@@ -1,3 +1,17 @@
+2002-10-22  Andrei Zmievski  <andrei@php.net>
+
+    * ext/gtk+/php_gtk+_types.c
+      ext/gdkpixbuf/php_gdkpixbuf.h
+      ext/gdkpixbuf/gdk-pixbuf.php
+      ext/gdkpixbuf/gdkpixbuf.defs
+      ext/gdkpixbuf/gdkpixbuf.overrides:
+    - Small fixes to gdk-pixbuf test script.
+    - gdk-pixbuf 2.0 has a fill function. Implemented a manual emulation of
+      it for now.
+    - Made interpolation parameter for GdkPixbuf::scale_simple() optional.
+    - Realized that the code to set tile/stipple/clip_mask of GdkGC was broken
+      and only accepted GdkWindow's instead of GdkPixmap/GdkBitmap.
+
 2002-10-17  Andrei Zmievski  <andrei@php.net>
 
     * main/php_gtk_object.c
