@@ -2922,25 +2922,6 @@ PHP_FUNCTION(gtk_widget_get_pointer)
 }
 
 %%
-override gtk_tooltips_set_tip
-PHP_FUNCTION(gtk_tooltips_set_tip)
-{
-	zval *widget;
-	char *tip_text, *tip_private = NULL;
-
-	NOT_STATIC_METHOD();
-
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Os|s", &widget, gtk_widget_ce, &tip_text, &tip_private))
-		return;
-
-	if (!tip_private)
-		tip_private = "";
-
-	gtk_tooltips_set_tip(GTK_TOOLTIPS(PHP_GTK_GET(this_ptr)), GTK_WIDGET(PHP_GTK_GET(widget)), tip_text, tip_private);
-	RETURN_NULL();
-}
-
-%%
 ignore
   gtk_drag_source_handle_event gtk_drag_dest_handle_event
   gtk_selection_request gtk_selection_notify gtk_selection_property_notify

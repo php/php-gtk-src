@@ -9194,7 +9194,7 @@
   (return-type none)
   (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name const-gchar* tip_text))
-  (parameter (type-and-name const-gchar* tip_private))
+  (parameter (type-and-name const-gchar* tip_private) (default ""))
 )
 
 (method set_colors
