@@ -65,4 +65,23 @@ PHP_FUNCTION(wrap_%s)
 
 $function_entry_tpl = "\t{\"%s\",	PHP_FN(wrap_%s),	%s},\n";
 
+$register_getter_tpl = "\tphp_gtk_register_prop_getter(%s, %s_get_property);\n";
+
+$prop_check_tpl =
+"%sif (!strcmp(prop_name, \"%s\")) {
+%s	%s
+	}";
+
+$prop_getter_tpl = "
+static void %s_get_property(zval *return_value, zval *object, zend_llist_element **element)
+{
+	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
+
+	ZVAL_NULL(return_value);
+
+%s
+}\n\n";
+
+$init_class_tpl = "\n\tINIT_OVERLOADED_CLASS_ENTRY(ce, \"%s\", %s_functions, NULL, %s, NULL);\n";
+
 ?>

@@ -97,6 +97,8 @@ void *php_gtk_get_object(zval *wrapper, int rsrc_type);
 int php_gtk_get_enum_value(GtkType enum_type, zval *enum_val, int *result);
 void php_gtk_destroy_notify(gpointer user_data);
 void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *args);
+void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args);
+void php_gtk_input_marshal(gpointer a, zval *func, int nargs, GtkArg *args);
 void php_gtk_ret_from_value(GtkArg *ret, zval *value);
 zval *php_gtk_args_as_hash(int nargs, GtkArg *args);
 zval *php_gtk_arg_as_value(GtkArg *arg);

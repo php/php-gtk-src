@@ -182,7 +182,7 @@ PHP_FUNCTION(wrap_gtk_timeout_add)
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
 	data = php_gtk_build_value("(VN)", func, extra);
 	RETURN_LONG(gtk_timeout_add_full(interval, NULL,
-									 (GtkCallbackMarshal)php_gtk_callback_marshal,
+									 (GtkCallbackMarshal)php_gtk_handler_marshal,
 									 data, php_gtk_destroy_notify));
 }
 %%
@@ -194,7 +194,7 @@ PHP_FUNCTION(wrap_gtk_idle_add)
 	zval *data;
 
 	if (ZEND_NUM_ARGS() < 1) {
-		php_error(E_WARNING, "%s() requires at least 1 arguments, %d given",
+		php_error(E_WARNING, "%s() requires at least 1 argument, %d given",
 				  get_active_function_name(), ZEND_NUM_ARGS());
 		return;
 	}
@@ -211,7 +211,7 @@ PHP_FUNCTION(wrap_gtk_idle_add)
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 1, ZEND_NUM_ARGS());
 	data = php_gtk_build_value("(VN)", func, extra);
 	RETURN_LONG(gtk_idle_add_full(GTK_PRIORITY_DEFAULT, NULL,
-								 (GtkCallbackMarshal)php_gtk_callback_marshal,
+								 (GtkCallbackMarshal)php_gtk_handler_marshal,
 								 data, php_gtk_destroy_notify));
 }
 %%
@@ -241,7 +241,7 @@ PHP_FUNCTION(wrap_gtk_quit_add)
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
 	data = php_gtk_build_value("(VN)", func, extra);
 	RETURN_LONG(gtk_quit_add_full(main_level, NULL,
-								 (GtkCallbackMarshal)php_gtk_callback_marshal,
+								 (GtkCallbackMarshal)php_gtk_handler_marshal,
 								 data, php_gtk_destroy_notify));
 }
 %%
@@ -251,16 +251,14 @@ PHP_FUNCTION(wrap_gtk_input_add_full)
     int source;
     GdkInputCondition condition;
 	zval *func = NULL;
-	zval *extra;
-	zval *data;
 
-	if (ZEND_NUM_ARGS() < 2) {
-		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
+	if (ZEND_NUM_ARGS() != 3) {
+		php_error(E_WARNING, "%s() requires exactly 3 arguments, %d given",
 				  get_active_function_name(), ZEND_NUM_ARGS());
 		return;
 	}
 
-	if (!php_gtk_parse_args(2, "iiV", &source, &condition, &func))
+	if (!php_gtk_parse_args(3, "iiV", &source, &condition, &func))
 		return;
 
 	if (!php_gtk_check_callable(func)) {
@@ -269,11 +267,9 @@ PHP_FUNCTION(wrap_gtk_input_add_full)
 		return;
 	}
 
-	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
-	data = php_gtk_build_value("(VN)", func, extra);
 	RETURN_LONG(gtk_input_add_full(source, condition, NULL,
-								 (GtkCallbackMarshal)php_gtk_callback_marshal,
-								 data, php_gtk_destroy_notify));
+								 (GtkCallbackMarshal)php_gtk_input_marshal,
+								 func, php_gtk_destroy_notify));
 }
 %%
 override gtk_signal_connect

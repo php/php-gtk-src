@@ -285,6 +285,43 @@ class Generator {
 		return $this->parse_byref($parse_type);
 	}
 
+	function write_prop_getter($fp, $object)
+	{
+		global	$matcher,
+				$prop_check_tpl,
+				$prop_getter_tpl;
+
+		$obj_cast = substr(convert_typename($object->c_name), 1);
+		$prop_checks = '';
+		$else_clause = "\t";
+
+		foreach ($object->fields as $field_def) {
+			list($field_type, $field_name) = $field_def;
+			$var_list = new Var_List();
+			$handler = &$matcher->get($field_type);
+			if ($handler === null) {
+				error_log("Could not write getter for $object->c_name '$field_name' field (field type $field_type)");
+				continue;
+			}
+
+			$prop_tpl = $handler->write_return($field_type, $var_list);
+			$prop_code = sprintf($prop_tpl,
+								 $obj_cast . '(PHP_GTK_GET(object))->' . $field_name);
+			$prop_code = str_replace("\n", "\n\t", $prop_code);
+
+			$prop_checks .= sprintf($prop_check_tpl,
+									$else_clause,
+									$field_name,
+									"\t" . $var_list->to_string(),
+									$prop_code);
+			$else_clause = ' else ';
+		}
+
+		fwrite($fp, sprintf($prop_getter_tpl,
+							strtolower($object->in_module . '_' .  $object->name),
+							$prop_checks));
+	}
+
 	function write_static_vars($fp) {
 		fwrite($fp, "\n/* static variables  */\n");
 		foreach ($this->parser->objects as $object)
@@ -293,11 +330,19 @@ class Generator {
 	
 	function write_objects($fp)
 	{
-		global $function_entry_tpl;
+		global	$function_entry_tpl,
+				$register_getter_tpl,
+				$init_class_tpl;
 		
 		foreach ($this->parser->objects as $object) {
+			$object_module = strtolower($object->in_module);
+			$object_lname = strtolower($object->name);
+
 			fwrite($fp, "\n/* object $object->c_name  */\n");
-			$this->register_classes .= "\n\tINIT_CLASS_ENTRY(ce, \"gtk" . strtolower($object->name) . "\", " . $this->prefix . "_" . strtolower($object->name) . "_functions);\n";
+			$this->register_classes .= sprintf($init_class_tpl,
+											   $object_module . $object_lname,
+											   'php_' . $object_module . '_' . $object_lname,
+											   count($object->fields) ? 'php_gtk_get_property' : 'NULL');
 			if ($object->parent == null)
 				$this->register_classes .= "\t$object->ce = zend_register_internal_class_ex(&ce, NULL, NULL);\n";
 			else {
@@ -305,7 +350,12 @@ class Generator {
 				$this->register_classes .= "\t$object->ce = zend_register_internal_class_ex(&ce, $parent_obj->ce, NULL);\n" .
 										   "\tg_hash_table_insert(php_gtk_class_hash, g_strdup(\"Gtk$object->name\"), $object->ce);\n";
 			}
-			$function_entry = sprintf($this->function_entry, $this->prefix . "_" . strtolower($object->name));
+
+			if (count($object->fields)) {
+				$this->register_classes .= sprintf($register_getter_tpl, $object->ce, $object_module . '_' . $object_lname);
+			}
+
+			$function_entry = sprintf($this->function_entry, $this->prefix . "_" . $object_lname);
 			$constructor = $this->parser->find_constructor($object);
 			if ($this->overrides->is_overriden($constructor->c_name)) {
 				list(, $constructor_override) = $this->overrides->get_override($constructor->c_name);
@@ -351,6 +401,9 @@ class Generator {
 			}
 			$function_entry .= $this->function_entry_end;
 			fwrite($fp, $function_entry);
+
+			if (count($object->fields))
+				$this->write_prop_getter($fp, $object);
 		}
 	}
 
