@@ -611,6 +611,7 @@
   (field (type-and-name GtkWidget* ok_button))
   (field (type-and-name GtkWidget* cancel_button))
   (field (type-and-name GtkWidget* help_button))
+  (field (type-and-name GtkWidget* action_area))
 )
 
 (object Dialog

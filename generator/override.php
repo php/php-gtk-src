@@ -29,6 +29,7 @@ class Overrides {
 	var $getprops			= array();
 	var $register_classes	= array();
 	var $headers			= '';
+	var $constants			= '';
 
 	function Overrides($file_name = null)
 	{
@@ -96,6 +97,10 @@ class Overrides {
 				$this->headers .= "\n" . $rest . "\n";
 				break;
 
+			case 'constants':
+				$this->constants .= "\n" . $rest . "\n";
+				break;
+
 			case 'register_class':
 				$this->register_classes[$words[0]] = $rest;
 				break;
@@ -138,6 +143,11 @@ class Overrides {
 	function get_headers()
 	{
 		return $this->headers;
+	}
+
+	function get_constants()
+	{
+		return $this->constants;
 	}
 
 	function get_register_classes()

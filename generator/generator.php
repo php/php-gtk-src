@@ -87,6 +87,7 @@ class Generator {
 				fwrite($fp, "	REGISTER_LONG_CONSTANT(\"$enum_value[1]\", $enum_value[1], CONST_CS | CONST_PERSISTENT);\n");
 			}
 		}
+		fwrite($fp, $this->overrides->get_constants());
 		fwrite($fp, "}\n\n");
 	}
 
