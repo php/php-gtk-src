@@ -197,6 +197,26 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC)
             g_value_set_float(gval, Z_DVAL_P(value));
             break;
 
+        case G_TYPE_ENUM:
+        {
+            gint val = 0;
+            if (phpg_gvalue_get_enum(G_VALUE_TYPE(gval), value, &val) == FAILURE) {
+                return FAILURE;
+            }
+            g_value_set_enum(gval, val);
+            break;
+        }
+
+        case G_TYPE_FLAGS:
+        {
+            gint val = 0;
+            if (phpg_gvalue_get_flags(G_VALUE_TYPE(gval), value, &val) == FAILURE) {
+                return FAILURE;
+            }
+            g_value_set_flags(gval, val);
+            break;
+        }
+
         case G_TYPE_STRING:
             convert_to_string(value);
             g_value_set_string(gval, Z_STRVAL_P(value));
