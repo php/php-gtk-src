@@ -59,6 +59,7 @@ PHP_FUNCTION(%s)
 	if (!wrapped_obj) {
 		php_error(E_WARNING, \"%%s(): could not create %s object\",
 				  get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
 		return;
 	}
 
