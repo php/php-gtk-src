@@ -1,3 +1,13 @@
+2001-08-09  Frank M. Kromann  <frank@frontbase.com>
+
+    * ext/gtk+/php_gdk.c: Changed GDK_KEY names from
+    _GDK_KEY_ to GDK_KEY__
+
+    * ext/gtk+/php_gdk.c:
+    Getting rid of warnings caused by limitations in the Zend engine.
+    Lowercase constants are prepended with '_'
+    eth, and thorn are prepended with '__'
+
 2001-08-08  Andrei Zmievski  <andrei@ispi.net>
 
     * NEWS
