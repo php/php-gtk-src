@@ -269,8 +269,9 @@ zend_bool phpg_gobject_construct(zval *this_ptr TSRMLS_DC)
 
     obj = g_object_newv(my_type, n_params, params);
     if (!obj) {
-        zend_error(E_ERROR, "Could not get create %s object", Z_OBJCE_P(this_ptr)->name);
-        return 0;
+        char buf [128];
+        snprintf(buf, 128, "could not construct %s object", Z_OBJCE_P(this_ptr)->name);
+        PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_construct_exception, buf, 0);
     }
 
     phpg_gobject_set_wrapper(this_ptr, obj TSRMLS_CC);
