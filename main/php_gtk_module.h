@@ -28,7 +28,7 @@
 #ifdef PHP_WIN32
 #include "config.w32.h"
 #else
-#include "php_config.h"
+#include "config.h"
 #endif
 
 #include "ext/standard/info.h"
