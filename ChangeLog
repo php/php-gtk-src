@@ -1,3 +1,7 @@
+2002-01-11  Frank M. Kromann  <frank@frontbase.com>
+
+    * ext/gtk+/gtk.overrides: Changed return value from empty string to null
+
 2002-01-04  Frank M. Kromann  <frank@frontbase.com>
 
     * ext/gtk+/gtk.overrides: Fixing crash when returned texts is null
