@@ -508,5 +508,6 @@ $matcher->register('GdkRectangle*', $arg);
 $matcher->register_boxed('GdkEvent', 'gdk_event');
 $matcher->register_boxed('GdkWindow', 'gdk_window');
 $matcher->register_boxed('GdkColor', 'gdk_color');
+$matcher->register_boxed('GdkColormap', 'gdk_colormap');
 
 ?>

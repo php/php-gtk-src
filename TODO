@@ -1,7 +1,16 @@
 /* vim: set tw=80 ai expandtab: */
 
+* Finish boxed type support.
 * Investigate how to improve h2def.py or modify gdk.defs to define boxed type
   objects (GdkColormap, etc.)
 * Decide on the license.
 * Modify generator to strip 'gdk_' from some functions.
 * Modify generic get/set property handlers to handle array index accesses.
+* Modify generic get/set property handlers to percolate up the inheritance chain
+  looking for attributes.
+
+In PHP
+------
+* Fix call_user_method_*() functions to force object by reference.
+* Modify var_dump() and print_r() to check get property handlers when
+  dumping information.
