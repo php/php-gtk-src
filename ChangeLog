@@ -1,3 +1,11 @@
+2003-01-08  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * (ZE2_PORT)
+      generator/scheme.php:
+      Clean up scheme.php:
+       - &new to new
+       - Redo serialization scheme as $this is not changeable in methods now.
+
 2003-01-04  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (ZE2_PORT)
