@@ -314,7 +314,9 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
     }
 
     if (gtype) {
-        /* TODO store __gtype object */
+        /* TODO store __gtype object. This is problematic since the shutdown
+         * destructor does not know what to do with internal properties that are
+         * objects and exits badly. */
         zval *g = phpg_gtype_new(gtype);
         zend_hash_update(real_ce->static_members, "__gtype", sizeof("__gtype"), &g, sizeof(zval *), NULL);
         g_type_set_qdata(gtype, gobject_class_key, real_ce);
