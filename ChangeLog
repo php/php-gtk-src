@@ -1,3 +1,24 @@
+2001-05-10  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/class.xsl
+      docs/stylesheets/xsl/html/overrides.xsl
+      docs/stylesheets/xsl/html/phpweb.xsl
+      docs/stylesheets/xsl/chunk.xsl.in
+      docs/stylesheets/xsl/html.xsl.in
+      docs/stylesheets/xsl/phpweb.xsl.in:
+    Various changes for phpweb stylesheets, some more modifications needed but these are the beginings
+
+2001-05-10  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk_util.c:
+    Break out type name retrieval into a separate function.
+
+    * generator/generator.php
+      generator/gtk.overrides
+      src/php_gtk.c
+      src/php_gtk_object.c: * Fix checking of argc upon startup.
+    * Added GtkObject::get() method - may be renamed soon.
+
 2001-05-09  Andrei Zmievski  <andrei@ispi.net>
 
     * docs/en/classes/gtkbutton.xml
