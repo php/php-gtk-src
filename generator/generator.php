@@ -208,6 +208,27 @@ class Generator {
         $dict['pre_code'] = $info->get_pre_code();
         $dict['post_code'] = $info->get_post_code();
 
+        if (!empty($dict['ctor_with_props'])) {
+            $dict['n_params'] = count((array)$callable->params);
+            $dict['n_args'] = $dict['n_params'] + 1;
+            $prop_names = '';
+            foreach ($callable->properties as $prop) {
+                $prop_names .= '"' . $prop[0] . '", ';
+            }
+            $dict['props'] = $prop_names;
+            $n = 0;
+            for ($i = 0; $i < count($info->parse_list); $i++) {
+                if ($info->parse_list[$i] && $info->parse_list[$i]{0} == '&') {
+                    $info->parse_list[$i] = "&php_args[$n]";
+                    $n++;
+                }
+            }
+            $dict['specs'] = preg_replace('!([^|])!', '^$1', $dict['specs']);
+            $dict['parse_list'] = $info->get_parse_list();
+            $dict['pre_code'] = '';
+            $dict['post_code'] = '';
+        }
+
         return aprintf($template, $dict);
     }
 
@@ -314,7 +335,16 @@ class Generator {
                     $template_name = 'static_constructor';
                 }
 
-                $template = $this->template_map[$object->def_type][$template_name];
+                $dict['ctor_with_props'] = false;
+                if ($object->def_type == 'object' && !$ctor->params) {
+                    $template = Templates::constructor_without_props;
+                    $dict['ctor_with_props'] = true;
+                } else if ($object->def_type == 'object' && $ctor->properties) {
+                    $template = Templates::constructor_with_props;
+                    $dict['ctor_with_props'] = true;
+                } else {
+                    $template = $this->template_map[$object->def_type][$template_name];
+                }
 
                 try {
                     if (($overriden = $this->overrides->is_overriden($ctor_name))) {
@@ -328,6 +358,7 @@ class Generator {
                         $code = $this->write_callable($ctor, $template, false, false, $dict);
                         $this->fp->write($code);
                     }
+
                     $ctor_defs[] = sprintf(Templates::method_entry,
                                            $ctor->is_constructor_of,
                                            $ctor_fe_name, 'NULL', $flags);
@@ -373,7 +404,6 @@ class Generator {
         $this->log_print("(%d written, %d skipped)\n", $num_written, $num_skipped);
         return $ctor_defs;
     }
-
 
     function write_classes()
     {
@@ -762,7 +792,7 @@ class Generator {
     function write_coverage_info()
     {
         $this->log_print("\n\n");
-        $this->log_print($this->make_header("Coverage"));
+        $this->log_print($this->make_header("$this->prefix Coverage"));
 
         foreach ($this->cover as $coverage) {
             list($name, $written, $total, $percent) = $coverage->get_stats();
@@ -805,7 +835,7 @@ class Generator {
     function write_source($savefile)
     {
         $this->not_generated_list = array();;
-        $this->log_print($this->make_header("Summary"));
+        $this->log_print($this->make_header("$this->prefix Summary"));
 
         $this->fp = new LineOutput(fopen($savefile, 'w'), $savefile);
         $this->fp->write("#include \"php_gtk.h\"");
@@ -817,12 +847,12 @@ class Generator {
         $this->fp->write("\n#endif /* HAVE_PHP_GTK */\n");
 
         $this->log("\n\n");
-        $this->log($this->make_header("Generated Items"));
+        $this->log($this->make_header("$this->prefix Generated Items"));
         $this->log("%%%% - overriden\n\n");
         $this->log("%s", $this->diversions["gen"]);
 
         $this->log("\n\n");
-        $this->log($this->make_header("Not Generated Items"));
+        $this->log($this->make_header("$this->prefix Not Generated Items"));
         $this->log("%s", $this->diversions["notgen"]);
 
         $this->write_coverage_info();

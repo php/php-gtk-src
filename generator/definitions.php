@@ -121,6 +121,7 @@ class Method_Def extends Definition {
     var $params             = array();
     var $varargs            = false;
     var $deprecated         = null;
+    var $properties         = array();
     var $static             = false;
 
     function Method_Def($args)
@@ -178,6 +179,7 @@ class Function_Def extends Definition {
     var $return_type        = null;
     var $caller_owns_return = null;
     var $params             = array();
+    var $properties         = array();
     var $varargs            = false;
     var $deprecated         = null;
 
@@ -199,13 +201,11 @@ class Function_Def extends Definition {
             else if ($arg[0] == 'caller-owns-return')
                 $this->caller_owns_return = in_array($arg[1], self::$true_values);
             else if ($arg[0] == 'parameters') {
-                $param_type = null;
-                $param_name = null;
-                $param_default = null;
-                $param_null = false;
                 foreach (array_slice($arg, 1) as $param_arg) {
                     $param_type = $param_arg[0];
                     $param_name = $param_arg[1];
+                    $param_default = null;
+                    $param_null = false;
                     foreach (array_slice($param_arg, 2) as $opt_arg) {
                         if ($opt_arg[0] == 'default')
                             $param_default = $opt_arg[1];
@@ -214,6 +214,21 @@ class Function_Def extends Definition {
                     }
                     $this->params[] = array($param_type, $param_name,
                                             $param_default, $param_null);
+                }
+            } else if ($arg[0] == 'properties') {
+                if (empty($this->is_constructor_of)) {
+                    continue;
+                }
+
+                foreach (array_slice($arg, 1) as $prop) {
+                    $prop_name = $prop[0];
+                    $optional = false;
+                    foreach (array_slice($prop, 1) as $opt_arg) {
+                        if ($opt_arg[0] == 'optional') {
+                            $optional = true;
+                        }
+                    }
+                    $this->properties[] = array($prop_name, $optional);
                 }
             } else if ($arg[0] == 'varargs')
                 $this->varargs = in_array($arg[1], self::$true_values);

@@ -502,19 +502,19 @@ class Object_Arg extends Arg_Type {
                                     "        $name = $this->cast(PHPG_GOBJECT(php_$name));\n";
             }
 
-            $info->add_parse_list('N', '&php_' . $name . ', ' . $this->obj_ce);
+            $info->add_parse_list('N', array('&php_' . $name, $this->obj_ce));
             $info->arg_list[] = $name;
         } else {
             if (isset($default)) {
                 $info->var_list->add($this->obj_name, '*' . $name . ' = ' . $default);
                 $info->var_list->add('zval', '*php_' . $name . ' = NULL');
-                $info->add_parse_list('O', '&php_' . $name . ', ' . $this->obj_ce);
+                $info->add_parse_list('O', array('&php_' . $name, $this->obj_ce));
                 $info->arg_list[] = $name;
                 $info->pre_code[] = "    if (php_$name)\n" .
                                     "        $name = $this->cast(PHPG_GOBJECT(php_$name));\n";
             } else {
                 $info->var_list->add('zval', '*' . $name);
-                $info->add_parse_list('O', '&' . $name . ', ' . $this->obj_ce);
+                $info->add_parse_list('O', array('&' . $name, $this->obj_ce));
                 $info->arg_list[] = "$this->cast(PHPG_GOBJECT($name))";
             }
         }
@@ -605,7 +605,7 @@ class Boxed_Arg extends Arg_Type {
                                                                         'name' => $name));
             }
 
-            $info->add_parse_list('N', '&php_' . $name . ', gboxed_ce');
+            $info->add_parse_list('N', array('&php_' . $name, 'gboxed_ce'));
             $typename = preg_replace('!^(const-)?([^*]+)(\*)?$!', '$2', $type);
             if ($typename != $this->boxed_type) {
                 $info->arg_list[] = '(' . substr($type, 0, -1) . ' *)' . $name;
@@ -629,7 +629,7 @@ class Boxed_Arg extends Arg_Type {
                                                                    'name' => $name));
             }
 
-            $info->add_parse_list('O', '&php_' . $name . ', gboxed_ce');
+            $info->add_parse_list('O', array('&php_' . $name, 'gboxed_ce'));
             $info->arg_list[] = $name;
         }
     }
