@@ -135,6 +135,7 @@ ignore
 	gtk_object_arg_get_info
 	gtk_widget_new
 	gtk_widget_newv
+	gtk_widget_reset_shapes
 	gtk_key_snooper_install
 	gtk_key_snooper_remove
 	gtk_get_current_event
