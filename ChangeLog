@@ -1,3 +1,22 @@
+2005-02-13  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * php_gtk.m4
+      main/php_gtk.h
+      main/phpg_closure.c
+      main/phpg_gobject.c:
+      Initial work on closures.
+
+    * main/phpg_gtype.c:
+      Fix exception throwing to return a value as well.
+
+    * main/phpg_gobject.c:
+      - Fix memory leaks with class constants.
+      - Fix premature object destruction for GtkWindow class. Argh. You cannot
+        imagine how long it took to figure out that GtkWindow needs to be
+        "sunk" after creation. After hours of wading through guts of
+        GLib's type and object system written entirely in C.. I should have
+        just looked at PyGTK implementation.
+
 2005-02-06  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/php_gtk+.c:
