@@ -9,6 +9,8 @@
 
 * Implement GdkPoint support.
 
+* Register constants for cursor names.
+
 * Gnome support
 
 * Clean up and optimize generator
