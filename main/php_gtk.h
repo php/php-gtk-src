@@ -218,6 +218,7 @@ zval ***php_gtk_func_args(int argc);
 PHP_GTK_API zval *php_gtk_func_args_as_hash(int argc, int start, int length);
 PHP_GTK_API zval *php_gtk_build_value(char *format, ...);
 char *php_gtk_zval_type_name(zval *arg);
+PHP_GTK_API void phpg_warn_deprecated(char *msg TSRMLS_DC);
 
 PHP_GTK_API  void php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object, int after);
 PHP_GTK_API zval* php_gtk_simple_signal_callback(GtkObject *o, gpointer data, zval *gtk_args );

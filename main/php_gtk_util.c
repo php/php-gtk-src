@@ -918,4 +918,11 @@ PHP_GTK_API zval *php_gtk_build_value(char *format, ...)
 	return result;
 }
 
+PHP_GTK_API void phpg_warn_deprecated(char *msg TSRMLS_DC)
+{
+	char *space;
+	char *class_name = get_active_class_name(&space TSRMLS_CC);
+	php_error(E_WARNING, "PHP-GTK warning: %s%s%s() is deprecated%s%s", class_name, space, get_active_function_name(TSRMLS_C), msg?":":"", msg?msg:"");
+}
+
 #endif  /* HAVE_PHP_GTK */

@@ -1806,7 +1806,7 @@
   (parameters
     '("const-char*" "language")
   )
-  (deprecated "use pango.Language instead")
+  (deprecated "use PangoLanguage() constructor instead")
 )
 
 (define-function pango_language_matches
@@ -1816,7 +1816,7 @@
     '("PangoLanguage*" "language" (null-ok))
     '("const-char*" "range_list")
   )
-  (deprecated "use pango.Language.matches instead")
+  (deprecated "use PangoLanguage::matches() instead")
 )
 
 (define-method matches

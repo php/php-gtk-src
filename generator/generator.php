@@ -293,7 +293,9 @@ class Generator {
             $handler->write_return($callable->return_type, $callable->caller_owns_return, $info);
         }
 
-        /* TODO handle deprecation */
+        if (isset($callable->deprecated)) {
+            $info->pre_code[] = sprintf(Templates::deprecation_msg, $callable->deprecated ? '"'.$callable->deprecated.'"' : 'NULL');
+        }
 
         if (!isset($dict['name'])) {
             $dict['name'] = $callable->name;

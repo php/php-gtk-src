@@ -131,13 +131,13 @@
 )
 
 (define-function colormap_get_system_size
-  (deprecated "deprecated")
+  (deprecated "")
   (c-name "gdk_colormap_get_system_size")
   (return-type "gint")
 )
 
 ;(define-method change
-;  (deprecated "deprecated")
+;  (deprecated "")
 ;  (of-object "GdkColormap")
 ;  (c-name "gdk_colormap_change")
 ;  (return-type "none")
@@ -188,7 +188,7 @@
 )
 
 (define-method white
-  (deprecated "deprecated")
+  (deprecated "")
   (of-object "GdkColormap")
   (c-name "gdk_color_white")
   (return-type "gint")
@@ -198,7 +198,7 @@
 )
 
 (define-method black
-  (deprecated "deprecated")
+  (deprecated "")
   (of-object "GdkColormap")
   (c-name "gdk_color_black")
   (return-type "gint")
@@ -208,7 +208,7 @@
 )
 
 (define-method alloc
-  (deprecated "deprecated")
+  (deprecated "")
   (of-object "GdkColormap")
   (c-name "gdk_color_alloc")
   (return-type "gint")
@@ -218,7 +218,7 @@
 )
 
 (define-method change
-  (deprecated "deprecated")
+  (deprecated "")
   (of-object "GdkColormap")
   (c-name "gdk_color_change")
   (return-type "gint")
@@ -851,7 +851,7 @@
 )
 
 (define-method draw_string
-  (deprecated "use GdkDrawable.draw_layout")
+  (deprecated "use GdkDrawable::draw_layout()")
   (of-object "GdkDrawable")
   (c-name "gdk_draw_string")
   (return-type "none")
@@ -865,7 +865,7 @@
 )
 
 (define-method draw_text
-  (deprecated "use GdkDrawable.draw_layout")
+  (deprecated "use GdkDrawable::draw_layout()")
   (of-object "GdkDrawable")
   (c-name "gdk_draw_text")
   (return-type "none")
@@ -880,7 +880,7 @@
 )
 
 (define-method draw_text_wc
-  (deprecated "use GdkDrawable.draw_layout")
+  (deprecated "use GdkDrawable::draw_layout()")
   (of-object "GdkDrawable")
   (c-name "gdk_draw_text_wc")
   (return-type "none")
@@ -1030,7 +1030,7 @@
 )
 
 (define-function gdk_draw_layout_with_colors
-  (deprecated "use gtk.gdk.Drawable.draw_layout instead")
+  (deprecated "use GdkDrawable::draw_layout() instead")
   (c-name "gdk_draw_layout_with_colors")
   (return-type "none")
   (parameters
@@ -1465,7 +1465,7 @@
 )
 
 (define-function gc_new
-  (deprecated "use gdk.GC")
+  (deprecated "use GdkGC() constructor instead")
   (c-name "gdk_gc_new2")
   (return-type "GdkGC*")
   (parameters
@@ -1733,7 +1733,7 @@
 
 (define-method image_get
   (of-object "GdkDrawable")
-  (deprecated "use GdkDrawable.get_image")
+  (deprecated "use GdkDrawable::get_image()")
   (c-name "gdk_image_get")
   (return-type "GdkImage*")
   (parameters
@@ -2472,7 +2472,7 @@
 )
 
 (define-function rgb_get_cmap
-  (deprecated "use gtk.gdk.rgb_get_colormap instead")
+  (deprecated "use gdk::rgb_get_colormap() instead")
   (c-name "gdk_rgb_get_cmap")
   (return-type "GdkColormap*")
 )
@@ -4190,7 +4190,7 @@
 )
 
 (define-function gdk_pixbuf_loader_new
-  (deprecated "use gtk.gdk.PixbufLoader instead")
+  (deprecated "use GdkPixbufLoader() constructor instead")
   (c-name "gdk_pixbuf_loader_new")
   (return-type "GdkPixbufLoader*")
 )

@@ -80,6 +80,7 @@ PHP_METHOD(%(class), %(name))
     phpg_gobject_new(wrapped_obj, &return_value TSRMLS_CC);
 }\n\n";
 
+const deprecation_msg = "\n\tphpg_warn_deprecated(%s TSRMLS_CC);\n";
 const method1_call = "%s(%s(PHP_GTK_GET(this_ptr))%s)";
 const method2_call = "%s(PHP_%s_GET(this_ptr)%s)";
 
