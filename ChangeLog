@@ -1,3 +1,7 @@
+2001-12-15  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * ext/gdkpixbuf/gdkpixbuf.overrides: - Typo.
+
 2001-12-12  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gdkpixbuf/gdkpixbuf.overrides:
