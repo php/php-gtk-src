@@ -1,3 +1,9 @@
+2003-07-10  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * (ZE2_PORT)
+      main/php_gtk_object.c:
+      Fix object allocation.
+
 2003-07-09  Frank M. Kromann  <frank@kromann.info>
 
     * (ZE2_PORT)
