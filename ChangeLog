@@ -1,3 +1,30 @@
+2001-04-08  James Moore  <James@phpuk.org>
+
+    * docs/scripts/CommonFuncs.inc:
+    Load php_gtk.[dll|so] when needed automatically.
+
+    * docs/en/classes/gtkdata.xml:
+    Correct the ID that steph used, should be gtk,<object_nanme>
+
+    * docs/en/classes/gtkmisc.xml
+      docs/manual.xml.in: Adding documentation for GtkMisc
+
+2001-04-08  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/en/classes/gtkdata.xml
+      docs/en/classes/gtkitemfactory.xml
+      docs/en/classes/gtkobject.xml
+      docs/en/classes/gtkwidget.xml
+      docs/manual.xml.in
+      docs/stylesheets/xsl/html/class.xsl: Finally got moving on the docs :)
+
+2001-04-08  James Moore  <James@phpuk.org>
+
+    * docs/en/language-defs.ent
+      docs/dbxml/phpgtkdoc.dtd
+      docs/manual.xml.in:
+    Updating dtd to allow desc to contain <para> as this allows better layout.
+
 2001-04-07  James Moore  <James@phpuk.org>
 
     * docs/manual.xml.in: Removing referece to gtkwidget
