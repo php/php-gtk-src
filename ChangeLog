@@ -1,3 +1,9 @@
+2001-10-16  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/scheme.dsp: Adding generation of gen_ce_libglade.h
+
+    * win32/php_gtk.dsp: Movong source files to sub folders
+
 2001-10-15  Frank M. Kromann  <frank@frontbase.com>
 
     * generator/Getopt.php: Fix warning from Getopt.
