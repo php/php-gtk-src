@@ -2,6 +2,8 @@
 
 # $Id$
 
+file_list=".cvsignore Makefile.in config.m4 php_skeleton.c php_skeleton.h skeleton.overrides"
+
 giveup() {
 	echo $*
 	echo ""
@@ -53,13 +55,13 @@ echo "Creating directory $widget"
 mkdir $widget || givup "Cannot create directory $widget"
 
 echo "Creating skeleton files"
-cp -a skeleton/* $widget/
-cp -f skeleton/.cvsignore $widget/
-cd $widget
+cd skeleton
+cp -a $file_list ../$widget/
+cd ../$widget/
 
-perl -p -i -e "s/skeleton/$widget/g" *
-perl -p -i -e "s/Skeleton/$Widget/g" *
-perl -p -i -e "s/SKELETON/$WIDGET/g" *
+perl -p -i -e "s/skeleton/$widget/g" $file_list
+perl -p -i -e "s/Skeleton/$Widget/g" $file_list
+perl -p -i -e "s/SKELETON/$WIDGET/g" $file_list
 
 mv php_skeleton.c php_$widget.c
 mv php_skeleton.h php_$widget.h
