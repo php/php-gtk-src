@@ -44,7 +44,6 @@ PHP_GTK_API void php_gtk_object_init(GtkObject *obj, zval *wrapper)
 void php_gtk_set_object(zval *wrapper, void *obj, int rsrc_type)
 {
 	zval *handle;
-	zval **rsrc;
 
 	MAKE_STD_ZVAL(handle);
 	Z_TYPE_P(handle) = IS_LONG;
@@ -168,7 +167,6 @@ PHP_GTK_API void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nar
 	zval *wrapper = NULL;
 	zval *params;
 	zval *retval = NULL;
-	zval *tmp;
 	zval ***signal_args;
 	char *callback_name;
 	TSRMLS_FETCH();
@@ -296,7 +294,6 @@ PHP_GTK_API zval *php_gtk_new(GtkObject *obj)
 	zval *wrapper;
 	zend_class_entry *ce;
 	GtkType type;
-	gchar *type_name;
 	TSRMLS_FETCH();
 	
 	if (!obj) {
@@ -407,7 +404,7 @@ int php_gtk_args_from_hash(GtkArg *args, int nparams, zval *hash)
 						   gtk_type_name(args[i].type),
 						   php_gtk_zval_type_name(*item));
 			else
-				g_snprintf(buf, 511, "argument %s: expected %s, %s found", i+1,
+				g_snprintf(buf, 511, "argument %d: expected %s, %s found", i+1,
 						   gtk_type_name(args[i].type),
 						   php_gtk_zval_type_name(*item));
 			php_error(E_WARNING, buf);
@@ -1016,7 +1013,8 @@ zval php_gtk_get_property(zend_property_reference *property_reference)
 		ZVAL_NULL(&result);
 		if (Z_TYPE_P(overloaded_property) == OE_IS_OBJECT) {
 			/* Trying to access a property on a non-object. */
-			if (Z_TYPE(object) != IS_OBJECT) {
+			if (Z_TYPE(object) != IS_OBJECT ||
+				Z_TYPE(overloaded_property->element) != IS_STRING) {
 				return result;
 			}
 

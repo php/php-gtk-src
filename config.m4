@@ -31,3 +31,18 @@ if test "$PHP_PHP_GTK" != "no"; then
 
   AC_DEFINE(HAVE_PHP_GTK, 1, [If PHP-GTK support is enabled])
 fi
+
+PHP_GTK_ARG_ENABLE(debug, whether to include debugging symbols,
+[  --enable-debug          Compile with debugging symbols.], no)
+if test "$PHP_GTK_DEBUG" = "yes"; then
+  echo " $CFLAGS" | grep ' -g' >/dev/null || DEBUG_CFLAGS="-g"
+  if test "$CFLAGS" = "-g -O2"; then
+  	CFLAGS=-g
+  fi
+  test -n "$GCC" && DEBUG_CFLAGS="$DEBUG_CFLAGS -Wall"
+fi
+
+test -n "$DEBUG_CFLAGS" && CFLAGS="$CFLAGS $DEBUG_CFLAGS"
+
+CFLAGS_CLEAN=$CFLAGS
+PHP_SUBST(CFLAGS_CLEAN)
