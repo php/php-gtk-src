@@ -1,0 +1,49 @@
+;; -*- scheme -*-
+; object definitions ...
+(object Scrollpane
+  (in-module Gtk)
+  (parent Widget (Gtk))
+  (c-name GtkScrollpane)
+)
+
+;; Enumerations and flags ...
+
+
+;; From gtkscrollpane.h
+
+(function gtk_scrollpane_get_type
+  (c-name gtk_scrollpane_get_type)
+  (return-type guint)
+)
+
+(function gtk_scrollpane_new
+  (c-name gtk_scrollpane_new)
+  (is-constructor-of GtkScrollpane)
+  (return-type GtkWidget*)
+  (parameter (type-and-name GtkAdjustment* Xadjustment))
+  (parameter (type-and-name GtkAdjustment* Yadjustment))
+  (parameter (type-and-name gint aspect_ratio))
+)
+
+(method goto_edge
+  (of-object Scrollpane (Gtk))
+  (c-name gtk_scrollpane_goto_edge)
+  (return-type gboolean)
+  (parameter (type-and-name gint vertical))
+  (parameter (type-and-name gint horizontal))
+)
+
+(method step
+  (of-object Scrollpane (Gtk))
+  (c-name gtk_scrollpane_step)
+  (return-type gboolean)
+  (parameter (type-and-name gint direction))
+  (parameter (type-and-name gboolean dowrap))
+)
+
+(function gtk_range_get_type
+  (c-name gtk_range_get_type)
+  (return-type guint)
+)
+
+
