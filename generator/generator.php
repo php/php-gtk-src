@@ -19,6 +19,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/* $Id$ */
+
 /*
  * Significant portions of this generator are based on the pygtk code generator
  * developed by James Henstridge <jamesh@daa.com.au>.
