@@ -599,16 +599,23 @@ PHP_FUNCTION(gtk_object_get_data)
 override gtk_widget_intersect
 PHP_FUNCTION(gtk_widget_intersect)
 {
+	zval *php_area;
 	GdkRectangle area, intersection;
 	
 	NOT_STATIC_METHOD();
 
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iiii", &(area.x), &(area.y), &(area.width), &(area.height)))
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &php_area, gdk_rectangle_ce))
 		return;
 
+	php_gdk_rectangle_get(php_area, &area);
 	if (gtk_widget_intersect(GTK_WIDGET(PHP_GTK_GET(this_ptr)), &area, &intersection)) {
-		array_init(return_value);
-		*return_value = *php_gtk_build_value("(iiii)", area.x, area.y, area.width, area.height);
+		zval *ret;
+
+		ret= php_gdk_rectangle_new(&intersection);
+		*return_value = *ret;
+		FREE_ZVAL(ret);
+	} else {
+		RETURN_FALSE;
 	}
 }
 %%
@@ -2302,4 +2309,85 @@ PHP_FUNCTION(gtk_clist_get_selection_info)
 	} else {
 		RETURN_FALSE;
 	}
+}
+%%
+override gtk_widget_size_request
+PHP_FUNCTION(gtk_widget_size_request)
+{   
+	zval *ret;
+    GtkRequisition requisition;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_widget_size_request(GTK_WIDGET(PHP_GTK_GET(this_ptr)), &requisition);
+
+	ret = php_gtk_requisition_new(&requisition);
+	*return_value = *ret;
+	FREE_ZVAL(ret);
+}
+%%
+override gtk_widget_get_child_requisition
+PHP_FUNCTION(gtk_widget_get_child_requisition)
+{   
+	zval *ret;
+    GtkRequisition requisition;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_widget_get_child_requisition(GTK_WIDGET(PHP_GTK_GET(this_ptr)), &requisition);
+
+	ret = php_gtk_requisition_new(&requisition);
+	*return_value = *ret;
+	FREE_ZVAL(ret);
+}
+%%
+override gtk_notebook_query_tab_label_packing
+PHP_FUNCTION(gtk_notebook_query_tab_label_packing)
+{
+	zval *child;
+	gboolean expand, fill;
+	GtkPackType pack_type;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &child, gtk_widget_ce))
+		return;
+
+	gtk_notebook_query_tab_label_packing(GTK_NOTEBOOK(PHP_GTK_GET(this_ptr)),
+										 GTK_WIDGET(PHP_GTK_GET(child)),
+										 &expand, &fill, &pack_type);
+
+	array_init(return_value);
+	add_next_index_bool(return_value, expand);
+	add_next_index_bool(return_value, fill);
+	add_next_index_long(return_value, pack_type);
+}%%
+override gtk_box_query_child_packing
+PHP_FUNCTION(gtk_box_query_child_packing)
+{
+	zval *child;
+	gboolean expand, fill;
+	guint padding;
+	GtkPackType pack_type;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &child, gtk_widget_ce))
+		return;
+
+	gtk_box_query_child_packing(GTK_BOX(PHP_GTK_GET(this_ptr)),
+								GTK_WIDGET(PHP_GTK_GET(child)),
+								&expand, &fill, &padding, &pack_type);
+
+	array_init(return_value);
+	add_next_index_bool(return_value, expand);
+	add_next_index_bool(return_value, fill);
+	add_next_index_long(return_value, padding);
+	add_next_index_long(return_value, pack_type);
 }

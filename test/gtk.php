@@ -8,6 +8,52 @@ else
 
 $windows = array();
 
+$book_closed_xpm = array("16 16 6 1",
+						 "       c None s None",
+						 ".      c black",
+						 "X      c red",
+						 "o      c yellow",
+						 "O      c #808080",
+						 "#      c white",
+						 "                ",
+						 "       ..       ",
+						 "     ..XX.      ",
+						 "   ..XXXXX.     ",
+						 " ..XXXXXXXX.    ",
+						 ".ooXXXXXXXXX.   ",
+						 "..ooXXXXXXXXX.  ",
+						 ".X.ooXXXXXXXXX. ",
+						 ".XX.ooXXXXXX..  ",
+						 " .XX.ooXXX..#O  ",
+						 "  .XX.oo..##OO. ",
+						 "   .XX..##OO..  ",
+						 "    .X.#OO..    ",
+						 "     ..O..      ",
+						 "      ..        ",
+						 "                ");
+
+$book_open_xpm = array("16 16 4 1",
+					   "       c None s None",
+					   ".      c black",
+					   "X      c #808080",
+					   "o      c white",
+					   "                ",
+					   "  ..            ",
+					   " .Xo.    ...    ",
+					   " .Xoo. ..oo.    ",
+					   " .Xooo.Xooo...  ",
+					   " .Xooo.oooo.X.  ",
+					   " .Xooo.Xooo.X.  ",
+					   " .Xooo.oooo.X.  ",
+					   " .Xooo.Xooo.X.  ",
+					   " .Xooo.oooo.X.  ",
+					   "  .Xoo.Xoo..X.  ",
+					   "   .Xo.o..ooX.  ",
+					   "    .X..XXXXX.  ",
+					   "    ..X.......  ",
+					   "     ..         ",
+					   "                ");
+
 function delete_event($window, $event)
 {
 	$window->hide();
@@ -136,7 +182,9 @@ function create_dnd()
 function create_ctree()
 {
 	global	$windows,
-			$ctree_data;
+			$ctree_data,
+			$book_closed_xpm,
+			$book_open_xpm;
 
 	if (!isset($windows['ctree'])) {
 		function rebuild_tree($button, $ctree)
@@ -646,50 +694,6 @@ function create_ctree()
 
 		$window->realize();
 
-		$book_closed_xpm = array("16 16 6 1",
-								 "       c None s None",
-								 ".      c black",
-								 "X      c red",
-								 "o      c yellow",
-								 "O      c #808080",
-								 "#      c white",
-								 "                ",
-								 "       ..       ",
-								 "     ..XX.      ",
-								 "   ..XXXXX.     ",
-								 " ..XXXXXXXX.    ",
-								 ".ooXXXXXXXXX.   ",
-								 "..ooXXXXXXXXX.  ",
-								 ".X.ooXXXXXXXXX. ",
-								 ".XX.ooXXXXXX..  ",
-								 " .XX.ooXXX..#O  ",
-								 "  .XX.oo..##OO. ",
-								 "   .XX..##OO..  ",
-								 "    .X.#OO..    ",
-								 "     ..O..      ",
-								 "      ..        ",
-								 "                ");
-		$book_open_xpm = array("16 16 4 1",
-							   "       c None s None",
-							   ".      c black",
-							   "X      c #808080",
-							   "o      c white",
-							   "                ",
-							   "  ..            ",
-							   " .Xo.    ...    ",
-							   " .Xoo. ..oo.    ",
-							   " .Xooo.Xooo...  ",
-							   " .Xooo.oooo.X.  ",
-							   " .Xooo.Xooo.X.  ",
-							   " .Xooo.oooo.X.  ",
-							   " .Xooo.Xooo.X.  ",
-							   " .Xooo.oooo.X.  ",
-							   "  .Xoo.Xoo..X.  ",
-							   "   .Xo.o..ooX.  ",
-							   "    .X..XXXXX.  ",
-							   "    ..X.......  ",
-							   "     ..         ",
-							   "                ");
 		$mini_page_xpm = array("16 16 4 1",
 							   "       c None s None",
 							   ".      c black",
@@ -2240,6 +2244,258 @@ function create_event_watcher()
 		$dialog->destroy();
 }
 
+/*
+ * GtkNotebook
+ */
+
+$book_open = null;
+$book_open_mask = null;
+$book_closed = null;
+$book_closed_mask = null;
+$sample_notebook = null;
+
+function page_switch($notebook, $page, $page_num)
+{
+	global $book_open, $book_open_mask,
+	$book_closed, $book_closed_mask;
+
+	/* The second parameter of the 'switch_page' callback
+	doesn't work as expected; in fact, the GtkNotebookPage is
+	not passed to it. So we'll do a dirty workaround here. */
+
+	/* Set the icon of all pages to closed pixmap */
+	foreach( $notebook->children() as $child) {
+		$tab_label = $notebook->get_tab_label($child);
+		$children = $tab_label->children();
+		$pixwid = $children[0];
+		$pixwid->set( $book_closed, $book_closed_mask);
+	}
+
+	/* Set the icon of the current page to open pixmap */
+	$tab_label = $notebook->get_tab_label($notebook->get_nth_page($page_num));
+	$children = $tab_label->children();
+	$pixwid = $children[0];
+	$pixwid->set( $book_open, $book_open_mask);
+}
+
+function tab_fill($button, $child, $notebook)
+{
+	list($expand,,$pack_type) = $notebook->query_tab_label_packing($child);
+	$notebook->set_tab_label_packing($child, $expand, $button->get_active(), $pack_type);
+}
+
+function tab_expand($button, $child, $notebook)
+{
+	list(,$fill,$pack_type) = $notebook->query_tab_label_packing($child);
+	$notebook->set_tab_label_packing($child, $button->get_active(), $fill, $pack_type);
+}
+
+function tab_pack($button, $child, $notebook)
+{
+	list($expand, $fill) = $notebook->query_tab_label_packing($child);
+	$notebook->set_tab_label_packing($child, $expand, $fill, (int)$button->get_active());
+}
+
+function notebook_homogeneous($button, $notebook)
+{
+	$notebook->set_homogeneous_tabs($button->get_active());
+}
+
+function notebook_popup($button, $notebook)
+{
+	if ($button->get_active())
+		$notebook->popup_enable();
+	else
+		$notebook->popup_disable();
+}
+
+function notebook_rotate($notebook)
+{
+	$notebook->set_tab_pos(($notebook->tab_pos + 1) % 4);
+}
+
+function show_all_pages($notebook)
+{
+	foreach( $notebook->children() as $child)
+		$child->show();
+}
+
+function standard_notebook($menuitem, $notebook)
+{
+	$notebook->set_show_tabs(true);
+	$notebook->set_scrollable(false);
+	if (count($notebook->children()) == 15)
+		for ($i = 0; $i < 10; $i++)
+			$notebook->remove_page(5);
+}
+
+function notabs_notebook($menuitem, $notebook)
+{
+	$notebook->set_show_tabs(false);
+	if (count($notebook->children()) == 15)
+		for ($i = 0; $i < 10; $i++)
+			$notebook->remove_page(5);
+}
+
+function scrollable_notebook($menuitem, $notebook)
+{
+	$notebook->set_show_tabs(true);
+	$notebook->set_scrollable(true);
+	if (count($notebook->children()) == 5)
+		create_pages(&$notebook, 6, 15);
+}
+
+function create_pages($notebook, $start, $end)
+{
+	global $book_closed, $book_closed_mask,
+		   $book_open, $book_open_mask;
+
+	for( $i = $start; $i <= $end; $i++)
+	{
+		$child = &new GtkFrame("Page $i");
+		$child->set_border_width(10);
+
+		$vbox = &new GtkVBox(true, 0);
+		$vbox->set_border_width(10);
+		$child->add($vbox);
+
+		$hbox = &new GtkHbox(true, 0);
+		$vbox->pack_start($hbox, false, true, 5);
+
+		$button = &new GtkCheckButton('Fill Tab');
+		$hbox->pack_start($button, true, true, 5);
+		$button->set_active(true);
+		$button->connect('toggled', 'tab_fill', &$child, &$notebook);
+
+		$button = &new GtkCheckButton('Expand Tab');
+		$hbox->pack_start($button, true, true, 5);
+		$button->connect('toggled', 'tab_expand', &$child, &$notebook);
+
+		$button = &new GtkCheckButton('Pack end');
+		$hbox->pack_start($button, true, true, 5);
+		$button->connect('toggled', 'tab_pack', &$child, &$notebook);
+
+		$button = &new GtkButton('Hide page');
+		$vbox->pack_end($button, false, false, 5);
+		$button->connect_object('clicked', array(&$child, 'hide'));
+
+		$child->show_all();
+
+		$label_box = &new GtkHBox(false, 0);
+		$pixwid = &new GtkPixmap($book_closed, $book_closed_mask);
+		$label_box->pack_start($pixwid, false, true, 0);
+		$pixwid->set_padding(3, 1);
+
+		$label = &new GtkLabel("Page $i");
+		$label_box->pack_start($label, false, true, 0);
+		$label_box->show_all();
+
+		$menu_box = &new GtkHBox(false, 0);
+		$pixwid = &new GtkPixmap($book_closed, $book_closed_mask);
+		$menu_box->pack_start($pixwid, false, true, 0);
+		$pixwid->set_padding(3, 1);
+
+		$label = &new GtkLabel("Page $i");
+		$menu_box->pack_start($label, false, true, 0);
+		$menu_box->show_all();
+		
+		$notebook->append_page_menu($child, $label_box, $menu_box);
+	}
+}
+
+function create_notebook()
+{
+	global $windows, $sample_notebook,
+		   $book_open, $book_open_mask,
+		   $book_closed, $book_closed_mask,
+		   $book_open_xpm, $book_closed_xpm;
+
+	$items = array(
+		'Standard'	=>	array('standard_notebook', &$sample_notebook),
+		'No tabs'	=>	array('notabs_notebook', &$sample_notebook),
+		'Scrollable'=>	array('scrollable_notebook', &$sample_notebook)
+	);
+
+	if (!isset($windows['notebook'])) {
+		$window = new GtkWindow;
+		$windows['notebook'] = $window;
+		$window->connect('delete_event', 'delete_event');
+		$window->set_title('Notebook');
+		$window->set_border_width(0);
+
+		$box1 = &new GtkVBox(false, 0);
+		$window->add($box1);
+
+		$sample_notebook = new GtkNotebook;
+		$sample_notebook->connect('switch_page', 'page_switch');
+		$sample_notebook->set_tab_pos( GTK_POS_TOP);
+		$box1->pack_start($sample_notebook, true, true, 0);
+		$sample_notebook->set_border_width(10);
+		$sample_notebook->realize();
+
+		list($book_open, $book_open_mask) = Gdk::pixmap_create_from_xpm_d($sample_notebook->window, null, $book_open_xpm);
+		list($book_closed, $book_closed_mask) = Gdk::pixmap_create_from_xpm_d($sample_notebook->window, null, $book_closed_xpm);
+
+		create_pages(&$sample_notebook, 1, 5);
+
+		$separator = &new GtkHSeparator;
+		$box1->pack_start($separator, false, true, 10);
+
+		$box2 = &new GtkHBox(false, 5);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2, false, true, 0);
+
+		$button = &new GtkCheckButton('popup menu');
+		$box2->pack_start($button, true, false, 0);
+		$button->connect('clicked', 'notebook_popup', &$sample_notebook);
+
+		$button = &new GtkCheckButton('homogeneous tabs');
+		$box2->pack_start($button, true, false, 0);
+		$button->connect('clicked', 'notebook_homogeneous', &$sample_notebook);
+
+		$box2 = &new GtkHBox(false, 5);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2, false, true, 0);
+
+		$label = &new GtkLabel('Notebook Style:');
+		$box2->pack_start($label, false, true, 0);
+
+		$omenu = build_option_menu($items, 3, 0, &$sample_notebook);
+		$box2->pack_start($omenu, false, true, 0);
+
+		$button = &new GtkButton('Show all Pages');
+		$box2->pack_start($button, false, true, 0);
+		$button->connect_object('clicked','show_all_pages',&$sample_notebook);
+
+		$box2 = &new GtkHBox(true, 10);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2, false, true, 0);
+
+		$button = &new GtkButton('prev');
+		$button->connect_object('clicked', array(&$sample_notebook,'prev_page'));
+		$box2->pack_start($button, true, true, 0);
+
+		$button = &new GtkButton('next');
+		$button->connect_object('clicked', array(&$sample_notebook,'next_page'));
+		$box2->pack_start($button, true, true, 0);
+
+		$button = &new GtkButton('rotate');
+		$button->connect_object('clicked', 'notebook_rotate', &$sample_notebook);
+		$box2->pack_start($button, true, true, 0);
+
+		$separator = &new GtkHSeparator;
+		$box1->pack_start($separator, false, true, 5);
+
+		$button = &new GtkButton('close');
+		$button->set_border_width(5);
+		$button->connect('clicked', 'close_window');
+		$box1->pack_start($button, false, false, 0);
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$button->grab_default();
+	}
+	$windows['notebook']->show_all();
+}
+
 function create_main_window()
 {
 	$buttons = array(
@@ -2256,7 +2512,7 @@ function create_main_window()
 					 'cursors'			=> 'create_cursor_test',
 					 'ctree'			=> 'create_ctree',
 					 'event watcher'	=> 'create_event_watcher',
-					 'notebook'			=> null,
+					 'notebook'			=> 'create_notebook',
 					 'drawing area'		=> null,
 					 'file selection'	=> 'create_file_selection',
 					 'dialog'			=> 'create_dialog',
