@@ -3,9 +3,56 @@
 ignore
 	GdkDebugFlag
 	GdkColorInfoFlags
+	GdkColor
+	GdkCursor
+	GdkEvent
+	GdkEventAny
+	GdkEventExpose
+	GdkColormap
+	GdkEventNoExpose
+	GdkEventVisibility
+	GdkEventMotion
+	GdkEventButton
+	GdkEventScroll
+	GdkDisplay
+	GdkDragContext
+	GdkDrawable
+	GdkKeymap
+	GdkPixmapObject
+	GdkScreen
+	GdkWindowObject
+	GdkGC
+	GdkColormap
+	
+	
 %%
 ignore
 	gdk_pixmap_new
+	gdk_color_new
+	gdk_cursor_new
+	gdk_cursor_get
+	gdk_device_free_history
+	gdk_text_property_to_text_list
+	gdk_text_property_to_utf8_list
+	gdk_text_property_to_text_list_for_display
+	gdk_free_text_list
+	
+	
+	gdk_x11_screen_get_window_manager_name
+	gdk_x11_font_get_name
+	gdk_get_program_class
+	gdk_get_display_arg_name
+	gdk_drawable_ref
+	gdk_gc_new
+	gdk_image_new
+	gdk_keymap_get_default
+	gdk_screen_get_default
+	
+	
+	
+	
+	
+	
 %%
 override gdk_color_parse
 PHP_FUNCTION(gdk_color_parse)

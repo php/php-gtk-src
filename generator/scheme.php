@@ -31,13 +31,20 @@ $translation_table = preg_replace('![^a-zA-Z_]!', '_', $char_table);
 function parse($fp)
 {
 	$stack = array(array());
+        $l =0;
 	while ($line = fgets($fp, 4096)) {
+                $l++;
 		while (($line = ltrim($line)) != '') {
 			if ($line{0} == '(') {
 				array_push($stack, array());
 				$line = substr($line, 1);
 			} else if ($line{0} == ')') {
+                                
 				$closed = array_pop($stack);
+                                if (empty($stack)) {
+                                    echo "unmatched bracket on line $l\n";
+                                    exit;
+                                }
 				array_push($stack[count($stack)-1], $closed);
 				$line = substr($line, 1);
 			} else if ($line{0} == '"') {
@@ -96,7 +103,8 @@ class Defs_Parser {
 
 	function _parse_or_load($defs_file)
 	{
-		$cache_file = $defs_file.'.cache';
+		
+        $cache_file = $defs_file.'.cache';
 		if (@is_file($cache_file) &&
 			filemtime($cache_file) > filemtime($defs_file)) {
 			error_log("Loading cache \"$cache_file\"");
@@ -104,11 +112,20 @@ class Defs_Parser {
 			$this->parse_cache = fread($fp, filesize($cache_file));
 			fclose($fp);
 		} else {
+                 
 			error_log("Parsing file \"$defs_file\".");
 			$this->file_name = basename($defs_file);
 			$this->file_path = dirname($defs_file);
+            $this->defaults = array();
+            if (file_exists("{$defs_file}.defaults")) {
+                $this->defaults = parse_ini_file("{$defs_file}.defaults",true);
+            }
 			$this->parse_tree = parse(fopen($defs_file, 'r'));
+                
 		}
+                
+               // error_log(print_r($this->parse_tree,true));
+                
 	}
 
 	function start_parsing($tree = NULL)
@@ -175,9 +192,44 @@ class Defs_Parser {
 		$this->c_name[] = &$flag_def->c_name;
 	}
 
+
+    function _mergeDefaults($arg,$defaults) {
+        foreach(array_keys($arg) as $i) {
+            if (!is_array($arg[$i])) {
+                continue;
+            }
+            if ($arg[$i][0] != 'parameter') {
+                continue;
+            }
+            $argname = $arg[$i][1][2];
+            if (!isset($defaults[$argname])) {
+                continue;
+            }
+            $default = $defaults[$argname];
+            // has it got a space...
+            if ($default == 'null-ok') {
+                $arg[$i][] = array('null-ok');
+                continue;
+            }
+            if (strpos($default,' ')) {
+                list($default,$nullok) = explode(' ',$default);
+                $arg[$i][] = array('default',$default);
+                $arg[$i][] = array('null-ok');
+                continue;
+            }
+            $arg[$i][] = array('default',$default);
+        }
+        return $arg;
+    
+    }
+
 	function handle_function($arg)
 	{
-		$function_def 		= new Function_Def($arg);
+		if (isset($this->defaults[$arg[0]])) {
+            $arg = $this->_mergeDefaults($arg,$this->defaults[$arg[0]]);
+        }
+        
+        $function_def 		= new Function_Def($arg);
 		if (isset($function_def->is_constructor_of))
 			$this->constructors[] = &$function_def;
 		else
@@ -187,14 +239,30 @@ class Defs_Parser {
 
 	function handle_method($arg)
 	{
-		$method_def 		= new Method_Def($arg);
+		 
+        foreach($arg as $k=>$v) {
+            if (!is_array($v)) {
+                continue;
+            }
+            if (($v[0] == 'c-name') && isset($this->defaults[$v[1]])) {
+                $arg = $this->_mergeDefaults($arg,$this->defaults[$v[1]]);
+                break;
+            }
+        }
+         
+        
+        
+        $method_def 		= new Method_Def($arg);
 		$this->methods[] 	= &$method_def;
 		$this->c_name[] 	= &$method_def->c_name;
 	}
 
 	function handle_object($arg)
 	{
-		$object_def			= new Object_Def($arg);
+		
+                //echo 'handle Object:'.print_r($arg);
+                $object_def			= new Object_Def($arg);
+                //echo 'result Object:'.print_r($object_def);
 		$this->objects[$object_def->in_module . $object_def->name] = &$object_def;
 		$this->c_name[] 	= &$object_def->c_name;
 	}

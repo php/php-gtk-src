@@ -7,154 +7,317 @@ headers
 
 %%
 ignore-glob
+	
 	*_get_type
 	gtk_marshal_*
 	gtk_arg_*
 	gtk_args_*
-	gtk_signal_connect*
-	gtk_signal_new*
+	gtk_signal_*
 	gtk_init_add_*
 	gtk_quit_add_*
 	gtk_timeout_add_*
 	gtk_idle_add_*
 	gtk_accelerator_*
 	gtk_target_list_*
+	
+ 	 
+	
 %%
 ignore
-	gtk_init
-	gtk_init_check
-	gtk_exit
-	gtk_set_locale
-	gtk_accel_group_new
-	gtk_accel_group_ref
-	gtk_accel_group_unref
-	gtk_accel_group_lock
-	gtk_accel_group_unlock
-	gtk_accel_groups_activate
-	gtk_accel_group_activate
-	gtk_accel_group_attach
-	gtk_accel_group_detach
-	gtk_accel_group_get_entry
-	gtk_accel_group_lock_entry
-	gtk_accel_group_unlock_entry
-	gtk_accel_group_add
-	gtk_accel_group_remove
-	gtk_accel_group_handle_add
-	gtk_accel_group_handle_remove
-	gtk_accel_group_create_add
-	gtk_accel_group_create_remove
-	gtk_accel_groups_from_object
-	gtk_accel_group_entries_from_object
-	gtk_signal_add_emission_hook_full
-	gtk_signal_set_funcs
-	gtk_signal_disconnect_by_func
-	gtk_signal_disconnect_by_data
-	gtk_signal_handler_block_by_func
-	gtk_signal_handler_block_by_data
-	gtk_signal_handler_unblock_by_func
-	gtk_signal_handler_unblock_by_data
-	gtk_signal_handler_pending_by_func
-	gtk_signal_n_emissions
-	gtk_signal_n_emissions_by_name
-	gtk_signal_query
-	gtk_signal_emit
-	gtk_signal_emit_by_name
-	gtk_signal_emitv
-	gtk_signal_emitv_by_name
-	gtk_quit_remove_by_data
-	gtk_idle_remove_by_data
-	gtk_object_weakref
-	gtk_object_weakunref
-	gtk_object_get
-	gtk_object_getv
-	gtk_object_set
-	gtk_object_setv
-	gtk_object_set_data_full
-	gtk_object_set_user_data
-	gtk_object_get_user_data
-	gtk_object_set_data_by_id
-	gtk_object_set_data_by_id_full
-	gtk_object_get_data_by_id
-	gtk_object_remove_data_by_id
-	gtk_object_remove_no_notify_by_id
-	gtk_object_arg_set
-	gtk_object_arg_get
-	gtk_trace_referencing
-	gtk_widget_get
-	gtk_widget_getv
-	gtk_widget_set
-	gtk_widget_setv
-	gtk_container_get_toplevels
+	
+	GtkArgFlags
+	GtkPrivateFlags
+	GtkAccelGroup
+	GtkAccelGroupEntry
+	GtkAccessible
+	
+	 
+	 
+	
+	
+	 
+	gtk_accessible_connect_widget_destroyed
+	
+	gtk_alignment_set
+	
+	gtk_arrow_set
+	
+	gtk_aspect_frame_set
+	
+	gtk_bindings_activate	
+	
+	gtk_button_box_get_layout
+	gtk_button_box_set_child_ipadding
+	gtk_button_box_set_child_secondary
+	gtk_button_box_set_child_size
+	gtk_button_box_set_layout
+	gtk_button_get_label
+	
+	gtk_clist_append
+	gtk_clist_construct
+	gtk_clist_get_pixmap
+	gtk_clist_get_text
+	gtk_clist_insert
+	gtk_clist_prepend
+	gtk_clist_set_row_data_full
+	
 	gtk_container_add_child_arg_type
-	gtk_container_query_child_args
-	gtk_container_child_args_collect
-	gtk_container_child_arg_get_info
-	gtk_container_foreach
-	gtk_container_foreach_full
-	gtk_container_forall
-	gtk_container_child_getv
-	gtk_container_child_setv
 	gtk_container_add_with_args
 	gtk_container_addv
-	gtk_container_child_set
-	gtk_container_arg_set
 	gtk_container_arg_get
-	gtk_progress_bar_new
-	gtk_clist_set_row_data_full
-	gtk_window_add_embedded_xid
-	gtk_window_remove_embedded_xid
-	gtk_range_trough_click
-	gtk_range_default_htrough_click
-	gtk_range_default_vtrough_click
-	gtk_tooltips_data_get
-	gtk_type_check_object_cast
-	gtk_type_check_class_cast
-	gtk_type_register_enum
-	gtk_type_register_flags
-	gtk_preview_uninit
+	gtk_container_arg_set
+	gtk_container_child_arg_get_info
+	gtk_container_child_args_collect
+	gtk_container_child_composite_name
+	gtk_container_child_getv
+	gtk_container_child_set
+	gtk_container_child_setv
+	gtk_container_clear_resize_widgets
+	gtk_container_dequeue_resize_handler
+	gtk_container_forall
+	gtk_container_foreach
+	gtk_container_foreach_full
+	gtk_container_get_toplevels
+	gtk_container_query_child_args
+	gtk_container_queue_resize
+	
+	gtk_ctree_node_get_pixmap
+	gtk_ctree_node_get_text
+	
+	gtk_curve_get_vector
+	gtk_curve_set_vector
+	
+	gtk_drag_begin
+	gtk_drag_dest_get_target_list
+	
+	gtk_draw_box_gap
+	gtk_draw_check
+	gtk_draw_cross
+	gtk_draw_extension
+	gtk_draw_flat_box
+	gtk_draw_focus
+	gtk_draw_handle
+	gtk_draw_option
+	gtk_draw_ramp
+	gtk_draw_shadow_gap
+	gtk_draw_slider
+	gtk_draw_tab
+	
+	gtk_entry_get_text
+	
+	gtk_exit
+	
+	gtk_file_selection_get_filename
+	
+	gtk_font_selection_dialog_get_preview_text
+	gtk_font_selection_get_preview_text
+	
+	gtk_frame_get_label
+	
+	gtk_gc_get
+	
+	gtk_get_current_event
+	gtk_get_event_widget
+	
+	gtk_icon_factory_new
+	
+	gtk_idle_remove_by_data
+	
+	gtk_im_context_simple_new
+	gtk_im_multicontext_append_menuitems	
+	gtk_im_multicontext_new
+	
+	gtk_image_get_pixmap
+	
+	gtk_init
+	gtk_init_check
+	
+	gtk_invisible_get_screen
+	gtk_invisible_set_screen
+	
 	gtk_item_factory_create_item
-	gtk_item_factory_delete_entry
-	gtk_item_factory_delete_entries
-	gtk_item_factory_popup_with_data
-	gtk_item_factory_popup_data
-	gtk_item_factory_set_translate_func
 	gtk_item_factory_create_items_ac
 	gtk_item_factory_create_menu_entries
+	gtk_item_factory_delete_entries
+	gtk_item_factory_delete_entry
+	gtk_item_factory_path_from_widget
+	gtk_item_factory_popup_data
+	gtk_item_factory_popup_with_data
+	gtk_item_factory_set_translate_func
+	
+	gtk_key_snooper_install
+	gtk_key_snooper_remove
+	
+	gtk_label_get
+	gtk_label_get_label
+	gtk_label_get_text
+	
+	gtk_list_store_new
+	
 	gtk_menu_attach_to_widget
-	gtk_style_new
-	gtk_clist_construct
+	gtk_menu_get_title
+	gtk_menu_set_screen
+	
+	gtk_notebook_get_menu_label_text
+	gtk_notebook_get_tab_label_text
+	
+	gtk_object_add_arg_type
+	gtk_object_arg_get
+	gtk_object_arg_get_info
+	gtk_object_arg_set
+	gtk_object_args_collect
+	gtk_object_get
+	gtk_object_get_data_by_id
+	gtk_object_get_user_data
+	gtk_object_getv
 	gtk_object_new
 	gtk_object_newv
 	gtk_object_query_args
-	gtk_object_add_arg_type
-	gtk_object_args_collect
-	gtk_object_arg_get_info
+	gtk_object_remove_data_by_id
+	gtk_object_remove_no_notify_by_id
+	gtk_object_set
+	gtk_object_set_data_by_id
+	gtk_object_set_data_by_id_full
+	gtk_object_set_data_full
+	gtk_object_set_user_data
+	gtk_object_setv
+	gtk_object_weakref
+	gtk_object_weakunref
+	
+	gtk_old_editable_changed
+	gtk_old_editable_claim_selection
+	
+	gtk_pixmap_get
+	
+	gtk_preview_get_info
+	gtk_preview_uninit
+	
+	gtk_progress_bar_get_text
+	gtk_progress_bar_new
+	gtk_progress_bar_update
+	
+	gtk_propagate_event
+	
+	gtk_quit_remove_by_data
+	
+	gtk_range_default_htrough_click
+	gtk_range_default_vtrough_click
+	gtk_range_trough_click
+	
+	gtk_rc_style_new
+	gtk_rc_set_default_files
+	gtk_rc_reparse_all_for_settings
+	
+	gtk_set_locale
+	
+	gtk_settings_get_default
+	
+	gtk_style_new
+	
+	gtk_text_buffer_create_child_anchor
+	gtk_text_buffer_create_mark
+	gtk_text_buffer_create_tag
+	gtk_text_buffer_get_insert
+	gtk_text_buffer_get_mark
+	gtk_text_buffer_get_selection_bound
+	gtk_text_buffer_get_tag_table
+	gtk_text_buffer_new
+	
+	gtk_text_child_anchor_get_deleted
+	gtk_text_child_anchor_new
+	gtk_text_iter_get_buffer
+	gtk_text_iter_get_child_anchor
+	gtk_text_layout_free_line_display
+	gtk_text_layout_get_buffer
+	gtk_text_layout_new
+	
+	gtk_text_mark_get_buffer
+	gtk_text_mark_get_name
+	
+	gtk_text_tag_table_add
+	gtk_text_tag_table_get_size
+	gtk_text_tag_table_lookup
+	gtk_text_tag_table_new
+	gtk_text_tag_table_remove
+	gtk_text_view_get_buffer
+	gtk_text_view_get_default_attributes
+	
+	gtk_tooltips_data_get
+	
+	gtk_trace_referencing
+	
+	gtk_tree_store_new
+	gtk_tree_view_column_get_title
+	gtk_tree_view_column_pack_start
+	gtk_tree_view_get_selection
+	
+	gtk_type_check_class_cast
+	gtk_type_check_object_cast
+	gtk_type_register_enum
+	gtk_type_register_flags
+	
+	gtk_widget_get
+	gtk_widget_get_modifier_style
+	gtk_widget_get_name
+	gtk_widget_get_settings
+	gtk_widget_getv
 	gtk_widget_new
 	gtk_widget_newv
 	gtk_widget_reset_shapes
-	gtk_key_snooper_install
-	gtk_key_snooper_remove
-	gtk_get_current_event
-	gtk_get_event_widget
-	gtk_propagate_event
-	gtk_container_dequeue_resize_handler
-	gtk_window_reposition
-	gtk_draw_flat_box
-	gtk_draw_check
-	gtk_draw_option
-	gtk_draw_cross
-	gtk_draw_ramp
-	gtk_draw_tab
-	gtk_draw_shadow_gap
-	gtk_draw_box_gap
-	gtk_draw_extension
-	gtk_draw_focus
-	gtk_draw_slider
-	gtk_draw_handle
-	gtk_container_queue_resize
-	gtk_container_clear_resize_widgets
-	gtk_container_child_composite_name
-	gtk_progress_bar_update
+	gtk_widget_set
+	gtk_widget_setv
+	
+	gtk_window_add_embedded_xid
+	gtk_window_get_role 
+	gtk_window_get_screen
+	gtk_window_get_title
+	gtk_window_group_add_window
+	gtk_window_group_remove_window
+	gtk_window_remove_embedded_xid
+	gtk_window_set_screen
+
+%% {{{ overridden in gtk1 - not fixed in gtk2
+
+%% ignore 
+	gtk_widget_size_request
+	gtk_widget_get_child_requisition
+	gtk_widget_intersect
+	gtk_timeout_add
+	gtk_idle_add
+	gtk_quit_add
+	gtk_input_add_full
+	gtk_signal_add_emission_hook
+	gtk_signal_add_emission_hook
+
+%% }}}
+
+%% {{{ General functions
+
+
+%% {{{ GtkButton
+%%
+ignore gtk_button_new_with_label
+%%
+
+
+%% {{{ GtkCTree
+%%
+ignore
+  gtk_ctree_construct
+  gtk_ctree_insert_gnode
+  gtk_ctree_export_to_gnode
+  gtk_ctree_find_node_ptr
+  gtk_ctree_new
+%%
+
+%%
+ignore
+  gtk_drag_source_handle_event gtk_drag_dest_handle_event
+  gtk_selection_request gtk_selection_notify gtk_selection_property_notify
+  gtk_selection_incr_event
+%% }}}
+
+
 %%
 ignore
 	GtkArgFlags
@@ -175,290 +338,7 @@ PHP_FUNCTION(gtk_false)
 {
 	RETURN_FALSE;
 }
-%%
-override gtk_timeout_add
-PHP_FUNCTION(gtk_timeout_add)
-{
-	guint32 interval;
-	zval *callback = NULL;
-	zval *extra;
-	zval *data;
-	char *callback_filename;
-	uint callback_lineno;
-
-	if (ZEND_NUM_ARGS() < 2) {
-		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
-				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
-		return;
-	}
-
-	if (!php_gtk_parse_args(2, "iV", &interval, &callback))
-		return;
-
-	callback_filename = zend_get_executed_filename(TSRMLS_C);
-	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
-	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
-	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
-	RETURN_LONG(gtk_timeout_add_full(interval, NULL,
-									 (GtkCallbackMarshal)php_gtk_handler_marshal,
-									 data, php_gtk_destroy_notify));
-}
-%%
-override gtk_idle_add
-PHP_FUNCTION(gtk_idle_add)
-{
-	zval *callback = NULL;
-	zval *extra;
-	zval *data;
-	char *callback_filename;
-	uint callback_lineno;
-
-	if (ZEND_NUM_ARGS() < 1) {
-		php_error(E_WARNING, "%s() requires at least 1 argument, %d given",
-				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
-		return;
-	}
-
-	if (!php_gtk_parse_args(1, "V", &callback))
-		return;
-
-	callback_filename = zend_get_executed_filename(TSRMLS_C);
-	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
-	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 1, ZEND_NUM_ARGS());
-	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
-	RETURN_LONG(gtk_idle_add_full(GTK_PRIORITY_DEFAULT, NULL,
-								 (GtkCallbackMarshal)php_gtk_handler_marshal,
-								 data, php_gtk_destroy_notify));
-}
-%%
-override gtk_quit_add
-PHP_FUNCTION(gtk_quit_add)
-{
-	gint main_level;
-	zval *callback = NULL;
-	zval *extra;
-	zval *data;
-	char *callback_filename;
-	uint callback_lineno;
-
-	if (ZEND_NUM_ARGS() < 2) {
-		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
-				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
-		return;
-	}
-
-	if (!php_gtk_parse_args(2, "iV", &main_level, &callback))
-		return;
-
-	callback_filename = zend_get_executed_filename(TSRMLS_C);
-	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
-	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
-	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
-	RETURN_LONG(gtk_quit_add_full(main_level, NULL,
-								  (GtkCallbackMarshal)php_gtk_handler_marshal,
-								  data, php_gtk_destroy_notify));
-}
-%%
-override gtk_input_add_full
-void php_gtk_input_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
-{
-	zval *callback_data = (zval *)data;
-	zval *params;
-	zval *retval = NULL, **callback, **extra = NULL;
-	zval **callback_filename = NULL, **callback_lineno = NULL;
-	zval **source_rsrc = NULL;
-	zval ***input_args;
-	char *callback_name;
-	TSRMLS_FETCH();
-
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&source_rsrc);
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&extra);
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_filename);
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&callback_lineno);
-
-	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
-		php_error(E_WARNING, "Unable to call input callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
-		efree(callback_name);
-		return;
-	}
-
-	params = php_gtk_args_as_hash(nargs, args);
-	/*
-	 * We substitute the first argument with the actual resource zval.
-	 */
-	zval_add_ref(source_rsrc);
-	zend_hash_index_update(Z_ARRVAL_P(params), 0, (void*)source_rsrc, sizeof(zval *), NULL);
-	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
-	input_args = php_gtk_hash_as_array(params);
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), input_args, 0, NULL TSRMLS_CC);
-	if (retval)
-		zval_ptr_dtor(&retval);
-	efree(input_args);
-	zval_ptr_dtor(&params);
-}
-
-PHP_FUNCTION(gtk_input_add_full)
-{
-	zval *source_rsrc;
-	int source;
-	int rsrc_type;
-    GdkInputCondition condition;
-	zval *callback = NULL;
-	zval *extra, *data;
-	char *callback_filename;
-	uint callback_lineno;
-
-	if (ZEND_NUM_ARGS() < 3) {
-		php_error(E_WARNING, "%s() requires at least 3 arguments, %d given",
-				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
-		return;
-	}
-
-	if (!php_gtk_parse_args(3, "riV", &source_rsrc, &condition, &callback))
-		return;
-
-#ifdef PHP_HAVE_STREAMS
-	{
-		php_stream *stream;
-		stream = zend_list_find(Z_LVAL_P(source_rsrc), &rsrc_type);
-		if (!stream || rsrc_type != php_file_le_stream()) {
-			php_error(E_WARNING, "%s() expects argument 1 to be a valid stream resource", get_active_function_name(TSRMLS_C));
-			return;
-		}
-		if (php_stream_can_cast(stream, PHP_STREAM_AS_SOCKETD) == SUCCESS) {
-			php_stream_cast(stream, PHP_STREAM_AS_SOCKETD, (void*)&source, 0);
-		} else if (php_stream_can_cast(stream, PHP_STREAM_AS_FD) == SUCCESS) {
-			php_stream_cast(stream, PHP_STREAM_AS_FD, (void*)&source, 0);
-		} else {
-			php_error(E_WARNING, "%s() could not use stream of type '%s'",
-					  get_active_function_name(TSRMLS_C), stream->ops->label);
-			return;
-		}
-	}
-#else
-	{
-		void *source_ptr;
-
-		source_ptr = zend_list_find(Z_LVAL_P(source_rsrc), &rsrc_type);
-		if (!source_ptr ||
-			(rsrc_type != php_file_le_fopen() && rsrc_type != php_file_le_popen() && rsrc_type != php_file_le_socket())) {
-			php_error(E_WARNING, "%s() expects argument 1 to be a valid filehandle, pipe, or socket resource", get_active_function_name(TSRMLS_C));
-			return;
-		}
-		if (rsrc_type == php_file_le_socket())
-			source = *((int *)source_ptr);
-		else
-			source = fileno((FILE *)source_ptr);
-	}
-#endif
-	
-	callback_filename = zend_get_executed_filename(TSRMLS_C);
-	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
-	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 3, ZEND_NUM_ARGS());
-	data = php_gtk_build_value("(VVNsi)", callback, source_rsrc, extra, callback_filename, callback_lineno);
-	RETURN_LONG(gtk_input_add_full(source, condition, NULL,
-								   (GtkCallbackMarshal)php_gtk_input_marshal,
-								   data, php_gtk_destroy_notify));
-}
-%%
-override gtk_signal_add_emission_hook
-
-static void php_gtk_emission_hook_marshal(GtkObject *o, guint signal_id, guint nargs, GtkArg *args, gpointer data)
-{
-	zval *callback_data = (zval *)data;
-	zval *gtk_args;
-	zval **callback, **extra = NULL;
-	zval **callback_filename = NULL, **callback_fileno = NULL;
-	zval ***hook_args;
-	zval *wrapper = NULL;
-	zval *params;
-	zval *retval = NULL;
-	char *callback_name;
-	TSRMLS_FETCH();
-
-	/* Callback is always passed as the first element. */
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void**)&callback);
-
-	/* Extra parametrers are always passed as the second element. */
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void**)&extra);
-
-	/* Third and fourth parameter are always filename and the line number where
-	 * the callback was specified. */
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void**)&callback_filename);
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void**)&callback_fileno);
-
-	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
-		php_error(E_WARNING, "Unable to call emission hook '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_fileno));
-		efree(callback_name);
-		return;
-	}
-
-	wrapper = php_gtk_new(o);
-
-	/* Prepare the parameters to be passed to the user function. */
-	MAKE_STD_ZVAL(params);
-	array_init(params);
-	/* Pass the object which emitted the signal as first parameer. */
-	add_next_index_zval(params, wrapper);
-	/* Pass the signal id as second parameter. */
-	add_next_index_long(params, signal_id);
-
-	gtk_args = php_gtk_args_as_hash(nargs, args);
-	php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0 TSRMLS_CC);
-
-	zval_ptr_dtor(&gtk_args);
-
-	/*
-	 * If there are extra arguments specified by user, add them to the parameter
-	 * array.
-	 */
-	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
-	
-	hook_args = php_gtk_hash_as_array(params);
-
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval,
-						  zend_hash_num_elements(Z_ARRVAL_P(params)), hook_args,
-						  0, NULL TSRMLS_CC);
-	
-	if (retval) {
-		if (args)
-			php_gtk_ret_from_value(&args[nargs], retval);
-		zval_ptr_dtor(&retval);
-	}
-
-	efree(hook_args);
-	zval_ptr_dtor(&params);
-}
-
-PHP_FUNCTION(gtk_signal_add_emission_hook)
-{
-	guint signal_id;
-	zval  *callback;
-	char  *callback_filename;
-	uint  callback_lineno;
-	zval  *extra;
-	zval  *data;
-
-	if (ZEND_NUM_ARGS() < 2) {
-		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
-				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
-		return;
-	}
-
-	if (!php_gtk_parse_args(2, "iV", &signal_id, &callback))
-		return;
-	
-	callback_filename = zend_get_executed_filename(TSRMLS_C);
-	callback_lineno   = zend_get_executed_lineno(TSRMLS_C);
-	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
-	data  = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
-	RETURN_LONG(gtk_signal_add_emission_hook_full(signal_id,
-												  (GtkEmissionHook)php_gtk_emission_hook_marshal,
-												  data, php_gtk_destroy_notify));
-}
+   
 %%
 overrides gtk_rc_get_default_files
 PHP_FUNCTION(gtk_rc_get_default_files)
@@ -510,7 +390,6 @@ PHP_FUNCTION(gtk_box_query_child_packing)
 getprop GtkBox children
 	GList *tmp;
 	GList *children = GTK_BOX(PHP_GTK_GET(object))->children;
-	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -533,11 +412,6 @@ getprop GtkBox children
 		for (tmp = children; tmp; tmp = tmp->next) {
 			add_next_index_zval(return_value, php_gtk_box_child_new((GtkBoxChild *)tmp->data));
 		}
-	}
-	*/
-	array_init(return_value);
-	for (tmp = children; tmp; tmp = tmp->next) {
-		add_next_index_zval(return_value, php_gtk_box_child_new((GtkBoxChild *)tmp->data));
 	}
 %% }}}
 
@@ -588,7 +462,6 @@ PHP_FUNCTION(gtk_button_new)
 %%
 getprop GtkCalendar marked_date
 	GtkCalendar *cal = GTK_CALENDAR(PHP_GTK_GET(object));
-	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -608,12 +481,6 @@ getprop GtkCalendar marked_date
 		for (i = 0; i < 31; i++)
 			add_next_index_long(return_value, cal->marked_date[i]);
 	}
-	*/
-	int i;
-
-	array_init(return_value);
-	for (i = 0; i < 31; i++)
-		add_next_index_long(return_value, cal->marked_date[i]);
 %%
 override gtk_calendar_get_date
 PHP_FUNCTION(gtk_calendar_get_date)
@@ -1070,7 +937,6 @@ PHP_FUNCTION(gtk_clist_get_selection_info)
 getprop GtkCList selection
 	GList *tmp;
 	GList *selection = GTK_CLIST(PHP_GTK_GET(object))->selection;
-	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -1092,15 +958,10 @@ getprop GtkCList selection
 		for (tmp = selection; tmp; tmp = tmp->next)
 			add_next_index_long(return_value, GPOINTER_TO_INT(tmp->data));
 	}
-	*/
-	array_init(return_value);
-	for (tmp = selection; tmp; tmp = tmp->next)
-		add_next_index_long(return_value, GPOINTER_TO_INT(tmp->data));
 %%
 getprop GtkCList row_list
 	GList *tmp;
 	GList *row_list = GTK_CLIST(PHP_GTK_GET(object))->row_list;
-	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -1123,11 +984,6 @@ getprop GtkCList row_list
 		for (tmp = row_list; tmp; tmp = tmp->next) {
 			add_next_index_zval(return_value, php_gtk_clist_row_new((GtkCListRow *)tmp->data));
 		}
-	}
-	*/
-	array_init(return_value);
-	for (tmp = row_list; tmp; tmp = tmp->next) {
-		add_next_index_zval(return_value, php_gtk_clist_row_new((GtkCListRow *)tmp->data));
 	}
 %% }}}
 
@@ -1161,7 +1017,7 @@ PHP_FUNCTION(gtk_color_selection_get_color)
 
 	colorsel = GTK_COLOR_SELECTION(PHP_GTK_GET(this_ptr));
 	gtk_color_selection_get_color(colorsel, value);
-	if (colorsel->use_opacity)
+	if (gtk_color_selection_get_has_opacity_control(colorsel))
 		*return_value = *php_gtk_build_value("(dddd)", value[0], value[1], value[2], value[3]);
 	else
 		*return_value = *php_gtk_build_value("(ddd)", value[0], value[1], value[2]);
@@ -1323,11 +1179,10 @@ PHP_FUNCTION(gtk_ctree_insert_node)
 	target_hash = HASH_OF(php_text);
 	tree = GTK_CTREE(PHP_GTK_GET(this_ptr));
 	columns = GTK_CLIST(tree)->columns;
-	if (zend_hash_num_elements(target_hash) < columns) {
-		php_error(E_WARNING, "%s(): the text array is not long enough", get_active_function_name(TSRMLS_C));
+	if (zend_hash_num_elements(target_hash) != columns) {
+		php_error(E_WARNING, "%s(): the text array size (%d) does not match the number of columns in the ctree (%d)", get_active_function_name(TSRMLS_C), zend_hash_num_elements(target_hash), columns);
 		return;
 	}
-
 	if (Z_TYPE_P(php_parent) != IS_NULL)
 		parent			= PHP_GTK_CTREE_NODE_GET(php_parent);
 	if (Z_TYPE_P(php_sibling) != IS_NULL)
@@ -1689,7 +1544,6 @@ PHP_FUNCTION(gtk_ctree_find_all_by_row_data)
 getprop GtkCTree selection
 	GList *tmp;
 	GList *selection = GTK_CLIST(PHP_GTK_GET(object))->selection;
-	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -1712,10 +1566,6 @@ getprop GtkCTree selection
 		for (tmp = selection; tmp; tmp = tmp->next)
 			add_next_index_zval(return_value, php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp->data)));
 	}
-	*/
-	array_init(return_value);
-	for (tmp = selection; tmp; tmp = tmp->next)
-		add_next_index_zval(return_value, php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp->data)));
 %%
 getprop GtkCTree clist
 	*return_value = *php_gtk_new((GtkObject *)GTK_CLIST(PHP_GTK_GET(object)));
@@ -1723,7 +1573,6 @@ getprop GtkCTree clist
 getprop GtkCTree row_list
 	GList *tmp;
 	GList *row_list = GTK_CLIST(PHP_GTK_GET(object))->row_list;
-	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -1746,11 +1595,6 @@ getprop GtkCTree row_list
 		for (tmp = row_list; tmp; tmp = tmp->next) {
 			add_next_index_zval(return_value, php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp)));
 		}
-	}
-	*/
-	array_init(return_value);
-	for (tmp = row_list; tmp; tmp = tmp->next) {
-		add_next_index_zval(return_value, php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp)));
 	}
 %% }}}
 
@@ -1829,7 +1673,6 @@ PHP_FUNCTION(gtk_editable_insert_text)
 getprop GtkFixed children
 	GList *tmp;
 	GList *children = GTK_FIXED(PHP_GTK_GET(object))->children;
-	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -1852,11 +1695,6 @@ getprop GtkFixed children
 		for (tmp = children; tmp; tmp = tmp->next) {
 			add_next_index_zval(return_value, php_gtk_fixed_child_new((GtkFixedChild *)tmp->data));
 		}
-	}
-	*/
-	array_init(return_value);
-	for (tmp = children; tmp; tmp = tmp->next) {
-		add_next_index_zval(return_value, php_gtk_fixed_child_new((GtkFixedChild *)tmp->data));
 	}
 %% }}}
 
@@ -2119,7 +1957,6 @@ PHP_FUNCTION(gtk_list_item_new)
 getprop GtkList selection
 	GList *tmp;
 	GList *selection = GTK_LIST(PHP_GTK_GET(object))->selection;
-	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -2142,10 +1979,7 @@ getprop GtkList selection
 		for (tmp = selection; tmp; tmp = tmp->next)
 			add_next_index_zval(return_value, php_gtk_new((GtkObject *)tmp->data));
 	}
-	*/
-	array_init(return_value);
-	for (tmp = selection; tmp; tmp = tmp->next)
-		add_next_index_zval(return_value, php_gtk_new((GtkObject *)tmp->data));
+
 %% }}}
 
 %% {{{ GtkMenu
@@ -2318,123 +2152,7 @@ PHP_FUNCTION(gtk_notebook_query_tab_label_packing)
 
 %% {{{ GtkObject
 
-%%
-override gtk_signal_connect
-static void gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object, int after)
-{
-	char *name = NULL;
-	zval *callback = NULL;
-	zval *extra;
-	zval *data;
-	char *callback_filename;
-	uint callback_lineno;
-
-	NOT_STATIC_METHOD();
-
-	if (ZEND_NUM_ARGS() < 2) {
-		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
-				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
-		return;
-	}
-
-	if (!php_gtk_parse_args(2, "sV", &name, &callback))
-		return;
-
-	callback_filename = zend_get_executed_filename(TSRMLS_C);
-	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
-	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
-	data = php_gtk_build_value("(VNisi)", callback, extra, pass_object, callback_filename, callback_lineno);
-	RETURN_LONG(gtk_signal_connect_full(PHP_GTK_GET(this_ptr), name, NULL,
-										(GtkCallbackMarshal)php_gtk_callback_marshal,
-										data, php_gtk_destroy_notify, FALSE, after));
-}
-
-PHP_FUNCTION(gtk_signal_connect)
-{
-	gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1, 0);
-}
-%%
-override gtk_signal_connect_object
-PHP_FUNCTION(gtk_signal_connect_object)
-{
-	gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0, 0);
-}
-%%
-override gtk_signal_connect_after
-PHP_FUNCTION(gtk_signal_connect_after)
-{
-	gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1, 1);
-}
-%%
-override gtk_signal_connect_object_after
-PHP_FUNCTION(gtk_signal_connect_object_after)
-{
-	gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0, 1);
-}
-%%
-override gtk_signal_emit
-PHP_FUNCTION(gtk_signal_emit)
-{
-	char *name;
-	guint signal_id, nparams, i;
-	GtkSignalQuery *query;
-	GtkArg *params;
-	zval *php_params, *ret;
-	gchar buf[sizeof(GtkArg)]; /* holds the return value */
-
-	NOT_STATIC_METHOD();
-
-	if (ZEND_NUM_ARGS() < 1) {
-		php_error(E_WARNING, "%s() requires at least 1 argument, 0 given", get_active_function_name(TSRMLS_C));
-		return;
-	}
-
-	if (!php_gtk_parse_args(1, "s", &name))
-		return;
-
-	signal_id = gtk_signal_lookup(name, GTK_OBJECT_TYPE(PHP_GTK_GET(this_ptr)));
-	if (signal_id <= 0) {
-		php_error(E_WARNING, "%s() can't find signal '%s' in class hierarchy",
-				  get_active_function_name(TSRMLS_C), name);
-		return;
-	}
-
-	query = gtk_signal_query(signal_id);
-	if (ZEND_NUM_ARGS() < (int)query->nparams + 1) {
-		php_error(E_WARNING, "%s() requires %d arguments for signal '%s', %d given",
-				  get_active_function_name(TSRMLS_C), query->nparams, name, ZEND_NUM_ARGS()-1);
-		g_free(query);
-		return;
-	}
-
-	php_params = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 1, ZEND_NUM_ARGS());
-	params = g_new(GtkArg, query->nparams + 1);
-	nparams = query->nparams;
-
-	for (i = 0; i < nparams; i++) {
-		params[i].type = query->params[i];
-		params[i].name = NULL;
-	}
-	params[i].type = query->return_val;
-	params[i].name = NULL;
-	params[i].d.pointer_data = buf;
-	g_free(query);
-
-	if (!php_gtk_args_from_hash(params, nparams, php_params)) {
-		zval_ptr_dtor(&php_params);
-		g_free(params);
-		return;
-	}
-	zval_ptr_dtor(&php_params);
-
-	gtk_signal_emitv(PHP_GTK_GET(this_ptr), signal_id, params);
-	ret = php_gtk_ret_as_value(&params[nparams]);
-	g_free(params);
-	if (ret) {
-		*return_value = *ret;
-		FREE_ZVAL(ret);
-	}
-}
+ 
 %%
 override gtk_object_set
 PHP_FUNCTION(gtk_object_set)
@@ -2448,14 +2166,15 @@ PHP_FUNCTION(gtk_object_set)
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &hash))
 		return;
-
+#ifdef DISABLED
 	obj = PHP_GTK_GET(this_ptr);
 	arg = php_gtk_hash_as_args(hash, GTK_OBJECT_TYPE(obj), &nargs);
 	if (!arg && nargs != 0)
 		return;
 
-	gtk_object_setv(obj, nargs, arg);
+	g_object_setv(G_OBJECT(obj), nargs, arg);
 	g_free(arg);
+#endif
 }
 %%
 override gtk_object_get
@@ -2472,7 +2191,7 @@ PHP_FUNCTION(gtk_object_get)
 
 	garg.type = GTK_TYPE_INVALID;
 	garg.name = name;
-	gtk_object_getv(PHP_GTK_GET(this_ptr), 1, &garg);
+	g_object_getv(G_OBJECT(PHP_GTK_GET(this_ptr)), 1, &garg);
 
 	if (garg.type == GTK_TYPE_INVALID) {
 		php_error(E_WARNING, "%s(): invalid arg '%s'",
@@ -2504,7 +2223,7 @@ PHP_FUNCTION(gtk_object_set_data)
 		return;
 
 	zval_add_ref(&data);
-	gtk_object_set_data_full(PHP_GTK_GET(this_ptr), key, data, php_gtk_destroy_notify);
+	g_object_set_data_full(G_OBJECT(PHP_GTK_GET(this_ptr)), key, data, php_gtk_destroy_notify);
 }
 %%
 override gtk_object_get_data
@@ -2518,7 +2237,7 @@ PHP_FUNCTION(gtk_object_get_data)
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &key))
 		return;
 
-	data = gtk_object_get_data(PHP_GTK_GET(this_ptr), key);
+	data = g_object_get_data(G_OBJECT(PHP_GTK_GET(this_ptr)), key);
 	if (data) {
 		*return_value = *data;
 		zval_copy_ctor(return_value);
@@ -2714,7 +2433,6 @@ PHP_FUNCTION(gtk_radio_menu_item_set_group)
 getprop GtkTable children
 	GList *tmp;
 	GList *children = GTK_TABLE(PHP_GTK_GET(object))->children;
-	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -2737,11 +2455,6 @@ getprop GtkTable children
 		for (tmp = children; tmp; tmp = tmp->next) {
 			add_next_index_zval(return_value, php_gtk_table_child_new((GtkTableChild *)tmp->data));
 		}
-	}
-	*/
-	array_init(return_value);
-	for (tmp = children; tmp; tmp = tmp->next) {
-		add_next_index_zval(return_value, php_gtk_table_child_new((GtkTableChild *)tmp->data));
 	}
 %% }}}
 
@@ -2852,7 +2565,7 @@ PHP_FUNCTION(gtk_drag_dest_set)
 	if (!php_gtk_get_flag_value(GTK_TYPE_DEST_DEFAULTS, php_flags, (gint *)&flags))
 		return;
 
-	if (!php_gtk_get_flag_value(GTK_TYPE_GDK_DRAG_ACTION, php_actions, (gint *)&actions))
+	if (!php_gtk_get_flag_value(GDK_TYPE_DRAG_ACTION, php_actions, (gint *)&actions))
 		return;
 
 	targets = g_new(GtkTargetEntry, zend_hash_num_elements(Z_ARRVAL_P(php_targets)));
@@ -2889,10 +2602,10 @@ PHP_FUNCTION(gtk_drag_source_set)
 							&php_actions))
 		return;
 
-	if (!php_gtk_get_flag_value(GTK_TYPE_GDK_MODIFIER_TYPE, php_sbmask, (gint *)&sbmask))
+	if (!php_gtk_get_flag_value(GDK_TYPE_MODIFIER_TYPE, php_sbmask, (gint *)&sbmask))
 		return;
 
-	if (!php_gtk_get_flag_value(GTK_TYPE_GDK_DRAG_ACTION, php_actions, (gint *)&actions))
+	if (!php_gtk_get_flag_value(GDK_TYPE_DRAG_ACTION, php_actions, (gint *)&actions))
 		return;
 
 	targets = g_new(GtkTargetEntry, zend_hash_num_elements(Z_ARRVAL_P(php_targets)));
@@ -2930,7 +2643,7 @@ PHP_FUNCTION(gtk_drag_begin)
 							&button, &event, gdk_event_ce))
 		return;
 
-	if (!php_gtk_get_flag_value(GTK_TYPE_GDK_DRAG_ACTION, php_actions, (gint *)&actions))
+	if (!php_gtk_get_flag_value(GDK_TYPE_DRAG_ACTION, php_actions, (gint *)&actions))
 		return;
 
 	tents = g_new(GtkTargetEntry, zend_hash_num_elements(Z_ARRVAL_P(php_targets)));
@@ -2951,70 +2664,14 @@ PHP_FUNCTION(gtk_drag_begin)
 	g_free(tents);
 	context = gtk_drag_begin(GTK_WIDGET(PHP_GTK_GET(this_ptr)), targets, actions, button, PHP_GDK_EVENT_GET(event));
 	gtk_target_list_unref(targets);
-
+#ifdef DISABLED
 	php_ret = php_gdk_drag_context_new(context);
+
 	SEPARATE_ZVAL(&php_ret);
 	*return_value = *php_ret;
+#endif	
 }
-%%
-override gtk_widget_size_request
-PHP_FUNCTION(gtk_widget_size_request)
-{   
-	zval *ret;
-    GtkRequisition requisition;
-
-    NOT_STATIC_METHOD();
-
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
-        return;
-
-    gtk_widget_size_request(GTK_WIDGET(PHP_GTK_GET(this_ptr)), &requisition);
-
-	ret = php_gtk_requisition_new(&requisition);
-	*return_value = *ret;
-	FREE_ZVAL(ret);
-}
-%%
-override gtk_widget_get_child_requisition
-PHP_FUNCTION(gtk_widget_get_child_requisition)
-{   
-	zval *ret;
-    GtkRequisition requisition;
-
-    NOT_STATIC_METHOD();
-
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
-        return;
-
-    gtk_widget_get_child_requisition(GTK_WIDGET(PHP_GTK_GET(this_ptr)), &requisition);
-
-	ret = php_gtk_requisition_new(&requisition);
-	*return_value = *ret;
-	FREE_ZVAL(ret);
-}
-%%
-override gtk_widget_intersect
-PHP_FUNCTION(gtk_widget_intersect)
-{
-	zval *php_area;
-	GdkRectangle area, intersection;
 	
-	NOT_STATIC_METHOD();
-
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &php_area, gdk_rectangle_ce))
-		return;
-
-	php_gdk_rectangle_get(php_area, &area);
-	if (gtk_widget_intersect(GTK_WIDGET(PHP_GTK_GET(this_ptr)), &area, &intersection)) {
-		zval *ret;
-
-		ret= php_gdk_rectangle_new(&intersection);
-		*return_value = *ret;
-		FREE_ZVAL(ret);
-	} else {
-		RETURN_FALSE;
-	}
-}
 %%
 override gtk_font_selection_dialog_set_filter
 PHP_FUNCTION(gtk_font_selection_dialog_set_filter)
@@ -3026,7 +2683,6 @@ override gtk_font_selection_set_filter
 /* Convert a ZVAL to an array of gchar strings terminated with NULL */
 int php_gtk_array_to_gchar_array(zval *zvalue, gchar ***gchar_array)
 {
-	TSRMLS_FETCH();
 	/* If either no value was passed or its the PHP NULL value, return NULL
 	 * too. This is not an error but just an empty gchar array. */
 	if (zvalue == NULL || Z_TYPE_P(zvalue) == IS_NULL) {
@@ -3228,3 +2884,10 @@ ignore
   gtk_selection_request gtk_selection_notify gtk_selection_property_notify
   gtk_selection_incr_event
 %% }}}
+
+
+
+
+
+
+

@@ -40,6 +40,11 @@ function convert_typename($typename)
 function enum_name($typename)
 {
 	$proper = convert_typename($typename);
+        
+        if (substr($proper,0,4) == '_GDK') {
+            return str_replace('_GDK_', 'GDK_TYPE_', $proper);
+        }
+        
 	if (strlen($proper) > 4 && substr($proper, 0, 4) == '_GTK')
 		return 'GTK_TYPE' . substr($proper, 4);
 	else
@@ -79,22 +84,22 @@ class Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
 						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
 	{
-		trigger_error("This is an abstract class", E_USER_ERROR);
+		trigger_error(get_class($this).":".__FUNCTION__." This is an abstract class" . print_r(func_get_args(),true), E_USER_ERROR);
 	}
 	
 	function write_return($type, &$var_list, $separate)
 	{
-		trigger_error("This is an abstract class", E_USER_ERROR);
+		trigger_error(get_class($this).":".__FUNCTION__." This is an abstract class" . print_r(func_get_args(),true), E_USER_ERROR);
 	}
 
 	function write_to_prop($obj, $name, $source)
 	{
-		trigger_error("This is an abstract class", E_USER_ERROR);
+		trigger_error(get_class($this).":".__FUNCTION__." This is an abstract class" . print_r(func_get_args(),true), E_USER_ERROR);
 	}
 
 	function write_from_prop($name, $type)
 	{
-		trigger_error("This is an abstract class", E_USER_ERROR);
+		trigger_error(get_class($this).":".__FUNCTION__." This is an abstract class" . print_r(func_get_args(),true), E_USER_ERROR);
 	}
 }
 
@@ -337,11 +342,11 @@ class Enum_Arg extends Arg_Type {
 			$extra_pre_code[] 	= sprintf($enum_tpl, $name, $name, $name,
 										  $in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "");
 		} else {
-			$enum_tpl = "	if (php_%s && !php_gtk_get_enum_value(%s, php_%s, (gint *)&%s)) {\n" .
-						"		%sreturn;\n" .
+			 
+                        $extra_pre_code[]  = "	if (php_{$name} && !php_gtk_get_enum_value({$this->type_code}, php_{$name}, (gint *)&{$name})) {\n" .
+						"		". ($in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "") ."return;\n" .
 						"	}\n\n";
-			$extra_pre_code[] 	= sprintf($enum_tpl, $name, $this->type_code, $name, $name,
-										  $in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "");
+                                                                                  
 		}
 		return 'V';
 	}
@@ -352,6 +357,20 @@ class Enum_Arg extends Arg_Type {
 		return "	php_retval = %s;\n" .
 			   "%s	RETURN_LONG(php_retval);";
 	}
+        function write_to_prop($obj, $name, $source)
+	{
+		return "	add_property_long($obj, \"$name\", $source);\n";
+	}
+        function write_from_prop($name, $type)
+	{
+		return "	if (zend_hash_find(Z_OBJPROP_P(wrapper), \"$name\", sizeof(\"$name\"), (void **)&item) == SUCCESS && Z_TYPE_PP(item) == IS_LONG)\n" .
+        	   "		obj->$name = ($type)Z_LVAL_PP(item);\n" .
+    		   "	else\n" .
+        	   "		return 0;\n\n";
+
+	}
+
+       
 }
 
 class Flags_Arg extends Arg_Type {
@@ -432,6 +451,17 @@ class Struct_Arg extends Arg_Type {
 		$typename = strtolower(substr(convert_typename($this->struct_name), 1));
 		return 	"	*return_value = *php_{$typename}_new(" . ((substr($type, -1) != '*') ? '&' : '') . "%s);\n" .
 				"	return;";
+	}
+        
+        
+        function write_to_prop($obj, $name, $source)
+	{
+		return "	add_property_long($obj, \"$name\", $source);\n";
+	}
+        function write_from_prop($name, $type)
+	{
+		return "	/* struct write to prop */";
+
 	}
 }
 
@@ -606,12 +636,8 @@ class Drawable_Arg extends Arg_Type {
 				$extra_code[]	=	"	if (php_$name) {\n" .
 									"		if (Z_TYPE_P(php_$name) == IS_NULL)\n" .
 									"			$name = NULL;\n" .
-									"		else if (php_gtk_check_class(php_$name, gdk_window_ce))\n" .
-									"			$name = (GdkDrawable *)PHP_GDK_WINDOW_GET(php_$name);\n" .
-									"		else if(php_gtk_check_class(php_$name, gdk_pixmap_ce))\n" .
-									"			$name = (GdkDrawable *)PHP_GDK_PIXMAP_GET(php_$name);\n" .
-									"		else if(php_gtk_check_class(php_$name, gdk_bitmap_ce))\n" .
-									"			$name = (GdkDrawable *)PHP_GDK_BITMAP_GET(php_$name);\n" .
+									"		else\n" .
+									"			$name = PHP_" . strtoupper($this->php_type). "_GET(php_" . $name . ");\n" .
 									"	}\n";
 			} else {
 				$var_list->add($this->type, '*' . $name);
@@ -789,6 +815,7 @@ $matcher->register_boxed('GdkBitmap', 'gdk_bitmap');
 $matcher->register_boxed('GdkColor', 'gdk_color');
 $matcher->register_boxed('GdkColormap', 'gdk_colormap');
 $matcher->register_boxed('GdkCursor', 'gdk_cursor');
+$matcher->register_boxed('GdkCursorType', 'gdk_cursor_type');
 $matcher->register_boxed('GdkVisual', 'gdk_visual');
 $matcher->register_boxed('GdkFont', 'gdk_font');
 $matcher->register_boxed('GdkGC', 'gdk_gc');
@@ -797,5 +824,11 @@ $matcher->register_boxed('GtkSelectionData', 'gtk_selection_data');
 $matcher->register_boxed('GtkCTreeNode', 'gtk_ctree_node');
 $matcher->register_boxed('GtkAccelGroup', 'gtk_accel_group');
 $matcher->register_boxed('GtkStyle', 'gtk_style');
+
+$matcher->register_boxed('GtkRcStyle', 'gtk_rc_style');
+$matcher->register_boxed('GtkBindingSet', 'gtk_binding_set');
+$matcher->register_boxed('GtkBindingEntry', 'gtk_binding_entry');
+$matcher->register_boxed('GtkBindingSignal', 'gtk_binding_signal');
+
 
 ?>

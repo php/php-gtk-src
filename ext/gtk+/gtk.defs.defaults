@@ -1,0 +1,156 @@
+[gtk_aspect_frame_new]
+label  = "NULL null-ok"
+xalign = "0.5"
+yalign = "0.5"
+ratio  ="1.0"
+obey_child= "TRUE"
+
+[gtk_box_pack_start]
+expand 	= "TRUE"
+fill 	= "TRUE"
+padding	= "0"
+
+[gtk_box_pack_end]
+expand 	= "TRUE"
+fill 	= "TRUE"
+padding	= "0"
+
+[gtk_ctree_expand_recursive]
+node	= "NULL null-ok"
+
+[gtk_ctree_collapse_recursive]
+node	= "NULL null-ok"
+
+
+[gtk_ctree_select_recursive]
+node	= "NULL null-ok"
+
+[gtk_ctree_unselect_recursive]
+node	= "NULL null-ok"
+
+[gtk_ctree_sort_recursive]
+node	= "NULL null-ok"
+
+[gtk_file_selection_new]
+title   = "NULL"
+
+
+[gtk_frame_new]
+label 	=	"NULL null-ok"
+
+[gtk_hbox_new]
+homogeneous = "FALSE"
+spacing = "0"
+
+[gtk_label_new]
+str	= "NULL"
+
+[gtk_label_set_pattern]
+pattern	= "NULL"
+
+[gtk_main_iteration_do]
+blocking = "NULL"
+
+[gtk_packer_add]
+border_width = "0"
+pad_x	="0"
+pad_y	="0"
+i_pad_x = "0"
+i_pad_y ="0"
+
+[gtk_packer_set_child_packing]
+border_width = "0"
+pad_x	="0"
+pad_y	="0"
+i_pad_x = "0"
+i_pad_y ="0"
+
+[gtk_paned_pack1]
+resize ="FALSE"
+shrink = "TRUE"
+
+
+[gtk_paned_pack2]
+resize = "TRUE"
+shrink = "TRUE"
+
+
+[gtk_progress_bar_new_with_adjustment]
+adjustment = "NULL null-ok"
+
+
+
+[gtk_scrolled_window_new]
+hadjustment= "NULL null-ok"
+vadjustment= "NULL null-ok"
+
+
+[gtk_spin_button_new]
+adjustment= "NULL null-ok"
+climb_rate = "0.0"
+digits ="0"
+
+
+[gtk_table_new]
+rows = "1"
+columns ="1"
+homogeneous ="FALSE"
+
+[gtk_table_attach]
+xoptions = "GTK_EXPAND|GTK_FILL"
+yoptions = "GTK_EXPAND|GTK_FILL"
+xpadding =  "0"
+ypadding = "0"
+ 
+ 
+[gtk_text_new]
+hadj= "NULL null-ok"
+vadj= "NULL null-ok"
+
+[gtk_text_insert]
+font= "null-ok"
+fore= "null-ok"
+back= "null-ok"
+length ="-1"
+ 
+ 
+[gtk_tooltips_set_tip]
+tip_private = ""
+ 
+[gtk_vbox_new]
+homogeneous = "FALSE"
+spacing ="0"
+
+[gtk_viewport_new]
+hadjustment= "NULL null-ok"
+vadjustment= "NULL null-ok"
+
+
+
+
+[gtk_vscale_new]
+adjustment= "NULL null-ok"
+
+[gtk_vscrollbar_new]
+adjustment= "NULL null-ok"
+
+[gtk_widget_draw]
+area = "NULL"
+
+
+[gtk_window_new]
+type= "GTK_WINDOW_TOPLEVEL"
+
+
+
+ 
+ 
+ 
+
+
+
+
+
+
+
+

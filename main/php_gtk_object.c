@@ -36,13 +36,14 @@ static const char *php_gtk_wrapper_key  = "php_gtk::wrapper";
 
 HashTable php_gtk_prop_getters;
 HashTable php_gtk_prop_setters;
-HashTable php_gtk_rsrc_hash;
+HashTable php_gtk_rsrc_hash; 
 HashTable php_gtk_type_hash;
 HashTable php_gtk_prop_desc;
+HashTable php_gtk_callback_hash;
 
 //static const char *php_gtk_wrapper_key  = "php_gtk::wrapper";
 
-PHP_GTK_API zend_object_handlers *php_gtk_handlers;
+PHP_GTK_API zend_object_handlers php_gtk_handlers;
 
 static inline void php_gtk_destroy_object(php_gtk_object *object, zend_object_handle handle TSRMLS_DC)
 {
@@ -62,7 +63,6 @@ static inline zval* invoke_getter(zval *object, char *property)
 	prop_getter_t *getter;
 	zval result, *result_ptr = NULL;
 	int found = FAILURE;
-	TSRMLS_FETCH();
 
 	ZVAL_NULL(&result);
 	for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
@@ -84,7 +84,6 @@ static inline int invoke_setter(zval *object, char *property, zval *value)
 	zend_class_entry *ce;
 	prop_setter_t *setter;
 	int found = FAILURE;
-	TSRMLS_FETCH();
 
 	for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
 		if (zend_hash_index_find(&php_gtk_prop_setters, (long)ce, (void **)&setter) == SUCCESS) {
@@ -142,7 +141,7 @@ static void php_gtk_write_property(zval *object, zval *member, zval *value TSRML
 
 	wrapper = (php_gtk_object *) zend_object_store_get_object(object TSRMLS_CC);
 	if (invoke_setter(object, Z_STRVAL_P(member), value) == FAILURE) {
-		php_gtk_handlers->write_property(object, member, value TSRMLS_CC);
+		std_object_handlers.write_property(object, member, value TSRMLS_CC);
 	}
 
 	if (member == &tmp_member) {
@@ -166,7 +165,7 @@ static zval *php_gtk_read_property(zval *object, zval *member, zend_bool silent 
 	wrapper = (php_gtk_object *) zend_object_store_get_object(object TSRMLS_CC);
 	rv = invoke_getter(object, Z_STRVAL_P(member));
 	if (!rv) {
-		rv = php_gtk_handlers->read_property(object, member, silent TSRMLS_CC);
+		rv = std_object_handlers.read_property(object, member,  silent TSRMLS_CC);
 	}
 
 	if (member == &tmp_member) {
@@ -182,7 +181,7 @@ static zend_object_value create_php_gtk_object(zend_class_entry *ce TSRMLS_DC)
 	php_gtk_object *object;
 	prop_desc_t *prop_desc;
 
-	zov.handlers = php_gtk_handlers;
+	zov.handlers = &php_gtk_handlers;
 
 	if (zend_hash_index_find(&php_gtk_prop_desc, (long)ce, (void **)&prop_desc) == SUCCESS) {
 		if (prop_desc->have_getter) {
@@ -220,9 +219,9 @@ PHP_GTK_API zend_class_entry* php_gtk_register_class(const char *class_name, fun
 	ce.name_length = strlen(class_name);
 	ce.builtin_functions = class_functions;
 	ce.create_object = create_php_gtk_object;
-
+	
 	real_ce = zend_register_internal_class_ex(&ce, parent, NULL TSRMLS_CC);
-
+	/*printf("Registered Class %s as %i (parent = %i)\n",class_name, real_ce, parent); */
 	if (zend_hash_index_find(&php_gtk_prop_desc, (long)real_ce->parent, (void **)&parent_prop_desc) == SUCCESS) {
 		if (parent_prop_desc->have_getter)
 			prop_desc.have_getter = 1;
@@ -238,9 +237,22 @@ PHP_GTK_API void php_gtk_object_init(GtkObject *obj, zval *zobj)
 {
 	gtk_object_ref(obj);
 	gtk_object_sink(obj);
-
+	// defined in php_gtk.h
 	php_gtk_set_object(zobj, obj, (php_gtk_dtor_t)gtk_object_unref, 0);
 }
+
+    /**
+    * Get an GObject from a zval
+    * 
+    * @param   zval*    pointer to zval (with object in it)
+    * @param   int type of object (the ce?)
+    * 
+    *
+    * @return   void* pointer to object;
+    */
+
+
+
 
 PHP_GTK_API void *php_gtk_get_object(zval *zobj, int rsrc_type)
 {
@@ -271,7 +283,7 @@ PHP_GTK_API void *php_gtk_get_object(zval *zobj, int rsrc_type)
 	return wrapper->obj;
 }
 
-PHP_GTK_API int php_gtk_get_simple_enum_value(zval *enum_val, int *result)
+int php_gtk_get_simple_enum_value(zval *enum_val, int *result)
 {
 	if (!enum_val)
 		return 0;
@@ -350,133 +362,7 @@ int php_gtk_get_flag_value(GtkType flag_type, zval *flag_val, int *result)
 	php_error(E_WARNING, "flag values must be integers or strings");
 	return 0;
 }
-
-/* Generic callback marshal. */
-PHP_GTK_API void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *args)
-{
-	zval *gtk_args;
-	zval *callback_data = (zval *)data;
-	zval **callback, **extra = NULL, **pass_object = NULL;
-	zval **callback_filename = NULL, **callback_lineno = NULL;
-	zval *wrapper = NULL;
-	zval *params;
-	zval *retval = NULL;
-	zval ***signal_args;
-	char *callback_name;
-	TSRMLS_FETCH();
-
-	/* Callback is always passed as the first element. */
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
-
-	/*
-	 * If there is more than one element, it will be an array of:
-	 *  [1] an array of extra arguments
-	 *  [2] a flag indidicating whether the object should be passed to the
-	 *      callback
-	 *  [3] the filename where the callback was specified
-	 *  [4] the line number where the callback was specified
-	 */
-	if (zend_hash_num_elements(Z_ARRVAL_P(callback_data)) > 1) {
-		zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
-		zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&pass_object);
-		zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_filename);
-		zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&callback_lineno);
-	}
-
-	if (!zend_is_callable(*callback, 0, &callback_name)) {
-		if (callback_filename)
-			php_error(E_WARNING, "Unable to call signal callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
-		else
-			php_error(E_WARNING, "Unable to call callback '%s'", callback_name);
-		efree(callback_name);
-		return;
-	}
-
-	gtk_args = php_gtk_args_as_hash(nargs, args);
-	
-	/*
-	 * If pass_object flag is not specified, or it's specified and true, and we
-	 * have the actual object, construct the wrapper around it.
-	 */
-	if ((!pass_object || Z_LVAL_PP(pass_object)) && o)
-		wrapper = php_gtk_new(o);
-
-	/*
-	 * If there is a wrapper, construct array of parameters, set wrapper as
-	 * the first parameter, and append the array of GTK signal arguments to it.
-	 */
-	if (wrapper) {
-		MAKE_STD_ZVAL(params);
-		array_init(params);
-		zend_hash_next_index_insert(Z_ARRVAL_P(params), &wrapper, sizeof(zval *), NULL);
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0 TSRMLS_CC);
-		zval_ptr_dtor(&gtk_args);
-	} else
-		/* Otherwise, the only parameters will be GTK signal arguments. */
-		params = gtk_args;
-
-	/*
-	 * If there are extra arguments specified by user, add them to the parameter
-	 * array.
-	 */
-	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
-	
-	signal_args = php_gtk_hash_as_array(params);
-
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), signal_args, 0, NULL TSRMLS_CC);
-
-	if (retval) {
-		if (args)
-			php_gtk_ret_from_value(&args[nargs], retval);
-		zval_ptr_dtor(&retval);
-	}
-
-	efree(signal_args);
-	zval_ptr_dtor(&params);
-}
-
-void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
-{
-	zval *callback_data = (zval *)data;
-	zval **callback, **extra = NULL;
-	zval **callback_filename = NULL, **callback_lineno = NULL;
-	zval ***handler_args = NULL;
-	int num_handler_args = 0;
-	zval *retval = NULL;
-	char *callback_name;
-	TSRMLS_FETCH();
-
-	/* Callback is always passed as the first element. */
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&callback_filename);
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_lineno);
-
-	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
-		php_error(E_WARNING, "Unable to call handler callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
-		efree(callback_name);
-		return;
-	}
-
-	handler_args = php_gtk_hash_as_array(*extra);
-	num_handler_args = zend_hash_num_elements(Z_ARRVAL_PP(extra));
-
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval, num_handler_args, handler_args, 0, NULL TSRMLS_CC);
-
-	*GTK_RETLOC_BOOL(args[0]) = FALSE;
-	if (retval) {
-		if (zval_is_true(retval))
-			*GTK_RETLOC_BOOL(args[0]) = TRUE;
-		else
-			*GTK_RETLOC_BOOL(args[0]) = FALSE;
-		zval_ptr_dtor(&retval);
-	}
-
-	if (handler_args)
-		efree(handler_args);
-}
-
+  
 PHP_GTK_API void php_gtk_destroy_notify(gpointer user_data)
 {
 	zval *value = (zval *)user_data;
@@ -514,11 +400,10 @@ PHP_GTK_API zval *php_gtk_new(GtkObject *obj)
 	wrapper->dtor = (php_gtk_dtor_t)gtk_object_unref;
 	zend_objects_store_add_ref(zobj TSRMLS_CC);
 	gtk_object_set_data(obj, php_gtk_wrapper_key, zobj);
-	zval_add_ref(&zobj);
-
+        zval_add_ref(&zobj);
 	return zobj;
 }
-
+#ifdef DISABLED
 zval *php_gtk_args_as_hash(int nargs, GtkArg *args)
 {
 	zval *hash;
@@ -538,7 +423,9 @@ zval *php_gtk_args_as_hash(int nargs, GtkArg *args)
 
 	return hash;
 }
+/*
 
+*/
 GtkArg *php_gtk_hash_as_args(zval *hash, GtkType type, gint *nargs)
 {
 	int i;
@@ -547,10 +434,7 @@ GtkArg *php_gtk_hash_as_args(zval *hash, GtkType type, gint *nargs)
 	ulong num_key;
 	GtkArg *arg = NULL;
 	GtkArgInfo *info;
-	HashTable *ht;
-	TSRMLS_FETCH();
-
-	ht = HASH_OF(hash);
+	HashTable *ht = HASH_OF(hash);
 
 	gtk_type_class(type);
 	*nargs = zend_hash_num_elements(ht);
@@ -592,11 +476,8 @@ GtkArg *php_gtk_hash_as_args(zval *hash, GtkType type, gint *nargs)
 int php_gtk_args_from_hash(GtkArg *args, int nparams, zval *hash)
 {
 	zval **item;
-	HashTable *ht;
+	HashTable *ht = HASH_OF(hash);
 	int i;
-	TSRMLS_FETCH();
-
-	ht = HASH_OF(hash);
 
 	for (zend_hash_internal_pointer_reset(ht), i = 0;
 		 i < nparams && zend_hash_get_current_data(ht, (void **)&item) == SUCCESS;
@@ -1166,8 +1047,8 @@ void php_gtk_ret_from_value(GtkArg *ret, zval *value)
 			break;
 	}
 }
-
-#if 0
+#endif
+#ifdef DISABLED
 PHP_GTK_API zval php_gtk_get_property(zend_property_reference *property_reference)
 {
 	zval result;
@@ -1398,7 +1279,6 @@ void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference
 PHP_GTK_API zval php_gtk_get_property(zend_property_reference *property_reference)
 {
 	zval foo;
-	INIT_ZVAL(foo);
 	return foo;
 }
 
@@ -1418,6 +1298,273 @@ PHP_GTK_API void php_gtk_register_prop_setter(zend_class_entry *ce, prop_setter_
 	zend_hash_index_update(&php_gtk_prop_setters, (long)ce, (void*)&setter,
 						   sizeof(prop_setter_t), NULL);
 }
+
+    /**
+    * Register a hardcoded callback handler.
+    *
+    * @param string eg .'GtkNotebook::change_page'
+    * @param GClosureMarshal a marshel handler.
+    *
+    * @access   private
+    */
+
+
+
+
+PHP_GTK_API void php_gtk_register_callback(char *class_and_method, GClosureMarshal  call_function)
+{
+       char *lcname;
+
+       lcname = emalloc(strlen(class_and_method)+1);
+
+       strncpy(lcname, class_and_method, strlen(class_and_method));
+       zend_str_tolower(lcname, strlen(class_and_method));
+       zend_hash_update(&php_gtk_callback_hash,  lcname, strlen(class_and_method),(void**)  &call_function,
+                                                  sizeof(void*), NULL);
+}
+
+
+
+
+    /**
+    * this is the new marshal code for closures - 
+    *
+    * @see GClosureMarshal() in the gclosure API
+    *
+    * @access   private
+    */
+  
+
+
+
+
+
+PHP_GTK_API void php_gtk_closure_marshal(
+					GClosure 	*gobject_closure,
+					GValue 		*return_value,
+					guint 		n_param_values,
+					const GValue 	*param_values,
+					// this is the standard signal parameters..
+					// the first of which is usually the object..
+					gpointer 	invocation_hint,
+					gpointer 	marshal_data
+					)
+{
+	zval *gtk_args;
+	php_gtk_closure  *closure = (php_gtk_closure *)gobject_closure;
+	zval *wrapper = NULL;
+	zval *params;
+	zval *retval = NULL;
+	zval ***signal_args;
+	char *callback_name;
+	 
+	TSRMLS_FETCH();
+	 
+	/* Callback is always passed as the first element. */
+	//zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
+
+	/*
+	 * If there is more than one element, it will be an array of:
+	 *  [1] an array of extra arguments
+	 *  [2] a flag indidicating whether the object should be passed to the
+	 *      callback
+	 *  [3] the filename where the callback was specified
+	 *  [4] the line number where the callback was specified
+	 */
+	//if (zend_hash_num_elements(Z_ARRVAL_P(callback_data)) > 1) {
+	//	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
+	//	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&pass_object);
+	//	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_filename);
+	//	zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&callback_lineno);
+	//}
+	//printf("callback get: %x\n",closure->callback);
+	//return;
+	
+	if (!zend_is_callable(closure->callback, 0, &callback_name)) {
+		if (closure->callback_filename) {
+			php_error(E_WARNING, "Unable to call signal callback '%s' specified in %s on line %d", 
+				callback_name, 
+				closure->callback_filename, 
+				closure->callback_lineno
+			);
+		}  else {
+			php_error(E_WARNING, "Unable to call callback '%s'", callback_name);
+		}
+		efree(callback_name);
+		return;
+	}
+	/* [TODO] = convert arguments.... */
+	// dummy code!!
+	//printf("attempt to call %s\n",callback_name);
+	//return;
+	
+	MAKE_STD_ZVAL(params);
+	array_init(params);
+	
+	
+	//gtk_args = php_gtk_args_as_hash(nargs, args);
+	
+	/*
+	 * If pass_object flag is not specified, or it's specified and true, and we
+	 * have the actual object, construct the wrapper around it.
+	 */
+	//if ((!php_gtk_closure->pass_object || Z_LVAL_PP(php_gtk_closure->pass_object)) && o)
+	// wrapper = php_gtk_new(o);
+	
+	// we need to sort out here if the first arg ... param_values[0] is the object and !pass_object
+	// then remove it from the args...
+
+	/*
+	 * If there is a wrapper (eg. gobject as the first param), construct array of parameters, set wrapper as
+	 * the first parameter, and append the array of GTK signal arguments to it.
+	 */
+	//if (wrapper) {
+	//	MAKE_STD_ZVAL(params);
+	//	array_init(params);
+	//	zend_hash_next_index_insert(Z_ARRVAL_P(params), &wrapper, sizeof(zval *), NULL);
+	//	php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0 TSRMLS_CC);
+	//		zval_ptr_dtor(&gtk_args);
+	//} else
+	//	/* Otherwise, the only parameters will be GTK signal arguments. */
+	//	params = gtk_args;
+
+	/*
+	 * If there are extra arguments specified by user, add them to the parameter
+	 * array.
+	 */
+	if (closure->extra) {
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(closure->extra), 0 TSRMLS_CC);
+	}
+	
+	// convert hash into args... - util function.
+	signal_args = php_gtk_hash_as_array(params);
+
+	call_user_function_ex(EG(function_table), NULL, closure->callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), signal_args, 0, NULL TSRMLS_CC);
+
+	if (retval) {
+		//if (args) {
+			// need to work out how to return stuff...
+			// we should put it in 
+			//php_gtk_ret_from_value(return_value, retval);
+		//}
+		zval_ptr_dtor(&retval);
+	}
+
+	efree(signal_args);
+	zval_ptr_dtor(&params);
+}
+
+
+
+    /**
+    * basically handler for $object->connect('signal',$callback,$otherargs....)
+    *
+    * See where this goes - it uses g_closure to connect a marshel (the reciever)
+    * 
+    * 
+    * @param   INTERNAL_FUNCTION_PARAMETERS - relayed data from a PHP_FUNCTION DEF.
+    * @param   int pass_object - should it send the calling object as the first argument of the callback
+    * @param   int after       - is it a connect_after()
+    *
+    * @return   long - id of connect handle..
+    * @access   private
+    */
+  
+
+
+PHP_GTK_API void php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object, int after)
+{
+        char *name = NULL;
+        zval *callback = NULL;
+        zval *extra;
+        zval *data;
+        char *callback_filename;
+        uint callback_lineno;
+        char *lookup;
+        zend_class_entry *ce;
+        //GtkSignalFunc *callback_cfunction;
+        int lookup_len;
+	GClosure *closure;
+	GQuark detail = 0;
+	guint   sigid, len;
+	
+	GClosureMarshal *callback_cfunction;
+
+        NOT_STATIC_METHOD();
+ 
+ 
+ 
+        if (ZEND_NUM_ARGS() < 2) {
+                php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
+                                  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+                return;
+        }
+	
+        if (!php_gtk_parse_args(2, "sV", &name, &callback)) {
+			return;
+	}
+	
+	
+	if (!g_signal_parse_name(name, G_OBJECT_TYPE(PHP_GTK_GET(this_ptr)),
+                 			     &sigid, &detail, TRUE)) {
+		php_error(E_WARNING, "%s() Unknown signal name '%s'",
+			get_active_function_name(TSRMLS_C), name);
+			return; 		     
+	}
+	closure = g_closure_new_simple(sizeof(php_gtk_closure), NULL);	
+	zval_add_ref(&callback);
+	
+	//printf("callback set: %x\n",callback);
+	
+	((php_gtk_closure *)closure)->callback 			= callback;
+	
+	((php_gtk_closure *)closure)->callback_filename 	= zend_get_executed_filename(TSRMLS_C);
+        ((php_gtk_closure *)closure)->callback_lineno 		= zend_get_executed_lineno(TSRMLS_C);
+        ((php_gtk_closure *)closure)->extra 			= php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
+	((php_gtk_closure *)closure)->pass_object 		= pass_object;
+	
+	// this check to see if we have registered a manual handler...
+	ce = Z_OBJCE_P(this_ptr);
+        lookup_len = ce->name_length + strlen(name) + 2;
+        lookup = emalloc(lookup_len + 1);
+        sprintf(lookup, "%s::%s", ce->name, name);
+                                                                                                                                                                                  
+        lookup[lookup_len] = '\0';
+        zend_str_tolower(lookup,lookup_len);
+ 
+        /* now see if it's a manually handled object::callback.. */
+        if (zend_hash_find(&php_gtk_callback_hash, lookup, lookup_len , (void **) &callback_cfunction) == SUCCESS) {
+		g_closure_set_marshal(closure, (GClosureMarshal)  *callback_cfunction);
+		RETURN_LONG(g_signal_connect_closure_by_id
+			(G_OBJECT(PHP_GTK_GET(this_ptr)), 
+			sigid, 
+			detail,
+			closure, 
+			(gboolean) after
+		));
+	  
+      
+        }
+ 
+	g_closure_set_marshal(closure, php_gtk_closure_marshal);
+	
+	RETURN_LONG(g_signal_connect_closure_by_id
+		(G_OBJECT(PHP_GTK_GET(this_ptr)), 
+		sigid, 
+		detail,
+		closure, 
+		(gboolean) after
+	));
+	
+ 
+
+}
+ 
+
+
+
+
+
 
 
 #endif  /* HAVE_PHP_GTK */

@@ -95,7 +95,8 @@ static void init_gtk(void)
 	   one more time to make sure it stays in memory even after our .so is
 	   unloaded. */
 	//DL_LOAD("libgtk.so");
-			   
+	gtk_init(&argc,&argv);
+	/*
 	if (!gtk_init_check(&argc, &argv)) {
 		if (argv != NULL) {
 			for (i = 0; i < argc; i++)
@@ -105,14 +106,14 @@ static void init_gtk(void)
 		php_error(E_ERROR, "php-gtk: Could not open display");
 		return;
 	}
-
+	*/
 	/*
 	   We must always call gtk_set_locale() in order to get GTK+/GDK
 	   correctly initialize multilingual support. Otherwise, application
 	   will refuse any letters outside ASCII and font metrics will
 	   be broken.
 	 */
-	gtk_set_locale();
+	//gtk_set_locale();
 
 	if (no_argc) {
 		/* The -f switch case, simple. */
@@ -156,10 +157,10 @@ static void register_exception(TSRMLS_D)
 
 PHP_GTK_XINIT_FUNCTION(gtk_plus)
 {
-	le_gtk_object = zend_register_list_destructors_ex(release_gtk_object_rsrc, NULL, "GtkObject", module_number);
+	le_gobject = zend_register_list_destructors_ex(release_gtk_object_rsrc, NULL, "GObject", module_number);
 
-	php_gtk_handlers = zend_get_std_object_handlers();
-	php_gtk_handlers->get_property_zval_ptr = NULL;
+	php_gtk_handlers = std_object_handlers;
+	php_gtk_handlers.get_property_zval_ptr = NULL;
 
 	register_exception(TSRMLS_C);
 
@@ -167,9 +168,12 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 	php_gtk_register_constants(module_number TSRMLS_CC);
 	php_gdk_register_constants(module_number TSRMLS_CC);
 	php_gdk_register_keysyms(module_number TSRMLS_CC);
+	// registor core types first?!!
+	php_gtk_plus_register_types(module_number);
+	
 	php_gtk_register_classes();
 	php_gdk_register_classes();
-	php_gtk_plus_register_types(module_number);
+	
 
 	return SUCCESS;
 }
