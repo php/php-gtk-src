@@ -242,6 +242,10 @@
   (in-module Gtk)
   (parent Container (Gtk))
   (c-name GtkToolbar)
+  (field (type-and-name GtkOrientation orientation))
+  (field (type-and-name GtkToolbarStyle style))
+  (field (type-and-name gint space_size))
+  (field (type-and-name GtkToolbarSpaceStyle space_style))
 )
 
 (object Table
