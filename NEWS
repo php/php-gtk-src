@@ -1,3 +1,5 @@
+    - added ability to get and set color for GtkColorSelection. (Andrei)
+
 Version 0.0.3 "slow glass": 20-Mar-2001
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - added libglade support. (Andrei)
