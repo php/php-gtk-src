@@ -24,6 +24,10 @@
 
 #if HAVE_SCINTILLA
 
+#ifdef PHP_GTK_COMPILE_DL_SCINTILLA
+PHP_GTK_GET_EXTENSION(scintilla)
+#endif
+
 PHP_GTK_XINIT_FUNCTION(scintilla)
 {
 	php_scintilla_register_constants(module_number TSRMLS_CC);

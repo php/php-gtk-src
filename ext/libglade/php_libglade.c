@@ -24,6 +24,10 @@
 
 #if HAVE_LIBGLADE
 
+#ifdef PHP_GTK_COMPILE_DL_LIBGLADE
+PHP_GTK_GET_EXTENSION(libglade)
+#endif
+
 PHP_GTK_XINIT_FUNCTION(libglade)
 {
 	glade_init();

@@ -1,7 +1,7 @@
 LTLIBRARY_NAME          = libsqpane.la
 LTLIBRARY_SOURCES       = php_sqpane.c gen_sqpane.c gtksqpane.c
 LTLIBRARY_LIBADD        = $(SQPANE_SHARED_LIBADD)
-LTLIBRARY_SHARED_NAME   = libsqpane.la
+LTLIBRARY_SHARED_NAME   = php_gtk_sqpane.la
 LTLIBRARY_SHARED_LIBADD = $(SQPANE_SHARED_LIBADD)
 
 include $(top_srcdir)/build/dynlib.mk

@@ -1,7 +1,7 @@
 LTLIBRARY_NAME          = libscintilla.la
 LTLIBRARY_SOURCES       = php_scintilla.c gen_scintilla.c
 LTLIBRARY_LIBADD        = $(SCINTILLA_SHARED_LIBADD)
-LTLIBRARY_SHARED_NAME   = libscintilla.la
+LTLIBRARY_SHARED_NAME   = php_gtk_scintilla.la
 LTLIBRARY_SHARED_LIBADD = $(SCINTILLA_SHARED_LIBADD)
 
 include $(top_srcdir)/build/dynlib.mk

@@ -22,5 +22,5 @@ dnl    AC_DEFINE(HAVE_SKELETON,1,[skeleton support])
 dnl    PHP_ADD_INCLUDE($SKELETON_INCDIR)
 dnl    PHP_ADD_LIBRARY_WITH_PATH(gtkskeleton, $SKELETON_LIBDIR, SKELETON_SHARED_LIBADD)
 dnl    PHP_SUBST(SKELETON_SHARED_LIBADD)
-dnl    PHP_GTK_EXTENSION(skeleton)
+dnl    PHP_GTK_EXTENSION(skeleton, $php_gtk_ext_shared)
 dnl  fi

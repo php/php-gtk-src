@@ -62,12 +62,17 @@ struct _php_gtk_ext_entry {
 	int (*ext_startup_func)(EXT_INIT_ARGS);
 	int (*ext_shutdown_func)(EXT_SHUTDOWN_ARGS);
 	int ext_started;
+	void *handle;
 };
+
+#define PHP_GTK_GET_EXTENSION(name) \
+    ZEND_DLEXPORT php_gtk_ext_entry *get_extension(void) { return &name##_ext_entry; }
+
 
 #include "ext/gtk+/php_gtk+.h"
 
 /* True globals. */
-extern HashTable php_gtk_ext_registry;
+extern zend_llist php_gtk_ext_registry;
 extern GHashTable *php_gtk_class_hash;
 extern HashTable php_gtk_rsrc_hash;
 extern HashTable php_gtk_prop_getters;

@@ -1,7 +1,7 @@
 LTLIBRARY_NAME          = liblibglade.la
 LTLIBRARY_SOURCES       = php_libglade.c gen_libglade.c
 LTLIBRARY_LIBADD        = $(LIBGLADE_SHARED_LIBADD)
-LTLIBRARY_SHARED_NAME   = libglade.la
+LTLIBRARY_SHARED_NAME   = php_gtk_libglade.la
 LTLIBRARY_SHARED_LIBADD = $(LIBGLADE_SHARED_LIBADD)
 
 include $(top_srcdir)/build/dynlib.mk

@@ -1,7 +1,7 @@
 LTLIBRARY_NAME          = libskeleton.la
 LTLIBRARY_SOURCES       = php_skeleton.c gen_skeleton.c
 LTLIBRARY_LIBADD        = $(SKELETON_SHARED_LIBADD)
-LTLIBRARY_SHARED_NAME   = libskeleton.la
+LTLIBRARY_SHARED_NAME   = php_gtk_skeleton.la
 LTLIBRARY_SHARED_LIBADD = $(SKELETON_SHARED_LIBADD)
 
 include $(top_srcdir)/build/dynlib.mk

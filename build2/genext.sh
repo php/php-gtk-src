@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# $Id: genext.sh,v 1.3 2001-08-14 21:04:17 andrei Exp $
+# $Id: genext.sh,v 1.4 2001-11-20 20:36:30 andrei Exp $
 # replacement for genif.pl
 
 infile="$1"
@@ -31,7 +31,9 @@ for ext in ${1+"$@"} ; do
 	header_list="$header_list ext/$ext/*.h"
 done
 
-includes=`$awk -f ./build2/print_include.awk $header_list`
+if test -n "$header_list"; then
+    includes=`$awk -f ./build2/print_include.awk $header_list`
+fi
 
 cd $olddir
 

@@ -24,6 +24,10 @@
 
 #if HAVE_SKELETON
 
+#ifdef PHP_GTK_COMPILE_DL_SKELETON
+PHP_GTK_GET_EXTENSION(skeleton)
+#endif
+
 PHP_GTK_XINIT_FUNCTION(skeleton)
 {
 	php_skeleton_register_constants(module_number TSRMLS_CC);

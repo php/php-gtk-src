@@ -1,5 +1,5 @@
 dnl
-dnl PHP_GTK_EXTENSION(extname)
+dnl PHP_GTK_EXTENSION(extname [, shared])
 dnl
 dnl Includes an extension in the build.
 dnl
@@ -13,9 +13,16 @@ AC_DEFUN(PHP_GTK_EXTENSION,[
   php_gtk_ext_builddir=ext/$1
   php_gtk_ext_srcdir=$abs_srcdir/ext/$1
 
-  LIB_BUILD($php_gtk_ext_builddir)
-  PHP_GTK_EXT_LTLIBS="$PHP_GTK_EXT_LTLIBS $php_gtk_ext_builddir/lib$1.la"
-  PHP_GTK_EXTENSIONS="$PHP_GTK_EXTENSIONS $1"
+  if test "$2" != "shared" && test "$2" != "yes"; then
+dnl ---------------------------------------------- Static module
+	  LIB_BUILD($php_gtk_ext_builddir)
+	  PHP_GTK_EXT_LTLIBS="$PHP_GTK_EXT_LTLIBS $php_gtk_ext_builddir/lib$1.la"
+	  PHP_GTK_EXTENSIONS="$PHP_GTK_EXTENSIONS $1"
+  else
+dnl ---------------------------------------------- Shared module
+	  LIB_BUILD($php_gtk_ext_builddir,yes)
+	  AC_DEFINE_UNQUOTED([PHP_GTK_COMPILE_DL_]translit($1,a-z+-,A-Z__), 1, Whether to build $1 as dynamic module)
+  fi
 
   PHP_FAST_OUTPUT($php_gtk_ext_builddir/Makefile)
 ])
@@ -23,6 +30,32 @@ AC_DEFUN(PHP_GTK_EXTENSION,[
 PHP_SUBST(PHP_GTK_EXT_SUBDIRS)
 PHP_SUBST(PHP_GTK_EXT_LTLIBS)
 PHP_SUBST(PHP_GTK_EXTENSIONS)
+
+
+AC_DEFUN(PHP_GTK_ARG_ANALYZE,[
+case [$]$1 in
+shared,*)
+  php_gtk_ext_output="yes, shared"
+  php_gtk_ext_shared=yes
+  $1=`echo "[$]$1"|sed 's/^shared,//'`
+  ;;
+shared)
+  php_gtk_ext_output="yes, shared"
+  php_gtk_ext_shared=yes
+  $1=yes
+  ;;
+no)
+  php_gtk_ext_output=no
+  php_gtk_ext_shared=no
+  ;;
+*)
+  php_gtk_ext_output=yes
+  php_gtk_ext_shared=no
+  ;;
+esac
+
+AC_MSG_RESULT([$php_gtk_ext_output])
+])
 
 dnl
 dnl PHP_GTK_ARG_ENABLE(arg-name, check message, help text[, default-val])
@@ -36,12 +69,5 @@ PHP_GTK_REAL_ARG_ENABLE([$1],[$2],[$3],[$4],PHP_GTK_[]translit($1,a-z-,A-Z_))
 AC_DEFUN(PHP_GTK_REAL_ARG_ENABLE,[
 AC_MSG_CHECKING($2)
 AC_ARG_ENABLE($1,[$3],$5=[$]enableval,$5=ifelse($4,,no,$4))
-case [$]$5 in
-no)
-  AC_MSG_RESULT(no)
-  ;;
-*)
-  AC_MSG_RESULT(yes)
-  ;;
-esac
+PHP_GTK_ARG_ANALYZE($5)
 ])

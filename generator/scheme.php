@@ -66,6 +66,7 @@ function parse($fp)
 
 class Defs_Parser {
 	var $parse_tree 	= null;
+	var $parse_cache	= null;
 	var $file_path  	= null;
 	var $file_name  	= null;
 	var $objects		= array();	// objects
@@ -76,15 +77,11 @@ class Defs_Parser {
 	var $structs		= array();  // structures
 	var $c_name			= array();  // C names of entities
 
-	
 	function Defs_Parser($arg)
 	{
 		switch (gettype($arg)) {
 			case 'string':
-				error_log("Parsing file \"$arg\".");
-				$this->file_name = $arg;
-				$this->file_path = dirname($this->file_name);
-				$this->parse_tree = parse(fopen($arg, 'r'));
+				$this->_parse_or_load($arg);
 				break;
 
 			case 'array':
@@ -97,12 +94,40 @@ class Defs_Parser {
 		}
 	}
 
+	function _parse_or_load($defs_file)
+	{
+		$cache_file = $defs_file.'.cache';
+		if (is_file($cache_file) &&
+			filemtime($cache_file) > filemtime($defs_file)) {
+			error_log("Loading cache \"$cache_file\"");
+			$fp = fopen($cache_file, 'r');
+			$this->parse_cache = fread($fp, filesize($cache_file));
+			fclose($fp);
+		} else {
+			error_log("Parsing file \"$defs_file\".");
+			$this->file_name = basename($defs_file);
+			$this->file_path = dirname($defs_file);
+			$this->parse_tree = parse(fopen($defs_file, 'r'));
+		}
+	}
+
 	function start_parsing($tree = NULL)
 	{
-		if (!isset($tree))
-			$tree = $this->parse_tree;
-		foreach ($tree as $node)
-			$this->handle($node);
+		if (isset($this->parse_cache)) {
+			$this = unserialize($this->parse_cache);
+		} else {
+			if (!isset($tree))
+				$tree = $this->parse_tree;
+			foreach ($tree as $node)
+				$this->handle($node);
+
+			if (is_writeable($this->file_path)) {
+				$cache_file = $this->file_path . '/' . $this->file_name . '.cache';
+				$fp = fopen($cache_file, 'w');
+				fwrite($fp, serialize($this));
+				fclose($fp);
+			}
+		}
 	}
 
 	function merge($parser)

@@ -24,6 +24,10 @@
 
 #if HAVE_SQPANE
 
+#ifdef PHP_GTK_COMPILE_DL_SQPANE
+PHP_GTK_GET_EXTENSION(sqpane)
+#endif
+
 PHP_GTK_XINIT_FUNCTION(sqpane)
 {
 	php_sqpane_register_constants(module_number TSRMLS_CC);
