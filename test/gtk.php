@@ -182,11 +182,96 @@ function create_labels()
 	$windows['labels']->show();
 }
 
+
+function create_button_box()
+{
+	global	$windows;
+
+	if (!isset($windows['button_box'])) {
+		$window = &new GtkWindow;
+		$windows['button_box'] = $window;
+		$window->connect('delete-event', 'delete_event');
+		$window->set_title('Button Boxes');
+		$window->set_border_width(10);
+
+		$main_vbox = &new GtkVBox(false, 10);
+		$window->add($main_vbox);
+		$main_vbox->show();
+
+		function create_bbox($horizontal, $title, $spacing,
+							 $child_w, $child_h, $layout)
+		{
+			$frame = &new GtkFrame($title);
+			if ($horizontal)
+				$bbox = &new GtkHButtonBox();
+			else
+				$bbox = &new GtkVButtonBox();
+			$bbox->set_border_width(5);
+			$bbox->set_layout($layout);
+			$bbox->set_spacing($spacing);
+			$bbox->set_child_size($child_w, $child_h);
+			$frame->add($bbox);
+			$bbox->show();
+
+			$button = &new GtkButton('OK');
+			$bbox->add($button);
+			$button->show();
+
+			$button = &new GtkButton('Cancel');
+			$bbox->add($button);
+			$button->show();
+
+			$button = &new GtkButton('Help');
+			$bbox->add($button);
+			$button->show();
+
+			$frame->show();
+
+			return $frame;
+		}
+
+		$frame_horz = &new GtkFrame('Horizontal Button Boxes');
+		$main_vbox->add($frame_horz);
+		$frame_horz->show();
+
+		$vbox = &new GtkVBox();
+		$vbox->set_border_width(10);
+		$frame_horz->add($vbox);
+		$vbox->show();
+
+		$vbox->pack_start(create_bbox(true, 'Spread', 40, 85, 20, GTK_BUTTONBOX_SPREAD), true, true, 10);
+		$vbox->pack_start(create_bbox(true, 'Edge', 40, 85, 20, GTK_BUTTONBOX_EDGE), true, true, 10);
+		$vbox->pack_start(create_bbox(true, 'Start', 40, 85, 20, GTK_BUTTONBOX_START), true, true, 10);
+		$vbox->pack_start(create_bbox(true, 'End', 40, 85, 20, GTK_BUTTONBOX_END), true, true, 10);
+
+		$frame_vert = &new GtkFrame('Vertical Button Boxes');
+		$main_vbox->add($frame_vert);
+		$frame_vert->show();
+
+		$hbox = &new GtkHBox();
+		$hbox->set_border_width(10);
+		$frame_vert->add($hbox);
+		$hbox->show();
+
+		$hbox->pack_start(create_bbox(false, 'Spread', 30, 85, 20, GTK_BUTTONBOX_SPREAD), true, true, 5);
+		$hbox->pack_start(create_bbox(false, 'Edge', 30, 85, 20, GTK_BUTTONBOX_EDGE), true, true, 5);
+		$hbox->pack_start(create_bbox(false, 'Start', 30, 85, 20, GTK_BUTTONBOX_START), true, true, 5);
+		$hbox->pack_start(create_bbox(false, 'End', 30, 85, 20, GTK_BUTTONBOX_END), true, true, 5);
+	}
+	$windows['button_box']->show();
+}
+
+
 function create_main_window()
 {
 	$buttons = array(
-					 'buttons'	=>	'create_buttons',
-					 'labels'	=>	'create_labels',
+					 'buttons'			=> 'create_buttons',
+					 'labels'			=> 'create_labels',
+					 'button box'		=> 'create_button_box',
+					 'toggle buttons'	=> null,
+					 'check buttons'	=> null,
+					 'radio buttons'	=> null,
+					 'tooltips'			=> null,
 					);
 
 	$window = &new GtkWindow();
