@@ -35,6 +35,241 @@ function build_radio_menu($items)
 	return $menu;
 }
 
+
+function create_cursor_test()
+{
+	global	$windows;
+
+	if (!isset($windows['cursor_test'])) {
+		function expose_event($darea, $event)
+		{
+			$drawable = $darea->window;
+			$style = $darea->get_style();
+			$white_gc = $style->white_gc;
+			$grey_gc = $style->bg_gc[GTK_STATE_NORMAL];
+			$black_gc = $style->black_gc;
+			$max_width = $drawable->width;
+			$max_height = $drawable->height;
+
+			gdk::draw_rectangle($drawable, $white_gc, true, 0, 0, $max_width,
+								(int)($max_height / 2));
+			gdk::draw_rectangle($drawable, $black_gc, true, 0, (int)($max_height / 2),
+								$max_width, (int)($max_height / 2));
+			gdk::draw_rectangle($drawable, $grey_gc, true, (int)($max_width / 3),
+								(int)($max_height / 3), (int)($max_width / 3),
+								(int)($max_height / 3));
+		}
+
+		function set_cursor($spinner, $darea, $cur_name)
+		{
+			$c = $spinner->get_value_as_int();
+			$c = $c & 0xfe;
+			$cursor = gdk::cursor_new($c);
+			$window = $darea->window;
+			$window->set_cursor($cursor);
+			$cur_name->set_text($cursor->name);
+		}
+
+		function button_press($widget, $event, $spinner)
+		{
+			if ($event->type == GDK_BUTTON_PRESS) {
+				if ($event->button == 1)
+					$spinner->spin(GTK_SPIN_STEP_FORWARD, 0.0);
+				else if ($event->button == 3)
+					$spinner->spin(GTK_SPIN_STEP_BACKWARD, 0.0);
+			}
+		}
+
+		$window = &new GtkWindow;
+		$windows['cursor_test'] = $window;
+		$window->connect('delete-event', 'delete_event');
+		$window->set_title('Cursor Test');
+		$window->set_border_width(0);
+
+		$main_vbox = &new GtkVBox(false, 5);
+		$main_vbox->set_border_width(0);
+		$window->add($main_vbox);
+		$main_vbox->show();
+
+		$vbox = &new GtkVBox(false, 5);
+		$vbox->set_border_width(10);
+		$main_vbox->pack_start($vbox);
+		$vbox->show();
+
+		$hbox = &new GtkHBox(false, 5);
+		$vbox->pack_start($hbox, false);
+		$hbox->show();
+
+		$label = &new GtkLabel('Cursor value: ');
+		$label->set_alignment(0.0, 0.5);
+		$hbox->pack_start($label, false);
+		$label->show();
+
+		$spinner = &new GtkSpinButton(new GtkAdjustment(0.0, 0.0, 152.0, 2.0, 10.0, 0.0), 0.0, 0);
+		$hbox->pack_start($spinner);
+		$spinner->show();
+
+		$frame = &new GtkFrame('Cursor Area');
+		$frame->set_border_width(10);
+		$frame->set_label_align(0.5, 0.0);
+		$vbox->pack_start($frame);
+		$frame->show();
+
+		$darea = &new GtkDrawingArea();
+		$darea->set_usize(80, 80);
+		$frame->add($darea);
+		$darea->show();
+
+		$cur_name = &new GtkLabel('');
+		$vbox->pack_start($cur_name);
+		$cur_name->show();
+
+		$darea->connect('expose_event', 'expose_event');
+		$darea->add_events(GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK);
+		$darea->connect('button_press_event', 'button_press', $spinner);
+		$spinner->connect('changed', 'set_cursor', $darea, $cur_name);
+
+		$separator = &new GtkHSeparator();
+		$main_vbox->pack_start($separator, false);
+		$separator->show();
+
+		$vbox = &new GtkVBox(false, 5);
+		$vbox->set_border_width(5);
+		$main_vbox->pack_start($vbox, false);
+		$vbox->show();
+
+		$button = &new GtkButton('close');
+		$button->connect('clicked', 'close_window');
+		$vbox->pack_start($button);
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$button->grab_default();
+		$button->show();
+
+		$window->show_all();
+		set_cursor($spinner, $darea, $cur_name);
+	}
+	$windows['cursor_test']->show();
+}
+
+
+function create_color_selection()
+{
+	global	$windows;
+
+	if (!isset($windows['color_selection'])) {
+		$window = &new GtkColorSelectionDialog('color selection dialog');
+		$windows['color_selection'] = $window;
+		$colorsel = $window->colorsel;
+		$colorsel->set_opacity(true);
+		$colorsel->set_update_policy(GTK_UPDATE_CONTINUOUS);
+		$colorsel->set_color(0.4, 0.5, 0.7, 0.75);
+		$window->set_position(GTK_WIN_POS_MOUSE);
+		$window->connect('delete-event', 'delete_event');
+
+		$cancel_button = $window->cancel_button;
+		$cancel_button->connect('clicked', 'close_window');
+		$ok_button = $window->ok_button;
+		$ok_button->connect('clicked', 'close_window');
+	}
+	$windows['color_selection']->show();
+}
+
+
+function create_radio_buttons()
+{
+	global	$windows;
+
+	if (!isset($windows['radio_buttons'])) {
+		$window = &new GtkWindow;
+		$windows['radio_buttons'] = $window;
+		$window->connect('delete-event', 'delete_event');
+		$window->set_title('radio buttons');
+		$window->set_border_width(0);
+
+		$box1 = &new GtkVBox();
+		$window->add($box1);
+		$box1->show();
+
+		$box2 = &new GtkVBox(false, 10);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2);
+		$box2->show();
+
+		$button1 = &new GtkRadioButton(null, 'button1');
+		$button1->set_active(true);
+		$box2->pack_start($button1);
+		$button1->show();
+		for ($i = 2; $i <= 4; $i++) {
+			$button = &new GtkRadioButton($button1, 'button' . $i);
+			$box2->pack_start($button);
+			$button->show();
+		}
+
+		$separator = &new GtkHSeparator();
+		$box1->pack_start($separator, false);
+		$separator->show();
+
+		$box2 = &new GtkVBox(false, 10);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2, false);
+		$box2->show();
+
+		$button = &new GtkButton('close');
+		$button->connect('clicked', 'close_window');
+		$box2->pack_start($button);
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$button->grab_default();
+		$button->show();
+	}
+	$windows['radio_buttons']->show();
+}
+
+
+function create_check_buttons()
+{
+	global	$windows;
+
+	if (!isset($windows['check_buttons'])) {
+		$window = &new GtkWindow;
+		$windows['check_buttons'] = $window;
+		$window->connect('delete-event', 'delete_event');
+		$window->set_title('check buttons');
+		$window->set_border_width(0);
+
+		$box1 = &new GtkVBox();
+		$window->add($box1);
+		$box1->show();
+
+		$box2 = &new GtkVBox(false, 10);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2);
+		$box2->show();
+
+		for ($i = 1; $i <= 4; $i++) {
+			$button = &new GtkCheckButton('button' . $i);
+			$box2->pack_start($button);
+			$button->show();
+		}
+
+		$separator = &new GtkHSeparator();
+		$box1->pack_start($separator, false);
+		$separator->show();
+
+		$box2 = &new GtkVBox(false, 10);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2, false);
+		$box2->show();
+
+		$button = &new GtkButton('close');
+		$button->connect('clicked', 'close_window');
+		$box2->pack_start($button);
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$button->grab_default();
+		$button->show();
+	}
+	$windows['check_buttons']->show();
+}
+
 function create_clist()
 {
 	global	$windows;
@@ -890,11 +1125,20 @@ function create_main_window()
 					 'labels'			=> 'create_labels',
 					 'button box'		=> 'create_button_box',
 					 'toggle buttons'	=> 'create_toggle_buttons',
-					 'check buttons'	=> null,
-					 'radio buttons'	=> null,
+					 'check buttons'	=> 'create_check_buttons',
+					 'radio buttons'	=> 'create_radio_buttons',
 					 'tooltips'			=> 'create_tooltips',
 					 'entry'			=> 'create_entry',
 					 'clist'			=> 'create_clist',
+					 'color selection'	=> 'create_color_selection',
+					 'cursors'			=> 'create_cursor_test',
+					 'ctree'			=> null,
+					 'event watcher'	=> null,
+					 'notebook'			=> null,
+					 'drawing area'		=> null,
+					 'file selection'	=> null,
+					 'dialog'			=> null,
+					 'panes'			=> null,
 					);
 
 	$window = &new GtkWindow();

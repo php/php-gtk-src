@@ -20,12 +20,6 @@
   (parameter (type-and-name guint flags))
 )
 
-(method get_window
-  (of-object Widget (Gtk))
-  (c-name gtk_widget_get_window)
-  (return-type GdkWindow)
-)
-
 (method get_allocation
   (of-object Widget (Gtk))
   (c-name gtk_widget_get_allocation)

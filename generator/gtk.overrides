@@ -1375,3 +1375,37 @@ PHP_FUNCTION(wrap_gtk_radio_button_new)
 
 	php_gtk_object_init(wrapped_obj, this_ptr);	
 }
+%%
+override gtk_color_selection_set_color
+PHP_FUNCTION(wrap_gtk_color_selection_set_color)
+{
+	gdouble value[4];
+
+	NOT_STATIC_METHOD();
+
+	value[3] = 1.0;
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ddd|d",
+							&value[0], &value[1], &value[2], &value[3]))
+		return;
+
+	gtk_color_selection_set_color(GTK_COLOR_SELECTION(PHP_GTK_GET(this_ptr)), value);
+}
+%%
+override gtk_color_selection_get_color
+PHP_FUNCTION(wrap_gtk_color_selection_get_color)
+{
+	gdouble value[4];
+	GtkColorSelection *colorsel;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	colorsel = GTK_COLOR_SELECTION(PHP_GTK_GET(this_ptr));
+	gtk_color_selection_get_color(colorsel, value);
+	if (colorsel->use_opacity)
+		*return_value = *php_gtk_build_value("(dddd)", value[0], value[1], value[2], value[3]);
+	else
+		*return_value = *php_gtk_build_value("(ddd)", value[0], value[1], value[2]);
+}
