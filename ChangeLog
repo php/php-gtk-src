@@ -1,3 +1,83 @@
+2002-04-11  Andrei Zmievski  <andrei@php.net>
+
+    * main/php_gtk_ext.c.in
+      main/php_gtk_ext.w32.c
+      main/php_gtk_module.h
+      main/php_gtk_object.c
+      main/php_gtk_util.c
+      test/gtk.php
+      generator/arg_types.php
+      generator/definitions.php
+      generator/doc_templates.php
+      generator/docgen.php
+      generator/docmerger.php
+      generator/generator.php
+      generator/override.php
+      generator/scheme.php
+      generator/templates.php
+      main/Makefile.frag
+      main/php_gtk.c
+      main/php_gtk.h
+      ext/scrollpane/Makefile.frag
+      ext/scrollpane/config.m4
+      ext/scrollpane/php_scrollpane.c
+      ext/scrollpane/php_scrollpane.h
+      ext/skeleton/Makefile.frag
+      ext/skeleton/config.m4
+      ext/skeleton/php_skeleton.c
+      ext/skeleton/php_skeleton.h
+      ext/spaned/Makefile.frag
+      ext/spaned/config.m4
+      ext/spaned/php_spaned.c
+      ext/spaned/php_spaned.h
+      ext/sqpane/Makefile.frag
+      ext/sqpane/config.m4
+      ext/sqpane/php_sqpane.c
+      ext/sqpane/php_sqpane.h
+      ext/libglade/Makefile.frag
+      ext/libglade/config.m4
+      ext/libglade/php_libglade.c
+      ext/libglade/php_libglade.h
+      ext/piemenu/Makefile.frag
+      ext/piemenu/config.m4
+      ext/piemenu/php_piemenu.c
+      ext/piemenu/php_piemenu.h
+      ext/scintilla/Makefile.frag
+      ext/scintilla/config.m4
+      ext/scintilla/php_scintilla.c
+      ext/scintilla/php_scintilla.h
+      ext/combobutton/php_combobutton.h
+      ext/gdkpixbuf/php_gdkpixbuf.c
+      ext/gdkpixbuf/php_gdkpixbuf.h
+      ext/gtk+/Makefile.frag
+      ext/gtk+/config.m4
+      ext/gtk+/gtk.defs
+      ext/gtk+/php_gdk.c
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      ext/gtkhtml/Makefile.frag
+      ext/gtkhtml/config.m4
+      ext/gtkhtml/php_gtkhtml.c
+      ext/gtkhtml/php_gtkhtml.h
+      .cvsignore
+      Makefile.in
+      build2/build.mk
+      build2/build2.mk
+      config.m4
+      ext/combobutton/Makefile.frag
+      ext/combobutton/config.m4
+      ext/combobutton/php_combobutton.c
+      ext/ext_skel
+      php_gtk.m4
+      php_gtk_new.m4
+      php_gtk_old.m4:
+    This mega-patch adjusts the build system so that it can work automatically
+    with either old or new PHP build system. It also updates copyright years
+    and fixes loading of rc files by test/gtk.php.
+
+    Extension writers should take notice of the changes in the build system.
+
 2002-04-09  Andrei Zmievski  <andrei@php.net>
 
     * ext/gtk+/gtk.overrides
