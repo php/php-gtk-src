@@ -63,6 +63,7 @@ static inline zval* invoke_getter(zval *object, char *property)
 	prop_getter_t *getter;
 	zval result, *result_ptr = NULL;
 	int found = FAILURE;
+	TSRMLS_FETCH();
 
 	ZVAL_NULL(&result);
 	for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
@@ -84,6 +85,7 @@ static inline int invoke_setter(zval *object, char *property, zval *value)
 	zend_class_entry *ce;
 	prop_setter_t *setter;
 	int found = FAILURE;
+	TSRMLS_FETCH();
 
 	for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
 		if (zend_hash_index_find(&php_gtk_prop_setters, (long)ce, (void **)&setter) == SUCCESS) {
