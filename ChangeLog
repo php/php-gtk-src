@@ -1,3 +1,32 @@
+2005-03-27  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      -** empty log message ***
+
+    * generator/arg_types.php
+      generator/definitions.php
+      generator/generator.php
+      generator/templates.php:
+      Make most of GObject-derived classes use property constructors. This
+      allows for widget subclassing in the future.
+
+    * ext/gtk+/gtk.defs:
+      We do need constructor property information after all.
+
+    * main/phpg_gobject.c:
+      Throw an exception if unable to construct the object.
+
+    * main/php_gtk.h
+      main/phpg_support.c:
+      Implement phpg_parse_ctor_props() that is used to convert a list of PHP
+      function parameters to a form suitable for g_object_newv().
+
+    * main/phpg_gvalue.c:
+      Add enum and flags cases to phpg_gvalue_from_zval().
+
+    * main/php_gtk_util.c:
+      Fix ^ case for 'i' and 'l' specifiers.
+
 2005-03-26  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/php_gtk_util.c:
