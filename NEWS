@@ -1,4 +1,4 @@
-Version ????  "As Yet unnamed and might be ZE2" 
+Version 1.0  "As Yet to be named by Andrei" 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      - added support for GtkCanvas widget (Alan)
      - added support for GdkImLib toolkit - experimental (Alan)
@@ -8,7 +8,7 @@ Version ????  "As Yet unnamed and might be ZE2"
      - fixed segfault when providing GtkCtree::insert_node wrong parameters
      - added GtkScintilla, GtkComboButton, GtkSpaned, GtkScrollpane to
        Win32 distribution (Frank)
- 
+     - fixed warning on GtkNotebook::switch-page signal (Alan)
 	 
 
 Version 0.5.2 "Bass does a body good" 01-Nov-2002
