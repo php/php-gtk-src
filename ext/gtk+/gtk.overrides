@@ -924,6 +924,35 @@ PHP_FUNCTION(gtk_clist_get_row_data)
 	}
 }
 %%
+override gtk_clist_get_pixtext
+PHP_FUNCTION(gtk_clist_get_pixtext)
+{
+	zval *php_pixmap = NULL, *php_mask = NULL;
+	int column, row;
+	gchar *text = NULL;
+	guint8 spacing;
+	GdkPixmap *pixmap = NULL;
+	GdkBitmap *mask = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &row, &column))
+		return;
+
+	if (!gtk_clist_get_pixtext(GTK_CLIST(PHP_GTK_GET(this_ptr)),
+							   row, column, &text, &spacing, &pixmap, &mask)) {
+		php_error(E_WARNING, "%s() cannot get pixtext value", get_active_function_name(TSRMLS_C));
+		return;
+	}
+
+	php_pixmap = php_gdk_pixmap_new(pixmap);
+	php_mask = php_gdk_bitmap_new(mask);
+
+	*return_value = *php_gtk_build_value("(siNN)", text, (int)spacing,
+										 php_pixmap, php_mask);
+
+}
+%%
 ignore gtk_menu_item_new_with_label 
 %%
 override gtk_menu_item_new
@@ -2077,19 +2106,8 @@ PHP_FUNCTION(gtk_ctree_node_get_pixtext)
 		return;
 	}
 
-	if (pixmap) {
-		php_pixmap = php_gdk_pixmap_new(pixmap);
-	} else {
-		MAKE_STD_ZVAL(php_pixmap);
-		ZVAL_NULL(php_pixmap);
-	}
-
-	if (mask) {
-		php_mask = php_gdk_bitmap_new(mask);
-	} else {
-		MAKE_STD_ZVAL(php_mask);
-		ZVAL_NULL(php_mask);
-	}
+	php_pixmap = php_gdk_pixmap_new(pixmap);
+	php_mask = php_gdk_bitmap_new(mask);
 
 	*return_value = *php_gtk_build_value("(siNN)", text, (int)spacing,
 										 php_pixmap, php_mask);
