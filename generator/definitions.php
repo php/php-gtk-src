@@ -30,7 +30,7 @@ abstract class Definition {
     {
         if ($this->is_constructor_of)
             $this->caller_owns_return = true;
-        else if (in_array($this->return_type, $char_types))
+        else if (in_array($this->return_type, self::$char_types))
             $this->caller_owns_return = true;
         else
             $this->caller_owns_return = false;
@@ -149,7 +149,7 @@ class Method_Def extends Definition {
             else if ($arg[0] == 'return-type')
                 $this->return_type = $arg[1];
             else if ($arg[0] == 'caller-owns-return')
-                $this->caller_owns_return = in_array($arg[1], Definition::$true_values);
+                $this->caller_owns_return = in_array($arg[1], self::$true_values);
             else if ($arg[0] == 'parameters') {
                 $param_type = null;
                 $param_name = null;
@@ -168,7 +168,7 @@ class Method_Def extends Definition {
                                             $param_default, $param_null);
                 }
             } else if ($arg[0] == 'varargs')
-                $this->varargs = in_array($arg[1], Definition::$true_values);
+                $this->varargs = in_array($arg[1], self::$true_values);
             else if ($arg[0] == 'deprecated')
                 $this->deprecated = $arg[1];
         }
@@ -206,7 +206,7 @@ class Function_Def extends Definition {
             else if ($arg[0] == 'return-type')
                 $this->return_type = $arg[1];
             else if ($arg[0] == 'caller-owns-return')
-                $this->caller_owns_return = in_array($arg[1], Definition::$true_values);
+                $this->caller_owns_return = in_array($arg[1], self::$true_values);
             else if ($arg[0] == 'parameters') {
                 $param_type = null;
                 $param_name = null;
@@ -225,7 +225,7 @@ class Function_Def extends Definition {
                                             $param_default, $param_null);
                 }
             } else if ($arg[0] == 'varargs')
-                $this->varargs = in_array($arg[1], Definition::$true_values);
+                $this->varargs = in_array($arg[1], self::$true_values);
             else if ($arg[0] == 'deprecated')
                 $this->deprecated = $arg[1];
         }
