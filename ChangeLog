@@ -1,3 +1,11 @@
+2004-11-10  Andrei Zmievski  <andreiz@gravitonic.com>
+
+    * generator/arg_types.php
+      generator/generator.php
+      main/php_gtk.h
+      main/phpg_gvalue.c:
+      Implement support for flags arg type.
+
 2004-11-07  Andrei Zmievski  <andreiz@gravitonic.com>
 
     * generator/arg_types.php
