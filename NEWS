@@ -6,12 +6,12 @@
     - ported Scribble example from C. (Andrei)
     - modified GdkWindow::get_pointer() to be simpler, without XInput support.
       (Andrei)
-    - changed 'area' event property to be an allocation. (Andrei)
+    - changed 'area' event property to be a GdkRectangle. (Andrei)
     - changed 'is_hint' event property to be boolean. (Andrei)
     - added ability to query the state and allocation of a widget. (Andrei)
     - added direct construction of pixmaps. (Andrei)
     - added GdkWindow::set_icon() method. (Andrei)
-    - implemented GtkList methods insert_items() and prepend_items. (Andrei)
+    - implemented GtkList methods insert_items() and prepend_items(). (Andrei)
     - implemented new PHP-like build system that supports adding extensions to
       PHP-GTK. (Andrei)
     - implemented GtkCTree methods node_get_pixtext(), node_get_pixmap(), and
