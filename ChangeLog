@@ -1,3 +1,47 @@
+2001-10-14  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * ext/sqpane/gtksqpane.c: Remove Win32 warnings
+
+    * win32/php_gtk.dsp
+      win32/scheme.dsp
+      main/php_gtk_ext.w32.c: Add SQPane to Win32 build
+
+    * ext/sqpane/gtksqpane.c:
+    Fix gtk_sqpane_hxor_line() not called on button release
+
+    * ext/sqpane/php_sqpane.c
+      ext/sqpane/php_sqpane.h: Prepare for Win32 build
+
+    * ext/ext_skel: Use only specified files instead of all.
+
+    * ext/skeleton/php_skeleton.h: Wrong header file included
+
+    * ext/skeleton/php_skeleton.c
+      ext/skeleton/php_skeleton.h:
+    Add missing header file and update php_skeleton.c
+
+    * test/sqpane.php: Added SQPane exmaple.
+
+    * ext/ext_skel
+      ext/skeleton/.cvsignore
+      ext/skeleton/Makefile.in
+      ext/skeleton/config.m4
+      ext/skeleton/php_skeleton.c
+      ext/skeleton/skeleton.overrides:
+    Added simple skeleton for new widgets and helper script.
+
+    * ext/sqpane/.cvsignore
+      ext/sqpane/Makefile.in
+      ext/sqpane/config.m4
+      ext/sqpane/gtksqpane.c
+      ext/sqpane/gtksqpane.h
+      ext/sqpane/php_sqpane.c
+      ext/sqpane/php_sqpane.h
+      ext/sqpane/sqpane.defs
+      ext/sqpane/sqpane.overrides:
+    - Added initial support for SQPane widget. 
+    - Added initial support for SQPane widget. (Markus)
+
 2001-10-13  Markus Fischer  <mfischer@guru.josefine.at>
 
     * ext/gtk+/gtk.overrides:
