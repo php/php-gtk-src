@@ -106,7 +106,10 @@ int php_gtk_startup_extensions(php_gtk_ext_entry **ext, int ext_count, int modul
 
 static inline void php_gtk_set_object(zval *zobj, void *obj, php_gtk_dtor_t dtor, zend_bool boxed)
 {
-	php_gtk_object *wrapper = (php_gtk_object *) zend_object_store_get_object(zobj TSRMLS_CC);
+	php_gtk_object *wrapper;
+	TSRMLS_FETCH();
+
+	wrapper= (php_gtk_object *) zend_object_store_get_object(zobj TSRMLS_CC);
 	wrapper->obj = obj;
 	wrapper->dtor = dtor;
 	zend_objects_store_add_ref(zobj TSRMLS_CC);

@@ -3026,6 +3026,7 @@ override gtk_font_selection_set_filter
 /* Convert a ZVAL to an array of gchar strings terminated with NULL */
 int php_gtk_array_to_gchar_array(zval *zvalue, gchar ***gchar_array)
 {
+	TSRMLS_FETCH();
 	/* If either no value was passed or its the PHP NULL value, return NULL
 	 * too. This is not an error but just an empty gchar array. */
 	if (zvalue == NULL || Z_TYPE_P(zvalue) == IS_NULL) {

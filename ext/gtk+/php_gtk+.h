@@ -29,7 +29,7 @@
 extern php_gtk_ext_entry gtk_plus_ext_entry;
 #define php_gtk_ext_gtk__ptr &gtk_plus_ext_entry
 
-PHP_GTK_API extern zend_object_handlers php_gtk_handlers;
+PHP_GTK_API extern zend_object_handlers *php_gtk_handlers;
 PHP_GTK_API extern zend_class_entry *php_gtk_exception_ce;
 PHP_GTK_API extern int le_gtk_object;
 extern int le_php_gtk_wrapper;
@@ -56,6 +56,7 @@ typedef struct _php_gtk_object {
 static inline GdkAtom php_gdk_atom_get(zval *wrapper)
 {
 	zval **atom;
+	TSRMLS_FETCH();
 	
 	zend_hash_find(Z_OBJPROP_P(wrapper), "atom", sizeof("atom"), (void**)&atom);
 	return (GdkAtom)Z_LVAL_PP(atom);

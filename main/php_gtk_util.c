@@ -26,6 +26,7 @@
 
 inline char *php_gtk_zval_type_name(zval *arg)
 {
+	TSRMLS_FETCH();
 	switch (Z_TYPE_P(arg)) {
 		case IS_NULL:
 			return "null";
@@ -524,6 +525,7 @@ int php_gtk_parse_args_hash_quiet(zval *hash, char *format, ...)
 PHP_GTK_API int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce)
 {
 	zend_class_entry *ce;
+	TSRMLS_FETCH();
 
 	if (Z_TYPE_P(wrapper) != IS_OBJECT)
 		return 0;
@@ -536,9 +538,10 @@ PHP_GTK_API int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce
 	return 0;
 }
 
-PHP_GTK_API void php_gtk_invalidate(zval *wrapper TSRMLS_DC)
+PHP_GTK_API void php_gtk_invalidate(zval *wrapper)
 {
 	zval *ex;
+	TSRMLS_FETCH();
 
 	MAKE_STD_ZVAL(ex);
 	object_init_ex(ex, php_gtk_exception_ce);

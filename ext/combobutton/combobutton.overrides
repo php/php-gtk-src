@@ -45,5 +45,5 @@ PHP_FUNCTION(gtk_combobutton_new)
 		return;
 	}
 
-	php_gtk_object_init(wrapped_obj, this_ptr);
+	php_gtk_object_init(wrapped_obj, this_ptr TSRMLS_CC);
 }

@@ -42,7 +42,7 @@ HashTable php_gtk_prop_desc;
 
 //static const char *php_gtk_wrapper_key  = "php_gtk::wrapper";
 
-PHP_GTK_API zend_object_handlers php_gtk_handlers;
+PHP_GTK_API zend_object_handlers *php_gtk_handlers;
 
 static inline void php_gtk_destroy_object(php_gtk_object *object, zend_object_handle handle TSRMLS_DC)
 {
@@ -62,6 +62,7 @@ static inline zval* invoke_getter(zval *object, char *property)
 	prop_getter_t *getter;
 	zval result, *result_ptr = NULL;
 	int found = FAILURE;
+	TSRMLS_FETCH();
 
 	ZVAL_NULL(&result);
 	for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
@@ -83,6 +84,7 @@ static inline int invoke_setter(zval *object, char *property, zval *value)
 	zend_class_entry *ce;
 	prop_setter_t *setter;
 	int found = FAILURE;
+	TSRMLS_FETCH();
 
 	for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
 		if (zend_hash_index_find(&php_gtk_prop_setters, (long)ce, (void **)&setter) == SUCCESS) {
@@ -140,7 +142,7 @@ static void php_gtk_write_property(zval *object, zval *member, zval *value TSRML
 
 	wrapper = (php_gtk_object *) zend_object_store_get_object(object TSRMLS_CC);
 	if (invoke_setter(object, Z_STRVAL_P(member), value) == FAILURE) {
-		std_object_handlers.write_property(object, member, value TSRMLS_CC);
+		php_gtk_handlers->write_property(object, member, value TSRMLS_CC);
 	}
 
 	if (member == &tmp_member) {
@@ -164,7 +166,7 @@ static zval *php_gtk_read_property(zval *object, zval *member TSRMLS_DC)
 	wrapper = (php_gtk_object *) zend_object_store_get_object(object TSRMLS_CC);
 	rv = invoke_getter(object, Z_STRVAL_P(member));
 	if (!rv) {
-		rv = std_object_handlers.read_property(object, member TSRMLS_CC);
+		rv = php_gtk_handlers->read_property(object, member TSRMLS_CC);
 	}
 
 	if (member == &tmp_member) {
@@ -180,7 +182,7 @@ static zend_object_value create_php_gtk_object(zend_class_entry *ce TSRMLS_DC)
 	php_gtk_object *object;
 	prop_desc_t *prop_desc;
 
-	zov.handlers = &php_gtk_handlers;
+	zov.handlers = php_gtk_handlers;
 
 	if (zend_hash_index_find(&php_gtk_prop_desc, (long)ce, (void **)&prop_desc) == SUCCESS) {
 		if (prop_desc->have_getter) {
@@ -544,7 +546,10 @@ GtkArg *php_gtk_hash_as_args(zval *hash, GtkType type, gint *nargs)
 	ulong num_key;
 	GtkArg *arg = NULL;
 	GtkArgInfo *info;
-	HashTable *ht = HASH_OF(hash);
+	HashTable *ht;
+	TSRMLS_FETCH();
+
+	ht = HASH_OF(hash);
 
 	gtk_type_class(type);
 	*nargs = zend_hash_num_elements(ht);
@@ -586,8 +591,11 @@ GtkArg *php_gtk_hash_as_args(zval *hash, GtkType type, gint *nargs)
 int php_gtk_args_from_hash(GtkArg *args, int nparams, zval *hash)
 {
 	zval **item;
-	HashTable *ht = HASH_OF(hash);
+	HashTable *ht;
 	int i;
+	TSRMLS_FETCH();
+
+	ht = HASH_OF(hash);
 
 	for (zend_hash_internal_pointer_reset(ht), i = 0;
 		 i < nparams && zend_hash_get_current_data(ht, (void **)&item) == SUCCESS;
@@ -1389,6 +1397,7 @@ void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference
 PHP_GTK_API zval php_gtk_get_property(zend_property_reference *property_reference)
 {
 	zval foo;
+	INIT_ZVAL(foo);
 	return foo;
 }
 
