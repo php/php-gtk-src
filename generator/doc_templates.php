@@ -124,4 +124,33 @@ $no_parameter_tpl = <<<EOD
 
 EOD;
 
+$props_start_tpl= <<<EOD
+
+ <properties>
+
+EOD;
+
+$props_end_tpl= <<<EOD
+
+ </properties>
+
+EOD;
+
+$prop_start_tpl = <<<EOD
+
+  <property id="%s.%s.property.%s" type="ro">
+   <propname>%s</propname>
+   <proptype>%s</proptype>
+
+EOD;
+
+$prop_end_tpl = <<<EOD
+   <shortdesc>
+   </shortdesc>
+   <desc>
+   </desc>
+  </property>
+
+EOD;
+
 ?>

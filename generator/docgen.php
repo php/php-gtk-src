@@ -130,11 +130,45 @@ class DocGenerator {
 
 		$this->write_constructor($object);
 		$this->write_methods($object);
+		$this->write_properties($object);
 		if($update_docs)
 			fwrite($this->fp,
 				  $this->docmerger->get_section_contents(NULL, SIGNALS, NULL));
 
 		fwrite($this->fp, $class_end_tpl);
+	}
+
+	function write_properties($object)
+	{
+		global	$props_start_tpl,
+				$props_end_tpl;
+
+		if (count($object->fields) == 0)
+			return;
+		
+		fwrite($this->fp, $props_start_tpl);
+
+		foreach ($object->fields as $field) {
+			$this->write_property($object, $field);
+		}
+		
+		fwrite($this->fp, $props_end_tpl);
+	}
+
+	function write_property($object, $field)
+	{
+		global	$prop_start_tpl,
+				$prop_end_tpl;
+
+		list($field_type, $field_name) = $field;
+		if (($doc_type = $this->get_type($field_type)) === false) {
+			$doc_type = 'XXX';
+		}
+
+		fwrite($this->fp, sprintf($prop_start_tpl, $this->prefix,
+								  strtolower($object->in_module . $object->name),
+								  $field_name, $field_name, $doc_type));
+		fwrite($this->fp, $prop_end_tpl);
 	}
 
 	function write_methods($object)
@@ -350,6 +384,10 @@ class DocGenerator {
 
 $argc = $HTTP_SERVER_VARS['argc'];
 $argv = $HTTP_SERVER_VARS['argv'];
+
+/* An ugly hack to counteract PHP's pernicious desire to treat + as an argument
+   separator in command-line version. */
+array_walk($argv, create_function('&$x', '$x = urldecode($x);'));
 
 $result = Console_Getopt::getopt($argv, 'o:p:r:d:s:l:u');
 if (!$result || count($result[1]) < 2)
