@@ -1,3 +1,21 @@
+2001-08-18  Andrei Zmievski  <andrei@ispi.net>
+
+    * test/gtk.php:
+    Fix the event watcher example.
+
+    * NEWS: *** empty log message ***
+
+    * main/php_gtk_object.c
+      test/gtk.php
+      ext/gtk+/gtk.overrides:
+    - Fixed callbacks bug that would not invoke a callback if it took a parameter
+      by reference.
+    - Changed "GTK_TYPE_POINTER not supported" from warning to notice and made it
+      return NULL instead of aborting.
+    - Integrated a patch from Markus that implements functions
+      signal_(add|remove)_emission_hook(), signal_lookup(), signal_name() and adds
+      a few more examples to gtk.php.
+
 2001-08-15  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/gtk.overrides
