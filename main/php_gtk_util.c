@@ -686,6 +686,10 @@ zval *php_gtk_array_as_hash(zval ***values, int num_values, int start, int lengt
 	else if (start+length > num_values)
 		length = num_values-start;
 
+	if (length == 0) {
+		return NULL;
+	}
+
 	MAKE_STD_ZVAL(hash);
 	array_init(hash);
 

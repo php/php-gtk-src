@@ -88,12 +88,11 @@ static void phpg_closure_marshal(GClosure *closure,
     }
 
 	params = (zval ***)emalloc(n_params * sizeof(zval **));
-    for (i = 0; i < n_param_values ; ) {
-        zval **item = emalloc(sizeof(zval *));
-        if (phpg_gvalue_to_zval(&param_values[i], item, FALSE TSRMLS_CC) != SUCCESS) {
+    for (i = 0; i < n_param_values; i++) {
+        params[i] = emalloc(sizeof(zval *));
+        if (phpg_gvalue_to_zval(&param_values[i], params[i], FALSE TSRMLS_CC) != SUCCESS) {
             goto err_marshal;
 		}
-        params[i++] = item;
     }
 
     if (phpg_closure->user_args) {

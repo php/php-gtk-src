@@ -156,7 +156,9 @@ zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 		if (ret == SUCCESS) {
 			ALLOC_ZVAL(result_ptr);
 			*result_ptr = result;
-            INIT_PZVAL(result_ptr);
+            //INIT_PZVAL(result_ptr);
+            result_ptr->refcount = 0;
+            result_ptr->is_ref = 0;
         } else {
             result_ptr = EG(uninitialized_zval_ptr);
         }
@@ -492,9 +494,47 @@ PHP_GTK_API void phpg_gobject_watch_closure(zval *zobj, GClosure *closure TSRMLS
  * GObject PHP class definition
  */
 
-static PHP_METHOD(GObject, __construct)
+PHP_GTK_EXPORT_CE(gobject_ce) = NULL;
+
+/* {{{ GObject::connect */
+static PHP_METHOD(GObject, connect)
 {
+    char *signal = NULL;
+    zval *callback;
+    zval *extra = NULL;
+    GObject *obj = NULL;
+    guint signal_id, handler_id;
+    GQuark detail = 0;
+    GClosure *closure = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (ZEND_NUM_ARGS() < 2) {
+        php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
+                  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+        return;
+    }
+
+    if (!php_gtk_parse_args(2, "sV", &signal, &callback)) {
+        return;
+    }
+
+    obj = PHPG_GET(this_ptr);
+    if (!g_signal_parse_name(signal, G_OBJECT_TYPE(obj), &signal_id, &detail, TRUE)) {
+        php_error(E_WARNING, "%s(): unknown signal name", get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
+    closure = phpg_closure_new(callback, extra, TRUE TSRMLS_CC);
+    if (extra) {
+        zval_ptr_dtor(&extra);
+    }
+    phpg_gobject_watch_closure(this_ptr, closure);
+    handler_id = g_signal_connect_closure_by_id(obj, signal_id, detail, closure, FALSE);
+    RETURN_LONG(handler_id);
 }
+/* }}} */
 
 /* {{{ GObject::__tostring() */
 static PHP_METHOD(GObject, __tostring)
@@ -514,12 +554,10 @@ static PHP_METHOD(GObject, __tostring)
 /* }}} */
 
 static zend_function_entry gobject_methods[] = {
-	ZEND_ME(GObject, __construct, NULL, ZEND_ACC_PUBLIC)
-	ZEND_ME(GObject, __tostring, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(GObject, connect, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(GObject, __tostring, NULL, ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}
 };
-
-PHP_GTK_EXPORT_CE(gobject_ce) = NULL;
 
 void phpg_gobject_register_self()
 {
