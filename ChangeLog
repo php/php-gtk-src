@@ -1,3 +1,11 @@
+2003-07-16  Frank M. Kromann  <frank@kromann.info>
+
+    * ext/extra/.cvsignore:
+      Ignore MSVC output
+
+    * ext/extra/extra.dsp:
+      Adding project for GtkExtra on Win32
+
 2003-07-15  Frank M. Kromann  <frank@kromann.info>
 
     * (ZE2_PORT)
