@@ -549,6 +549,37 @@
   (parameter (type-and-name gint tag))
 )
 
+(function gdk_pointer_grab
+  (c-name gdk_pointer_grab)
+  (return-type gint)
+  (parameter (type-and-name GdkWindow* window))
+  (parameter (type-and-name gint owner_events))
+  (parameter (type-and-name GdkEventMask event_mask))
+  (parameter (type-and-name GdkWindow* confine_to) (null-ok))
+  (parameter (type-and-name GdkCursor* cursor) (null-ok))
+  (parameter (type-and-name guint32 time))
+)
+
+(function gdk_pointer_ungrab
+  (c-name gdk_pointer_ungrab)
+  (return-type none)
+  (parameter (type-and-name guint32 time))
+)
+
+(function gdk_keyboard_grab
+  (c-name gdk_keyboard_grab)
+  (return-type gint)
+  (parameter (type-and-name GdkWindow* window))
+  (parameter (type-and-name gboolean owner_events))
+  (parameter (type-and-name guint32 time))
+)
+
+(function gdk_keyboard_ungrab
+  (c-name gdk_keyboard_ungrab)
+  (return-type none)
+  (parameter (type-and-name guint32 time))
+)
+
 (function pointer_is_grabbed
   (c-name gdk_pointer_is_grabbed)
   (return-type gboolean)
