@@ -95,7 +95,7 @@ function create_labels()
 	if (!isset($windows['labels'])) {
 		$window = &new GtkWindow;
 		$windows['labels'] = $window;
-		$window->connect('delete-event', delete_event);
+		$window->connect('delete-event', 'delete_event');
 		$window->set_title('GtkLabel');
 
 		$vbox = &new GtkVBox(false, 5);
