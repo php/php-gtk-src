@@ -1,3 +1,28 @@
+2005-01-18  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.defs
+      generator/definitions.php
+      generator/generator.php:
+      - Make generator support static methods.
+      - Adjust gtk.defs to move some methods that were in gtk:: namespace into
+        the proper classes.
+
+    * .cvsignore:
+      Add .gdb* files.
+
+    * ext/gtk+/gdk.defs
+      ext/gtk+/gtk.defs
+      ext/gtk+/pango.defs
+      generator/generator.php
+      generator/templates.php
+      main/php_gtk.h
+      main/php_gtk_util.c:
+      Implement deprecation warnings.
+
+    * ext/gtk+/gtk.defs:
+      Add is-constructor-of to certain functions to indicate that they are, in
+      fact, static constructors.
+
 2005-01-17  Andrei Zmievski  <andreiz@gravitonic.com>
 
     * ext/gtk+/gtk.defs
