@@ -34,7 +34,7 @@
 #if HAVE_PHP_GTK
 
 #include "zend_objects_API.h"
-#include "zend_default_classes.h"
+#include "zend_exceptions.h"
 
 #define PHP_GTK_VERSION "2.0.0"
 
@@ -148,7 +148,7 @@ extern PHP_GTK_API zend_class_entry *phpg_generic_exception;
 extern PHP_GTK_API zend_class_entry *phpg_construct_exception;
 extern PHP_GTK_API zend_class_entry *phpg_type_exception;
 
-PHP_GTK_API zend_object_handlers php_gtk_handlers;
+extern PHP_GTK_API zend_object_handlers php_gtk_handlers;
 
 /* Function declarations. */
 

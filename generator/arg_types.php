@@ -534,12 +534,12 @@ class Object_Arg extends Arg_Type {
 
         $info->var_list->add($type, 'php_retval');
         if ($owns_return) {
-            $info->post_code[] = "    phpg_gobject_new((GObject *)php_retval, &this_ptr);\n" .
+            $info->post_code[] = "    phpg_gobject_new((GObject *)php_retval, &return_value);\n" .
                                  "    if (php_retval != NULL) {\n" .
                                  "        g_object_unref(php_retval);\n" .
                                  "    }";
         } else {
-            $info->post_code[] = "    phpg_gobject_new((GObject *)php_retval, &this_ptr);";
+            $info->post_code[] = "    phpg_gobject_new((GObject *)php_retval, &return_value);";
         }
     }
 }

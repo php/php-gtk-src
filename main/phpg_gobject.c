@@ -457,7 +457,7 @@ PHP_GTK_API void phpg_gobject_new(GObject *obj, zval **zobj TSRMLS_DC)
 		pobj = zend_object_store_get_object(*zobj TSRMLS_CC);
 		pobj->obj = obj;
 		pobj->dtor = (phpg_dtor_t) g_object_unref;
-		g_object_set_qdata(obj, gobject_wrapper_key, (void*)handle);
+		g_object_set_qdata(obj, gobject_wrapper_key, (void*)Z_OBJ_HANDLE_PP(zobj));
 	}
 }
 /* }}} */

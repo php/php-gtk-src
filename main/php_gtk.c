@@ -39,6 +39,7 @@
 
 zend_llist php_gtk_ext_registry;
 PHP_GTK_API GHashTable *php_gtk_class_hash = NULL;
+PHP_GTK_API zend_object_handlers php_gtk_handlers;
 
 zend_module_entry gtk_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901

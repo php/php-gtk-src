@@ -154,6 +154,7 @@ ignore
 	gtk_text_view_new_with_buffer
 	gtk_tooltips_data_get
 	gtk_trace_referencing
+	gtk_tree_view_new_with_model
 	gtk_type_check_class_cast
 	gtk_type_check_object_cast
 	gtk_type_register_enum
