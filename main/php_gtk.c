@@ -99,6 +99,12 @@ static void php_gtk_ext_destructor(php_gtk_ext_entry *ext)
 	}
 }
 
+static void php_gtk_prop_info_destroy(void *pi_hash)
+{
+	HashTable *pih = (HashTable *) pi_hash;
+	zend_hash_destroy(pih);
+}
+
 /* Remove if there's nothing to do at request start */
 PHP_RINIT_FUNCTION(gtk)
 {
@@ -111,16 +117,27 @@ PHP_RINIT_FUNCTION(gtk)
 	zend_hash_init_ex(&php_gtk_type_hash, 50, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_callback_hash, 50, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_prop_desc, 50, NULL, NULL, 1, 0);
+	zend_hash_init_ex(&phpg_prop_info, 50, NULL, (dtor_func_t) php_gtk_prop_info_destroy, 1, 0);
 	
 	zend_unset_timeout(TSRMLS_C);
 	zend_set_timeout(0);
 
+	php_gtk_handlers = zend_get_std_object_handlers();
+
+	/*
+	 * Initialize the type system and the GType wrapper class.
+	 */
+	g_type_init();
+	php_gtype_register_self();
+
+	/* XXX
 	if (php_gtk_startup_all_extensions(module_number) == FAILURE) {
 		php_error(E_WARNING, "Unable to start internal extensions");
 		return FAILURE;
 	}
 
 	php_gtk_startup_shared_extensions(module_number);
+	*/
 
 	return SUCCESS;
 }
@@ -132,6 +149,7 @@ PHP_RSHUTDOWN_FUNCTION(gtk)
 	zend_hash_destroy(&php_gtk_prop_setters);
 	zend_hash_destroy(&php_gtk_rsrc_hash);
 	zend_hash_destroy(&php_gtk_type_hash);
+	zend_hash_destroy(&phpg_prop_info);
 
 	zend_llist_destroy(&php_gtk_ext_registry);
 

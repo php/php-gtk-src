@@ -544,7 +544,7 @@ PHP_GTK_API void php_gtk_invalidate(zval *wrapper)
 	TSRMLS_FETCH();
 
 	MAKE_STD_ZVAL(ex);
-	object_init_ex(ex, php_gtk_exception_ce);
+	/* object_init_ex(ex, php_gtk_exception_ce); */
 	EG(exception) = ex;
 	//if (!wrapper) return;
 	//zend_objects_store_delete_obj(wrapper TSRMLS_CC);

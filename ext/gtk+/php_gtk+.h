@@ -26,8 +26,10 @@
 #include <gtk/gtk.h>
 #include "gtk/gtkinvisible.h"
 
+/* XXX
 extern php_gtk_ext_entry gtk_plus_ext_entry;
 #define php_gtk_ext_gtk__ptr &gtk_plus_ext_entry
+*/
 
 PHP_GTK_API extern zend_object_handlers *php_gtk_handlers;
 PHP_GTK_API extern zend_class_entry *php_gtk_exception_ce;
@@ -45,14 +47,6 @@ PHP_GTK_API extern int le_gdk_drag_context;
 PHP_GTK_API extern int le_gtk_accel_group;
 PHP_GTK_API extern int le_gtk_style;
 
-typedef void (*php_gtk_dtor_t)(void *);
-
-typedef struct _php_gtk_object {
-	zend_object zobj;
-	void *obj;
-	php_gtk_dtor_t dtor;
-} php_gtk_object;
-
 static inline GdkAtom php_gdk_atom_get(zval *wrapper)
 {
 	zval **atom;
@@ -62,7 +56,6 @@ static inline GdkAtom php_gdk_atom_get(zval *wrapper)
 	return (GdkAtom)Z_LVAL_PP(atom);
 }
 
-#define PHP_GTK_GET(w)				PHP_GTK_GET_GENERIC(w, GtkObject*, le_gtk_object)
 #define PHP_GDK_EVENT_GET(w)		PHP_GTK_GET_GENERIC(w, GdkEvent*, le_php_gtk_wrapper)
 #define PHP_GDK_WINDOW_GET(w)		PHP_GTK_GET_GENERIC(w, GdkWindow*, le_gdk_window)
 #define PHP_GDK_PIXMAP_GET(w)		PHP_GTK_GET_GENERIC(w, GdkPixmap*, le_gdk_window)
@@ -102,9 +95,8 @@ PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtk_fixed_child_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtk_clist_row_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtk_allocation_ce);
 
-#include "gen_gtk.h"
+/* #include "gen_gtk.h" */
 
-PHP_GTK_API zval *php_gtk_new(GtkObject *obj);
 zval *php_gdk_event_new(GdkEvent *event);
 zval *php_gdk_window_new(GdkWindow *window);
 zval *php_gdk_pixmap_new(GdkPixmap *pixmap);

@@ -28,8 +28,10 @@
 
 #if HAVE_PHP_GTK
 
+/* XXX
 extern zend_module_entry gtk_module_entry;
 #define phpext_php_gtk_ptr &gtk_module_entry
+*/
 
 PHP_MINIT_FUNCTION(gtk);
 PHP_MSHUTDOWN_FUNCTION(gtk);
