@@ -517,8 +517,8 @@ zval *php_gtk_arg_as_value(const GValue *arg)
 {
 	zval *value;
 	TSRMLS_FETCH();
-
-	switch (G_VALUE_TYPE(arg)) {
+	//printf("got arg type %s \n",  g_type_name(G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(arg))));
+	switch (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(arg))) {
 
 		case G_TYPE_INVALID:
 		case G_TYPE_NONE:
@@ -587,7 +587,7 @@ zval *php_gtk_arg_as_value(const GValue *arg)
 */
 		case G_TYPE_OBJECT:
 			/* just guessing the api here.. - g_value_get_pointer:?? - cast to G_OBJECT!? */
-			value = php_gtk_new_base_gobject(G_OBJECT(arg));
+			value = php_gtk_new_base_gobject(g_value_get_object(arg));
 			break;
 
 		case G_TYPE_POINTER:
@@ -1379,15 +1379,7 @@ PHP_GTK_API void php_gtk_closure_marshal(
 	 *  [3] the filename where the callback was specified
 	 *  [4] the line number where the callback was specified
 	 */
-	//if (zend_hash_num_elements(Z_ARRVAL_P(callback_data)) > 1) {
-	//	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
-	//	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&pass_object);
-	//	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_filename);
-	//	zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&callback_lineno);
-	//}
-	//printf("callback get: %x\n",closure->callback);
-	//return;
-	
+	 
 	if (!zend_is_callable(closure->callback, 0, &callback_name)) {
 		if (closure->callback_filename) {
 			php_error(E_WARNING, "Unable to call signal callback '%s' specified in %s on line %d", 
@@ -1401,38 +1393,23 @@ PHP_GTK_API void php_gtk_closure_marshal(
 		efree(callback_name);
 		return;
 	}
-	/* [TODO] = convert arguments.... */
-	// dummy code!!
-	//printf("attempt to call %s\n",callback_name);
-	//return;
+	  
 	
-	 
 	gtk_args = php_gtk_args_as_hash((int) n_param_values,  param_values);
 	
-	if (closure->object) {
-		wrapper = php_gtk_new_base_gobject(closure->object);
-	}
-	
- 
-	if (wrapper) {
-		MAKE_STD_ZVAL(params);
-		array_init(params);
-		zend_hash_next_index_insert(Z_ARRVAL_P(params), &wrapper, sizeof(zval *), NULL);
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0 TSRMLS_CC);
-			zval_ptr_dtor(&gtk_args);
-	} else {
-	//	/* Otherwise, the only parameters will be GTK signal arguments. */
-		if (!closure->pass_object && zend_hash_index_exists(HASH_OF(gtk_args), 0)) {
-			 zend_hash_index_del(HASH_OF(gtk_args), 0);
-		}
-		params = gtk_args;
-	
-	}
 	 
+	/* Otherwise, the only parameters will be GTK signal arguments. */
+	if (!closure->pass_object && zend_hash_index_exists(HASH_OF(gtk_args), 0)) {
+		 zend_hash_index_del(HASH_OF(gtk_args), 0);
+	}
+     	params = gtk_args;
+	
+	  
 	/*
 	 * If there are extra arguments specified by user, add them to the parameter
 	 * array.
 	 */
+	
 	if (closure->extra) {
 		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(closure->extra), 0 TSRMLS_CC);
 	}
