@@ -1,3 +1,115 @@
+2001-05-04  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/chunk-common.xsl
+      docs/stylesheets/xsl/html/label.xsl
+      docs/stylesheets/xsl/html/overrides.xsl
+      docs/stylesheets/xsl/html/title.xsl
+      docs/stylesheets/xsl/html-common.xsl:  - Link to copyright properly
+     - Change size of Authorgroup titles
+
+2001-05-04  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: A few more missed news.
+
+    * TODO: Not necessary.
+
+2001-05-04  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/en/classes/gtkclist.xml
+      docs/en/classes/gtkctree.xml
+      docs/stylesheets/xsl/html/name_to_id.xsl
+      docs/manual.xml.in: That's the entire hierarchy shell in, now ..
+
+2001-05-04  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/chunk.xsl.in
+      docs/stylesheets/xsl/html.xsl.in
+      docs/stylesheets/xsl/phpweb.xsl.in
+      docs/.cvsignore
+      docs/Makefile.in: Everything is now built under build/*
+
+    * docs/stylesheets/xsl/.cvsignore
+      docs/stylesheets/xsl/chunk.xsl.in
+      docs/stylesheets/xsl/html-common.xsl
+      docs/stylesheets/xsl/html/chunk-common.xsl
+      docs/stylesheets/xsl/html/chunk.xsl
+      docs/stylesheets/xsl/html/custom.titlepage.xml
+      docs/stylesheets/xsl/html/custom.titlepage.xsl
+      docs/stylesheets/xsl/html/html.xsl
+      docs/stylesheets/xsl/html/overrides.xsl
+      docs/stylesheets/xsl/html/phpweb.xsl
+      docs/stylesheets/xsl/phpweb.xsl.in
+      docs/.cvsignore
+      docs/Makefile.in
+      docs/configure.in
+      docs/dbxml/phpgtkdoc.dtd:
+     - Updated Makefile & configure to add make phpweb
+     - Corrected typo in phpgtkdoc.dtd
+     - Updated stylesheets with various minor stylelistic changes
+     - Added the beginings of the phpweb stylesheets
+     - Corrected the titlepage stylesheet (Kinda :))
+
+2001-05-04  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk_object.c
+      src/php_gtk_types.c: Allow assigning custom props on overloaded props.
+
+    * src/php_gtk_types.c:
+    Nuke the object destruction since it's not necessary after the latest changes.
+
+2001-05-04  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/en/classes/gtkadjustment.xml
+      docs/en/classes/gtkhseparator.xml
+      docs/en/classes/gtkpreview.xml
+      docs/en/classes/gtkprogress.xml
+      docs/en/classes/gtkprogressbar.xml
+      docs/en/classes/gtkseparator.xml
+      docs/en/classes/gtktooltips.xml
+      docs/en/classes/gtkvseparator.xml
+      docs/stylesheets/xsl/html/name_to_id.xsl
+      docs/manual.xml.in: SHELLSUIT#08
+
+    * docs/en/classes/gtkhruler.xml
+      docs/en/classes/gtkhscale.xml
+      docs/en/classes/gtkhscrollbar.xml
+      docs/en/classes/gtkrange.xml
+      docs/en/classes/gtkruler.xml
+      docs/en/classes/gtkscale.xml
+      docs/en/classes/gtkscrollbar.xml
+      docs/en/classes/gtkvruler.xml
+      docs/en/classes/gtkvscale.xml
+      docs/en/classes/gtkvscrollbar.xml
+      docs/manual.xml.in
+      docs/stylesheets/xsl/html/name_to_id.xsl: SHELLSUIT#07
+
+    * docs/stylesheets/xsl/html/name_to_id.xsl
+      docs/en/classes/gtkcalendar.xml
+      docs/en/classes/gtkcurve.xml
+      docs/en/classes/gtkdrawingarea.xml
+      docs/en/classes/gtkeditable.xml
+      docs/en/classes/gtkentry.xml
+      docs/en/classes/gtkspinbutton.xml
+      docs/en/classes/gtktable.xml
+      docs/en/classes/gtktext.xml
+      docs/en/classes/gtktoolbar.xml
+      docs/en/classes/gtktree.xml
+      docs/manual.xml.in: SHELLSUIT#06
+
+2001-05-04  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk.c
+      src/php_gtk_object.c
+      src/php_gtk_types.c
+      test/gtk.php
+      generator/arg_types.php
+      generator/generator.php
+      generator/gtk.overrides:
+    * Cleaned up cruft from the code generator that was left over from
+      trying to handle byref args automatically.
+    * Started working on having only one object wrapper for each boxed type
+      pointer. Obviously broke stuff, but will fix soon.
+
 2001-05-03  Andrei Zmievski  <andrei@ispi.net>
 
     * src/php_gtk.c
