@@ -1,3 +1,18 @@
+2001-05-23  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS
+      generator/gtk.overrides: Implemented GtkCTree::node_get_pixmap().
+
+2001-05-23  Frank M. Kromann  <frank@frontbase.com>
+
+    * generator/gtk.overrides: Nuke compiler warning
+
+2001-05-23  Andrei Zmievski  <andrei@ispi.net>
+
+    * test/gtk.php
+      NEWS
+      generator/gtk.overrides: Added GtkCTree::get_node_info().
+
 2001-05-22  Andrei Zmievski  <andrei@ispi.net>
 
     * generator/doc_templates.php
