@@ -1,3 +1,20 @@
+2001-04-14  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/chunk.xsl.in
+      docs/stylesheets/xsl/html.xsl.in
+      docs/stylesheets/xsl/html/chunk-common.xsl
+      docs/stylesheets/xsl/html/class.xsl
+      docs/configure.in: Prepairing to build manual with no chunks as well
+
+    * docs/stylesheets/xsl/bightml.xsl.in
+      docs/stylesheets/xsl/htmlhelp.xsl.in
+      docs/stylesheets/xsl/print.xsl.in
+      docs/Makefile.in
+      docs/configure.in
+      docs/makedocs.in:
+    - Removing files no longer needed or not used at this time.
+    - Update makefile and makedocs references to removed files
+
 2001-04-13  Andrei Zmievski  <andrei@ispi.net>
 
     * generator/arg_types.php
