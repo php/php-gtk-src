@@ -151,6 +151,13 @@ class Generator {
         }
 
         $info = new Wrapper_Info();
+        /*
+         * Slight hack that relies on both parameters being false when used to
+         * write out a constructor.
+         */
+        if (!$handle_return && !$is_method) {
+            $info->error_action = "PHPG_THROW_CONSTRUCT_EXCEPTION($dict[class])";
+        }
 
         /* need the extra comma for methods */
         if ($is_method) {

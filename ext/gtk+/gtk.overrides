@@ -436,7 +436,7 @@ PHP_METHOD
 			parent = GTK_WINDOW(PHPG_GOBJECT(php_parent));
 	}
 
-	if (php_flags && !phpg_gvalue_get_flags(GTK_TYPE_DIALOG_FLAGS, php_flags, (gint *)&flags) == FAILURE) {
+	if (php_flags && phpg_gvalue_get_flags(GTK_TYPE_DIALOG_FLAGS, php_flags, (gint *)&flags) == FAILURE) {
 		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMessageDialog);
 	}
 

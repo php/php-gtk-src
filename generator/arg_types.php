@@ -77,6 +77,7 @@ class Wrapper_Info {
     var $specifiers = '';
     var $pre_code   = array();
     var $post_code  = array();
+    var $error_action  = 'return';
 
     function __construct()
     {
@@ -346,7 +347,7 @@ class Double_Arg extends Arg_Type {
 
 /* {{{ Enum_Arg */
 class Enum_Arg extends Arg_Type {
-    static $enum_tpl  = "\n\tif (php_%(name) && phpg_gvalue_get_enum(%(typecode), php_%(name), (gint *)&%(name)) == FAILURE) {\n\t\treturn;\n\t}\n";
+    static $enum_tpl  = "\n\tif (php_%(name) && phpg_gvalue_get_enum(%(typecode), php_%(name), (gint *)&%(name)) == FAILURE) {\n\t\t%(on_error);\n\t}\n";
     var $enum_name = null;
     var $typecode = null;
 
@@ -365,8 +366,10 @@ class Enum_Arg extends Arg_Type {
         $info->var_list->add('zval', '*php_' . $name . ' = NULL');
         $info->arg_list[] = $name;
         $info->add_parse_list('V', '&php_' . $name);
-        $info->pre_code[] = aprintf(self::$enum_tpl, array('typecode' => $this->typecode,
-                                                           'name' => $name));
+        $info->pre_code[] = aprintf(self::$enum_tpl,
+                                    array('typecode' => $this->typecode,
+                                          'name' => $name,
+                                          'on_error' => $info->error_action));
     }
     
     function write_return($type, $owns_return, $info)
@@ -379,7 +382,7 @@ class Enum_Arg extends Arg_Type {
 
 /* {{{ Flags_Arg */
 class Flags_Arg extends Arg_Type {
-    static $flag_tpl = "\n\tif (php_%(name) && !phpg_gvalue_get_flags(%(typecode), php_%(name), (gint *)&%(name)) == FAILURE) {\n\t\treturn;\n\t}\n";
+    static $flag_tpl = "\n\tif (php_%(name) && phpg_gvalue_get_flags(%(typecode), php_%(name), (gint *)&%(name)) == FAILURE) {\n\t\t%(on_error);\n\t}\n";
     var $flag_name = null;
     var $typecode = null;
 
@@ -399,7 +402,8 @@ class Flags_Arg extends Arg_Type {
         $info->arg_list[] = $name;
         $info->add_parse_list('V', '&php_' . $name);
         $info->pre_code[] = aprintf(self::$flag_tpl, array('typecode' => $this->typecode,
-                                                           'name' => $name));
+                                                           'name' => $name,
+                                                           'on_error' => $info->error_action));
     }
     
     function write_return($type, $owns_return, $info)
@@ -539,7 +543,7 @@ class Boxed_Arg extends Arg_Type {
     } else {
         php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a valid %(typename) object\",
                   get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-        return;
+        %(on_error);
     }\n";
     const check_default_tpl = "
     if (php_%(name)) {
@@ -548,7 +552,7 @@ class Boxed_Arg extends Arg_Type {
         } else {
             php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a valid %(typename) object\",
                       get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-            return;
+            %(on_error);
         }
     }\n";
     const check_null_tpl = "
@@ -557,7 +561,7 @@ class Boxed_Arg extends Arg_Type {
             %(name) = (%(typename) *) PHPG_GBOXED(php_%(name));
         } else {
             php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a valid %(typename) object or null\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-            return;
+            %(on_error);
         }
     }\n";
     const check_null_default_tpl = "
@@ -569,7 +573,7 @@ class Boxed_Arg extends Arg_Type {
                 %(name) = (%(typename) *) PHPG_GBOXED(php_%(name));
             } else {
                 php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a valid %(typename) object or null\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-                return;
+                %(on_error);
             }
         }
     }\n";
@@ -590,12 +594,14 @@ class Boxed_Arg extends Arg_Type {
                 $info->var_list->add('zval', '*php_' . $name . ' = NULL');
                 $info->pre_code[] = aprintf(self::check_null_default_tpl, array('typecode' => $this->typecode,
                                                                                 'typename' => $this->boxed_type,
+                                                                                'on_error' => $info->error_action,
                                                                                 'name' => $name));
             } else {
                 $info->var_list->add($this->boxed_type, '*' . $name . ' = NULL');
                 $info->var_list->add('zval', '*php_' . $name);
                 $info->pre_code[] = aprintf(self::check_null_tpl, array('typecode' => $this->typecode,
                                                                         'typename' => $this->boxed_type,
+                                                                        'on_error' => $info->error_action,
                                                                         'name' => $name));
             }
 
@@ -612,12 +618,14 @@ class Boxed_Arg extends Arg_Type {
                 $info->var_list->add('zval', '*php_' . $name . ' = NULL');
                 $info->pre_code[] = aprintf(self::check_default_tpl, array('typecode' => $this->typecode,
                                                                            'typename' => $this->boxed_type,
+                                                                           'on_error' => $info->error_action,
                                                                            'name' => $name));
             } else {
                 $info->var_list->add($this->boxed_type, '*' . $name . ' = NULL');
                 $info->var_list->add('zval', '*php_' . $name);
                 $info->pre_code[] = aprintf(self::check_tpl, array('typecode' => $this->typecode,
                                                                    'typename' => $this->boxed_type,
+                                                                   'on_error' => $info->error_action,
                                                                    'name' => $name));
             }
 
@@ -759,7 +767,7 @@ class GdkRectanglePtr_Arg extends Arg_Type {
     const check_tpl = "
     if (phpg_rectangle_from_zval(php_%(name), &%(name)) == FAILURE) {
         php_error(E_WARNING, \"%s::%s() expects %(name) argument to be either a 4-element array or a GdkRectangle object\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-        return;
+        %(on_error);
     }";
     const check_null_tpl = "
     if (Z_TYPE_P(php_%(name)) == IS_NULL) {
@@ -768,7 +776,7 @@ class GdkRectanglePtr_Arg extends Arg_Type {
         %(name) = &%(name)_arg;
     } else {
         php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a 4-element array, a GdkRectangle object, or null\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-        return;
+        %(on_error);
     }";
     function write_param($type, $name, $default, $null_ok, $info)
     {
@@ -778,13 +786,15 @@ class GdkRectanglePtr_Arg extends Arg_Type {
             $info->var_list->add('zval', '*php_' . $name . ' = NULL');
             $info->add_parse_list('V', '&php_' . $name);
             $info->arg_list[] = $name;
-            $info->pre_code[] = aprintf(self::check_null_tpl, array('name' => $name));
+            $info->pre_code[] = aprintf(self::check_null_tpl, array('name' => $name,
+                                                                    'on_error' => $info->error_action));
         } else {
             $info->var_list->add('GdkRectangle', $name . ' = { 0, 0, 0, 0 }');
             $info->var_list->add('zval', '*php_' . $name);
             $info->add_parse_list('V', '&php_' . $name);
             $info->arg_list[] = '&' . $name;
-            $info->pre_code[] = aprintf(self::check_tpl, array('name' => $name));
+            $info->pre_code[] = aprintf(self::check_tpl, array('name' => $name,
+                                                               'on_error' => $info->error_action));
         }
     }
 }
@@ -799,7 +809,7 @@ class GType_Arg extends Arg_Type {
         $info->arg_list[] = $name;
         $info->add_parse_list('V', '&php_' . $name);
         $info->pre_code[] = "    if (($name = phpg_gtype_from_zval(php_$name)) == 0) {\n" .
-                            "        return;\n" .
+                            "        $info->error_action;\n" .
                             "    }\n";
     }
 
