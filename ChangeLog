@@ -1,3 +1,14 @@
+2005-03-29  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * generator/merge_defs.php
+      generator/missing_defs.php:
+      Add scripts for merging and listing missing defs.
+
+    * generator/Getopt.php
+      generator/definitions.php
+      generator/scheme.php:
+      Framework for merging different sets of diffs.
+
 2005-03-27  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides:
