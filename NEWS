@@ -1,3 +1,5 @@
+    - fixed bug with GtkStyle::copy() that was not returning the result
+      properly. (Andrei)
     - implemented support for struct based classes (GdkRectangle, GtkAllocation,
       GtkRequisition, etc). (Andrei)
     - finished drag-n-drop support. (Andrei)
