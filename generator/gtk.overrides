@@ -635,3 +635,61 @@ PHP_FUNCTION(wrap_gtk_list_append_items)
 
 	gtk_list_append_items(GTK_LIST(PHP_GTK_GET(this_ptr)), items);
 }
+%%
+ignore gtk_list_item_new_with_label
+%%
+override gtk_list_item_new
+PHP_FUNCTION(wrap_gtk_list_item_new)
+{
+	GtkObject *wrapped_obj;
+	gchar *text = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|s", &text)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	if (text)
+		wrapped_obj = (GtkObject *)gtk_list_item_new_with_label(text);
+	else
+		wrapped_obj = (GtkObject *)gtk_list_item_new();
+
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkListItem object",
+				get_active_function_name());
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr);
+}
+%%
+ignore gtk_button_new_with_label
+%%
+override gtk_button_new
+PHP_FUNCTION(wrap_gtk_button_new)
+{
+	GtkObject *wrapped_obj;
+	gchar *text = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|s", &text)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	if (text)
+		wrapped_obj = (GtkObject *)gtk_button_new_with_label(text);
+	else
+		wrapped_obj = (GtkObject *)gtk_button_new();
+
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkButton object",
+				  get_active_function_name());
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr);
+}

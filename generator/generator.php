@@ -282,8 +282,8 @@ class Generator {
 				$this->register_classes .= "\t$object->ce = zend_register_internal_class_ex(&ce, NULL, NULL);\n";
 			else {
 				$parent_obj = $this->parser->find_parent($object);
-				$this->register_classes .= "\t$object->ce = zend_register_internal_class_ex(&ce, $parent_obj->ce, NULL);\n"
-										. "\tg_hash_table_insert(php_gtk_class_hash, g_strdup(\"Gtk$object->name\"), $object->ce);\n";
+				$this->register_classes .= "\t$object->ce = zend_register_internal_class_ex(&ce, $parent_obj->ce, NULL);\n" .
+										   "\tg_hash_table_insert(php_gtk_class_hash, g_strdup(\"Gtk$object->name\"), $object->ce);\n";
 			}
 			$function_entry = sprintf($this->function_entry, $this->prefix . "_" . strtolower($object->name));
 			$constructor = $this->parser->find_constructor($object);

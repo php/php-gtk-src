@@ -49,7 +49,7 @@ class Defs_Parser {
 	var $file_name  	= null;
 	var $objects		= array();	// objects
 	var $functions		= array();	// module functions
-	var $constuctors	= array();  // object constructors
+	var $constructors	= array();  // object constructors
 	var $methods		= array();  // object methods
 	var $enums			= array();	// enums and flags
 	var $c_name			= array();  // C names of entities
@@ -113,7 +113,7 @@ class Defs_Parser {
 	{
 		$function_def 		= &new Function_Def($arg);
 		if (isset($function_def->is_constructor_of))
-			$this->constuctors[] = &$function_def;
+			$this->constructors[] = &$function_def;
 		else
 			$this->functions[] = &$function_def;
 		$this->c_name[] 	= &$function_def->c_name;
@@ -161,26 +161,18 @@ class Defs_Parser {
 
 	function find_constructor($obj)
 	{
-		$obj_constructor = null;
-		
-		foreach ($this->constuctors as $constructor) {
-			if ($constructor->is_constructor_of == $obj->name || $constructor->is_constructor_of == "Gtk$obj->name")
-				$obj_constructor = $constructor;
+		foreach ($this->constructors as $constructor) {
+			if ($constructor->is_constructor_of == $obj->c_name)
+				return $constructor;
 		}
-
-		return $obj_constructor;
 	}
 
 	function find_parent($obj)
 	{
-		$obj_parent = null;
-		
 		foreach ($this->objects as $object) {
 			if ($object->name == $obj->parent)
-				$obj_parent = $object;
+				return $object;
 		}
-
-		return $obj_parent;
 	}
 }
 
