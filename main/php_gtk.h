@@ -103,9 +103,10 @@ typedef struct {
 
 typedef struct {
 	PHPG_OBJ_HEADER
-	void *obj;
+	GObject *obj;
 	phpg_dtor_t dtor;
 	GSList *closures;
+	gboolean is_owned;
 } phpg_gobject_t;
 
 typedef struct {
