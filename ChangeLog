@@ -1,3 +1,13 @@
+2001-10-22  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * generator/arg_types.php:
+    - Revert Struct_Arg::write_return() fix. It actually broke ext/gtk+.
+
+    * generator/arg_types.php:
+    - Added property read/write for bool and double types.
+    - Fixed Struct_Arg::write_return().
+    - Recognize 'const' modifier with 'struct' and 'object' types.
+
 2001-10-19  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/gtk.defs:
