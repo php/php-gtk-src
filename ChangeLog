@@ -1,3 +1,10 @@
+2001-11-15  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/doc_templates.php
+      generator/docgen.php:
+    Generate properties. James, I didn't do anything about merging property
+    definitions, do you want to take care of that?
+
 2001-11-13  Frank M. Kromann  <frank@frontbase.com>
 
     * win32/php_gtk.dsp: Cleanup override files
