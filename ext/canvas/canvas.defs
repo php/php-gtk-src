@@ -1,0 +1,788 @@
+; from /usr/include/gtk-canvas/gtk-canvastypebuiltins.h
+;; -*- scheme -*-
+; object definitions ...
+
+(object CanvasItem 
+  (in-module Gtk)
+  (parent Object (Gtk))
+  (c-name GtkCanvasItem )
+)
+
+(object CanvasImage 
+  (in-module Gtk)
+  (parent CanvasItem (Gtk))
+  (c-name GtkCanvasImage )
+)
+
+(object CanvasLine 
+  (in-module Gtk)
+  (parent CanvasItem (Gtk))
+  (c-name GtkCanvasLine )
+)
+
+(object CanvasPolygon 
+  (in-module Gtk)
+  (parent CanvasItem (Gtk))
+  (c-name GtkCanvasPolygon )
+)
+
+(object CanvasRE 
+  (in-module Gtk)
+  (parent CanvasItem (Gtk))
+  (c-name GtkCanvasRE )
+)
+
+(object CanvasRect 
+  (in-module Gtk)
+  (parent CanvasRE (Gtk))
+  (c-name GtkCanvasRect )
+)
+
+(object CanvasEllipse 
+  (in-module Gtk)
+  (parent CanvasRE (Gtk))
+  (c-name GtkCanvasEllipse )
+)
+
+(object CanvasText 
+  (in-module Gtk)
+  (parent CanvasItem (Gtk))
+  (c-name GtkCanvasText )
+)
+
+(object CanvasWidget 
+  (in-module Gtk)
+  (parent CanvasItem (Gtk))
+  (c-name GtkCanvasWidget )
+)
+
+
+
+
+
+(object CanvasGroup 
+  (in-module Gtk)
+  (parent CanvasItem (Gtk))
+  (c-name GtkCanvasGroup )
+)
+
+(object Canvas 
+  (in-module Gtk)
+  (parent Layout (Gtk))
+  (c-name GtkCanvas )
+)
+
+
+
+;; this is a bit fake, but it's a shit load easier for the user to understand...
+
+(function gtk_canvas_item_new 
+  (c-name gtk_canvas_item_new)
+  (is-constructor-of GtkCanvasItem)
+  (return-type GtkCanvasItem*)
+  (parameter (type-and-name GtkCanvasGroup*        parent))
+  (parameter (type-and-name GtkType type))
+  (parameter (type-and-name const-gchar*        first_arg_name))
+;  (varargs t)
+)
+; use newv
+
+
+(function gtk_canvas_item_newv 
+  (c-name gtk_canvas_item_newv)
+  (is-constructor-of GtkCanvasItem)
+  (return-type GtkCanvasItem*)
+  (parameter (type-and-name GtkCanvasGroup*        parent))
+  (parameter (type-and-name GtkType type))
+  (parameter (type-and-name guint nargs))
+  (parameter (type-and-name GtkArg*        args))
+)
+
+
+
+
+(function gtk_canvas_image_new 
+  (c-name gtk_canvas_image_new)
+  (is-constructor-of GtkCanvasImage)
+  (return-type GtkCanvasImage*)
+  (parameter (type-and-name GtkCanvasGroup*        parent))
+ 
+  
+)
+
+ 
+
+(function gtk_canvas_line_new 
+  (c-name gtk_canvas_line_new)
+  (is-constructor-of GtkCanvasLine)
+  (return-type  GtkCanvasLine*)
+  (parameter (type-and-name GtkCanvasGroup*        parent))
+  
+)
+
+(function gtk_canvas_polygon_new 
+  (c-name gtk_canvas_polygon_new)
+  (is-constructor-of GtkCanvasPolygon)
+  (return-type GtkCanvasPolygon*)
+  (parameter (type-and-name GtkCanvasGroup*        parent))
+  (parameter (type-and-name GtkType type))
+
+)
+(function gtk_canvas_re_new 
+  (c-name gtk_canvas_re_new)
+  (is-constructor-of GtkCanvasRE)
+  (return-type GtkCanvasRE*)
+  (parameter (type-and-name GtkCanvasGroup*        parent))
+  (parameter (type-and-name GtkType type))
+
+)
+(function gtk_canvas_rect_new 
+  (c-name gtk_canvas_rect_new)
+  (is-constructor-of GtkCanvasRect)
+  (return-type GtkCanvasRect*)
+  (parameter (type-and-name GtkCanvasGroup*        parent))
+  (parameter (type-and-name GtkType type))
+
+)
+(function gtk_canvas_ellipse_new 
+  (c-name gtk_canvas_ellipse_new)
+  (is-constructor-of GtkCanvasEllipse)
+  (return-type GtkCanvasEllipse*)
+  (parameter (type-and-name GtkCanvasGroup*        parent))
+  (parameter (type-and-name GtkType type))
+)
+
+(function gtk_canvas_text_new 
+  (c-name gtk_canvas_text_new)
+  (is-constructor-of GtkCanvasText)
+  (return-type GtkCanvasText*)
+  (parameter (type-and-name GtkCanvasGroup*        parent))
+  (parameter (type-and-name GtkType type))
+
+)
+
+(function gtk_canvas_widget_new 
+  (c-name gtk_canvas_widget_new)
+  (is-constructor-of GtkCanvasWidget)
+  (return-type GtkCanvasWidget*)
+  (parameter (type-and-name GtkCanvasGroup*        parent))
+  (parameter (type-and-name GtkType type))
+
+)
+
+
+
+;; Enumerations and flags ...
+
+(enum 
+  (in-module GtkCanvastypebuiltins)
+  (value (name requested) (c-name GTK_CANVAS_UPDATE_REQUESTED))
+  (value (name affine) (c-name GTK_CANVAS_UPDATE_AFFINE))
+  (value (name clip) (c-name GTK_CANVAS_UPDATE_CLIP))
+  (value (name visibility) (c-name GTK_CANVAS_UPDATE_VISIBILITY))
+  (value (name is_visible) (c-name GTK_CANVAS_UPDATE_IS_VISIBLE))
+)
+
+(function gtk_canvas_image_get_type 
+  (c-name gtk_canvas_image_get_type)
+  (return-type GtkType)
+)
+
+(method gtk_canvas_init 
+  (of-object GtkCanvas )
+  (c-name gtk_canvas_init)
+  (return-type none)
+)
+
+(function gtk_canvas_line_get_type 
+  (c-name gtk_canvas_line_get_type)
+  (return-type GtkType)
+)
+
+(function gtk_canvas_load_alpha 
+  (c-name gtk_canvas_load_alpha)
+  (return-type GdkImlibImage*)
+  (parameter (type-and-name const-gchar*        file))
+)
+
+(function gtk_canvas_destroy_image 
+  (c-name gtk_canvas_destroy_image)
+  (return-type none)
+  (parameter (type-and-name GdkImlibImage*        image))
+)
+
+(function gtk_canvas_polygon_get_type 
+  (c-name gtk_canvas_polygon_get_type)
+  (return-type GtkType)
+)
+
+(function gtk_canvas_re_get_type 
+  (c-name gtk_canvas_re_get_type)
+  (return-type GtkType)
+)
+
+(function gtk_canvas_rect_get_type 
+  (c-name gtk_canvas_rect_get_type)
+  (return-type GtkType)
+)
+
+(function gtk_canvas_ellipse_get_type 
+  (c-name gtk_canvas_ellipse_get_type)
+  (return-type GtkType)
+)
+
+(function gtk_canvas_text_get_type 
+  (c-name gtk_canvas_text_get_type)
+  (return-type GtkType)
+)
+
+(method gtk_canvas_type_init 
+  (of-object )
+  (c-name gtk_canvas_type_init)
+  (return-type none)
+)
+
+(function gtk_canvas_points_new 
+  (c-name gtk_canvas_points_new)
+  (is-constructor-of GtkCanvasPoints)
+  (return-type GtkCanvasPoints*)
+  (parameter (type-and-name int num_points))
+)
+
+(method ref 
+  (of-object CanvasPoints (Gtk))
+  (c-name gtk_canvas_points_ref)
+  (return-type GtkCanvasPoints*)
+)
+
+(method free 
+  (of-object CanvasPoints (Gtk))
+  (c-name gtk_canvas_points_free)
+  (return-type none)
+)
+
+(function gtk_canvas_get_miter_points 
+  (c-name gtk_canvas_get_miter_points)
+  (return-type int)
+  (parameter (type-and-name double x1))
+  (parameter (type-and-name double y1))
+  (parameter (type-and-name double x2))
+  (parameter (type-and-name double y2))
+  (parameter (type-and-name double x3))
+  (parameter (type-and-name double y3))
+  (parameter (type-and-name double width))
+  (parameter (type-and-name double*        mx1))
+  (parameter (type-and-name double*        my1))
+  (parameter (type-and-name double*        mx2))
+  (parameter (type-and-name double*        my2))
+)
+
+(function gtk_canvas_get_butt_points 
+  (c-name gtk_canvas_get_butt_points)
+  (return-type none)
+  (parameter (type-and-name double x1))
+  (parameter (type-and-name double y1))
+  (parameter (type-and-name double x2))
+  (parameter (type-and-name double y2))
+  (parameter (type-and-name double width))
+  (parameter (type-and-name int project))
+  (parameter (type-and-name double*        bx1))
+  (parameter (type-and-name double*        by1))
+  (parameter (type-and-name double*        bx2))
+  (parameter (type-and-name double*        by2))
+)
+
+(function gtk_canvas_polygon_to_point 
+  (c-name gtk_canvas_polygon_to_point)
+  (return-type double)
+  (parameter (type-and-name double*        poly))
+  (parameter (type-and-name int num_points))
+  (parameter (type-and-name double x))
+  (parameter (type-and-name double y))
+)
+
+(function gtk_canvas_render_svp 
+  (c-name gtk_canvas_render_svp)
+  (return-type none)
+  (parameter (type-and-name GtkCanvasBuf*        buf))
+  (parameter (type-and-name ArtSVP*        svp))
+  (parameter (type-and-name guint32 rgba))
+)
+
+(method update_svp 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_update_svp)
+  (return-type none)
+  (parameter (type-and-name ArtSVP*        *p_svp))
+  (parameter (type-and-name ArtSVP*        new_svp))
+)
+
+(method update_svp_clip 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_update_svp_clip)
+  (return-type none)
+  (parameter (type-and-name ArtSVP*        *p_svp))
+  (parameter (type-and-name ArtSVP*        new_svp))
+  (parameter (type-and-name ArtSVP*        clip_svp))
+)
+
+(method reset_bounds 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_reset_bounds)
+  (return-type none)
+)
+
+(method update_svp 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_update_svp)
+  (return-type none)
+  (parameter (type-and-name ArtSVP*        *p_svp))
+  (parameter (type-and-name ArtSVP*        new_svp))
+)
+
+(method update_svp_clip 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_update_svp_clip)
+  (return-type none)
+  (parameter (type-and-name ArtSVP*        *p_svp))
+  (parameter (type-and-name ArtSVP*        new_svp))
+  (parameter (type-and-name ArtSVP*        clip_svp))
+)
+
+(method request_redraw_svp 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_request_redraw_svp)
+  (return-type none)
+  (parameter (type-and-name const-ArtSVP*        svp))
+)
+
+(function gtk_canvas_update_bbox 
+  (c-name gtk_canvas_update_bbox)
+  (return-type none)
+  (parameter (type-and-name GtkCanvasItem*        item))
+  (parameter (type-and-name int x1))
+  (parameter (type-and-name int y1))
+  (parameter (type-and-name int x2))
+  (parameter (type-and-name int y2))
+)
+
+(method ensure_buf 
+  (of-object CanvasBuf (Gtk))
+  (c-name gtk_canvas_buf_ensure_buf)
+  (return-type none)
+)
+
+(function gtk_canvas_join_gdk_to_art 
+  (c-name gtk_canvas_join_gdk_to_art)
+  (return-type ArtPathStrokeJoinType)
+  (parameter (type-and-name GdkJoinStyle gdk_join))
+)
+
+(function gtk_canvas_cap_gdk_to_art 
+  (c-name gtk_canvas_cap_gdk_to_art)
+  (return-type ArtPathStrokeCapType)
+  (parameter (type-and-name GdkCapStyle gdk_cap))
+)
+
+(function gtk_canvas_widget_get_type 
+  (c-name gtk_canvas_widget_get_type)
+  (return-type GtkType)
+)
+
+(function gtk_canvas_item_get_type 
+  (c-name gtk_canvas_item_get_type)
+  (return-type GtkType)
+)
+
+
+
+
+
+
+
+
+
+(method construct 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_construct)
+  (return-type none)
+  (parameter (type-and-name GtkCanvasGroup*        parent))
+  (parameter (type-and-name const-gchar*        first_arg_name))
+  (parameter (type-and-name va_list args))
+)
+
+(method constructv 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_constructv)
+  (return-type none)
+  (parameter (type-and-name GtkCanvasGroup*        parent))
+  (parameter (type-and-name guint nargs))
+  (parameter (type-and-name GtkArg*        args))
+)
+
+(method set 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_set)
+  (return-type none)
+  (parameter (type-and-name const-gchar*        first_arg_name))
+;  (varargs t)
+)
+
+(method setv 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_setv)
+  (return-type none)
+  (parameter (type-and-name guint nargs))
+  (parameter (type-and-name GtkArg*        args))
+)
+
+(method set_valist 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_set_valist)
+  (return-type none)
+  (parameter (type-and-name const-gchar*        first_arg_name))
+  (parameter (type-and-name va_list args))
+)
+
+(method move 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_move)
+  (return-type none)
+  (parameter (type-and-name double dx))
+  (parameter (type-and-name double dy))
+)
+
+(method affine_relative 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_affine_relative)
+  (return-type none)
+  (parameter (type-and-name const-double affine[6]))
+)
+
+(method affine_absolute 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_affine_absolute)
+  (return-type none)
+  (parameter (type-and-name const-double affine[6]))
+)
+
+(method scale 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_scale)
+  (return-type none)
+  (parameter (type-and-name double x))
+  (parameter (type-and-name double y))
+  (parameter (type-and-name double scale_x))
+  (parameter (type-and-name double scale_y))
+)
+
+(method rotate 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_rotate)
+  (return-type none)
+  (parameter (type-and-name double x))
+  (parameter (type-and-name double y))
+  (parameter (type-and-name double angle))
+)
+
+(method raise 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_raise)
+  (return-type none)
+  (parameter (type-and-name int positions))
+)
+
+(method lower 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_lower)
+  (return-type none)
+  (parameter (type-and-name int positions))
+)
+
+(method raise_to_top 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_raise_to_top)
+  (return-type none)
+)
+
+(method lower_to_bottom 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_lower_to_bottom)
+  (return-type none)
+)
+
+(method show 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_show)
+  (return-type none)
+)
+
+(method hide 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_hide)
+  (return-type none)
+)
+
+(method grab 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_grab)
+  (return-type int)
+  (parameter (type-and-name int event_mask))
+  (parameter (type-and-name GdkCursor*        cursor))
+  (parameter (type-and-name guint32 etime))
+)
+
+(method ungrab 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_ungrab)
+  (return-type none)
+  (parameter (type-and-name guint32 etime))
+)
+
+(method w2i 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_w2i)
+  (return-type none)
+  (parameter (type-and-name double*        x))
+  (parameter (type-and-name double*        y))
+)
+
+(method i2w 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_i2w)
+  (return-type none)
+  (parameter (type-and-name double*        x))
+  (parameter (type-and-name double*        y))
+)
+
+(method i2w_affine 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_i2w_affine)
+  (return-type none)
+  (parameter (type-and-name double affine[6]))
+)
+
+(method i2c_affine 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_i2c_affine)
+  (return-type none)
+  (parameter (type-and-name double affine[6]))
+)
+
+(method reparent 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_reparent)
+  (return-type none)
+  (parameter (type-and-name GtkCanvasGroup*        new_group))
+)
+
+(method grab_focus 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_grab_focus)
+  (return-type none)
+)
+
+(method get_bounds 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_get_bounds)
+  (return-type none)
+  (parameter (type-and-name double*        x1))
+  (parameter (type-and-name double*        y1))
+  (parameter (type-and-name double*        x2))
+  (parameter (type-and-name double*        y2))
+)
+
+(method request_update 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_request_update)
+  (return-type none)
+)
+
+(function gtk_canvas_group_get_type 
+  (c-name gtk_canvas_group_get_type)
+  (return-type GtkType)
+)
+
+(method child_bounds 
+  (of-object CanvasGroup (Gtk))
+  (c-name gtk_canvas_group_child_bounds)
+  (return-type none)
+  (parameter (type-and-name GtkCanvasItem*        item))
+)
+
+(function gtk_canvas_get_type 
+  (c-name gtk_canvas_get_type)
+  (return-type GtkType)
+)
+
+(function gtk_canvas_new 
+  (c-name gtk_canvas_new)
+  (is-constructor-of GtkCanvas)
+  (return-type GtkWidget*)
+)
+
+(function gtk_canvas_new_aa 
+  (c-name gtk_canvas_new_aa)
+  (is-constructor-of GtkCanvas)
+  (return-type GtkWidget*)
+)
+
+(method root 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_root)
+  (return-type GtkCanvasGroup*)
+)
+
+(method set_scroll_region 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_set_scroll_region)
+  (return-type none)
+  (parameter (type-and-name double x1))
+  (parameter (type-and-name double y1))
+  (parameter (type-and-name double x2))
+  (parameter (type-and-name double y2))
+)
+
+(method get_scroll_region 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_get_scroll_region)
+  (return-type none)
+  (parameter (type-and-name double*        x1))
+  (parameter (type-and-name double*        y1))
+  (parameter (type-and-name double*        x2))
+  (parameter (type-and-name double*        y2))
+)
+
+(method set_pixels_per_unit 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_set_pixels_per_unit)
+  (return-type none)
+  (parameter (type-and-name double n))
+)
+
+(method scroll_to 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_scroll_to)
+  (return-type none)
+  (parameter (type-and-name int cx))
+  (parameter (type-and-name int cy))
+)
+
+(method get_scroll_offsets 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_get_scroll_offsets)
+  (return-type none)
+  (parameter (type-and-name int*        cx))
+  (parameter (type-and-name int*        cy))
+)
+
+(method update_now 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_update_now)
+  (return-type none)
+)
+
+(method get_item_at 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_get_item_at)
+  (return-type GtkCanvasItem*)
+  (parameter (type-and-name double x))
+  (parameter (type-and-name double y))
+)
+
+(method request_redraw_uta 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_request_redraw_uta)
+  (return-type none)
+  (parameter (type-and-name ArtUta*        uta))
+)
+
+(method request_redraw 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_request_redraw)
+  (return-type none)
+  (parameter (type-and-name int x1))
+  (parameter (type-and-name int y1))
+  (parameter (type-and-name int x2))
+  (parameter (type-and-name int y2))
+)
+
+(method w2c_affine 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_w2c_affine)
+  (return-type none)
+  (parameter (type-and-name double affine[6]))
+)
+
+(method w2c 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_w2c)
+  (return-type none)
+  (parameter (type-and-name double wx))
+  (parameter (type-and-name double wy))
+  (parameter (type-and-name int*        cx))
+  (parameter (type-and-name int*        cy))
+)
+
+(method w2c_d 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_w2c_d)
+  (return-type none)
+  (parameter (type-and-name double wx))
+  (parameter (type-and-name double wy))
+  (parameter (type-and-name double*        cx))
+  (parameter (type-and-name double*        cy))
+)
+
+(method c2w 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_c2w)
+  (return-type none)
+  (parameter (type-and-name int cx))
+  (parameter (type-and-name int cy))
+  (parameter (type-and-name double*        wx))
+  (parameter (type-and-name double*        wy))
+)
+
+(method window_to_world 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_window_to_world)
+  (return-type none)
+  (parameter (type-and-name double winx))
+  (parameter (type-and-name double winy))
+  (parameter (type-and-name double*        worldx))
+  (parameter (type-and-name double*        worldy))
+)
+
+(method world_to_window 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_world_to_window)
+  (return-type none)
+  (parameter (type-and-name double worldx))
+  (parameter (type-and-name double worldy))
+  (parameter (type-and-name double*        winx))
+  (parameter (type-and-name double*        winy))
+)
+
+(method get_color 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_get_color)
+  (return-type int)
+  (parameter (type-and-name const-char*        spec))
+  (parameter (type-and-name GdkColor*        color))
+)
+
+(method get_color_pixel 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_get_color_pixel)
+  (return-type gulong)
+  (parameter (type-and-name guint        rgba))
+)
+
+(method set_stipple_origin 
+  (of-object Canvas (Gtk))
+  (c-name gtk_canvas_set_stipple_origin)
+  (return-type none)
+  (parameter (type-and-name GdkGC*        gc))
+)
+

@@ -1,0 +1,508 @@
+/* vim: set ft=cpp: */
+%%
+headers
+#include <gtk-canvas.h>
+#include "ext/gtk+/php_gtk+.h"
+%%
+constants
+
+
+
+
+%%
+ignore-glob
+  *_get_type
+%%
+ignore gtk_canvas_update_bbox
+%%
+ignore gtk_canvas_item_i2w_affine
+%%
+ignore   gtk_canvas_item_i2c_affine
+%%
+ignore   gtk_canvas_w2c_affine
+
+
+%%
+override gtk_canvas_item_reparent
+
+PHP_FUNCTION(gtk_canvas_item_reparent)
+{
+	zval *new_group;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &new_group, gtk_canvasgroup_ce))
+		return;
+
+	gtk_canvas_item_reparent(GTK_CANVAS_ITEM(PHP_GTK_GET(this_ptr)), GTK_CANVAS_GROUP(PHP_GTK_GET(new_group)));
+	RETURN_NULL();
+}
+
+
+%%
+override  gtk_canvas_group_child_bounds
+
+PHP_FUNCTION(gtk_canvas_group_child_bounds)
+{
+	zval *item;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &item, gtk_canvasitem_ce))
+		return;
+
+	gtk_canvas_group_child_bounds(GTK_CANVAS_GROUP(PHP_GTK_GET(this_ptr)), GTK_CANVAS_ITEM(PHP_GTK_GET(item)));
+	RETURN_NULL();
+}
+
+%%
+override gtk_canvas_image_new
+
+ 
+static GtkCanvasPoints* pointsAr;
+ 
+int php_gtk_canvas_points_to_arg(GtkArg *arg, zval *value)
+{
+
+	HashTable *points = HASH_OF(value);
+	int len,j;
+	zval **item;
+	php_error(E_WARNING, "TRYING POINTS?");
+	 
+	 
+	/* even number of elements */
+	if ((len=zend_hash_num_elements(points)) & 1 == 1) {
+		php_error(E_WARNING, "must be an even number of points");
+		return 0;
+	}
+
+	  /* XXXX - this hack means we don't need to worry about freeing the
+	   * GnomeCanvasPoints structure after the function call.  It will not
+	   * work if more than one GnomeCanvasPoints structure needs to be
+	   * passed in. */
+	if (pointsAr) {
+		gtk_canvas_points_free(pointsAr);
+	}
+	pointsAr = gtk_canvas_points_new(len/2);
+	
+	for (zend_hash_internal_pointer_reset(points), j = 0;
+		zend_hash_get_current_data(points, (void **)&item) == SUCCESS;
+		zend_hash_move_forward(points), j++) 
+	{
+		php_error(E_WARNING, "set %d to %s",j,Z_STRVAL_PP(item));
+		pointsAr->coords[j] = 100; /*Z_DVAL_PP(item); */
+	}
+	GTK_VALUE_POINTER(*arg) =  pointsAr;
+	 
+	return 1;
+
+
+}
+ 
+ 
+ 
+GtkArg *php_gtk_canvas_hash_as_args(zval *hash, GtkType type, gint *nargs)
+{
+	int i;
+	zval **item;
+	gchar *err, buf[255];
+	ulong num_key;
+	GtkArg *arg = NULL;
+	GtkArgInfo *info;
+	HashTable *ht = HASH_OF(hash);
+	
+	
+
+	gtk_type_class(type);
+	*nargs = zend_hash_num_elements(ht);
+	arg = g_new(GtkArg, *nargs);
+
+	for (zend_hash_internal_pointer_reset(ht), i = 0;
+		 zend_hash_get_current_data(ht, (void **)&item) == SUCCESS;
+		 zend_hash_move_forward(ht), i++) {
+		if (zend_hash_get_current_key(ht, &arg[i].name, &num_key, 0) != HASH_KEY_IS_STRING) {
+			php_error(E_WARNING, "array keys must be strings");
+			g_free(arg);
+			return NULL;
+		}
+		
+		
+		 if (!strcmp(arg[i].name, "points")) {
+			 
+			 
+			if (!php_gtk_canvas_points_to_arg(&arg[i], *item)) {
+				g_snprintf(buf, 255, "argument '%s': expected type %s, found %s",
+						   arg[i].name, gtk_type_name(arg[i].type),
+						   php_gtk_zval_type_name(*item));
+				php_error(E_WARNING, buf);
+				g_free(arg);
+				return NULL;
+			}
+			
+	    
+		
+		} else {
+ 
+			err = gtk_object_arg_get_info(type, arg[i].name, &info);
+			if (!info) {
+				php_error(E_WARNING, "NO INFO FOUND:%s   %s",arg[i].name, err);
+				g_free(err);
+				g_free(arg);
+				return NULL;
+			}
+	
+			arg[i].type = info->type;
+			arg[i].name = info->name;
+			
+			if (!php_gtk_arg_from_value(&arg[i], *item)) {
+				g_snprintf(buf, 255, "argument '%s': expected type %s, found %s",
+						   arg[i].name, gtk_type_name(arg[i].type),
+						   php_gtk_zval_type_name(*item));
+				php_error(E_WARNING, buf);
+				g_free(arg);
+				return NULL;
+			}
+		 }  
+	}
+
+	return arg;
+}
+  
+
+PHP_FUNCTION(gtk_canvas_image_new)
+{
+	 
+	zval *parent;
+	zval *hash;
+	long type = GTK_CANVAS_TYPE_CANVAS_IMAGE;
+	char *first_arg_name;
+	GtkObject *wrapped_obj;
+	GtkArg *args;
+	guint nargs;
+	
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oa", &parent, gtk_canvasgroup_ce,  &hash)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+	
+	
+	args = php_gtk_hash_as_args(hash,type,&nargs);
+	
+	wrapped_obj = (GtkObject *)gtk_canvas_item_newv(GTK_CANVAS_GROUP(PHP_GTK_GET(parent)), (GtkType)type, nargs, args);
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkCanvasItem object",
+				  get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr);
+
+}
+
+
+%%
+override gtk_canvas_line_new
+
+PHP_FUNCTION(gtk_canvas_line_new)
+{
+	zval *parent;
+	zval *hash;
+	long type = GTK_CANVAS_TYPE_CANVAS_LINE;
+	char *first_arg_name;
+	GtkObject *wrapped_obj;
+	GtkArg *args;
+	guint nargs;
+	
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oa", &parent, gtk_canvasgroup_ce, &hash)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+	
+	args = php_gtk_hash_as_args(hash,type,&nargs);
+	
+	wrapped_obj = (GtkObject *)gtk_canvas_item_newv(GTK_CANVAS_GROUP(PHP_GTK_GET(parent)), (GtkType)type, nargs, args);
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkCanvasItem object",
+				  get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr); 
+}
+
+
+%%
+override gtk_canvas_polygon_new
+ 
+
+
+PHP_FUNCTION(gtk_canvas_polygon_new)
+{
+	zval *parent;
+	zval *hash;
+	long type = GTK_CANVAS_TYPE_CANVAS_POLYGON;
+	char *first_arg_name;
+	GtkObject *wrapped_obj;
+	GtkArg *args;
+	guint nargs;
+	GtkCanvasPoints *points = NULL;
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oa", &parent, gtk_canvasgroup_ce,  &hash)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+	
+	if (!(args = php_gtk_canvas_hash_as_args(hash,type,&nargs))) {
+		return;
+	}
+	
+	wrapped_obj = (GtkObject *)gtk_canvas_item_newv(GTK_CANVAS_GROUP(PHP_GTK_GET(parent)), (GtkType)type, nargs, args);
+	
+	 
+	
+	
+	
+	
+	
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkCanvasItem object",
+				  get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr); 
+}
+
+
+
+
+%%
+override gtk_canvas_re_new
+
+PHP_FUNCTION(gtk_canvas_re_new)
+{
+	zval *parent;
+	zval *hash;
+	long type = GTK_CANVAS_TYPE_CANVAS_RE;
+	char *first_arg_name;
+	GtkObject *wrapped_obj;
+	GtkArg *args;
+	guint nargs;
+	
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oa", &parent, gtk_canvasgroup_ce,  &hash)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+	
+	args = php_gtk_hash_as_args(hash,type,&nargs);
+	
+	wrapped_obj = (GtkObject *)gtk_canvas_item_newv(GTK_CANVAS_GROUP(PHP_GTK_GET(parent)), (GtkType)type, nargs, args);
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkCanvasItem object",
+				  get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr); 
+}
+
+
+%%
+override gtk_canvas_rect_new
+
+PHP_FUNCTION(gtk_canvas_rect_new)
+{
+	zval *parent;
+	zval *hash;
+	long type = GTK_CANVAS_TYPE_CANVAS_RECT;
+	char *first_arg_name;
+	GtkObject *wrapped_obj;
+	GtkArg *args;
+	guint nargs;
+	
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oa", &parent, gtk_canvasgroup_ce,  &hash)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+	 
+	args = php_gtk_hash_as_args(hash,type,&nargs);
+	
+	
+	wrapped_obj = (GtkObject *)gtk_canvas_item_newv(GTK_CANVAS_GROUP(PHP_GTK_GET(parent)), (GtkType)type, nargs, args);
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkCanvasItem object",
+				  get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr); 
+}
+
+
+
+%%
+override gtk_canvas_ellipse_new
+
+PHP_FUNCTION(gtk_canvas_ellipse_new)
+{
+	zval *parent;
+	zval *hash;
+	long type = GTK_CANVAS_TYPE_CANVAS_ELLIPSE;
+	char *first_arg_name;
+	GtkObject *wrapped_obj;
+	GtkArg *args;
+	guint nargs;
+	
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oa", &parent, gtk_canvasgroup_ce,  &hash)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+	 
+	args = php_gtk_hash_as_args(hash,type,&nargs);
+	
+	
+	wrapped_obj = (GtkObject *)gtk_canvas_item_newv(GTK_CANVAS_GROUP(PHP_GTK_GET(parent)), (GtkType)type, nargs, args);
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkCanvasItem object",
+				  get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr); 
+}
+
+%%
+override gtk_canvas_text_new
+
+PHP_FUNCTION(gtk_canvas_text_new)
+{
+	zval *parent;
+	zval *hash;
+	long type = GTK_CANVAS_TYPE_CANVAS_TEXT;
+	char *first_arg_name;
+	GtkObject *wrapped_obj;
+	GtkArg *args;
+	guint nargs;
+	
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oa", &parent, gtk_canvasgroup_ce,  &hash)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+	 
+	args = php_gtk_hash_as_args(hash,type,&nargs);
+	
+	
+	wrapped_obj = (GtkObject *)gtk_canvas_item_newv(GTK_CANVAS_GROUP(PHP_GTK_GET(parent)), (GtkType)type, nargs, args);
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkCanvasItem object",
+				  get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr); 
+}
+
+
+
+%%
+override gtk_canvas_widget_new
+
+PHP_FUNCTION(gtk_canvas_widget_new)
+{
+	zval *parent;
+	zval *hash;
+	long type = GTK_CANVAS_TYPE_CANVAS_WIDGET;
+	char *first_arg_name;
+	GtkObject *wrapped_obj;
+	GtkArg *args;
+	guint nargs;
+	
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oa", &parent, gtk_canvasgroup_ce,  &hash)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+	
+	args = php_gtk_hash_as_args(hash,type,&nargs);
+	
+	wrapped_obj = (GtkObject *)gtk_canvas_item_newv(GTK_CANVAS_GROUP(PHP_GTK_GET(parent)), (GtkType)type, nargs, args);
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkCanvasItem object",
+				  get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr); 
+}
+
+
+
+
+%%
+override gtk_canvas_item_new
+
+
+
+
+
+PHP_FUNCTION(gtk_canvas_item_new)
+{
+	zval *parent;
+	zval *hash;
+	long type;
+	char *first_arg_name;
+	GtkObject *wrapped_obj;
+	GtkArg *args;
+	guint nargs;
+	
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oia", &parent, gtk_canvasgroup_ce, &type, &hash)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+	
+	args = php_gtk_hash_as_args(hash,type,&nargs);
+	
+	wrapped_obj = (GtkObject *)gtk_canvas_item_newv(GTK_CANVAS_GROUP(PHP_GTK_GET(parent)), (GtkType)type, nargs, args);
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkCanvasItem object",
+				  get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr);
+
+}

@@ -1,0 +1,16 @@
+LTLIBRARY_NAME          = libcanvas.la
+LTLIBRARY_SOURCES       = php_canvas.c gen_canvas.c
+LTLIBRARY_LIBADD        = $(CANVAS_SHARED_LIBADD)
+LTLIBRARY_SHARED_NAME   = php_gtk_canvas.la
+LTLIBRARY_SHARED_LIBADD = $(CANVAS_SHARED_LIBADD)
+
+include $(top_srcdir)/build/dynlib.mk
+
+php_canvas.o php_canvas.lo php_canvas.slo: gen_ce_canvas.h
+
+gen_canvas.c: canvas.defs canvas.overrides
+	$(PHP) -q $(top_srcdir)/generator/generator.php -o $(srcdir)/canvas.overrides -p Canvas -r $(top_srcdir)/ext/gtk%2b/gtk.defs $(srcdir)/canvas.defs > gen_canvas.c
+
+gen_ce_canvas.h: gen_canvas.c
+	grep -h "^PHP_GTK_EXPORT_CE" gen_canvas.c | sed -e "s!^!extern !" > gen_ce_canvas.h
+
