@@ -1,3 +1,13 @@
+2004-10-21  Andrei Zmievski  <andreiz@gmail.com>
+
+    * generator/arg_types.php
+      generator/array_printf.php
+      generator/generator.php
+      generator/scheme.php
+      generator/templates.php
+      main/php_gtk.h:
+      More work on the generator.
+
 2004-08-14  Andrei Zmievski  <andreiz@gmail.com>
 
     * ext/gtk+/atk-types.defs
