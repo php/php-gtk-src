@@ -107,3 +107,31 @@ PHP_FUNCTION(gtk_plot_axis_set_title)
 	RETURN_NULL();
 }
 
+
+
+
+
+/*---------------------- Gtk Sheet Overrides --------------------------*/
+
+%% 
+override gtk_sheet_get_active_cell
+
+PHP_FUNCTION(gtk_sheet_get_active_cell)
+{
+	gint  row, column;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+ 
+ 
+
+	gtk_sheet_get_active_cell(GTK_SHEET(PHP_GTK_GET(this_ptr)), &row, &column);
+
+	array_init(return_value);
+	add_next_index_double(return_value, (long)row);
+	add_next_index_double(return_value, (long)column);
+
+}
+

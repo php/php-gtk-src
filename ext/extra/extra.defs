@@ -1584,13 +1584,13 @@
   (parameter (type-and-name gint row))
   (parameter (type-and-name gint column))
 )
-
+;; overriden to return an array.
 (method get_active_cell 
   (of-object Sheet (Gtk))
   (c-name gtk_sheet_get_active_cell)
   (return-type none)
-  (parameter (type-and-name gint*        row))
-  (parameter (type-and-name gint*        column))
+  (parameter (type-and-name gint         row))
+  (parameter (type-and-name gint         column))
 )
 
 (method set_cell 
