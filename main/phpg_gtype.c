@@ -87,7 +87,8 @@ PHP_GTK_API zval* phpg_gtype_new(GType type)
 	phpg_gtype_t *object;
 	TSRMLS_FETCH();
 
-	MAKE_STD_ZVAL(wrapper);
+	wrapper = (zval*)malloc(sizeof(zval));
+	INIT_PZVAL(wrapper);
 	object_init_ex(wrapper, gtype_ce);
 	object = zend_object_store_get_object(wrapper TSRMLS_CC);
 	object->type = type;
@@ -101,8 +102,7 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 	GType type;
 
 	if (!value) {
-		PHPG_THROW_EXCEPTION(phpg_type_exception, "cannot get type from NULL value");
-		return 0;
+		PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_type_exception, "cannot get type from NULL value", 0);
 	}
 
 	switch (Z_TYPE_P(value)) {
