@@ -60,7 +60,8 @@ AC_MSG_RESULT([$php_gtk_ext_output])
 dnl
 dnl PHP_GTK_ARG_ENABLE(arg-name, check message, help text[, default-val])
 dnl Sets PHP_GTK_ARG_NAME either to the user value or to the default value.
-dnl default-val defaults to no.
+dnl default-val defaults to no.  This will also set the variable
+dnl php_gtk_ext_shared, and will overwrite any previous variable of that name.
 dnl
 AC_DEFUN(PHP_GTK_ARG_ENABLE,[
 PHP_GTK_REAL_ARG_ENABLE([$1],[$2],[$3],[$4],PHP_GTK_[]translit($1,a-z-,A-Z_))
@@ -69,5 +70,21 @@ PHP_GTK_REAL_ARG_ENABLE([$1],[$2],[$3],[$4],PHP_GTK_[]translit($1,a-z-,A-Z_))
 AC_DEFUN(PHP_GTK_REAL_ARG_ENABLE,[
 AC_MSG_CHECKING($2)
 AC_ARG_ENABLE($1,[$3],$5=[$]enableval,$5=ifelse($4,,no,$4))
+PHP_GTK_ARG_ANALYZE($5)
+])
+
+dnl
+dnl PHP_GTK_ARG_WITH(arg-name, check message, help text[, default-val])
+dnl Sets PHP_GTK_ARG_NAME either to the user value or to the default value.
+dnl default-val defaults to no.  This will also set the variable
+dnl php_gtk_ext_shared, and will overwrite any previous variable of that name.
+dnl
+AC_DEFUN(PHP_GTK_ARG_WITH,[
+PHP_GTK_REAL_ARG_WITH([$1],[$2],[$3],[$4],PHP_GTK_[]translit($1,a-z0-9-,A-Z0-9_))
+])
+
+AC_DEFUN(PHP_REAL_ARG_WITH,[
+AC_MSG_CHECKING([$2])
+AC_ARG_WITH($1,[$3],$5=[$]withval,$5=ifelse($4,,no,$4))
 PHP_GTK_ARG_ANALYZE($5)
 ])
