@@ -1,3 +1,13 @@
+2001-08-27  Frank M. Kromann  <frank@frontbase.com>
+
+    * ext/gtk+/gtk.overrides
+      ext/libglade/libglade.overrides: Adding missing TSRMLS_C macros
+
+2001-08-27  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/gtk.defs:
+    Remove the damn thing.
+
 2001-08-24  Andrei Zmievski  <andrei@ispi.net>
 
     * NEWS
