@@ -121,7 +121,8 @@ $class_entry_tpl = "PHP_GTK_EXPORT_CE(%s);\n";
 $struct_init_tpl = "
 zval *PHP_GTK_EXPORT_FUNC(php_%s_new)(%s *obj)
 {
-   zval *result;
+	zval *result;
+	TSRMLS_FETCH();
 
     if (!obj) {
         MAKE_STD_ZVAL(result);
@@ -152,6 +153,7 @@ $struct_get_tpl = "
 zend_bool PHP_GTK_EXPORT_FUNC(php_%s_get)(zval *wrapper, %s *obj)
 {
     zval **item;
+	TSRMLS_FETCH();
 
     if (!php_gtk_check_class(wrapper, %s))
         return 0;
