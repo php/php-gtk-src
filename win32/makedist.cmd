@@ -29,5 +29,5 @@ copy \php\php-gtk\test\scribble.php test
 copy \php\php-gtk\test\testgtkrc test
 copy \php\php-gtk\test\testgtkrc2 test
 copy \php\php-gtk\win32\README.txt 
-"c:\Program Files\WinZip\WZZip" -ampr php-gtk-0.1.1a-win32.zip
+"c:\Program Files\WinZip\WZZip" -ampr php-gtk-0.5.0-win32.zip
 cd \php\php-gtk\win32
