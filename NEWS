@@ -1,3 +1,6 @@
+    - Implemented set_filter() for GtkFontSelection and GtkFontSelectionDialog,
+      gtk_button_box_get_child_size(), gtk_button_box_get_child_ipadding_default()
+      and get_widget_get_pointer(). (Markus)
     - implemented gdkpixbuf extension (loading and displaying images). (Andrei)
     - added GtkCTree methods find_by_row_data, find_all_by_row_data. (Andrei)
     - added gtkhtml extension which provides support for GtkHTML, an HTML
