@@ -57,7 +57,7 @@ inline char *php_gtk_zval_type_name(zval *arg)
 	}
 }
 
-static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
+static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf TSRMLS_DC)
 {
 	char *spec_walk = *spec;
 	char c = *spec_walk++;
@@ -292,7 +292,7 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
 			{
 				zval **p = va_arg(*va, zval **);
 				zend_class_entry *ce = va_arg(*va, zend_class_entry *);
-				if (Z_TYPE_PP(arg) != IS_OBJECT || !php_gtk_check_class(*arg, ce))
+				if (Z_TYPE_PP(arg) != IS_OBJECT || !instanceof_function(Z_OBJCE_PP(arg), ce TSRMLS_CC))
 					return ce->name;
 				else {
 					if (*spec_walk == '/') {
@@ -308,7 +308,7 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
 			{
 				zval **p = va_arg(*va, zval **);
 				zend_class_entry *ce = va_arg(*va, zend_class_entry *);
-				if (Z_TYPE_PP(arg) != IS_NULL && (Z_TYPE_PP(arg) != IS_OBJECT || !php_gtk_check_class(*arg, ce))) {
+				if (Z_TYPE_PP(arg) != IS_NULL && (Z_TYPE_PP(arg) != IS_OBJECT || !instanceof_function(Z_OBJCE_PP(arg), ce TSRMLS_CC))) {
 					sprintf(buf, "%s or null", ce->name);
 					return buf;
 				} else {
@@ -356,14 +356,14 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
 	return NULL;
 }
 
-static int parse_arg(int arg_num, zval **arg, va_list *va, char **spec, int quiet)
+static int parse_arg(int arg_num, zval **arg, va_list *va, char **spec, int quiet TSRMLS_DC)
 {
 	char *expected_type;
 	char buf[1024];
 	char errorbuf[1024];
 	TSRMLS_FETCH();
 
-	expected_type = parse_arg_impl(arg, va, spec, errorbuf);
+	expected_type = parse_arg_impl(arg, va, spec, errorbuf TSRMLS_CC);
 	if (expected_type) {
 		if (!quiet) {
 			sprintf(buf, "%s() expects argument %d to be %s, %s given",
@@ -377,14 +377,13 @@ static int parse_arg(int arg_num, zval **arg, va_list *va, char **spec, int quie
 	return 1;
 }
 
-static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int quiet)
+static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int quiet TSRMLS_DC)
 {
 	char *format_walk;
 	char buf[1024];
 	int c, i;
 	int min_argc = -1;
 	int max_argc = 0;
-	TSRMLS_FETCH();
 
 	/*
 	 * First we check that the number of arguments matches the number specified
@@ -434,7 +433,7 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 	for (i = 0; i < argc; i++) {
 		if (*format == '|')
 			format++;
-		if (!parse_arg(i+1, args[i], va, &format, quiet))
+		if (!parse_arg(i+1, args[i], va, &format, quiet TSRMLS_CC))
 			return 0;
 	}
 
@@ -456,7 +455,7 @@ static int php_gtk_parse_args_impl(int argc, char *format, va_list *va, int quie
 		return 0;
 	}
 
-	retval = parse_va_args(argc, args, format, va, quiet);
+	retval = parse_va_args(argc, args, format, va, quiet TSRMLS_CC);
 	efree(args);
 
 	return retval;
