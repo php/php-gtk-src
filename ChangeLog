@@ -1,3 +1,10 @@
+2002-09-19  Andrei Zmievski  <andrei@php.net>
+
+    * ext/gtk+/gtk.overrides
+      ext/gtkhtml/gtkhtml.overrides
+      ext/libglade/libglade.overrides:
+    Fixing php_array_merge() call for ZTS builds.
+
 2002-06-04  Andrei Zmievski  <andrei@php.net>
 
     * NEWS: *** empty log message ***
