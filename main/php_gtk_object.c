@@ -328,8 +328,12 @@ zval *php_gtk_arg_as_value(GtkArg *arg)
 				value = php_gdk_visual_new(GTK_VALUE_BOXED(*arg));
 			else if (arg->type == GTK_TYPE_GDK_FONT)
 				value = php_gdk_font_new(GTK_VALUE_BOXED(*arg));
+			else if (arg->type == GTK_TYPE_GDK_DRAG_CONTEXT)
+				value = php_gdk_drag_context_new(GTK_VALUE_BOXED(*arg));
 			else if (arg->type == GTK_TYPE_ACCEL_GROUP)
 				value = php_gtk_accel_group_new(GTK_VALUE_BOXED(*arg));
+			else if (arg->type == GTK_TYPE_STYLE)
+				value = php_gtk_style_new(GTK_VALUE_BOXED(*arg));
 			else if (arg->type == GTK_TYPE_SELECTION_DATA)
 				value = php_gtk_selection_data_new(GTK_VALUE_BOXED(*arg));
 			else if (arg->type == GTK_TYPE_CTREE_NODE) {
@@ -452,9 +456,19 @@ void php_gtk_ret_from_value(GtkArg *ret, zval *value)
 					*GTK_RETLOC_BOXED(*ret) = PHP_GDK_FONT_GET(value);
 				else
 					*GTK_RETLOC_BOXED(*ret) = NULL;
+			} else if (ret->type == GTK_TYPE_GDK_DRAG_CONTEXT) {
+				if (php_gtk_check_class(value, gdk_drag_context_ce))
+					*GTK_RETLOC_BOXED(*ret) = PHP_GDK_DRAG_CONTEXT_GET(value);
+				else
+					*GTK_RETLOC_BOXED(*ret) = NULL;
 			} else if (ret->type == GTK_TYPE_ACCEL_GROUP) {
 				if (php_gtk_check_class(value, gtk_accel_group_ce))
 					*GTK_RETLOC_BOXED(*ret) = PHP_GTK_ACCEL_GROUP_GET(value);
+				else
+					*GTK_RETLOC_BOXED(*ret) = NULL;
+			} else if (ret->type == GTK_TYPE_STYLE) {
+				if (php_gtk_check_class(value, gtk_style_ce))
+					*GTK_RETLOC_BOXED(*ret) = PHP_GTK_STYLE_GET(value);
 				else
 					*GTK_RETLOC_BOXED(*ret) = NULL;
 			} else if (ret->type == GTK_TYPE_SELECTION_DATA) {

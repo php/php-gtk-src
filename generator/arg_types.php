@@ -560,8 +560,10 @@ $matcher->register_boxed('GdkCursor', 'gdk_cursor');
 $matcher->register_boxed('GdkVisual', 'gdk_visual');
 $matcher->register_boxed('GdkFont', 'gdk_font');
 $matcher->register_boxed('GdkGC', 'gdk_gc');
+$matcher->register_boxed('GdkDragContext', 'gdk_drag_context');
 $matcher->register_boxed('GtkSelectionData', 'gtk_selection_data');
 $matcher->register_boxed('GtkCTreeNode', 'gtk_ctree_node');
 $matcher->register_boxed('GtkAccelGroup', 'gtk_accel_group');
+$matcher->register_boxed('GtkStyle', 'gtk_style');
 
 ?>
