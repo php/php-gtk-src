@@ -1,3 +1,7 @@
+2001-03-15  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: News update.
+
 2001-03-14  Andrei Zmievski  <andrei@ispi.net>
 
     * generator/gtk.defs: Adding GtkHandleBox properties.
