@@ -4284,7 +4284,7 @@
 (define-method union
   (of-object "GdkRectangle")
   (c-name "gdk_rectangle_union")
-  (return-type "void")
+  (return-type "none")
   (parameters
     '("GdkRectangle*" "src1")
     '("GdkRectangle*" "src2")
