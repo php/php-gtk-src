@@ -1,3 +1,8 @@
+2002-03-04  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/gtkhtml/gtkhtml.defs:
+    set_indent_by_delta should have been modify_indent_by_delta
+
 2002-02-14  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/gtk.defs: Expose GtkLayout's bin_window property.
