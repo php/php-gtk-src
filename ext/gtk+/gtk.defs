@@ -1306,6 +1306,7 @@
 
 (define-function gtk_button_new_from_stock
   (c-name "gtk_button_new_from_stock")
+  (is-constructor-of "GtkButton")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "stock_id")
@@ -1314,6 +1315,7 @@
 
 (define-function gtk_button_new_with_mnemonic
   (c-name "gtk_button_new_with_mnemonic")
+  (is-constructor-of "GtkButton")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
