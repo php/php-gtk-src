@@ -20,6 +20,7 @@
 
 /* $Id$ */
 
+
 #include "php_gtk.h"
 
 #if HAVE_PHP_GTK
@@ -371,7 +372,7 @@ PHP_GTK_API void php_gtk_destroy_notify(gpointer user_data)
 	zval_ptr_dtor(&value);
 }
 
-PHP_GTK_API zval *php_gtk_new(GtkObject *obj)
+PHP_GTK_API zval *php_gtk_new_base_gobject(GObject *obj)
 {
 	zval *zobj;
 	php_gtk_object *wrapper = NULL;
@@ -385,7 +386,7 @@ PHP_GTK_API zval *php_gtk_new(GtkObject *obj)
 		return zobj;
 	}
 
-    if ((zobj = (zval *) gtk_object_get_data(obj, php_gtk_wrapper_key))) {
+        if ((zobj = (zval *) g_object_get_data(obj, php_gtk_wrapper_key))) {
 		zval_add_ref(&zobj);
 		return zobj;
 	}
@@ -396,16 +397,22 @@ PHP_GTK_API zval *php_gtk_new(GtkObject *obj)
 
 	MAKE_STD_ZVAL(zobj);
 	object_init_ex(zobj, ce);
-	gtk_object_ref(obj);
+	g_object_ref(obj);
 	wrapper = zend_object_store_get_object(zobj TSRMLS_CC);
 	wrapper->obj = obj;
 	wrapper->dtor = (php_gtk_dtor_t)gtk_object_unref;
 	zend_objects_store_add_ref(zobj TSRMLS_CC);
-	gtk_object_set_data(obj, php_gtk_wrapper_key, zobj);
+	g_object_set_data(obj, php_gtk_wrapper_key, zobj);
         zval_add_ref(&zobj);
 	return zobj;
 }
-#ifdef DISABLED
+
+PHP_GTK_API zval *php_gtk_new(GtkObject *obj)
+{
+	return (zval *)php_gtk_new_base_gobject(G_OBJECT(obj));
+
+}
+
 zval *php_gtk_args_as_hash(int nargs, GValue *args)
 {
 	zval *hash;
@@ -425,6 +432,7 @@ zval *php_gtk_args_as_hash(int nargs, GValue *args)
 
 	return hash;
 }
+#ifdef DISABLED
 /*
 
 */
@@ -503,12 +511,14 @@ int php_gtk_args_from_hash(GtkArg *args, int nparams, zval *hash)
 	return 1;
 }
 
-zval *php_gtk_arg_as_value(GValue *arg)
+#endif
+
+zval *php_gtk_arg_as_value(const GValue *arg)
 {
 	zval *value;
 	TSRMLS_FETCH();
 
-	switch (G_VALUE_TYPE(arg->type)) {
+	switch (G_VALUE_TYPE(arg)) {
 
 		case G_TYPE_INVALID:
 		case G_TYPE_NONE:
@@ -517,66 +527,71 @@ zval *php_gtk_arg_as_value(GValue *arg)
 			break;
 
 		case G_TYPE_CHAR:
-		case G_TYPE_UCHAR:
-			MAKE_STD_ZVAL(value);
-			ZVAL_STRINGL(value, &GTK_VALUE_CHAR(*arg), 1, 1);
+		case G_TYPE_UCHAR:{
+ 	            	gint8 val = g_value_get_char(arg);
+ 			MAKE_STD_ZVAL(value);
+			ZVAL_STRINGL(value, (char *)&val, 1, 1);
 			break;
-
-		case G_TYPE_BOOL:
+		}
+		case G_TYPE_BOOLEAN:
 			MAKE_STD_ZVAL(value);
-			ZVAL_BOOL(value, GTK_VALUE_BOOL(*arg));
+			ZVAL_BOOL(value, g_value_get_boolean(arg));
 			break;
 
 		case G_TYPE_ENUM:
 		case G_TYPE_FLAGS:
 		case G_TYPE_INT:
 			MAKE_STD_ZVAL(value);
-			ZVAL_LONG(value, GTK_VALUE_INT(*arg));
+			ZVAL_LONG(value, g_value_get_int(arg));
 			break;
 
 		case G_TYPE_LONG:
 			MAKE_STD_ZVAL(value);
-			ZVAL_LONG(value, GTK_VALUE_LONG(*arg));
+			ZVAL_LONG(value, g_value_get_long(arg));
 			break;
 
 		case G_TYPE_UINT:
 			MAKE_STD_ZVAL(value);
-			ZVAL_LONG(value, GTK_VALUE_UINT(*arg));
+			ZVAL_LONG(value, g_value_get_uint(arg));
 			break;
 
 		case G_TYPE_ULONG:
 			MAKE_STD_ZVAL(value);
-			ZVAL_LONG(value, GTK_VALUE_ULONG(*arg));
+			ZVAL_LONG(value, g_value_get_ulong(arg));
 			break;
 
 		case G_TYPE_FLOAT:
 			MAKE_STD_ZVAL(value);
-			ZVAL_DOUBLE(value, GTK_VALUE_FLOAT(*arg));
+			ZVAL_DOUBLE(value, g_value_get_float(arg));
 			break;
 
 		case G_TYPE_DOUBLE:
 			MAKE_STD_ZVAL(value);
-			ZVAL_DOUBLE(value, GTK_VALUE_DOUBLE(*arg));
+			ZVAL_DOUBLE(value, g_value_get_double(arg));
 			break;
 
-		case G_TYPE_STRING:
+		case G_TYPE_STRING: {
+			const gchar *str = g_value_get_string(arg);
 			MAKE_STD_ZVAL(value);
-			if (GTK_VALUE_STRING(*arg) != NULL) {
-				ZVAL_STRING(value, GTK_VALUE_STRING(*arg), 1);
+			if (str != NULL) {
+				ZVAL_STRING(value, (char *)str, 1);
 			} else
 				ZVAL_NULL(value);
 			break;
-
+		}
+/*  Does this exist? - probably PARAM..?
 		case G_TYPE_ARGS:
-			value = php_gtk_args_as_hash(GTK_VALUE_ARGS(*arg).n_args,
-										 GTK_VALUE_ARGS(*arg).args);
+			value = php_gtk_args_as_hash(GTK_VALUE_ARGS(arg).n_args,
+										 GTK_VALUE_ARGS(arg).args);
 			break;
-
+*/
 		case G_TYPE_OBJECT:
-			value = php_gtk_new(GTK_VALUE_OBJECT(*arg));
+			/* just guessing the api here.. - g_value_get_pointer:?? - cast to G_OBJECT!? */
+			value = php_gtk_new_base_gobject(G_OBJECT(arg));
 			break;
 
 		case G_TYPE_POINTER:
+			/* if you get this error.. - a callback probably needs to use the callback registry */
 			php_error(E_NOTICE, "%s(): internal error: G_TYPE_POINTER unsupported",
 					  get_active_function_name(TSRMLS_C));
 			MAKE_STD_ZVAL(value);
@@ -584,8 +599,9 @@ zval *php_gtk_arg_as_value(GValue *arg)
 			break;
 
 		case G_TYPE_BOXED:
-		
-			if (arg->type == GDK_TYPE_EVENT)
+			
+			/* TODO ... this needs more investigation..
+			if (G_VALUE_HOLDS(*arg, GDK_TYPE_EVENT))
 				value = php_gdk_event_new(G_VALUE_BOXED(*arg));
 			else if (arg->type == GDK_TYPE_WINDOW)
 				value = php_gdk_window_new(G_VALUE_BOXED(*arg));
@@ -610,21 +626,7 @@ zval *php_gtk_arg_as_value(GValue *arg)
 			else
 				return NULL;
 			break;
-
-		case G_TYPE_PARAM_FOREIGN:
-			value = (zval *)GTK_VALUE_FOREIGN(*arg).data;
-			zval_add_ref(&value);
-			break;
-
-		case G_TYPE_PARAM_CALLBACK:
-			value = (zval *)GTK_VALUE_CALLBACK(*arg).data;
-			zval_add_ref(&value);
-			break;
-
-		case G_TYPE_PARAM_SIGNAL:
-			value = (zval *)GTK_VALUE_SIGNAL(*arg).d;
-			zval_add_ref(&value);
-			break;
+*/
 
 		default:
 			g_assert_not_reached();
@@ -633,7 +635,7 @@ zval *php_gtk_arg_as_value(GValue *arg)
 
 	return value;
 }
-
+#ifdef DISABLED
 int php_gtk_arg_from_value(GtkArg *arg, zval *value)
 {
 	switch (GTK_FUNDAMENTAL_TYPE(arg->type)) {

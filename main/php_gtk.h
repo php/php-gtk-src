@@ -154,14 +154,14 @@ PHP_GTK_API void php_gtk_closure_marshal(
 					gpointer 	marshal_data
 					);
 void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args);
-zval *php_gtk_args_as_hash(int nargs, GtkArg *args);
-GtkArg *php_gtk_hash_as_args(zval *hash, GtkType type, gint *nargs);
-int php_gtk_args_from_hash(GtkArg *args, int nparams, zval *hash);
-zval *php_gtk_arg_as_value(GtkArg *arg);
-int php_gtk_arg_from_value(GtkArg *arg, zval *value);
-zval *php_gtk_ret_as_value(GtkArg *ret);
-void php_gtk_ret_from_value(GtkArg *ret, zval *value);
-int php_gtk_get_flag_value(GtkType flag_type, zval *flag_val, int *result);
+zval *php_gtk_args_as_hash(int nargs, GValue *args);
+GtkArg *php_gtk_hash_as_args(zval *hash, GType type, gint *nargs);
+int php_gtk_args_from_hash(GValue *args, int nparams, zval *hash);
+zval *php_gtk_arg_as_value(const GValue *arg);
+int php_gtk_arg_from_value(GValue *arg, zval *value);
+zval *php_gtk_ret_as_value(GValue *ret);
+void php_gtk_ret_from_value(GValue *ret, zval *value);
+int php_gtk_get_flag_value(GType flag_type, zval *flag_val, int *result);
 PHP_GTK_API zval php_gtk_get_property(zend_property_reference *property_reference);
 PHP_GTK_API int php_gtk_set_property(zend_property_reference *property_reference, zval *value);
 void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference *property_reference);
