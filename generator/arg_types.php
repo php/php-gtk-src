@@ -606,8 +606,12 @@ class Drawable_Arg extends Arg_Type {
 				$extra_code[]	=	"	if (php_$name) {\n" .
 									"		if (Z_TYPE_P(php_$name) == IS_NULL)\n" .
 									"			$name = NULL;\n" .
-									"		else\n" .
-									"			$name = PHP_" . strtoupper($this->php_type). "_GET(php_" . $name . ");\n" .
+									"		else if (php_gtk_check_class(php_$name, gdk_window_ce))\n" .
+									"			$name = (GdkDrawable *)PHP_GDK_WINDOW_GET(php_$name);\n" .
+									"		else if(php_gtk_check_class(php_$name, gdk_pixmap_ce))\n" .
+									"			$name = (GdkDrawable *)PHP_GDK_PIXMAP_GET(php_$name);\n" .
+									"		else if(php_gtk_check_class(php_$name, gdk_bitmap_ce))\n" .
+									"			$name = (GdkDrawable *)PHP_GDK_BITMAP_GET(php_$name);\n" .
 									"	}\n";
 			} else {
 				$var_list->add($this->type, '*' . $name);
