@@ -6524,7 +6524,7 @@
   (is-constructor-of GtkPixmap)
   (return-type GtkWidget*)
   (parameter (type-and-name GdkPixmap* pixmap))
-  (parameter (type-and-name GdkBitmap* mask))
+  (parameter (type-and-name GdkBitmap* mask) (null-ok))
 )
 
 (method set
