@@ -1,3 +1,7 @@
+2001-10-26  Andrei Zmievski  <andrei@ispi.net>
+
+    * TODO: *** empty log message ***
+
 2001-10-24  Markus Fischer  <mfischer@guru.josefine.at>
 
     * generator/generator.php: - Expose object when throwing an error.
