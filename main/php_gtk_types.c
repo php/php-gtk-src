@@ -23,7 +23,9 @@
 #include "php_gtk.h"
 
 #if HAVE_PHP_GTK
+#ifndef PHP_WIN32
 #include <gdk/gdkx.h>
+#endif
 
 int le_gdk_event;
 int le_gdk_window;
