@@ -3,8 +3,6 @@
 * Figure out what's up with getting/setting gc background/foreground colors and
   how to get RGB values from pixels.
 * Provide access to GTK version number.
-* Implement the hack fix for $dialog->vbox->show() crash and assigning
-  properties to overloaded objects crash.
 * See what other object definitions might have been missed by h2def.py.
 * See if it's possible or needed to set GtkAdjustment properties (and similar
   ones).

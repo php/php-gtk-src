@@ -1,3 +1,6 @@
+    - implemented object overloading emulation layer to correct for Zend
+      engine's problems, now it's possible to assign and read custom properties
+      on Gtk+ objects. (Andrei)
     - added GtkAspectFrame class definition. (Andrei)
     - optimized internal resource handling, this should save on memory. (Andrei)
     - fixed a bug that would corrupt object type when setting cascaded property.

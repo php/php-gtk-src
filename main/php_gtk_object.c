@@ -638,17 +638,17 @@ static inline int invoke_setter(zval *object, zval *value, zend_llist_element **
 {
 	zend_class_entry *ce;
 	prop_setter_t *setter;
-	int found = FAILURE;
+	int result = FAILURE;
 
 	if (Z_OBJCE_P(object)->handle_property_set) {
-		for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
+		for (ce = Z_OBJCE_P(object); ce != NULL && result != SUCCESS && result != PG_ERROR; ce = ce->parent) {
 			if (zend_hash_index_find(&php_gtk_prop_setters, (long)ce, (void **)&setter) == SUCCESS) {
-				found = (*setter)(object, element, value);
+				result = (*setter)(object, element, value);
 			}
 		}
 	}
 
-	return found;
+	return result;
 }
 
 zval php_gtk_get_property(zend_property_reference *property_reference)
@@ -747,8 +747,10 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 			} 
 
 			if (element == stop_element) {
-				if (invoke_setter(*object, value, &element) == SUCCESS)
+				if ((setter_retval = invoke_setter(*object, value, &element)) == SUCCESS)
 					return SUCCESS;
+				else if (setter_retval == PG_ERROR)
+					return FAILURE;
 				else if ((getter_retval = invoke_getter(*object, &result, &element)) == SUCCESS) {
 					php_error(E_WARNING, "Cannot assign to overloaded property '%s'",
 							  Z_STRVAL(overloaded_property->element));
