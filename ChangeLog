@@ -1,3 +1,16 @@
+2001-05-20  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/docgen.php: More work on doc generator.
+
+    * generator/docgen.php:
+    Added -r option to register types file that defsfile may depend on.
+
+    * generator/doc_templates.php
+      generator/docgen.php
+      generator/generator.php
+      generator/gtk.overrides:
+    First pass at documentation structure generator.
+
 2001-05-15  Andrei Zmievski  <andrei@ispi.net>
 
     * NEWS
