@@ -234,7 +234,6 @@ PHP_GTK_API void phpg_get_properties_helper(zval *object, HashTable *ht TSRMLS_D
 PHP_GTK_API void *php_gtk_get_object(zval *wrapper);
 PHP_GTK_API int php_gtk_get_simple_enum_value(zval *enum_val, int *result);
 PHP_GTK_API int php_gtk_get_enum_value(GType enum_type, zval *enum_val, int *result);
-PHP_GTK_API void php_gtk_destroy_notify(gpointer user_data);
 PHP_GTK_API void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *args);
 void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args);
 zval *php_gtk_args_as_hash(int nargs, GtkArg *args);
@@ -260,6 +259,7 @@ PHP_GTK_API void php_gtk_register_callback(char *class_and_method, GtkSignalFunc
 PHP_GTK_API void php_gtk_object_init(GtkObject *obj, zval *wrapper);
 
 /* Utility functions. */
+PHP_GTK_API void phpg_destroy_notify(gpointer user_data);
 PHP_GTK_API int php_gtk_parse_args(int argc, char *format, ...);
 int php_gtk_parse_args_quiet(int argc, char *format, ...);
 int php_gtk_parse_args_hash(zval *hash, char *format, ...);

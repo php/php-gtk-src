@@ -174,6 +174,96 @@ ignore
 	GtkPrivateFlags
 %% }}}
 
+%% {{{ main loop
+%%
+override gtk_timeout_add
+
+static gboolean phpg_handler_marshal(gpointer user_data)
+{
+	zval *callback_data = (zval *) user_data;
+	zval **callback, **extra = NULL;
+	zval **callback_filename = NULL, **callback_lineno = NULL;
+	zval ***handler_args = NULL;
+	int num_handler_args = 0;
+	zval *retval = NULL;
+	char *callback_name;
+	gboolean result;
+	TSRMLS_FETCH();
+
+	/* Callback is always passed as the first element. */
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&callback_filename);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_lineno);
+
+	if (!zend_is_callable(*callback, 0, &callback_name)) {
+		php_error(E_WARNING, "Unable to invoke handler callback '%s' specified in %s on line %ld", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
+		efree(callback_name);
+		return 0;
+	}
+
+	handler_args = php_gtk_hash_as_array(*extra);
+	num_handler_args = zend_hash_num_elements(Z_ARRVAL_PP(extra));
+
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, num_handler_args, handler_args, 0, NULL TSRMLS_CC);
+
+	result = FALSE;
+	if (retval) {
+		result = zval_is_true(retval);
+		zval_ptr_dtor(&retval);
+	}
+
+	if (handler_args)
+		efree(handler_args);
+
+	return result;
+}
+
+static void phpg_gtk_timeout_add_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool with_priority)
+{
+	guint interval;
+	gint priority = G_PRIORITY_DEFAULT;
+	zval *callback = NULL;
+	zval *extra;
+	zval *data = NULL;
+	char *callback_filename;
+	uint callback_lineno;
+	guint handler_id;
+	int req_args = with_priority ? 3 : 2;
+
+	if (ZEND_NUM_ARGS() < req_args) {
+		php_error(E_WARNING, "%s() requires at least %d arguments, %d given",
+				  get_active_function_name(TSRMLS_C), req_args, ZEND_NUM_ARGS());
+		return;
+	}
+
+	if (with_priority) {
+		if (!php_gtk_parse_args(3, "iiV", &interval, &priority, &callback))
+			return;
+	} else {
+		if (!php_gtk_parse_args(2, "iV", &interval, &callback))
+			return;
+	}
+
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
+	if (!extra) {
+		MAKE_STD_ZVAL(extra);
+		array_init(extra);
+	}
+	php_gtk_build_value(&data, "(VNsi)", callback, extra, callback_filename, callback_lineno);
+
+	handler_id = g_timeout_add_full(priority, interval, phpg_handler_marshal, data, phpg_destroy_notify);
+	RETURN_LONG(handler_id);
+}
+
+static PHP_METHOD(gtk, timeout_add)
+{
+	phpg_gtk_timeout_add_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
+}
+%% }}}
+
 %% {{{ GtkButton
 %%
 override gtk_button_new
