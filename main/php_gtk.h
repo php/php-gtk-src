@@ -165,7 +165,7 @@ static inline void php_gtk_set_object(zval *zobj, void *obj, php_gtk_dtor_t dtor
 }
 */
 
-zval *phpg_read_property(zval *object, zval *member, zend_bool silent TSRMLS_DC);
+zval *phpg_read_property(zval *object, zval *member, int type TSRMLS_DC);
 void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC);
 HashTable* phpg_get_properties(zval *object TSRMLS_DC);
 

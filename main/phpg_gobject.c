@@ -42,13 +42,14 @@ HashTable php_gtk_prop_desc;
 HashTable php_gtk_callback_hash;
 */
 
-/* {{{ static phpg_destroy_object() */
-static inline void phpg_destroy_object(phpg_gobject_t *object, zend_object_handle handle TSRMLS_DC)
+/* {{{ static phpg_free_object_storage() */
+static inline void phpg_free_object_storage(phpg_gobject_t *object, zend_object_handle handle TSRMLS_DC)
 {
     zend_hash_destroy(object->zobj.properties);
     FREE_HASHTABLE(object->zobj.properties);
 	if (object->obj && object->dtor)
 		object->dtor(object->obj);
+    object->obj = NULL;
     efree(object);
 }
 /* }}} */
@@ -65,7 +66,7 @@ static zend_object_value phpg_create_object(zend_class_entry *ce TSRMLS_DC)
 	object->dtor = NULL;
 
 	zov.handlers = &php_gtk_handlers;
-	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_destroy_object, NULL TSRMLS_CC);
+	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_free_object_storage, NULL TSRMLS_CC);
 
 	return zov;
 }
@@ -88,7 +89,7 @@ static zend_class_entry* phpg_class_from_gtype(GType gtype)
 
 
 /* {{{ phpg_read_property() */
-zval *phpg_read_property(zval *object, zval *member, zend_bool silent TSRMLS_DC)
+zval *phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 {
 	phpg_head_t *poh;
 	zval tmp_member;
@@ -124,7 +125,7 @@ zval *phpg_read_property(zval *object, zval *member, zend_bool silent TSRMLS_DC)
             result_ptr = EG(uninitialized_zval_ptr);
         }
 	} else {
-		result_ptr = zend_get_std_object_handlers()->read_property(object, member, silent TSRMLS_CC);
+		result_ptr = zend_get_std_object_handlers()->read_property(object, member, type TSRMLS_CC);
 	}
 
 	if (member == &tmp_member) {
@@ -349,7 +350,7 @@ PHP_GTK_API zval* phpg_gobject_new(GObject *obj)
 
 		pobj = zend_object_store_get_object(zobj TSRMLS_CC);
 		pobj->obj = obj;
-		pobj->dtor = (phpg_dtor_t) gtk_object_unref;
+		pobj->dtor = (phpg_dtor_t) g_object_unref;
 		g_object_set_qdata(obj, gobject_wrapper_key, (void*)handle);
 	}
 
