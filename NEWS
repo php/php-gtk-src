@@ -1,3 +1,4 @@
+    - adapted build system to work with the new PHP build system. (Andrei)
     - made gtk::input_add() work with PHP streams. (Andrei)
     - fixed property and method access on GdkBitmap. (Andrei)
 
