@@ -4,7 +4,7 @@ The binary distribution for php-gtk contains this structure
 
 \php4				->	php and php-gtk binary files
 \winnt				->	the default php.ini file
-\winnt\system32		->	gtk binaries uesd by the extension
+\winnt\system32		->	gtk binaries used by the extension
 \samples			->	a few samples to demonstrate the usage
 README.TXT			->	this file.
 
