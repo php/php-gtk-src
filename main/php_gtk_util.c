@@ -84,6 +84,7 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int
 					case IS_LONG:
 					case IS_DOUBLE:
 						convert_to_long_ex(arg);
+						if (as_zval) goto ret_zval;
 						*va_arg(*va, int *) = Z_LVAL_PP(arg);
 						break;
 
@@ -117,6 +118,7 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int
 					case IS_LONG:
 					case IS_DOUBLE:
 						convert_to_long_ex(arg);
+						if (as_zval) goto ret_zval;
 						*va_arg(*va, long *) = Z_LVAL_PP(arg);
 						break;
 
