@@ -20,22 +20,25 @@
  
 /* $Id$ */
 
+#ifndef PHP_SKELETON_H
+#define PHP_SKELETON_H
+
 #include "php_skeleton.h"
 
 #if HAVE_SKELETON
 
-PHP_GTK_XINIT_FUNCTION(skeleton)
-{
-	php_skeleton_register_constants(module_number TSRMLS_CC);
-	php_skeleton_register_classes();
+extern php_gtk_ext_entry skeleton_ext_entry;
+#define skeleton_ext_ptr &skeleton_ext_entry
 
-	return SUCCESS;
-}
+void php_skeleton_register_constants(int module_number TSRMLS_DC);
+void php_skeleton_register_classes();
 
-php_gtk_ext_entry skeleton_ext_entry = {
-	"skeleton",
-	PHP_GTK_XINIT(skeleton),
-	NULL,
-};
+#else
+
+#define skeleton_ext_ptr NULL
 
 #endif	/* HAVE_SKELETON */
+
+#define php_gtk_ext_skeleton_ptr skeleton_ext_ptr
+
+#endif	/* PHP_SKELETON_H */
