@@ -859,12 +859,12 @@ class Generator {
                 if ($this->overrides->is_prop_overriden($object->c_name, $field_name)) {
                     $overrides = $this->overrides->get_prop_override($object->c_name, $field_name);
                     if (isset($overrides['read'])) {
-                        fwrite($this->fp, $overrides['read'] . "\n");
+                        fwrite($this->fp, $overrides['read'] . "\n\n");
                     } else {
                         $read_func = 'NULL';
                     }
                     if (isset($overrides['write'])) {
-                        fwrite($this->fp, $overrides['write'] . "\n");
+                        fwrite($this->fp, $overrides['write'] . "\n\n");
                         $write_func = $write_prefix . $field_name;
                     }
                 } else {

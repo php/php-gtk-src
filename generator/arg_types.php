@@ -346,7 +346,7 @@ class Double_Arg extends Arg_Type {
 
 /* {{{ Enum_Arg */
 class Enum_Arg extends Arg_Type {
-    static $enum_tpl  = "\n\tif (php_%(name) && !phpg_gvalue_get_enum(%(typecode), php_%(name), (gint *)&%(name))) {\n\t\treturn;\n\t}\n";
+    static $enum_tpl  = "\n\tif (php_%(name) && phpg_gvalue_get_enum(%(typecode), php_%(name), (gint *)&%(name)) == FAILURE) {\n\t\treturn;\n\t}\n";
     var $enum_name = null;
     var $typecode = null;
     //var $simple    = null;
@@ -395,7 +395,7 @@ class Enum_Arg extends Arg_Type {
 
 /* {{{ Flags_Arg */
 class Flags_Arg extends Arg_Type {
-    static $flag_tpl = "\n\tif (php_%(name) && !phpg_gvalue_get_flags(%(typecode), php_%(name), (gint *)&%(name))) {\n\t\treturn;\n\t}\n";
+    static $flag_tpl = "\n\tif (php_%(name) && !phpg_gvalue_get_flags(%(typecode), php_%(name), (gint *)&%(name)) == FAILURE) {\n\t\treturn;\n\t}\n";
     var $flag_name = null;
     var $typecode = null;
 
@@ -550,7 +550,7 @@ class Object_Arg extends Arg_Type {
 /* {{{ Boxed_Arg */
 class Boxed_Arg extends Arg_Type {
     const check_tpl = "
-    if (phpg_gboxed_check(php_%(name), %(typecode) TSRMLS_CC)) {
+    if (phpg_gboxed_check(php_%(name), %(typecode), FALSE TSRMLS_CC)) {
         %(name) = (%(typename) *) PHPG_GBOXED(php_%(name));
     } else {
         php_error(E_WARNING, \"%s() expects %(name) argument to be a valid %(typename) object\",
@@ -559,7 +559,7 @@ class Boxed_Arg extends Arg_Type {
     }\n";
     const check_default_tpl = "
     if (php_%(name)) {
-        if (phpg_gboxed_check(php_%(name), %(typecode) TSRMLS_CC)) {
+        if (phpg_gboxed_check(php_%(name), %(typecode), FALSE TSRMLS_CC)) {
             %(name) = (%(typename) *) PHPG_GBOXED(php_%(name));
         } else {
             php_error(E_WARNING, \"%s() expects %(name) argument to be a valid %(typename) object\",
@@ -569,7 +569,7 @@ class Boxed_Arg extends Arg_Type {
     }\n";
     const check_null_tpl = "
     if (Z_TYPE_P(php_%(name)) != IS_NULL) {
-        if (phpg_gboxed_check(php_%(name), %(typecode) TSRMLS_CC)) {
+        if (phpg_gboxed_check(php_%(name), %(typecode), FALSE TSRMLS_CC)) {
             %(name) = (%(typename) *) PHPG_GBOXED(php_%(name));
         } else {
             php_error(E_WARNING, \"%s() expects %(name) argument to be a valid %(typename) object or null\",
@@ -582,7 +582,7 @@ class Boxed_Arg extends Arg_Type {
         if (Z_TYPE_P(php_%(name)) == IS_NULL) {
             %(name) = NULL;
         } else {
-            if (phpg_gboxed_check(php_%(name), %(typecode) TSRMLS_CC)) {
+            if (phpg_gboxed_check(php_%(name), %(typecode), FALSE TSRMLS_CC)) {
                 %(name) = (%(typename) *) PHPG_GBOXED(php_%(name));
             } else {
                 php_error(E_WARNING, \"%s() expects %(name) argument to be a valid %(typename) object or null\",
