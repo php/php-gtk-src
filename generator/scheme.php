@@ -80,7 +80,7 @@ class Defs_Parser {
 	{
 		switch (gettype($arg)) {
 			case 'string':
-				print("Parsing file \"$arg\".\n");
+				error_log("Parsing file \"$arg\".");
 				$this->file_name = $arg;
 				$this->file_path = dirname($this->file_name);
 				$this->parse_tree = parse(fopen($arg, 'r'));
@@ -162,7 +162,7 @@ class Defs_Parser {
 	function handle_include($arg)
 	{
 		$include_file = $this->file_path . "/" . $arg[0];
-		print("Parsing file \"$include_file\".\n");
+		error_log("Parsing file \"$include_file\".");
 		$include_tree = parse(fopen($include_file, 'r'));
 		$this->start_parsing($include_tree);
 	}

@@ -1,0 +1,19 @@
+LTLIBRARY_NAME          = libgtk+.la
+LTLIBRARY_SOURCES       = php_gtk+.c php_gtk+_types.c gen_gtk.c gen_gdk.c
+LTLIBRARY_LIBADD        = $(GTK_PLUS_SHARED_LIBADD)
+LTLIBRARY_SHARED_NAME   = gtk+.la
+LTLIBRARY_SHARED_LIBADD = $(GTK_PLUS_SHARED_LIBADD)
+
+include $(top_srcdir)/build/dynlib.mk
+
+php_gtk+.o php_gtk+.lo php_gtk+.slo: gen_ce_gtk.h
+
+gen_gtk.c: gtk.defs gtk-extrafuncs.defs gtk.overrides
+	php -q $(top_srcdir)/generator/generator.php -o ext/gtk%2b/gtk.overrides -p gtk ext/gtk%2b/gtk.defs > gen_gtk.c
+
+gen_gdk.c: gdk.defs gdk.overrides
+	php -q $(top_srcdir)/generator/generator.php -o ext/gtk%2b/gdk.overrides -p gdk ext/gtk%2b/gdk.defs > gen_gdk.c
+
+gen_ce_gtk.h: gen_gtk.c gen_gdk.c
+	grep -h "^PHP_GTK_EXPORT_CE" gen_gtk.c gen_gdk.c | sed -e "s!^!extern !" > gen_ce_gtk.h
+

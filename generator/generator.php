@@ -491,7 +491,7 @@ class Generator {
 	{
 		global	$register_classes_tpl;
 
-		$fp = fopen('../src/php_gtk_gen_' . $this->prefix . '.c', 'w');
+		$fp = fopen('php://stdout', 'w');
 		fwrite($fp, "#include \"php_gtk.h\"");
 		fwrite($fp, "\n#if HAVE_PHP_GTK\n");
 		fwrite($fp, $this->overrides->get_headers());
@@ -510,11 +510,17 @@ class Generator {
 $argc = $HTTP_SERVER_VARS['argc'];
 $argv = $HTTP_SERVER_VARS['argv'];
 
+/* An ugly hack to counteract PHP's pernicious desire to treat + as an argument
+   separator in command-line version. */
+array_walk($argv, create_function('&$x', '$x = urldecode($x);'));
+
 $result = Console_Getopt::getopt($argv, 'o:p:r:');
 if (!$result || count($result[1]) < 2)
 	die("usage: php -q generator.php [-o overridesfile] [-p prefix] [-r typesfile] defsfile\n");
 
 list($opts, $argv) = $result;
+
+chdir('..');
 
 $prefix = 'gtk';
 $overrides = new Overrides();

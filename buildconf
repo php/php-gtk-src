@@ -1,0 +1,5 @@
+#!/bin/sh
+# $Id$
+
+rm -f generated_lists
+${MAKE:-make} -s -f build2/build.mk

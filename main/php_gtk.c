@@ -25,6 +25,7 @@
 
 #if HAVE_PHP_GTK
 
+HashTable php_gtk_ext_registry;
 GHashTable *php_gtk_class_hash = NULL;
 
 zend_module_entry gtk_module_entry = {
@@ -42,123 +43,10 @@ zend_module_entry gtk_module_entry = {
 ZEND_GET_MODULE(gtk)
 #endif
 
-
-static void init_gtk(void)
-{
-	HashTable *symbol_table;
-	zval **z_argv = NULL, **z_argc = NULL, **entry;
-	zval *tmp;
-	char **argv;
-	int argc, i;
-	zend_bool no_argc = 0;
-	PLS_FETCH();
-	SLS_FETCH();
-
-	/* We check request_method to see if we've been called from command line or
-	   Web server. Running GUI apps through a Web module can be dangerous to
-	   your health. */
-	if (SG(request_info).request_method != NULL) {
-		php_error(E_ERROR, "php-gtk: PHP GTK+ support is not available under Web servers");
-		return;
-	}
- 
-	/*
-	 * Since track_vars is always on, we just get the argc/argv values from
-	 * there.
-	 */
-	symbol_table = PG(http_globals)[TRACK_VARS_SERVER]->value.ht;
-
-	zend_hash_find(symbol_table, "argc", sizeof("argc"), (void **)&z_argc);
-	zend_hash_find(symbol_table, "argv", sizeof("argv"), (void **)&z_argv);
-	if (!z_argc || !z_argv || Z_TYPE_PP(z_argc) != IS_LONG || Z_TYPE_PP(z_argv) != IS_ARRAY) {
-		php_error(E_ERROR, "php-gtk: argc/argv are corrupted");
-	}
-
-	argc = Z_LVAL_PP(z_argc);
-
-	/*
-	 * If the script was called via -f switch and no further arguments were
-	 * given, argc will be 0 and that's not good for gtk_init_check(). We use
-	 * the path to the script as the only argument, and remember that we won't
-	 * have to update symbol table after gtk_init_check().
-	 */
-	if (argc == 0) {
-		argc = 1;
-		no_argc = 1;
-		argv = (char **)g_new(char *, argc);
-		argv[0] = g_strdup(SG(request_info).path_translated);
-	} else {
-		argv = (char **)g_new(char *, argc);
-		i = 0;
-		for (zend_hash_internal_pointer_reset(Z_ARRVAL_PP(z_argv));
-			 zend_hash_get_current_data(Z_ARRVAL_PP(z_argv), (void **)&entry) == SUCCESS;
-			 zend_hash_move_forward(Z_ARRVAL_PP(z_argv))) {
-			argv[i++] = g_strndup(Z_STRVAL_PP(entry), Z_STRLEN_PP(entry));
-		}
-	}
-	
-	/* Ok, this is a hack. GTK+/GDK calls g_atexit() to set up a couple of cleanup
-	   functions that should be called when the main program exits. However, if
-	   we're compiled as .so library, libgtk.so will be unloaded first and the
-	   pointers to the cleanup functions will be invalid. So we load libgtk.so
-	   one more time to make sure it stays in memory even after our .so is
-	   unloaded. */
-	//DL_LOAD("libgtk.so");
-			   
-	if (!gtk_init_check(&argc, &argv)) {
-		if (argv != NULL) {
-			for (i = 0; i < argc; i++)
-				g_free(argv[i]);
-			g_free(argv);
-		}
-		php_error(E_ERROR, "php-gtk: Could not open display");
-		return;
-	}
-
-	/*
-	   We must always call gtk_set_locale() in order to get GTK+/GDK
-	   correctly initialize multilingual support. Otherwise, application
-	   will refuse any letters outside ASCII and font metrics will
-	   be broken.
-	 */
-	gtk_set_locale();
-
-	if (no_argc) {
-		/* The -f switch case, simple. */
-		g_free(argv[0]);
-	} else {
-		/* We always clean the argv array. */
-		zend_hash_clean(Z_ARRVAL_PP(z_argv));
-
-		/* Then if there are any arguments left after processing with
-		   gtk_init_check(), we put them back into PHP's argv array and update
-		   argc as well. */
-		if (argv != NULL) {
-			for (i = 0; i < argc; i++) {
-				ALLOC_ZVAL(tmp);
-				tmp->type = IS_STRING;
-				tmp->value.str.len = strlen(argv[i]);
-				tmp->value.str.val = estrndup(argv[i], tmp->value.str.len);
-				INIT_PZVAL(tmp);
-				zend_hash_next_index_insert(Z_ARRVAL_PP(z_argv), &tmp, sizeof(zval *), NULL);
-			}
-			g_free(argv);
-
-			Z_LVAL_PP(z_argc) = argc;
-		}
-	}
-}
-
 /* Remove comments and fill if you need to have entries in php.ini
 PHP_INI_BEGIN()
 PHP_INI_END()
 */
-
-static void release_gtk_object_rsrc(zend_rsrc_list_entry *rsrc)
-{
-	GtkObject *obj = (GtkObject *)rsrc->ptr;
-	gtk_object_unref(obj);
-}
 
 PHP_MINIT_FUNCTION(gtk)
 {
@@ -179,26 +67,31 @@ PHP_MSHUTDOWN_FUNCTION(gtk)
 	return SUCCESS;
 }
 
+static void php_gtk_ext_destructor(php_gtk_ext_entry *ext)
+{
+	if (ext->ext_started && ext->ext_shutdown_func)
+		ext->ext_shutdown_func();
+	ext->ext_started = 0;
+}
+
 /* Remove if there's nothing to do at request start */
 PHP_RINIT_FUNCTION(gtk)
 {
-	le_gtk = zend_register_list_destructors_ex(release_gtk_object_rsrc, NULL, "GtkObject", module_number);
+	zend_hash_init_ex(&php_gtk_ext_registry, 10, NULL, (void (*)(void *))php_gtk_ext_destructor, 1, 0);
 
 	php_gtk_class_hash = g_hash_table_new(g_str_hash, g_str_equal);
 	zend_hash_init_ex(&php_gtk_prop_getters, 20, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_prop_setters, 20, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_rsrc_hash, 50, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_type_hash, 50, NULL, NULL, 1, 0);
-#include "src/php_gtk_gen_reg_items.h"
-	php_gtk_register_types(module_number);
 	
-	init_gtk();
-#if HAVE_LIBGLADE
-	glade_init();
-#endif
-
 	zend_unset_timeout();
 	zend_set_timeout(0);
+
+	if (php_gtk_startup_all_extensions(module_number) == FAILURE) {
+		php_error(E_WARNING, "Unable to start extensions");
+		return FAILURE;
+	}
 
 	return SUCCESS;
 }
@@ -210,7 +103,8 @@ PHP_RSHUTDOWN_FUNCTION(gtk)
 	zend_hash_destroy(&php_gtk_prop_setters);
 	zend_hash_destroy(&php_gtk_rsrc_hash);
 	zend_hash_destroy(&php_gtk_type_hash);
-	gtk_exit(0);
+
+	zend_hash_destroy(&php_gtk_ext_registry);
 
 	return SUCCESS;
 }
@@ -236,12 +130,43 @@ PHP_FUNCTION(wrap_no_constructor)
 	php_gtk_invalidate(this_ptr);
 }
 
+PHP_FUNCTION(wrap_no_direct_constructor)
+{
+	php_error(E_WARNING, "Class %s cannot be constructed directly", get_active_function_name());
+	php_gtk_invalidate(this_ptr);
+}
+
+static int php_gtk_startup_extension(php_gtk_ext_entry *ext, int module_number)
+{
+	if (ext) {
+		if (ext->ext_startup_func) {
+			if (ext->ext_startup_func(module_number) == FAILURE) {
+				php_error(E_WARNING, "Unable to start '%s' PHP-GTK extension", ext->name);
+				return FAILURE;
+			}
+		}
+		ext->ext_started = 1;
+		zend_hash_add(&php_gtk_ext_registry, ext->name, strlen(ext->name)+1,
+					  (void *)ext, sizeof(php_gtk_ext_entry), NULL);
+	}
+
+	return SUCCESS;
+}
+
+int php_gtk_startup_extensions(php_gtk_ext_entry **ext, int ext_count, int module_number)
+{
+	php_gtk_ext_entry **end = ext + ext_count;
+
+	while (ext < end) {
+		if (*ext) {
+			if (php_gtk_startup_extension(*ext, module_number)==FAILURE) {
+				return FAILURE;
+			}
+		}
+		ext++;
+	}
+
+	return SUCCESS;
+}
 
 #endif	/* HAVE_PHP_GTK */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- */

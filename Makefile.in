@@ -1,8 +1,9 @@
+SUBDIRS = ext main
+
 LTLIBRARY_NAME        = libphp_gtk.la
 LTLIBRARY_SHARED_NAME = php_gtk.la
-LTLIBRARY_SHARED_LIBADD = $(PHP_GTK_SHARED_LIBADD)
-LTLIBRARY_DEPENDENCIES = $(PHP_GTK_SOURCE_LIBADD)
-
-SUBDIRS = src
+LTLIBRARY_DEPENDENCIES = $(PHP_GTK_EXT_LTLIBS) \
+                         main/libmain.la
+LTLIBRARY_SHARED_LIBADD = $(LTLIBRARY_DEPENDENCIES)
 
 include $(top_srcdir)/build/dynlib.mk

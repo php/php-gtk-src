@@ -40,32 +40,25 @@ int le_gdk_drag_context;
 int le_gtk_accel_group;
 int le_gtk_style;
 
-zend_class_entry *gdk_event_ce;
-zend_class_entry *gdk_window_ce;
-zend_class_entry *gdk_pixmap_ce;
-zend_class_entry *gdk_bitmap_ce;
-zend_class_entry *gdk_color_ce;
-zend_class_entry *gdk_colormap_ce;
-zend_class_entry *gdk_atom_ce;
-zend_class_entry *gdk_cursor_ce;
-zend_class_entry *gdk_visual_ce;
-zend_class_entry *gdk_font_ce;
-zend_class_entry *gdk_gc_ce;
-zend_class_entry *gdk_drag_context_ce;
-zend_class_entry *gtk_selection_data_ce;
-zend_class_entry *gtk_ctree_node_ce;
-zend_class_entry *gtk_accel_group_ce;
-zend_class_entry *gtk_style_ce;
-zend_class_entry *gtk_box_child_ce;
-zend_class_entry *gtk_fixed_child_ce;
-zend_class_entry *gtk_clist_row_ce;
-
-static PHP_FUNCTION(wrap_no_direct_constructor)
-{
-	php_error(E_WARNING, "Class %s cannot be constructed directly",
-			  get_active_function_name());
-	php_gtk_invalidate(this_ptr);
-}
+PHP_GTK_EXPORT_CE(gdk_event_ce)
+PHP_GTK_EXPORT_CE(gdk_window_ce)
+PHP_GTK_EXPORT_CE(gdk_pixmap_ce)
+PHP_GTK_EXPORT_CE(gdk_bitmap_ce)
+PHP_GTK_EXPORT_CE(gdk_color_ce)
+PHP_GTK_EXPORT_CE(gdk_colormap_ce)
+PHP_GTK_EXPORT_CE(gdk_atom_ce)
+PHP_GTK_EXPORT_CE(gdk_cursor_ce)
+PHP_GTK_EXPORT_CE(gdk_visual_ce)
+PHP_GTK_EXPORT_CE(gdk_font_ce)
+PHP_GTK_EXPORT_CE(gdk_gc_ce)
+PHP_GTK_EXPORT_CE(gdk_drag_context_ce)
+PHP_GTK_EXPORT_CE(gtk_selection_data_ce)
+PHP_GTK_EXPORT_CE(gtk_ctree_node_ce)
+PHP_GTK_EXPORT_CE(gtk_accel_group_ce)
+PHP_GTK_EXPORT_CE(gtk_style_ce)
+PHP_GTK_EXPORT_CE(gtk_box_child_ce)
+PHP_GTK_EXPORT_CE(gtk_fixed_child_ce)
+PHP_GTK_EXPORT_CE(gtk_clist_row_ce)
 
 /* GdkEvent */
 static function_entry php_gdk_event_functions[] = {
@@ -2439,11 +2432,11 @@ static void gtk_clist_row_get_property(zval *return_value, zval *object, zend_ll
 }
 
 
-void php_gtk_register_types(int module_number)
+void php_gtk_plus_register_types(int module_number)
 {
 	zend_class_entry ce;
 
-	le_php_gtk_wrapper = zend_register_list_destructors_ex(NULL, NULL, "Generic wrapper", module_number);
+	le_php_gtk_wrapper = zend_register_list_destructors_ex(NULL, NULL, "Generic PHP-GTK wrapper", module_number);
 	le_gdk_window = zend_register_list_destructors_ex(release_gdk_window_rsrc, NULL, "GdkWindow", module_number);
 	le_gdk_bitmap = zend_register_list_destructors_ex(release_gdk_bitmap_rsrc, NULL, "GdkBitmap", module_number);
 	le_gdk_color = zend_register_list_destructors_ex(release_gdk_color_rsrc, NULL, "GdkColor", module_number);

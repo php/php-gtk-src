@@ -9,5 +9,8 @@
   cascaded overloads, i.e. $style->base[GTK_STATE_NORMAL]->red = 55555.
 * Make <gdk/gdkkeysyms.h> available as constants and document them.
 
+* Have a separate _init() function for each module(). Also have .ini setting
+  that automatically inits modules.
+
 # vim: set tw=80 ai et sts=4:
 
