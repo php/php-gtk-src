@@ -64,7 +64,6 @@ class Var_List {
         foreach (array_keys($this->vars) as $c_type)
             $result[] = "\t$c_type " . implode(', ', $this->vars[$c_type]) .  ";\n";
         if (count($result)) {
-            $result[] = "\n";
             return implode('', $result);
         } else
             return '';
@@ -147,7 +146,7 @@ class Arg_Type {
 class None_Arg extends Arg_Type {
     function write_return($type, $owns_return, $info)
     {
-        return "\tRETURN_NULL();";
+        return "\tRETVAL_NULL();";
     }
 }
 
@@ -180,17 +179,17 @@ class String_Arg extends Arg_Type {
                 $info->post_code[] = 
                        "    if (php_retval) {\n"                           .
                        "        cp_ret = g_convert(php_retval, strlen(php_retval), GTK_G(codepage), \"UTF-8\", NULL, NULL, NULL);\n" .
-                       "        RETURN_STRING((char *)cp_ret, 1);\n"       .
+                       "        RETVAL_STRING((char *)cp_ret, 1);\n"       .
                        "        g_free(cp_ret);\n"                         .
                        "    } else {\n"                                    .
-                       "        RETURN_NULL();\n"                          .
+                       "        RETVAL_NULL();\n"                          .
                        "    }";
             } else {
                 $info->post_code[] = 
                        "    if (php_retval) {\n"                           .
-                       "        RETURN_STRING((char *)php_retval, 1);\n"   .
+                       "        RETVAL_STRING((char *)php_retval, 1);\n"   .
                        "    } else {\n"                                    .
-                       "        RETURN_NULL();\n"                          .
+                       "        RETVAL_NULL();\n"                          .
                        "    }";
             }
 
@@ -201,19 +200,19 @@ class String_Arg extends Arg_Type {
                 $info->post_code[] = 
                        "    if (php_retval) {\n"                        .
                        "        cp_ret = g_convert(php_retval, strlen(php_retval), GTK_G(codepage), \"UTF-8\", NULL, NULL, NULL);\n" .
-                       "        RETURN_STRING((char *)cp_ret, 1);\n"    .
+                       "        RETVAL_STRING((char *)cp_ret, 1);\n"    .
                        "        g_free(cp_ret);\n"                      .
                        "        g_free(php_retval);\n"                  .
                        "    } else\n"                                   .
-                       "        RETURN_NULL();";
+                       "        RETVAL_NULL();";
             }
             else {
                 $info->post_code[] = 
                        "    if (php_retval) {\n"                   .
-                       "        RETURN_STRING(php_retval, 1);\n"   .
+                       "        RETVAL_STRING(php_retval, 1);\n"   .
                        "        g_free(php_retval);\n"             .
                        "    } else\n"                              .
-                       "        RETURN_NULL();";
+                       "        RETVAL_NULL();";
             }
         }
     }
@@ -233,7 +232,7 @@ class Char_Arg extends Arg_Type {
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add('gchar', 'php_retval');
-        $info->post_code[] =  "\tRETURN_STRINGL((char*)&ret, 1, 1);";
+        $info->post_code[] =  "\tRETVAL_STRINGL((char*)&ret, 1, 1);";
     }
 }
 
@@ -251,7 +250,7 @@ class Int_Arg extends Arg_Type {
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add('long', 'php_retval');
-        $info->post_code[] = "\tRETURN_LONG(php_retval);";
+        $info->post_code[] = "\tRETVAL_LONG(php_retval);";
     }
 
     function write_to_prop($obj, $name, $source)
@@ -283,7 +282,7 @@ class Bool_Arg extends Arg_Type {
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add('gboolean', 'php_retval');
-        $info->post_code[] = "\tRETURN_BOOL(php_retval);";
+        $info->post_code[] = "\tRETVAL_BOOL(php_retval);";
     }
 
     function write_to_prop($obj, $name, $source)
@@ -315,7 +314,7 @@ class Double_Arg extends Arg_Type {
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add('double', 'php_retval');
-        $info->post_code[] = "\tRETURN_DOUBLE(php_retval);";
+        $info->post_code[] = "\tRETVAL_DOUBLE(php_retval);";
     }
 
     function write_to_prop($obj, $name, $source)
@@ -376,7 +375,7 @@ class Enum_Arg extends Arg_Type {
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add('long', 'php_retval');
-        $info->post_code[] = "\tRETURN_LONG(php_retval);";
+        $info->post_code[] = "\tRETVAL_LONG(php_retval);";
     }
 }
 
@@ -407,7 +406,7 @@ class Flags_Arg extends Arg_Type {
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add('long', 'php_retval');
-        $info->post_code[] = "RETURN_LONG(php_retval);";
+        $info->post_code[] = "\tRETVAL_LONG(php_retval);";
     }
 }
 
@@ -615,7 +614,7 @@ class Boxed_Arg extends Arg_Type {
             $owns_return = false;
         }
 
-        $info->post_code[] = sprintf("    phpg_gboxed_new(&return_value, %s, %s, %s, TRUE);\n",
+        $info->post_code[] = sprintf("\tphpg_gboxed_new(&return_value, %s, %s, %s, TRUE);\n",
                                      $this->typecode, $ret, $owns_return ?  'FALSE' : 'TRUE');
     }
 }
