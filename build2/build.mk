@@ -17,5 +17,5 @@ build2/generated_lists:
 
 $(STAMP):
 	phpize
-	@test -f php_gtk.m4 && rm php_gtk.m4
+	if test -f php_gtk.m4; then rm php_gtk.m4; fi
 	touch $(STAMP)
