@@ -22,6 +22,7 @@
 /* $Id$ */
 
 abstract class Definition {
+    static $true_values = array('#t', 't');
     function guess_return_value_ownership()
     {
         /* TODO implement */
@@ -191,7 +192,7 @@ class Function_Def extends Definition {
             else if ($arg[0] == 'return-type')
                 $this->return_type = $arg[1];
             else if ($arg[0] == 'caller-owns-return')
-                $this->caller_owns_return = in_array($arg[1], array('t', '#t'));
+                $this->caller_owns_return = in_array($arg[1], Definition::$true_values);
             else if ($arg[0] == 'parameters') {
                 $param_type = null;
                 $param_name = null;
@@ -206,11 +207,11 @@ class Function_Def extends Definition {
                         else if ($opt_arg[0] == 'null-ok')
                             $param_null = true;
                     }
+                    $this->params[] = array($param_type, $param_name,
+                                            $param_default, $param_null);
                 }
-                $this->params[] = array($param_type, $param_name,
-                                        $param_default, $param_null);
             } else if ($arg[0] == 'varargs')
-                $this->varargs = $arg[1] == 't';
+                $this->varargs = in_array($arg[1], Definition::$true_values);
         }
     }
 }
