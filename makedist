@@ -65,9 +65,10 @@ fi
 
 # version part of the CVS release tag
 CVSVER=`echo $VER | sed -e 's/[\.\-]/_/g'`
+CVSPKG=`echo $PKG | sed -e 's/[^a-zA-Z_]/_/g'`
 
 # CVS release tag
-CVSTAG=${PKG}_$CVSVER
+CVSTAG=${CVSPKG}_$CVSVER
 
 if test ! -d $DIRPATH; then
     mkdir -p $DIRPATH || exit 2
