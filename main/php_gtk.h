@@ -27,6 +27,8 @@
 
 #if HAVE_PHP_GTK
 
+#define PHP_GTK_VERSION "0.1.1"
+
 #define PHP_GTK_EXPORT_CE(ce) zend_class_entry *ce
 #define PHP_GTK_EXPORT_FUNC(func) func
 #define PHP_GTK_GET_GENERIC(w, type, le) ((type)php_gtk_get_object(w, le))
