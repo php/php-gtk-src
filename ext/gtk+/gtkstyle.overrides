@@ -1,0 +1,190 @@
+
+%%
+override-prop GtkStyle fg
+PHPG_PROP_READER(GtkStyle, fg)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_COLOR_ARRAY, style->fg TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle bg
+PHPG_PROP_READER(GtkStyle, bg)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_COLOR_ARRAY, style->bg TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle light
+PHPG_PROP_READER(GtkStyle, light)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_COLOR_ARRAY, style->light TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle dark
+PHPG_PROP_READER(GtkStyle, dark)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_COLOR_ARRAY, style->dark TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle mid
+PHPG_PROP_READER(GtkStyle, mid)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_COLOR_ARRAY, style->mid TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle text
+PHPG_PROP_READER(GtkStyle, text)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_COLOR_ARRAY, style->text TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle text_aa
+PHPG_PROP_READER(GtkStyle, text_aa)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_COLOR_ARRAY, style->text_aa TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle base
+PHPG_PROP_READER(GtkStyle, base)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_COLOR_ARRAY, style->base TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle fg_gc
+PHPG_PROP_READER(GtkStyle, fg_gc)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_GC_ARRAY, style->fg_gc TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle bg_gc
+PHPG_PROP_READER(GtkStyle, bg_gc)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_GC_ARRAY, style->bg_gc TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle light_gc
+PHPG_PROP_READER(GtkStyle, light_gc)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_GC_ARRAY, style->light_gc TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle dark_gc
+PHPG_PROP_READER(GtkStyle, dark_gc)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_GC_ARRAY, style->dark_gc TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle mid_gc
+PHPG_PROP_READER(GtkStyle, mid_gc)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_GC_ARRAY, style->mid_gc TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle text_gc
+PHPG_PROP_READER(GtkStyle, text_gc)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_GC_ARRAY, style->text_gc TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle text_aa_gc
+PHPG_PROP_READER(GtkStyle, text_aa_gc)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_GC_ARRAY, style->text_aa_gc TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle base_gc
+PHPG_PROP_READER(GtkStyle, base_gc)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_GC_ARRAY, style->base_gc TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkStyle bg_pixmap
+PHPG_PROP_READER(GtkStyle, bg_pixmap)
+{
+	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
+
+	phpg_create_style_helper(&return_value, style, STYLE_PIXMAP_ARRAY, style->bg_pixmap TSRMLS_CC);
+
+	return SUCCESS;
+}
+
+%% }}} 
+
