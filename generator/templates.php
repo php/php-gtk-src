@@ -89,4 +89,13 @@ static void %s_get_property(zval *return_value, zval *object, zend_llist_element
 
 $init_class_tpl = "\n\tINIT_OVERLOADED_CLASS_ENTRY(ce, \"%s\", %s_functions, NULL, %s, NULL);\n";
 
+$get_type_tpl = "
+PHP_FUNCTION(wrap_%s_get_type)
+{
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"\"))
+		return;
+
+	RETURN_LONG(%s_get_type());
+}\n\n";
+
 ?>

@@ -187,7 +187,7 @@ PHP_FUNCTION(wrap_gtk_timeout_add)
 	if (!php_gtk_parse_args(2, "iV", &interval, &func))
 		return;
 
-	if (!php_gtk_check_callable(func)) {
+	if (!php_gtk_is_callable(func, NULL)) {
 		php_error(E_WARNING, "%s() expects argument 2 to be callable",
 				  get_active_function_name());
 		return;
@@ -216,7 +216,7 @@ PHP_FUNCTION(wrap_gtk_idle_add)
 	if (!php_gtk_parse_args(1, "V", &func))
 		return;
 
-	if (!php_gtk_check_callable(func)) {
+	if (!php_gtk_is_callable(func, NULL)) {
 		php_error(E_WARNING, "%s() expects argument 1 to be callable",
 				  get_active_function_name());
 		return;
@@ -246,7 +246,7 @@ PHP_FUNCTION(wrap_gtk_quit_add)
 	if (!php_gtk_parse_args(2, "iV", &main_level, &func))
 		return;
 
-	if (!php_gtk_check_callable(func)) {
+	if (!php_gtk_is_callable(func, NULL)) {
 		php_error(E_WARNING, "%s() expects argument 2 to be callable",
 				  get_active_function_name());
 		return;
@@ -275,7 +275,7 @@ PHP_FUNCTION(wrap_gtk_input_add_full)
 	if (!php_gtk_parse_args(3, "iiV", &source, &condition, &func))
 		return;
 
-	if (!php_gtk_check_callable(func)) {
+	if (!php_gtk_is_callable(func, NULL)) {
 		php_error(E_WARNING, "%s() expects argument 3 to be callable",
 				  get_active_function_name());
 		return;
@@ -306,7 +306,7 @@ PHP_FUNCTION(wrap_gtk_signal_connect)
 	if (!php_gtk_parse_args(2, "sV", &name, &func))
 		return;
 
-	if (!php_gtk_check_callable(func)) {
+	if (!php_gtk_is_callable(func, NULL)) {
 		php_error(E_WARNING, "%s() expects argument 2 to be callable",
 				  get_active_function_name());
 		return;
@@ -346,7 +346,7 @@ PHP_FUNCTION(wrap_gtk_signal_connect_object)
 	add_next_index_zval(method, obj);
 	add_next_index_string(method, func, 1);
 
-	if (!php_gtk_check_callable(method)) {
+	if (!php_gtk_is_callable(method, NULL)) {
 		php_error(E_WARNING, "%s() expects argument 2 to be callable method of argument 3", get_active_function_name());
 		zval_dtor(method);
 		return;
@@ -608,7 +608,7 @@ PHP_FUNCTION(wrap_gtk_file_selection_new)
 	}
 
 	if (destroy_action) {
-		if (!php_gtk_check_callable(destroy_action)) {
+		if (!php_gtk_is_callable(destroy_action, NULL)) {
 			php_error(E_WARNING, "%s() expects argument 2 to be callable",
 					  get_active_function_name());
 			return;
@@ -621,7 +621,7 @@ PHP_FUNCTION(wrap_gtk_file_selection_new)
 	}
 
 	if (ok_action) {
-		if (!php_gtk_check_callable(ok_action)) {
+		if (!php_gtk_is_callable(ok_action, NULL)) {
 			php_error(E_WARNING, "%s() expects argument 3 to be callable",
 					  get_active_function_name());
 			return;
@@ -636,7 +636,7 @@ PHP_FUNCTION(wrap_gtk_file_selection_new)
 								GTK_SIGNAL_FUNC(gtk_widget_destroy), (gpointer)wrapped_obj);
 
 	if (cancel_action) {
-		if (!php_gtk_check_callable(cancel_action)) {
+		if (!php_gtk_is_callable(cancel_action, NULL)) {
 			php_error(E_WARNING, "%s() expects argument 4 to be callable",
 					  get_active_function_name());
 			return;
@@ -963,4 +963,71 @@ PHP_FUNCTION(wrap_gtk_container_children)
 	for (tmp = children; tmp; tmp = tmp->next)
 		add_next_index_zval(return_value, php_gtk_new(tmp->data));
 	g_list_free(children);
+}
+%%
+override gtk_item_factory_create_items
+static void item_factory_callback(zval *callback, guint action, GtkWidget *widget)
+{
+	zval *retval = NULL;
+	zval *action_arg, *widget_arg;
+	zval **args[2];
+	char *callable_name = NULL;
+	ELS_FETCH();
+
+	if (!php_gtk_is_callable(callback, &callable_name)) {
+		php_error(E_WARNING, "unable to call item factory callback %s", callable_name);
+		g_free(callable_name);
+		return;
+	}
+
+	MAKE_STD_ZVAL(action_arg);
+	ZVAL_LONG(action_arg, action);
+	widget_arg = php_gtk_new((GtkObject *)widget);
+	args[0] = &action_arg;
+	args[1] = &widget_arg;
+
+	call_user_function_ex(EG(function_table), NULL, callback, &retval, 2, args, 1, NULL);
+	zval_ptr_dtor(&widget_arg);
+	if (retval)
+		zval_ptr_dtor(&retval);
+}
+
+PHP_FUNCTION(wrap_gtk_item_factory_create_items)
+{
+	zval *list, **item, *callback;
+	GtkItemFactoryEntry entry;
+	GtkItemFactory *factory;
+	int i = 0;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &list))
+		return;
+	
+	factory = GTK_ITEM_FACTORY(PHP_GTK_GET(this_ptr));
+	zend_hash_internal_pointer_reset(Z_ARRVAL_P(list));
+	while (zend_hash_get_current_data(Z_ARRVAL_P(list), (void**)&item) == SUCCESS) {
+		if (Z_TYPE_PP(item) != IS_ARRAY ||
+			!php_gtk_parse_args_hash(*item, "ssVis", &entry.path,
+									 &entry.accelerator, &callback,
+									 &entry.callback_action, &entry.item_type)) {
+			php_error(E_WARNING, "%s() was unable to parse item #%d in the input array",
+					  get_active_function_name(), i+1);
+			return;
+		}
+
+		if (Z_TYPE_P(callback) == IS_NULL)
+			entry.callback = NULL;
+		else {
+			zval_add_ref(&callback);
+			entry.callback = (GtkItemFactoryCallback)item_factory_callback;
+		}
+
+		gtk_item_factory_create_item(factory, &entry, callback, 1);
+
+		i++;
+		zend_hash_move_forward(Z_ARRVAL_P(list));
+	}
+
+	RETURN_TRUE;
 }

@@ -25,6 +25,7 @@ class Overrides {
 	var $ignores 		= array();
 	var $glob_ignores 	= array();
 	var $overrides		= array();
+	var $extra_methods	= array();
 
 	function Overrides($file_name = null)
 	{
@@ -70,12 +71,15 @@ class Overrides {
 				break;
 
 			case 'override':
-				list($func_cname) = $words;
+				$func_cname = $words[0];
 				if (isset($words[1])) 
 					$func_name = $words[1];
 				else
 					$func_name = $func_cname;
-				$this->overrides[$func_cname] = array($func_name, $rest);
+				if (isset($words[2]))
+					$this->extra_methods[$words[2]][$func_cname] = array($func_name, $rest);
+				else
+					$this->overrides[$func_cname] = array($func_name, $rest);
 				break;
 		}
 	}

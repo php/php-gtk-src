@@ -335,7 +335,8 @@ class Generator {
 	{
 		global	$function_entry_tpl,
 				$register_getter_tpl,
-				$init_class_tpl;
+				$init_class_tpl,
+				$get_type_tpl;
 		
 		foreach ($this->parser->objects as $object) {
 			$object_module = strtolower($object->in_module);
@@ -381,6 +382,14 @@ class Generator {
 				}
 			}
 
+			/* insert get_type() as class method */
+			$lclass = strtolower(substr(convert_typename($object->c_name), 1));
+			$function_entry .= sprintf($function_entry_tpl,
+									   'get_type',
+									   $lclass .  '_get_type',
+									   'NULL');
+			fwrite($fp, sprintf($get_type_tpl, $lclass, $lclass));
+
 			foreach ($this->parser->find_methods($object) as $method) {
 				if ($this->overrides->is_overriden($method->c_name)) {
 					list($method_name, $method_override) = $this->overrides->get_override($method->c_name);
@@ -402,6 +411,20 @@ class Generator {
 				}
 
 			}
+
+			if (isset($this->overrides->extra_methods[$object->c_name])) {
+				foreach ($this->overrides->extra_methods[$object->c_name] as $method_cname => $method_data) {
+					list($method_name, $method_override) = $method_data;
+					fwrite($fp, $method_override . "\n");
+					if (!isset($method_name))
+						$method_name = $method_cname;
+					$function_entry .= sprintf($function_entry_tpl,
+											   strtolower($method_name),
+											   strtolower($method_cname),
+											   'NULL');
+				}
+			}
+
 			$function_entry .= $this->function_entry_end;
 			fwrite($fp, $function_entry);
 
