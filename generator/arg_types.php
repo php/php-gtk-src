@@ -143,13 +143,16 @@ class Arg_Type {
     */
 }
 
+/* {{{ None_Arg */
 class None_Arg extends Arg_Type {
     function write_return($type, $owns_return, $info)
     {
         return "\tRETVAL_NULL();";
     }
 }
+/* }}} */
 
+/* {{{ String_Arg */
 class String_Arg extends Arg_Type {
     function write_param($type, $name, $default, $null_ok, $info)
     {
@@ -217,7 +220,9 @@ class String_Arg extends Arg_Type {
         }
     }
 }
+/* }}} */
 
+/* {{{ Char_Arg */
 class Char_Arg extends Arg_Type {
     function write_param($type, $name, $default, $null_ok, $info)
     {
@@ -235,7 +240,9 @@ class Char_Arg extends Arg_Type {
         $info->post_code[] =  "\tRETVAL_STRINGL((char*)&ret, 1, 1);";
     }
 }
+/* }}} */
 
+/* {{{ Int_Arg */
 class Int_Arg extends Arg_Type {
     function write_param($type, $name, $default, $null_ok, $info)
     {
@@ -267,7 +274,9 @@ class Int_Arg extends Arg_Type {
 
     }
 }
+/* }}} */
 
+/* {{{ Bool_Arg */
 class Bool_Arg extends Arg_Type {
     function write_param($type, $name, $default, $null_ok, $info)
     {
@@ -299,7 +308,9 @@ class Bool_Arg extends Arg_Type {
 
     }
 }
+/* }}} */
 
+/* {{{ Double_Arg */
 class Double_Arg extends Arg_Type {
     function write_param($type, $name, $default, $null_ok, $info)
     {
@@ -331,7 +342,9 @@ class Double_Arg extends Arg_Type {
 
     }
 }
+/* }}} */
 
+/* {{{ Enum_Arg */
 class Enum_Arg extends Arg_Type {
     static $enum_tpl  = "\n\tif (php_%(name) && !phpg_gvalue_get_enum(%(typecode), php_%(name), (gint *)&%(name))) {\n\t\treturn;\n\t}\n";
     var $enum_name = null;
@@ -378,7 +391,9 @@ class Enum_Arg extends Arg_Type {
         $info->post_code[] = "\tRETVAL_LONG(php_retval);";
     }
 }
+/* }}} */
 
+/* {{{ Flags_Arg */
 class Flags_Arg extends Arg_Type {
     static $flag_tpl = "\n\tif (php_%(name) && !phpg_gvalue_get_flags(%(typecode), php_%(name), (gint *)&%(name))) {\n\t\treturn;\n\t}\n";
     var $flag_name = null;
@@ -409,7 +424,9 @@ class Flags_Arg extends Arg_Type {
         $info->post_code[] = "\tRETVAL_LONG(php_retval);";
     }
 }
+/* }}} */
 
+/* {{{ Struct_Arg */
 class Struct_Arg extends Arg_Type {
     var $struct_name = null;
 
@@ -453,7 +470,9 @@ class Struct_Arg extends Arg_Type {
                 "   return;";
     }
 }
+/* }}} */
 
+/* {{{ Object_Arg */
 class Object_Arg extends Arg_Type {
     var $obj_name = null;
     var $cast     = null;
@@ -542,7 +561,9 @@ class Object_Arg extends Arg_Type {
         }
     }
 }
+/* }}} */
 
+/* {{{ Boxed_Arg */
 class Boxed_Arg extends Arg_Type {
     var $boxed_type  = null;
     var $typecode    = null;
@@ -611,6 +632,7 @@ class Boxed_Arg extends Arg_Type {
         } else {
             $info->var_list->add($this->boxed_type, 'php_retval');
             $ret = '&php_retval';
+            /* can't own reference to a local var */
             $owns_return = false;
         }
 
@@ -618,7 +640,9 @@ class Boxed_Arg extends Arg_Type {
                                      $this->typecode, $ret, $owns_return ?  'FALSE' : 'TRUE');
     }
 }
+/* }}} */
 
+/* {{{ Atom_Arg */
 class Atom_Arg extends Int_Arg {
     function write_return($type, &$var_list, $separate)
     {
@@ -626,7 +650,9 @@ class Atom_Arg extends Int_Arg {
                "    return;";
     }
 }
+/* }}} */
 
+/* {{{ Drawable_Arg */
 /* This is a hack -- the $default handling doesn't work, neither does
    write_return(). */ 
 class Drawable_Arg extends Arg_Type {
@@ -714,8 +740,9 @@ class Drawable_Arg extends Arg_Type {
                "    return;";
     }
 }
+/* }}} */
 
-
+/* {{{ Arg_Matcher */
 class Arg_Matcher {
     var $arg_types = array();
 
@@ -777,6 +804,7 @@ class Arg_Matcher {
         }
     }
 }
+/* }}} */
 
 $matcher = new Arg_Matcher();
 
@@ -855,5 +883,5 @@ $matcher->register('gfloat', $arg);
 
 $matcher->register_object('GObject', 'G_TYPE_OBJECT');
 
-/* vim: set et sts=4: */
+/* vim: set et sts=4 fdm=marker: */
 ?>
