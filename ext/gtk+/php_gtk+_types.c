@@ -751,8 +751,7 @@ static void gdk_window_get_property(zval *return_value, zval *object, zend_llist
 	*result = FAILURE;
 }
 
-
-static void release_gdk_window_rsrc(zend_rsrc_list_entry *rsrc)
+static void release_gdk_window_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
 	GdkWindow *obj = (GdkWindow *)rsrc->ptr;
 	zval **wrapper_ptr;
@@ -767,7 +766,7 @@ static void release_gdk_window_rsrc(zend_rsrc_list_entry *rsrc)
 		gdk_window_unref(obj);
 }
 
-static void release_gdk_bitmap_rsrc(zend_rsrc_list_entry *rsrc)
+static void release_gdk_bitmap_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
 	GdkBitmap *obj = (GdkBitmap *)rsrc->ptr;
 	zval **wrapper_ptr;
@@ -866,7 +865,7 @@ static int gdk_color_set_property(zval *object, zend_llist_element **element, zv
 	return SUCCESS;
 }
 
-static void release_gdk_color_rsrc(zend_rsrc_list_entry *rsrc)
+static void release_gdk_color_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
 	GdkColor *obj = (GdkColor *)rsrc->ptr;
 	zval **wrapper_ptr;
@@ -948,7 +947,7 @@ zval *php_gdk_colormap_new(GdkColormap *cmap)
 	return result;
 }
 
-static void release_gdk_colormap_rsrc(zend_rsrc_list_entry *rsrc)
+static void release_gdk_colormap_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
 	GdkColormap *obj = (GdkColormap *)rsrc->ptr;
 	zval **wrapper_ptr;
@@ -1050,7 +1049,7 @@ zval *php_gdk_cursor_new(GdkCursor *cursor)
 	return result;
 }
 
-static void release_gdk_cursor_rsrc(zend_rsrc_list_entry *rsrc)
+static void release_gdk_cursor_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
 	GdkCursor *obj = (GdkCursor *)rsrc->ptr;
 	zval **wrapper_ptr;
@@ -1116,7 +1115,7 @@ zval *php_gdk_visual_new(GdkVisual *visual)
 	return result;
 }
 
-static void release_gdk_visual_rsrc(zend_rsrc_list_entry *rsrc)
+static void release_gdk_visual_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
 	GdkVisual *obj = (GdkVisual *)rsrc->ptr;
 	zval **wrapper_ptr;
@@ -1256,7 +1255,7 @@ zval *php_gdk_font_new(GdkFont *font)
 	return result;
 }
 
-static void release_gdk_font_rsrc(zend_rsrc_list_entry *rsrc)
+static void release_gdk_font_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
 	GdkFont *obj = (GdkFont *)rsrc->ptr;
 	zval **wrapper_ptr;
@@ -1356,7 +1355,7 @@ zval *php_gdk_gc_new(GdkGC *gc)
 	return result;
 }
 
-static void release_gdk_gc_rsrc(zend_rsrc_list_entry *rsrc)
+static void release_gdk_gc_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
 	GdkGC *obj = (GdkGC *)rsrc->ptr;
 	zval **wrapper_ptr;
@@ -1591,7 +1590,7 @@ zval *php_gdk_drag_context_new(GdkDragContext *context)
 	return result;
 }
 
-static void release_gdk_drag_context_rsrc(zend_rsrc_list_entry *rsrc)
+static void release_gdk_drag_context_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
 	GdkDragContext *obj = (GdkDragContext *)rsrc->ptr;
 	zval **wrapper_ptr;
@@ -1899,7 +1898,7 @@ zval *php_gtk_accel_group_new(GtkAccelGroup *group)
 	return result;
 }
 
-static void release_gtk_accel_group_rsrc(zend_rsrc_list_entry *rsrc)
+static void release_gtk_accel_group_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
 	GtkAccelGroup *obj = (GtkAccelGroup *)rsrc->ptr;
 	zval **wrapper_ptr;
@@ -1969,7 +1968,7 @@ zval *php_gtk_style_new(GtkStyle *style)
 	return result;
 }
 
-static void release_gtk_style_rsrc(zend_rsrc_list_entry *rsrc)
+static void release_gtk_style_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
 	GtkStyle *obj = (GtkStyle *)rsrc->ptr;
 	zval **wrapper_ptr;

@@ -137,7 +137,7 @@ static void init_gtk(void)
 	}
 }
 
-static void release_gtk_object_rsrc(zend_rsrc_list_entry *rsrc)
+static void release_gtk_object_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
 	GtkObject *obj = (GtkObject *)rsrc->ptr;
 	gtk_object_unref(obj);
