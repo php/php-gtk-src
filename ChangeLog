@@ -1,3 +1,8 @@
+2001-05-15  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS
+      generator/gtk.defs: Rename signal_emit_stop() to emit_stop().
+
 2001-05-14  James Moore  <James@phpuk.org>
 
     * docs/stylesheets/xsl/html/class.xsl:
