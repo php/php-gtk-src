@@ -240,7 +240,7 @@ class Enum_Arg extends Arg_Type {
 	{
 		$this->enum_name = $enum_name;
 		$this->type_code = enum_name($enum_name);
-		$this->enum_tpl	 = "	php_gtk_get_enum_value(%s, php_%s, (gint *)&%s);\n\n";
+		$this->enum_tpl	 = "	php_%s_retval = php_gtk_get_enum_value(%s, php_%s, (gint *)&%s);\n\n";
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
@@ -251,10 +251,11 @@ class Enum_Arg extends Arg_Type {
 		else
 			$var_list->add($this->enum_name, $name);
 		$var_list->add('zval', '*php_' . $name . ' = NULL');
+		$var_list->add('int', 'php_' . $name . '_retval');
 		$parse_list[] 	= '&php_' . $name;
 		$parse_type[]	= " ";
 		$arg_list[] 	= $name;
-		$extra_code[] 	= sprintf($this->enum_tpl, $this->type_code, $name, $name);
+		$extra_code[] 	= sprintf($this->enum_tpl, $name, $this->type_code, $name, $name);
 		return 'V';
 	}
 	
@@ -273,7 +274,7 @@ class Flags_Arg extends Arg_Type {
 	{
 		$this->flag_name = $flag_name;
 		$this->type_code = enum_name($flag_name);
-		$this->flag_tpl	 = "	php_gtk_get_flag_value(%s, php_%s, (gint *)&%s);\n\n";
+		$this->flag_tpl	 = "	php_%s_retval = php_gtk_get_flag_value(%s, php_%s, (gint *)&%s);\n\n";
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
@@ -284,10 +285,11 @@ class Flags_Arg extends Arg_Type {
 		else
 			$var_list->add($this->flag_name, $name);
 		$var_list->add('zval', '*php_' . $name . ' = NULL');
+		$var_list->add('int', 'php_' . $name . '_retval');
 		$parse_list[] 	= '&php_' . $name;
 		$parse_type[]	= " ";
 		$arg_list[] 	= $name;
-		$extra_code[] 	= sprintf($this->flag_tpl, $this->type_code, $name, $name);
+		$extra_code[] 	= sprintf($this->flag_tpl, $name, $this->type_code, $name, $name);
 		return 'V';
 	}
 	

@@ -1,9 +1,9 @@
 <?php
-
-/* TODO
-   - find a way to invalidate this_ptr if getting enum/flag value fails,
-     but only in constructors
-*/
+/*
+ * Significant portions of this generator are based on the pygtk code generator
+ * developed by James Henstridge <jamesh@daa.com.au>.
+ *
+ */
 
 require "arg_types.php";
 require "override.php";
@@ -172,6 +172,14 @@ class Generator {
 											$arg_list,
 											$extra_code,
 											$parse_type);
+
+			if (($handler_class = get_class($handler)) ==  'enum_arg' ||
+				$handler_class == 'flags_arg') {
+				$extra_code[] = "	if (!php_" . $param_name . "_retval) {\n" .
+								"		php_gtk_invalidate(this_ptr);\n" .
+								"		return;\n" .
+								"	}\n\n";
+			}
 		}
 
 		$arg_list 	= implode(', ', $arg_list);
@@ -285,18 +293,19 @@ class Generator {
 			$function_entry = sprintf($this->function_entry, $this->prefix . "_" . strtolower($object->name));
 			$constructor = $this->parser->find_constructor($object);
 			if ($this->overrides->is_overriden($constructor->c_name)) {
-					fwrite($fp, $this->overrides->get_override($constructor->c_name) . "\n");
-					$function_entry .= sprintf($function_entry_tpl,
-												strtolower($constructor->is_constructor_of),
-												strtolower($constructor->c_name),
-												'NULL');
+				list(, $constructor_override) = $this->overrides->get_override($constructor->c_name);
+				fwrite($fp, $constructor_override . "\n");
+				$function_entry .= sprintf($function_entry_tpl,
+										   strtolower($constructor->is_constructor_of),
+										   strtolower($constructor->c_name),
+										   'NULL');
 			}
 			else if ($constructor != null && !$this->overrides->is_ignored($constructor->c_name)) {
 				if ($byref = $this->write_constructor($fp, $object->c_name, $constructor)) {
 					$function_entry .= sprintf($function_entry_tpl,
-												strtolower($constructor->is_constructor_of),
-												strtolower($constructor->c_name),
-												$byref);
+											   strtolower($constructor->is_constructor_of),
+											   strtolower($constructor->c_name),
+											   $byref);
 				} else {
 					$function_entry .= sprintf($function_entry_tpl,
 											   strtolower($constructor->is_constructor_of),
@@ -306,7 +315,10 @@ class Generator {
 
 			foreach ($this->parser->find_methods($object) as $method) {
 				if ($this->overrides->is_overriden($method->c_name)) {
-					fwrite($fp, $this->overrides->get_override($method->c_name) . "\n");
+					list($method_name, $method_override) = $this->overrides->get_override($method->c_name);
+					fwrite($fp, $method_override . "\n");
+					if (!isset($method_name))
+						$method_name = $method->name;
 					$function_entry .= sprintf($function_entry_tpl,
 											   strtolower($method->name),
 											   strtolower($method->c_name),
@@ -343,16 +355,27 @@ class Generator {
 
 		foreach ($this->parser->functions as $function) {
 			if ($this->overrides->is_overriden($function->c_name)) {
-				fwrite($fp, $this->overrides->get_override($function->c_name) . "\n");
+				list($function_name, $function_override) = $this->overrides->get_override($function->c_name);
+				fwrite($fp, $function_override . "\n");
+				if (!isset($function_name)) {
+					if ($function->name == $function->c_name)
+						$function_name = substr($function->name, 4);
+					else
+						$function_name = $function->name;
+				}
 				$function_entry[substr($function->c_name, 0, 3)] .= sprintf($function_entry_tpl, 
-																			strtolower($function->name), 
+																			strtolower($function_name), 
 																			strtolower($function->c_name), 
 																			'NULL');
 			}
 			else if (!$this->overrides->is_ignored($function->c_name)) {
 				if ($byref = $this->write_function($fp, $function)) {
+					if ($function->name == $function->c_name)
+						$function_name = substr($function->name, 4);
+					else
+						$function_name = $function->name;
 					$function_entry[substr($function->c_name, 0, 3)] .= sprintf($function_entry_tpl, 
-																				strtolower($function->name), 
+																				$function_name, 
 																				strtolower($function->c_name), 
 																				$byref);
 				}
