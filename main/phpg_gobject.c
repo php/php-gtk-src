@@ -53,8 +53,13 @@ static inline void phpg_free_gobject_storage(phpg_gobject_t *object, zend_object
 
     tmp = object->closures;
     while (tmp) {
-        g_closure_invalidate((GClosure *)tmp->data);
+        GClosure *closure = (GClosure *) tmp->data;
+        /*
+         * Save the pointer, because phpg_gobject_unwatch_closure() will remove
+         * the closure from the list.
+         */
         tmp = tmp->next;
+        g_closure_invalidate(closure);
     }
     object->closures = NULL;
 
@@ -489,6 +494,13 @@ PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC)
 /* }}} */
 
 /* {{{ PHP_GTK_API phpg_gobject_watch_closure() */
+static void phpg_gobject_unwatch_closure(gpointer data, GClosure *closure)
+{
+    phpg_gobject_t *pobj = (phpg_gobject_t *) data;
+
+    pobj->closures = g_slist_remove(pobj->closures, closure);
+}
+
 PHP_GTK_API void phpg_gobject_watch_closure(zval *zobj, GClosure *closure TSRMLS_DC)
 {
     phpg_gobject_t *pobj = NULL;
@@ -501,6 +513,7 @@ PHP_GTK_API void phpg_gobject_watch_closure(zval *zobj, GClosure *closure TSRMLS
     phpg_return_if_fail_quiet(g_slist_find(pobj->closures, closure) == NULL);
 
     pobj->closures = g_slist_prepend(pobj->closures, closure);
+    g_closure_add_invalidate_notifier(closure, pobj, phpg_gobject_unwatch_closure);
 }
 /* }}} */
 
