@@ -103,6 +103,7 @@ ignore
 	gtk_key_snooper_remove
 	gtk_label_new_with_mnemonic
 	gtk_menu_attach_to_widget
+	gtk_message_dialog_new_with_markup
 	gtk_object_add_arg_type
 	gtk_object_arg_get
 	gtk_object_arg_get_info
@@ -408,6 +409,55 @@ PHP_METHOD
 
 	gtk_label_get_layout_offsets(GTK_LABEL(PHPG_GOBJECT(this_ptr)), &x, &y);
 	php_gtk_build_value(&return_value, "(ii)", x, y);
+}
+%% }}}
+
+%% {{{ GtkMessageDialog
+%%
+override gtk_message_dialog_new
+PHP_METHOD
+{
+	GtkWindow *parent = NULL;
+	zval *php_parent = NULL, *php_flags = NULL, *php_type = NULL, *php_buttons = NULL;
+	GtkDialogFlags flags = 0;
+	GtkMessageType type = GTK_MESSAGE_INFO;
+	GtkButtonsType buttons = GTK_BUTTONS_NONE;
+	char *message = NULL;
+	GObject *wrapped_obj;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|NVVVs", &php_parent, gtkwindow_ce, &php_flags, &php_type, &php_buttons, &message)) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMessageDialog);
+	}
+
+	if (php_parent) {
+		if (Z_TYPE_P(php_parent) == IS_NULL)
+			parent = NULL;
+		else
+			parent = GTK_WINDOW(PHPG_GOBJECT(php_parent));
+	}
+
+	if (php_flags && !phpg_gvalue_get_flags(GTK_TYPE_DIALOG_FLAGS, php_flags, (gint *)&flags) == FAILURE) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMessageDialog);
+	}
+
+	if (php_type && phpg_gvalue_get_enum(GTK_TYPE_MESSAGE_TYPE, php_type, (gint *)&type) == FAILURE) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMessageDialog);
+	}
+
+	if (php_buttons && phpg_gvalue_get_enum(GTK_TYPE_BUTTONS_TYPE, php_buttons, (gint *)&buttons) == FAILURE) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMessageDialog);
+	}
+
+	if (!message) {
+		message = "";
+	}
+
+	wrapped_obj = (GObject *) gtk_message_dialog_new(parent, flags, type, buttons, "%s", message);
+
+	if (!wrapped_obj) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMessageDialog);
+	}
+	phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
 %% }}}
 
