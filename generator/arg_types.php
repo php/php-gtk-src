@@ -58,7 +58,7 @@ class Var_List {
         $this->vars[$c_type][] = $name;
     }
 
-    function to_string()
+    function __tostring()
     {
         $result = array();
         foreach (array_keys($this->vars) as $c_type)
@@ -72,8 +72,43 @@ class Var_List {
 }
 
 class Wrapper_Info {
-    var $varlist = array();
-            
+    private $var_list   = array();
+    private $arg_list   = array();
+    private $parse_list = array();
+    private $specifiers = '';
+    private $pre_code   = array();
+    private $post_code  = array();
+
+    function add_parse_list($specifiers, $parse_args)
+    {
+        $this->specifiers .= $specifiers;
+        $this->parse_args = array_merge($this->parse_list, $parse_args);
+    }
+
+    function get_var_list()
+    {
+        return $this->var_list->__tostring();
+    }
+
+    function get_arg_list()
+    {
+        return implode(', ', $this->arg_list);
+    }
+    
+    function get_parse_list()
+    {
+        return implode(', ', $this->parse_list);
+    }
+
+    function get_pre_code()
+    {
+        return implode('', $this->pre_code);
+    }
+
+    function get_post_code()
+    {
+        return implode('', $this->post_code);
+    }
 }
 
 /*======================================================================*\
@@ -81,13 +116,12 @@ class Wrapper_Info {
     Purpose:  Base class for argument type handlers
 \*======================================================================*/
 class Arg_Type {
-    function write_param($type, $name, $default, $null_ok, &$var_list,
-                         &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor)
     {
         trigger_error("This is an abstract class", E_USER_ERROR);
     }
     
-    function write_return($type, &$var_list, $separate)
+    function write_return($type, $owns_return, $info)
     {
         trigger_error("This is an abstract class", E_USER_ERROR);
     }
@@ -104,7 +138,7 @@ class Arg_Type {
 }
 
 class None_Arg extends Arg_Type {
-    function write_return($type, &$var_list, $separate)
+    function write_return($type, $owns_return, $info)
     {
         return "    %s;\n" .
                "    RETURN_NULL();";

@@ -146,6 +146,7 @@ static void release_gtk_object_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 	gtk_object_unref(obj);
 }
 
+/*
 static void register_exception(TSRMLS_D)
 {
 	zend_class_entry ce;
@@ -153,20 +154,21 @@ static void register_exception(TSRMLS_D)
 	INIT_CLASS_ENTRY(ce, "PHPGTKException", NULL);
 	php_gtk_exception_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 }
+*/
 
 PHP_GTK_XINIT_FUNCTION(gtk_plus)
 {
 	le_gtk_object = zend_register_list_destructors_ex(release_gtk_object_rsrc, NULL, "GtkObject", module_number);
 
-	register_exception(TSRMLS_C);
+	//register_exception(TSRMLS_C);
 
 	init_gtk();
-	php_gtk_register_constants(module_number TSRMLS_CC);
-	php_gdk_register_constants(module_number TSRMLS_CC);
-	php_gdk_register_keysyms(module_number TSRMLS_CC);
+	//php_gtk_register_constants(module_number TSRMLS_CC);
+	//php_gdk_register_constants(module_number TSRMLS_CC);
+	//php_gdk_register_keysyms(module_number TSRMLS_CC);
 	php_gtk_register_classes();
-	php_gdk_register_classes();
-	php_gtk_plus_register_types(module_number);
+	//php_gdk_register_classes();
+	//php_gtk_plus_register_types(module_number);
 
 	return SUCCESS;
 }

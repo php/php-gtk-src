@@ -1,21 +1,52 @@
 ; -*- scheme -*-
 
-(method flags
-  (of-object Object (Gtk))
-  (c-name GTK_OBJECT_FLAGS)
-  (return-type guint)
+(define-method flags
+  (of-object "GtkObject")
+  (c-name "GTK_OBJECT_FLAGS")
+  (return-type "guint")
 )
 
-(method set_flags
-  (of-object Object (Gtk))
-  (c-name GTK_OBJECT_SET_FLAGS)
-  (return-type none)
-  (parameter (type-and-name guint flags))
+(define-method set_flags
+  (of-object "GtkObject")
+  (c-name "GTK_OBJECT_SET_FLAGS")
+  (return-type "none")
+  (parameters
+    '("guint" "flags")
+  )
 )
 
-(method unset_flags
-  (of-object Object (Gtk))
-  (c-name GTK_OBJECT_UNSET_FLAGS)
-  (return-type none)
-  (parameter (type-and-name guint flags))
+(define-method unset_flags
+  (of-object "GtkObject")
+  (c-name "GTK_OBJECT_UNSET_FLAGS")
+  (return-type "none")
+  (parameters
+    '("guint" "flags")
+  )
 )
+
+(define-method get_allocation
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_get_allocation")
+  (return-type "GtkAllocation")
+)
+
+(define-method get_selection
+  (of-object "GtkList")
+  (c-name "gtk_list_get_selection")
+  (return-type "GList*")
+)
+
+(define-method set_all
+  (of-object "GtkAdjustment")
+  (c-name "gtk_adjustment_set_all")
+  (return-type "none")
+  (parameters
+    '("gfloat" "value")
+    '("gfloat" "lower")
+    '("gfloat" "upper")
+    '("gfloat" "step_increment")
+    '("gfloat" "page_increment")
+    '("gfloat" "page_size")
+  )
+)
+

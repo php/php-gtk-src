@@ -126,7 +126,6 @@ class Defs_Parser {
 
     function _parse_or_load($defs_file)
     {
-        /* XXX disable caching for now
         $cache_file = $defs_file.'.cache';
         if (@is_file($cache_file) &&
             filemtime($cache_file) > filemtime($defs_file)) {
@@ -135,12 +134,11 @@ class Defs_Parser {
             $this->parse_cache = fread($fp, filesize($cache_file));
             fclose($fp);
         } else {
-            */
             error_log("Parsing file \"$defs_file\".");
             $this->file_name = basename($defs_file);
             $this->file_path = dirname($defs_file);
             $this->parse_tree = parse($defs_file, 'r');
-        //}
+        }
     }
 
     function start_parsing($tree = NULL)
@@ -227,7 +225,7 @@ class Defs_Parser {
     function handle_define_object($arg)
     {
         $object_def         = new Object_Def($arg);
-        $this->objects[$object_def->in_module . $object_def->name] = &$object_def;
+        $this->objects[]    = &$object_def;
         $this->c_name[]     = &$object_def->c_name;
     }
 
@@ -247,7 +245,7 @@ class Defs_Parser {
 
     function handle_define_pointer($arg)
     {
-        trigger_error("TODO: implement Pointer_Def", E_WARNING);
+        fprintf(STDERR, "TODO: implement Pointer_Def\n");
     }
 
     function handle_include($arg)
@@ -293,9 +291,9 @@ class Defs_Parser {
     }
 }
 
-require './arg_types.php';
-$d = new Defs_Parser('test.defs');
-$d->start_parsing();
+#require './arg_types.php';
+#$d = new Defs_Parser('test.defs');
+#$d->start_parsing();
 #var_dump($d->constructors);
 #var_dump($d->functions);
 #var_dump($d->methods);

@@ -34,6 +34,7 @@ typedef struct {
 static PHP_METHOD(GType, __construct);
 static int gtype_type_read(void *object, zval *return_value);
 
+/* XXX possibly make constructor public */
 static zend_function_entry gtype_methods[] = {
 	ZEND_ME(GType, __construct, NULL, ZEND_ACC_PRIVATE)
 	{NULL, NULL, NULL}
@@ -163,7 +164,7 @@ void php_gtype_register_self()
 {
 	if (gtype_ce) return;
 
-	gtype_ce = phpg_register_class("GType", gtype_methods, NULL, gtype_props_info, gtype_create_object, 0 TSRMLS_CC);
+	gtype_ce = phpg_register_class("GType", gtype_methods, NULL, 0, gtype_props_info, gtype_create_object, 0 TSRMLS_CC);
 }
 
 #endif /* HAVE_PHP_GTK */

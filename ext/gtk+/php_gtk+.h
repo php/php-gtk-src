@@ -26,13 +26,9 @@
 #include <gtk/gtk.h>
 #include "gtk/gtkinvisible.h"
 
-/* XXX
 extern php_gtk_ext_entry gtk_plus_ext_entry;
 #define php_gtk_ext_gtk__ptr &gtk_plus_ext_entry
-*/
 
-PHP_GTK_API extern zend_object_handlers *php_gtk_handlers;
-PHP_GTK_API extern zend_class_entry *php_gtk_exception_ce;
 PHP_GTK_API extern int le_gtk_object;
 PHP_GTK_API extern int le_php_gtk_wrapper;
 PHP_GTK_API extern int le_gdk_window;

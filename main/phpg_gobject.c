@@ -82,7 +82,7 @@ static zend_class_entry* phpg_class_from_gtype(GType gtype)
 		gtype = g_type_parent(gtype);
 	}
 	
-	g_assert(ce != NULL);
+	assert(ce != NULL);
 	return ce;
 }
 /* }}} */
@@ -258,6 +258,7 @@ PHP_GTK_API void phpg_init_object(void *object, zend_class_entry *ce)
 PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
                                                   function_entry *class_methods,
                                                   zend_class_entry *parent,
+                                                  zend_uint ce_flags,
                                                   prop_info_t *prop_info,
                                                   create_object_func_t create_obj_func,
                                                   GType gtype
@@ -283,6 +284,7 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 	}
 
 	real_ce = zend_register_internal_class_ex(&ce, parent, NULL TSRMLS_CC);
+    real_ce->ce_flags = ce_flags;
 
     if (prop_info) {
         pi = prop_info;
@@ -321,7 +323,7 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 /* }}} */
 
 /* {{{ PHP_GTK_API phpg_set_wrapper() */
-PHP_GTK_API void phpg_set_wrapper(zval *zobj TSRMLS_DC)
+PHP_GTK_API void phpg_set_wrapper(zval *zobj, void *obj, phpg_dtor_t dtor TSRMLS_DC)
 {
     phpg_gobject_t *pobj = NULL;
 
@@ -331,15 +333,17 @@ PHP_GTK_API void phpg_set_wrapper(zval *zobj TSRMLS_DC)
 
     zend_objects_store_add_ref(zobj TSRMLS_CC);
     pobj = zend_object_store_get_object(zobj TSRMLS_CC);
+    pobj->obj = obj;
+    pobj->dtor = dtor;
+    /* XXX do better checking for whether obj is a sinkable object */
     phpg_sink_object(pobj->obj);
     g_object_set_qdata(pobj->obj, gobject_wrapper_key, (void*)Z_OBJ_HANDLE_P(zobj));
 }
 /* }}} */
 
 /* {{{ PHP_GTK_API phpg_gobject_new() */
-PHP_GTK_API zval* phpg_gobject_new(GObject *obj)
+PHP_GTK_API void phpg_gobject_new(GObject *obj, zval **zobj TSRMLS_DC)
 {
-	zval *zobj = NULL;
 	zend_class_entry *ce = NULL;
 	phpg_gobject_t *pobj = NULL;
     zend_object_handle handle;
@@ -349,11 +353,14 @@ PHP_GTK_API zval* phpg_gobject_new(GObject *obj)
 		gobject_wrapper_key = g_quark_from_static_string(gobject_wrapper_id);
 	}
 
-	MAKE_STD_ZVAL(zobj);
-	ZVAL_NULL(zobj);
+    assert(zobj != NULL);
+    if (*zobj == NULL) {
+        MAKE_STD_ZVAL(*zobj);
+    }
+	ZVAL_NULL(*zobj);
 
 	if (obj == NULL) {
-		return zobj;
+		return;
 	}
 
 	/* 
@@ -365,23 +372,21 @@ PHP_GTK_API zval* phpg_gobject_new(GObject *obj)
 
 	handle = (zend_object_handle)g_object_get_qdata(obj, gobject_wrapper_key);
 	if ((void*)handle != NULL) {
-		Z_TYPE_P(zobj) = IS_OBJECT;
-		Z_OBJ_HANDLE_P(zobj) = handle;
-		Z_OBJ_HT_P(zobj) = &php_gtk_handlers;
-		zend_objects_store_add_ref(zobj TSRMLS_CC);
+		Z_TYPE_PP(zobj) = IS_OBJECT;
+		Z_OBJ_HANDLE_PP(zobj) = handle;
+		Z_OBJ_HT_PP(zobj) = &php_gtk_handlers;
+		zend_objects_store_add_ref(*zobj TSRMLS_CC);
 	} else {
 		ce = phpg_class_from_gtype(G_OBJECT_TYPE(obj));
-		object_init_ex(zobj, ce);
+		object_init_ex(*zobj, ce);
 		g_object_ref(obj);
 
         phpg_sink_object(obj);
-		pobj = zend_object_store_get_object(zobj TSRMLS_CC);
+		pobj = zend_object_store_get_object(*zobj TSRMLS_CC);
 		pobj->obj = obj;
 		pobj->dtor = (phpg_dtor_t) g_object_unref;
 		g_object_set_qdata(obj, gobject_wrapper_key, (void*)handle);
 	}
-
-	return zobj;
 }
 /* }}} */
 
@@ -393,6 +398,7 @@ static PHP_METHOD(GObject, __construct)
 {
 }
 
+/* {{{ GObject::__tostring() */
 static PHP_METHOD(GObject, __tostring)
 {
     char buf[256];
@@ -407,6 +413,7 @@ static PHP_METHOD(GObject, __tostring)
                     obj ? G_OBJECT_TYPE_NAME(obj) : "uninitialized");
     RETURN_STRINGL(buf, numc, 1);
 }
+/* }}} */
 
 static zend_function_entry gobject_methods[] = {
 	ZEND_ME(GObject, __construct, NULL, ZEND_ACC_PUBLIC)
@@ -420,7 +427,7 @@ void phpg_gobject_register_self()
 {
 	if (gobject_ce) return;
 
-	gobject_ce = phpg_register_class("GObject", gobject_methods, NULL, NULL, NULL, G_TYPE_OBJECT TSRMLS_CC);
+	gobject_ce = phpg_register_class("GObject", gobject_methods, NULL, 0, NULL, NULL, G_TYPE_OBJECT TSRMLS_CC);
 }
 
 #endif /* HAVE_PHP_GTK */

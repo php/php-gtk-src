@@ -106,7 +106,7 @@ class Object_Def extends Definition {
             else if ($arg[0] == 'fields')
                 $this->fields = array_slice($arg, 1);
         }
-        $this->ce = strtolower($this->in_module . '_' . $this->name . '_ce');
+        $this->ce = strtolower($this->c_name) . '_ce';
     }
 }
 

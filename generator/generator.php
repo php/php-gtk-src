@@ -34,8 +34,8 @@ set_time_limit(300);
 ini_set('memory_limit','64M');
 
 require "Getopt.php";
-require "arg_types.php";
 require "override.php";
+require "arg_types.php";
 require "scheme.php";
 require "templates.php";
 
@@ -69,8 +69,10 @@ class Generator {
         if (!$parser)
             $parser = $this->parser;
 
+        /*
         foreach ($parser->structs as $struct)
             $matcher->register_struct($struct->c_name);
+            */
 
         foreach ($parser->objects as $object) {
             $gtk_obj_descendant = false;
@@ -485,7 +487,38 @@ class Generator {
                 $register_class_tpl,
                 $get_type_tpl;
         
-        foreach ($this->parser->objects as $object) {
+        /* TODO move sorting to definitions.php */
+        
+        $objects = $this->parser->objects;
+        $pos = 0;
+        $num_obj = count($objects);
+        //print_r($objects);
+        while ($pos < $num_obj) {
+            $object = $objects[$pos];
+            $parent = $object->parent;
+            //print "object: $object->c_name\n";
+            //print "parent: $parent\n";
+            for ($i = $pos+1; $i < $num_obj; $i++) {
+                if ($objects[$i]->c_name == $parent) {
+                    //print "found parent at $i\n";
+                    //print "removing $object->c_name from $pos\n";
+                    unset($objects[$pos]);
+                    //print "inserting $object->c_name after " . $i . "\n";
+                    array_splice($objects, $i+1, 0, array($object));
+                    break;
+                }
+            }
+            if ($i == $num_obj)
+                $pos++;
+        }
+        /*
+        foreach ($objects as $object) {
+            print $object->c_name . " <- " . $object->parent . "\n";
+        }
+        */
+        
+        foreach ($objects as $object) {
+            fprintf(STDERR, $object->name. "\n");
             $object_module = strtolower($object->in_module);
             $object_lname = strtolower($object->name);
 
@@ -505,70 +538,52 @@ class Generator {
                                                   count($object->fields) ? 1 : 0,
                                                   count($object->fields) ? 'php_' . $object_module . '_' . $object_lname . '_properties' : 'NULL');
             else {
-                if ($object->parent[1] === null)
-                    $parent_ce = strtolower($object->parent[0]) . '_ce';
-                else
-                    $parent_ce = strtolower($object->parent[1] . '_' . $object->parent[0]) . '_ce';
+                $parent_ce = strtolower($object->parent) . '_ce';
                 $this->register_classes .= sprintf($register_class_tpl,
                                                    $object->ce,
                                                    $object->in_module . $object->name,
-                                                   $object_module . '_' . $object_lname,
                                                    $parent_ce,
-                                                   count($object->fields) ? '1' : '0',
-                                                   count($object->fields) ? 'php_' . $object_module . '_' . $object_lname . '_properties' : 'NULL');
-                $this->register_classes .= "\tg_hash_table_insert(php_gtk_class_hash, g_strdup(\"Gtk$object->name\"), $object->ce);\n";
+                                                   $object->typecode);
+                //$this->register_classes .= "\tg_hash_table_insert(php_gtk_class_hash, g_strdup(\"Gtk$object->name\"), $object->ce);\n";
             }
 
+            /* XXX fix
             if (count($object->fields)) {
                 $this->register_classes .= sprintf($register_getter_tpl, $object->ce, $object_module . '_' . $object_lname);
             }
+            */
 
             $functions_decl = sprintf($functions_decl_tpl, $object_module . '_' . $object_lname);
             $constructor = $this->parser->find_constructor($object);
             if (!$constructor || $this->overrides->is_ignored($constructor->c_name)) {
+                /* XXX fix
                 $functions_decl .= sprintf($function_entry_tpl,
                                            $object->in_module . $object->name,
                                            'no_constructor', 'NULL');
-                /*
-                $functions_decl .= sprintf($function_entry_tpl,
-                                           $object_module . $object_lname,
-                                           'no_constructor', 'NULL');
-                */
+                                           */
             } else if ($this->overrides->is_overriden($constructor->c_name)) {
+                /*
                 list(, $constructor_override) = $this->overrides->get_override($constructor->c_name);
                 fwrite($fp, $constructor_override . "\n");
                 $functions_decl .= sprintf($function_entry_tpl,
                                            $constructor->is_constructor_of,
                                            strtolower($constructor->c_name),
                                            'NULL');
-                /*
-                $functions_decl .= sprintf($function_entry_tpl,
-                                           strtolower($constructor->is_constructor_of),
-                                           strtolower($constructor->c_name),
-                                           'NULL');
-                */
+                                           */
             } else if (!$this->overrides->is_ignored($constructor->c_name)) {
+                /* XXX fix */
+                /*
                 if ($this->write_constructor($fp, $object->c_name, $this->is_gtk_object[$object->in_module . $object->name], $constructor)) {
                     $functions_decl .= sprintf($function_entry_tpl,
                                                $constructor->is_constructor_of,
                                                strtolower($constructor->c_name),
                                                'NULL');
-                    /*
-                    $functions_decl .= sprintf($function_entry_tpl,
-                                               strtolower($constructor->is_constructor_of),
-                                               strtolower($constructor->c_name),
-                                               'NULL');
-                    */
                 } else {
                     $functions_decl .= sprintf($function_entry_tpl,
                                                $constructor->is_constructor_of,
                                                'no_constructor', 'NULL');
-                    /*
-                    $functions_decl .= sprintf($function_entry_tpl,
-                                               strtolower($constructor->is_constructor_of),
-                                               'no_constructor', 'NULL');
-                    */
                 }
+                */
             }
 
             /*
@@ -584,6 +599,7 @@ class Generator {
                 fwrite($fp, sprintf($get_type_tpl, $lclass, $lclass));
             }
 
+            /* XXX
             foreach ($this->parser->find_methods($object) as $method) {
                 if ($this->overrides->is_overriden($method->c_name)) {
                     list($method_name, $method_override) = $this->overrides->get_override($method->c_name);
@@ -606,6 +622,7 @@ class Generator {
                 }
 
             }
+            */
 
             if (isset($this->overrides->extra_methods[$object->c_name])) {
                 foreach ($this->overrides->extra_methods[$object->c_name] as $method_cname => $method_data) {
@@ -627,8 +644,10 @@ class Generator {
             $functions_decl .= $this->functions_decl_end;
             fwrite($fp, $functions_decl);
 
+            /* XXX fix 
             if (count($object->fields))
                 $this->write_prop_getter($fp, $object);
+            */
         }
 
         $this->register_classes .= "\n" . implode("\n", $this->overrides->get_register_classes());
@@ -742,12 +761,12 @@ class Generator {
         fwrite($fp, "#include \"php_gtk.h\"");
         fwrite($fp, "\n#if HAVE_PHP_GTK\n");
         fwrite($fp, $this->overrides->get_headers());
-        $this->write_constants($fp);
+        //$this->write_constants($fp);
         $this->write_class_entries($fp);
-        $this->write_prop_lists($fp);
-        if (!isset($this->parser->objects[$this->function_class]))
-            $this->write_functions($fp, true, $dummy);
-        $this->write_structs($fp);
+        //$this->write_prop_lists($fp);
+        //if (!isset($this->parser->objects[$this->function_class]))
+        //    $this->write_functions($fp, true, $dummy);
+        //$this->write_structs($fp);
         $this->write_objects($fp);
         fwrite($fp, sprintf($register_classes_tpl,
                             $this->lprefix,

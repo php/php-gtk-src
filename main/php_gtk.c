@@ -137,16 +137,14 @@ PHP_RINIT_FUNCTION(gtk)
 	g_type_init();
 	php_gtype_register_self();
 
-	phpg_gobject_register_self();
+	phpg_gobject_register_self(module_number);
 
-	/* XXX
 	if (php_gtk_startup_all_extensions(module_number) == FAILURE) {
 		php_error(E_WARNING, "Unable to start internal extensions");
 		return FAILURE;
 	}
 
 	php_gtk_startup_shared_extensions(module_number);
-	*/
 
 	return SUCCESS;
 }
