@@ -1,3 +1,5 @@
+    - implemented GtkObject::emit(), thus allowing programmatical emission of
+      signals. (Andrei)
     - added support for accessing GtkObject arguments via get_arg() and
       set_arg() methods. (Andrei)
 
