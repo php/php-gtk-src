@@ -460,7 +460,7 @@ class Generator {
 									   strtolower($struct->c_name),
 									   'NULL');
 			$functions_decl .= sprintf($function_entry_tpl,
-									   $struct_module . $struct_lname,
+									   strtolower($struct->in_module . $struct->name),
 									   strtolower($struct->c_name),
 									   'NULL');
 			$functions_decl .= $this->functions_decl_end;
