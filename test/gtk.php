@@ -99,6 +99,7 @@ $ctree_data['pages'] = 0;
 function create_dnd()
 {
 	global	$windows;
+
 	if (!isset($windows['dnd'])) {
 		$targets = array(array('text/plain', 0, -1));
 
@@ -176,7 +177,10 @@ function create_dnd()
 		$button->grab_default();
 		$button->show();
 	}
-	$windows['dnd']->show();
+	if ($windows['dnd']->flags() & GTK_VISIBLE)
+		$windows['dnd']->hide();
+	else
+		$windows['dnd']->show();
 }
 
 function create_ctree()
@@ -808,7 +812,10 @@ function create_ctree()
 		
 		rebuild_tree(null, $ctree);
 	}
-	$windows['ctree']->show();
+	if ($windows['ctree']->flags() & GTK_VISIBLE)
+		$windows['ctree']->hide();
+	else
+		$windows['ctree']->show();
 }
 
 
@@ -865,7 +872,10 @@ function create_pixmap()
 		$button->grab_default();
 		$button->show();
 	}
-	$windows['pixmap']->show();
+	if ($windows['pixmap']->flags() & GTK_VISIBLE)
+		$windows['pixmap']->hide();
+	else
+		$windows['pixmap']->show();
 }
 
 function create_cursor_test()
@@ -977,10 +987,12 @@ function create_cursor_test()
 		$button->grab_default();
 		$button->show();
 
-		$window->show_all();
-		set_cursor($spinner, $darea, $cur_name);
+		$darea->connect_object('realize', 'set_cursor', $spinner, $darea, $cur_name);
 	}
-	$windows['cursor_test']->show();
+	if ($windows['cursor_test']->flags() & GTK_VISIBLE)
+		$windows['cursor_test']->hide();
+	else
+		$windows['cursor_test']->show();
 }
 
 
@@ -1003,7 +1015,10 @@ function create_color_selection()
 		$ok_button = $window->ok_button;
 		$ok_button->connect('clicked', 'close_window');
 	}
-	$windows['color_selection']->show();
+	if ($windows['color_selection']->flags() & GTK_VISIBLE)
+		$windows['color_selection']->hide();
+	else
+		$windows['color_selection']->show();
 }
 
 
@@ -1053,7 +1068,10 @@ function create_radio_buttons()
 		$button->grab_default();
 		$button->show();
 	}
-	$windows['radio_buttons']->show();
+	if ($windows['radio_buttons']->flags() & GTK_VISIBLE)
+		$windows['radio_buttons']->hide();
+	else
+		$windows['radio_buttons']->show();
 }
 
 
@@ -1099,7 +1117,10 @@ function create_check_buttons()
 		$button->grab_default();
 		$button->show();
 	}
-	$windows['check_buttons']->show();
+	if ($windows['check_buttons']->flags() & GTK_VISIBLE)
+		$windows['check_buttons']->hide();
+	else
+		$windows['check_buttons']->show();
 }
 
 function create_clist()
@@ -1418,7 +1439,10 @@ function create_clist()
 		$button->grab_default();
 		$button->show();
 	}
-	$windows['clist']->show();
+	if ($windows['clist']->flags() & GTK_VISIBLE)
+		$windows['clist']->hide();
+	else
+		$windows['clist']->show();
 }
 
 
@@ -1480,7 +1504,10 @@ function create_buttons()
 		$button->grab_default();
 		$button->show();
 	}
-	$windows['buttons']->show();
+	if ($windows['buttons']->flags() & GTK_VISIBLE)
+		$windows['buttons']->hide();
+	else
+		$windows['buttons']->show();
 }
 
 
@@ -1591,7 +1618,10 @@ function create_labels()
 		$button->grab_default();
 		$button->show();
 	}
-	$windows['labels']->show();
+	if ($windows['labels']->flags() & GTK_VISIBLE)
+		$windows['labels']->hide();
+	else
+		$windows['labels']->show();
 }
 
 
@@ -1681,7 +1711,11 @@ function create_button_box()
 		$button->grab_default();
 		$button->show();
 	}
-	$windows['button_box']->show();
+
+	if ($windows['button_box']->flags() & GTK_VISIBLE)
+		$windows['button_box']->hide();
+	else
+		$windows['button_box']->show();
 }
 
 
@@ -1794,7 +1828,10 @@ function create_tooltips()
 		$tooltips->set_tip($button, 'Push this button to close window', 'push');
 		$tooltips->enable();
 	}
-	$windows['tooltips']->show();
+	if ($windows['tooltips']->flags() & GTK_VISIBLE)
+		$windows['tooltips']->hide();
+	else
+		$windows['tooltips']->show();
 }
 
 
@@ -1840,7 +1877,10 @@ function create_toggle_buttons()
 		$button->grab_default();
 		$button->show();
 	}
-	$windows['toggle_buttons']->show();
+	if ($windows['toggle_buttons']->flags() & GTK_VISIBLE)
+		$windows['toggle_buttons']->hide();
+	else
+		$windows['toggle_buttons']->show();
 }
 
 
@@ -1939,7 +1979,10 @@ function create_entry()
 		$button->grab_default();
 		$button->show();
 	}
-	$windows['entry']->show();
+	if ($windows['entry']->flags() & GTK_VISIBLE)
+		$windows['entry']->hide();
+	else
+		$windows['entry']->show();
 }
 
 function toggle_resize($child)
@@ -1991,32 +2034,40 @@ function toggle_shrink($child)
 function create_pane_options($paned, $frame_label, $label1, $label2)
 {
 	$frame = &new GtkFrame($frame_label);
+	$frame->show();
 	$frame->set_border_width(0);
 
 	$table = &new GtkTable(3, 2, true);
+	$table->show();
 	$frame->add($table);
 
 	$label = &new GtkLabel($label1);
+	$label->show();
 	$table->attach_defaults($label, 0, 1, 0, 1);
 
 	$check_button = &new GtkCheckButton('Resize');
+	$check_button->show();
 	$table->attach_defaults($check_button, 0, 1, 1, 2);
 	$check_button->connect_object('toggled', 'toggle_resize', $paned->child1);
 
 	$check_button = &new GtkCheckButton('Shrink');
+	$check_button->show();
 	$table->attach_defaults($check_button, 0, 1, 2, 3);
 	$check_button->set_active(true);
 	$check_button->connect_object('toggled', 'toggle_shrink', $paned->child1);
 
 	$label = &new GtkLabel($label2);
-	$table->attach_defaults($label,1,2,0,1);
+	$label->show();
+	$table->attach_defaults($label, 1, 2, 0, 1);
 
 	$check_button = &new GtkCheckButton('Resize');
+	$check_button->show();
 	$table->attach_defaults($check_button, 1, 2, 1, 2);
 	$check_button->set_active(true);
 	$check_button->connect_object('toggled', 'toggle_resize', $paned->child2);
 
 	$check_button = &new GtkCheckButton('Shrink');
+	$check_button->show();
 	$table->attach_defaults($check_button, 1, 2, 2, 3);
 	$check_button->set_active(true);
 	$check_button->connect_object('toggled', 'toggle_shrink', $paned->child2);
@@ -2035,29 +2086,36 @@ function create_panes()
 		$window->set_title('GtkPane');
 
 		$vbox = &new GtkVBox;
+		$vbox->show();
 		$window->add($vbox);
 
 		$vpaned = &new GtkVPaned;
+		$vpaned->show();
 		$vbox->pack_start($vpaned, true, true, 0);
 		$vpaned->set_border_width(5);
 
 		$hpaned = &new GtkHPaned;
+		$hpaned->show();
 		$vpaned->add1($hpaned);
 
 		$frame = &new GtkFrame;
+		$frame->show();
 		$frame->set_shadow_type(GTK_SHADOW_IN);
 		$frame->set_usize(60, 60);
 		$hpaned->add1($frame);
 
 		$button = &new GtkButton('Hi there');
+		$button->show();
 		$frame->add($button);
 
 		$frame = &new GtkFrame;
+		$frame->show();
 		$frame->set_shadow_type(GTK_SHADOW_IN);
 		$frame->set_usize(80, 60);
 		$hpaned->add2($frame);
 
 		$frame = &new GtkFrame;
+		$frame->show();
 		$frame->set_shadow_type(GTK_SHADOW_IN);
 		$frame->set_usize(60, 80);
 		$vpaned->add2($frame);
@@ -2079,49 +2137,61 @@ function create_panes()
 			false, false, 0);
 
 		$separator = &new GtkHSeparator();
+		$separator->show();
 		$vbox->pack_start($separator, false);
 
 		$button = &new GtkButton('Close');
+		$button->show();
 		$button->connect('clicked', 'close_window');
 		$vbox->pack_start($button);
 		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
-		$button->show();
 	}
-	$windows['panes']->show_all();
+	if ($windows['panes']->flags() & GTK_VISIBLE)
+		$windows['panes']->hide();
+	else
+		$windows['panes']->show();
 }
 
 function file_selection_ok($button, $fs)
 {
 	print "selected '" . $fs->get_filename() . "'\n";
-	$fs->destroy();
+	$fs->hide();
 }
 
 function create_file_selection()
 {
-	$window = new GtkFileSelection('File selection dialog');
-	$window->hide_fileop_buttons();
-	$window->set_position(GTK_WIN_POS_MOUSE);
+	global $windows;
 
-	$button_ok = $window->ok_button;
-	$button_ok->connect('clicked', 'file_selection_ok', $window);
+	if (!isset($windows['file_selection'])) {
+		$window = &new GtkFileSelection('File selection dialog');
+		$windows['file_selection'] = $window;
+		$window->hide_fileop_buttons();
+		$window->set_position(GTK_WIN_POS_MOUSE);
+		$window->connect('delete_event', 'delete_event');
 
-	$button_cancel = $window->cancel_button;
-	$button_cancel->connect_object('clicked', array($window, 'destroy'));
+		$button_ok = $window->ok_button;
+		$button_ok->connect('clicked', 'file_selection_ok', $window);
 
-	$action_area = $window->action_area;
+		$button_cancel = $window->cancel_button;
+		$button_cancel->connect('clicked', 'close_window');
 
-	$button = &new GtkButton('Hide Fileops');
-	$button->connect_object('clicked', create_function('$w', '$w->hide_fileop_buttons();'), $window);
-	$action_area->pack_start($button, false, false, 0);
-	$button->show();
+		$action_area = $window->action_area;
 
-	$button = &new GtkButton('Show Fileops');
-	$button->connect_object('clicked', create_function('$w', '$w->show_fileop_buttons();'), $window);
-	$action_area->pack_start($button, false, false, 0);
-	$button->show();
+		$button = &new GtkButton('Hide Fileops');
+		$button->show();
+		$button->connect_object('clicked', create_function('$w', '$w->hide_fileop_buttons();'), $window);
+		$action_area->pack_start($button, false, false, 0);
 
-	$window->show_all();
+		$button = &new GtkButton('Show Fileops');
+		$button->show();
+		$button->connect_object('clicked', create_function('$w', '$w->show_fileop_buttons();'), $window);
+		$action_area->pack_start($button, false, false, 0);
+	}
+	if ($windows['file_selection']->flags() & GTK_VISIBLE)
+		$windows['file_selection']->hide();
+	else
+		$windows['file_selection']->show();
 }
 
 function label_toggle($dialog, $label, $dialog)
@@ -2140,20 +2210,20 @@ function label_toggle($dialog, $label, $dialog)
 
 function create_dialog()
 {
-	static $dialog = null;
+	global $windows;
 	static $label = null;
 
-	if (!$dialog)
-	{
-		$dialog = new GtkDialog;
+	if (!isset($windows['dialog'])) {
+		$dialog = &new GtkDialog;
+		$windows['dialog'] = $dialog;
 		$dialog->set_title('GtkDialog');
 		$dialog->set_border_width(0);
-		$dialog->set_usize(200,110);
-		$dialog->connect_object('destroy', create_function('$w', '$w = null;'), &$dialog);
+		$dialog->set_usize(200, 110);
+		$dialog->connect('delete_event', 'delete_event');
 
 		$button = &new GtkButton('Ok');
 		$button->set_flags(GTK_CAN_DEFAULT);
-		$button->connect_object('clicked', array($dialog, 'destroy'));
+		$button->connect('clicked', 'close_window');
 
 		$action_area = $dialog->action_area;
 		$action_area->pack_start($button, true, true, 0);
@@ -2166,11 +2236,10 @@ function create_dialog()
 		$action_area->pack_start($button, true, true, 0);
 		$button->show();
 	}
-
-	if (!($dialog->flags() & GTK_VISIBLE))
-		$dialog->show();
+	if ($windows['dialog']->flags() & GTK_VISIBLE)
+		$windows['dialog']->hide();
 	else
-		$dialog->destroy();
+		$windows['dialog']->show();
 }
 
 function event_watcher($object, $signal_id)
@@ -2211,10 +2280,9 @@ function create_event_watcher()
 	static $event_watcher_enter_id = 0;
 	static $event_watcher_leave_id = 0;
 
-	if (!$dialog)
-	{
+	if (!$dialog) {
 		$dialog = new GtkDialog;
-		$dialog->connect_object('destroy','event_watcher_down', &$event_watcher_enter_id, &$event_watcher_leave_id);
+		$dialog->connect_object('destroy', 'event_watcher_down', &$event_watcher_enter_id, &$event_watcher_leave_id);
 		$dialog->connect_object('destroy', create_function('$w', '$w = null;'), &$dialog);
 		$dialog->set_title('Event Watcher');
 		$dialog->set_border_width(0);
@@ -2237,7 +2305,6 @@ function create_event_watcher()
 		$button->grab_default();
 		$button->show();
 	}
-
 	if (!($dialog->flags() & GTK_VISIBLE))
 		$dialog->show();
 	else
@@ -2280,13 +2347,13 @@ function page_switch($notebook, $page, $page_num)
 
 function tab_fill($button, $child, $notebook)
 {
-	list($expand,,$pack_type) = $notebook->query_tab_label_packing($child);
+	list($expand,, $pack_type) = $notebook->query_tab_label_packing($child);
 	$notebook->set_tab_label_packing($child, $expand, $button->get_active(), $pack_type);
 }
 
 function tab_expand($button, $child, $notebook)
 {
-	list(,$fill,$pack_type) = $notebook->query_tab_label_packing($child);
+	list(, $fill, $pack_type) = $notebook->query_tab_label_packing($child);
 	$notebook->set_tab_label_packing($child, $button->get_active(), $fill, $pack_type);
 }
 
@@ -2424,9 +2491,11 @@ function create_notebook()
 		$window->set_border_width(0);
 
 		$box1 = &new GtkVBox(false, 0);
+		$box1->show();
 		$window->add($box1);
 
 		$sample_notebook = new GtkNotebook;
+		$sample_notebook->show();
 		$sample_notebook->connect('switch_page', 'page_switch');
 		$sample_notebook->set_tab_pos(GTK_POS_TOP);
 		$box1->pack_start($sample_notebook, true, true, 0);
@@ -2439,61 +2508,78 @@ function create_notebook()
 		create_pages(&$sample_notebook, 1, 5);
 
 		$separator = &new GtkHSeparator;
+		$separator->show();
 		$box1->pack_start($separator, false, true, 10);
 
 		$box2 = &new GtkHBox(false, 5);
+		$box2->show();
 		$box2->set_border_width(10);
 		$box1->pack_start($box2, false, true, 0);
 
 		$button = &new GtkCheckButton('popup menu');
+		$button->show();
 		$box2->pack_start($button, true, false, 0);
 		$button->connect('clicked', 'notebook_popup', &$sample_notebook);
 
 		$button = &new GtkCheckButton('homogeneous tabs');
+		$button->show();
 		$box2->pack_start($button, true, false, 0);
 		$button->connect('clicked', 'notebook_homogeneous', &$sample_notebook);
 
 		$box2 = &new GtkHBox(false, 5);
+		$box2->show();
 		$box2->set_border_width(10);
 		$box1->pack_start($box2, false, true, 0);
 
 		$label = &new GtkLabel('Notebook Style:');
+		$label->show();
 		$box2->pack_start($label, false, true, 0);
 
 		$omenu = build_option_menu($items, 3, 0, &$sample_notebook);
+		$omenu->show();
 		$box2->pack_start($omenu, false, true, 0);
 
 		$button = &new GtkButton('Show all Pages');
+		$button->show();
 		$box2->pack_start($button, false, true, 0);
-		$button->connect_object('clicked','show_all_pages',&$sample_notebook);
+		$button->connect_object('clicked', 'show_all_pages', &$sample_notebook);
 
 		$box2 = &new GtkHBox(true, 10);
+		$box2->show();
 		$box2->set_border_width(10);
 		$box1->pack_start($box2, false, true, 0);
 
 		$button = &new GtkButton('prev');
-		$button->connect_object('clicked', array(&$sample_notebook,'prev_page'));
+		$button->show();
+		$button->connect_object('clicked', array(&$sample_notebook, 'prev_page'));
 		$box2->pack_start($button, true, true, 0);
 
 		$button = &new GtkButton('next');
-		$button->connect_object('clicked', array(&$sample_notebook,'next_page'));
+		$button->show();
+		$button->connect_object('clicked', array(&$sample_notebook, 'next_page'));
 		$box2->pack_start($button, true, true, 0);
 
 		$button = &new GtkButton('rotate');
+		$button->show();
 		$button->connect_object('clicked', 'notebook_rotate', &$sample_notebook);
 		$box2->pack_start($button, true, true, 0);
 
 		$separator = &new GtkHSeparator;
+		$separator->show();
 		$box1->pack_start($separator, false, true, 5);
 
 		$button = &new GtkButton('close');
+		$button->show();
 		$button->set_border_width(5);
 		$button->connect('clicked', 'close_window');
 		$box1->pack_start($button, false, false, 0);
 		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 	}
-	$windows['notebook']->show_all();
+	if ($windows['notebook']->flags() & GTK_VISIBLE)
+		$windows['notebook']->hide();
+	else
+		$windows['notebook']->show();
 }
 
 function create_main_window()
