@@ -1,3 +1,12 @@
+2005-01-20  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/phpg_gobject.c:
+      Add note about some issues with internal properties not supporting
+      objects.
+
+    * generator/generator.php:
+      Support function overrides.
+
 2005-01-18  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.defs
