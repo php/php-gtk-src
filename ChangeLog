@@ -1,3 +1,18 @@
+2005-03-12  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk.h
+      main/phpg_gobject.c:
+      Since we lack a garbage collector, we need to fake it. We need to override
+      del_ref handler on the object, which will make sure that our wrapper is
+      destroyed only if the referent gobject also has refcount of 1, which we
+      means
+      that only we own it. Otherwise, we need to keep our wrapper from being
+      destroyed and save a pointer to the wrapper in the gobject with
+      notification
+      turned on, so that when gobject is destroyed by Gtk+ our wrapper is
+      destroyed
+      as well.
+
 2005-03-11  Andrei Zmievski  <andrei@gravitonic.com>
 
     * TODO2:
