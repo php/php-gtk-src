@@ -11,6 +11,7 @@ configure.ac: configure.in $(config_m4_files)
 
 configure: aclocal.m4 config.m4 php_gtk.m4 configure.ac
 	@echo rebuilding $@
+	@aclocal
 	@autoconf 
 
 config.h.in: configure
