@@ -230,7 +230,7 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC)
                 g_value_set_boxed(gval, NULL);
             } else if (Z_TYPE_P(value) == IS_OBJECT
                        && instanceof_function(Z_OBJCE_P(value), gboxed_ce TSRMLS_CC)
-                       && G_VALUE_HOLDS(value, ((phpg_gboxed_t*)PHPG_GET(value))->gtype)) {
+                       && G_VALUE_HOLDS(gval, ((phpg_gboxed_t*)PHPG_GET(value))->gtype)) {
                 g_value_set_boxed(gval, PHPG_GBOXED(value));
             } else if ((gbm = phpg_gboxed_lookup_custom(G_VALUE_TYPE(gval)))) {
                 return gbm->from_zval(value, gval TSRMLS_CC);
@@ -244,7 +244,7 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC)
                 g_value_set_object(gval, NULL);
             } else if (Z_TYPE_P(value) == IS_OBJECT
                        && instanceof_function(Z_OBJCE_P(value), gobject_ce TSRMLS_CC)
-                       && G_TYPE_CHECK_INSTANCE_TYPE(PHPG_GOBJECT(value), G_VALUE_TYPE(value))) {
+                       && G_TYPE_CHECK_INSTANCE_TYPE(PHPG_GOBJECT(value), G_VALUE_TYPE(gval))) {
                 g_value_set_object(gval, PHPG_GOBJECT(value));
             } else
                 return FAILURE;

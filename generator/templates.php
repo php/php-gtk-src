@@ -147,7 +147,7 @@ static PHP_METHOD(%(class), %(name))
     }
 
 	memset(&params, 0, %(n_params) * sizeof(GParameter));
-    if (!phpg_parse_ctor_props(gtype, php_args, params, &n_params, prop_names TSRMLS_CC) == FAILURE) {
+    if (!phpg_parse_ctor_props(gtype, php_args, params, &n_params, prop_names TSRMLS_CC)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
     }
 %(pre_code)
