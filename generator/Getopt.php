@@ -113,7 +113,7 @@ class Console_Getopt {
             }
 
             if ($spec{1} == ':') {
-                if ($spec{2} == ':') {
+                if (strlen($spec) > 2 && $spec{2} == ':') {
                     if ($i + 1 < strlen($arg)) {
                         /* Option takes an optional argument. Use the remainder of
                            the arg string if there is anything left. */
