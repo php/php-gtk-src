@@ -366,7 +366,9 @@ PHP_FUNCTION(gdk_window_new_gc)
 		}
 	}
 
-	gc = gdk_gc_new_with_values(PHP_GDK_WINDOW_GET(this_ptr), &values, mask);
+	gc = gdk_gc_new_with_values(Z_OBJCE_P(this_ptr) == gdk_bitmap_ce ?
+								PHP_GDK_BITMAP_GET(this_ptr) :
+								PHP_GDK_WINDOW_GET(this_ptr), &values, mask);
 	*return_value = *php_gdk_gc_new(gc);
 	gdk_gc_unref(gc);
 }
@@ -581,6 +583,13 @@ static function_entry php_gdk_window_functions[] = {
 	{NULL, NULL, NULL}
 };
 
+static function_entry php_gdk_bitmap_functions[] = {
+	{"GdkBitmap",		PHP_FN(no_direct_constructor), NULL},
+	{"gdkbitmap",		PHP_FN(no_direct_constructor), NULL},
+	{"new_gc", 			PHP_FN(gdk_window_new_gc), NULL},
+	{NULL, NULL, NULL}
+};
+
 PHP_FUNCTION(gdkpixmap)
 {
 	GdkWindow *window = NULL;
@@ -697,12 +706,18 @@ zval *php_gdk_bitmap_new(GdkWindow *bitmap)
 static void gdk_window_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
 {
 	zval *value;
-	GdkWindow *win = PHP_GDK_WINDOW_GET(object);
+	GdkWindow *win;
 	gint x, y;
 	GdkModifierType p_mask;
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 	
 	*result = SUCCESS;
+
+	if (Z_OBJCE_P(object) == gdk_bitmap_ce) {
+		win = PHP_GDK_BITMAP_GET(object);
+	} else {
+		win = PHP_GDK_WINDOW_GET(object);
+	}
 
 	if (!strcmp(prop_name, "width")) {
 		gdk_window_get_size(win, &x, NULL);
@@ -710,40 +725,8 @@ static void gdk_window_get_property(zval *return_value, zval *object, zend_llist
 	} else if (!strcmp(prop_name, "height")) {
 		gdk_window_get_size(win, NULL, &y);
 		RETURN_LONG(y);
-	} else if (!strcmp(prop_name, "x")) {
-		gdk_window_get_position(win, &x, NULL);
-		RETURN_LONG(x);
-	} else if (!strcmp(prop_name, "y")) {
-		gdk_window_get_position(win, NULL, &y);
-		RETURN_LONG(y);
 	} else if (!strcmp(prop_name, "colormap")) {
 		*return_value = *php_gdk_colormap_new(gdk_window_get_colormap(win));
-		return;
-	} else if (!strcmp(prop_name, "pointer")) {
-		gdk_window_get_pointer(win, &x, &y, NULL);
-		*return_value = *php_gtk_build_value("(ii)", x, y);
-		return;
-	} else if (!strcmp(prop_name, "pointer_state")) {
-		gdk_window_get_pointer(win, NULL, NULL, &p_mask);
-		RETURN_LONG(p_mask);
-	} else if (!strcmp(prop_name, "parent")) {
-		GdkWindow *parent = gdk_window_get_parent(win);
-		if (parent)
-			*return_value = *php_gdk_window_new(parent);
-		return;
-	} else if (!strcmp(prop_name, "toplevel")) {
-		*return_value = *php_gdk_window_new(gdk_window_get_toplevel(win));
-		return;
-	} else if (!strcmp(prop_name, "children")) {
-		GList *children, *tmp;
-		zval *child;
-		children = gdk_window_get_children(win);
-		array_init(return_value);
-		for (tmp = children; tmp; tmp = tmp->next) {
-			child = php_gdk_window_new(tmp->data);
-			zend_hash_next_index_insert(Z_ARRVAL_P(return_value), &child, sizeof(zval *), NULL);
-		}
-		g_list_free(children);
 		return;
 	} else if (!strcmp(prop_name, "type")) {
 		RETURN_LONG(gdk_window_get_type(win));
@@ -756,6 +739,42 @@ static void gdk_window_get_property(zval *return_value, zval *object, zend_llist
 		RETURN_LONG(GDK_WINDOW_XWINDOW(win));
 	}
 #endif
+
+	if (gdk_window_get_type(win) != GDK_WINDOW_PIXMAP) {
+		if (!strcmp(prop_name, "x")) {
+			gdk_window_get_position(win, &x, NULL);
+			RETURN_LONG(x);
+		} else if (!strcmp(prop_name, "y")) {
+			gdk_window_get_position(win, NULL, &y);
+			RETURN_LONG(y);
+		} else if (!strcmp(prop_name, "pointer")) {
+			gdk_window_get_pointer(win, &x, &y, NULL);
+			*return_value = *php_gtk_build_value("(ii)", x, y);
+			return;
+		} else if (!strcmp(prop_name, "pointer_state")) {
+			gdk_window_get_pointer(win, NULL, NULL, &p_mask);
+			RETURN_LONG(p_mask);
+		} else if (!strcmp(prop_name, "parent")) {
+			GdkWindow *parent = gdk_window_get_parent(win);
+			if (parent)
+				*return_value = *php_gdk_window_new(parent);
+			return;
+		} else if (!strcmp(prop_name, "toplevel")) {
+			*return_value = *php_gdk_window_new(gdk_window_get_toplevel(win));
+			return;
+		} else if (!strcmp(prop_name, "children")) {
+			GList *children, *tmp;
+			zval *child;
+			children = gdk_window_get_children(win);
+			array_init(return_value);
+			for (tmp = children; tmp; tmp = tmp->next) {
+				child = php_gdk_window_new(tmp->data);
+				zend_hash_next_index_insert(Z_ARRVAL_P(return_value), &child, sizeof(zval *), NULL);
+			}
+			g_list_free(children);
+			return;
+		}
+	}
 
 	*result = FAILURE;
 }
@@ -2609,7 +2628,7 @@ void php_gtk_plus_register_types(int module_number)
 	gdk_window_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "GdkPixmap", php_gdk_pixmap_functions, NULL, php_gtk_get_property, php_gtk_set_property);
 	gdk_pixmap_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GdkBitmap", php_gdk_window_functions, NULL, php_gtk_get_property, php_gtk_set_property);
+	INIT_OVERLOADED_CLASS_ENTRY(ce, "GdkBitmap", php_gdk_bitmap_functions, NULL, php_gtk_get_property, php_gtk_set_property);
 	gdk_bitmap_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_window_ce, gdk_window_get_property);
 	php_gtk_register_prop_getter(gdk_pixmap_ce, gdk_window_get_property);
