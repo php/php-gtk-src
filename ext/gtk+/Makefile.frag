@@ -31,6 +31,6 @@ gen_%.c : %.defs
         -r gtk-types.defs \
         -o $(*F).overrides \
         -p $(*F) \
-        -f $(@F) $(*F).defs \
+        -f $(@F) $(*F).defs 2>&1 | tee gen_$(*F).log \
      && grep -h "^PHP_GTK_EXPORT_CE" $(@F) | sed -e "s!^!extern !" > gen_$(*F).h \
 	)
