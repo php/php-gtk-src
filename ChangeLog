@@ -1,3 +1,48 @@
+2001-04-30  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/en/classes/gtkaspectframe.xml
+      docs/en/classes/gtkdata.xml
+      docs/en/classes/gtkitemfactory.xml
+      docs/en/classes/gtkoptionmenu.xml
+      docs/en/classes/gtkpixmap.xml
+      docs/en/classes/gtkradiobutton.xml
+      docs/en/classes/gtktipsquery.xml
+      docs/en/classes/gtktreeitem.xml: Cleaning up some xml.
+
+    * docs/en/classes/gtkframe3.xml
+      docs/en/classes/gtkframe4.xml
+      docs/manual.xml.in
+      docs/stylesheets/xsl/html/name_to_id.xsl:
+    Another 2 tests.  frame3, unix + unicode.  frame4, doze + unicode.
+
+    * docs/en/classes/gtkframe2.xml
+      docs/manual.xml.in
+      docs/stylesheets/xsl/html/name_to_id.xsl:
+    Testing whether unix LF/CR toggle helps the linewrap situation any
+
+    * docs/en/classes/gtkhpaned.xml
+      docs/en/classes/gtklayout.xml
+      docs/en/classes/gtkmenubar.xml
+      docs/en/classes/gtkmenushell.xml
+      docs/en/classes/gtkpacker.xml
+      docs/en/classes/gtkpaned.xml
+      docs/en/classes/gtksocket.xml
+      docs/en/classes/gtkvpaned.xml
+      docs/stylesheets/xsl/html/name_to_id.xsl
+      docs/manual.xml.in: SHELLSUIT#05 - not including gktlist, gtkmenu.
+
+    * docs/stylesheets/xsl/html/name_to_id.xsl
+      docs/en/classes/gtkcolorselection.xml
+      docs/en/classes/gtkcolorselectiondialog.xml
+      docs/en/classes/gtkcombo.xml
+      docs/en/classes/gtkfixed.xml
+      docs/en/classes/gtkfontselection.xml
+      docs/en/classes/gtkgammacurve.xml
+      docs/en/classes/gtkhbox.xml
+      docs/en/classes/gtkstatusbar.xml
+      docs/manual.xml.in:
+    SHELLSUIT#04  (nb have left clist, ctree, notebook for later input)
+
 2001-04-27  Andrei Zmievski  <andrei@ispi.net>
 
     * src/php_gtk_object.c: More work.
