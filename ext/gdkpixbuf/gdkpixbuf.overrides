@@ -46,6 +46,6 @@ PHP_FUNCTION(gdk_pixbuf_render_pixmap_and_mask)
 	gdk_pixbuf_render_pixmap_and_mask(PHP_GDK_PIXBUF_GET(this_ptr), &pixmap,
 									  &mask, alpha_threshold);
 
-	*return_value = *php_gtk_build_value("NN", php_gdk_pixmap_new(pixmap),
+	*return_value = *php_gtk_build_value("(NN)", php_gdk_pixmap_new(pixmap),
 										 php_gdk_bitmap_new(mask));
 }
