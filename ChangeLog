@@ -1,3 +1,11 @@
+2001-04-01  James Moore  <James@phpuk.org>
+
+    * docs/makedocs.bat: Make it work under win98 too
+
+    * docs/makedocs.bat: Cleaning up .php files after build
+
+    * docs/makedocs.bat: batch file to make building of PHP under win32 easier
+
 2001-03-31  Andrei Zmievski  <andrei@ispi.net>
 
     * src/php_gtk.h
