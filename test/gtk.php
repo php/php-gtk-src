@@ -2184,11 +2184,10 @@ function event_watcher( $object, $signal_id)
 	return true;
 }
 
-function event_watcher_toggle(&$event_watcher_enter_id, &$event_watcher_leave_id)
+function event_watcher_toggle($event_watcher_enter_id, $event_watcher_leave_id)
 {
-	var_dump($event_watcher_enter_id);
 	if ($event_watcher_enter_id)
-		event_watcher_down($event_watcher_enter_id, $event_watcher_leave_id);
+		event_watcher_down(&$event_watcher_enter_id, &$event_watcher_leave_id);
 	else
 	{
 		$signal_id = Gtk::signal_lookup( 'enter_notify_event', GtkWidget::get_type());
@@ -2198,7 +2197,7 @@ function event_watcher_toggle(&$event_watcher_enter_id, &$event_watcher_leave_id
 	}
 }
 
-function event_watcher_down(&$event_watcher_enter_id, &$event_watcher_leave_id)
+function event_watcher_down($event_watcher_enter_id, $event_watcher_leave_id)
 {
 	if ($event_watcher_enter_id)
 	{
@@ -2220,7 +2219,7 @@ function create_event_watcher()
 	if (!$dialog)
 	{
 		$dialog = new GtkDialog;
-		$dialog->connect_object('delete_event','event_watcher_down', $event_watcher_enter_id, $event_watcher_leave_id);
+		$dialog->connect_object('delete_event','event_watcher_down', &$event_watcher_enter_id, &$event_watcher_leave_id);
 		$dialog->connect_object('delete_event', 'delete_event');
 		$dialog->set_title('Event Watcher');
 		$dialog->set_border_width(0);
@@ -2230,13 +2229,13 @@ function create_event_watcher()
 		$action_area = $dialog->action_area;
 
 		$button = &new GtkToggleButton('Activate Watch');
-		$button->connect_object('clicked', 'event_watcher_toggle', $event_watcher_enter_id, $event_watcher_leave_id);
+		$button->connect_object('clicked', 'event_watcher_toggle', &$event_watcher_enter_id, &$event_watcher_leave_id);
 		$button->set_border_width(10);
 		$vbox->pack_start($button);
 		$button->show();
 
 		$button = &new GtkButton('Close');
-		$button->connect_object('clicked', 'event_watcher_down', $event_watcher_enter_id, $event_watcher_leave_id);
+		$button->connect_object('clicked', 'event_watcher_down', &$event_watcher_enter_id, &$event_watcher_leave_id);
 		$button->connect('clicked', 'close_window');
 		$button->set_flags(GTK_CAN_DEFAULT);
 		$action_area->pack_start($button);
