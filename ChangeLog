@@ -1,3 +1,35 @@
+2001-11-20  Andrei Zmievski  <andrei@ispi.net>
+
+    * README: Update README.
+
+    * php_gtk.m4: Added PHP_GTK_ARG_WITH() macro.
+
+    * ext/sqpane/config.m4
+      ext/sqpane/php_sqpane.c
+      generator/scheme.php
+      main/php_gtk.c
+      main/php_gtk.h
+      ext/gtk+/.cvsignore
+      ext/libglade/.cvsignore
+      ext/libglade/Makefile.in
+      ext/libglade/config.m4
+      ext/libglade/php_libglade.c
+      ext/scintilla/.cvsignore
+      ext/scintilla/Makefile.in
+      ext/scintilla/config.m4
+      ext/scintilla/php_scintilla.c
+      ext/skeleton/.cvsignore
+      ext/skeleton/Makefile.in
+      ext/skeleton/config.m4
+      ext/skeleton/php_skeleton.c
+      ext/sqpane/.cvsignore
+      ext/sqpane/Makefile.in
+      AUTHORS
+      NEWS
+      build2/genext.sh
+      php_gtk.m4:
+    Implemented ability to build shared extensions.
+
 2001-11-18  Andrei Zmievski  <andrei@ispi.net>
 
     * NEWS:
