@@ -111,12 +111,14 @@ PHP_RINIT_FUNCTION(gtk)
 	zend_llist_init(&php_gtk_ext_registry, sizeof(php_gtk_ext_entry), (llist_dtor_func_t)php_gtk_ext_destructor, 1);
 
 	php_gtk_class_hash = g_hash_table_new(g_str_hash, g_str_equal);
+	/*
 	zend_hash_init_ex(&php_gtk_prop_getters, 20, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_prop_setters, 20, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_rsrc_hash, 50, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_type_hash, 50, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_callback_hash, 50, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_prop_desc, 50, NULL, NULL, 1, 0);
+	*/
 	zend_hash_init_ex(&phpg_prop_info, 50, NULL, (dtor_func_t) php_gtk_prop_info_destroy, 1, 0);
 	
 	zend_unset_timeout(TSRMLS_C);
@@ -135,6 +137,8 @@ PHP_RINIT_FUNCTION(gtk)
 	g_type_init();
 	php_gtype_register_self();
 
+	phpg_gobject_register_self();
+
 	/* XXX
 	if (php_gtk_startup_all_extensions(module_number) == FAILURE) {
 		php_error(E_WARNING, "Unable to start internal extensions");
@@ -150,10 +154,12 @@ PHP_RINIT_FUNCTION(gtk)
 /* Remove if there's nothing to do at request end */
 PHP_RSHUTDOWN_FUNCTION(gtk)
 {
+	/*
 	zend_hash_destroy(&php_gtk_prop_getters);
 	zend_hash_destroy(&php_gtk_prop_setters);
 	zend_hash_destroy(&php_gtk_rsrc_hash);
 	zend_hash_destroy(&php_gtk_type_hash);
+	*/
 	zend_hash_destroy(&phpg_prop_info);
 
 	zend_llist_destroy(&php_gtk_ext_registry);

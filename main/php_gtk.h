@@ -66,7 +66,7 @@
 #undef PG_ERROR
 #define PG_ERROR -2
 
-typedef void (*php_gtk_dtor_t)(void *);
+typedef void (*phpg_dtor_t)(void *);
 
 #define PHPG_OBJ_HEADER \
 	zend_object zobj;   \
@@ -74,13 +74,13 @@ typedef void (*php_gtk_dtor_t)(void *);
 
 typedef struct {
 	PHPG_OBJ_HEADER
-} phpg_object_head_t;
+} phpg_head_t;
 
-typedef struct _php_gtk_object {
+typedef struct {
 	PHPG_OBJ_HEADER
 	void *obj;
-	php_gtk_dtor_t dtor;
-} php_gtk_object;
+	phpg_dtor_t dtor;
+} phpg_gobject_t;
 
 /*
  * Property read/write function types
@@ -148,7 +148,8 @@ PHP_GTK_API zend_object_handlers php_gtk_handlers;
 int php_gtk_startup_all_extensions(int module_number);
 int php_gtk_startup_extensions(php_gtk_ext_entry **ext, int ext_count, int module_number);
 
-PHP_GTK_API zval *php_gtk_new(GtkObject *obj);
+PHP_GTK_API zval *php_gtk_new(GObject *obj);
+/*
 static inline void php_gtk_set_object(zval *zobj, void *obj, php_gtk_dtor_t dtor, zend_bool boxed)
 {
 	php_gtk_object *wrapper;
@@ -162,6 +163,7 @@ static inline void php_gtk_set_object(zval *zobj, void *obj, php_gtk_dtor_t dtor
 		zend_hash_index_update(&php_gtk_type_hash, (long)obj, (void *)&zobj, sizeof(zval *), NULL);
 	}
 }
+*/
 
 zval *phpg_read_property(zval *object, zval *member, zend_bool silent TSRMLS_DC);
 void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC);
@@ -187,7 +189,7 @@ PHP_GTK_API int php_gtk_set_property(zend_property_reference *property_reference
 void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference *property_reference);
 */
 
-PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name, function_entry *class_functions, zend_class_entry *parent, prop_info_t *prop_info, create_object_func_t create_obj_func TSRMLS_DC);
+PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name, function_entry *class_functions, zend_class_entry *parent, prop_info_t *prop_info, create_object_func_t create_obj_func, GType gtype TSRMLS_DC);
 PHP_GTK_API void phpg_init_object(void *pobj, zend_class_entry *ce);
 
 PHP_GTK_API void phpg_register_prop_getter(zend_class_entry *ce, prop_getter_t getter);
@@ -237,13 +239,17 @@ PHP_GTK_API zval* php_gtype_new(GType type);
 PHP_GTK_API GType php_gtype_from_zval(zval *value);
 
 /* GValue */
-PHP_GTK_API zval* php_gvalue_as_zval(const GValue *gval, zend_bool copy_boxed);
-PHP_GTK_API int php_gvalue_from_zval(GValue *gval, zval *value);
-PHP_GTK_API int php_gvalue_enum_get(GType enum_type, zval *enum_val, gint *result);
-PHP_GTK_API int php_gvalue_flags_get(GType flags_type, zval *flags_val, gint *result);
+PHP_GTK_API zval* phpg_gvalue_as_zval(const GValue *gval, zend_bool copy_boxed);
+PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value);
+PHP_GTK_API int phpg_gvalue_enum_get(GType enum_type, zval *enum_val, gint *result);
+PHP_GTK_API int phpg_gvalue_flags_get(GType flags_type, zval *flags_val, gint *result);
 
+/* GObject */
+PHP_GTK_API zval* phpg_gobject_new(GObject *obj);
+void phpg_gobject_register_self();
 
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtype_ce);
+PHP_GTK_API extern PHP_GTK_EXPORT_CE(gobject_ce);
 
 PHP_GTK_API ZEND_EXTERN_MODULE_GLOBALS(gtk);
 

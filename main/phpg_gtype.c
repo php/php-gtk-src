@@ -46,7 +46,7 @@ static prop_info_t gtype_props_info[] = {
 
 PHP_GTK_EXPORT_CE(gtype_ce) = NULL;
 
-static void gtype_destroy_object(php_gtype_t *object, zend_object_handle handle TSRMLS_DC)
+static void gtype_free_object_storage(php_gtype_t *object TSRMLS_DC)
 {
 	zend_hash_destroy(object->zobj.properties);
 	FREE_HASHTABLE(object->zobj.properties);
@@ -64,7 +64,7 @@ static zend_object_value gtype_create_object(zend_class_entry *ce TSRMLS_DC)
 	object->type = 0;
 
 	zov.handlers = &php_gtk_handlers;
-	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) gtype_destroy_object, NULL TSRMLS_CC);
+	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) gtype_free_object_storage, NULL TSRMLS_CC);
 
 	return zov;
 }
@@ -149,7 +149,7 @@ PHP_GTK_API GType php_gtype_from_zval(zval *value)
 			break;
 	}
 
-	PHPG_THROW_EXCEPTION(phpg_type_exception, "could not get typecode from value");
+	php_error(E_WARNING, "PHP-GTK: internal error: could not get typecode from value");
 	return 0;
 }
 
@@ -157,7 +157,7 @@ void php_gtype_register_self()
 {
 	if (gtype_ce) return;
 
-	gtype_ce = phpg_register_class("GType", gtype_methods, NULL, gtype_props_info, gtype_create_object TSRMLS_CC);
+	gtype_ce = phpg_register_class("GType", gtype_methods, NULL, gtype_props_info, gtype_create_object, 0 TSRMLS_CC);
 }
 
 #endif /* HAVE_PHP_GTK */
