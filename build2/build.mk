@@ -15,5 +15,5 @@ build2/generated_lists:
 	@echo config_m4_files = ext/*/config*.m4 >> $@
 
 $(STAMP):
-	phpize
+	$(PHPIZE)
 	touch $(STAMP)
