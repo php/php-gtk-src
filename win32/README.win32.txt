@@ -33,6 +33,8 @@ Copy this file to yor extension dir and you are ready to test the applications.
 copy all gtk-dll's to \winnt\system32. You can do this by executing 
 the script \php-gtk\win32\inst.cmd
 
+Inside a script you need to load the DLL dynamically using dl(). See the 
+exaples for more details. php.ini settings do not work, yet.
 
 On a command line type:
 	cd \php-gtk\test
@@ -40,6 +42,8 @@ On a command line type:
 	
 Or create a shortcut:
 	C:\php4\php.exe -q c:\php-gtk\test\gtk.php
+
+
 
 Happy hacking
 
