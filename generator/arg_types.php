@@ -228,6 +228,20 @@ class Bool_Arg extends Arg_Type {
 		return "	php_retval = %s;\n" .
 			   "%s	RETURN_BOOL(php_retval);";
 	}
+
+	function write_to_prop($obj, $name, $source)
+	{
+		return "	add_property_bool($obj, \"$name\", $source);\n";
+	}
+
+	function write_from_prop($name)
+	{
+		return "	if (zend_hash_find(Z_OBJPROP_P(wrapper), \"$name\", sizeof(\"$name\"), (void **)&item) == SUCCESS && Z_TYPE_PP(item) == IS_BOOL)\n" .
+        	   "		obj->$name = Z_BVAL_PP(item);\n" .
+    		   "	else\n" .
+        	   "		return 0;\n\n";
+
+	}
 }
 
 class Double_Arg extends Arg_Type {
@@ -248,6 +262,20 @@ class Double_Arg extends Arg_Type {
 		$var_list->add('double', 'php_retval');
 		return "	php_retval = %s;\n" .
 			   "%s	RETURN_DOUBLE(php_retval);";
+	}
+
+	function write_to_prop($obj, $name, $source)
+	{
+		return "	add_property_double($obj, \"$name\", $source);\n";
+	}
+
+	function write_from_prop($name)
+	{
+		return "	if (zend_hash_find(Z_OBJPROP_P(wrapper), \"$name\", sizeof(\"$name\"), (void **)&item) == SUCCESS && Z_TYPE_PP(item) == IS_DOUBLE)\n" .
+        	   "		obj->$name = Z_DVAL_PP(item);\n" .
+    		   "	else\n" .
+        	   "		return 0;\n\n";
+
 	}
 }
 
@@ -364,7 +392,7 @@ class Struct_Arg extends Arg_Type {
 	function write_return($type, &$var_list, $separate)
 	{
 		$typename = strtolower(substr(convert_typename($this->struct_name), 1));
-		return 	"	*return_value = *php_{$typename}_new(&%s);\n" .
+		return 	"	*return_value = *php_{$typename}_new(%s);\n" .
 				"	return;";
 	}
 }
@@ -617,6 +645,7 @@ class Arg_Matcher {
 		$struct_arg = new Struct_Arg($type);
 		$this->register($type, $struct_arg);
 		$this->register($type . '*', $struct_arg);
+		$this->register('const-' . $type . '*', $struct_arg);
 	}
 
 	function register_object($type)
@@ -630,6 +659,7 @@ class Arg_Matcher {
 	{
 		$handler = new Boxed_Arg($type, $php_type);
 		$this->register($type . '*', $handler);
+		$this->register('const-' . $type . '*', $handler);
 	}
 
 	function &get($type)
