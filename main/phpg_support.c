@@ -483,6 +483,39 @@ gboolean phpg_handler_marshal(gpointer user_data)
 }
 /* }}} */
 
+PHP_GTK_API zend_bool phpg_parse_ctor_props(GType gtype, zval **php_args, GParameter *params, guint *n_params, char **prop_names TSRMLS_DC)
+{
+    GObjectClass *klass;
+    GParamSpec *spec;
+    int i, n;
+
+    klass = g_type_class_ref(gtype);
+    g_return_val_if_fail(klass != NULL, FALSE);
+
+    for (n = i = 0; php_args[i]; i++) {
+        spec = g_object_class_find_property(klass, prop_names[i]);
+        params[i].name = prop_names[i];
+        g_value_init(&params[i].value, spec->value_type);
+
+        if (phpg_gvalue_from_zval(&params[i].value, php_args[i] TSRMLS_CC) == FAILURE) {
+            php_error(E_WARNING, "Could not convert value for parameter '%s' of type '%s'",
+                      prop_names[i], g_type_name(spec->value_type));
+            g_type_class_unref(klass);
+            for (; i >= 0; i--) {
+                g_value_unset(&params[i].value);
+            }
+            return FALSE;
+        }
+
+        n++;
+    }
+
+    g_type_class_unref(klass);
+    *n_params = n;
+
+    return TRUE;
+}
+
 #endif
 
 /* vim: set fdm=marker et sts=4: */
