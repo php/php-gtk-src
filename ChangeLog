@@ -1,3 +1,12 @@
+2005-01-28  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      main/phpg_closure.c:
+      Starting work on closures..
+
+    * main/php_gtk.c:
+      typo
+
 2005-01-27  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides
