@@ -153,7 +153,7 @@ void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *
 
 	gtk_args = php_gtk_args_as_hash(nargs, args);
 	
-	if (!php_gtk_check_callable(signal_data)) {
+	if (!php_gtk_is_callable(signal_data, NULL)) {
 		zend_hash_index_find(Z_ARRVAL_P(signal_data), 0, (void **)&func);
 		zend_hash_index_find(Z_ARRVAL_P(signal_data), 1, (void **)&extra);
 		zend_hash_index_find(Z_ARRVAL_P(signal_data), 2, (void **)&pass_wrapper);
@@ -198,7 +198,7 @@ void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 	zval *retval = NULL;
 	ELS_FETCH();
 
-	if (!php_gtk_check_callable(handler_data)) {
+	if (!php_gtk_is_callable(handler_data, NULL)) {
 		zend_hash_index_find(Z_ARRVAL_P(handler_data), 0, (void **)&func);
 		zend_hash_index_find(Z_ARRVAL_P(handler_data), 1, (void **)&extra);
 		handler_args = php_gtk_hash_as_array(*extra);
@@ -234,6 +234,8 @@ void php_gtk_input_marshal(gpointer a, zval *func, int nargs, GtkArg *args)
 	input_args[1] 	= &condition;
 
 	call_user_function_ex(EG(function_table), NULL, func, &retval, 2, input_args, 1, NULL);
+	zval_ptr_dtor(&source);
+	zval_ptr_dtor(&condition);
 	if (retval)
 		zval_ptr_dtor(&retval);
 }

@@ -348,6 +348,21 @@ int php_gtk_parse_args_quiet(int argc, char *format, ...)
 	return retval;
 }
 
+int php_gtk_parse_args_hash(zval *hash, char *format, ...)
+{
+	va_list va;
+	int retval;
+	zval ***args;
+
+	va_start(va, format);
+	args = php_gtk_hash_as_array(hash);
+	retval = parse_va_args(zend_hash_num_elements(Z_ARRVAL_P(hash)), args, format, &va, 0);
+	efree(args);
+	va_end(va);
+
+	return retval;
+}
+
 int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce)
 {
 	zend_class_entry *ce;
@@ -370,19 +385,21 @@ void php_gtk_invalidate(zval *wrapper)
 	ZVAL_NULL(wrapper);
 }
 
-zend_bool php_gtk_check_callable(zval *function)
+zend_bool php_gtk_is_callable(zval *callable, char **callable_name)
 {
 	char *lcname;
 	int retval = 0;
 	ELS_FETCH();
 
-	switch (Z_TYPE_P(function)) {
+	switch (Z_TYPE_P(callable)) {
 		case IS_STRING:
-			lcname = estrndup(Z_STRVAL_P(function), Z_STRLEN_P(function));
-			zend_str_tolower(lcname, Z_STRLEN_P(function));
-			if (zend_hash_exists(EG(function_table), lcname, Z_STRLEN_P(function)+1)) 
+			lcname = estrndup(Z_STRVAL_P(callable), Z_STRLEN_P(callable));
+			zend_str_tolower(lcname, Z_STRLEN_P(callable));
+			if (zend_hash_exists(EG(function_table), lcname, Z_STRLEN_P(callable)+1)) 
 				retval = 1;
 			efree(lcname);
+			if (!retval && callable_name)
+				*callable_name = g_strndup(Z_STRVAL_P(callable), Z_STRLEN_P(callable));
 			break;
 
 		case IS_ARRAY:
@@ -391,8 +408,8 @@ zend_bool php_gtk_check_callable(zval *function)
 				zval **obj;
 				zend_class_entry *ce;
 				
-				if (zend_hash_index_find(Z_ARRVAL_P(function), 0, (void **) &obj) == SUCCESS &&
-					zend_hash_index_find(Z_ARRVAL_P(function), 1, (void **) &method) == SUCCESS &&
+				if (zend_hash_index_find(Z_ARRVAL_P(callable), 0, (void **) &obj) == SUCCESS &&
+					zend_hash_index_find(Z_ARRVAL_P(callable), 1, (void **) &method) == SUCCESS &&
 					(Z_TYPE_PP(obj) == IS_OBJECT || Z_TYPE_PP(obj) == IS_STRING) &&
 					Z_TYPE_PP(method) == IS_STRING) {
 					if (Z_TYPE_PP(obj) == IS_STRING) {
@@ -402,16 +419,22 @@ zend_bool php_gtk_check_callable(zval *function)
 						zend_str_tolower(lcname, Z_STRLEN_PP(obj));
 						found = zend_hash_find(EG(class_table), lcname, Z_STRLEN_PP(obj) + 1, (void**)&ce);
 						efree(lcname);
-						if (found == FAILURE)
+						if (found == FAILURE) {
+							if (callable_name)
+								*callable_name = g_strdup_printf("%s::%s", Z_STRVAL_PP(obj), Z_STRVAL_PP(method));
 							break;
+						}
 					} else
 						ce = Z_OBJCE_PP(obj);
 					lcname = estrndup(Z_STRVAL_PP(method), Z_STRLEN_PP(method));
 					zend_str_tolower(lcname, Z_STRLEN_PP(method));
 					if (zend_hash_exists(&ce->function_table, lcname, Z_STRLEN_PP(method)+1))
 						retval = 1;
+					if (!retval && callable_name)
+						*callable_name = g_strdup_printf("%s::%s", ce->name, Z_STRVAL_PP(method));
 					efree(lcname);
-				}
+				} else if (callable_name)
+					*callable_name = g_strdup("unknown");
 			}
 			break;
 

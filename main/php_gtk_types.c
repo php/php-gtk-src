@@ -1532,7 +1532,7 @@ PHP_FUNCTION(gtkaccelgroup)
 	}
 
 	accel_group = gtk_accel_group_new();
-	*return_value = *php_gtk_accel_group_new(accel_group);
+	php_gtk_set_object(this_ptr, accel_group, le_gtk_accel_group);
 }
 
 PHP_FUNCTION(gtk_accel_group_lock)
