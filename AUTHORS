@@ -5,4 +5,7 @@ Frank Kromann <fmk@php.net>
     Win32 compilation and some code generator work
 
 Markus Fischer <mfischer@php.net>
-    Miscellaneous code work
+    Miscellaneous code work, several extensions
+
+Alan Knowles
+    GtkHTML extension
