@@ -1,3 +1,49 @@
+2001-05-03  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk.c
+      src/php_gtk.h: Setup type hash in preparation for a nice experiment.
+
+    * TODO: Keysyms need to be made available.
+
+2001-05-03  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/en/classes/gtklist.xml
+      docs/en/classes/gtkmenu.xml
+      docs/manual.xml.in
+      docs/stylesheets/xsl/html/name_to_id.xsl: The rest of SHELLSUIT#05
+
+2001-05-03  Andrei Zmievski  <andrei@ispi.net>
+
+    * docs/Makefile.in: Add cvsclean target.
+
+2001-05-03  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/class.xsl
+      docs/stylesheets/xsl/html/label.xsl
+      docs/stylesheets/xsl/html/overrides.xsl
+      docs/stylesheets/xsl/html/title.xsl
+      docs/stylesheets/xsl/html/chunk-common.xsl
+      docs/en/bookinfo.xml
+      docs/Makefile.in
+      docs/configure.in
+      docs/makedocs.in:  - Functions now appear on their own pages.
+     - No post processing by PHP anymore.
+     - makedocs script is nolonger used, it is all done from make
+     - added markus to manual authors
+     - bigmanual.html now builds
+     # - Anyproblems and shout.. it builds for me here.
+
+2001-05-03  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk_object.c: One more place to restrict for now.
+
+    * NEWS
+      TODO
+      src/php_gtk_object.c
+      src/php_gtk_types.c:
+    Properly detect type mismatches and other errors when assigning to overloaded
+    properties.
+
 2001-05-02  James Moore  <James@phpuk.org>
 
     * docs/templates/classentry.tpl: Clean up the classentry slightly
