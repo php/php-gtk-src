@@ -7,7 +7,6 @@
 * Modify generic get/set property handlers to percolate up the inheritance chain
   looking for attributes.
 * Implemented optional zval separation when parsing arguments.
-* Implement s# parse arg support.
 * Think about separating static class methods, Gtk::widget_push_colormap ->
   GtkWidget::push_colormap.
 

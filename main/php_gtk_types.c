@@ -508,11 +508,11 @@ static void gdk_colormap_get_property(zval *result, zval *object, zend_llist_ele
 	zend_overloaded_element *property = (zend_overloaded_element *)(*element)->data;
 	zend_llist_element *next;
 	char *prop_name = Z_STRVAL(property->element);
-	int prop_index;
+	int prop_index, i;
 
 	ZVAL_NULL(result);
 
-	if (!strcmp(prop_name, "colors")) {
+	if (!strcmp(prop_name, "colors") && cmap->colors) {
 		next = (*element)->next;
 		if (next) {
 			property = (zend_overloaded_element *)next->data;
@@ -526,6 +526,10 @@ static void gdk_colormap_get_property(zval *result, zval *object, zend_llist_ele
 				*result = *php_gdk_color_new(&cmap->colors[prop_index]);
 			}
 		} else {
+			array_init(result);
+			
+			for (i = 0; i < cmap->size; i++)
+				add_next_index_zval(result, php_gdk_color_new(&cmap->colors[i]));
 		}
 	}
 }
@@ -670,19 +674,47 @@ static void gdk_visual_get_property(zval *result, zval *object, zend_llist_eleme
 /* GdkFont */
 PHP_FUNCTION(gdk_font_width)
 {
-	
+	char *text;
+	int length;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s#", &text, &length))
+		return;
+
+	RETURN_LONG(gdk_text_width(PHP_GDK_FONT_GET(this_ptr), text, length));
 }
 
 PHP_FUNCTION(gdk_font_height)
 {
+	char *text;
+	int length;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s#", &text, &length))
+		return;
+
+	RETURN_LONG(gdk_text_height(PHP_GDK_FONT_GET(this_ptr), text, length));
 }
 
 PHP_FUNCTION(gdk_font_measure)
 {
+	char *text;
+	int length;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s#", &text, &length))
+		return;
+
+	RETURN_LONG(gdk_text_measure(PHP_GDK_FONT_GET(this_ptr), text, length));
 }
 
 PHP_FUNCTION(gdk_font_extents)
 {
+	char *text;
+	int length, lbearing, rbearing, width, ascent, descent;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s#", &text, &length))
+		return;
+
+    gdk_text_extents(PHP_GDK_FONT_GET(this_ptr), text, length, &lbearing, &rbearing, &width, &ascent, &descent);
+	*return_value = *php_gtk_build_value("(iiiii)", lbearing, rbearing, width, ascent, descent);
 }
 
 static function_entry php_gdk_font_functions[] = {

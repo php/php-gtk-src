@@ -24,9 +24,12 @@
 
 #if HAVE_PHP_GTK
 
-static char *parse_arg_impl(zval **arg, va_list *va, int spec, char *buf)
+static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
 {
-	switch (spec) {
+	char *spec_walk = *spec;
+	char c = *spec_walk++;
+
+	switch (c) {
 		case 'h':
 			{
 				short *p = va_arg(*va, short *);
@@ -66,6 +69,10 @@ static char *parse_arg_impl(zval **arg, va_list *va, int spec, char *buf)
 					*p = Z_STRVAL_PP(arg);
 				if ((int)strlen(*p) != Z_STRLEN_PP(arg))
 					return "string without null bytes";
+				if (*spec_walk == '#') {
+					int *p = va_arg(*va, int *);
+					*p = Z_STRLEN_PP(arg);
+				}
 			}
 			break;
 
@@ -138,12 +145,17 @@ static char *parse_arg_impl(zval **arg, va_list *va, int spec, char *buf)
 				*p = *arg;
 			}
 			break;
+
+		default:
+			return "<unknown>";
 	}
+
+	*spec = spec_walk;
 
 	return NULL;
 }
 
-static int parse_arg(int arg_num, zval **arg, va_list *va, int spec, int quiet)
+static int parse_arg(int arg_num, zval **arg, va_list *va, char **spec, int quiet)
 {
 	char *expected_type;
 	char *actual_type;
@@ -230,6 +242,10 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 				max_argc++;
 				break;
 
+			case '#':
+				/* Pass */
+				break;
+
 			default:
 				g_assert_not_reached();
 				break;
@@ -252,10 +268,10 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 		return 0;
 	}
 
-	for (i = 0; i < argc; i++, format++) {
+	for (i = 0; i < argc; i++) {
 		if (*format == '|')
 			format++;
-		if (!parse_arg(i+1, args[i], va, *format, quiet))
+		if (!parse_arg(i+1, args[i], va, &format, quiet))
 			return 0;
 	}
 
