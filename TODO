@@ -1,15 +1,11 @@
 * Figure out what's up with getting/setting gc background/foreground colors and
   how to get RGB values from pixels.
 * Provide access to GTK version number.
-* See what other object definitions might have been missed by h2def.py.
 * See if it's possible or needed to set GtkAdjustment properties (and similar
   ones).
-* Add missing field defs to gtk.defs.
+* Add missing field defs to gtk.defs (as necessary).
 * Document limitation of not being able to assign color components directly in
   cascaded overloads, i.e. $style->base[GTK_STATE_NORMAL]->red = 55555.
-
-* Have a separate _init() function for each module(). Also have .ini setting
-  that automatically inits modules. Or make loadable modules.
 
 * Test GdkRGB functionality.
 * Implement GdkPoint support.
@@ -17,8 +13,6 @@
 * gdk-pixbuf support
 * Gnome support
 * GtkHtml support
-
-* GtkTableChild
 
 # vim: set tw=80 ai et sts=4:
 
