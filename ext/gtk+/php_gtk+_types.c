@@ -740,7 +740,7 @@ static void gdk_window_get_property(zval *return_value, zval *object, zend_llist
 	}
 #endif
 
-	if (gdk_window_get_type(win) != GDK_WINDOW_PIXMAP) {
+	if (Z_OBJCE_P(object) == gdk_window_ce) {
 		if (!strcmp(prop_name, "x")) {
 			gdk_window_get_position(win, &x, NULL);
 			RETURN_LONG(x);
