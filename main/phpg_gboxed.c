@@ -138,7 +138,7 @@ PHP_GTK_API void phpg_gboxed_new(zval **zobj, GType gtype, gpointer boxed, gbool
 /* }}} */
 
 /* {{{ phpg_gboxed_register_self() */
-void phpg_gboxed_register_self()
+void phpg_gboxed_register_self(TSRMLS_D)
 {
 	if (gboxed_ce) return;
 

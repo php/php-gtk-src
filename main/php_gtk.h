@@ -110,8 +110,8 @@ typedef struct _phpg_closure_t phpg_closure_t;
 /*
  * Property read/write function types
  */
-typedef int (*prop_read_func_t)(void *object, zval *return_value);
-typedef int (*prop_write_func_t)(void *object, zval *rvalue);
+typedef int (*prop_read_func_t)(void *object, zval *return_value TSRMLS_DC);
+typedef int (*prop_write_func_t)(void *object, zval *rvalue TSRMLS_DC);
 
 typedef struct {
 	const char *name;
@@ -287,7 +287,7 @@ extern char *php_gtk_zval_type_name(zval *arg);
 PHP_GTK_API void phpg_register_enum(GType gtype, const char *strip_prefix, zend_class_entry *ce);
 PHP_GTK_API void phpg_register_flags(GType gtype, const char *strip_prefix, zend_class_entry *ce);
 
-void phpg_gtype_register_self();
+void phpg_gtype_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gtype_new(zval *zobj, GType type TSRMLS_DC);
 PHP_GTK_API GType phpg_gtype_from_zval(zval *value);
 
@@ -304,7 +304,7 @@ PHP_GTK_API zend_object_value phpg_create_gobject(zend_class_entry *ce TSRMLS_DC
 PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC);
 PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC);
 PHP_GTK_API void phpg_gobject_watch_closure(zval *zobj, GClosure *closure TSRMLS_DC);
-void phpg_gobject_register_self();
+void phpg_gobject_register_self(TSRMLS_D);
 
 static inline phpg_gobject_t* phpg_gobject_get(zval *zobj TSRMLS_DC)
 {
@@ -317,7 +317,7 @@ static inline phpg_gobject_t* phpg_gobject_get(zval *zobj TSRMLS_DC)
 
 
 /* GBoxed */
-void phpg_gboxed_register_self();
+void phpg_gboxed_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gboxed_new(zval **zobj, GType gtype, gpointer boxed, gboolean copy, gboolean own_ref TSRMLS_DC);
 PHP_GTK_API zend_class_entry* phpg_register_boxed(const char *class_name, function_entry *class_methods, prop_info_t *prop_info, create_object_func_t create_obj_func, GType gtype TSRMLS_DC);
 PHP_GTK_API zend_object_value phpg_create_gboxed(zend_class_entry *ce TSRMLS_DC);

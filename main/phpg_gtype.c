@@ -169,7 +169,7 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 	return 0;
 }
 
-void phpg_gtype_register_self()
+void phpg_gtype_register_self(TSRMLS_D)
 {
 	if (gtype_ce) return;
 

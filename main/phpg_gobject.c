@@ -133,7 +133,7 @@ zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 
 	if (ret == SUCCESS) {
         ZVAL_NULL(&result);
-		ret = pi->read(poh, &result);
+		ret = pi->read(poh, &result TSRMLS_CC);
 		if (ret == SUCCESS) {
 			ALLOC_ZVAL(result_ptr);
 			*result_ptr = result;
@@ -178,7 +178,7 @@ void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
 
     if (ret == SUCCESS) {
         if (pi->write) {
-            pi->write(poh, value);
+            pi->write(poh, value TSRMLS_CC);
         } else {
             php_error(E_NOTICE, "PHP-GTK: ignoring write attempt to the read only property");
         }
@@ -637,7 +637,7 @@ static zend_function_entry gobject_methods[] = {
 	{NULL, NULL, NULL}
 };
 
-void phpg_gobject_register_self()
+void phpg_gobject_register_self(TSRMLS_D)
 {
 	if (gobject_ce) return;
 

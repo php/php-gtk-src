@@ -63,7 +63,7 @@ zend_module_entry gtk_module_entry = {
 
 ZEND_DECLARE_MODULE_GLOBALS(gtk)
 
-#ifdef COMPILE_DL_PHP_GTK
+#ifdef COMPILE_DL_PHP_GTK2
 ZEND_GET_MODULE(gtk)
 #endif
 
@@ -148,9 +148,9 @@ PHP_RINIT_FUNCTION(gtk)
 	 * Initialize the type system and the GType wrapper class.
 	 */
 	g_type_init();
-	phpg_gtype_register_self();
-	phpg_gobject_register_self(module_number);
-	phpg_gboxed_register_self();
+	phpg_gtype_register_self(TSRMLS_C);
+	phpg_gobject_register_self(TSRMLS_C);
+	phpg_gboxed_register_self(TSRMLS_C);
 
 	if (php_gtk_startup_all_extensions(module_number) == FAILURE) {
 		php_error(E_WARNING, "Unable to start internal extensions");
