@@ -75,24 +75,6 @@ PHP_INI_BEGIN()
 PHP_INI_END()
 
 
-PHP_MINIT_FUNCTION(gtk)
-{
-#ifdef ZTS
-	ZEND_INIT_MODULE_GLOBALS(gtk, NULL, NULL);
-#endif
-
-	REGISTER_INI_ENTRIES();
-
-	return SUCCESS;
-}
-
-PHP_MSHUTDOWN_FUNCTION(gtk)
-{
-	UNREGISTER_INI_ENTRIES();
-
-	return SUCCESS;
-}
-
 static void php_gtk_ext_destructor(php_gtk_ext_entry *ext)
 {
 	if (ext->ext_started && ext->ext_shutdown_func)
@@ -109,10 +91,13 @@ static void php_gtk_prop_info_destroy(void *pi_hash)
 	zend_hash_destroy(pih);
 }
 
-/* Remove if there's nothing to do at request start */
-PHP_RINIT_FUNCTION(gtk)
+PHP_MINIT_FUNCTION(gtk)
 {
-	zend_llist_init(&php_gtk_ext_registry, sizeof(php_gtk_ext_entry), (llist_dtor_func_t)php_gtk_ext_destructor, 1);
+#ifdef ZTS
+	ZEND_INIT_MODULE_GLOBALS(gtk, NULL, NULL);
+#endif
+
+	REGISTER_INI_ENTRIES();
 
 	php_gtk_class_hash = g_hash_table_new(g_str_hash, g_str_equal);
 	/*
@@ -125,6 +110,29 @@ PHP_RINIT_FUNCTION(gtk)
 	*/
 	zend_hash_init_ex(&phpg_prop_info, 50, NULL, (dtor_func_t) php_gtk_prop_info_destroy, 1, 0);
 	
+	return SUCCESS;
+}
+
+PHP_MSHUTDOWN_FUNCTION(gtk)
+{
+	UNREGISTER_INI_ENTRIES();
+
+	/*
+	zend_hash_destroy(&php_gtk_prop_getters);
+	zend_hash_destroy(&php_gtk_prop_setters);
+	zend_hash_destroy(&php_gtk_rsrc_hash);
+	zend_hash_destroy(&php_gtk_type_hash);
+	*/
+	zend_hash_destroy(&phpg_prop_info);
+
+	return SUCCESS;
+}
+
+/* Remove if there's nothing to do at request start */
+PHP_RINIT_FUNCTION(gtk)
+{
+	zend_llist_init(&php_gtk_ext_registry, sizeof(php_gtk_ext_entry), (llist_dtor_func_t)php_gtk_ext_destructor, 1);
+
 	zend_unset_timeout(TSRMLS_C);
 	zend_set_timeout(0);
 
@@ -157,14 +165,6 @@ PHP_RINIT_FUNCTION(gtk)
 /* Remove if there's nothing to do at request end */
 PHP_RSHUTDOWN_FUNCTION(gtk)
 {
-	/*
-	zend_hash_destroy(&php_gtk_prop_getters);
-	zend_hash_destroy(&php_gtk_prop_setters);
-	zend_hash_destroy(&php_gtk_rsrc_hash);
-	zend_hash_destroy(&php_gtk_type_hash);
-	*/
-	zend_hash_destroy(&phpg_prop_info);
-
 	zend_llist_destroy(&php_gtk_ext_registry);
 
 	return SUCCESS;
