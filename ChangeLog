@@ -1,3 +1,137 @@
+2002-12-10  Frank M. Kromann  <frank@kromann.info>
+
+    * ext/spaned/gtkshpaned.c
+      ext/spaned/gtkshpaned.h
+      ext/spaned/gtkspaned.c
+      ext/spaned/gtkspaned.h
+      ext/spaned/gtksvpaned.c
+      ext/spaned/gtksvpaned.h:
+      Change line breaks from 0d 0d 0a to 0d 0a
+      Nuke compiler warnings
+
+    * ext/sqpane/gtksqpane.c
+      ext/sqpane/gtksqpane.h:
+      Nuke compiler warnings
+
+    * ext/combobutton/gtkcombobutton.c:
+      Removing unused variables
+      Adding type casts to nuke warnings
+
+    * main/php_gtk_util.c:
+      Removing unused variables
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+_types.c
+      main/php_gtk_object.c:
+      Forcing some type casts
+
+    * generator/arg_types.php
+      generator/generator.php:
+      Adding extra paramter to write_from_prop() function to avoid compiler
+      warnings from missing type casts
+
+    * test/combobutton.php
+      test/fileselection.php
+      test/gtk.php
+      test/hello.php
+      test/list.php
+      test/piemenu.php
+      test/scribble.php
+      test/scrollpane.php
+      test/spaned.php
+      test/sqpane.php:
+      Use the constant PHP_SHLIB_SUFFIX when loading the extension
+
+    * win32/makedist.cmd:
+      Adding the new extensions to distribution
+
+    * win32/makedist.cmd
+      win32/php.ini
+      win32/php_gtk.dsw:
+      Adding scrollpane related files to distribution and workspace
+
+    * ext/scrollpane/.cvsignore
+      ext/scrollpane/scrollpane.dsp:
+      Adding Win32 project for scrollpane
+
+    * win32/makedist.cmd
+      win32/php.ini
+      win32/php_gtk.dsw:
+      Adding spaned related files to distribution and workspace
+
+    * ext/spaned/.cvsignore
+      ext/spaned/spaned.dsp:
+      Adding Win32 project for spaned
+
+    * main/php_gtk.c
+      main/php_gtk.h:
+      Exporting symbols to make spaned compilable on WIn32
+
+    * win32/php_gtk.dsw:
+      Include the new pixpuf project in the workspace
+
+    * ext/gdkpixbuf/.cvsignore
+      ext/gdkpixbuf/gdkpixbuf.dsp:
+      Adding WIn32 project for gdk-pixbuf
+      Addin a few files to the ignore file
+
+    * win32/README.txt:
+      New version of the readme to match version 0.5.2a
+
+    * test/combobutton.php
+      test/fileselection.php
+      test/hello.php
+      test/list.php
+      test/piemenu.php
+      test/scrollpane.php
+      test/spaned.php
+      test/sqpane.php:
+      Adding CVS Id and changing <? to <?php
+
+    * win32/makedist.cmd:
+      Added an copy of php.ini-gth with gtk related options.
+
+    * win32/makedist.cmd:
+      Updating script to include new GTK+ dll's
+      Adding extra samples and removing php4isapi.dll
+
+    * ext/combobutton/combobutton.defs:
+      Well, spelling can be hard with both upper and lower case letters.
+
+    * ext/combobutton/combobutton.defs:
+      Fixing spelling of object name
+
+    * win32/php.ini:
+      adding combobutton.dll and php-gtk.codepage option to ini file
+
+    * ext/libglade/libglade.dsp:
+      Use libglade-0.1-lib to build.
+      This will force the libglade extension to use same versions ofGTK+
+      libraries as used ing php_gtk
+
+    * generator/generator.php:
+      Introducing a Win32 hack to avoid naming conflict with macros.
+
+    * ext/combobutton/combobutton.dsp
+      ext/gtk+/php_gtk.dsp
+      ext/libglade/libglade.dsp
+      ext/sqpane/sqpane.dsp:
+      Updated to build with the latest version of GTK+ libraries.
+
+    * win32/README.win32.txt:
+      Updated source locations for libs needed to build this on Win32
+
+2002-11-14  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/php_gtk+.c:
+      Don't bail out if argc/argv aren't found, just fall back onto an empty set.
+
+2002-11-04  Frank M. Kromann  <frank@kromann.info>
+
+    * win32/makedist.cmd:
+      Modify script for easy versioning and adding ComboButton to the
+      distribution.
+
 2002-11-01  Andrei Zmievski  <andrei@php.net>
 
     * ext/gtk+/gtk.defs: Make GdkPixmap constructor accept null for the mask.
