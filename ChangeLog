@@ -1,3 +1,26 @@
+2003-12-15  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_object.c
+      main/php_gtype.c:
+      Made work with latest Zend.
+
+    * php_gtk.m4
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      main/Makefile.in
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_module.h
+      main/php_gtk_object.c
+      main/php_gtk_util.c
+      main/php_gtype.c:
+      Okay, let's break stuff. The property getters/setters are split up now,
+      so that each property gets its own function. This saves us from having
+      to do a bunch of strcmp() calls. Only one class is implemented now,
+      GType, manually at that. But it provides an example.
+
 2003-12-06  Andrei Zmievski  <andrei@gravitonic.com>
 
     * .cvsignore:
