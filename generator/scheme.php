@@ -269,11 +269,10 @@ class Defs_Parser {
             }
         }
 
+        /* don't sort objects */
         if ($this->objects) {
-            $my_defs = $this->objects;
-            usort($my_defs, array($this, 'cmp_defs'));
             fwrite($fp, ";; Objects ...\n\n");
-            foreach ($my_defs as $object) {
+            foreach ($this->objects as $object) {
                 $object->write_defs($fp);
             }
         }
