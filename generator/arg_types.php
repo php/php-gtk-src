@@ -133,21 +133,49 @@ class String_Arg extends Arg_Type {
 	{
 		if (in_array($type, array('const-gchar*', 'const-char*', 'static_string'))) {
 			$var_list->add('const gchar', '*ret');
-			return "	ret = %s;\n" 							.
-				   "%s	if (ret) {\n"							.
-				   "		RETURN_STRING((char *)ret, 1);\n"	.
-				   "	}\n"									.
-				   "	else {\n"								.
-				   "		RETURN_NULL();\n"					.
-				   "	}";
+			if (strtoupper(substr(PHP_OS, 0,3) == "WIN")) {
+				$var_list->add('gchar', '*cp_ret');
+				return "	ret = %s;\n" 							.
+					   "%s	if (ret) {\n"							.
+					   "		cp_ret = g_convert(ret, strlen(ret), GTK_G(codepage), \"UTF-8\", NULL, NULL, NULL);\n" .
+					   "		RETURN_STRING((char *)cp_ret, 1);\n"	.
+					   "		g_free(cp_ret);\n"					.
+					   "	}\n"									.
+					   "	else {\n"								.
+					   "		RETURN_NULL();\n"					.
+					   "	}";
+			}
+			else {
+				return "	ret = %s;\n" 							.
+					   "%s	if (ret) {\n"							.
+					   "		RETURN_STRING((char *)ret, 1);\n"	.
+					   "	}\n"									.
+					   "	else {\n"								.
+					   "		RETURN_NULL();\n"					.
+					   "	}";
+			}
+
 		} else {
 			$var_list->add('gchar', '*ret');
-			return "	ret = %s;\n" 					.
-				   "%s	if (ret) {\n"					.
-				   "		RETURN_STRING(ret, 1);\n"	.
-				   "		g_free(ret);\n"				.
-				   "	} else\n"						.
-				   "		RETURN_NULL();";
+			if (strtoupper(substr(PHP_OS, 0,3) == "WIN")) {
+				$var_list->add('gchar', '*cp_ret');
+				return "	ret = %s;\n" 					.
+					   "%s	if (ret) {\n"					.
+					   "		cp_ret = g_convert(ret, strlen(ret), GTK_G(codepage), \"UTF-8\", NULL, NULL, NULL);\n" .
+					   "		RETURN_STRING((char *)cp_ret, 1);\n"	.
+					   "		g_free(cp_ret);\n"					.
+					   "		g_free(ret);\n"				.
+					   "	} else\n"						.
+					   "		RETURN_NULL();";
+			}
+			else {
+				return "	ret = %s;\n" 					.
+					   "%s	if (ret) {\n"					.
+					   "		RETURN_STRING(ret, 1);\n"	.
+					   "		g_free(ret);\n"				.
+					   "	} else\n"						.
+					   "		RETURN_NULL();";
+			}
 		}
 	}
 }
