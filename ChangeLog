@@ -1,3 +1,24 @@
+2003-05-28  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/canvas/canvas.defs
+      ext/canvas/canvas.overrides
+      ext/canvas/canvas.php:
+      GtkCanvasGroup - constructor added - removed redundant GtkCanvasItem
+      constructor
+
+    * ext/canvas/canvas.defs
+      ext/canvas/canvas.overrides
+      ext/canvas/canvas.php:
+      coordinate systems mapping methods working
+
+    * ext/canvas/canvas.defs
+      ext/canvas/canvas.overrides
+      ext/canvas/canvas.php:
+      antialias support added
+
+    * ext/extra/.cvsignore:
+      adding empty directory so Angel Maza can work on this
+
 2003-05-27  Alan Knowles  <alan@akbkhome.com>
 
     * ext/canvas/canvas.php:
