@@ -278,7 +278,7 @@ gtk_svpaned_draw (GtkWidget    *widget,
 		GdkRectangle *area)
 {
   GtkSPaned *svpaned;
-  GdkRectangle handle_area, child_area;
+  GdkRectangle child_area;
   guint16 border_width;
 
   g_return_if_fail (widget != NULL);
@@ -286,8 +286,6 @@ gtk_svpaned_draw (GtkWidget    *widget,
 
   if (GTK_WIDGET_VISIBLE (widget) && GTK_WIDGET_MAPPED (widget))
     {
-      gint width, height;
-      
       svpaned = GTK_SPANED (widget);
       border_width = GTK_CONTAINER (svpaned)->border_width;
 
@@ -354,8 +352,8 @@ gtk_svpaned_button_press (GtkWidget *widget, GdkEventButton *event)
 			| GDK_BUTTON1_MOTION_MASK 
 			| GDK_BUTTON_RELEASE_MASK,
 			NULL, NULL, event->time);
-      svpaned->child1_size += event->y - svpaned->handle_size / 2;
-      svpaned->child1_size = CLAMP (svpaned->child1_size, 0,
+      svpaned->child1_size += (gint)event->y - svpaned->handle_size / 2;
+      svpaned->child1_size = CLAMP ((guint16)svpaned->child1_size, 0,
                                   widget->allocation.height - svpaned->handle_size
                                   - 2 * GTK_CONTAINER (svpaned)->border_width);
       gtk_svpaned_xor_line (svpaned);
@@ -400,7 +398,7 @@ gtk_svpaned_motion (GtkWidget *widget, GdkEventMotion *event)
   if (event->is_hint || event->window != widget->window)
     gtk_widget_get_pointer(widget, NULL, &y);
   else
-    y = event->y;
+    y = (gint)event->y;
 
   if (svpaned->in_drag)
     {

@@ -466,7 +466,7 @@ gtk_spaned_set_position    (GtkSPaned  *spaned,
 
 void
 gtk_spaned_set_handle_size (GtkSPaned *spaned,
-			   guint16   size)
+			   guint   size)
 {
   g_return_if_fail (spaned != NULL);
   g_return_if_fail (GTK_IS_SPANED (spaned));

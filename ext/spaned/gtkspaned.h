@@ -98,7 +98,7 @@ void    gtk_spaned_pack2           (GtkSPaned  *shpaned,
 void    gtk_spaned_set_position    (GtkSPaned  *shpaned,
 				   gint       position);
 void    gtk_spaned_set_handle_size (GtkSPaned *shpaned,
-				   guint16   size);
+				   guint   size);
 void    gtk_spaned_set_fixed (GtkSPaned *shpaned,
 				   gboolean   fixed);
 
