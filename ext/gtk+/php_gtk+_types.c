@@ -46,6 +46,138 @@ PHP_GTK_API int phpg_rectangle_from_zval(zval *value, GdkRectangle *rectangle TS
 	return FAILURE;
 }
 
+/*
+ * Style Array Helper
+ */
+
+typedef struct {
+    GtkStyle *style; /* here only so we can make sure it persists */
+    gpointer array;
+    style_helper_type type;
+} style_helper;
+
+static const uint STYLE_NUM_STATES = 5;
+
+static zval *style_helper_read_dimension(zval *object, zval *offset, int type TSRMLS_DC)
+{
+    zval *result = NULL;
+    long index;
+    style_helper *sh = (style_helper *) zend_object_store_get_object(object TSRMLS_CC);
+
+	MAKE_STD_ZVAL(result);
+	ZVAL_NULL(result);
+	result->refcount = 0;
+	result->is_ref = 0;
+
+    if (Z_TYPE_P(offset) != IS_LONG) {
+        zend_error(E_NOTICE, "Illegal index type");
+		return EG(uninitialized_zval_ptr);
+    }
+    
+    index = Z_LVAL_P(offset);
+    if (index < 0 || index >= STYLE_NUM_STATES) {
+        zend_error(E_NOTICE, "Index out of range");
+		return EG(uninitialized_zval_ptr);
+    }
+
+    switch (sh->type) {
+        case STYLE_COLOR_ARRAY:
+        {
+            GdkColor *array = (GdkColor *) sh->array;
+            phpg_gboxed_new(&result, GDK_TYPE_COLOR, &array[index], TRUE, TRUE TSRMLS_CC);
+            break;
+        }
+
+        case STYLE_GC_ARRAY:
+        {
+            GdkGC **array = (GdkGC **) sh->array;
+            phpg_gobject_new(&result, (GObject *)array[index] TSRMLS_CC);
+            break;
+        }
+
+        case STYLE_PIXMAP_ARRAY:
+        {
+            GdkPixmap **array = (GdkPixmap **) sh->array;
+            phpg_gobject_new(&result, (GObject *)array[index] TSRMLS_CC);
+            break;
+        }
+            
+        default:
+            g_assert_not_reached();
+            break;
+    }
+
+    return result;
+}
+
+static void style_helper_write_dimension(zval *object, zval *offset, zval *value TSRMLS_DC)
+{
+}
+
+static int style_helper_has_dimension(zval *object, zval *member, int check_empty TSRMLS_DC)
+{
+    return SUCCESS;
+}
+
+static void style_helper_unset_dimension(zval *object, zval *member TSRMLS_DC)
+{
+}
+
+static int style_helper_count_elements(zval *object, long *count TSRMLS_DC)
+{
+    *count = STYLE_NUM_STATES;
+    return SUCCESS;
+}
+
+static zend_object_handlers style_helper_handlers = {
+	ZEND_OBJECTS_STORE_HANDLERS,
+	NULL,						 /* read_property */
+	NULL,						 /* write_property */
+	style_helper_read_dimension, /* read dimension */
+	style_helper_write_dimension,/* write_dimension */
+	NULL,						 /* get_property_ptr_ptr */
+	NULL,	                  	 /* get */
+	NULL,		                 /* set */
+	NULL,			 			 /* has_property */
+	NULL,						 /* unset_property */
+	style_helper_has_dimension,	 /* has_dimension */
+	style_helper_unset_dimension,/* unset_dimension */
+	NULL,						 /* get_properties */
+	NULL,						 /* get_method */
+	NULL,						 /* call_method */
+	NULL,						 /* get_constructor */
+	NULL,						 /* get_class_entry */
+	NULL,						 /* get_class_name */
+	NULL,						 /* compare_objects */
+	NULL,						 /* cast_object */
+	style_helper_count_elements, /* count_elements */
+};
+
+ZEND_API void style_helper_free_storage(style_helper *sh TSRMLS_DC)
+{
+    g_object_unref(sh->style);
+    efree(sh);
+}
+
+PHP_GTK_API void phpg_create_style_helper(zval **zobj, GtkStyle *style, int type, gpointer array TSRMLS_DC)
+{
+	style_helper *sh = emalloc(sizeof(style_helper));
+
+    sh->array = array;
+    sh->type = type;
+    sh->style = g_object_ref(style);
+
+    assert(zobj != NULL);
+    if (*zobj == NULL) {
+        MAKE_STD_ZVAL(*zobj);
+    }
+	Z_TYPE_PP(zobj) = IS_OBJECT;
+
+	Z_OBJ_HANDLE_PP(zobj) = zend_objects_store_put(sh, NULL, (zend_objects_free_object_storage_t) style_helper_free_storage, NULL TSRMLS_CC);
+	Z_OBJ_HT_PP(zobj) = &style_helper_handlers;
+}
+
+/* {{{ old code */
 #if 0
 #ifndef PHP_WIN32
 #include <gdk/gdkx.h>
@@ -2849,4 +2981,8 @@ void php_gtk_plus_register_types(int module_number)
 
 #endif
 
+/* }}} */
+
 #endif
+
+/* vim: set fdm=marker et sts=4: */
