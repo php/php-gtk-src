@@ -691,7 +691,40 @@ class Generator {
 	}
 }
 
+/* simple fatal_error function 
+        - useful in 4.2.0-dev and later as it will actually halt exectution of make
+	- needs to output to stderr as the default print would end up inside the code
+	- TODO - the make file outputs an empty file to gen_XXX.c, there must be a
+	  better way  to delete it... - by using output buffering or somthing?
+*/	
+function fatal_error($message) {
+	$fh = fopen("php://stderr", "w");
+        fwrite($fh,"\n\n\n\n
+========================================================================	
+	There was a Serious error with the PHP-GTK generator script
+========================================================================	
+	$message
+========================================================================	
+	You should type this to ensure that the c source is correctly
+	generated before attempting to make again.
+	
+	#find . | grep defs | xargs touch
+
+	\n\n\n\n");
+	fclose($fh);
+	exit(1);
+}	
+
+
 $old_error_reporting = error_reporting(E_ALL & ~E_NOTICE);
+
+if (!isset($HTTP_SERVER_VARS['argv'])) 
+	fatal_error("
+        Could not read command line arguments for generator.php 
+        Please ensure that this option is set in your php.ini
+        register_argc_argv = On 	
+	");
+
 
 $argc = $HTTP_SERVER_VARS['argc'];
 $argv = $HTTP_SERVER_VARS['argv'];
@@ -700,9 +733,10 @@ $argv = $HTTP_SERVER_VARS['argv'];
    separator in command-line version. */
 array_walk($argv, create_function('&$x', '$x = urldecode($x);'));
 
+	
 $result = Console_Getopt::getopt($argv, 'o:p:c:r:');
 if (!$result || count($result[1]) < 2)
-	die("usage: php -q generator.php [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] defsfile\n");
+	fatal_error("usage: php -q generator.php [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] defsfile\n");
 
 list($opts, $argv) = $result;
 
