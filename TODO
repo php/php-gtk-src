@@ -7,10 +7,8 @@
 * Document limitation of not being able to assign color components directly in
   cascaded overloads, i.e. $style->base[GTK_STATE_NORMAL]->red = 55555.
 
-* Test GdkRGB functionality.
 * Implement GdkPoint support.
 
-* gdk-pixbuf support
 * Gnome support
 
 * Clean up and optimize generator
