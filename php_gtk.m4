@@ -103,8 +103,8 @@ PHP_GTK_EXTENSION(gtk+, no, php_gtk+.c, gen_atk.c gen_pango.c gen_gdk.c gen_gtk.
 PHP_NEW_EXTENSION(php_gtk2, main/php_gtk.c main/phpg_support.c main/phpg_gtype.c main/phpg_exceptions.c main/php_gtk_util.c main/phpg_gvalue.c main/phpg_closure.c main/phpg_gboxed.c main/phpg_gobject.c, $ext_shared,, -I@ext_srcdir@/main)
 
 dnl reading config stubs
-dnl esyscmd(./build2/config-stubs ext)
-sinclude(ext/gtk+/config.m4)
+dnl esyscmd(./build2/config-stubs ext/gtk+)
+sinclude(ext.m4)
 
 PHP_ADD_SOURCES_X(/main, php_gtk_ext.c,, shared_objects_php_gtk2)
 PHP_ADD_MAKEFILE_FRAGMENT(main/Makefile.frag, main)

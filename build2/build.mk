@@ -8,11 +8,11 @@ STAMP = buildmk.stamp
 
 ALWAYS = build2/generated_lists
 
-all: $(STAMP) $(ALWAYS)
+all: $(ALWAYS) $(STAMP)
 	@$(MAKE) -s -f build2/build2.mk
 
 build2/generated_lists:
-	@echo config_m4_files = ext/*/config*.m4 >> $@
+	@echo config_m4_files = `build2/config-stubs ext ext.m4` >> $@
 
 $(STAMP):
 	$(PHPIZE)

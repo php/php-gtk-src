@@ -5,11 +5,10 @@ include build2/generated_lists
 
 all: configure config.h.in
 
-configure.ac: configure.in $(config_m4_files)
-	@cat configure.in $(config_m4_files) > $@
-	@aclocal > /dev/null 2>&1
+ext.m4: $(config_m4_files)
+	@cat $(config_m4_files) > $@
 
-configure: aclocal.m4 config.m4 php_gtk.m4 configure.ac
+configure: aclocal.m4 config.m4 php_gtk.m4 ext.m4
 	@echo rebuilding $@
 	@aclocal
 	@autoconf 
