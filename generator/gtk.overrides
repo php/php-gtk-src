@@ -837,3 +837,20 @@ PHP_FUNCTION(wrap_gtk_ctree_insert_node)
 	efree(text);
 	*return_value = *php_gtk_ctree_node_new(ret);
 }
+%%
+override gtk_container_children
+PHP_FUNCTION(wrap_gtk_container_children)
+{
+	GList *children, *tmp;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	children = gtk_container_children(GTK_CONTAINER(PHP_GTK_GET(this_ptr)));
+	array_init(return_value);
+	for (tmp = children; tmp; tmp = tmp->next)
+		add_next_index_zval(return_value, php_gtk_new(tmp->data));
+	g_list_free(children);
+}
