@@ -549,6 +549,8 @@
   (field (type-and-name GtkCTreeLineStyle line_style))
   (field (type-and-name GtkCTreeExpanderStyle expander_style))
   (field (type-and-name GtkCList clist))
+  (field (type-and-name GList* selection))
+  (field (type-and-name GList* row_list))
 )
 
 (object Calendar

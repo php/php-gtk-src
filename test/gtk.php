@@ -167,9 +167,8 @@ function create_ctree()
 		{
 			global	$ctree_data;
 
-			$clist = $ctree->clist;
-			$ctree_data['sel_label']->set_text((string)count($clist->selection));
-			$ctree_data['vis_label']->set_text((string)count($clist->row_list));
+			$ctree_data['sel_label']->set_text((string)count($ctree->selection));
+			$ctree_data['vis_label']->set_text((string)count($ctree->row_list));
 			$ctree_data['book_label']->set_text((string)$ctree_data['books']);
 			$ctree_data['page_label']->set_text((string)$ctree_data['pages']);
 		}
@@ -222,8 +221,6 @@ function create_ctree()
 
 			$clist = $ctree->clist;
 
-			/* TODO fixme */
-
 			if ($clist->focus_row >= 0)
 				$node = $clist->row_list[$clist->focus_row];
 			else
@@ -251,7 +248,7 @@ function create_ctree()
 			$ctree->node_set_cell_style($node, 0, $style2);
 
 			if ($node->children)
-				$ctree->node_set_row_style($node->children, $style2);
+				$ctree->node_set_row_style($node->children[0], $style2);
 		}
 
 		$window = &new GtkWindow;
@@ -611,7 +608,7 @@ function create_ctree()
 		$hbox2->pack_start($label, false);
 		$label->show();
 
-		$ctree_data['sel_label'] = &new GtkLabel((string)count($clist->selection));
+		$ctree_data['sel_label'] = &new GtkLabel((string)count($ctree->selection));
 		$hbox2->pack_start($ctree_data['sel_label'], false, true, 5);
 		$ctree_data['sel_label']->show();
 
@@ -629,7 +626,7 @@ function create_ctree()
 		$hbox2->pack_start($label, false);
 		$label->show();
 
-		$ctree_data['vis_label'] = &new GtkLabel((string)count($clist->row_list));
+		$ctree_data['vis_label'] = &new GtkLabel((string)count($ctree->row_list));
 		$hbox2->pack_start($ctree_data['vis_label'], false, true, 5);
 		$ctree_data['vis_label']->show();
 		

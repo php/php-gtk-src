@@ -1300,6 +1300,33 @@ getprop GtkCList selection
 			add_next_index_long(return_value, GPOINTER_TO_INT(tmp->data));
 	}
 %%
+getprop GtkCTree selection
+	zval *php_item;
+	GList *tmp;
+	GList *selection = GTK_CLIST(PHP_GTK_GET(object))->selection;
+	zend_overloaded_element *property;
+	zend_llist_element *next = (*element)->next;
+	int prop_index;
+
+	if (next) {
+		int i = 0;
+		property = (zend_overloaded_element *)next->data;
+		if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
+			*element = next;
+			prop_index = Z_LVAL(property->element);
+			for (tmp = selection, i = 0; tmp; tmp = tmp->next, i++) {
+				if (i == prop_index) {
+					*return_value = *php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp));
+					return;
+				}
+			}
+		}
+	} else {
+		array_init(return_value);
+		for (tmp = selection; tmp; tmp = tmp->next)
+			add_next_index_zval(return_value, php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp)));
+	}
+%%
 ignore gtk_radio_menu_item_new_with_label
 %%
 override gtk_radio_menu_item_new
@@ -1446,6 +1473,33 @@ getprop GtkCList row_list
 		array_init(return_value);
 		for (tmp = row_list; tmp; tmp = tmp->next) {
 			add_next_index_zval(return_value, php_gtk_clist_row_new((GtkCListRow *)tmp->data));
+		}
+	}
+%%
+getprop GtkCTree row_list
+	GList *tmp;
+	GList *row_list = GTK_CLIST(PHP_GTK_GET(object))->row_list;
+	zend_overloaded_element *property;
+	zend_llist_element *next = (*element)->next;
+	int prop_index;
+
+	if (next) {
+		int i = 0;
+		property = (zend_overloaded_element *)next->data;
+		if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
+			*element = next;
+			prop_index = Z_LVAL(property->element);
+			for (tmp = row_list, i = 0; tmp; tmp = tmp->next, i++) {
+				if (i == prop_index) {
+					*return_value = *php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp));
+					return;
+				}
+			}
+		}
+	} else {
+		array_init(return_value);
+		for (tmp = row_list; tmp; tmp = tmp->next) {
+			add_next_index_zval(return_value, php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp)));
 		}
 	}
 %%

@@ -3,14 +3,16 @@
 * Figure out what's up with getting/setting gc background/foreground colors and
   how to get RGB values from pixels.
 * Provide access to GTK version number.
-* Fix $dialog->vbox->show() crash.
+* Fix $dialog->vbox->show() crash [not fixable unless major Zend OO is done]
 * See what other object definitions might have been missed by h2def.py.
 * See if it's possible or needed to set GtkAdjustment properties (and similar
   ones).
 * Add missing field defs to gtk.defs.
-* Figure out why doing $style->base[GTK_STATE_NORMAL]->red = 55555 converts
-  $style to stdClass.
 * Work on GtkMenu::popup().
+* Document limitation of not being able to assign color components directly in
+  cascaded overloads, i.e. $style->base[GTK_STATE_NORMAL]->red = 55555.
+* Think about how to minimize creation of resources for something like
+  count($clist->row_list).
 
 In PHP
 ------

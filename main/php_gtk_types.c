@@ -1591,39 +1591,66 @@ static void gtk_ctree_node_get_property(zval *return_value, zval *object, zend_l
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	ZVAL_NULL(return_value);
+	*found = SUCCESS;
 
 	if (!strcmp(prop_name, "parent")) {
 		temp = GTK_CTREE_ROW(node)->parent;
-		if (temp)
+		if (temp) {
 			*return_value = *php_gtk_ctree_node_new(temp);
+			return;
+		}
 	} else if (!strcmp(prop_name, "sibling")) {
 		temp = GTK_CTREE_ROW(node)->sibling;
-		if (temp)
+		if (temp) {
 			*return_value = *php_gtk_ctree_node_new(temp);
+			return;
+		}
 	} else if (!strcmp(prop_name, "children")) {
 		zval *php_node;
+		zend_overloaded_element *property;
+		zend_llist_element *next = (*element)->next;
+		int prop_index;
+
 		temp = GTK_CTREE_ROW(node)->children;
 
-		array_init(return_value);
-		while (temp) {
-			php_node = php_gtk_ctree_node_new(temp);
-			add_next_index_zval(return_value, php_node);
-			zval_ptr_dtor(&php_node);
-			temp = GTK_CTREE_ROW(temp)->sibling;
+		if (next) {
+			int i = 0;
+			property = (zend_overloaded_element *)next->data;
+			if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
+				*element = next;
+				prop_index = Z_LVAL(property->element);
+				while (temp) {
+					if (i == prop_index) {
+						*return_value = *php_gtk_ctree_node_new(temp);
+						return;
+					}
+					temp = GTK_CTREE_ROW(temp)->sibling;
+					i++;
+				}
+			}
+		} else {
+			array_init(return_value);
+			while (temp) {
+				php_node = php_gtk_ctree_node_new(temp);
+				add_next_index_zval(return_value, php_node);
+				zval_ptr_dtor(&php_node);
+				temp = GTK_CTREE_ROW(temp)->sibling;
+			}
 		}
+
+		return;
 	} else if (!strcmp(prop_name, "level")) {
-		ZVAL_LONG(return_value, GTK_CTREE_ROW(node)->level);
+		RETURN_LONG(GTK_CTREE_ROW(node)->level);
 	} else if (!strcmp(prop_name, "is_leaf")) {
-		ZVAL_BOOL(return_value, GTK_CTREE_ROW(node)->is_leaf);
+		RETURN_BOOL(GTK_CTREE_ROW(node)->is_leaf);
 	} else if (!strcmp(prop_name, "expanded")) {
-		ZVAL_BOOL(return_value, GTK_CTREE_ROW(node)->expanded);
+		RETURN_BOOL(GTK_CTREE_ROW(node)->expanded);
 	} else if (!strcmp(prop_name, "row")) {
 		*return_value = *php_gtk_clist_row_new(&GTK_CTREE_ROW(node)->row);
+		return;
 	} else {
 		*found = FAILURE;
 	}
-
-	*found = SUCCESS;
 }
 
 
