@@ -1,3 +1,11 @@
+2003-02-06  Frank M. Kromann  <frank@kromann.info>
+
+    * win32/php_win.dsp:
+      Move output to the same directory as the rest of the files
+
+    * ext/gtk+/gtk.overrides:
+      Fixing build
+
 2003-01-30  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (ZE2_PORT)
