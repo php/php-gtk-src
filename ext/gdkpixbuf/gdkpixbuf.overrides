@@ -1,0 +1,8 @@
+/* vim: set ft=cpp: */
+%%
+headers
+#include "php_gdkpixbuf.h"
+%%
+ignore
+  gdk_pixbuf_preinit
+  gdk_pixbuf_postinit
