@@ -238,16 +238,16 @@ static void phpg_gtk_timeout_add_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool wi
 	}
 
 	if (with_priority) {
-		if (!php_gtk_parse_args(3, "iiV", &interval, &priority, &callback))
+		if (!php_gtk_parse_args(req_args, "iiV", &interval, &priority, &callback))
 			return;
 	} else {
-		if (!php_gtk_parse_args(2, "iV", &interval, &callback))
+		if (!php_gtk_parse_args(req_args, "iV", &interval, &callback))
 			return;
 	}
 
 	callback_filename = zend_get_executed_filename(TSRMLS_C);
 	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
-	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), req_args, ZEND_NUM_ARGS());
 	if (!extra) {
 		MAKE_STD_ZVAL(extra);
 		array_init(extra);
@@ -262,6 +262,14 @@ static PHP_METHOD(gtk, timeout_add)
 {
 	phpg_gtk_timeout_add_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
 }
+
+%%
+add gtk timeout_add_priority
+static PHP_METHOD(gtk, timeout_add_priority)
+{
+	phpg_gtk_timeout_add_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
+}
+
 %% }}}
 
 %% {{{ GtkButton
