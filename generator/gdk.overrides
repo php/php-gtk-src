@@ -1,0 +1,21 @@
+/* vim: set ft=cpp: */
+%%
+ignore
+	GdkDebugFlag
+	GdkColorInfoFlags
+%%
+override gdk_color_parse
+PHP_FUNCTION(wrap_gdk_color_parse)
+{
+	gchar *color_spec;
+	GdkColor color;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &color_spec)) {
+		return;
+	}
+
+	if (gdk_color_parse(color_spec, &color))
+		*return_value = *php_gdk_color_new(&color);
+	else
+		php_error(E_WARNING, "%s() could not parse color spec '%s'", get_active_function_name(), color_spec);
+}

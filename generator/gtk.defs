@@ -1,7 +1,5 @@
 ;; -*- scheme -*-
 
-(include "gdk.defs")
-
 ; object definitions ...
 (object Object
   (in-module Gtk)

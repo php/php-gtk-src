@@ -66,6 +66,9 @@ PHP_FUNCTION(wrap_%s)
 }\n\n";
 
 $function_entry_tpl = "\t{\"%s\",	PHP_FN(wrap_%s),	%s},\n";
+$functions_decl_tpl = "
+static function_entry php_%s_functions[] = {
+";
 
 $register_getter_tpl = "\tphp_gtk_register_prop_getter(%s, %s_get_property);\n";
 
@@ -87,7 +90,8 @@ static void %s_get_property(zval *return_value, zval *object, zend_llist_element
 	*found = FAILURE;
 }\n\n";
 
-$init_class_tpl = "\n\tINIT_OVERLOADED_CLASS_ENTRY(ce, \"%s\", %s_functions, NULL, %s, NULL);\n";
+$init_class_tpl = "
+	INIT_OVERLOADED_CLASS_ENTRY(ce, \"%s\", php_%s_functions, NULL, %s, NULL);\n";
 
 $get_type_tpl = "
 PHP_FUNCTION(wrap_%s_get_type)
@@ -97,5 +101,17 @@ PHP_FUNCTION(wrap_%s_get_type)
 
 	RETURN_LONG(%s_get_type());
 }\n\n";
+
+$register_classes_tpl = "
+void php_%s_register_classes(void)
+{
+	zend_class_entry ce;
+%s
+}\n";
+
+
+$register_class_tpl = "\t%s = zend_register_internal_class_ex(&ce, %s, NULL);\n";
+
+$class_entry_tpl = "zend_class_entry *%s;\n";
 
 ?>

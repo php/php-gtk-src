@@ -145,8 +145,6 @@ ignore
 %%
 ignore
 	GtkPrivateFlags
-	GdkDebugFlag
-	GdkColorInfoFlags
 %%
 ignore
 	gtk_container_dequeue_resize_handler
@@ -167,6 +165,10 @@ ignore
 	gtk_draw_handle
 %%
 ignore-glob gtk_radio_button_new_*
+%%
+register_class gtk_box_child_ce
+	INIT_CLASS_ENTRY(ce, "gtkboxchild", NULL);
+	gtk_box_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 %%
 override gtk_true
 PHP_FUNCTION(wrap_gtk_true)
@@ -266,7 +268,9 @@ PHP_FUNCTION(wrap_gtk_quit_add)
 override gtk_input_add_full
 PHP_FUNCTION(wrap_gtk_input_add_full)
 {
-    int source;
+	zval *source_rsrc;
+	int rsrc_type;
+	int *source;
     GdkInputCondition condition;
 	zval *callback = NULL;
 	zval *extra, *data;
@@ -279,14 +283,20 @@ PHP_FUNCTION(wrap_gtk_input_add_full)
 		return;
 	}
 
-	if (!php_gtk_parse_args(3, "iiV", &source, &condition, &callback))
+	if (!php_gtk_parse_args(3, "riV", &source_rsrc, &condition, &callback))
 		return;
 
+	source = zend_list_find(Z_LVAL_P(source_rsrc), &rsrc_type);
+	if (!source || rsrc_type != php_file_le_fopen()) {
+		php_error(E_WARNING, "%s() expects argument 1 to be a valid filehandle resource", get_active_function_name());
+		return;
+	}
+	
 	callback_filename = zend_get_executed_filename(ELS_C);
 	callback_lineno = zend_get_executed_lineno(ELS_C);
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 3, ZEND_NUM_ARGS());
 	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
-	RETURN_LONG(gtk_input_add_full(source, condition, NULL,
+	RETURN_LONG(gtk_input_add_full(*source, condition, NULL,
 								 (GtkCallbackMarshal)php_gtk_input_marshal,
 								 data, php_gtk_destroy_notify));
 }
@@ -584,22 +594,6 @@ PHP_FUNCTION(wrap_gtk_check_menu_item_new)
 	}
 
 	php_gtk_object_init(wrapped_obj, this_ptr);
-}
-%%
-override gdk_color_parse
-PHP_FUNCTION(wrap_gdk_color_parse)
-{
-	gchar *color_spec;
-	GdkColor color;
-
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &color_spec)) {
-		return;
-	}
-
-	if (gdk_color_parse(color_spec, &color))
-		*return_value = *php_gdk_color_new(&color);
-	else
-		php_error(E_WARNING, "%s() could not parse color spec '%s'", get_active_function_name(), color_spec);
 }
 %%
 override gtk_list_append_items
@@ -906,15 +900,15 @@ static void item_factory_callback(zval *callback_data, guint action, GtkWidget *
 	zval **callback_filename, **callback_lineno;
 	zval *params;
 	zval ***args;
-	gchar *callable_name;
+	char *callback_name;
 	ELS_FETCH();
 
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&callback_filename);
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&callback_lineno);
-	if (!php_gtk_is_callable(*callback, &callable_name)) {
-		php_error(E_WARNING, "unable to call item factory callback '%s' specified in %s on line %d", callable_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
-		g_free(callable_name);
+	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
+		php_error(E_WARNING, "unable to call item factory callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
+		efree(callback_name);
 		return;
 	}
 
