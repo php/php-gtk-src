@@ -1260,7 +1260,6 @@ static int gdk_gc_set_property(zval *object, zend_llist_element **element, zval 
 		else if (!strcmp(prop_name, "background")) {
 			GdkGCValues gcv;
 			gdk_gc_set_background(gc, c);
-			gdk_gc_get_values(gc, &gcv);
 		}
 		else {
 			php_error(E_WARNING, "'%s' property should be a GdkColor", prop_name);
@@ -1548,6 +1547,17 @@ static void release_gtk_accel_group_rsrc(zend_rsrc_list_entry *rsrc)
 
 
 /* GtkStyle */
+PHP_FUNCTION(gtkstyle)
+{
+	GtkStyle *ret;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	ret = gtk_style_new();
+	*return_value = *php_gtk_style_new(ret);
+}
+
 PHP_FUNCTION(gtk_style_copy)
 {
 	GtkStyle *style;
@@ -1563,7 +1573,7 @@ PHP_FUNCTION(gtk_style_copy)
 }
 
 static function_entry php_gtk_style_functions[] = {
-	{"gtkstyle", PHP_FN(wrap_no_direct_constructor), NULL},
+	{"gtkstyle", PHP_FN(gtkstyle), NULL},
 	{"copy",	 PHP_FN(gtk_style_copy), NULL},
 	{NULL, NULL, NULL}
 };

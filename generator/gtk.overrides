@@ -124,6 +124,7 @@ ignore
 	gtk_radio_menu_item_set_group
 	gtk_radio_button_group
 	gtk_radio_button_set_group
+	gtk_style_new
 %%
 ignore
 	gtk_object_new
