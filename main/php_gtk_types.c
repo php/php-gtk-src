@@ -1767,7 +1767,6 @@ static void gtk_ctree_node_get_property(zval *return_value, zval *object, zend_l
 			while (temp) {
 				php_node = php_gtk_ctree_node_new(temp);
 				add_next_index_zval(return_value, php_node);
-				zval_ptr_dtor(&php_node);
 				temp = GTK_CTREE_ROW(temp)->sibling;
 			}
 		}
