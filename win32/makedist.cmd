@@ -6,6 +6,7 @@ md winnt
 md winnt\system32
 md samples
 copy \php4\php.exe php4
+copy \php4\php_win.exe php4
 copy \php4\php4ts.dll php4
 copy \php4\php4isapi.dll php4
 copy \php4\php_gtk.dll php4
