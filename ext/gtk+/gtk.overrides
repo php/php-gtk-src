@@ -1300,7 +1300,7 @@ PHP_FUNCTION(gtk_ctree_insert_node)
 	tree = GTK_CTREE(PHP_GTK_GET(this_ptr));
 	columns = GTK_CLIST(tree)->columns;
 	if (zend_hash_num_elements(target_hash) != columns) {
-		php_error(E_WARNING, "%s(): the text array size (%d) does not match the number of columns in the ctree (%d)", get_active_function_name(TSRMLS_C),(zend_hash_num_elements(target_hash), columns);
+		php_error(E_WARNING, "%s(): the text array size (%d) does not match the number of columns in the ctree (%d)", get_active_function_name(TSRMLS_C), zend_hash_num_elements(target_hash), columns);
 		return;
 	}
 	if (Z_TYPE_P(php_parent) != IS_NULL)
