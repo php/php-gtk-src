@@ -321,6 +321,7 @@ extern char *php_gtk_zval_type_name(zval *arg);
 
 PHP_GTK_API void phpg_register_enum(GType gtype, const char *strip_prefix, zend_class_entry *ce);
 PHP_GTK_API void phpg_register_flags(GType gtype, const char *strip_prefix, zend_class_entry *ce);
+PHP_GTK_API void phpg_register_int_constant(zend_class_entry *ce, char *name, int name_len, long value);
 
 void phpg_gtype_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gtype_new(zval *zobj, GType type TSRMLS_DC);

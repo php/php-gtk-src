@@ -293,7 +293,7 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 /* }}} */
 
 /* {{{ phpg_register_enum() */
-void phpg_register_enum(GType gtype, const char *strip_prefix, zend_class_entry *ce)
+PHP_GTK_API void phpg_register_enum(GType gtype, const char *strip_prefix, zend_class_entry *ce)
 {
     GEnumClass *eclass;
     char *enum_name;
@@ -330,7 +330,7 @@ void phpg_register_enum(GType gtype, const char *strip_prefix, zend_class_entry 
 /* }}} */
 
 /* {{{ phpg_register_flags() */
-void phpg_register_flags(GType gtype, const char *strip_prefix, zend_class_entry *ce)
+PHP_GTK_API void phpg_register_flags(GType gtype, const char *strip_prefix, zend_class_entry *ce)
 {
     GFlagsClass *eclass;
     char *enum_name;
@@ -363,6 +363,21 @@ void phpg_register_flags(GType gtype, const char *strip_prefix, zend_class_entry
         zend_hash_update(&ce->constants_table, enum_name, strlen(enum_name)+1, &val, sizeof(zval *), NULL);
     }
     g_type_class_unref(eclass);
+}
+/* }}} */
+
+/* {{{ phpg_register_int_constant */
+PHP_GTK_API void phpg_register_int_constant(zend_class_entry *ce, char *name, int name_len, long value)
+{
+    zval *zvalue;
+
+    phpg_return_if_fail(ce != NULL);
+    phpg_return_if_fail(name != NULL);
+
+    zvalue = (zval *)malloc(sizeof(zval));
+    INIT_PZVAL(zvalue);
+    ZVAL_LONG(zvalue, value);
+    zend_hash_update(&ce->constants_table, name, name_len+1, &zvalue, sizeof(zval *), NULL);
 }
 /* }}} */
 
