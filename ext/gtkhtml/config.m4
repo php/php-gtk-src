@@ -40,7 +40,7 @@ PHP_GTK_ARG_ENABLE(gtkhtml,for gtkhtml support,
 if test "$PHP_GTK_GTKHTML" != "no"; then
   PHP_PATH_GNOME_CONFIG(have_gnomeconfig=yes,have_gnomeconfig=no)
   if test "$have_gnomeconfig" != "yes"; then
-    AC_MSG_ERROR(Unable to locate gnomeconfig)
+    AC_MSG_ERROR(Unable to locate gnome-config)
   else
     AC_DEFINE(HAVE_HTML,1,[gtkhtml support])
     PHP_EVAL_INCLINE($HTML_CFLAGS)
