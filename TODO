@@ -12,5 +12,9 @@
 * Have a separate _init() function for each module(). Also have .ini setting
   that automatically inits modules. Or make loadable modules.
 
+* gdk-pixbuf support
+* Gnome support
+* GtkHtml support
+
 # vim: set tw=80 ai et sts=4:
 
