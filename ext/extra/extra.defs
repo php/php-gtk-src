@@ -1287,6 +1287,18 @@
   (parameter (type-and-name GtkType entry_type))
 )
 
+(method get_entry
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_get_entry)
+  (return-type GtkWidget*)
+)
+
+(method get_entry_widget
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_get_entry_widget)
+  (return-type GtkWidget*)
+)
+
 (method get_state 
   (of-object Sheet (Gtk))
   (c-name gtk_sheet_get_state)
