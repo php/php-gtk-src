@@ -334,7 +334,7 @@ class Double_Arg extends Arg_Type {
 }
 
 class Enum_Arg extends Arg_Type {
-    static $enum_tpl  = "\n\tif (php_%(name) && !php_gtk_get_enum_value(%(typecode), php_%(name), (gint *)&%(name))) {\n\t\treturn;\n\t}\n";
+    static $enum_tpl  = "\n\tif (php_%(name) && !phpg_gvalue_get_enum(%(typecode), php_%(name), (gint *)&%(name))) {\n\t\treturn;\n\t}\n";
     var $enum_name = null;
     var $typecode = null;
     //var $simple    = null;
@@ -381,7 +381,7 @@ class Enum_Arg extends Arg_Type {
 }
 
 class Flags_Arg extends Arg_Type {
-    var $flag_tpl  = null;
+    static $flag_tpl = "\n\tif (php_%(name) && !phpg_gvalue_get_flags(%(typecode), php_%(name), (gint *)&%(name))) {\n\t\treturn;\n\t}\n";
     var $flag_name = null;
     var $typecode = null;
 
@@ -389,31 +389,25 @@ class Flags_Arg extends Arg_Type {
     {
         $this->flag_name = $flag_name;
         $this->typecode = $typecode;
-        $this->flag_tpl  = "    if (php_%s && !php_gtk_get_flag_value(%s, php_%s, (gint *)&%s)) {\n" .
-                           "        %sreturn;\n" .
-                           "    }\n\n";
     }
 
-    function write_param($type, $name, $default, $null_ok, &$var_list,
-                         &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
+    function write_param($type, $name, $default, $null_ok, $info)
     {
         if (isset($default))
-            $var_list->add($this->flag_name, $name . ' = ' . $default);
+            $info->var_list->add($this->flag_name, $name . ' = ' . $default);
         else
-            $var_list->add($this->flag_name, $name);
-        $var_list->add('zval', '*php_' . $name . ' = NULL');
-        $parse_list[]   = '&php_' . $name;
-        $arg_list[]     = $name;
-        $extra_pre_code[]   = sprintf($this->flag_tpl, $name, $this->type_code, $name, $name,
-                                  $in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "");
-        return 'V';
+            $info->var_list->add($this->flag_name, $name);
+        $info->var_list->add('zval', '*php_' . $name . ' = NULL');
+        $info->arg_list[] = $name;
+        $info->add_parse_list('V', '&php_' . $name);
+        $info->pre_code[] = aprintf(self::$flag_tpl, array('typecode' => $this->typecode,
+                                                           'name' => $name));
     }
     
-    function write_return($type, &$var_list, $separate)
+    function write_return($type, $owns_return, $info)
     {
-        $var_list->add('long', 'php_retval');
-        return "    php_retval = %s;\n" .
-               "%s  RETURN_LONG(php_retval);";
+        $info->var_list->add('long', 'php_retval');
+        $info->post_code[] = "RETURN_LONG(php_retval);";
     }
 }
 

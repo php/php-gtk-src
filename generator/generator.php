@@ -87,7 +87,7 @@ class Generator {
 
         foreach ($parser->enums as $enum) {
             if ($enum->def_type == 'flags')
-                ;//$matcher->register_flag($enum->c_name, $enum->typecode);
+                $matcher->register_flag($enum->c_name, $enum->typecode);
             else
                 $matcher->register_enum($enum->c_name, $enum->typecode);
         }

@@ -28,8 +28,8 @@
 
 /* TODO G_TYPE_POINTER, G_TYPE_BOXED, G_TYPE_PARAM */
 
-/* {{{ PHP_GTK_API php_gvalue_to_zval() */
-PHP_GTK_API zval* php_gvalue_to_zval(const GValue *gval, zend_bool copy_boxed)
+/* {{{ PHP_GTK_API phpg_gvalue_to_zval() */
+PHP_GTK_API zval* phpg_gvalue_to_zval(const GValue *gval, zend_bool copy_boxed)
 {
     zval *value = NULL;
 
@@ -126,8 +126,8 @@ PHP_GTK_API zval* php_gvalue_to_zval(const GValue *gval, zend_bool copy_boxed)
 }
 /* }}} */
 
-/* {{{ PHP_GTK_API php_gvalue_from_val() */
-PHP_GTK_API int php_gvalue_from_zval(GValue *gval, zval *value)
+/* {{{ PHP_GTK_API phpg_gvalue_from_val() */
+PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value)
 {
     switch (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(gval))) {
         case G_TYPE_BOOLEAN:
@@ -190,8 +190,8 @@ PHP_GTK_API int php_gvalue_from_zval(GValue *gval, zval *value)
 }
 /* }}} */
 
-/* {{{ PHP_GTK_API php_gvalue_enum_get() */
-PHP_GTK_API int php_gvalue_enum_get(GType enum_type, zval *enum_val, gint *result)
+/* {{{ PHP_GTK_API phpg_gvalue_get_enum() */
+PHP_GTK_API int phpg_gvalue_get_enum(GType enum_type, zval *enum_val, gint *result)
 {
     if (result == NULL)
         return FAILURE;
@@ -233,8 +233,8 @@ PHP_GTK_API int php_gvalue_enum_get(GType enum_type, zval *enum_val, gint *resul
 }
 /* }}} */
 
-/* {{{ PHP_GTK_API php_gvalue_flags_get() */
-PHP_GTK_API int php_gvalue_flags_get(GType flags_type, zval *flags_val, gint *result)
+/* {{{ PHP_GTK_API phpg_gvalue_get_flags() */
+PHP_GTK_API int phpg_gvalue_get_flags(GType flags_type, zval *flags_val, gint *result)
 {
     GFlagsClass *fclass = NULL;
     GFlagsValue *info = NULL;
