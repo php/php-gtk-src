@@ -285,39 +285,6 @@ void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 		efree(handler_args);
 }
 
-void php_gtk_input_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
-{
-	zval *callback_data = (zval *)data;
-	zval *params;
-	zval *retval = NULL, **callback, **extra = NULL;
-	zval **callback_filename = NULL, **callback_lineno = NULL;
-	zval ***input_args;
-	char *callback_name;
-	TSRMLS_FETCH();
-
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&callback_filename);
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_lineno);
-
-	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
-		php_error(E_WARNING, "Unable to call input callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
-		efree(callback_name);
-		return;
-	}
-
-	params = php_gtk_args_as_hash(nargs, args);
-	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
-	input_args = php_gtk_hash_as_array(params);
-
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), input_args, 0, NULL TSRMLS_CC);
-	if (retval)
-		zval_ptr_dtor(&retval);
-	efree(input_args);
-	zval_ptr_dtor(&params);
-}
-
 PHP_GTK_API void php_gtk_destroy_notify(gpointer user_data)
 {
 	zval *value = (zval *)user_data;
