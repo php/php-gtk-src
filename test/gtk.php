@@ -542,6 +542,165 @@ function create_entry()
 }
 
 
+function create_clist()
+{
+	if (!isset($windows['entry'])) {
+		$window = &new GtkWindow;
+		$windows['clist'] = $window;
+		$window->connect('delete-event', 'delete_event');
+		$window->set_title('CList');
+		$window->set_border_width(0);
+
+		$vbox = &new GtkVBox();
+		$window->add($vbox);
+		$vbox->show();
+
+		$scrolled_win = &new GtkScrolledWindow();
+		$scrolled_win->set_border_width(5);
+		$scrolled_win->set_policy(GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+		$titles = array("auto resize", "not resizeable", "max width 100",
+						"min width 50", "hide column", "Title 5", "Title 6",
+						"Title 7", "Title 8",  "Title 9",  "Title 10", "Title 11");
+		$clist = &new GtkCList(12, $titles);
+		$scrolled_win->add($clist);
+		$clist->show();
+		/* TODO connect clicked_column signal here */
+
+		$hbox = &new GtkHBox(false, 5);
+		$hbox->set_border_width(5);
+		$vbox->pack_start($hbox, false, false);
+		$hbox->show();
+
+		$button = &new GtkButton('Insert Row');
+		$button->connect('clicked', 'insert_row_clist', $clist);
+		$hbox->pack_start($button);
+		$button->show();
+
+		$button = &new GtkButton('Add 1,000 Rows With Pixmaps');
+		$button->connect('clicked', 'add1000_clist', $clist);
+		$hbox->pack_start($button);
+		$button->show();
+
+		$button = &new GtkButton('Add 10,000 Rows');
+		$button->connect('clicked', 'add10000_clist', $clist);
+		$hbox->pack_start($button);
+		$button->show();
+
+		$hbox = &new GtkHBox(false, 5);
+		$hbox->set_border_width(5);
+		$vbox->pack_start($hbox, false, false);
+		$hbox->show();
+
+		$button = &new GtkButton('Clear List');
+		$button->connect('clicked', 'clear_clist', $clist);
+		$hbox->pack_start($button);
+		$button->show();
+
+		$button = &new GtkButton('Remove Selection');
+		$button->connect('clicked', 'clist_remove_selection', $clist);
+		$hbox->pack_start($button);
+		$button->show();
+
+		$button = &new GtkButton('Undo Selection');
+		$button->connect('clicked', 'undo_selection', $clist);
+		$hbox->pack_start($button);
+		$button->show();
+
+		$button = &new GtkButton('Warning Test');
+		$button->connect('clicked', 'clist_warning_test', $clist);
+		$hbox->pack_start($button);
+		$button->show();
+
+		$hbox = &new GtkHBox(false, 5);
+		$hbox->set_border_width(5);
+		$vbox->pack_start($hbox, false, false);
+		$hbox->show();
+
+		$button = &new GtkCheckButton('Show Title Buttons');
+		$button->set_active(true);
+		$button->connect('clicked', 'toggle_title_buttons', $clist);
+		$hbox->pack_start($button, false);
+		$button->show();
+
+		$button = &new GtkCheckButton('Reorderable');
+		$button->set_active(true);
+		$button->connect('clicked', 'toggle_reorderable', $clist);
+		$hbox->pack_start($button, false);
+		$button->show();
+
+		/*
+		   TODO selection mode option menu
+		$label = &new GtkLabel('Selection Mode: ');
+		$hbox->pack_start($label, false);
+		$label->show();
+		*/
+
+		$vbox->pack_start($scrolled_win);
+		$scrolled_win->show();
+
+		$clist->set_row_height(18);
+		$clist->set_usize(-1, 300);
+
+		$clist_rows = 0;
+		for ($i = 1; $i < 12; $i++)
+			$clist->set_column_width($i, 80);
+		
+		$clist->set_column_auto_resize(0, true);
+		$clist->set_column_resizeable(1, false);
+		$clist->set_column_max_width(2, 100);
+		$clist->set_column_min_width(3, 50);
+		$clist->set_selection_mode(GTK_SELECTION_EXTENDED);
+		$clist->set_column_justification(1, GTK_JUSTIFY_RIGHT);
+		$clist->set_column_justification(2, GTK_JUSTIFY_CENTER);
+
+		for ($i = 0; $i < 12; $i++)
+			$texts[$i] = "Column $i";
+
+		$texts[1] = 'Right';
+		$texts[2] = 'Center';
+
+		$col1 = &new GdkColor(56000, 0, 0);
+		$col2 = &new GdkColor(0, 56000, 32000);
+		$style = &new GtkStyle;
+		$style->fg[GTK_STATE_NORMAL] = $col1;
+		$style->base[GTK_STATE_NORMAL] = $col2;
+		$style->font = gdk::font_load ("-adobe-helvetica-bold-r-*-*-*-140-*-*-*-*-*-*");
+
+		for ($i = 0; $i < 10; $i++) {
+			$texts[0] = sprintf('CListRow %d', $clist_rows++);
+			$clist->append($texts);
+
+			switch ($i % 4) {
+				case 2:
+					$clist->set_row_style($i, $style);
+					break;
+
+				default:
+					$clist->set_cell_style($i, $i % 4, $style);
+					break;
+			}
+		}
+
+		$separator = &new GtkHSeparator();
+		$vbox->pack_start($separator, false);
+		$separator->show();
+
+		$hbox = &new GtkHBox();
+		$vbox->pack_start($hbox, false);
+		$hbox->show();
+
+		$button = &new GtkButton('close');
+		$button->connect('clicked', 'close_window');
+		$hbox->pack_start($button);
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$button->grab_default();
+		$button->show();
+	}
+	$windows['clist']->show();
+}
+
+
 function create_main_window()
 {
 	$buttons = array(
@@ -553,6 +712,7 @@ function create_main_window()
 					 'radio buttons'	=> null,
 					 'tooltips'			=> 'create_tooltips',
 					 'entry'			=> 'create_entry',
+					 'clist'			=> 'create_clist',
 					);
 
 	$window = &new GtkWindow();
