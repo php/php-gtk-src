@@ -10,6 +10,7 @@
 * Add missing field defs to gtk.defs.
 * Figure out why doing $style->base[GTK_STATE_NORMAL]->red = 55555 converts
   $style to stdClass.
+* Work on GtkMenu::popup().
 
 In PHP
 ------
