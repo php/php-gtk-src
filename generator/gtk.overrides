@@ -845,7 +845,7 @@ PHP_FUNCTION(wrap_gtk_ctree_insert_node)
 		zend_hash_move_forward(target_hash);
 	}
 
-	ret = gtk_ctree_insert_node(tree, parent, sibling, text, spacing,
+	ret = gtk_ctree_insert_node(tree, parent, sibling, text, (guint8)spacing,
 								pixmap_closed, mask_closed, pixmap_opened,
 								mask_opened, is_leaf, expanded);
 	efree(text);

@@ -922,7 +922,7 @@ static void gdk_cursor_get_property(zval *return_value, zval *object, zend_llist
 		ZVAL_LONG(return_value, cursor->type);
 	} else if (!strcmp(prop_name, "name")) {
 		GtkEnumValue *vals = gtk_type_enum_get_values(GTK_TYPE_GDK_CURSOR_TYPE);
-		while (vals->value_name != NULL && vals->value != cursor->type)
+		while (vals->value_name != NULL && vals->value != (unsigned)cursor->type)
 			vals++;
 		if (vals->value_nick) {
 			ZVAL_STRING(return_value, vals->value_nick, 1);
