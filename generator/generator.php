@@ -384,7 +384,7 @@ class Generator {
 
 		foreach ($this->parser->structs as $struct) {
 			$struct_module = strtolower($struct->in_module);
-			$struct_lname = strtolower($struct->name);
+			$struct_lname = strtolower(substr(convert_typename($struct->name),1));
 			fwrite($fp, "\n/* struct $struct->c_name */\n");
 
 			$this->register_classes .= sprintf($struct_class_tpl,

@@ -236,7 +236,7 @@ class Struct_Def {
 				$this->fields[] = array($field_type, $field_name);
 			}
 		}
-		$this->ce = strtolower($this->in_module . '_' . $this->name . '_ce');
+		$this->ce = strtolower($this->in_module . convert_typename($this->name) . '_ce');
 	}
 }
 
