@@ -1,3 +1,12 @@
+2003-11-12  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/gtkhtml/gtkhtml.defs_for_gtkhtml.1.1
+      ext/gtkhtml/gtkhtml.defs_for_gtkhtml.1.1
+      ext/gtkhtml/gtkhtml.overrides_for_gtkhtml.1.1
+      ext/gtkhtml/gtkhtml.overrides_for_gtkhtml.1.1:
+      
+      file gtkhtml.defs_for_gtkhtml.1.1 was initially added on branch PHP_GTK_1.
+
 2003-10-23  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (PHP_GTK_1)
