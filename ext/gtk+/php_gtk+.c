@@ -96,7 +96,7 @@ static void init_gtk(void)
 	   unloaded. */
 	//DL_LOAD("libgtk.so");
 	gtk_init(&argc,&argv);
-	/*
+	
 	if (!gtk_init_check(&argc, &argv)) {
 		if (argv != NULL) {
 			for (i = 0; i < argc; i++)
@@ -106,14 +106,14 @@ static void init_gtk(void)
 		php_error(E_ERROR, "php-gtk: Could not open display");
 		return;
 	}
-	*/
+	
 	/*
 	   We must always call gtk_set_locale() in order to get GTK+/GDK
 	   correctly initialize multilingual support. Otherwise, application
 	   will refuse any letters outside ASCII and font metrics will
 	   be broken.
 	 */
-	//gtk_set_locale();
+	gtk_set_locale();
 
 	if (no_argc) {
 		/* The -f switch case, simple. */
