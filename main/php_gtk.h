@@ -101,6 +101,7 @@ extern GHashTable *php_gtk_class_hash;
 extern HashTable php_gtk_rsrc_hash;
 extern HashTable php_gtk_prop_getters;
 extern HashTable php_gtk_prop_setters;
+extern HashTable php_gtk_type_hash;
 
 /* Function declarations. */
 
