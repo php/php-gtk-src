@@ -175,3 +175,45 @@ PHP_FUNCTION(gdk_pixmap_colormap_create_from_xpm_d)
 	gdk_pixmap_unref(pixmap);
 	gdk_bitmap_unref(mask);
 }
+%%
+override gdk_cursor_new_from_pixmap
+PHP_FUNCTION(gdk_cursor_new_from_pixmap)
+{
+    zval *source, *mask, *fg, *bg;
+    long x, y,i,j;
+    int width,height;
+    GdkPixmap *dest;
+    GdkWindow *swin;
+    GdkGC *gc;
+    GdkImage *simage, *dimage;
+    guint32 pixel;
+                                                                                                                           
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OOOOii", &source, gdk_pixmap_ce,
+                            &mask, gdk_bitmap_ce, &fg, gdk_color_ce, &bg,
+                            gdk_color_ce, &x, &y)) {
+        return;
+    }
+                                                                                                                           
+    swin = PHP_GDK_WINDOW_GET(source);
+    gdk_window_get_size(swin, &width, &height);
+    simage = gdk_image_get(swin, 0, 0, width, height);
+    dest = gdk_pixmap_new(NULL, width, height, 1);
+    dimage = gdk_image_get(dest, 0, 0, width, height);
+                                                                                                                           
+    for (i = 0; i < height; i++) {
+        for (j = 0; j < width; j++) {
+            pixel = gdk_image_get_pixel(simage, j, i);
+            gdk_image_put_pixel(dimage, j, i, (pixel > 0));
+        }
+    }
+    gc = gdk_gc_new(dest);
+    gdk_draw_image(dest, gc, dimage, 0, 0, 0, 0, width, height);
+                                                                                                                           
+    PHP_GTK_SEPARATE_RETURN(return_value, php_gdk_cursor_new(gdk_cursor_new_from_pixmap(dest, PHP_GDK_BITMAP_GET(mask), PHP_GDK_COLOR_GET(fg), PHP_GDK_COLOR_GET(bg), (gint)x, (gint)y)));
+                                                                                                                           
+    /* cleanup */
+    gdk_gc_unref(gc);
+    gdk_image_destroy(simage);
+    gdk_image_destroy(dimage);
+    gdk_pixmap_unref(dest);
+}

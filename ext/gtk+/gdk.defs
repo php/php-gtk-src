@@ -678,7 +678,7 @@
   (c-name gdk_cursor_new_from_pixmap)
   (return-type GdkCursor*)
   (parameter (type-and-name GdkPixmap* source))
-  (parameter (type-and-name GdkPixmap* mask))
+  (parameter (type-and-name GdkBitmap* mask))
   (parameter (type-and-name GdkColor* fg))
   (parameter (type-and-name GdkColor* bg))
   (parameter (type-and-name gint x))
