@@ -24,13 +24,13 @@
 
 #if HAVE_PHP_GTK
 
+#include "gen_gdk.h"
+
 PHP_GTK_API int phpg_rectangle_from_zval(zval *value, GdkRectangle *rectangle TSRMLS_DC)
 {
-	g_return_val_if_fail(rectangle != NULL, FAILURE);
+	phpg_return_val_if_fail(rectangle != NULL, FAILURE);
 
-	if (Z_TYPE_P(value) == IS_OBJECT
-		&& instanceof_function(Z_OBJCE_P(value), gboxed_ce TSRMLS_CC)
-		&& phpg_gboxed_check(value, GDK_TYPE_RECTANGLE TSRMLS_CC)) {
+	if (phpg_gboxed_check(value, GDK_TYPE_RECTANGLE, TRUE TSRMLS_CC)) {
 		*rectangle = *(GdkRectangle *)PHPG_GBOXED(value);
 		return SUCCESS;
 	}
@@ -46,9 +46,7 @@ PHP_GTK_API int phpg_rectangle_from_zval(zval *value, GdkRectangle *rectangle TS
 	return FAILURE;
 }
 
-/*
- * Style Array Helper
- */
+/* {{{ Style Array Helper */
 
 typedef struct {
     GtkStyle *style; /* here only so we can make sure it persists */
@@ -70,13 +68,13 @@ static zval *style_helper_read_dimension(zval *object, zval *offset, int type TS
 	result->is_ref = 0;
 
     if (Z_TYPE_P(offset) != IS_LONG) {
-        zend_error(E_NOTICE, "Illegal index type");
+        php_error(E_WARNING, "Illegal index type");
 		return EG(uninitialized_zval_ptr);
     }
     
     index = Z_LVAL_P(offset);
     if (index < 0 || index >= STYLE_NUM_STATES) {
-        zend_error(E_NOTICE, "Index out of range");
+        php_error(E_WARNING, "Index out of range");
 		return EG(uninitialized_zval_ptr);
     }
 
@@ -112,15 +110,83 @@ static zval *style_helper_read_dimension(zval *object, zval *offset, int type TS
 
 static void style_helper_write_dimension(zval *object, zval *offset, zval *value TSRMLS_DC)
 {
+    long index;
+    style_helper *sh = (style_helper *) zend_object_store_get_object(object TSRMLS_CC);
+
+    if (Z_TYPE_P(offset) != IS_LONG) {
+        php_error(E_WARNING, "Illegal index type");
+		return;
+    }
+
+    index = Z_LVAL_P(offset);
+    if (index < 0 && index >= STYLE_NUM_STATES) {
+        php_error(E_WARNING, "Index out of range");
+        return;
+    }
+
+    switch (sh->type) {
+        case STYLE_COLOR_ARRAY:
+        {
+            GdkColor *array = (GdkColor *) sh->array;
+            if (!phpg_gboxed_check(value, GDK_TYPE_COLOR, TRUE TSRMLS_CC)) {
+                php_error(E_WARNING, "Can only assign a GdkColor object");
+                return;
+            }
+            array[index] = *(GdkColor *)PHPG_GBOXED(value);
+            break;
+        }
+
+        case STYLE_GC_ARRAY:
+        {
+            GdkGC **array = (GdkGC **) sh->array;
+            if (!phpg_object_check(value, gdkgc_ce)) {
+                php_error(E_WARNING, "Can only assign a GdkGC object");
+                return;
+            }
+            if (array[index]) {
+                g_object_unref(array[index]);
+            }
+            array[index] = GDK_GC(g_object_ref(PHPG_GOBJECT(value)));
+            break;
+        }
+
+        case STYLE_PIXMAP_ARRAY:
+        {
+            GdkPixmap **array = (GdkPixmap **) sh->array;
+            if (Z_TYPE_P(value) != IS_NULL && !phpg_object_check(value, gdkgc_ce)) {
+                php_error(E_WARNING, "Can only assign a GdkPixmap object or null");
+                return;
+            }
+            if (array[index]) {
+                g_object_unref(array[index]);
+            }
+            if (Z_TYPE_P(value) == IS_NULL) {
+                array[index] = NULL;
+            } else {
+                array[index] = GDK_PIXMAP(g_object_ref(PHPG_GOBJECT(value)));
+            }
+            break;
+        }
+
+        default:
+            g_assert_not_reached();
+            break;
+    }
 }
 
-static int style_helper_has_dimension(zval *object, zval *member, int check_empty TSRMLS_DC)
+static int style_helper_has_dimension(zval *object, zval *offset, int check_empty TSRMLS_DC)
 {
-    return SUCCESS;
-}
+    if (Z_TYPE_P(offset) != IS_LONG) {
+        php_error(E_WARNING, "Illegal index type");
+		return 0;
+    }
 
-static void style_helper_unset_dimension(zval *object, zval *member TSRMLS_DC)
-{
+    if (Z_LVAL_P(offset) < 0 && Z_LVAL_P(offset) >= STYLE_NUM_STATES) {
+        php_error(E_WARNING, "Index out of range");
+        return 0;
+    }
+
+    return 1;
 }
 
 static int style_helper_count_elements(zval *object, long *count TSRMLS_DC)
@@ -141,7 +207,7 @@ static zend_object_handlers style_helper_handlers = {
 	NULL,			 			 /* has_property */
 	NULL,						 /* unset_property */
 	style_helper_has_dimension,	 /* has_dimension */
-	style_helper_unset_dimension,/* unset_dimension */
+	NULL,                        /* unset_dimension */
 	NULL,						 /* get_properties */
 	NULL,						 /* get_method */
 	NULL,						 /* call_method */
@@ -176,6 +242,8 @@ PHP_GTK_API void phpg_create_style_helper(zval **zobj, GtkStyle *style, int type
 	Z_OBJ_HANDLE_PP(zobj) = zend_objects_store_put(sh, NULL, (zend_objects_free_object_storage_t) style_helper_free_storage, NULL TSRMLS_CC);
 	Z_OBJ_HT_PP(zobj) = &style_helper_handlers;
 }
+
+/* }}} */
 
 /* {{{ old code */
 #if 0
