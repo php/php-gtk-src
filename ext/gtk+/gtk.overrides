@@ -627,6 +627,9 @@ PHP_FUNCTION(gtk_check_button_new)
 {
 	char *label;
 	GtkObject *wrapped_obj;
+#ifdef PHP_WIN32
+	gchar *utf8_label = NULL;
+#endif
 
 	NOT_STATIC_METHOD();
 
@@ -634,8 +637,16 @@ PHP_FUNCTION(gtk_check_button_new)
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
-	if (label)
-    	wrapped_obj = (GtkObject *)gtk_check_button_new_with_label(label);
+
+	if (label) {
+#ifdef PHP_WIN32
+		utf8_label = g_convert(label, strlen(label), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+		wrapped_obj = (GtkObject *)gtk_check_menu_item_new_with_label(utf8_label);
+		g_free(utf8_label);
+#else
+		wrapped_obj = (GtkObject *)gtk_check_menu_item_new_with_label(label);		
+#endif
+	}
     else    
 		wrapped_obj = (GtkObject *)gtk_check_button_new();
 	if (!wrapped_obj) {
@@ -659,6 +670,9 @@ PHP_FUNCTION(gtk_check_menu_item_new)
 {
 	char *label;
 	GtkObject *wrapped_obj;
+#ifdef PHP_WIN32
+	gchar *utf8_label = NULL;
+#endif
 	
 	NOT_STATIC_METHOD();
 
@@ -667,8 +681,15 @@ PHP_FUNCTION(gtk_check_menu_item_new)
 		return;
 	}
 
-	if (label)
+	if (label) {
+#ifdef PHP_WIN32
+		utf8_label = g_convert(label, strlen(label), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+		wrapped_obj = (GtkObject *)gtk_check_menu_item_new_with_label(utf8_label);
+		g_free(utf8_label);
+#else
 		wrapped_obj = (GtkObject *)gtk_check_menu_item_new_with_label(label);		
+#endif
+	}
 	else
 	    wrapped_obj = (GtkObject *)gtk_check_menu_item_new();
 
