@@ -1,3 +1,28 @@
+2005-02-24  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk_util.c
+      main/phpg_closure.c
+      main/phpg_gobject.c:
+      - Implement GObject::connect().
+      - I guess the return value of read_property handler really does have to
+        have refcount = 0 since it's a temporary value.
+
+    * main/phpg_gvalue.c:
+      Make sure that a valid zval is returned even in an error case.
+
+    * main/php_gtk.h
+      main/phpg_closure.c
+      main/phpg_gobject.c
+      main/phpg_gvalue.c:
+      - Make pi_hash persistent.
+      - Change phpg_gvalue_to_zval() to operate on zval**, similar to
+        phpg_gobject_new().
+      - Implement closure marshalling and cleanup.
+
+    * main/php_gtk.c:
+      Move prop info hash handling into module init/shutdown function, since
+      it needs to be persistent.
+
 2005-02-13  Andrei Zmievski  <andrei@gravitonic.com>
 
     * php_gtk.m4
