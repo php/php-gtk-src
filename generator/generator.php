@@ -308,8 +308,13 @@ class Generator {
 							   $function_call,
 							   $extra_post_code);
 
+		// hack to avoid macro conflict on win32
+		$extra_name = "";
+		if (strtolower($function->c_name) == "gdk_draw_pixmap")
+			$extra_name = "_int";
+
 		$function_code = sprintf($function_tpl,
-								 strtolower($function->c_name),
+								 strtolower($function->c_name) . $extra_name,
 								 $var_list->to_string(),
 								 $specs,
 								 $parse_list,
@@ -631,9 +636,15 @@ class Generator {
 						$function_name = substr($function->name, strlen($this->lprefix) + 1);
 					else
 						$function_name = $function->name;
+
+					// hack to avoid macro conflict on win32
+					$extra_name = "";
+					if (strtolower($function->c_name) == "gdk_draw_pixmap")
+						$extra_name = "_int";
+
 					$functions_decl .= sprintf($function_entry_tpl, 
 											   $function_name, 
-											   strtolower($function->c_name), 
+											   strtolower($function->c_name) . $extra_name, 
 											   'NULL');
 					$num_functions++;
 				}
