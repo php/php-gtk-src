@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SQPANE_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "." /I "../../" /I "../../main" /I "../../../php4" /I "../../../php4/main" /I "../../../php4\Zend" /I "../../../php4\TSRM" /I "../../../src/gtk+" /I "../../../src/gtk+/gdk" /I "../../../src/glib" /I "../../../src/glib/glib" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SQPANE_EXPORTS" /D "PHP_WIN32" /D "ZEND_WIN32" /D ZTS=1 /D ZEND_DEBUG=1 /D HAVE_PHP_GTK=1 /D GTK_SHARED=1 /D HAVE_SQPANE=1 /D "PHP_GTK_COMPILE_DL_SQPANE" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "." /I "..\..\\" /I "..\..\main" /I "..\..\..\php4" /I "..\..\..\php4\main" /I "..\..\..\php4\Zend" /I "..\..\..\php4\TSRM" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SQPANE_EXPORTS" /D "PHP_WIN32" /D "ZEND_WIN32" /D ZTS=1 /D ZEND_DEBUG=1 /D HAVE_PHP_GTK=1 /D GTK_SHARED=1 /D HAVE_SQPANE=1 /D "PHP_GTK_COMPILE_DL_SQPANE" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 php4ts_debug.lib php_gtk.lib gtk-1.3.lib gdk-1.3.lib glib-1.3.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /out:"../../win32/Debug_TS/php_gtk_sqpane.dll" /pdbtype:sept /libpath:"../../../php4/Debug_TS" /libpath:"../../win32/Debug_TS" /libpath:"../../../src/glib" /libpath:"../../../src/gtk+/gtk" /libpath:"../../../src/gtk+/gdk"
+# ADD LINK32 php4ts_debug.lib php_gtk.lib gtk.lib gdk.lib glib-2.0.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /out:"../../win32/Debug_TS/php_gtk_sqpane.dll" /pdbtype:sept /libpath:"..\..\..\php4\Debug_TS" /libpath:"..\gtk+\Debug_TS"
 
 !ELSEIF  "$(CFG)" == "sqpane - Win32 Release_TS"
 
@@ -69,7 +69,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SQPANE_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "." /I "../../" /I "../../main" /I "../../../php4" /I "../../../php4/main" /I "../../../php4\Zend" /I "../../../php4\TSRM" /I "../../../src/gtk+" /I "../../../src/gtk+/gdk" /I "../../../src/glib" /I "../../../src/glib/glib" /I "../../../src/pango" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SQPANE_EXPORTS" /D "PHP_WIN32" /D "ZEND_WIN32" /D ZTS=1 /D ZEND_DEBUG=0 /D HAVE_PHP_GTK=1 /D GTK_SHARED=1 /D HAVE_SQPANE=1 /D "PHP_GTK_COMPILE_DL_SQPANE" /YX /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /I "." /I "..\..\\" /I "..\..\main" /I "..\..\..\php4" /I "..\..\..\php4\main" /I "..\..\..\php4\Zend" /I "..\..\..\php4\TSRM" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SQPANE_EXPORTS" /D "PHP_WIN32" /D "ZEND_WIN32" /D ZTS=1 /D ZEND_DEBUG=0 /D HAVE_PHP_GTK=1 /D GTK_SHARED=1 /D HAVE_SQPANE=1 /D "PHP_GTK_COMPILE_DL_SQPANE" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -79,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386
-# ADD LINK32 php4ts.lib php_gtk.lib gtk-1.3.lib gdk-1.3.lib glib-1.3.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386 /out:"../../win32/Release_TS/php_gtk_sqpane.dll" /libpath:"../../../php4/Release_TS" /libpath:"../../win32/Release_TS" /libpath:"../../../src/glib" /libpath:"../../../src/gtk+/gtk" /libpath:"../../../src/gtk+/gdk"
+# ADD LINK32 php4ts.lib php_gtk.lib gtk.lib gdk.lib glib-2.0.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386 /out:"../../win32/Release_TS/php_gtk_sqpane.dll" /libpath:"..\..\..\php4\Release_TS" /libpath:"..\gtk+\Release_TS"
 
 !ENDIF 
 
@@ -87,17 +87,16 @@ LINK32=link.exe
 
 # Name "sqpane - Win32 Debug_TS"
 # Name "sqpane - Win32 Release_TS"
-
 # Begin Group "Parsers"
-# PROP Default_Filter "defs"
 
+# PROP Default_Filter "defs"
 # Begin Source File
 
 SOURCE=.\sqpane.defs
 
-!IF  "$(CFG)" == "sqpane - Win32 Release_TS"
+!IF  "$(CFG)" == "sqpane - Win32 Debug_TS"
 
-USERDEP__LIBGL="sqpane.overrides"	"sqpane.defs"	
+USERDEP__SQPAN="sqpane.overrides"	"sqpane.defs"	
 # Begin Custom Build
 InputPath=.\sqpane.defs
 
@@ -107,9 +106,9 @@ InputPath=.\sqpane.defs
 	
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "sqpane - Win32 Debug_TS"
+!ELSEIF  "$(CFG)" == "sqpane - Win32 Release_TS"
 
-USERDEP__LIBGL="sqpane.overrides"	"sqpane.defs"	
+USERDEP__SQPAN="sqpane.overrides"	"sqpane.defs"	
 # Begin Custom Build
 InputPath=.\sqpane.defs
 
@@ -123,7 +122,6 @@ InputPath=.\sqpane.defs
 
 # End Source File
 # End Group
-
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
