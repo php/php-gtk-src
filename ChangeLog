@@ -1,3 +1,73 @@
+2001-12-07  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * ext/gdkpixbuf/config.m4: - Format configure --help output.
+
+    * ext/gtkhtml/config.m4:
+    - Some more work to proper detect gtkhtml (still not perfect).
+
+    * NEWS:
+    - added new widgets with samples: GtkComboButton, GtkSPaned, GtkScrollPane
+      and GtkPieMenu. (Markus)
+
+    * ext/sqpane/README: - Added README.
+
+
+    * test/piemenu.php
+      ext/piemenu/.cvsignore
+      ext/piemenu/Makefile.in
+      ext/piemenu/README
+      ext/piemenu/config.m4
+      ext/piemenu/gdkaddons.c
+      ext/piemenu/gdkaddons.h
+      ext/piemenu/gtkaddons.c
+      ext/piemenu/gtkaddons.h
+      ext/piemenu/gtkpiemenu.c
+      ext/piemenu/gtkpiemenu.h
+      ext/piemenu/php_piemenu.c
+      ext/piemenu/php_piemenu.h
+      ext/piemenu/piemenu.defs
+      ext/piemenu/piemenu.overrides: - Initial commit of GtkPieMenu widget.
+
+    * ext/scrollpane/.cvsignore
+      ext/scrollpane/Makefile.in
+      ext/scrollpane/README
+      ext/scrollpane/config.m4
+      ext/scrollpane/gtkscrollpane.c
+      ext/scrollpane/gtkscrollpane.h
+      ext/scrollpane/php_scrollpane.c
+      ext/scrollpane/php_scrollpane.h
+      ext/scrollpane/scrollpane.defs
+      ext/scrollpane/scrollpane.overrides
+      test/scrollpane.php: - Initial commit of GtkScrollPane widget.
+
+    * ext/spaned/.cvsignore
+      ext/spaned/Makefile.in
+      ext/spaned/README
+      ext/spaned/config.m4
+      ext/spaned/gtkshpaned.c
+      ext/spaned/gtkshpaned.h
+      ext/spaned/gtkspaned.c
+      ext/spaned/gtkspaned.h
+      ext/spaned/gtksvpaned.c
+      ext/spaned/gtksvpaned.h
+      ext/spaned/php_spaned.c
+      ext/spaned/php_spaned.h
+      ext/spaned/spaned.defs
+      ext/spaned/spaned.overrides
+      test/spaned.php: - Initial commit of GtkSPaned widget.
+
+    * ext/combobutton/.cvsignore
+      ext/combobutton/Makefile.in
+      ext/combobutton/README
+      ext/combobutton/combobutton.defs
+      ext/combobutton/combobutton.overrides
+      ext/combobutton/config.m4
+      ext/combobutton/gtkcombobutton.c
+      ext/combobutton/gtkcombobutton.h
+      ext/combobutton/php_combobutton.c
+      ext/combobutton/php_combobutton.h
+      test/combobutton.php: - Initial commit of GtkComboButton widget.
+
 2001-12-06  Andrei Zmievski  <andrei@ispi.net>
 
     * generator/generator.php: Turn off notices temporarily.
