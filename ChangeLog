@@ -1,3 +1,18 @@
+2005-03-30  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/Makefile.frag:
+      Add clean-gen and clean-caches targets.
+
+    * generator/scheme.php:
+      Don't sort objects.
+
+    * ext/gtk+/gdk.defs
+      ext/gtk+/gtk-extrafuncs.defs
+      ext/gtk+/gtk-types.defs
+      ext/gtk+/gtk.defs
+      ext/gtk+/pango-types.defs:
+      Update Gtk+ defs to the latest (2.6).
+
 2005-03-29  Andrei Zmievski  <andrei@gravitonic.com>
 
     * generator/merge_defs.php
