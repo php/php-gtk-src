@@ -722,6 +722,9 @@ PHP_FUNCTION(gtk_clist_new)
 	GtkObject *wrapped_obj;
 	gint columns, i;
 	gchar **titles;
+#ifdef PHP_WIN32
+	gchar *utf8_title = NULL;
+#endif
 	zval *php_titles = NULL, **temp_title;
 	HashTable *target_hash;
 
@@ -751,7 +754,14 @@ PHP_FUNCTION(gtk_clist_new)
 		zend_hash_internal_pointer_reset(target_hash);
 		while (zend_hash_get_current_data(target_hash, (void **)&temp_title) == SUCCESS) {
 			convert_to_string_ex(temp_title);
+
+#ifdef PHP_WIN32
+			utf8_title = g_convert(Z_STRVAL_PP(temp_title), Z_STRLEN_PP(temp_title), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+			titles[i++] = utf8_title;
+#else
 			titles[i++] = estrndup(Z_STRVAL_PP(temp_title), Z_STRLEN_PP(temp_title));
+#endif
+
 			zend_hash_move_forward(target_hash);
 		}
 		wrapped_obj = (GtkObject *)gtk_clist_new_with_titles(columns, titles);
@@ -773,6 +783,9 @@ PHP_FUNCTION(gtk_clist_append)
 {
 	gint columns, i, res;
 	gchar **list;
+#ifdef PHP_WIN32
+	gchar *utf8_text = NULL;
+#endif
 	zval *php_list, **text;
 	HashTable *target_hash;
 
@@ -795,7 +808,14 @@ PHP_FUNCTION(gtk_clist_append)
 	zend_hash_internal_pointer_reset(target_hash);
 	while (zend_hash_get_current_data(target_hash, (void **)&text) == SUCCESS) {
 		convert_to_string_ex(text);
+
+#ifdef PHP_WIN32
+		utf8_text = g_convert(Z_STRVAL_PP(text), Z_STRLEN_PP(text), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+		list[i++] = utf8_text;
+#else
 		list[i++] = estrndup(Z_STRVAL_PP(text), Z_STRLEN_PP(text));
+#endif
+
 		zend_hash_move_forward(target_hash);
 	}
 	ZVAL_LONG(return_value, gtk_clist_append(GTK_CLIST(PHP_GTK_GET(this_ptr)), list));
@@ -807,6 +827,9 @@ PHP_FUNCTION(gtk_clist_prepend)
 {
 	gint columns, i, res;
 	gchar **list;
+#ifdef PHP_WIN32
+	gchar *utf8_text = NULL;
+#endif
 	zval *php_list, **text;
 	HashTable *target_hash;
 
@@ -829,7 +852,14 @@ PHP_FUNCTION(gtk_clist_prepend)
 	zend_hash_internal_pointer_reset(target_hash);
 	while (zend_hash_get_current_data(target_hash, (void **)&text) == SUCCESS) {
 		convert_to_string_ex(text);
+
+#ifdef PHP_WIN32
+		utf8_text = g_convert(Z_STRVAL_PP(text), Z_STRLEN_PP(text), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+		list[i++] = utf8_text;
+#else
 		list[i++] = estrndup(Z_STRVAL_PP(text), Z_STRLEN_PP(text));
+#endif
+
 		zend_hash_move_forward(target_hash);
 	}
 	ZVAL_LONG(return_value, gtk_clist_prepend(GTK_CLIST(PHP_GTK_GET(this_ptr)), list));
@@ -841,6 +871,9 @@ PHP_FUNCTION(gtk_clist_insert)
 {
 	gint columns, i, row, res;
 	gchar **list;
+#ifdef PHP_WIN32
+	gchar *utf8_text = NULL;
+#endif
 	zval *php_list, **text;
 	HashTable *target_hash;
 
@@ -863,7 +896,14 @@ PHP_FUNCTION(gtk_clist_insert)
 	zend_hash_internal_pointer_reset(target_hash);
 	while (zend_hash_get_current_data(target_hash, (void **)&text) == SUCCESS) {
 		convert_to_string_ex(text);
+
+#ifdef PHP_WIN32
+		utf8_text = g_convert(Z_STRVAL_PP(text), Z_STRLEN_PP(text), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+		list[i++] = utf8_text;
+#else
 		list[i++] = estrndup(Z_STRVAL_PP(text), Z_STRLEN_PP(text));
+#endif
+
 		zend_hash_move_forward(target_hash);
 	}
 	ZVAL_LONG(return_value, gtk_clist_insert(GTK_CLIST(PHP_GTK_GET(this_ptr)), row, list));
