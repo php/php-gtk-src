@@ -1,3 +1,36 @@
+2002-01-14  Andrei Zmievski  <andrei@ispi.net>
+
+    * main/php_gtk.h: Fix compilation for non-ZTS cases.
+
+2002-01-14  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/php_win.dsp: Changed temp dir for php_win
+
+    * win32/makedist.cmd:
+    Adding shared extensions to distribution command file
+
+    * ext/combobutton/.cvsignore
+      ext/combobutton/combobutton.dsp: Adding project file for ComboButton.
+
+    This does not work yet !
+
+    * win32/php_gtk.dsp
+      win32/php_gtk.dsw
+      win32/scheme.dsp: parser files are moved to the extensions
+
+    * ext/sqpane/sqpane.dsp
+      ext/libglade/libglade.dsp: Mooving parser files to extension
+
+    * ext/gtk+/.cvsignore
+      ext/gtk+/php_gtk.dsp: Moving Project for gtk+ from Win32
+    Mooving parser files
+
+    * ext/sqpane/sqpane.dsp: Fixing wrong path for Debug_TS output
+
+    * ext/sqpane/.cvsignore
+      ext/sqpane/sqpane.dsp:
+    Adding project file for building php_gtk_sqpane.dll
+
 2002-01-12  Frank M. Kromann  <frank@frontbase.com>
 
     * ext/libglade/libglade.dsp:
