@@ -1,3 +1,5 @@
+    - implemented GladeXML methods signal_connect_object() and
+      signal_autoconnect_object(). (Andrei)
     - changed PHP-visible extension name from 'gtk' to 'php-gtk'. (Andrei)
 
 Version 0.1 "the void which binds" 1-Aug-2001

@@ -46,7 +46,7 @@ static void glade_connect_one(const gchar *handler_name, GtkObject *obj, const
 							callback_data, php_gtk_destroy_notify, FALSE, after);
 }
 
-PHP_FUNCTION(wrap_glade_xml_signal_connect)
+static glade_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object)
 {
 	char *handler_name = NULL;
 	zval *callback = NULL;
@@ -69,22 +69,39 @@ PHP_FUNCTION(wrap_glade_xml_signal_connect)
 	callback_filename = zend_get_executed_filename(TSRMLS_C);
 	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
-	data = php_gtk_build_value("(VNisi)", callback, extra, 1, callback_filename, callback_lineno);
+	data = php_gtk_build_value("(VNisi)", callback, extra, pass_object, callback_filename, callback_lineno);
 	glade_xml_signal_connect_full(GLADE_XML(PHP_GTK_GET(this_ptr)), handler_name,
 								  (GladeXMLConnectFunc)glade_connect_one, data);
 	RETURN_NULL();
 }
+
+PHP_FUNCTION(glade_xml_signal_connect)
+{
+	glade_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
+}
+%%
+override glade_xml_signal_connect_object signal_connect_object GladeXML
+PHP_FUNCTION(glade_xml_signal_connect_object)
+{
+	glade_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
+}
 %%
 override glade_xml_signal_autoconnect
+
+typedef struct _php_gtk_autoconnect_data {
+	zend_bool pass_object;
+	zval *map;
+} php_gtk_autoconnect_data;
+
 static void glade_connect_auto(const gchar *handler_name, GtkObject *obj,
 							   const gchar *signal_name, const gchar *signal_data,
 							   GtkObject *connect_object, gboolean after,
-							   zval *map)
+							   php_gtk_autoconnect_data *ac_data)
 {
-	zval **callback_data = NULL;
+	zval **callback_data = NULL, *map = ac_data->map;
 	zval **callback_ptr = NULL, *extra = NULL, *params = NULL;
 	zval *callback, *data, *object = NULL;
-	int pass_object = 1;
+	int pass_object = ac_data->pass_object;
 	char *callback_filename;
 	uint callback_lineno;
 	TSRMLS_FETCH();
@@ -133,15 +150,30 @@ static void glade_connect_auto(const gchar *handler_name, GtkObject *obj,
 							data, php_gtk_destroy_notify, FALSE, after);
 }
 
-PHP_FUNCTION(wrap_glade_xml_signal_autoconnect)
+static glade_signal_autoconnect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object)
 {
 	zval *map = NULL;
+	php_gtk_autoconnect_data *ac_data;
 
 	NOT_STATIC_METHOD();
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|a", &map))
 		return;
 
+	ac_data = (php_gtk_autoconnect_data *)emalloc(sizeof(php_gtk_autoconnect_data));
+	ac_data->map = map;
+	ac_data->pass_object = pass_object;
 	glade_xml_signal_autoconnect_full(GLADE_XML(PHP_GTK_GET(this_ptr)),
-									  (GladeXMLConnectFunc)glade_connect_auto, map);
+									  (GladeXMLConnectFunc)glade_connect_auto, ac_data);
+}
+
+PHP_FUNCTION(glade_xml_signal_autoconnect)
+{
+	glade_signal_autoconnect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
+}
+%%
+override glade_xml_signal_autoconnect_object signal_autoconnect_object GladeXML
+PHP_FUNCTION(glade_xml_signal_autoconnect_object)
+{
+	glade_signal_autoconnect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
 }
