@@ -27,8 +27,13 @@
 
 #if HAVE_LIBGLADE
 
+#include <glade/glade.h>
+
 extern php_gtk_ext_entry libglade_ext_entry;
 #define libglade_ext_ptr &libglade_ext_entry
+
+void php_libglade_register_constants(int module_number TSRMLS_DC);
+void php_libglade_register_classes();
 
 #else
 

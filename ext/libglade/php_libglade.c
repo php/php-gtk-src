@@ -20,7 +20,7 @@
  
 /* $Id$: */
 
-#include "php_gtk.h"
+#include "php_libglade.h"
 
 #if HAVE_LIBGLADE
 
