@@ -54,14 +54,13 @@ PHP_METHOD(%(class), %(name))
     NOT_STATIC_METHOD();
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
-		return;
+        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
 	}
 %(pre_code)
 	wrapped_obj = (GObject *)%(cname)(%(arg_list));
 %(post_code)
 	if (!wrapped_obj) {
-		php_error(E_WARNING, \"could not create %(class) object\");
-		return;
+        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
 	}
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }\n\n";
