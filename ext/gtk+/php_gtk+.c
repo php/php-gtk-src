@@ -74,7 +74,10 @@ static void init_gtk(void)
 		argc = 1;
 		no_argc = 1;
 		argv = (char **)g_new(char *, argc);
-		argv[0] = g_strdup(SG(request_info).path_translated);
+		if (SG(request_info).path_translated)
+			argv[0] = g_strdup(SG(request_info).path_translated);
+		else
+			argv[0] = g_strdup("-");
 	} else {
 		argv = (char **)g_new(char *, argc);
 		i = 0;
