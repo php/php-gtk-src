@@ -32,7 +32,7 @@ PHP_GTK_XINIT_FUNCTION(canvas)
 {
 	php_canvas_register_constants(module_number TSRMLS_CC);
 	php_canvas_register_classes();
-
+	gtk_canvas_init();
 	return SUCCESS;
 }
 

@@ -11,6 +11,10 @@ if test "$PHP_GTK_CANVAS" != "no"; then
 		  CANVAS_DIR=$x
 		  CANVAS_INCDIR=$x/include
 	  fi
+	  if test -f $x/libart_lgpl/libart.h; then
+		  ART_LGPL_DIR=$x
+		  ART_LGPL_INCDIR=$x
+	  fi
   done
 
   if test -z "$CANVAS_DIR"; then
@@ -18,14 +22,20 @@ if test "$PHP_GTK_CANVAS" != "no"; then
   fi
 
   CANVAS_LIBDIR=$CANVAS_DIR/lib
-
+  ART_LGPL_LIBDIR=$ART_LGPL_DIR/lib
+  
   AC_DEFINE(HAVE_CANVAS,1,[GtkCanvas support])
+  
   PHP_ADD_INCLUDE($CANVAS_INCDIR)
+  PHP_ADD_INCLUDE($ART_LGPL_INCDIR)
+  
   if test $php_gtk_ext_shared = "yes"; then
 	PHP_ADD_LIBRARY_WITH_PATH(gtk-canvas, $CANVAS_LIBDIR, CANVAS_SHARED_LIBADD)
+	PHP_ADD_LIBRARY_WITH_PATH(art_lgpl, $ART_LGPL_LIBDIR, ART_LGPL_SHARED_LIBADD)
 	PHP_SUBST(CANVAS_SHARED_LIBADD)
   else
 	PHP_ADD_LIBRARY_WITH_PATH(gtk-canvas, $CANVAS_LIBDIR, PHP_GTK_SHARED_LIBADD)
+	PHP_ADD_LIBRARY_WITH_PATH(art_lgpl, $ART_LGPL_LIBDIR, ART_LGPL_SHARED_LIBADD)
   fi
   PHP_GTK_EXTENSION(canvas, $php_gtk_ext_shared, php_canvas.c, gen_canvas.c)
 fi

@@ -428,6 +428,16 @@
 ;  (varargs t)
 )
 
+
+(method set_points 
+  (of-object CanvasItem (Gtk))
+  (c-name gtk_canvas_item_set_points)
+  (return-type none)
+  (parameter (type-and-name const-gchar*        first_arg_name))
+ 
+)
+
+
 (method setv 
   (of-object CanvasItem (Gtk))
   (c-name gtk_canvas_item_setv)

@@ -20,6 +20,8 @@ ignore gtk_canvas_item_i2w_affine
 ignore   gtk_canvas_item_i2c_affine
 %%
 ignore   gtk_canvas_w2c_affine
+%%
+ignore   gtk_canvas_item_set
 
 
 %%
@@ -253,7 +255,7 @@ PHP_FUNCTION(gtk_canvas_polygon_new)
 	GtkObject *wrapped_obj;
 	GtkArg *args;
 	guint nargs;
-	GtkCanvasPoints *points = NULL;
+	GtkCanvasPoints *points; 
 	
 	NOT_STATIC_METHOD();
 
@@ -262,15 +264,17 @@ PHP_FUNCTION(gtk_canvas_polygon_new)
 		return;
 	}
 	
-	if (!(args = php_gtk_canvas_hash_as_args(hash,type,&nargs))) {
-		return;
-	}
+	 
+ 
+	args = php_gtk_hash_as_args(hash,type,&nargs);
 	
 	wrapped_obj = (GtkObject *)gtk_canvas_item_newv(GTK_CANVAS_GROUP(PHP_GTK_GET(parent)), (GtkType)type, nargs, args);
-	
-	 
-	
-	
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkCanvasItem object",
+				  get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
 	
 	
 	
@@ -506,3 +510,49 @@ PHP_FUNCTION(gtk_canvas_item_new)
 	php_gtk_object_init(wrapped_obj, this_ptr);
 
 }
+
+
+%%
+override gtk_canvas_item_set_points
+
+
+ 
+
+PHP_FUNCTION(gtk_canvas_item_set_points)
+{
+	zval *hash;
+	GtkCanvasPoints* pointsAr;
+	HashTable *phash;
+	int len,j;
+	zval **item;
+	 
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &hash))
+		return;
+	
+	phash = HASH_OF(hash);
+	
+	if ((len=zend_hash_num_elements(phash)) & 1 == 1) {
+		php_error(E_WARNING, "must be an even number of points");
+		return;
+	}
+	pointsAr = gtk_canvas_points_new(len/2);
+	
+	for (zend_hash_internal_pointer_reset(phash), j = 0;
+		zend_hash_get_current_data(phash, (void **)&item) == SUCCESS;
+		zend_hash_move_forward(phash), j++) 
+	{
+		pointsAr->coords[j] =  Z_DVAL_PP(item); 
+	}
+	 
+	
+	 
+	gtk_canvas_item_set(GTK_CANVAS_ITEM(PHP_GTK_GET(this_ptr)), "points", pointsAr, NULL);
+	
+	gtk_canvas_points_unref(pointsAr);
+	
+	RETURN_NULL();
+}
+
+
