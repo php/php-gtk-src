@@ -11,9 +11,11 @@ copy \php4\php-cgi.exe php4
 copy \php4\php_win.exe php4
 copy \php4\php4ts.dll php4
 copy \php4\php_gtk.dll php4
-copy \php4\php_gtk_libglade.dll php4
-copy \php4\php_gtk_sqpane.dll php4
 copy \php4\php_gtk_combobutton.dll php4
+copy \php4\php_gtk_libglade.dll php4
+copy \php4\php_gtk_scrollpane.dll php4
+copy \php4\php_gtk_spaned.dll php4
+copy \php4\php_gtk_sqpane.dll php4
 copy \php\php4\php.ini-dist winnt\php.ini
 type \php\php-gtk\win32\php.ini >>winnt\php.ini
 copy \php\php-gtk\win32\php.ini php4\php.ini-gtk
