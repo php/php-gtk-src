@@ -617,38 +617,94 @@ void php_gtk_ret_from_value(GtkArg *ret, zval *value)
 }
 
 /* Generic get/set property handlers. */
+static inline int invoke_getter(zval *object, zval *result, zend_llist_element **element)
+{
+	zend_class_entry *ce;
+	prop_getter_t *getter;
+	int found = FAILURE;
+
+	if (Z_OBJCE_P(object)->handle_property_get) {
+		for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
+			if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
+				(*getter)(result, object, element, &found);
+			}
+		}
+	}
+
+	return found;
+}
+
+static inline int invoke_setter(zval *object, zval *value, zend_llist_element **element)
+{
+	zend_class_entry *ce;
+	prop_setter_t *setter;
+	int found = FAILURE;
+
+	if (Z_OBJCE_P(object)->handle_property_set) {
+		for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
+			if (zend_hash_index_find(&php_gtk_prop_setters, (long)ce, (void **)&setter) == SUCCESS) {
+				found = (*setter)(object, element, value);
+			}
+		}
+	}
+
+	return found;
+}
+
 zval php_gtk_get_property(zend_property_reference *property_reference)
 {
 	zval result;
+	zval **prop_result;
 	zend_overloaded_element *overloaded_property;
 	zend_llist_element *element;
 	zval object = *property_reference->object;
-	prop_getter_t *getter;
-	zend_class_entry *ce;
-	int found;
+	int getter_retval;
 
 	for (element=property_reference->elements_list->head; element; element=element->next) {
 		overloaded_property = (zend_overloaded_element *) element->data;
-		if ((Z_TYPE_P(overloaded_property) != OE_IS_OBJECT ||
-			Z_TYPE(overloaded_property->element) != IS_STRING) ||
-			Z_TYPE(object) != IS_OBJECT) {
-			convert_to_null(&result);
-			return result;
-		}
 
-		found = FAILURE;
-		for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
-			if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
-				(*getter)(&result, &object, &element, &found);
+		getter_retval = FAILURE;
+		ZVAL_NULL(&result);
+		if (Z_TYPE_P(overloaded_property) == OE_IS_OBJECT) {
+			/* Trying to access a property on a non-object. */
+			if (Z_TYPE(object) != IS_OBJECT) {
+				return result;
 			}
+
+			if ((getter_retval = invoke_getter(&object, &result, &element) == FAILURE)) {
+				getter_retval = zend_hash_find(Z_OBJPROP(object),
+											   Z_STRVAL(overloaded_property->element),
+											   Z_STRLEN(overloaded_property->element)+1,
+											   (void **)&prop_result);
+				result = **prop_result;
+			}
+		} else if (Z_TYPE_P(overloaded_property) == OE_IS_ARRAY) {
+			/* Trying to access index on a non-array. */
+			if (Z_TYPE(object) != IS_ARRAY) {
+				return result;
+			}
+
+			if (Z_TYPE(overloaded_property->element) == IS_STRING) {
+				getter_retval = zend_hash_find(Z_ARRVAL(object),
+											   Z_STRVAL(overloaded_property->element),
+											   Z_STRLEN(overloaded_property->element)+1,
+											   (void **)&prop_result);
+			} else if (Z_TYPE(overloaded_property->element) == IS_LONG) {
+				getter_retval = zend_hash_index_find(Z_ARRVAL(object),
+													 Z_LVAL(overloaded_property->element),
+													 (void **)&prop_result);
+			}
+			if (getter_retval == SUCCESS)
+				result = **prop_result;
 		}
-		if (found == FAILURE) {
-			convert_to_null(&result);
-			return result;
-		}
-		object = result;
 
 		zval_dtor(&overloaded_property->element);
+
+		object = result;
+
+		if (getter_retval == FAILURE) {
+			return result;
+		}
 	}
 
     return result;
@@ -656,15 +712,14 @@ zval php_gtk_get_property(zend_property_reference *property_reference)
 
 int php_gtk_set_property(zend_property_reference *property_reference, zval *value)
 {
-	zval result;
+	zval result, temp;
+	zval *temp_ptr = &temp;
+	zval *new_val;
 	zend_overloaded_element *overloaded_property;
 	zend_llist_element *element;
 	zend_llist_element *stop_element;
-	zval object = *property_reference->object;
-	prop_getter_t *getter;
-	prop_setter_t *setter;
-	zend_class_entry *ce;
-	int retval, found;
+	zval **object = &property_reference->object;
+	int setter_retval, getter_retval, last_oe_object = 0;
 
 	/*
 	 * We want to stop at the last overloaded object reference - the rest can
@@ -673,220 +728,102 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 	for (stop_element=property_reference->elements_list->tail;
 		 stop_element && Z_TYPE_P((zend_overloaded_element *)stop_element->data) == OE_IS_ARRAY;
 		 stop_element=stop_element->prev);
-
-	for (element=property_reference->elements_list->head; element && element!=stop_element; element=element->next) {
-		overloaded_property = (zend_overloaded_element *) element->data;
-		if (Z_TYPE_P(overloaded_property) != OE_IS_OBJECT ||
-			Z_TYPE(overloaded_property->element) != IS_STRING ||
-			Z_TYPE(object) != IS_OBJECT) {
-			return FAILURE;
-		}
-
-		found = FAILURE;
-		for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
-			if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
-				(*getter)(&result, &object, &element, &found);
-			}
-		}
-		if (found == FAILURE)
-			return FAILURE;
-		object = result;
-
-		zval_dtor(&overloaded_property->element);
-	}
-
-	retval = FAILURE;
-	overloaded_property = (zend_overloaded_element *) element->data;
-	if (zend_hash_index_find(&php_gtk_prop_setters, (long)object.value.obj.ce, (void **)&setter) == SUCCESS) {
-		retval = (*setter)(&object, &element, value);
-	}
-
-	zval_dtor(&overloaded_property->element);
-	return retval;
-}
-
-
-zval php_gtk_get_property_exp(zend_property_reference *property_reference)
-{
-	zval result;
-	zval **prop_result;
-	zval property;
-	zend_overloaded_element *overloaded_property;
-	zend_llist_element *element;
-	zval object = *property_reference->object;
-	prop_getter_t *getter;
-	zend_class_entry *ce;
-	int found;
 
 	for (element=property_reference->elements_list->head; element; element=element->next) {
 		overloaded_property = (zend_overloaded_element *) element->data;
 
-		found = FAILURE;
+		getter_retval = FAILURE;
 		if (Z_TYPE_P(overloaded_property) == OE_IS_OBJECT) {
+			if (Z_TYPE_PP(object) == IS_NULL ||
+				(Z_TYPE_PP(object) == IS_BOOL && Z_LVAL_PP(object) == 0) ||
+				(Z_TYPE_PP(object) == IS_STRING && Z_STRLEN_PP(object) == 0)) {
+				object_init(*object);
+			}
+
 			/* Trying to access a property on a non-object. */
-			if (Z_TYPE(object) != IS_OBJECT) {
-				ZVAL_NULL(&result);
-				return result;
-			}
-
-			if (Z_OBJCE(object)->handle_property_get) {
-				for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
-					if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
-						(*getter)(&result, &object, &element, &found);
-					}
-				}
-			}
-			if (found == FAILURE &&
-				(found = zend_hash_find(Z_OBJPROP(object),
-							   Z_STRVAL(overloaded_property->element),
-							   Z_STRLEN(overloaded_property->element)+1,
-							   (void **)&prop_result)) == SUCCESS) {
-				result = **prop_result;
-			}
-		} else if (Z_TYPE_P(overloaded_property) == OE_IS_ARRAY) {
-			/* Trying to access index on a non-array. */
-			if (Z_TYPE(object) != IS_ARRAY) {
-				ZVAL_NULL(&result);
-				return result;
-			}
-
-			if (Z_TYPE(overloaded_property->element) == IS_STRING) {
-				found = zend_hash_find(Z_ARRVAL(object),
-									   Z_STRVAL(overloaded_property->element),
-									   Z_STRLEN(overloaded_property->element)+1,
-									   (void **)&prop_result);
-			} else if (Z_TYPE(overloaded_property->element) == IS_LONG) {
-				found = zend_hash_index_find(Z_ARRVAL(object),
-											 Z_LVAL(overloaded_property->element),
-											 (void **)&prop_result);
-			}
-			if (found == SUCCESS)
-				result = **prop_result;
-		}
-
-		if (found == FAILURE) {
-			ZVAL_NULL(&result);
-		}
-		object = result;
-
-		zval_dtor(&overloaded_property->element);
-	}
-
-    return result;
-}
-
-
-int php_gtk_set_property_exp(zend_property_reference *property_reference, zval *value)
-{
-	zval result;
-	zval **prop_result;
-	zend_overloaded_element *overloaded_property;
-	zend_llist_element *element;
-	zend_llist_element *stop_element;
-	zval object = *property_reference->object;
-	prop_getter_t *getter;
-	prop_setter_t *setter;
-	zend_class_entry *ce;
-	int retval, found;
-
-	/*
-	 * We want to stop at the last overloaded object reference - the rest can
-	 * contain array references, that's fine.
-	 */
-	for (stop_element=property_reference->elements_list->tail;
-		 stop_element && Z_TYPE_P((zend_overloaded_element *)stop_element->data) == OE_IS_ARRAY;
-		 stop_element=stop_element->prev);
-
-	for (element=property_reference->elements_list->head; element && element!=stop_element; element=element->next) {
-		overloaded_property = (zend_overloaded_element *) element->data;
-
-		found = FAILURE;
-		if (Z_TYPE_P(overloaded_property) == OE_IS_OBJECT) {
-			/* Trying to access a property on a non-object. */
-			if (Z_TYPE(object) != IS_OBJECT) {
+			if (Z_TYPE_PP(object) != IS_OBJECT) {
+				return FAILURE;
+			} else if (last_oe_object) {
+				php_error(E_WARNING, "Cannot create property '%s' on overloaded property",
+						  Z_STRVAL(overloaded_property->element));
 				return FAILURE;
 			}
 
-			if (Z_OBJCE(object)->handle_property_get) {
-				for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
-					if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
-						(*getter)(&result, &object, &element, &found);
-					}
+			if (element == stop_element) {
+				if (invoke_setter(*object, value, &element) == SUCCESS)
+					return SUCCESS;
+				else if ((getter_retval = invoke_getter(*object, &result, &element)) == SUCCESS) {
+					php_error(E_WARNING, "Cannot assign to overloaded property '%s'",
+							  Z_STRVAL(overloaded_property->element));
+					return FAILURE;
+				}
+			} else
+				getter_retval = invoke_getter(*object, &result, &element);
+
+			if (getter_retval == SUCCESS) {
+				temp = result;
+				object = &temp_ptr;
+				last_oe_object = 1;
+			} else {
+				last_oe_object = 0;
+				if ((getter_retval = zend_hash_find(Z_OBJPROP_PP(object),
+											   Z_STRVAL(overloaded_property->element),
+											   Z_STRLEN(overloaded_property->element)+1,
+											   (void **)&object)) == FAILURE) {
+					MAKE_STD_ZVAL(new_val);
+					ZVAL_NULL(new_val);
+					zend_hash_update(Z_OBJPROP_PP(object),
+									 Z_STRVAL(overloaded_property->element),
+									 Z_STRLEN(overloaded_property->element)+1,
+									 &new_val, sizeof(void *), (void **)&object);
 				}
 			}
-			if (found == FAILURE &&
-				(found = zend_hash_find(Z_OBJPROP(object),
-							   Z_STRVAL(overloaded_property->element),
-							   Z_STRLEN(overloaded_property->element)+1,
-							   (void **)&prop_result)) == SUCCESS) {
-				result = **prop_result;
-			}
 		} else if (Z_TYPE_P(overloaded_property) == OE_IS_ARRAY) {
+			if (Z_TYPE_PP(object) == IS_NULL ||
+				(Z_TYPE_PP(object) == IS_BOOL && Z_LVAL_PP(object) == 0) ||
+				(Z_TYPE_PP(object) == IS_STRING && Z_STRLEN_PP(object) == 0)) {
+				array_init(*object);
+			}
+
 			/* Trying to access index on a non-array. */
-			if (Z_TYPE(object) != IS_ARRAY) {
+			if (Z_TYPE_PP(object) != IS_ARRAY) {
 				return FAILURE;
 			}
 
 			if (Z_TYPE(overloaded_property->element) == IS_STRING) {
-				found = zend_hash_find(Z_ARRVAL(object),
-									   Z_STRVAL(overloaded_property->element),
-									   Z_STRLEN(overloaded_property->element)+1,
-									   (void **)&prop_result);
+				getter_retval = zend_hash_find(Z_ARRVAL_PP(object),
+											   Z_STRVAL(overloaded_property->element),
+											   Z_STRLEN(overloaded_property->element)+1,
+											   (void **)&object);
 			} else if (Z_TYPE(overloaded_property->element) == IS_LONG) {
-				found = zend_hash_index_find(Z_ARRVAL(object),
-											 Z_LVAL(overloaded_property->element),
-											 (void **)&prop_result);
+				getter_retval = zend_hash_index_find(Z_ARRVAL_PP(object),
+													 Z_LVAL(overloaded_property->element),
+													 (void **)&object);
 			}
-			if (found == SUCCESS)
-				result = **prop_result;
-		}
 
-		if (found == FAILURE) {
-			/* TODO if not found store a null as the property/index, then in the
-			 * above checks replace init null to array or object */
-			return FAILURE;
+			if (getter_retval == FAILURE) {
+				MAKE_STD_ZVAL(new_val);
+				ZVAL_NULL(new_val);
+				if (Z_TYPE(overloaded_property->element) == IS_STRING) {
+					zend_hash_update(Z_ARRVAL_PP(object),
+									  Z_STRVAL(overloaded_property->element),
+									  Z_STRLEN(overloaded_property->element)+1,
+									  &new_val, sizeof(void *), (void **)&object);
+				} else if (Z_TYPE(overloaded_property->element) == IS_LONG) {
+					zend_hash_index_update(Z_ARRVAL_PP(object),
+										   Z_LVAL(overloaded_property->element),
+										   &new_val, sizeof(void *), (void **)&object);
+				}
+			}
+
+			last_oe_object = 0;
 		}
-		object = result;
 
 		zval_dtor(&overloaded_property->element);
 	}
 
-	retval = FAILURE;
-	overloaded_property = (zend_overloaded_element *) element->data;
-	if (Z_OBJCE(object)->handle_property_set) {
-		for (ce = Z_OBJCE(object); ce != NULL && retval != SUCCESS; ce = ce->parent) {
-			if (zend_hash_index_find(&php_gtk_prop_setters, (long)ce, (void **)&setter) == SUCCESS) {
-				retval = (*setter)(&object, &element, value);
-			}
-		}
-	}
-	if (retval == FAILURE) {
-		if (Z_OBJCE(object)->handle_property_get) {
-			for (ce = Z_OBJCE(object); ce != NULL && retval != SUCCESS; ce = ce->parent) {
-				if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
-					(*getter)(&result, &object, &element, &retval);
-				}
-			}
-		}
-
-		if (retval == FAILURE) {
-			zval *local_value;
-
-			MAKE_STD_ZVAL(local_value);
-			*local_value = *value;
-			zval_copy_ctor(local_value);
-			INIT_PZVAL(local_value);
-			retval = add_property_zval_ex(&object,
-										  Z_STRVAL(overloaded_property->element),
-										  Z_STRLEN(overloaded_property->element)+1, local_value);
-		} else {
-			php_error(E_WARNING, "Cannot assign to overloaded property '%s'",
-					  Z_STRVAL(overloaded_property->element));
-		}
-	}
-
-	zval_dtor(&overloaded_property->element);
-	return retval;
+	REPLACE_ZVAL_VALUE(object, value, 1);
+	return SUCCESS;
 }
 
 

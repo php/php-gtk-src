@@ -82,7 +82,6 @@ static void %s_get_property(zval *return_value, zval *object, zend_llist_element
 {
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
-	ZVAL_NULL(return_value);
 	*found = SUCCESS;
 
 %s
@@ -91,7 +90,7 @@ static void %s_get_property(zval *return_value, zval *object, zend_llist_element
 }\n\n";
 
 $init_class_tpl = "
-	INIT_OVERLOADED_CLASS_ENTRY(ce, \"%s\", php_%s_functions, NULL, %s, NULL);\n";
+	INIT_OVERLOADED_CLASS_ENTRY(ce, \"%s\", php_%s_functions, NULL, %s, php_gtk_set_property);\n";
 
 $get_type_tpl = "
 PHP_FUNCTION(wrap_%s_get_type)
