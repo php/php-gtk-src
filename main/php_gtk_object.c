@@ -385,7 +385,7 @@ PHP_GTK_API zval *php_gtk_new_base_gobject(GObject *obj)
 	zval *zobj;
 	php_gtk_object *wrapper = NULL;
 	zend_class_entry *ce;
-	GtkType type;
+	GType type;
 	TSRMLS_FETCH();
 	
 	if (!obj) {
@@ -399,9 +399,9 @@ PHP_GTK_API zval *php_gtk_new_base_gobject(GObject *obj)
 		return zobj;
 	}
 
-	type = GTK_OBJECT_TYPE(obj);
-	while ((ce = g_hash_table_lookup(php_gtk_class_hash, gtk_type_name(type))) == NULL)
-		type = gtk_type_parent(type);
+	type = G_OBJECT_TYPE(obj);
+	while ((ce = g_hash_table_lookup(php_gtk_class_hash, g_type_name(type))) == NULL)
+		type = g_type_parent(type);
 
 	MAKE_STD_ZVAL(zobj);
 	object_init_ex(zobj, ce);
