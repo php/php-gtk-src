@@ -50,6 +50,89 @@ function toggle_reorderable($button, $clist)
 $ctree_data['books'] = 1;
 $ctree_data['pages'] = 0;
 
+function create_dnd()
+{
+	global	$windows;
+	if (!isset($windows['dnd'])) {
+		$targets = array(array('text/plain', 0, -1));
+
+		function dnd_drag_data_get($widget, $context, $selection_data, $info, $time)
+		{
+			$dnd_string = "Perl is the only language that looks\nthe same before and after RSA encryption";
+			$selection_data->set($selection_data->target, 8, $dnd_string);
+		}
+
+		function dnd_drag_data_received($widget, $context, $x, $y, $data, $info, $time)
+		{
+			if ($data && $data->format == 8)
+				print "Drop data of type " . $data->target->string . " was:\n'$data->data'.\n";
+		}
+		
+		$window = &new GtkWindow;
+		$windows['dnd'] = $window;
+		$window->connect('delete-event', 'delete_event');
+		$window->set_title('Drag-n-Drop');
+
+		$box1 = &new GtkVBox();
+		$window->add($box1);
+		$box1->show();
+
+		$box2 = &new GtkHBox(false, 5);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2);
+		$box2->show();
+		
+		$frame = &new GtkFrame('Drag');
+		$box2->pack_start($frame);
+		$frame->show();
+
+		$box3 = &new GtkVBox(false, 5);
+		$box3->set_border_width(5);
+		$frame->add($box3);
+		$box3->show();
+
+		$button = &new GtkButton('Drag me!');
+		$box3->pack_start($button);
+		$button->show();
+		$button->connect('drag_data_get', 'dnd_drag_data_get');
+		$button->drag_source_set(GDK_BUTTON1_MASK|GDK_BUTTON3_MASK, $targets,
+								 GDK_ACTION_COPY);
+
+		$frame = &new GtkFrame('Drop');
+		$box2->pack_start($frame);
+		$frame->show();
+
+		$box3 = &new GtkVBox(false, 5);
+		$box3->set_border_width(5);
+		$frame->add($box3);
+		$box3->show();
+
+		$button = &new GtkButton('To');
+		$box3->pack_start($button);
+		$button->show();
+		$button->realize();
+		$button->connect('drag_data_received', 'dnd_drag_data_received');
+		$button->drag_dest_set(GTK_DEST_DEFAULT_ALL, $targets, GDK_ACTION_COPY);
+
+		$separator = &new GtkHSeparator();
+		$box1->pack_start($separator, false);
+		$separator->show();
+
+		$box2 = &new GtkVBox(false, 10);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2, false);
+		$box2->show();
+
+		$button = &new GtkButton('close');
+		$button->connect('clicked', 'close_window');
+		$box2->pack_start($button);
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$button->grab_default();
+		$button->show();
+	}
+	$windows['dnd']->show();
+}
+
 function create_ctree()
 {
 	global	$windows,
@@ -1877,6 +1960,7 @@ function create_main_window()
 					 'dialog'			=> null,
 					 'panes'			=> null,
 					 'pixmap'			=> 'create_pixmap',
+					 'drag\'n\'drop'	=> 'create_dnd',
 					);
 
 	$window = &new GtkWindow();

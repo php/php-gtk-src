@@ -1,3 +1,4 @@
+    - finished drag-n-drop support. (Andrei)
     - ported Scribble example from C. (Andrei)
     - modified GdkWindow::get_pointer() to be simpler, without XInput support.
       (Andrei)

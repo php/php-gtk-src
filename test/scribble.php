@@ -80,13 +80,14 @@ function draw_brush($widget, $x, $y)
 	global	$pixmap;
 
 	gdk::draw_arc($pixmap, $widget->style->black_gc,
-				  true, $x - 5, $y - 5, 10, 10, 0, 64 * 360); 
-	$widget->draw($x - 5, $y - 5, 10, 10);
+				  true, $x - 4, $y - 4, 8, 8, 0, 64 * 360); 
+	$widget->draw($x - 4, $y - 4, 8, 8);
 }
 
 
 $window = &new GtkWindow();
 $window->set_name('Test Input');
+$window->set_position(GTK_WIN_POS_CENTER);
 
 $window->connect_object('destroy', array('gtk', 'main_quit'));
 
@@ -95,7 +96,7 @@ $window->add($vbox);
 $vbox->show();
 
 $drawing_area = &new GtkDrawingArea();
-$drawing_area->size(200, 200);
+$drawing_area->size(300, 300);
 $vbox->pack_start($drawing_area);
 $drawing_area->show();
 

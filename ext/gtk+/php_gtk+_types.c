@@ -80,6 +80,7 @@ zval *php_gdk_event_new(GdkEvent *event)
 	}
 
 	object_init_ex(result, gdk_event_ce);
+	php_gtk_set_object(result, event, le_php_gtk_wrapper);
 
 	add_property_long(result, "type", event->type);
 	
@@ -375,6 +376,7 @@ PHP_FUNCTION(gdk_window_new_gc)
 
 PHP_FUNCTION(gdk_window_property_get)
 {
+	zval *php_property;
 	GdkAtom property, type = 0;
 	gint delete = FALSE;
 	GdkAtom atype;
@@ -383,14 +385,15 @@ PHP_FUNCTION(gdk_window_property_get)
 
 	NOT_STATIC_METHOD();
 
-	if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "O|Oi", &property, gdk_atom_ce, &type, gdk_atom_ce, &delete)) {
+	if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "O|Oi", &php_property, gdk_atom_ce, &type, gdk_atom_ce, &delete)) {
 		gchar *prop_name;
 
 		if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s|Oi", &prop_name, &type, gdk_atom_ce, &delete))
 			return;
 
 		property = gdk_atom_intern(prop_name, FALSE);
-	}
+	} else
+		property = PHP_GDK_ATOM_GET(php_property);
 
 	if (gdk_property_get(PHP_GDK_WINDOW_GET(this_ptr), property, type, 0, 9999, delete,
 						 &atype, &aformat, &alength, &data)) {
@@ -432,6 +435,7 @@ PHP_FUNCTION(gdk_window_property_get)
 
 PHP_FUNCTION(gdk_window_property_change)
 {
+	zval *php_property;
 	GdkAtom property, type;
 	gint format;
 	zval *php_mode, *php_data;
@@ -441,7 +445,7 @@ PHP_FUNCTION(gdk_window_property_change)
 
 	NOT_STATIC_METHOD();
 
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OOiVV", &property, gdk_atom_ce,
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OOiVV/", &php_property, gdk_atom_ce,
 							&type, gdk_atom_ce, &format, &php_mode, &php_data)) {
 		gchar *prop_name;
 
@@ -449,8 +453,9 @@ PHP_FUNCTION(gdk_window_property_change)
 								gdk_atom_ce, &format, &php_mode, &php_data))
 			return;
 
-			property = gdk_atom_intern(prop_name, FALSE);
-	}
+		property = gdk_atom_intern(prop_name, FALSE);
+	} else
+		property = PHP_GDK_ATOM_GET(php_property);
 
 	if (!php_gtk_get_enum_value(GTK_TYPE_GDK_PROP_MODE, php_mode, (gint *)&mode))
 		return;
@@ -522,18 +527,20 @@ PHP_FUNCTION(gdk_window_property_change)
 
 PHP_FUNCTION(gdk_window_property_delete)
 {
+	zval *php_property;
 	GdkAtom property;
 
 	NOT_STATIC_METHOD();
 
-	if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "O", &property, gdk_atom_ce)) {
+	if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "O", &php_property, gdk_atom_ce)) {
 		gchar *prop_name;
 
 		if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "s", &prop_name))
 			return;
 
 		property = gdk_atom_intern(prop_name, FALSE);
-	}
+	} else
+		property = PHP_GDK_ATOM_GET(php_property);
 
 	gdk_property_delete(PHP_GDK_WINDOW_GET(this_ptr), property);
 }
@@ -1654,16 +1661,16 @@ static void gdk_drag_context_get_property(zval *return_value, zval *object, zend
 /* GtkSelectionData */
 PHP_FUNCTION(gtk_selection_data_set)
 {
-	GdkAtom type;
+	zval *type;
 	int format, length;
 	guchar *data;
 
 	NOT_STATIC_METHOD();
 
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iis#", &type, &format, &data, &length))
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Ois#", &type, gdk_atom_ce, &format, &data, &length))
 		return;
 
-	gtk_selection_data_set(PHP_GTK_SELECTION_DATA_GET(this_ptr), type, format, data, length);
+	gtk_selection_data_set(PHP_GTK_SELECTION_DATA_GET(this_ptr), PHP_GDK_ATOM_GET(type), format, data, length);
 	RETURN_NULL();
 }
 

@@ -2032,3 +2032,132 @@ getprop GtkWidget allocation
 	add_property_long(return_value, "y", widget->allocation.y);
 	add_property_long(return_value, "width", widget->allocation.width);
 	add_property_long(return_value, "height", widget->allocation.height);
+%%
+override gtk_drag_dest_set
+PHP_FUNCTION(wrap_gtk_drag_dest_set)
+{
+	zval *php_flags, *php_targets, *php_actions;
+	zval **item;
+	GtkDestDefaults flags;
+	GdkDragAction actions;
+	GtkTargetEntry *targets;
+	int i;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "VaV", &php_flags, &php_targets,
+							&php_actions))
+		return;
+
+	if (!php_gtk_get_flag_value(GTK_TYPE_DEST_DEFAULTS, php_flags, (gint *)&flags))
+		return;
+
+	if (!php_gtk_get_flag_value(GTK_TYPE_GDK_DRAG_ACTION, php_actions, (gint *)&actions))
+		return;
+
+	targets = g_new(GtkTargetEntry, zend_hash_num_elements(Z_ARRVAL_P(php_targets)));
+
+	for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_targets)), i = 0;
+		 zend_hash_get_current_data(Z_ARRVAL_P(php_targets), (void **)&item) == SUCCESS;
+		 zend_hash_move_forward(Z_ARRVAL_P(php_targets)), i++) {
+		if (Z_TYPE_PP(item) != IS_ARRAY ||
+			!php_gtk_parse_args_hash_quiet(*item, "sii", &targets[i].target,
+										   &targets[i].flags, &targets[i].info)) {
+			php_error(E_WARNING, "%s() was unable to parse target #%d in the list of targets", get_active_function_name(), i+1);
+			g_free(targets);
+			return;
+		}
+	}
+
+	gtk_drag_dest_set(GTK_WIDGET(PHP_GTK_GET(this_ptr)), flags, targets, i, actions);
+	g_free(targets);
+}
+%%
+override gtk_drag_source_set
+PHP_FUNCTION(wrap_gtk_drag_source_set)
+{
+	zval *php_sbmask, *php_targets, *php_actions;
+	zval **item;
+	GdkModifierType sbmask;
+	GdkDragAction actions;
+	GtkTargetEntry *targets;
+	int i;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "VaV", &php_sbmask, &php_targets,
+							&php_actions))
+		return;
+
+	if (!php_gtk_get_flag_value(GTK_TYPE_GDK_MODIFIER_TYPE, php_sbmask, (gint *)&sbmask))
+		return;
+
+	if (!php_gtk_get_flag_value(GTK_TYPE_GDK_DRAG_ACTION, php_actions, (gint *)&actions))
+		return;
+
+	targets = g_new(GtkTargetEntry, zend_hash_num_elements(Z_ARRVAL_P(php_targets)));
+
+	for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_targets)), i = 0;
+		 zend_hash_get_current_data(Z_ARRVAL_P(php_targets), (void **)&item) == SUCCESS;
+		 zend_hash_move_forward(Z_ARRVAL_P(php_targets)), i++) {
+		if (Z_TYPE_PP(item) != IS_ARRAY ||
+			!php_gtk_parse_args_hash_quiet(*item, "sii", &targets[i].target,
+										   &targets[i].flags, &targets[i].info)) {
+			php_error(E_WARNING, "%s() was unable to parse target #%d in the list of targets", get_active_function_name(), i+1);
+			g_free(targets);
+			return;
+		}
+	}
+
+	gtk_drag_source_set(GTK_WIDGET(PHP_GTK_GET(this_ptr)), sbmask, targets, i, actions);
+	g_free(targets);
+}
+%%
+override gtk_drag_begin
+PHP_FUNCTION(wrap_gtk_drag_begin)
+{
+	zval *php_targets, *php_actions, *event;
+	zval *php_ret, **item;
+	GdkDragAction actions;
+	GtkTargetEntry *tents;
+	GtkTargetList *targets;
+	GdkDragContext *context;
+	gint button, i;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "aViO", &php_targets, &php_actions,
+							&button, &event, gdk_event_ce))
+		return;
+
+	if (!php_gtk_get_flag_value(GTK_TYPE_GDK_DRAG_ACTION, php_actions, (gint *)&actions))
+		return;
+
+	tents = g_new(GtkTargetEntry, zend_hash_num_elements(Z_ARRVAL_P(php_targets)));
+
+	for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_targets)), i = 0;
+		 zend_hash_get_current_data(Z_ARRVAL_P(php_targets), (void **)&item) == SUCCESS;
+		 zend_hash_move_forward(Z_ARRVAL_P(php_targets)), i++) {
+		if (Z_TYPE_PP(item) != IS_ARRAY ||
+			!php_gtk_parse_args_hash_quiet(*item, "sii", &tents[i].target,
+										   &tents[i].flags, &tents[i].info)) {
+			php_error(E_WARNING, "%s() was unable to parse target #%d in the list of targets", get_active_function_name(), i+1);
+			g_free(tents);
+			return;
+		}
+	}
+
+	targets = gtk_target_list_new(tents, i);
+	g_free(tents);
+	context = gtk_drag_begin(GTK_WIDGET(PHP_GTK_GET(this_ptr)), targets, actions, button, PHP_GDK_EVENT_GET(event));
+	gtk_target_list_unref(targets);
+
+	php_ret = php_gdk_drag_context_new(context);
+	SEPARATE_ZVAL(&php_ret);
+	*return_value = *php_ret;
+}
+%%
+ignore
+  gtk_drag_source_handle_event gtk_drag_dest_handle_event
+  gtk_selection_request gtk_selection_notify gtk_selection_property_notify
+  gtk_selection_incr_event
