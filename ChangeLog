@@ -1,3 +1,18 @@
+2005-03-24  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.defs
+      ext/gtk+/gdk.overrides:
+      Implement GdkRectangle::intersect() and ::union().
+
+    * ext/gtk+/Makefile.frag:
+      Fix generation error that resulted in a wrong header file being created.
+
+    * php_gtk.m4
+      build2/build.mk
+      build2/build2.mk
+      build2/config-stubs:
+      Some modifications to the build system to avoid aclocal problems.
+
 2005-03-22  Andrei Zmievski  <andrei@gravitonic.com>
 
     * TODO2
