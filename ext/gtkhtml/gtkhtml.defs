@@ -517,9 +517,9 @@
   (parameter (type-and-name gint level))
 )
 
-(method set_indent_by_delta
+(method modify_indent_by_delta
   (of-object HTML (Gtk))
-  (c-name gtk_html_set_indent_by_delta)
+  (c-name gtk_html_modify_indent_by_delta)
   (return-type none)
   (parameter (type-and-name gint delta))
 )
