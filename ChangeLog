@@ -1,3 +1,7 @@
+2001-11-12  Frank M. Kromann  <frank@frontbase.com>
+
+    * ext/gtk+/gtk.overrides: Fixing string problems in win32.
+
 2001-11-11  Frank M. Kromann  <frank@frontbase.com>
 
     * win32/makedist.cmd: Rename samples to test according to the docs.
