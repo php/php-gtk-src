@@ -143,7 +143,7 @@ void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *
 {
 	zval *gtk_args;
 	zval *signal_data = (zval *)data;
-	zval **func, **extra = NULL, **pass_wrapper;
+	zval **func, **extra = NULL, **pass_wrapper = NULL;
 	zval *wrapper = NULL;
 	zval *params;
 	zval *retval = NULL;
@@ -160,7 +160,7 @@ void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *
 	} else
 		func = &signal_data;
 
-	if (Z_LVAL_PP(pass_wrapper) && o)
+	if (pass_wrapper && Z_LVAL_PP(pass_wrapper) && o)
 		wrapper = php_gtk_new(o);
 
 	if (wrapper) {
