@@ -1,3 +1,11 @@
+2002-05-20  Frank M. Kromann  <frank@frontbase.com>
+
+    * ext/gtk+/gtk.overrides:
+    Adding utf8 encoding to GtkRadioButton and GtkToggleButton
+
+    * ext/gtk+/gtk.overrides:
+    Adding utf8 encoding to gtk_check_menu_item_new and gtk_check_button_new
+
 2002-04-30  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/piemenu/config.m4
