@@ -1,0 +1,62 @@
+/* vim: set ft=cpp: */
+%%
+headers
+#include <gdk_imlib.h>
+#include "php_imlib.h"
+#include "ext/gtk+/php_gtk+.h"
+%%
+constants
+%%
+ignore-glob
+  *_get_type
+  
+%%
+ignore gdk_imlib_get_image_shape
+ignore gdk_imlib_set_image_shape
+ignore gdk_imlib_set_image_modifier
+ignore gdk_imlib_set_image_red_modifier
+ignore gdk_imlib_set_image_green_modifier
+ignore gdk_imlib_set_image_blue_modifier
+ignore gdk_imlib_get_image_modifier
+ignore gdk_imlib_get_image_red_modifier
+ignore gdk_imlib_get_image_green_modifier
+ignore gdk_imlib_get_image_blue_modifier
+ignore gdk_imlib_save_image
+/* these can be done later  - they are quite easy */
+
+%%
+override gdk_imlib_get_image_border
+PHP_FUNCTION(gdk_imlib_get_image_border)
+{
+	zval *image;
+	GdkImlibBorder border;
+	
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &image, gdk_imlib_image_ce))
+		return;
+	
+	gdk_imlib_get_image_border(PHP_GDK_IMLIB_IMAGE_GET(image),  &border);
+	
+	
+	array_init(return_value);
+	add_next_index_long(return_value, (long)border.left);
+	
+	add_next_index_long(return_value, (long)border.right);
+	add_next_index_long(return_value, (long)border.top);
+	add_next_index_long(return_value, (long)border.bottom);
+	
+	 
+}
+%%
+override gdk_imlib_set_image_border
+
+PHP_FUNCTION(gdk_imlib_set_image_border)
+{
+	zval *image;
+	GdkImlibBorder border;
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oiiii", &image, gdk_imlib_image_ce,&border.left,&border.right,&border.top,&border.bottom ))
+		return;
+
+	gdk_imlib_set_image_border(PHP_GDK_IMLIB_IMAGE_GET(image), &border);
+	RETURN_NULL();
+}
