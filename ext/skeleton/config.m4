@@ -1,8 +1,8 @@
 dnl $Id$
 dnl config.m4 for skeleton module
 
-dnl  PHP_GTK_ARG_ENABLE(skeleton,for Skeleton support,
-dnl  [  --enable-skeleton       Enable Skeleton support])
+dnl  PHP_GTK_ARG_ENABLE(skeleton,for GtkSkeleton support,
+dnl  [  --enable-skeleton       Enable GtkSkeleton support])
 
 dnl  if test "$PHP_GTK_SKELETON" != "no"; then
 dnl    for x in /usr/local /usr; do
