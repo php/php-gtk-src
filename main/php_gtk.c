@@ -110,7 +110,8 @@ PHP_RINIT_FUNCTION(gtk)
 	zend_hash_init_ex(&php_gtk_rsrc_hash, 50, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_type_hash, 50, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_prop_desc, 50, NULL, NULL, 1, 0);
-	
+	zend_hash_init_ex(&php_gtk_callback_hash, 50, NULL, NULL, 1, 0);
+	 
 	zend_unset_timeout(TSRMLS_C);
 	zend_set_timeout(0);
 

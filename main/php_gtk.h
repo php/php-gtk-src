@@ -48,10 +48,15 @@
 #endif
 
 #include "php_gtk_module.h"
+#include <glib-object.h>
 
 #define PHP_GTK_EXPORT_CE(ce) zend_class_entry *ce
 #define PHP_GTK_EXPORT_FUNC(func) func
+
+
 #define PHP_GTK_GET_GENERIC(w, type, le) ((type)php_gtk_get_object(w, le))
+
+
 #define PHP_GTK_SEPARATE_RETURN(return_value, result)			\
 	{															\
 		zval *ret;												\
@@ -84,6 +89,19 @@ struct _php_gtk_ext_entry {
 	int ext_started;
 	void *handle;
 };
+ 
+
+typedef struct _php_gtk_closure php_gtk_closure;
+struct _php_gtk_closure {
+    GClosure	closure;
+    zval 	*callback;
+    char	*callback_filename;
+    uint 	callback_lineno;
+    zval 	*extra;
+    int		pass_object;
+};
+
+
 
 #define PHP_GTK_GET_EXTENSION(name) \
     ZEND_DLEXPORT php_gtk_ext_entry *get_extension(void) { return &name##_ext_entry; }
@@ -98,6 +116,8 @@ extern HashTable php_gtk_prop_getters;
 extern HashTable php_gtk_prop_setters;
 extern HashTable php_gtk_type_hash;
 extern HashTable php_gtk_prop_desc;
+extern HashTable php_gtk_callback_hash;
+
 
 /* Function declarations. */
 
@@ -106,10 +126,7 @@ int php_gtk_startup_extensions(php_gtk_ext_entry **ext, int ext_count, int modul
 
 static inline void php_gtk_set_object(zval *zobj, void *obj, php_gtk_dtor_t dtor, zend_bool boxed)
 {
-	php_gtk_object *wrapper;
-	TSRMLS_FETCH();
-
-	wrapper= (php_gtk_object *) zend_object_store_get_object(zobj TSRMLS_CC);
+	php_gtk_object *wrapper = (php_gtk_object *) zend_object_store_get_object(zobj TSRMLS_CC);
 	wrapper->obj = obj;
 	wrapper->dtor = dtor;
 	zend_objects_store_add_ref(zobj TSRMLS_CC);
@@ -119,10 +136,19 @@ static inline void php_gtk_set_object(zval *zobj, void *obj, php_gtk_dtor_t dtor
 }
 
 PHP_GTK_API void *php_gtk_get_object(zval *wrapper, int rsrc_type);
-PHP_GTK_API int php_gtk_get_simple_enum_value(zval *enum_val, int *result);
+int php_gtk_get_simple_enum_value(zval *enum_val, int *result);
 PHP_GTK_API int php_gtk_get_enum_value(GtkType enum_type, zval *enum_val, int *result);
 PHP_GTK_API void php_gtk_destroy_notify(gpointer user_data);
-PHP_GTK_API void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *args);
+PHP_GTK_API void php_gtk_closure_marshal(
+					GClosure 	*gobject_closure,
+					GValue 		*return_value,
+					guint 		n_param_values,
+					const GValue 	*param_values,
+					// this is the standard signal parameters..
+					// the first of which is usually the object..
+					gpointer 	invocation_hint,
+					gpointer 	marshal_data
+					);
 void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args);
 zval *php_gtk_args_as_hash(int nargs, GtkArg *args);
 GtkArg *php_gtk_hash_as_args(zval *hash, GtkType type, gint *nargs);
