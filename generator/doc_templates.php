@@ -62,6 +62,14 @@ $method_start_tpl = <<<EOD
 
 EOD;
 
+$method_func_start_tpl = <<<EOD
+
+  <method id="%s.method.%s">
+   <funcsynopsis>
+    <funcprototype>
+
+EOD;
+
 $method_end_tpl = <<<EOD
     </funcprototype>
    </funcsynopsis>

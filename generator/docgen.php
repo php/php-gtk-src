@@ -146,7 +146,9 @@ class DocGenerator {
 	{
 		foreach ($this->parser->functions as $function) {
 			if ($this->overrides->is_overriden($function->c_name)) {
+				$this->write_method($function, true);
 			} else if (!$this->overrides->is_ignored($function->c_name)) {
+				$this->write_method($function, false);
 			}
 		}
 	}
@@ -194,6 +196,7 @@ class DocGenerator {
 	function write_method($method, $overriden)
 	{
 		global	$method_start_tpl,
+				$method_func_start_tpl,
 				$method_end_tpl,
 				$funcproto_tpl,
 				$no_parameter_tpl;
@@ -204,13 +207,19 @@ class DocGenerator {
 				return;
 		}
 
-		$object_name = $method->of_object[1] . $method->of_object[0];
+		if (isset($method->of_object)) {
+			$object_name = $method->of_object[1] . $method->of_object[0];
 
-		fwrite($this->fp,
-			   sprintf($method_start_tpl,
-					   $this->prefix,
-					   strtolower($object_name),
-					   $method->name));
+			fwrite($this->fp,
+				   sprintf($method_start_tpl,
+						   $this->prefix,
+						   strtolower($object_name),
+						   $method->name));
+		} else
+			fwrite($this->fp,
+				   sprintf($method_func_start_tpl,
+						   $this->prefix,
+						   $method->name));
 
 		fwrite($this->fp,
 			   sprintf($funcproto_tpl,
