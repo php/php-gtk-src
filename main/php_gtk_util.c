@@ -536,11 +536,10 @@ PHP_GTK_API int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce
 	return 0;
 }
 
-PHP_GTK_API void php_gtk_invalidate(zval *wrapper)
+PHP_GTK_API void php_gtk_invalidate(zval *wrapper TSRMLS_DC)
 {
 	if (!wrapper) return;
-	zval_dtor(wrapper);
-	ZVAL_NULL(wrapper);
+	zend_objects_store_delete_object(wrapper TSRMLS_CC);
 }
 
 zend_bool php_gtk_is_callable(zval *callable, zend_bool syntax_only, char **callable_name)

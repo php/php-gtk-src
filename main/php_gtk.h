@@ -86,7 +86,6 @@ struct _php_gtk_ext_entry {
 #define PHP_GTK_GET_EXTENSION(name) \
     ZEND_DLEXPORT php_gtk_ext_entry *get_extension(void) { return &name##_ext_entry; }
 
-
 #include "ext/gtk+/php_gtk+.h"
 
 /* True globals. */
@@ -120,6 +119,8 @@ int php_gtk_get_flag_value(GtkType flag_type, zval *flag_val, int *result);
 PHP_GTK_API zval php_gtk_get_property(zend_property_reference *property_reference);
 PHP_GTK_API int php_gtk_set_property(zend_property_reference *property_reference, zval *value);
 void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference *property_reference);
+
+PHP_GTK_API zend_class_entry* php_gtk_register_class(const char *class_name, function_entry *class_functions, zend_class_entry *parent TSRMLS_DC);
 
 PHP_GTK_API void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter);
 PHP_GTK_API void php_gtk_register_prop_setter(zend_class_entry *ce, prop_setter_t setter);

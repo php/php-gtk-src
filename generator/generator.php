@@ -392,10 +392,16 @@ class Generator {
 			$struct_lname = strtolower(substr(convert_typename($struct->name),1));
 			fwrite($fp, "\n/* struct $struct->c_name */\n");
 
+			/*
 			$this->register_classes .= sprintf($struct_class_tpl,
 											   $struct->in_module . $struct->name,
 											   $struct_module . '_' . $struct_lname);
-			$this->register_classes .= sprintf($register_class_tpl, $struct->ce, 'NULL');
+		    */
+			$this->register_classes .= sprintf($register_class_tpl,
+											   $struct->ce,
+											   $struct->in_module . $struct->name,
+											   $struct_module . '_' . $struct_lname,
+											   'NULL');
 
 			$init_prop_code = array();
 			$construct_prop_code = array();
@@ -455,10 +461,12 @@ class Generator {
 									   $struct->in_module . $struct->name,
 									   strtolower($struct->c_name),
 									   'NULL');
+			/*
 			$functions_decl .= sprintf($function_entry_tpl,
 									   $struct_module . $struct_lname,
 									   strtolower($struct->c_name),
 									   'NULL');
+		    */
 			$functions_decl .= $this->functions_decl_end;
 			fwrite($fp, $functions_decl);
 		}
@@ -478,13 +486,17 @@ class Generator {
 			$object_lname = strtolower($object->name);
 
 			fwrite($fp, "\n/* object $object->c_name  */\n");
+			/*
 			$this->register_classes .= sprintf($init_class_tpl,
 											   $object->in_module . $object->name,
 											   $object_module . '_' . $object_lname,
 											   count($object->fields) ? 'php_gtk_get_property' : 'NULL');
+			*/
 			if ($object->parent === null)
 				$this->register_classes .= sprintf($register_class_tpl,
 												   $object->ce,
+												   $object->in_module . $object->name,
+												   $object_module . '_' . $object_lname,
 												  'NULL');
 			else {
 				if ($object->parent[1] === null)
@@ -493,6 +505,8 @@ class Generator {
 					$parent_ce = strtolower($object->parent[1] . '_' . $object->parent[0]) . '_ce';
 				$this->register_classes .= sprintf($register_class_tpl,
 												   $object->ce,
+												   $object->in_module . $object->name,
+												   $object_module . '_' . $object_lname,
 												   $parent_ce);
 				$this->register_classes .= "\tg_hash_table_insert(php_gtk_class_hash, g_strdup(\"Gtk$object->name\"), $object->ce);\n";
 			}
@@ -507,9 +521,11 @@ class Generator {
 				$functions_decl .= sprintf($function_entry_tpl,
 										   $object->in_module . $object->name,
 										   'no_constructor', 'NULL');
+				/*
 				$functions_decl .= sprintf($function_entry_tpl,
 										   $object_module . $object_lname,
 										   'no_constructor', 'NULL');
+				*/
 			} else if ($this->overrides->is_overriden($constructor->c_name)) {
 				list(, $constructor_override) = $this->overrides->get_override($constructor->c_name);
 				fwrite($fp, $constructor_override . "\n");
@@ -517,27 +533,33 @@ class Generator {
 										   $constructor->is_constructor_of,
 										   strtolower($constructor->c_name),
 										   'NULL');
+				/*
 				$functions_decl .= sprintf($function_entry_tpl,
 										   strtolower($constructor->is_constructor_of),
 										   strtolower($constructor->c_name),
 										   'NULL');
+				*/
 			} else if (!$this->overrides->is_ignored($constructor->c_name)) {
 				if ($this->write_constructor($fp, $object->c_name, $this->is_gtk_object[$object->in_module . $object->name], $constructor)) {
 					$functions_decl .= sprintf($function_entry_tpl,
 											   $constructor->is_constructor_of,
 											   strtolower($constructor->c_name),
 											   'NULL');
+					/*
 					$functions_decl .= sprintf($function_entry_tpl,
 											   strtolower($constructor->is_constructor_of),
 											   strtolower($constructor->c_name),
 											   'NULL');
+					*/
 				} else {
 					$functions_decl .= sprintf($function_entry_tpl,
 											   $constructor->is_constructor_of,
 											   'no_constructor', 'NULL');
+					/*
 					$functions_decl .= sprintf($function_entry_tpl,
 											   strtolower($constructor->is_constructor_of),
 											   'no_constructor', 'NULL');
+					*/
 				}
 			}
 
@@ -655,12 +677,16 @@ class Generator {
 
 		if ($num_functions > 0) {
 			if ($separate_class) {
+				/*
 				$this->register_classes .= sprintf($init_class_tpl,
 												   $this->prefix,
 												   $this->lprefix,
 												   'NULL');
+				*/
 				$this->register_classes .= sprintf($register_class_tpl,
 												   $this->lprefix . '_ce',
+												   $this->prefix,
+												   $this->lprefix,
 												   'NULL');
 				fwrite($fp, sprintf($class_entry_tpl, $this->lprefix . '_ce'));
 				fwrite($fp, $functions_decl);

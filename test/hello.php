@@ -1,11 +1,9 @@
 <?php
 /* $Id$ */
 
-if (!extension_loaded('gtk')) {
+if (!extension_loaded('php-gtk')) {
 	dl( 'php_gtk.' . PHP_SHLIB_SUFFIX);
 }
-
-
 /*
  * Called when delete-event happens. Returns false to indicate that the event
  * should proceed.
@@ -37,7 +35,7 @@ function hello()
  * Create a new top-level window and connect the signals to the appropriate
  * functions. Note that all constructors must be assigned by reference.
  */
-$window = &new GtkWindow();
+$window = new GtkWindow();
 $window->connect('destroy', 'destroy');
 $window->connect('delete-event', 'delete_event');
 $window->set_border_width(10);
@@ -46,17 +44,19 @@ $window->set_border_width(10);
  * Create a button, connect its clicked signal to hello() function and add
  * the button to the window.
  */
-$button = &new GtkButton('Hello World!');
+$button = new GtkButton('Hello World!');
 $button->connect('clicked', 'hello');
 $window->add($button);
 
 /*
  * Create a new tooltips object and use it to set a tooltip for the button.
  */
-$tt = &new GtkTooltips();
+$tt = new GtkTooltips();
 $tt->set_delay(200);
 $tt->set_tip($button, 'Prints "Hello World!"', '');
 $tt->enable();
+
+var_dump($button->child);
 
 /*
  * Show the window and all its child widgets.
