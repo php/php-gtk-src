@@ -94,11 +94,15 @@ PHP_GTK_API zend_class_entry* phpg_register_boxed(const char *class_name,
 /* }}} */
 
 /* {{{ phpg_gboxed_check() */
-PHP_GTK_API zend_bool phpg_gboxed_check(zval *zobj, GType gtype TSRMLS_DC)
+PHP_GTK_API zend_bool phpg_gboxed_check(zval *zobj, GType gtype, zend_bool full_check TSRMLS_DC)
 {
     phpg_gboxed_t *pobj;
 
-    g_return_val_if_fail(zobj != NULL, FALSE);
+    phpg_return_val_if_fail(zobj != NULL, FALSE);
+    if (full_check) {
+        phpg_return_val_if_fail_quiet(Z_TYPE_P(zobj) == IS_OBJECT
+                                      && instanceof_function(Z_OBJCE_P(zobj), gboxed_ce TSRMLS_CC), FALSE);
+    }
 
     pobj = phpg_gboxed_get(zobj TSRMLS_CC);
 
@@ -118,8 +122,8 @@ PHP_GTK_API void phpg_gboxed_new(zval **zobj, GType gtype, gpointer boxed, gbool
     }
     ZVAL_NULL(*zobj);
 
-    g_return_if_fail(gtype != 0);
-    g_return_if_fail(!copy || (copy && own_ref));
+    phpg_return_if_fail(gtype != 0);
+    phpg_return_if_fail(!copy || (copy && own_ref));
 
     ce = g_type_get_qdata(gtype, phpg_class_key);
     if (!ce) {

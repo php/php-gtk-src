@@ -351,8 +351,8 @@ void phpg_register_enum(GType gtype, const char *strip_prefix, zend_class_entry 
     int i, j;
     int prefix_len = 0;
 
-    g_return_if_fail(ce != NULL);
-    g_return_if_fail(g_type_is_a(gtype, G_TYPE_ENUM));
+    phpg_return_if_fail(ce != NULL);
+    phpg_return_if_fail(g_type_is_a(gtype, G_TYPE_ENUM));
 
     if (strip_prefix) {
         prefix_len = strlen(strip_prefix);
@@ -388,8 +388,8 @@ void phpg_register_flags(GType gtype, const char *strip_prefix, zend_class_entry
     int i, j;
     int prefix_len = 0;
 
-    g_return_if_fail(ce != NULL);
-    g_return_if_fail(g_type_is_a(gtype, G_TYPE_FLAGS));
+    phpg_return_if_fail(ce != NULL);
+    phpg_return_if_fail(g_type_is_a(gtype, G_TYPE_FLAGS));
 
     if (strip_prefix) {
         prefix_len = strlen(strip_prefix);
@@ -493,12 +493,12 @@ PHP_GTK_API void phpg_gobject_watch_closure(zval *zobj, GClosure *closure TSRMLS
 {
     phpg_gobject_t *pobj = NULL;
 
-    g_return_if_fail(zobj != NULL);
-    g_return_if_fail(Z_TYPE_P(zobj) == IS_OBJECT && instanceof_function(Z_OBJCE_P(zobj), gobject_ce TSRMLS_CC));
-    g_return_if_fail(closure != NULL);
+    phpg_return_if_fail(zobj != NULL);
+    phpg_return_if_fail(closure != NULL);
+    phpg_return_if_fail_quiet(Z_TYPE_P(zobj) == IS_OBJECT && instanceof_function(Z_OBJCE_P(zobj), gobject_ce TSRMLS_CC));
 
     pobj = zend_object_store_get_object(zobj TSRMLS_CC);
-    g_return_if_fail(g_slist_find(pobj->closures, closure) == NULL);
+    phpg_return_if_fail_quiet(g_slist_find(pobj->closures, closure) == NULL);
 
     pobj->closures = g_slist_prepend(pobj->closures, closure);
 }

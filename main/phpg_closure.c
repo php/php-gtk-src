@@ -131,7 +131,7 @@ PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, zend_boo
     GClosure *closure;
     phpg_closure_t *phpg_closure;
 
-    g_return_val_if_fail(callback != NULL, NULL);
+    phpg_return_val_if_fail(callback != NULL, NULL);
     closure = g_closure_new_simple(sizeof(phpg_closure_t), NULL);
     g_closure_add_invalidate_notifier(closure, NULL, phpg_closure_invalidate);
     g_closure_set_marshal(closure, phpg_closure_marshal);
