@@ -2465,9 +2465,6 @@ void php_gtk_register_types(int module_number)
 	le_gtk_accel_group = zend_register_list_destructors_ex(release_gtk_accel_group_rsrc, NULL, "GtkAccelGroup", module_number);
 	le_gtk_style = zend_register_list_destructors_ex(release_gtk_style_rsrc, NULL, "GtkStyle", module_number);
 
-	printf("le_php_gtk_wrapper = %d\nle_gtk_style = %d\n",
-		   le_php_gtk_wrapper, le_gtk_style);
-
 	INIT_CLASS_ENTRY(ce, "gdkevent", php_gdk_event_functions);
 	gdk_event_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 

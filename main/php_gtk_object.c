@@ -716,7 +716,7 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 	zend_llist_element *element;
 	zend_llist_element *stop_element;
 	zval **object = &property_reference->object;
-	int setter_retval, getter_retval, last_oe_object = 0;
+	int setter_retval, getter_retval;
 
 	/*
 	 * We want to stop at the last overloaded object reference - the rest can
@@ -754,19 +754,12 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 				}
 			}
 			
-			if (last_oe_object) {
-				php_error(E_WARNING, "Cannot create property '%s' on overloaded property",
-						  Z_STRVAL(overloaded_property->element));
-				return FAILURE;
-			} else
-				getter_retval = invoke_getter(*object, &result, &element);
+			getter_retval = invoke_getter(*object, &result, &element);
 
 			if (getter_retval == SUCCESS) {
 				temp = result;
 				object = &temp_ptr;
-				last_oe_object = 1;
 			} else {
-				last_oe_object = 0;
 				if ((getter_retval = zend_hash_find(Z_OBJPROP_PP(object),
 											   Z_STRVAL(overloaded_property->element),
 											   Z_STRLEN(overloaded_property->element)+1,
@@ -816,8 +809,6 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 										   &new_val, sizeof(void *), (void **)&object);
 				}
 			}
-
-			last_oe_object = 0;
 		}
 
 		zval_dtor(&overloaded_property->element);
