@@ -1,3 +1,48 @@
+2001-03-29  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/chunk.xsl
+      docs/stylesheets/xsl/html/overrides.xsl:
+    Nicer output of function definitions
+
+    * docs/makedocs: automate the running of the .php files and their removal.
+
+    * docs/templates/classmethods_suimmary.tpl
+      docs/templates/classmethods_summary.tpl
+      docs/stylesheets/xsl/html/class.xsl:
+    Fixed hierachy to hierarchy. And spelling of file names.
+
+    * docs/templates/classentry.tpl: Forgot the signals section
+
+    * docs/stylesheets/xsl/html/class.xsl:
+    stop intermittent warnings when each is passed an array that has not content
+
+    * docs/stylesheets/xsl/html/class.xsl:
+    make the tempalte parser actually parse the templates as needed
+
+    * docs/templates/classattributes.tpl
+      docs/templates/classattributes_summary.tpl
+      docs/templates/classmethods.tpl
+      docs/templates/classmethods_suimmary.tpl
+      docs/templates/classsignals.tpl
+      docs/templates/classsignals_summary.tpl:
+    Adding new templates for different parts of the classentry
+
+    * docs/scripts/TemplateParser.class:
+    Updating TemplateParser due to a few small bug fixes
+
+2001-03-29  Andrei Zmievski  <andrei@ispi.net>
+
+    * config.m4: Use PHP autoconf macros.
+
+2001-03-29  James Moore  <James@phpuk.org>
+
+    * docs/scripts/CommonFuncs.inc
+      docs/stylesheets/xsl/html/class.xsl:
+    Correct naming of get_class_heirarchy
+
+    * docs/templates/classentry.tpl:
+    fixing the tempalte (few typos and broken logic)
+
 2001-03-28  James Moore  <James@phpuk.org>
 
     * docs/templates/classentry.tpl: Updaing template slightly
