@@ -1,0 +1,11 @@
+Generator
+~~~~~~~~~
+* Support boxed types
+  - Custom boxed types too
+* Expose GTK properties
+* Implement '#line' pragma directives for debugging
+
+Base Functionality
+~~~~~~~~~~~~~~~~~~
+* Support signals and closures
+* Make errors messages display Class::Method() instead of just method name
