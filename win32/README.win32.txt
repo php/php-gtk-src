@@ -2,9 +2,10 @@ Installing php-gtk on Windows NT/Windows 2000
 
 Download the following files from http://www.gtk.org
 
-http://www.gimp.org/win32/glib-dev-20001226.zip
-http://www.gimp.org/win32/libiconv-dev-20001007.zip
-http://www.gimp.org/win32/gtk+-dev-20001226.zip
+http://www.gimp.org/~tml/gimp/win32/glib-dev-2.0.6-20020802.zip
+http://umn.dl.sourceforge.net/sourceforge/gettext/libiconv-1.8-w32-1.bin.zip
+http://www.gimp.org/~tml/gimp/win32/gtk+-dev-1.3.0-20020912.zip
+http://www.gimp.org/~tml/gimp/win32/gettext-dev-0.10.40-20020904.zip
 
 Filename might change with new releases.
 Links to the latest files are found on 
