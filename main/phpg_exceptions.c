@@ -25,6 +25,7 @@
 PHP_GTK_API zend_class_entry *phpg_generic_exception = NULL;
 PHP_GTK_API zend_class_entry *phpg_construct_exception = NULL;
 PHP_GTK_API zend_class_entry *phpg_type_exception = NULL;
+PHP_GTK_API zend_class_entry *phpg_gerror_exception = NULL;
 
 void phpg_register_exceptions()
 {
@@ -45,6 +46,32 @@ void phpg_register_exceptions()
 	phpg_type_exception = zend_register_internal_class_ex(&ce, zend_exception_get_default(), NULL TSRMLS_CC);
 	phpg_type_exception->ce_flags |= ZEND_ACC_FINAL;
 	phpg_type_exception->constructor->common.fn_flags |= ZEND_ACC_PROTECTED;
+
+	INIT_CLASS_ENTRY(ce, "PhpGtkGErrorException", NULL);
+	phpg_gerror_exception = zend_register_internal_class_ex(&ce, zend_exception_get_default(), NULL TSRMLS_CC);
+	phpg_gerror_exception->ce_flags |= ZEND_ACC_FINAL;
+	phpg_gerror_exception->constructor->common.fn_flags |= ZEND_ACC_PROTECTED;
+	zend_declare_property_string(phpg_gerror_exception, "domain", sizeof("domain")-1, "", ZEND_ACC_PUBLIC TSRMLS_CC);
+	zend_declare_property_string(phpg_gerror_exception, "message", sizeof("message")-1, "", ZEND_ACC_PUBLIC TSRMLS_CC);
+	zend_declare_property_string(phpg_gerror_exception, "code", sizeof("code")-1, "", ZEND_ACC_PUBLIC TSRMLS_CC);
+}
+
+PHP_GTK_API zval* phpg_throw_gerror_exception(const char *domain, long code, const char *message TSRMLS_DC)
+{
+	zval *exc;
+
+	MAKE_STD_ZVAL(exc);
+	object_init_ex(exc, phpg_gerror_exception);
+	zend_update_property_string(phpg_gerror_exception, exc, "domain", sizeof("domain")-1, (char *)domain TSRMLS_CC);
+	zend_update_property_long(phpg_gerror_exception, exc, "code", sizeof("code")-1, code TSRMLS_CC);
+
+	if (message) {
+		zend_update_property_string(phpg_gerror_exception, exc, "message", sizeof("message")-1, (char *)message TSRMLS_CC);
+	}
+
+	zend_throw_exception_internal(exc TSRMLS_CC);
+
+	return exc;
 }
 
 #endif /* HAVE_PHP_GTK */

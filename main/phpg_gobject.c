@@ -528,6 +528,19 @@ PHP_GTK_API void phpg_get_properties_helper(zval *object, HashTable *ht TSRMLS_D
 }
 /* }}} */
 
+zend_bool phpg_handle_gerror(GError **error TSRMLS_DC)
+{
+    if (error == NULL || *error == NULL)
+        return FALSE;
+
+    phpg_throw_gerror_exception(g_quark_to_string((*error)->domain),
+                                (*error)->code,
+                                (*error)->message TSRMLS_CC);
+    g_clear_error(error);
+
+    return TRUE;
+}
+
 /*
  * GObject PHP class definition
  */

@@ -147,7 +147,7 @@ class Arg_Type {
 class None_Arg extends Arg_Type {
     function write_return($type, $owns_return, $info)
     {
-        return "\tRETVAL_NULL();";
+        $this->post_code[] = "\tRETVAL_NULL();";
     }
 }
 /* }}} */
@@ -829,6 +829,19 @@ class GType_Arg extends Arg_Type {
 }
 /* }}} */
 
+/* {{{ GError_Arg */
+class GError_Arg extends Arg_Type {
+    function write_param($type, $name, $default, $null_ok, $info)
+    {
+        $info->var_list->add('GError', '*' . $name . ' = NULL');
+        $info->arg_list[] = '&' . $name;
+        $info->post_code[] = "    if (phpg_handle_gerror(&$name TSRMLS_CC)) {\n" .
+                             "        return;\n" .
+                             "    }\n";
+    }
+}
+/* }}} */
+
 /* {{{ Arg_Matcher */
 class Arg_Matcher {
     var $arg_types = array();
@@ -978,7 +991,8 @@ $matcher->register('GdkRectangle', new GdkRectangle_Arg);
 #$matcher->register_boxed('GtkStyle', 'gtk_style');
 
 $matcher->register_object('GObject', 'G_TYPE_OBJECT');
-$matcher->register('GType', new GType_Arg());
+$matcher->register('GType', new GType_Arg);
+$matcher->register('GError**', new GError_Arg);
 
 /* }}} */
 

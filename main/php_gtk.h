@@ -172,6 +172,7 @@ extern GQuark phpg_class_key;
 extern PHP_GTK_API zend_class_entry *phpg_generic_exception;
 extern PHP_GTK_API zend_class_entry *phpg_construct_exception;
 extern PHP_GTK_API zend_class_entry *phpg_type_exception;
+extern PHP_GTK_API zend_class_entry *phpg_gerror_exception;
 
 extern PHP_GTK_API zend_object_handlers php_gtk_handlers;
 
@@ -274,12 +275,14 @@ PHP_GTK_API zval* php_gtk_simple_signal_callback(GtkObject *o, gpointer data, zv
 		return retval; \
 	} while (0)
 
+void phpg_register_exceptions();
+zend_bool phpg_handle_gerror(GError **error TSRMLS_DC);
+PHP_GTK_API zval* phpg_throw_gerror_exception(const char *domain, long code, const char *message TSRMLS_DC);
+
 PHP_GTK_API PHP_FUNCTION(no_constructor);
 PHP_GTK_API PHP_FUNCTION(no_direct_constructor);
 
 extern char *php_gtk_zval_type_name(zval *arg);
-
-void phpg_register_exceptions();
 
 PHP_GTK_API void phpg_register_enum(GType gtype, const char *strip_prefix, zend_class_entry *ce);
 PHP_GTK_API void phpg_register_flags(GType gtype, const char *strip_prefix, zend_class_entry *ce);

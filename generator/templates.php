@@ -51,8 +51,7 @@ static PHP_METHOD(%(class), %(name))
 const constructor_body = "
 static PHP_METHOD(%(class), %(name))
 {
-%(var_list)
-    GObject *wrapped_obj;
+%(var_list)\tGObject *wrapped_obj;
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
@@ -69,8 +68,7 @@ static PHP_METHOD(%(class), %(name))
 const static_constructor_body = "
 static PHP_METHOD(%(class), %(name))
 {
-%(var_list)
-    GObject *wrapped_obj;
+%(var_list)\tGObject *wrapped_obj;
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
@@ -107,8 +105,7 @@ static PHP_METHOD(%(class), %(name))
 const boxed_static_constructor_body = "
 static PHP_METHOD(%(class), %(name))
 {
-%(var_list)
-    %(class) *wrapped_obj = NULL;
+%(var_list)\t%(class) *wrapped_obj = NULL;
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
