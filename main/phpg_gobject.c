@@ -521,6 +521,11 @@ PHP_GTK_API void phpg_get_properties_helper(zval *object, HashTable *ht TSRMLS_D
     while ((prop = va_arg(va, char *)) != NULL) {
         prop_len = va_arg(va, int);
         result = zend_read_property(ce, object, prop, prop_len, 1 TSRMLS_CC);
+        /*
+         * zend_read_property will return a temporary zval, so we need to
+         * initialize it in order to keep it around.
+         */
+        INIT_PZVAL(result);
         zend_hash_update(ht, prop, prop_len+1, &result, sizeof(zval *), NULL);
     }
 
