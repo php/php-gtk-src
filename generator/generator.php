@@ -310,24 +310,28 @@ class Generator {
 
 		foreach ($object->fields as $field_def) {
 			list($field_type, $field_name) = $field_def;
-			$var_list = new Var_List();
-			$handler = &$matcher->get($field_type);
-			if ($handler === null) {
-				error_log("Could not write getter for $object->c_name '$field_name' field (field type $field_type)");
-				continue;
+			if ($this->overrides->have_get_prop($object->c_name, $field_name)) {
+				$prop_get_code = $this->overrides->get_prop($object->c_name, $field_name);
+				$prop_get_code = str_replace("\n", "\n\t", $prop_get_code);
+			} else {
+				$var_list = new Var_List();
+				$handler = &$matcher->get($field_type);
+				if ($handler === null) {
+					error_log("Could not write getter for $object->c_name '$field_name' field (field type $field_type)");
+					continue;
+				}
+
+				$prop_tpl = $handler->write_return($field_type, $var_list);
+				$prop_code = sprintf($prop_tpl,
+									 $obj_cast . '(PHP_GTK_GET(object))->' . $field_name, "");
+				$prop_code = str_replace("\n", "\n\t", $prop_code);
+				$var_list_code = $var_list->to_string();
+				$prop_get_code = ($var_list_code ? $var_list_code . "\t" : '') .  ' ' . $prop_code;
 			}
-
-			$prop_tpl = $handler->write_return($field_type, $var_list);
-			$prop_code = sprintf($prop_tpl,
-								 $obj_cast . '(PHP_GTK_GET(object))->' . $field_name, "");
-			$prop_code = str_replace("\n", "\n\t", $prop_code);
-
-			$var_list_code = $var_list->to_string();
 			$prop_checks .= sprintf($prop_check_tpl,
 									$else_clause,
 									$field_name,
-									$var_list_code ? $var_list_code . "\t" : '',
-									$prop_code);
+									$prop_get_code);
 			$else_clause = ' else ';
 		}
 
@@ -454,10 +458,13 @@ class Generator {
 		fwrite($fp, "\n/* object Gtk  */\n");
 		fwrite($fp, "static zend_class_entry *gdk_ce;\n");
 		fwrite($fp, "static zend_class_entry *gtk_ce;\n");
+		fwrite($fp, "static zend_class_entry *gtk_box_child_ce;\n");
 		$this->register_classes .= "\n\tINIT_CLASS_ENTRY(ce, \"gdk\", php_gdk_functions);\n"
 								. "\tgdk_ce = zend_register_internal_class_ex(&ce, NULL, NULL);\n";
 		$this->register_classes .= "\n\tINIT_CLASS_ENTRY(ce, \"gtk\", php_gtk_functions);\n"
 								. "\tgtk_ce = zend_register_internal_class_ex(&ce, NULL, NULL);\n";
+		$this->register_classes .= "\n\tINIT_CLASS_ENTRY(ce, \"gtkboxchild\", NULL);\n"
+								. "\tgtk_box_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL);\n";
 		$function_entry["gdk"] = sprintf($this->function_entry, 'php_gdk');
 		$function_entry["gtk"] = sprintf($this->function_entry, $this->prefix);
 

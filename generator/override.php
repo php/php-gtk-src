@@ -26,6 +26,7 @@ class Overrides {
 	var $glob_ignores 	= array();
 	var $overrides		= array();
 	var $extra_methods	= array();
+	var $getprops		= array();
 
 	function Overrides($file_name = null)
 	{
@@ -81,6 +82,13 @@ class Overrides {
 				else
 					$this->overrides[$func_cname] = array($func_name, $rest);
 				break;
+
+			case 'getprop':
+				if (count($words) >= 2) {
+					list($class_name, $prop_name) = $words;
+					$this->getprops[$class_name][$prop_name] = $rest;
+				}
+				break;
 		}
 	}
 
@@ -105,6 +113,16 @@ class Overrides {
 	function get_override($name)
 	{
 		return $this->overrides[$name];
+	}
+
+	function have_get_prop($class_name, $prop_name)
+	{
+		return isset($this->getprops[$class_name][$prop_name]);
+	}
+
+	function get_prop($class_name, $prop_name)
+	{
+		return $this->getprops[$class_name][$prop_name];
 	}
 }
 

@@ -71,7 +71,6 @@ $register_getter_tpl = "\tphp_gtk_register_prop_getter(%s, %s_get_property);\n";
 
 $prop_check_tpl =
 "%sif (!strcmp(prop_name, \"%s\")) {
-	%s	*found = SUCCESS;
 	%s
 	}";
 
@@ -81,6 +80,7 @@ static void %s_get_property(zval *return_value, zval *object, zend_llist_element
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	ZVAL_NULL(return_value);
+	*found = SUCCESS;
 
 %s
 

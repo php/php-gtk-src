@@ -1017,3 +1017,85 @@ PHP_FUNCTION(wrap_gtk_label_get)
 	gtk_label_get(GTK_LABEL(PHP_GTK_GET(this_ptr)), &text);
 	RETURN_STRING(text, 1);
 }
+%%
+getprop GtkBox children
+	GtkBoxChild *box_child;
+	zval *php_box_child;
+	GList *tmp;
+	GList *children = GTK_BOX(PHP_GTK_GET(object))->children;
+	zend_overloaded_element *property;
+	zend_llist_element *next = (*element)->next;
+	int prop_index;
+
+	if (next) {
+		int i = 0;
+		property = (zend_overloaded_element *)next->data;
+		if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
+			*element = next;
+			prop_index = Z_LVAL(property->element);
+			for (tmp = children, i = 0; tmp; tmp = tmp->next, i++) {
+				if (i == prop_index) {
+					box_child = (GtkBoxChild *)tmp->data;
+					object_init_ex(return_value, gtk_box_child_ce);
+
+					add_property_zval(return_value, "widget", php_gtk_new((GtkObject *)box_child->widget));
+					add_property_long(return_value, "padding", box_child->padding);
+					add_property_bool(return_value, "expand", box_child->expand);
+					add_property_bool(return_value, "fill", box_child->fill);
+					add_property_long(return_value, "pack", box_child->pack);
+				}
+			}
+		}
+	} else {
+		array_init(return_value);
+		for (tmp = children; tmp; tmp = tmp->next) {
+			box_child = (GtkBoxChild *)tmp->data;
+			MAKE_STD_ZVAL(php_box_child);
+			object_init_ex(php_box_child, gtk_box_child_ce);
+
+			add_property_zval(php_box_child, "widget", php_gtk_new((GtkObject *)box_child->widget));
+			add_property_long(php_box_child, "padding", box_child->padding);
+			add_property_bool(php_box_child, "expand", box_child->expand);
+			add_property_bool(php_box_child, "fill", box_child->fill);
+			add_property_long(php_box_child, "pack", box_child->pack);
+
+			add_next_index_zval(return_value, php_box_child);
+		}
+	}
+
+	return;
+%%
+getprop GtkCalendar marked_date
+	GtkCalendar *cal = GTK_CALENDAR(PHP_GTK_GET(object));
+	zend_overloaded_element *property;
+	zend_llist_element *next = (*element)->next;
+	int prop_index;
+
+	if (next) {
+		property = (zend_overloaded_element *)next->data;
+		if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
+			*element = next;
+			prop_index = Z_LVAL(property->element);
+			if (prop_index > 0 && prop_index < 31)
+				ZVAL_LONG(return_value, cal->marked_date[prop_index]);
+		}
+	} else {
+		int i;
+
+		array_init(return_value);
+		for (i = 0; i < 31; i++)
+			add_next_index_long(return_value, cal->marked_date[i]);
+	}
+
+	return;
+%%
+override gtk_calendar_get_date
+PHP_FUNCTION(wrap_gtk_calendar_get_date)
+{
+	guint year, month, day;
+
+	NOT_STATIC_METHOD();
+
+	gtk_calendar_get_date(GTK_CALENDAR(PHP_GTK_GET(this_ptr)), &year, &month, &day);
+	*return_value = *php_gtk_build_value("(iii)", year, month, day);
+}

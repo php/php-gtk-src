@@ -144,6 +144,10 @@
   (in-module Gtk)
   (parent Widget (Gtk))
   (c-name GtkMisc)
+  (field (type-and-name gfloat xalign))
+  (field (type-and-name gfloat yalign))
+  (field (type-and-name guint16 xpad))
+  (field (type-and-name guint16 ypad))
 )
 
 (object Pixmap
@@ -156,6 +160,8 @@
   (in-module Gtk)
   (parent Misc (Gtk))
   (c-name GtkArrow)
+  (field (type-and-name gint16 arrow_type))
+  (field (type-and-name gint16 shadow_type))
 )
 
 (object Image
@@ -447,6 +453,9 @@
   (in-module Gtk)
   (parent Container (Gtk))
   (c-name GtkBox)
+  (field (type-and-name GList* children))
+  (field (type-and-name gint16 spacing))
+  (field (type-and-name gboolean homogeneous))
 )
 
 (object VBox
@@ -528,6 +537,11 @@
   (in-module Gtk)
   (parent Widget (Gtk))
   (c-name GtkCalendar)
+  (field (type-and-name gint month))
+  (field (type-and-name gint year))
+  (field (type-and-name gint selected_day))
+  (field (type-and-name gint num_marked_dates))
+  (field (type-and-name gint* marked_date))
 )
 
 (object Window
