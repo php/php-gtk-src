@@ -3,7 +3,7 @@
 (define-method flags
   (of-object "GtkObject")
   (c-name "GTK_OBJECT_FLAGS")
-  (return-type "guint")
+  (return-type "GtkWidgetFlags")
 )
 
 (define-method set_flags
