@@ -1,3 +1,24 @@
+2005-04-04  Christian Weiske  <cweiske@cweiske.de>
+
+    * generator/doc_templates.php
+      generator/docgen.php
+      generator/docmerger2.php:
+      modified docgen to create php-gtk2 docs
+
+2005-04-04  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * generator/templates.php
+      main/Makefile.frag
+      main/phpg_gvalue.c:
+      - Fix phpg_parse_ctor_props() return value check.
+      - Fix phpg_gvalue_from_zval() to check the proper variable in some
+        cases.
+
+    * ext/gtk+/gtk-types.defs
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides:
+      Implement a few more constructors.
+
 2005-03-31  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides:
