@@ -409,6 +409,26 @@ PHP_GTK_API void phpg_register_string_constant(zend_class_entry *ce, char *name,
 }
 /* }}} */
 
+/* {{{ phpg_create_class */
+PHP_GTK_API zend_class_entry* phpg_create_class(GType gtype)
+{
+    zend_class_entry *parent_ce, *ce;
+    gchar* gtype_name;
+    GType parent_type;
+    TSRMLS_FETCH();
+
+    parent_type = g_type_parent(gtype);
+    parent_ce = phpg_class_from_gtype(parent_type);
+
+    gtype_name = (gchar *) g_type_name(gtype);
+    ce = phpg_register_class(gtype_name, NULL, parent_ce, 0, NULL, NULL, gtype TSRMLS_CC);
+
+    phpg_register_int_constant(ce, "gtype", sizeof("gtype")-1, gtype TSRMLS_CC);
+
+    return ce;
+}
+/* }}} */
+
 #endif
 
 /* vim: set fdm=marker et sts=4: */
