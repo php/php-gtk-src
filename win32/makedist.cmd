@@ -4,7 +4,6 @@ md \php-gtk-dist
 cd \php-gtk-dist
 md php4
 md winnt
-md winnt\system32
 md test
 copy \php4\php.exe php4
 copy \php4\php-cgi.exe php4
