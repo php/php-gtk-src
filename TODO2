@@ -23,6 +23,8 @@ Base Functionality
 General
 ~~~~~~~
 * Find out why PY_TYPE_OBJECT is boxed
+* Maybe use zend_call_function() instead of call_user_function_ex() to take
+  advantage of function call cache
 
 
 Thoughts on reference counting and wrappers

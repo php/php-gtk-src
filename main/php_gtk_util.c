@@ -819,6 +819,7 @@ static zend_bool php_gtk_build_single(zval **result, char **format, va_list *va 
 			case 'V':
 			case 'N':
 				*result = (zval *)va_arg(*va, zval *);
+				assert(*result != NULL);
 				if (*(*format - 1) != 'N')
 					zval_add_ref(result);
 				return 1;
@@ -905,12 +906,13 @@ static zend_bool php_gtk_build_hash(zval **result_p, char **format, va_list *va,
 
 PHP_GTK_API void php_gtk_build_value(zval **result, char *format, ...)
 {
-	int count = php_gtk_count_specs(format, '\0' TSRMLS_CC);
+	int count;
 	va_list va;
 	TSRMLS_FETCH();
 
     assert(result != NULL);
 
+	count = php_gtk_count_specs(format, '\0' TSRMLS_CC);
 	if (count <= 0) {
 		return;
 	}
