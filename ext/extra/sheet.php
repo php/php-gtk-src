@@ -1,6 +1,8 @@
 <?php
 error_reporting('E_ALL');
-dl('php_gtk.so');
+if (!extension_loaded('gtk')) {
+	dl( 'php_gtk.' . PHP_SHLIB_SUFFIX);
+}
  
 $window = &new GtkWindow(GTK_WINDOW_TOPLEVEL);
 $scrolledwindow = &new GtkScrolledWindow();
