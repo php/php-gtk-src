@@ -702,8 +702,9 @@ PHP_FUNCTION(gtk_clist_append)
 	}
 
 	columns = GTK_CLIST(PHP_GTK_GET(this_ptr))->columns;
-	if (zend_hash_num_elements(Z_ARRVAL_P(php_list)) < columns) {
-		php_error(E_WARNING, "%s(): the array of strings is not long enough", get_active_function_name(TSRMLS_C));
+	if (zend_hash_num_elements(Z_ARRVAL_P(php_list)) != columns) {
+		php_error(E_WARNING, "%s(): the array of strings (%d) does not match the number of columns (%d)",
+				  get_active_function_name(TSRMLS_C), zend_hash_num_elements(Z_ARRVAL_P(php_list)), columns);
 		return;
 	}
 	
