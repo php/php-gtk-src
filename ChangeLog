@@ -1,3 +1,8 @@
+2002-01-15  Alan Knowles  <alan@akbkhome.com>
+
+    * generator/generator.php:
+    fatal_error function added to generator\nadditional checks for argv added to generator
+
 2002-01-14  Andrei Zmievski  <andrei@ispi.net>
 
     * main/php_gtk.h: Fix compilation for non-ZTS cases.
