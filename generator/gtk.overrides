@@ -173,6 +173,10 @@ register_class gtk_box_child_ce
 	INIT_CLASS_ENTRY(ce, "gtkboxchild", NULL);
 	gtk_box_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 %%
+register_class gtk_fixed_child_ce
+	INIT_CLASS_ENTRY(ce, "gtkfixedchild", NULL);
+	gtk_fixed_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+%%
 override gtk_true
 PHP_FUNCTION(wrap_gtk_true)
 {
@@ -1113,3 +1117,47 @@ PHP_FUNCTION(wrap_gtk_calendar_get_date)
 	gtk_calendar_get_date(GTK_CALENDAR(PHP_GTK_GET(this_ptr)), &year, &month, &day);
 	*return_value = *php_gtk_build_value("(iii)", year, month, day);
 }
+%%
+getprop GtkFixed children
+	GtkFixedChild *fixed_child;
+	zval *php_fixed_child;
+	GList *tmp;
+	GList *children = GTK_FIXED(PHP_GTK_GET(object))->children;
+	zend_overloaded_element *property;
+	zend_llist_element *next = (*element)->next;
+	int prop_index;
+
+	if (next) {
+		int i = 0;
+		property = (zend_overloaded_element *)next->data;
+		if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
+			*element = next;
+			prop_index = Z_LVAL(property->element);
+			for (tmp = children, i = 0; tmp; tmp = tmp->next, i++) {
+				if (i == prop_index) {
+					fixed_child = (GtkFixedChild *)tmp->data;
+					object_init_ex(return_value, gtk_fixed_child_ce);
+
+					add_property_zval(return_value, "widget", php_gtk_new((GtkObject *)fixed_child->widget));
+					add_property_long(return_value, "x", fixed_child->x);
+					add_property_long(return_value, "y", fixed_child->y);
+				}
+			}
+		}
+	} else {
+		array_init(return_value);
+		for (tmp = children; tmp; tmp = tmp->next) {
+			fixed_child = (GtkFixedChild *)tmp->data;
+			MAKE_STD_ZVAL(php_fixed_child);
+			object_init_ex(php_fixed_child, gtk_fixed_child_ce);
+
+			add_property_zval(php_fixed_child, "widget", php_gtk_new((GtkObject *)fixed_child->widget));
+			add_property_long(php_fixed_child, "x", fixed_child->x);
+			add_property_long(php_fixed_child, "y", fixed_child->y);
+
+			add_next_index_zval(return_value, php_fixed_child);
+		}
+	}
+
+	return;
+

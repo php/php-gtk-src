@@ -322,6 +322,7 @@
   (in-module Gtk)
   (parent Container (Gtk))
   (c-name GtkFixed)
+  (field (type-and-name GList* children))
 )
 
 (object Bin
