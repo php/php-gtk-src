@@ -691,6 +691,8 @@ class Generator {
 	}
 }
 
+$old_error_reporting = error_reporting(E_ALL & ~E_NOTICE);
+
 $argc = $HTTP_SERVER_VARS['argc'];
 $argv = $HTTP_SERVER_VARS['argv'];
 
@@ -734,5 +736,7 @@ foreach ($register_defs as $defs) {
 $parser->start_parsing();
 $generator->register_types();
 $generator->create_source();
+
+error_reporting($old_error_reporting);
 
 ?>
