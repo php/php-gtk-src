@@ -63,6 +63,7 @@ class Generator {
                                     'interface' => array('method' => Templates::method_body),
                                    );
     var $handlers           = array('read_property', 'write_property', 'get_properties');
+    var $cover              = array();
 
     function Generator(&$parser, &$overrides, $prefix, $function_class)
     {
@@ -71,6 +72,11 @@ class Generator {
         $this->prefix    = ucfirst($prefix);
         $this->lprefix   = strtolower($prefix);
         $this->function_class = $function_class;
+
+        $this->cover["funcs"] = new Coverage("Static methods");
+        $this->cover["methods"] = new Coverage("Methods");
+        $this->cover["ctors"] = new Coverage("Constructors");
+        $this->cover["props"] = new Coverage("Property accessors");
     }
 
     function set_logfile($logfile) {
@@ -266,10 +272,12 @@ class Generator {
                 }
                 $this->divert("gen", "%s  %-11s %s::%s\n", $overriden ? "%%":"  ", "method", $object->c_name, $method->name);
                 $num_written++;
+                $this->cover["methods"]->written();
                 $object->methods[$method->name] = 1;
             } catch (Exception $e) {
                 $this->divert("notgen", "  %-11s %s::%s: %s\n", "method", $object->c_name, $method->name, $e->getMessage());
                 $num_skipped++;
+                $this->cover["methods"]->skipped();
             }
         }
 
@@ -325,9 +333,11 @@ class Generator {
                                            $ctor_fe_name, 'NULL', $flags);
                     $this->divert("gen", "%s  %-11s %s::%s\n", $overriden?"%%":"  ", "constructor", $object->c_name, $ctor_fe_name);
                     $num_written++;
+                    $this->cover["ctors"]->written();
                 } catch (Exception $e) {
                     $this->divert("notgen", "  %-11s %s::%s: %s\n", "constructor", $object->c_name, $ctor_fe_name, $e->getMessage());
                     $num_skipped++;
+                    $this->cover["ctors"]->skipped();
                     // mark class as non-instantiable directly if we were trying
                     // to generate default constructor
                     if ($ctor_fe_name == '__construct') {
@@ -390,6 +400,9 @@ class Generator {
             $reg_info = $this->write_class($interface);
             $register_classes .= aprintf(Templates::register_interface, $reg_info);
         }
+        if (!$this->parser->interfaces) {
+            $this->log_print("  -- none --  ");
+        }
 
         /* GObject's */
         $this->log_print("\n\n" . $this->make_header("Objects", 50, '-'));
@@ -397,12 +410,18 @@ class Generator {
             $reg_info = $this->write_class($object);
             $register_classes .= aprintf(Templates::register_class, $reg_info);
         }
+        if (!$this->parser->objects) {
+            $this->log_print("  -- none --  ");
+        }
 
         /* GBoxed */
         $this->log_print("\n\n" . $this->make_header("Boxed Types", 50, '-'));
         foreach ($this->parser->boxed as $object) {
             $reg_info = $this->write_class($object);
             $register_classes .= aprintf(Templates::register_boxed, $reg_info);
+        }
+        if (!$this->parser->boxed) {
+            $this->log_print("  -- none --  ");
         }
 
         $this->fp->write(sprintf(Templates::register_classes,
@@ -480,9 +499,11 @@ class Generator {
                 $prop_defs[] = sprintf(Templates::prop_info_entry, 
                                        $field_name, $read_func, $write_func);
                 $num_written++;
+                $this->cover["props"]->written();
             } catch (Exception $e) {
                 $this->divert("notgen", "  %-11s %s->%s: %s\n", "reader for", $object->c_name, $field_name, $e->getMessage());
                 $num_skipped++;
+                $this->cover["props"]->written();
             }
         }
 
@@ -687,9 +708,11 @@ class Generator {
                 }
                 $this->divert("gen", "%s  %-11s %s::%s\n", $overriden?"%%":"  ", "function", $this->prefix, $function->name);
                 $num_written++;
+                $this->cover["funcs"]->written();
             } catch (Exception $e) {
                 $this->divert("notgen", "  %-11s %s::%s: %s\n", "function", $this->prefix, $function->name, $e->getMessage());
                 $num_skipped++;
+                $this->cover["funcs"]->written();
             }
         }
 
@@ -734,6 +757,22 @@ class Generator {
             }
             $this->fp->write($class_prop_list_footer);
         }
+    }
+
+    function write_coverage_info()
+    {
+        $this->log_print("\n\n");
+        $this->log_print($this->make_header("Coverage"));
+
+        foreach ($this->cover as $coverage) {
+            list($name, $written, $total, $percent) = $coverage->get_stats();
+            if ($total) {
+                $this->log_print("%-20s: %5.1f%% written (%d/%d)\n", $name, $percent, $written, $total);
+            } else {
+                $this->log_print("%-20s: none found\n", $name);
+            }
+        }
+        $this->log_print("\n\n");
     }
 
     function write_class_entries()
@@ -785,6 +824,8 @@ class Generator {
         $this->log("\n\n");
         $this->log($this->make_header("Not Generated Items"));
         $this->log("%s", $this->diversions["notgen"]);
+
+        $this->write_coverage_info();
     }
 }
 

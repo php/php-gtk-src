@@ -48,6 +48,38 @@ class LineOutput {
     }
 }
 
+class Coverage {
+    var $n_written = 0;
+    var $n_skipped = 0;
+    var $id        = null;
+
+    function Coverage($id)
+    {
+        $this->id = $id;
+    }
+
+    function written()
+    {
+        $this->n_written++;
+    }
+
+    function skipped()
+    {
+        $this->n_skipped++;
+    }
+
+    function get_stats()
+    {
+        $total = $this->n_written + $this->n_skipped;
+        if ($total) {
+            $pcnt_written = ((float)$this->n_written*100.0)/$total;
+        } else {
+            $pcnt_written = 0.0;
+        }
+        return array($this->id, $this->n_written, $total, $pcnt_written);
+    }
+}
+
 /* vim: set et sts=4 fdm=marker: */
 
 ?>
