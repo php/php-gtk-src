@@ -25,11 +25,11 @@
 #if HAVE_PHP_GTK
 
 #include "ext/gtk+/php_gtk+.h"
-//#include "ext/libglade/php_libglade.h"
+#include "ext/libglade/php_libglade.h"
 
 
 php_gtk_ext_entry *php_gtk_extensions[] = {
-//	php_gtk_ext_libglade_ptr,
+	php_gtk_ext_libglade_ptr,
 	php_gtk_ext_gtk__ptr,
 
 };
