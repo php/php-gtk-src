@@ -577,7 +577,7 @@ zend_bool php_gtk_is_callable(zval *callable, zend_bool syntax_only, char **call
 				zend_class_entry *ce;
 				char name_buf[1024];
 				char callable_name_len;
-				
+
 				if (zend_hash_index_find(Z_ARRVAL_P(callable), 0, (void **) &obj) == SUCCESS &&
 					zend_hash_index_find(Z_ARRVAL_P(callable), 1, (void **) &method) == SUCCESS &&
 					(Z_TYPE_PP(obj) == IS_OBJECT || Z_TYPE_PP(obj) == IS_STRING) &&
@@ -679,7 +679,7 @@ zval *php_gtk_array_as_hash(zval ***values, int num_values, int start, int lengt
 		start = num_values;
 	else if (start < 0 && (start = num_values+start) < 0)
 		start = 0;
-	
+
 	/* ..and the length */
 	if (length < 0)
 		length = num_values-start+length;
@@ -716,11 +716,10 @@ zval ***php_gtk_hash_as_array(zval *hash)
 	return values;
 }
 
-static int php_gtk_count_specs(char *format, int endchar)
+static int php_gtk_count_specs(char *format, int endchar TSRMLS_DC)
 {
 	int count = 0;
 	int level = 0;
-	TSRMLS_FETCH();
 
 	while (level > 0 || *format != endchar) {
 		switch (*format) {
@@ -757,69 +756,73 @@ static int php_gtk_count_specs(char *format, int endchar)
 	return count;
 }
 
-static zval *php_gtk_build_single(char **format, va_list *va);
-static zval *php_gtk_build_hash(char **format, va_list *va, int endchar, int count);
+static zend_bool php_gtk_build_single(zval **result, char **format, va_list *va TSRMLS_DC);
+static zend_bool php_gtk_build_hash(zval **result_p, char **format, va_list *va, int endchar, int count TSRMLS_DC);
 
-static zval *php_gtk_build_single(char **format, va_list *va)
+#define MAKE_ZVAL_IF_NULL(z) \
+   do { \
+	   if (z == NULL) { MAKE_STD_ZVAL(z) }; \
+   } while (0);
+
+static zend_bool php_gtk_build_single(zval **result, char **format, va_list *va TSRMLS_DC)
 {
-	zval *result;
-	TSRMLS_FETCH();
+	assert(result != NULL);
 
 	for (;;) {
 		switch (*(*format)++) {
 			case '(':
-				return php_gtk_build_hash(format, va, ')', php_gtk_count_specs(*format, ')'));
+				return php_gtk_build_hash(result, format, va, ')', php_gtk_count_specs(*format, ')') TSRMLS_CC);
 
 			case '{':
-				return php_gtk_build_hash(format, va, '}', php_gtk_count_specs(*format, '}'));
+				return php_gtk_build_hash(result, format, va, '}', php_gtk_count_specs(*format, '}') TSRMLS_CC);
 
 			case 'b':
-				MAKE_STD_ZVAL(result);
-				ZVAL_BOOL(result, (zend_bool)va_arg(*va, int));
-				return result;
+				MAKE_ZVAL_IF_NULL(*result);
+				ZVAL_BOOL(*result, (zend_bool)va_arg(*va, int));
+				return 1;
 
 			case 'h':
 			case 'i':
-				MAKE_STD_ZVAL(result);
-				ZVAL_LONG(result, (long)va_arg(*va, int));
-				return result;
+				MAKE_ZVAL_IF_NULL(*result);
+				ZVAL_LONG(*result, (long)va_arg(*va, int));
+				return 1;
 
 			case 'l':
-				MAKE_STD_ZVAL(result);
-				ZVAL_LONG(result, (long)va_arg(*va, long));
-				return result;
+				MAKE_ZVAL_IF_NULL(*result);
+				ZVAL_LONG(*result, (long)va_arg(*va, long));
+				return 1;
 
 			case 'f':
 			case 'd':
-				MAKE_STD_ZVAL(result);
-				ZVAL_DOUBLE(result, (double)va_arg(*va, double));
-				return result;
+				MAKE_ZVAL_IF_NULL(*result);
+				ZVAL_DOUBLE(*result, (double)va_arg(*va, double));
+				return 1;
 
 			case 's':
 				{
 					char *str = va_arg(*va, char *);
 					int len;
 
-					MAKE_STD_ZVAL(result);
+					MAKE_ZVAL_IF_NULL(*result);
 					if (str) {
 						if (**format == '#') {
 							++*format;
 							len = va_arg(*va, int);
 						} else
 							len = strlen(str);
-						ZVAL_STRINGL(result, str, len, 1);
+						ZVAL_STRINGL(*result, str, len, 1);
 					} else
-						ZVAL_NULL(result);
+						ZVAL_NULL(*result);
 
-					return result;
+					return 1;
 				}
 
 			case 'V':
 			case 'N':
-				result = (zval *)va_arg(*va, zval *);
+				*result = (zval *)va_arg(*va, zval *);
 				if (*(*format - 1) != 'N')
-					zval_add_ref(&result);
-				return result;
+					zval_add_ref(result);
+				return 1;
 
 			case ':':
 			case ',':
@@ -829,45 +832,46 @@ static zval *php_gtk_build_single(char **format, va_list *va)
 
 			default:
 				php_error(E_WARNING, "%s(): internal error: bad format spec while building value", get_active_function_name(TSRMLS_C));
-				return NULL;
+				return 0;
 		}
 	}
+	
+	return 0;
 }
 
-static zval *php_gtk_build_hash(char **format, va_list *va, int endchar, int count)
+static zend_bool php_gtk_build_hash(zval **result_p, char **format, va_list *va, int endchar, int count TSRMLS_DC)
 {
 	zval *result;
-	zval *single;
 	int i;
-	TSRMLS_FETCH();
+
+	assert(result_p != NULL);
 
 	if (count < 0)
-		return NULL;
+		return 0;
 
 	MAKE_STD_ZVAL(result);
 	array_init(result);
 
 	if (endchar == ')') {
 		for (i = 0; i < count; i++) {
-			single = php_gtk_build_single(format, va);
-			if (!single) {
+			zval *single = NULL;
+			if (!php_gtk_build_single(&single, format, va TSRMLS_CC)) {
 				zval_ptr_dtor(&result);
-				return NULL;
+				return 0;
 			}
 			zend_hash_next_index_insert(Z_ARRVAL_P(result), &single, sizeof(zval *), NULL);
 		}
 	} else if (endchar == '}') {
-		zval *key;
-
 		for (i = 0; i < count; i += 2) {
-			key = php_gtk_build_single(format, va);
-			if (!key) {
+			zval *key = NULL;
+			zval *single = NULL;
+
+			if (!php_gtk_build_single(&key, format, va TSRMLS_CC)) {
 				zval_ptr_dtor(&result);
-				return NULL;
+				return 0;
 			}
 
-			single = php_gtk_build_single(format, va);
-			if (!single) {
+			if (!php_gtk_build_single(&single, format, va TSRMLS_CC)) {
 				zval_ptr_dtor(&key);
 				zval_ptr_dtor(&result);
 				return NULL;
@@ -886,40 +890,43 @@ static zval *php_gtk_build_hash(char **format, va_list *va, int endchar, int cou
 	if (**format != endchar) {
 		zval_ptr_dtor(&result);
 		php_error(E_WARNING, "%s(): internal error: unmatched parenthesis in format", get_active_function_name(TSRMLS_C));
-		return NULL;
+		return 0;
 	} else if (endchar)
 		++*format;
 
-	return result;
+	if (*result_p) {
+		REPLACE_ZVAL_VALUE(result_p, result, 0);
+		FREE_ZVAL(result);
+	} else {
+		*result_p = result;
+	}
+
+	return 1;
 }
 
-PHP_GTK_API zval *php_gtk_build_value(char *format, ...)
+PHP_GTK_API void php_gtk_build_value(zval **result, char *format, ...)
 {
-	int count = php_gtk_count_specs(format, '\0');
-	zval *result;
+	int count = php_gtk_count_specs(format, '\0' TSRMLS_CC);
 	va_list va;
+	TSRMLS_FETCH();
+
+    assert(result != NULL);
 
 	if (count <= 0) {
-		MAKE_STD_ZVAL(result);
-		ZVAL_NULL(result);
-		return result;
+		return;
 	}
+
+	MAKE_ZVAL_IF_NULL(*result);
+	ZVAL_NULL(*result);
 
 	va_start(va, format);
 
 	if (count == 1)
-		result = php_gtk_build_single(&format, &va);
+		php_gtk_build_single(result, &format, &va TSRMLS_CC);
 	else
-		result = php_gtk_build_hash(&format, &va, '\0', count);
+		php_gtk_build_hash(result, &format, &va, '\0', count TSRMLS_CC);
 
 	va_end(va);
-
-	if (result == NULL) {
-		MAKE_STD_ZVAL(result);
-		ZVAL_NULL(result);
-	}
-
-	return result;
 }
 
 PHP_GTK_API void phpg_warn_deprecated(char *msg TSRMLS_DC)
