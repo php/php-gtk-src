@@ -222,7 +222,7 @@ function create_ctree()
 
 			$clist = $ctree->clist;
 
-			fixme
+			/* TODO fixme */
 
 			if ($clist->focus_row >= 0)
 				$node = $clist->row_list[$clist->focus_row];
