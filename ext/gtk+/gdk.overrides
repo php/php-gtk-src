@@ -66,7 +66,11 @@ PHP_METHOD(GdkRectangle, intersect)
 override-prop GdkDrawable xid
 PHPG_PROP_READER(GdkDrawable, xid)
 {
-    /* TODO */
+#if defined(GDK_WINDOWING_X11)
+	RETVAL_LONG(GDK_DRAWABLE_XID(((GdkDrawable *)((phpg_gobject_t *)object)->obj)));
+#else
+    php_error(E_WARNING, "xid property is not supported");
+#endif
     return SUCCESS;
 }
 
