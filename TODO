@@ -1,5 +1,7 @@
 /* vim: set tw=80 ai expandtab: */
 
+* Investigate how to improve h2def.py or modify gdk.defs to define boxed type
+  objects (GdkColormap, etc.)
 * Decide on the license.
 * Modify generator to strip 'gdk_' from some functions.
-* Modify generic set/set property handlers to handle array index accesses.
+* Modify generic get/set property handlers to handle array index accesses.
