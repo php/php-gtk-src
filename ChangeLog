@@ -1,3 +1,47 @@
+2001-05-08  Andrei Zmievski  <andrei@ispi.net>
+
+    * docs/en/classes/gtkbutton.xml: Start docs on GtkButton.
+
+2001-05-08  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/class.xsl
+      docs/stylesheets/xsl/html/title.xsl:
+     - Update style of classentry page slightly.
+     - Rename the constructors
+
+2001-05-08  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/README.HOWTO-CYGWIN
+      docs/README.HOWTO-WRITING-DOCS
+      docs/TODO
+      docs/en/classes/gtkarrow.xml
+      docs/en/classes/gtkbuttonbox.xml
+      docs/en/classes/gtkcolorselection.xml
+      docs/en/classes/gtkfontselection.xml
+      docs/en/classes/gtklabel.xml
+      docs/en/classes/gtkwidget.xml
+      docs/en/classes/gtkwindow.xml:
+    Adding text files into docs dir.  Mods are all minor.
+
+2001-05-08  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/class.xsl:
+     - Sort out spacing of object properties and methods
+     - Move classes desc and shortdesc about
+
+2001-05-08  Andrei Zmievski  <andrei@ispi.net>
+
+    * docs/stylesheets/xsl/html/toc.xsl:
+    Make class shortdesc appear on class list page.
+
+2001-05-08  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/class.xsl:
+     - Changing shortdesc for desc at top of classentry.
+
+    * docs/stylesheets/xsl/html/phpweb.xsl:
+    Killing some extra markup which we dont need in the phpweb stylesheet
+
 2001-05-07  Andrei Zmievski  <andrei@ispi.net>
 
     * docs/en/classes/gtklabel.xml: Whitespace fix.
