@@ -128,6 +128,10 @@ SOURCE=..\src\php_gtk_gen_reg_items.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\php_gtk_gen_reg_items_decl.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\php_gtk_module.h
 # End Source File
 # End Group
