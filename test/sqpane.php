@@ -11,7 +11,7 @@
 
 
 	$sq = &new GtkSQPane;
-	$sq->set_handle_size(20);
+	$sq->set_handle_size(12);
 	$w->add($sq);
 	
 	$text = &new GtkText;
