@@ -1,0 +1,79 @@
+PHP-GTK: PHP language bindings for GTK+ toolkit
+===============================================
+PHP-GTK is a PHP extension that enables you to write client-side cross-platform
+GUI applications. This is the first such extension of this kind and one of the
+goals behind it was to prove that PHP is a capable general-purpose scripting
+language that is suited for more than just Web applications.
+
+
+Requirements
+============
+As a prerequisite, you should have a CGI binary (command-line) version of PHP
+installed along with the header files and development scripts. They should
+normally be installed when you do 'make install' in the PHP source tree.
+
+It's always best to use the latest release version of PHP 4.x with PHP-GTK, but
+older versions may work as well. If they don't, let me know and we can see what
+the problem might be.
+
+PHP-GTK supports GTK+ v1.2 and requires v1.2.6 or greater. GTK+ v2.0 is not yet
+supported but will be so in the future when v2.0 is out of the development phase
+and is used more widely. The latest stable release of GTK+ v1.2.x can be
+obtained from ftp://ftp.gtk.org/pub/gtk/v1.2/.
+
+
+Installation and testing
+========================
+After unpacking the distribution or checking out the sources from the CVS,
+change into the base directory and do the following.
+
+First, run the 'phpize' script that should have been installed along with PHP.
+It will set up necessary files and create 'configure' script for you. Next, run
+'./configure'. It will check that you have proper version of GTK+ and other
+files required for compilation and create the Makefile's.
+
+Finally, run 'make' to compile the extension. If the compilation is successful,
+run 'make install' to install the extension into your default PHP extension
+directory (usually /usr/local/lib/php/extensions).
+
+To test the extension, try running the example scripts in the test/ directory,
+especially gtk.php. These are also good for showing how the extension can be
+used.
+
+
+Website
+=======
+The website for this extension can be found at:
+
+    http://gtk.php.net/
+
+This is where you should go to obtain the latest releases and news about
+PHP-GTK.
+
+
+Mailing list
+============
+There is a mailing list for PHP-GTK. To subscribe, send blank email to
+php-gtk-subscribe@lists.php.net. The address of the list itself is
+php-gtk@lists.php.net. The list is archived at MARC
+(http://marc.theaimsgroup.com/?l=php-gtk&r=1&w=2).
+
+
+Patches and feedback
+====================
+You can contact me directly at andrei@php.net or through the mailing list.
+Patches in the unified diff (diff -u) format can be sent via the same means.
+
+
+Acknowledgements
+================
+The person I would like to thank the most is James Henstridge
+<james@daa.com.au>, the author of PyGTK (Python GTK+ bindings). His help and
+advice have proved invaluable during the development of this extension, and a
+fair amount of source code is based on or inspired by what he has developed for
+PyGTK.
+
+I'd also like to thank PHP team for making such a great language and the GTK+
+team for developing what has to be the best C-based GUI toolkit.
+
+# vim: set et tw=80 ai:
