@@ -1,3 +1,18 @@
+2001-03-22  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/class.xsl:
+    Fix a few more attributes and turn it all PHP into a processing instruction
+
+    * docs/stylesheets/xsl/html/class.xsl:
+    A few more [corrected select/xsl:text's] I missed before.. they just seem to sneak through
+
+    * docs/stylesheets/xsl/html/class.xsl: Get correct attribute names
+
+    * docs/stylesheets/xsl/html/class.xsl: Making it build again..
+
+    * docs/stylesheets/xsl/html/class.xsl:
+    New output functions prepairing for PHP handling for building object hierachy
+
 2001-03-20  Andrei Zmievski  <andrei@ispi.net>
 
     * test/fileselection.php: Showing how to get the filename.
