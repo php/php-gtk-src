@@ -1,3 +1,70 @@
+2004-08-07  Andrei Zmievski  <andreiz@gmail.com>
+
+    * (PHP_GTK_1)
+      build2/build.mk:
+      Generate lists before phpize'ing.
+
+    * (PHP_GTK_1)
+      build2/build.mk:
+      Create php_gtk.m4 explicitly on the first run, as newer versions of
+      aclocal seem to care about that.
+
+    * (PHP_GTK_1)
+      config.m4:
+      Forgot the space.
+
+    * (PHP_GTK_1)
+      ext/canvas/php_canvas.c
+      ext/canvas/php_canvas.h
+      ext/combobutton/php_combobutton.c
+      ext/combobutton/php_combobutton.h
+      ext/extra/php_extra.c
+      ext/extra/php_extra.h
+      ext/gdkpixbuf/php_gdkpixbuf.c
+      ext/gdkpixbuf/php_gdkpixbuf.h
+      ext/gtk+/php_gdk.c
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      ext/imlib/php_imlib.c
+      ext/imlib/php_imlib.h
+      ext/libglade/php_libglade.c
+      ext/libglade/php_libglade.h
+      ext/piemenu/php_piemenu.c
+      ext/piemenu/php_piemenu.h
+      ext/scintilla/php_scintilla.c
+      ext/scintilla/php_scintilla.h
+      ext/scrollpane/php_scrollpane.c
+      ext/scrollpane/php_scrollpane.h
+      ext/skeleton/php_skeleton.c
+      ext/skeleton/php_skeleton.h
+      ext/spaned/php_spaned.c
+      ext/spaned/php_spaned.h
+      ext/sqpane/php_sqpane.c
+      ext/sqpane/php_sqpane.h
+      generator/arg_types.php
+      generator/definitions.php
+      generator/doc_templates.php
+      generator/docgen.php
+      generator/generator.php
+      generator/override.php
+      generator/scheme.php
+      generator/templates.php
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_ext.c.in
+      main/php_gtk_ext.w32.c
+      main/php_gtk_module.h
+      main/php_gtk_object.c
+      main/php_gtk_util.c:
+      Update Copyright notice.
+
+    * (PHP_GTK_1)
+      ChangeLog
+      NEWS
+      config.m4:
+      Update.
+
 2004-08-06  Andrei Zmievski  <andreiz@gmail.com>
 
     * (PHP_GTK_1)
