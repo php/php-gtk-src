@@ -179,17 +179,18 @@ zval *php_gtk_new(GtkObject *obj)
 	GtkType type;
 	gchar *type_name;
 	
+	if (!obj) {
+		MAKE_STD_ZVAL(wrapper);
+		ZVAL_NULL(wrapper);
+		return wrapper;
+	}
+
     if ((wrapper = (zval *)gtk_object_get_data(obj, php_gtk_wrapper_key))) {
 		zval_add_ref(&wrapper);
 		return wrapper;
 	}
 
 	MAKE_STD_ZVAL(wrapper);
-
-	if (!obj) {
-		ZVAL_NULL(wrapper);
-		return wrapper;
-	}
 
 	type = GTK_OBJECT_TYPE(obj);
 	while ((ce = g_hash_table_lookup(php_gtk_class_hash, gtk_type_name(type))) == NULL)
