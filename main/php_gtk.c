@@ -188,6 +188,7 @@ PHP_RINIT_FUNCTION(gtk)
 	php_gtk_class_hash = g_hash_table_new(g_str_hash, g_str_equal);
 	zend_hash_init_ex(&php_gtk_prop_getters, 20, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_prop_setters, 20, NULL, NULL, 1, 0);
+	zend_hash_init_ex(&php_gtk_rsrc_hash, 20, NULL, NULL, 1, 0);
 #include "src/php_gtk_gen_reg_items.h"
 	php_gtk_register_types(module_number);
 	
@@ -207,6 +208,7 @@ PHP_RSHUTDOWN_FUNCTION(gtk)
 {
 	zend_hash_destroy(&php_gtk_prop_getters);
 	zend_hash_destroy(&php_gtk_prop_setters);
+	zend_hash_destroy(&php_gtk_rsrc_hash);
 	gtk_exit(0);
 
 	return SUCCESS;

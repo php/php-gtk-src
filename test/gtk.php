@@ -251,6 +251,39 @@ function create_ctree()
 				$ctree->node_set_row_style($node->children[0], $style2);
 		}
 
+		function select_all($button, $ctree)
+		{
+			$ctree->select_recursive();
+			after_press($ctree);
+		}
+
+		function unselect_all($button, $ctree)
+		{
+			$ctree->unselect_recursive();
+			after_press($ctree);
+		}
+
+		function remove_selection($button, $ctree)
+		{
+			global	$ctree_data;
+
+			$clist = $ctree->clist;
+			$clist->freeze();
+
+			while (($node = $clist->selection[0]) !== null) {
+				if ($node->is_leaf) {
+					$ctree_data['pages']--;
+				}
+
+				$ctree->remove_node($node);
+				if ($clist->selection_mode == GTK_SELECTION_BROWSE)
+					break;
+			}
+
+			$clist->thaw();
+			after_press($ctree);
+		}
+
 		$window = &new GtkWindow;
 		$windows['ctree'] = $window;
 		$window->connect('delete-event', 'delete_event');

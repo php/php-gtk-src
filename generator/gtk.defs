@@ -3298,7 +3298,7 @@
   (of-object CTree (Gtk))
   (c-name gtk_ctree_select_recursive)
   (return-type none)
-  (parameter (type-and-name GtkCTreeNode* node))
+  (parameter (type-and-name GtkCTreeNode* node) (null-ok) (default "NULL"))
 )
 
 (method unselect
@@ -3312,7 +3312,7 @@
   (of-object CTree (Gtk))
   (c-name gtk_ctree_unselect_recursive)
   (return-type none)
-  (parameter (type-and-name GtkCTreeNode* node))
+  (parameter (type-and-name GtkCTreeNode* node) (null-ok) (default "NULL"))
 )
 
 (method node_set_text

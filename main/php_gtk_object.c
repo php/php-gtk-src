@@ -27,6 +27,7 @@
 int le_gtk;
 HashTable php_gtk_prop_getters;
 HashTable php_gtk_prop_setters;
+HashTable php_gtk_rsrc_hash;
 
 static const char *php_gtk_wrapper_key = "php_gtk::wrapper";
 
@@ -41,15 +42,24 @@ void php_gtk_object_init(GtkObject *obj, zval *wrapper)
 void php_gtk_set_object(zval *wrapper, void *obj, int rsrc_type)
 {
 	zval *handle;
+	zval **rsrc;
 
 	MAKE_STD_ZVAL(handle);
 	Z_TYPE_P(handle) = IS_LONG;
-	Z_LVAL_P(handle) = zend_list_insert(obj, rsrc_type);
-	zend_hash_index_update(Z_OBJPROP_P(wrapper), 0, &handle, sizeof(zval *), NULL);
 	if (rsrc_type == le_gtk) {
+		Z_LVAL_P(handle) = zend_list_insert(obj, rsrc_type);
 		zval_add_ref(&wrapper);
 		gtk_object_set_data_full(obj, php_gtk_wrapper_key, wrapper, php_gtk_destroy_notify);
+	} else {
+		if (zend_hash_index_find(&php_gtk_rsrc_hash, (long)obj, (void **)&rsrc) == SUCCESS)
+			Z_LVAL_P(handle) = Z_LVAL_PP(rsrc);
+		else {
+			Z_LVAL_P(handle) = zend_list_insert(obj, rsrc_type);
+			zval_add_ref(&handle);
+			zend_hash_index_update(&php_gtk_rsrc_hash, (long)obj, (void *)&handle, sizeof(zval *), NULL);
+		}
 	}
+	zend_hash_index_update(Z_OBJPROP_P(wrapper), 0, &handle, sizeof(zval *), NULL);
 }
 
 void *php_gtk_get_object(zval *wrapper, int rsrc_type)

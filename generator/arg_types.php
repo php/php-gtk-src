@@ -618,7 +618,7 @@ $matcher->register_boxed('GdkEvent', 'gdk_event');
 $matcher->register_boxed('GdkWindow', 'gdk_window');
 $matcher->register_boxed('GdkPixmap', 'gdk_pixmap');
 $matcher->register_boxed('GdkBitmap', 'gdk_bitmap');
-$matcher->register('GdkDrawable', $matcher->get('GdkWindow*'));
+$matcher->register('GdkDrawable*', $matcher->get('GdkWindow*'));
 $matcher->register_boxed('GdkColor', 'gdk_color');
 $matcher->register_boxed('GdkColormap', 'gdk_colormap');
 $matcher->register_boxed('GdkCursor', 'gdk_cursor');

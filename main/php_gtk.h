@@ -95,6 +95,7 @@ typedef int (*prop_setter_t)(zval *object, zend_llist_element **element, zval *v
 
 /* True globals. */
 extern GHashTable *php_gtk_class_hash;
+extern HashTable php_gtk_rsrc_hash;
 extern HashTable php_gtk_prop_getters;
 extern HashTable php_gtk_prop_setters;
 
