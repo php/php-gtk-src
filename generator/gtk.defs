@@ -636,6 +636,12 @@
   (c-name GtkTipsQuery)
 )
 
+(object AspectFrame
+  (in-module Gtk)
+  (parent Frame (Gtk))
+  (c-name GtkAspectFrame)
+)
+
 ;; Enumerations and flags ...
 
 (flags AccelFlags
