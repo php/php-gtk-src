@@ -115,6 +115,7 @@ zval *php_gtk_arg_as_value(GtkArg *arg);
 int php_gtk_get_flag_value(GtkType flag_type, zval *flag_val, int *result);
 zval php_gtk_get_property(zend_property_reference *property_reference);
 int php_gtk_set_property(zend_property_reference *property_reference, zval *value);
+int php_gtk_set_property_exp(zend_property_reference *property_reference, zval *value);
 void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference *property_reference);
 
 static inline void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter)

@@ -706,6 +706,67 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 }
 
 
+int php_gtk_set_property_exp(zend_property_reference *property_reference, zval *value)
+{
+	zval result;
+	zval **prop_result;
+	zend_overloaded_element *overloaded_property;
+	zend_llist_element *element;
+	zend_llist_element *stop_element;
+	zval object = *property_reference->object;
+	prop_getter_t *getter;
+	prop_setter_t *setter;
+	zend_class_entry *ce;
+	int retval, found;
+
+	/*
+	 * We want to stop at the last overloaded object reference - the rest can
+	 * contain array references, that's fine.
+	 */
+	for (stop_element=property_reference->elements_list->tail;
+		 stop_element && Z_TYPE_P((zend_overloaded_element *)stop_element->data) == OE_IS_ARRAY;
+		 stop_element=stop_element->prev);
+
+	for (element=property_reference->elements_list->head; element && element!=stop_element; element=element->next) {
+		overloaded_property = (zend_overloaded_element *) element->data;
+		if (Z_TYPE_P(overloaded_property) != OE_IS_OBJECT ||
+			Z_TYPE(overloaded_property->element) != IS_STRING ||
+			(Z_TYPE(object) != IS_OBJECT)) {
+			return FAILURE;
+		}
+
+		if ((found = zend_hash_find(Z_OBJPROP(object),
+									Z_STRVAL(overloaded_property->element),
+									Z_STRLEN(overloaded_property->element),
+									(void **)&prop_result)) != SUCCESS) {
+			for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
+				if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
+					(*getter)(&result, &object, &element, &found);
+				}
+			}
+		} else
+			result = **prop_result;
+		if (found == FAILURE)
+			return FAILURE;
+		object = result;
+
+		zval_dtor(&overloaded_property->element);
+	}
+
+	retval = FAILURE;
+	overloaded_property = (zend_overloaded_element *) element->data;
+	if (zend_hash_index_find(&php_gtk_prop_setters, (long)object.value.obj.ce, (void **)&setter) == SUCCESS) {
+		retval = (*setter)(&object, &element, value);
+	} else
+		retval = add_property_zval_ex(&object,
+									  Z_STRVAL(overloaded_property->element),
+									  Z_STRLEN(overloaded_property->element), value);
+
+	zval_dtor(&overloaded_property->element);
+	return retval;
+}
+
+
 void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference *property_reference)
 {
 	zval result;
