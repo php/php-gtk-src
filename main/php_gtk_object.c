@@ -646,80 +646,93 @@ zval *php_gtk_arg_as_value(const GValue *arg)
 	return value;
 }
 
+/* was php_gtk_arg_from_value */
 
-#ifdef DISABLED
-int php_gtk_arg_from_value(GtkArg *arg, zval *value)
+int php_gtk_gvalue_from_zval(GValue *arg, zval *value)
 {
-	switch (GTK_FUNDAMENTAL_TYPE(arg->type)) {
-		case GTK_TYPE_NONE:
-		case GTK_TYPE_INVALID:
-			GTK_VALUE_INT(*arg) = 0;
+	switch (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(arg))) {
+		case G_TYPE_NONE:
+		case G_TYPE_INVALID:
+			g_value_set_int(arg, 0);
 			break;
 
-		case GTK_TYPE_BOOL:
+		case G_TYPE_BOOLEAN:
 			convert_to_boolean(value);
-			GTK_VALUE_BOOL(*arg) = Z_BVAL_P(value);
+			g_value_set_boolean(arg, (gboolean)  Z_BVAL_P(value));
 			break;
 
-		case GTK_TYPE_CHAR:
-		case GTK_TYPE_UCHAR:
+		case G_TYPE_CHAR:
+		case G_TYPE_UCHAR:
 			convert_to_string(value);
-			GTK_VALUE_CHAR(*arg) = Z_STRVAL_P(value)[0];
+			g_value_set_char (arg,  Z_STRVAL_P(value)[0]);
 			break;
 
-		case GTK_TYPE_ENUM:
+		case G_TYPE_ENUM:
+			/* skip at present 
 			if (!php_gtk_get_enum_value(arg->type, value, &(GTK_VALUE_ENUM(*arg))))
 				return 0;
+			*/
+			return 0;
 			break;
 
-		case GTK_TYPE_FLAGS:
+		case G_TYPE_FLAGS:
+			/* skip at present 
 			if (!php_gtk_get_flag_value(arg->type, value, &(GTK_VALUE_FLAGS(*arg))))
 				return 0;
+			*/
+			return 0;
 			break;
 
-		case GTK_TYPE_INT:
+		case G_TYPE_INT:
 			convert_to_long(value);
-			GTK_VALUE_INT(*arg) = Z_LVAL_P(value);
+			g_value_set_int(arg, Z_LVAL_P(value));
 			break;
 
-		case GTK_TYPE_UINT:
+		case G_TYPE_UINT:
 			convert_to_long(value);
-			GTK_VALUE_UINT(*arg) = Z_LVAL_P(value);
+			g_value_set_uint(arg, Z_LVAL_P(value));
 			break;
 
-		case GTK_TYPE_LONG:
+		case G_TYPE_LONG:
 			convert_to_long(value);
-			GTK_VALUE_LONG(*arg) = Z_LVAL_P(value);
+			g_value_set_long(arg, Z_LVAL_P(value));
 			break;
 
-		case GTK_TYPE_ULONG:
+		case G_TYPE_ULONG:
 			convert_to_long(value);
-			GTK_VALUE_ULONG(*arg) = Z_LVAL_P(value);
+			g_value_set_ulong(arg, Z_LVAL_P(value));
 			break;
 
-		case GTK_TYPE_FLOAT:
+		case G_TYPE_FLOAT:
 			convert_to_double(value);
-			GTK_VALUE_FLOAT(*arg) = (gfloat)Z_DVAL_P(value);
+			g_value_set_float(arg, (gfloat)Z_DVAL_P(value));
 			break;
 
-		case GTK_TYPE_DOUBLE:
+		case G_TYPE_DOUBLE:
 			convert_to_double(value);
-			GTK_VALUE_DOUBLE(*arg) = Z_DVAL_P(value);
+			g_value_set_float(arg, Z_DVAL_P(value));
 			break;
 
-		case GTK_TYPE_STRING:
+		case G_TYPE_STRING:
 			convert_to_string(value);
-			GTK_VALUE_STRING(*arg) = Z_STRVAL_P(value);
+			g_value_set_string(arg, Z_STRVAL_P(value));
 			break;
 
-		case GTK_TYPE_OBJECT:
-			if (Z_TYPE_P(value) == IS_OBJECT && php_gtk_check_class(value, gtk_object_ce))
-				GTK_VALUE_OBJECT(*arg) = PHP_GTK_GET(value);
-			else
+		case G_TYPE_OBJECT:
+
+			if (Z_TYPE_P(value) == IS_OBJECT && php_gtk_check_class(value, gobject_ce)) {
+				g_value_set_object(arg,G_OBJECT(PHP_GTK_GET(value))); 
+			} else {
+				php_error(E_WARNING, "Non Object Assigned to GObject when Object expected");
 				return 0;
+			}
 			break;
 
-		case GTK_TYPE_BOXED:
+			return 0;
+			break;
+
+		case G_TYPE_BOXED:
+			/* not yet...
 			if (arg->type == GTK_TYPE_GDK_EVENT) {
 				if (php_gtk_check_class(value, gdk_event_ce))
 					GTK_VALUE_BOXED(*arg) = PHP_GDK_EVENT_GET(value);
@@ -776,13 +789,15 @@ int php_gtk_arg_from_value(GtkArg *arg, zval *value)
 				else
 					return 0;
 			} else
-				return 0;
+			*/
+			return 0;
 			break;
-
-		case GTK_TYPE_FOREIGN:
+/*
+		case G_TYPE_FOREIGN:
 			zval_add_ref(&value);
 			GTK_VALUE_FOREIGN(*arg).data = value;
 			GTK_VALUE_FOREIGN(*arg).notify = php_gtk_destroy_notify;
+			return 0;
 			break;
 
 		case GTK_TYPE_SIGNAL:
@@ -807,13 +822,19 @@ int php_gtk_arg_from_value(GtkArg *arg, zval *value)
 		case GTK_TYPE_ARGS:
 		case GTK_TYPE_POINTER:
 		case GTK_TYPE_C_CALLBACK:
+*/		
+		default:
 			php_error(E_WARNING, "Unsupported type");
 			g_assert_not_reached();
 			return 0;
+
+
+
 	}
 
 	return 1;
 }
+#ifdef DISABLED
 
 zval *php_gtk_ret_as_value(GtkArg *ret)
 {
@@ -991,6 +1012,7 @@ void php_gtk_ret_from_value(GtkArg *ret, zval *value)
 
 		case GTK_TYPE_OBJECT:
 			if (Z_TYPE_P(value) == IS_OBJECT && php_gtk_check_class(value, gtk_object_ce))
+			
 				*GTK_RETLOC_OBJECT(*ret) = PHP_GTK_GET(value);
 			else
 				*GTK_RETLOC_OBJECT(*ret) = NULL;

@@ -72,7 +72,7 @@
 typedef void (*prop_getter_t)(zval *return_value, zval *object, char *property, int *result);
 typedef int (*prop_setter_t)(zval *object, char *property, zval *value);
 
-#define EXT_INIT_ARGS			int module_number TSRMLS_DC
+#define EXT_INIT_ARGS				int module_number TSRMLS_DC
 #define EXT_SHUTDOWN_ARGS		void
 
 #define PHP_GTK_XINIT(ext)		php_gtk_xinit_##ext
@@ -159,7 +159,9 @@ zval *php_gtk_args_as_hash(int nargs, const GValue *args);
 GtkArg *php_gtk_hash_as_args(zval *hash, GType type, gint *nargs);
 int php_gtk_args_from_hash(GValue *args, int nparams, zval *hash);
 zval *php_gtk_arg_as_value(const GValue *arg);
-int php_gtk_arg_from_value(GValue *arg, zval *value);
+int php_gtk_gvalue_from_zval(GValue *arg, zval *value);
+
+
 zval *php_gtk_ret_as_value(GValue *ret);
 void php_gtk_ret_from_value(GValue *ret, zval *value);
 int php_gtk_get_flag_value(GType flag_type, zval *flag_val, int *result);

@@ -59,7 +59,8 @@ $tt->enable();
 $window->add($button);
 $x= $button->parent;
 echo "VARDUMP: ";var_dump($x);
-
+$button->visible = 0;
+$button->sensitive = 0;
 /*
  * Show the window and all its child widgets.
  */
