@@ -1,3 +1,43 @@
+2001-11-30  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gdkpixbuf/gdk-pixbuf.php: Added GdkPixbuf example.
+
+2001-11-30  Frank M. Kromann  <frank@frontbase.com>
+
+    * main/php_gtk.h: Adding missing prototype
+
+2001-11-30  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/definitions.php
+      generator/generator.php
+      generator/scheme.php:
+    Fixed generator to properly account for the gtk object hierarchy.
+
+    * ext/gdkpixbuf/Makefile.in: Typo.
+
+    * generator/generator.php
+      generator/scheme.php
+      generator/templates.php
+      main/php_gtk_object.c
+      TODO
+      generator/arg_types.php
+      generator/definitions.php:
+    Modified generator to have better support for objects that are not GtkObject
+    descendants. Made it use typed enums only when generating ext/gtk+, enums
+    in other extensions are handled as simple integers. Added -c option to
+    generator that allows specifying what class the non-method functions should
+    go into (this allows merging some of them into a defined class). And a few
+    optimizations of course.
+
+    * NEWS
+      ext/gdkpixbuf/.cvsignore
+      ext/gdkpixbuf/Makefile.in
+      ext/gdkpixbuf/config.m4
+      ext/gdkpixbuf/gdkpixbuf.defs
+      ext/gdkpixbuf/gdkpixbuf.overrides
+      ext/gdkpixbuf/php_gdkpixbuf.c
+      ext/gdkpixbuf/php_gdkpixbuf.h: Implemented gdk-pixbuf extension.
+
 2001-11-29  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/gtk.overrides
