@@ -1,0 +1,112 @@
+;; -*- scheme -*-
+; object definitions ...
+(object SQPane
+  (in-module Gtk)
+  (parent Container (Gtk))
+  (c-name GtkSQPane)
+)
+
+;; Enumerations and flags ...
+
+
+;; From gtksqpane.h
+
+(function gtk_sqpane_get_type
+  (c-name gtk_sqpane_get_type)
+  (return-type GtkType)
+)
+
+(function gtk_sqpane_new
+  (c-name gtk_sqpane_new)
+  (is-constructor-of GtkSQPane)
+  (return-type GtkWidget*)
+)
+
+(method add1
+  (of-object SQPane (Gtk))
+  (c-name gtk_sqpane_add1)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* child))
+)
+
+(method add2
+  (of-object SQPane (Gtk))
+  (c-name gtk_sqpane_add2)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* child))
+)
+
+(method add3
+  (of-object SQPane (Gtk))
+  (c-name gtk_sqpane_add3)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* child))
+)
+
+(method add4
+  (of-object SQPane (Gtk))
+  (c-name gtk_sqpane_add4)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* child))
+)
+
+(method pack1
+  (of-object SQPane (Gtk))
+  (c-name gtk_sqpane_pack1)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* child))
+  (parameter (type-and-name gboolean resize) (default "TRUE"))
+  (parameter (type-and-name gboolean shrink) (default "TRUE"))
+)
+
+(method pack2
+  (of-object SQPane (Gtk))
+  (c-name gtk_sqpane_pack2)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* child))
+  (parameter (type-and-name gboolean resize) (default "TRUE"))
+  (parameter (type-and-name gboolean shrink) (default "TRUE"))
+)
+
+(method pack3
+  (of-object SQPane (Gtk))
+  (c-name gtk_sqpane_pack3)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* child))
+  (parameter (type-and-name gboolean resize) (default "TRUE"))
+  (parameter (type-and-name gboolean shrink) (default "TRUE"))
+)
+
+(method pack4
+  (of-object SQPane (Gtk))
+  (c-name gtk_sqpane_pack4)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* child))
+  (parameter (type-and-name gboolean resize) (default "TRUE"))
+  (parameter (type-and-name gboolean shrink) (default "TRUE"))
+)
+
+(method set_position
+  (of-object SQPane (Gtk))
+  (c-name gtk_sqpane_set_position)
+  (return-type none)
+  (parameter (type-and-name gint x))
+  (parameter (type-and-name gint y))
+)
+
+(method set_handle_size
+  (of-object SQPane (Gtk))
+  (c-name gtk_sqpane_set_handle_size)
+  (return-type none)
+  (parameter (type-and-name guint16 size))
+)
+
+(method compute_position
+  (of-object SQPane (Gtk))
+  (c-name gtk_sqpane_compute_position)
+  (return-type none)
+  (parameter (type-and-name gint width))
+  (parameter (type-and-name gint height))
+)
+
+
