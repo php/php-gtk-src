@@ -8,7 +8,7 @@ http://www.gimp.org/win32/gtk+-dev-20001226.zip
 
 Filename might change with new releases.
 Links to the latest files are found on 
-http://user.sgic.fi/~tml/gimp/win32/downloads.html
+http://www.gimp.org/~tml/gimp/win32/downloads.html
 
 These zip files all have a directory stucture starting with \src.
 Extract the files so the \src directory is placed on the same
