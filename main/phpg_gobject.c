@@ -406,7 +406,7 @@ PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC)
 	}
 
     phpg_sink_object(obj);
-    zend_objects_store_add_ref(zobj TSRMLS_CC);
+    //zend_objects_store_add_ref(zobj TSRMLS_CC);
     pobj = zend_object_store_get_object(zobj TSRMLS_CC);
     pobj->obj = obj;
     pobj->dtor = (phpg_dtor_t) g_object_unref;

@@ -96,6 +96,8 @@ typedef struct {
 	gboolean free_on_destroy;
 } phpg_gboxed_t;
 
+/* Private structure */
+typedef struct _phpg_closure_t phpg_closure_t;
 
 #define PHPG_GET_GOBJECT(zobj, type) \
 	(type)(((phpg_gobject_t*)zend_object_store_get_object((zobj) TSRMLS_CC))->obj)
@@ -257,6 +259,13 @@ PHP_GTK_API zval* php_gtk_simple_signal_callback(GtkObject *o, gpointer data, zv
 #define PHPG_THROW_CONSTRUCT_EXCEPTION(type) \
 	PHPG_THROW_EXCEPTION(phpg_construct_exception, "could not construct " #type " object");
 
+#define PHPG_THROW_EXCEPTION_WITH_RETURN(exception, message, retval) \
+    do { \
+		TSRMLS_FETCH(); \
+		zend_throw_exception(exception, message, 0 TSRMLS_CC); \
+		return retval; \
+	} while (0)
+
 PHP_GTK_API PHP_FUNCTION(no_constructor);
 PHP_GTK_API PHP_FUNCTION(no_direct_constructor);
 
@@ -288,6 +297,10 @@ void phpg_gboxed_register_self();
 PHP_GTK_API void phpg_gboxed_new(zval **zobj, GType gtype, gpointer boxed, gboolean copy, gboolean own_ref TSRMLS_DC);
 PHP_GTK_API zend_class_entry* phpg_register_boxed(const char *class_name, function_entry *class_methods, prop_info_t *prop_info, GType gtype TSRMLS_DC);
 PHP_GTK_API gpointer phpg_gboxed_get(zval *zobj, GType gtype TSRMLS_DC);
+
+/* Closures */
+PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, zend_bool use_signal_object TSRMLS_DC);
+PHP_GTK_API void phpg_watch_closure(zval *obj, GClosure *closure TSRMLS_DC);
 
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtype_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gobject_ce);
