@@ -332,7 +332,7 @@ PHPG_PROP_READER(GtkTextAttributes, bg_stipple)
 	GdkBitmap *php_retval;
 
 	php_retval = ((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.bg_stipple;
-	phpg_gobject_new(&return_value, php_retval TSRMLS_CC);
+	phpg_gobject_new(&return_value, (GObject *)php_retval TSRMLS_CC);
 
 	return SUCCESS;
 }
@@ -344,7 +344,7 @@ PHPG_PROP_READER(GtkTextAttributes, fg_stipple)
 	GdkBitmap *php_retval;
 
 	php_retval = ((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.fg_stipple;
-	phpg_gobject_new(&return_value, php_retval TSRMLS_CC);
+	phpg_gobject_new(&return_value, (GObject *)php_retval TSRMLS_CC);
 
 	return SUCCESS;
 }
