@@ -141,12 +141,6 @@ static void init_gtk(void)
 	}
 }
 
-static void release_gtk_object_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
-{
-	GtkObject *obj = (GtkObject *)rsrc->ptr;
-	gtk_object_unref(obj);
-}
-
 /*
 static void register_exception(TSRMLS_D)
 {
@@ -159,14 +153,9 @@ static void register_exception(TSRMLS_D)
 
 PHP_GTK_XINIT_FUNCTION(gtk_plus)
 {
-	le_gtk_object = zend_register_list_destructors_ex(release_gtk_object_rsrc, NULL, "GtkObject", module_number);
-
 	//register_exception(TSRMLS_C);
 
 	init_gtk();
-	//php_gtk_register_constants(module_number TSRMLS_CC);
-	//php_gdk_register_constants(module_number TSRMLS_CC);
-	//php_gdk_register_keysyms(module_number TSRMLS_CC);
 	phpg_gtk_register_classes();
 	phpg_gdk_register_classes();
 	phpg_atk_register_classes();
@@ -177,7 +166,7 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 	phpg_gdk_register_constants("GDK_");
 	phpg_gtk_register_constants("GTK_");
 
-	//php_gtk_plus_register_types(module_number);
+	php_gtk_plus_register_types();
 
 	return SUCCESS;
 }

@@ -116,6 +116,13 @@ typedef struct {
 	gboolean free_on_destroy;
 } phpg_gboxed_t;
 
+typedef int (*boxed_from_zval_t)(const zval *value, GValue *gvalue TSRMLS_DC);
+typedef int (*boxed_to_zval_t)(const GValue *gvalue, zval **value TSRMLS_DC);
+typedef struct {
+	boxed_from_zval_t from_zval;
+	boxed_to_zval_t   to_zval;
+} phpg_gboxed_marshal_t;
+
 /* Private structure */
 typedef struct _phpg_closure_t phpg_closure_t;
 
@@ -322,7 +329,7 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value);
 
 /* GValue */
 PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool copy_boxed TSRMLS_DC);
-PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value);
+PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC);
 PHP_GTK_API zval *phpg_gvalues_to_array(const GValue *values, uint n_values);
 PHP_GTK_API int phpg_gvalue_get_enum(GType enum_type, zval *enum_val, gint *result);
 PHP_GTK_API int phpg_gvalue_get_flags(GType flags_type, zval *flags_val, gint *result);
@@ -346,6 +353,8 @@ static inline phpg_gobject_t* phpg_gobject_get(zval *zobj TSRMLS_DC)
 
 /* GBoxed */
 void phpg_gboxed_register_self(TSRMLS_D);
+PHP_GTK_API void phpg_gboxed_register_custom(GType type, boxed_from_zval_t from_func, boxed_to_zval_t to_func);
+PHP_GTK_API phpg_gboxed_marshal_t* phpg_gboxed_lookup_custom(GType type);
 PHP_GTK_API void phpg_gboxed_new(zval **zobj, GType gtype, gpointer boxed, gboolean copy, gboolean own_ref TSRMLS_DC);
 PHP_GTK_API zend_class_entry* phpg_register_boxed(const char *class_name, function_entry *class_methods, prop_info_t *prop_info, create_object_func_t create_obj_func, GType gtype TSRMLS_DC);
 PHP_GTK_API zend_object_value phpg_create_gboxed(zend_class_entry *ce TSRMLS_DC);

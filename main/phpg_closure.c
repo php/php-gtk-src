@@ -68,8 +68,9 @@ static void phpg_closure_marshal(GClosure *closure,
 
 	if (!zend_is_callable(phpg_closure->callback, 0, &callback_name)) {
 		if (phpg_closure->src_filename)
-			php_error(E_WARNING, "Unable to invoke signal callback '%s' specified in %s on line %d", callback_name,
-                      phpg_closure->src_filename, phpg_closure->src_lineno);
+            php_error(E_WARNING,
+                      "Unable to invoke signal callback '%s' specified in %s on line %d",
+                      callback_name, phpg_closure->src_filename, phpg_closure->src_lineno);
 		else
 			php_error(E_WARNING, "Unable to invoke signal callback '%s'", callback_name);
 		efree(callback_name);
@@ -109,7 +110,7 @@ static void phpg_closure_marshal(GClosure *closure,
 
 	if (retval) {
 		if (return_value) {
-			if (phpg_gvalue_from_zval(return_value, retval) == FAILURE) {
+			if (phpg_gvalue_from_zval(return_value, retval TSRMLS_CC) == FAILURE) {
                 php_error(E_WARNING, "Could not convert return value of signal callback '%s' to '%s'",
                           callback_name, g_type_name(G_VALUE_TYPE(return_value)));
             }

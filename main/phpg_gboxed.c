@@ -26,6 +26,8 @@
  * Boxed types API and helper functions
  */
 
+static GQuark custom_boxed_marshal_key = 0;
+
 PHP_GTK_EXPORT_CE(gboxed_ce) = NULL;
 
 /* {{{ PHP_METHOD(GBoxed, copy) */
@@ -40,7 +42,7 @@ PHP_METHOD(GBoxed, copy)
     }
 
     pobj = zend_object_store_get_object(this_ptr TSRMLS_CC);
-    phpg_gboxed_new(&return_value, pobj->gtype, pobj->boxed, TRUE, TRUE);
+    phpg_gboxed_new(&return_value, pobj->gtype, pobj->boxed, TRUE, TRUE TSRMLS_CC);
 }
 /* }}} */
 
@@ -93,7 +95,7 @@ PHP_GTK_API zend_class_entry* phpg_register_boxed(const char *class_name,
 }
 /* }}} */
 
-/* {{{ phpg_gboxed_check() */
+/* {{{ PHP_GTK_API phpg_gboxed_check() */
 PHP_GTK_API zend_bool phpg_gboxed_check(zval *zobj, GType gtype, zend_bool full_check TSRMLS_DC)
 {
     phpg_gboxed_t *pobj;
@@ -110,7 +112,7 @@ PHP_GTK_API zend_bool phpg_gboxed_check(zval *zobj, GType gtype, zend_bool full_
 }
 /* }}} */
 
-/* {{{ phpg_gboxed_new() */
+/* {{{ PHP_GTK_API phpg_gboxed_new() */
 PHP_GTK_API void phpg_gboxed_new(zval **zobj, GType gtype, gpointer boxed, gboolean copy, gboolean own_ref TSRMLS_DC)
 {
     zend_class_entry *ce = NULL;
@@ -138,6 +140,34 @@ PHP_GTK_API void phpg_gboxed_new(zval **zobj, GType gtype, gpointer boxed, gbool
     pobj->gtype = gtype;
     pobj->boxed = boxed;
     pobj->free_on_destroy = own_ref;
+}
+/* }}} */
+
+/* {{{ PHP_GTK_API phpg_gboxed_register_custom */
+PHP_GTK_API void phpg_gboxed_register_custom(GType type, boxed_from_zval_t from_func, boxed_to_zval_t to_func)
+{
+    phpg_gboxed_marshal_t *gbm;
+
+    if (!custom_boxed_marshal_key) {
+        custom_boxed_marshal_key = g_quark_from_static_string("phpg-custom-boxed-marshal");
+    }
+
+    /*
+     * Use GLib's memory allocation so that it gets cleaned up, since there is
+     * no destroy notify callback for type qdata.
+     */
+    gbm = g_new(phpg_gboxed_marshal_t, 1);
+    gbm->to_zval   = to_func;
+    gbm->from_zval = from_func;
+
+    g_type_set_qdata(type, custom_boxed_marshal_key, gbm);
+}
+/* }}} */
+
+/* {{{ PHP_GTK_API phpg_gboxed_lookup_custom */
+PHP_GTK_API phpg_gboxed_marshal_t* phpg_gboxed_lookup_custom(GType type)
+{
+    return (phpg_gboxed_marshal_t *) g_type_get_qdatea(type, custom_boxed_marshal_key);
 }
 /* }}} */
 

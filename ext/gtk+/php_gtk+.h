@@ -34,6 +34,17 @@ typedef enum { STYLE_COLOR_ARRAY, STYLE_GC_ARRAY, STYLE_PIXMAP_ARRAY} style_help
 PHP_GTK_API int phpg_rectangle_from_zval(zval *value, GdkRectangle *rectangle TSRMLS_DC);
 PHP_GTK_API void phpg_create_style_helper(zval **zobj, GtkStyle *style, int type, gpointer array TSRMLS_DC);
 
+void phpg_atk_register_constants(const char *strip_prefix);
+void phpg_pango_register_constants(const char *strip_prefix);
+void phpg_gdk_register_constants(const char *strip_prefix);
+void phpg_gtk_register_constants(const char *strip_prefix);
+void phpg_atk_register_classes(void);
+void phpg_pango_register_classes(void);
+void phpg_gdk_register_classes(void);
+void phpg_gtk_register_classes(void);
+
+void php_gtk_plus_register_types();
+
 #if 0
 PHP_GTK_API extern int le_gtk_object;
 PHP_GTK_API extern int le_php_gtk_wrapper;
@@ -119,17 +130,6 @@ zval *php_gtk_box_child_new(GtkBoxChild *box_child);
 zval *php_gtk_table_child_new(GtkTableChild *table_child);
 zval *php_gtk_fixed_child_new(GtkFixedChild *fixed_child);
 zval *php_gtk_clist_row_new(GtkCListRow *clist_row);
-
-void phpg_atk_register_constants(const char *strip_prefix);
-void phpg_pango_register_constants(const char *strip_prefix);
-void phpg_gdk_register_constants(const char *strip_prefix);
-void phpg_gtk_register_constants(const char *strip_prefix);
-void phpg_atk_register_classes(void);
-void phpg_pango_register_classes(void);
-void phpg_gdk_register_classes(void);
-void phpg_gtk_register_classes(void);
-
-void php_gtk_plus_register_types(int module_number);
 
 int php_gtk_array_to_gchar_array(zval *zvalue, gchar ***gchar_array);
 void php_gtk_free_gchar_array(gchar **gchar_array);

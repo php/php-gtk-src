@@ -110,6 +110,9 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
             break;
 
         case G_TYPE_BOXED:
+        {
+            phpg_gboxed_marshal_t *gbm;
+
             if (G_VALUE_HOLDS(gval, G_TYPE_VALUE_ARRAY)) {
                 int i;
                 zval *item;
@@ -122,12 +125,17 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
                     phpg_gvalue_to_zval(array->values + i, &item, copy_boxed TSRMLS_CC);
                     add_next_index_zval(*value, item);
                 }
-            } else if (copy_boxed) {
-                phpg_gboxed_new(value, G_VALUE_TYPE(gval), g_value_get_boxed(gval), TRUE, TRUE TSRMLS_CC);
+            } else if ((gbm = phpg_gboxed_lookup_custom(G_VALUE_TYPE(gval)))) {
+                return gbm->to_zval(gval, value TSRMLS_CC);
             } else {
-                phpg_gboxed_new(value, G_VALUE_TYPE(gval), g_value_get_boxed(gval), FALSE, FALSE TSRMLS_CC);
+                if (copy_boxed) {
+                    phpg_gboxed_new(value, G_VALUE_TYPE(gval), g_value_get_boxed(gval), TRUE, TRUE TSRMLS_CC);
+                } else {
+                    phpg_gboxed_new(value, G_VALUE_TYPE(gval), g_value_get_boxed(gval), FALSE, FALSE TSRMLS_CC);
+                }
             }
             break;
+        }
 
         default:
             php_error(E_WARNING, "PHP-GTK internal error: unsupported type %s", g_type_name(G_VALUE_TYPE(gval)));
@@ -141,7 +149,7 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
 /* }}} */
 
 /* {{{ PHP_GTK_API phpg_gvalue_from_zval() */
-PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value)
+PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC)
 {
     switch (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(gval))) {
         case G_TYPE_BOOLEAN:
@@ -195,15 +203,21 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value)
             break;
 
         case G_TYPE_BOXED:
+        {
+            phpg_gboxed_marshal_t *gbm;
+
             if (Z_TYPE_P(value) == IS_NULL) {
                 g_value_set_boxed(gval, NULL);
             } else if (Z_TYPE_P(value) == IS_OBJECT
                        && instanceof_function(Z_OBJCE_P(value), gboxed_ce TSRMLS_CC)
                        && G_VALUE_HOLDS(value, ((phpg_gboxed_t*)PHPG_GET(value))->gtype)) {
                 g_value_set_boxed(gval, PHPG_GBOXED(value));
+            } else if ((gbm = phpg_gboxed_lookup_custom(G_VALUE_TYPE(gval)))) {
+                return gbm->from_zval(value, gval TSRMLS_CC);
             } else
                 return FAILURE;
             break;
+        }
 
         case G_TYPE_OBJECT:
             if (Z_TYPE_P(value) == IS_NULL) {

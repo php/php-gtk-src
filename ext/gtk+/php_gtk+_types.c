@@ -245,6 +245,34 @@ PHP_GTK_API void phpg_create_style_helper(zval **zobj, GtkStyle *style, int type
 
 /* }}} */
 
+static int phpg_gdk_rectangle_from_zval(const zval *value, GValue *gvalue TSRMLS_DC)
+{
+    GdkRectangle rect;
+
+    if (phpg_rectangle_from_zval((zval *)value, &rect) == FAILURE) {
+        return FAILURE;
+    }
+
+    g_value_set_boxed(gvalue, &rect);
+    
+    return SUCCESS;
+}
+
+static int phpg_gdk_rectangle_to_zval(const GValue *gvalue, zval **value TSRMLS_DC)
+{
+    GdkRectangle *rect = (GdkRectangle *) g_value_get_boxed(gvalue);
+    phpg_gboxed_new(value, GDK_TYPE_RECTANGLE, rect, TRUE, TRUE);
+
+    return SUCCESS;
+}
+
+void php_gtk_plus_register_types()
+{
+    phpg_gboxed_register_custom(GDK_TYPE_RECTANGLE,
+                                phpg_gdk_rectangle_from_zval,
+                                phpg_gdk_rectangle_to_zval);
+}
+
 /* {{{ old code */
 #if 0
 #ifndef PHP_WIN32
