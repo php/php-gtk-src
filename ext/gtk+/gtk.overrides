@@ -343,15 +343,18 @@ PHP_FUNCTION(gtk_input_add_full)
 	}
 #else
 	{
-		int *source_ptr;
+		void *source_ptr;
 
 		source_ptr = zend_list_find(Z_LVAL_P(source_rsrc), &rsrc_type);
 		if (!source_ptr ||
-			(rsrc_type != php_file_le_fopen() && rsrc_type != php_file_le_popen())) {
-			php_error(E_WARNING, "%s() expects argument 1 to be a valid filehandle or pipe resource", get_active_function_name(TSRMLS_C));
+			(rsrc_type != php_file_le_fopen() && rsrc_type != php_file_le_popen() && rsrc_type != php_file_le_socket())) {
+			php_error(E_WARNING, "%s() expects argument 1 to be a valid filehandle, pipe, or socket resource", get_active_function_name(TSRMLS_C));
 			return;
 		}
-		source = *source_ptr;
+		if (rsrc_type == php_file_le_socket())
+			source = *((int *)source_ptr);
+		else
+			source = fileno((FILE *)source_ptr);
 	}
 #endif
 	
