@@ -1,3 +1,9 @@
+2003-08-24  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/canvas/canvas.overrides
+      ext/canvas/canvas.php:
+      allow polygons to work with integers as well as doubles.
+
 2003-08-21  Alan Knowles  <alan@akbkhome.com>
 
     * ext/extra/extra.overrides
