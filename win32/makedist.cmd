@@ -1,5 +1,5 @@
 @echo off
-SET zip_file=php-gtk-0.5.0-win32.zip
+SET zip_file=php-gtk-%1-win32.zip
 md \php-gtk-dist
 cd \php-gtk-dist
 md php4
@@ -7,12 +7,14 @@ md winnt
 md winnt\system32
 md test
 copy \php4\php.exe php4
+copy \php4\php-cgi.exe php4
 copy \php4\php_win.exe php4
 copy \php4\php4ts.dll php4
 copy \php4\php4isapi.dll php4
 copy \php4\php_gtk.dll php4
 copy \php4\php_gtk_libglade.dll php4
 copy \php4\php_gtk_sqpane.dll php4
+copy \php4\php_gtk_combobutton.dll php4
 copy \php\php4\php.ini-dist winnt\php.ini
 type \php\php-gtk\win32\php.ini >>winnt\php.ini
 copy %SystemRoot%\system32\gtk-1.3.dll winnt\system32
