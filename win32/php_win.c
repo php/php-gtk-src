@@ -17,7 +17,7 @@ int WINAPI WinMain(
 	char *path = getenv("PATH");
 	char newpath[2048];
 
-	sprintf(newpath, "PATH=c:\\php4;d:\\php4;%s", path);
+	sprintf(newpath, "PATH=c:\\php5;d:\\php5;%s", path);
 	putenv(newpath);
 
 	if (strlen(lpCmdLine) == 0)
