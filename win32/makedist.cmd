@@ -1,4 +1,5 @@
 @echo off
+SET zip_file=php-gtk-0.5.0-win32.zip
 md \php-gtk-dist
 cd \php-gtk-dist
 md php4
@@ -30,5 +31,8 @@ copy \php\php-gtk\test\scribble.php test
 copy \php\php-gtk\test\testgtkrc test
 copy \php\php-gtk\test\testgtkrc2 test
 copy \php\php-gtk\win32\README.txt 
-"c:\Program Files\WinZip\WZZip" -ampr php-gtk-0.5.0-win32.zip
+copy \php\php-gtk\NEWS
+"c:\Program Files\WinZip\WZZip" -ampr %zip_file% 
+copy %zip_file% \php\php-gtk-web\distributions
+del %zip_file%
 cd \php\php-gtk\win32
