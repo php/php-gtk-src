@@ -155,7 +155,7 @@ PHP_GTK_API GType php_gtype_from_zval(zval *value)
 			break;
 	}
 
-	php_error(E_WARNING, "PHP-GTK: internal error: could not get typecode from value");
+	php_error(E_WARNING, "PHP-GTK internal error: could not get typecode from value");
 	return 0;
 }
 

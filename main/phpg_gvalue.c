@@ -26,8 +26,8 @@
  * GValue related functions
  */
 
-/* {{{ php_gvalue_as_zval() */
-PHP_GTK_API zval* php_gvalue_as_zval(const GValue *gval, zend_bool copy_boxed)
+/* {{{ PHP_GTK_API php_gvalue_to_zval() */
+PHP_GTK_API zval* php_gvalue_to_zval(const GValue *gval, zend_bool copy_boxed)
 {
     zval *value = NULL;
 
@@ -116,7 +116,7 @@ PHP_GTK_API zval* php_gvalue_as_zval(const GValue *gval, zend_bool copy_boxed)
             */
 
         default:
-            php_error(E_WARNING, "PHP-GTK: internal error: unsupported type %s", g_type_name(G_VALUE_TYPE(gval)));
+            php_error(E_WARNING, "PHP-GTK internal error: unsupported type %s", g_type_name(G_VALUE_TYPE(gval)));
             break;
     }
 
@@ -179,7 +179,7 @@ PHP_GTK_API int php_gvalue_from_zval(GValue *gval, zval *value)
             break;
 
         default:
-            php_error(E_WARNING, "PHP-GTK: internal error: unsupported type %s", g_type_name(G_VALUE_TYPE(gval)));
+            php_error(E_WARNING, "PHP-GTK internal error: unsupported type %s", g_type_name(G_VALUE_TYPE(gval)));
             return FAILURE;
 
     }
@@ -205,7 +205,7 @@ PHP_GTK_API int php_gvalue_enum_get(GType enum_type, zval *enum_val, gint *resul
         if (enum_type != G_TYPE_NONE) {
             eclass = G_ENUM_CLASS(g_type_class_ref(enum_type));
         } else {
-            php_error(E_WARNING, "PHP-GTK: internal error: could not obtain the type of enum");
+            php_error(E_WARNING, "PHP-GTK internal error: could not obtain the type of enum");
             return FAILURE;
         }
 
@@ -219,11 +219,11 @@ PHP_GTK_API int php_gvalue_enum_get(GType enum_type, zval *enum_val, gint *resul
         if (info != NULL) {
             *result = info->value;
         } else {
-            php_error(E_WARNING, "PHP-GTK: internal error: could not convert '%s' to enum", Z_STRVAL_P(enum_val));
+            php_error(E_WARNING, "PHP-GTK internal error: could not convert '%s' to enum", Z_STRVAL_P(enum_val));
             return FAILURE;
         }
     } else {
-        php_error(E_WARNING, "PHP-GTK: internal error: enums must be strings or integers");
+        php_error(E_WARNING, "PHP-GTK internal error: enums must be strings or integers");
         return FAILURE;
     }
 
@@ -248,7 +248,7 @@ PHP_GTK_API int php_gvalue_flags_get(GType flags_type, zval *flags_val, gint *re
         if (flags_type != G_TYPE_NONE) {
             fclass = G_FLAGS_CLASS(g_type_class_ref(flags_type));
         } else {
-            php_error(E_WARNING, "PHP-GTK: internal error: could not obtain the type of flags");
+            php_error(E_WARNING, "PHP-GTK internal error: could not obtain the type of flags");
             return FAILURE;
         }
 
@@ -261,7 +261,7 @@ PHP_GTK_API int php_gvalue_flags_get(GType flags_type, zval *flags_val, gint *re
         if (info != NULL) {
             *result = info->value;
         } else {
-            php_error(E_WARNING, "PHP-GTK: internal error: could not convert '%s' to flags", Z_STRVAL_P(flags_val));
+            php_error(E_WARNING, "PHP-GTK internal error: could not convert '%s' to flags", Z_STRVAL_P(flags_val));
             return FAILURE;
         }
     } else if (Z_TYPE_P(flags_val) == IS_ARRAY) {
@@ -271,7 +271,7 @@ PHP_GTK_API int php_gvalue_flags_get(GType flags_type, zval *flags_val, gint *re
         if (flags_type != G_TYPE_NONE) {
             fclass = G_FLAGS_CLASS(g_type_class_ref(flags_type));
         } else {
-            php_error(E_WARNING, "PHP-GTK: internal error: could not obtain the type of flags");
+            php_error(E_WARNING, "PHP-GTK internal error: could not obtain the type of flags");
             return FAILURE;
         }
 
@@ -289,19 +289,19 @@ PHP_GTK_API int php_gvalue_flags_get(GType flags_type, zval *flags_val, gint *re
                 if (info != NULL) {
                     *result |= info->value;
                 } else {
-                    php_error(E_WARNING, "PHP-GTK: internal error: could not convert '%s' to flags", Z_STRVAL_PP(flag));
+                    php_error(E_WARNING, "PHP-GTK internal error: could not convert '%s' to flags", Z_STRVAL_PP(flag));
                     g_type_class_unref(fclass);
                     return FAILURE;
                 }
 			} else {
-				php_error(E_WARNING, "PHP-GTK: flag arrays can contain only integers or strings");
+				php_error(E_WARNING, "PHP-GTK flag arrays can contain only integers or strings");
                 g_type_class_unref(fclass);
 				return 0;
 			}
 		}
         g_type_class_unref(fclass);
     } else {
-        php_error(E_WARNING, "PHP-GTK: flags must be strings, integers, or arrays of strings or integers");
+        php_error(E_WARNING, "PHP-GTK flags must be strings, integers, or arrays of strings or integers");
         return FAILURE;
     }
 
