@@ -1,3 +1,54 @@
+2001-04-24  James Moore  <James@phpuk.org>
+
+    * docs/en/classes/gtkwidget.xml: Adding a bit more mark up...
+
+    * docs/en/classes/gtkwidget.xml: Killing error in build process
+
+2001-04-24  Andrei Zmievski  <andrei@ispi.net>
+
+    * docs/en/classes/gtklabel.xml: Use proper tag.
+
+    * docs/en/classes/gtklabel.xml
+      generator/gtk.defs: * Fixed some GtkLabel docs.
+    * Allow no parameters for GtkLabel constructor and set_pattern() method.
+
+2001-04-24  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/en/classes/gtktipsquery.xml
+      docs/en/classes/gtkwidget.xml
+      docs/stylesheets/xsl/html/name_to_id.xsl
+      docs/en/classes/gtkaccellabel.xml
+      docs/en/classes/gtkalignment.xml
+      docs/en/classes/gtkitemfactory.xml
+      docs/en/classes/gtkobject.xml
+      docs/manual.xml.in:
+    Terrible Typos eliminated (the ones I found, anyways).
+
+2001-04-24  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: News update.
+
+    * generator/gtk.defs: Added GtkAspectFrame definition.
+
+2001-04-24  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/stylesheets/xsl/html/name_to_id.xsl
+      docs/en/classes/gtkaccellabel.xml
+      docs/en/classes/gtkarrow.xml
+      docs/en/classes/gtkcontainer.xml
+      docs/en/classes/gtkdata.xml
+      docs/en/classes/gtkimage.xml
+      docs/en/classes/gtkitemfactory.xml
+      docs/en/classes/gtklabel.xml
+      docs/en/classes/gtkmisc.xml
+      docs/en/classes/gtkobject.xml
+      docs/en/classes/gtkpixmap.xml
+      docs/en/classes/gtktipsquery.xml
+      docs/en/classes/gtkwidget.xml
+      docs/en/classes/gtkwindow.xml
+      docs/manual.xml.in:
+    Need feedback and technical advice on all to date, please, all.
+
 2001-04-23  James Moore  <James@phpuk.org>
 
     * docs/stylesheets/xsl/html/class.xsl
