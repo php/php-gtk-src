@@ -82,7 +82,7 @@ LIB32=link.exe -lib
 # PROP Default_Filter "php"
 # Begin Source File
 
-SOURCE=..\generator\scheme.php
+SOURCE=..\generator\generator.php
 
 !IF  "$(CFG)" == "Scheme - Win32 Release_TS"
 
@@ -90,9 +90,9 @@ SOURCE=..\generator\scheme.php
 InputDir=..\src
 InputPath=..\generator\scheme.php
 
-BuildCmds=php.exe -q ..\generator\generator.php /pygtk-0.7.0/gtk/gtk.defs gtk.overrides
+BuildCmds=php.exe -q ..\generator\generator.php ../..//pygtk-0.7.0/gtk/gtk.defs gtk.overrides
 
-"$(InputDir)\php_gtk_constants.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+"$(InputDir)\php_gtk_gen.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
    $(BuildCmds)
 
 # End Custom Build
@@ -103,9 +103,9 @@ BuildCmds=php.exe -q ..\generator\generator.php /pygtk-0.7.0/gtk/gtk.defs gtk.ov
 InputDir=..\src
 InputPath=..\generator\scheme.php
 
-BuildCmds=php.exe -q ..\generator\generator.php /pygtk-0.7.0/gtk/gtk.defs gtk.overrides
+BuildCmds=php.exe -q ..\generator\generator.php ../..//pygtk-0.7.0/gtk/gtk.defs gtk.overrides
 
-"$(InputDir)\php_gtk_constants.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+"$(InputDir)\php_gtk_gen.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
    $(BuildCmds)
 
 # End Custom Build
