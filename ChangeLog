@@ -1,3 +1,16 @@
+2005-03-31  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      Implement override for GtkRadioToolButton constructor.
+
+    * TODO2
+      php_gtk.m4
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      generator/override.php:
+      - Implement override version for GtkRadioButton() constructor.
+      - Fix silly bug in ignore-glob processing
+
 2005-03-30  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/Makefile.frag:
