@@ -57,15 +57,15 @@ inline char *php_gtk_zval_type_name(zval *arg)
 	}
 }
 
-static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf TSRMLS_DC)
+static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int as_zval TSRMLS_DC)
 {
 	char *spec_walk = *spec;
 	char c = *spec_walk++;
 
 	switch (c) {
-		case 'h':
+
+		case 'i':
 			{
-				short *p = va_arg(*va, short *);
 				switch (Z_TYPE_PP(arg)) {
 					case IS_STRING:
 						{
@@ -75,53 +75,16 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf TSRM
 
 							if ((type = is_numeric_string(Z_STRVAL_PP(arg), Z_STRLEN_PP(arg), &l, &d, 0)) == 0) {
 								return "integer";
-							} else if (type == IS_DOUBLE) {
-								*p = (short) d;
-							} else if (type == IS_LONG) {
-								*p = (short) l;
 							}
+							if (as_zval) goto ret_zval;
 						}
-						break;
+						/* break omitted intenationally */
 
 					case IS_BOOL:
 					case IS_LONG:
 					case IS_DOUBLE:
 						convert_to_long_ex(arg);
-						*p = (short)Z_LVAL_PP(arg);
-						break;
-
-					case IS_NULL:
-					case IS_ARRAY:
-					case IS_OBJECT:
-					case IS_RESOURCE:
-					default:
-						return "integer";
-				}
-			}
-			break;
-
-		case 'i':
-			{
-				int *p = va_arg(*va, int *);
-				switch (Z_TYPE_PP(arg)) {
-					case IS_STRING:
-						{
-							double d;
-							int type;
-
-							if ((type = is_numeric_string(Z_STRVAL_PP(arg), Z_STRLEN_PP(arg), (long *)p, &d, 0)) == 0) {
-								return "integer";
-							} else if (type == IS_DOUBLE) {
-								*p = (int) d;
-							}
-						}
-						break;
-
-					case IS_BOOL:
-					case IS_LONG:
-					case IS_DOUBLE:
-						convert_to_long_ex(arg);
-						*p = Z_LVAL_PP(arg);
+						*va_arg(*va, int *) = Z_LVAL_PP(arg);
 						break;
 
 					case IS_NULL:
@@ -136,26 +99,25 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf TSRM
 
 		case 'l':
 			{
-				long *p = va_arg(*va, long *);
 				switch (Z_TYPE_PP(arg)) {
 					case IS_STRING:
 						{
 							double d;
+							long l;
 							int type;
 
-							if ((type = is_numeric_string(Z_STRVAL_PP(arg), Z_STRLEN_PP(arg), p, &d, 0)) == 0) {
+							if ((type = is_numeric_string(Z_STRVAL_PP(arg), Z_STRLEN_PP(arg), &l, &d, 0)) == 0) {
 								return "integer";
-							} else if (type == IS_DOUBLE) {
-								*p = (long) d;
 							}
+							if (as_zval) goto ret_zval;
 						}
-						break;
+						/* break omitted intenationally */
 
 					case IS_BOOL:
 					case IS_LONG:
 					case IS_DOUBLE:
 						convert_to_long_ex(arg);
-						*p = Z_LVAL_PP(arg);
+						*va_arg(*va, long *) = Z_LVAL_PP(arg);
 						break;
 
 					case IS_NULL:
@@ -170,17 +132,15 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf TSRM
 
 		case 'c':
 			{
-				char *p = va_arg(*va, char *);
 				if (Z_TYPE_PP(arg) != IS_STRING || Z_STRLEN_PP(arg) != 1)
 					return "char";
-				else
-					*p = Z_STRVAL_PP(arg)[0];
+				if (as_zval) goto ret_zval;
+				*va_arg(*va, char *) = Z_STRVAL_PP(arg)[0];
 			}
 			break;
 
 		case 's':
 			{
-				char **p = va_arg(*va, char **);
 				switch (Z_TYPE_PP(arg)) {
 					case IS_NULL:
 					case IS_STRING:
@@ -188,12 +148,12 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf TSRM
 					case IS_DOUBLE:
 					case IS_BOOL:
 						convert_to_string_ex(arg);
-						*p = Z_STRVAL_PP(arg);
-						if ((int)strlen(*p) != Z_STRLEN_PP(arg))
+						if ((int)strlen(Z_STRVAL_PP(arg)) != Z_STRLEN_PP(arg))
 							return "string without null bytes";
+						if (as_zval) goto ret_zval;
+						*va_arg(*va, char **) = Z_STRVAL_PP(arg);
 						if (*spec_walk == '#') {
-							int *pl = va_arg(*va, int *);
-							*pl = Z_STRLEN_PP(arg);
+							*va_arg(*va, int *) = Z_STRLEN_PP(arg);
 							spec_walk++;
 						}
 						break;
@@ -209,26 +169,25 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf TSRM
 
 		case 'd':
 			{
-				double *p = va_arg(*va, double *);
 				switch (Z_TYPE_PP(arg)) {
 					case IS_STRING:
 						{
 							long l;
+							double d;
 							int type;
 
-							if ((type = is_numeric_string(Z_STRVAL_PP(arg), Z_STRLEN_PP(arg), &l, p, 0)) == 0) {
+							if ((type = is_numeric_string(Z_STRVAL_PP(arg), Z_STRLEN_PP(arg), &l, &d, 0)) == 0) {
 								return "double";
-							} else if (type == IS_LONG) {
-								*p = (double) l;
 							}
+							if (as_zval) goto ret_zval;
 						}
-						break;
+						/* break omitted intenationally */
 
 					case IS_LONG:
 					case IS_DOUBLE:
 					case IS_BOOL:
 						convert_to_double_ex(arg);
-						*p = Z_DVAL_PP(arg);
+						*va_arg(*va, double *) = Z_DVAL_PP(arg);
 						break;
 
 					case IS_NULL:
@@ -243,7 +202,6 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf TSRM
 
 		case 'b':
 			{
-				zend_bool *p = va_arg(*va, zend_bool *);
 				switch (Z_TYPE_PP(arg)) {
 					case IS_NULL:
 					case IS_STRING:
@@ -251,7 +209,8 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf TSRM
 					case IS_DOUBLE:
 					case IS_BOOL:
 						convert_to_boolean_ex(arg);
-						*p = Z_BVAL_PP(arg);
+						if (as_zval) goto ret_zval;
+						*va_arg(*va, zend_bool *) = Z_BVAL_PP(arg);
 						break;
 
 					case IS_ARRAY:
@@ -265,26 +224,17 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf TSRM
 
 		case 'r':
 			{
-				zval **r = va_arg(*va, zval **);
 				if (Z_TYPE_PP(arg) != IS_RESOURCE)
 					return "resource";
-				else
-					*r = *arg;
+				goto ret_zval;
 			}
 			break;
 
 		case 'a':
 			{
-				zval **p = va_arg(*va, zval **);
 				if (Z_TYPE_PP(arg) != IS_ARRAY)
 					return "array";
-				else {
-					if (*spec_walk == '/') {
-						SEPARATE_ZVAL(arg);
-						spec_walk++;
-					}
-					*p = *arg;
-				}
+				goto ret_zval;
 			}
 			break;
 
@@ -323,20 +273,14 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf TSRM
 
 		case 'o':
 			{
-				zval **p = va_arg(*va, zval **);
 				if (Z_TYPE_PP(arg) != IS_OBJECT)
 					return "object";
-				else {
-					if (*spec_walk == '/') {
-						SEPARATE_ZVAL(arg);
-						spec_walk++;
-					}
-					*p = *arg;
-				}
+				goto ret_zval;
 			}
 			break;
 
 		case 'V':
+ret_zval:
 			{
 				zval **p = va_arg(*va, zval **);
 				if (*spec_walk == '/') {
@@ -356,14 +300,14 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf TSRM
 	return NULL;
 }
 
-static int parse_arg(int arg_num, zval **arg, va_list *va, char **spec, int quiet TSRMLS_DC)
+static int parse_arg(int arg_num, zval **arg, va_list *va, char **spec, int as_zval, int quiet TSRMLS_DC)
 {
 	char *expected_type;
 	char buf[1024];
 	char errorbuf[1024];
 	TSRMLS_FETCH();
 
-	expected_type = parse_arg_impl(arg, va, spec, errorbuf TSRMLS_CC);
+	expected_type = parse_arg_impl(arg, va, spec, errorbuf, as_zval TSRMLS_CC);
 	if (expected_type) {
 		if (!quiet) {
 			sprintf(buf, "%s::%s() expects argument %d to be %s, %s given",
@@ -385,6 +329,7 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 	int c, i;
 	int min_argc = -1;
 	int max_argc = 0;
+	int as_zval = 0;
 
 	/*
 	 * First we check that the number of arguments matches the number specified
@@ -406,6 +351,7 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 
 			case '#':
 			case '/':
+			case '^':
 				/* Pass */
 				break;
 
@@ -433,9 +379,14 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 	}
 
 	for (i = 0; i < argc; i++) {
+		as_zval = 0;
 		if (*format == '|')
 			format++;
-		if (!parse_arg(i+1, args[i], va, &format, quiet TSRMLS_CC))
+		if (*format == '^') {
+			format++;
+			as_zval = 1;
+		}
+		if (!parse_arg(i+1, args[i], va, &format, as_zval, quiet TSRMLS_CC))
 			return 0;
 	}
 
