@@ -15,20 +15,13 @@ function delete_event()
 	return false;
 }
 
-/*
- * Called when the window is being destroyed. Simply quit the main loop.
- */
-function destroy()
-{
-	Gtk::main_quit();
-}
 
 /*
  * Create a new top-level window and connect the signals to the appropriate
  * functions. Note that all constructors must be assigned by reference.
  */
 $window = &new GtkWindow();
-$window->connect('destroy', destroy);
+$window->connect_object('destroy', array('gtk', 'main_quit');
 $window->connect('delete-event', delete_event);
 
 /*

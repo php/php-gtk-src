@@ -137,8 +137,6 @@ ignore
 	gtk_widget_newv
 %%
 ignore
-	gtk_true
-	gtk_false
 	gtk_key_snooper_install
 	gtk_key_snooper_remove
 	gtk_get_current_event
@@ -170,13 +168,28 @@ ignore
 %%
 ignore-glob gtk_radio_button_new_*
 %%
+override gtk_true
+PHP_FUNCTION(wrap_gtk_true)
+{
+	RETURN_TRUE;
+}
+%%
+override gtk_false
+PHP_FUNCTION(wrap_gtk_false)
+{
+	RETURN_FALSE;
+}
+%%
 override gtk_timeout_add
 PHP_FUNCTION(wrap_gtk_timeout_add)
 {
 	guint32 interval;
-	zval *func = NULL;
+	zval *callback = NULL;
 	zval *extra;
 	zval *data;
+	char *callback_filename;
+	uint callback_lineno;
+	ELS_FETCH();
 
 	if (ZEND_NUM_ARGS() < 2) {
 		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
@@ -184,17 +197,13 @@ PHP_FUNCTION(wrap_gtk_timeout_add)
 		return;
 	}
 
-	if (!php_gtk_parse_args(2, "iV", &interval, &func))
+	if (!php_gtk_parse_args(2, "iV", &interval, &callback))
 		return;
 
-	if (!php_gtk_is_callable(func, NULL)) {
-		php_error(E_WARNING, "%s() expects argument 2 to be callable",
-				  get_active_function_name());
-		return;
-	}
-	
+	callback_filename = zend_get_executed_filename(ELS_C);
+	callback_lineno = zend_get_executed_lineno(ELS_C);
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
-	data = php_gtk_build_value("(VN)", func, extra);
+	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
 	RETURN_LONG(gtk_timeout_add_full(interval, NULL,
 									 (GtkCallbackMarshal)php_gtk_handler_marshal,
 									 data, php_gtk_destroy_notify));
@@ -203,9 +212,12 @@ PHP_FUNCTION(wrap_gtk_timeout_add)
 override gtk_idle_add
 PHP_FUNCTION(wrap_gtk_idle_add)
 {
-	zval *func = NULL;
+	zval *callback = NULL;
 	zval *extra;
 	zval *data;
+	char *callback_filename;
+	uint callback_lineno;
+	ELS_FETCH();
 
 	if (ZEND_NUM_ARGS() < 1) {
 		php_error(E_WARNING, "%s() requires at least 1 argument, %d given",
@@ -213,17 +225,13 @@ PHP_FUNCTION(wrap_gtk_idle_add)
 		return;
 	}
 
-	if (!php_gtk_parse_args(1, "V", &func))
+	if (!php_gtk_parse_args(1, "V", &callback))
 		return;
 
-	if (!php_gtk_is_callable(func, NULL)) {
-		php_error(E_WARNING, "%s() expects argument 1 to be callable",
-				  get_active_function_name());
-		return;
-	}
-	
+	callback_filename = zend_get_executed_filename(ELS_C);
+	callback_lineno = zend_get_executed_lineno(ELS_C);
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 1, ZEND_NUM_ARGS());
-	data = php_gtk_build_value("(VN)", func, extra);
+	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
 	RETURN_LONG(gtk_idle_add_full(GTK_PRIORITY_DEFAULT, NULL,
 								 (GtkCallbackMarshal)php_gtk_handler_marshal,
 								 data, php_gtk_destroy_notify));
@@ -233,9 +241,12 @@ override gtk_quit_add
 PHP_FUNCTION(wrap_gtk_quit_add)
 {
 	gint main_level;
-	zval *func = NULL;
+	zval *callback = NULL;
 	zval *extra;
 	zval *data;
+	char *callback_filename;
+	uint callback_lineno;
+	ELS_FETCH();
 
 	if (ZEND_NUM_ARGS() < 2) {
 		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
@@ -243,20 +254,16 @@ PHP_FUNCTION(wrap_gtk_quit_add)
 		return;
 	}
 
-	if (!php_gtk_parse_args(2, "iV", &main_level, &func))
+	if (!php_gtk_parse_args(2, "iV", &main_level, &callback))
 		return;
 
-	if (!php_gtk_is_callable(func, NULL)) {
-		php_error(E_WARNING, "%s() expects argument 2 to be callable",
-				  get_active_function_name());
-		return;
-	}
-	
+	callback_filename = zend_get_executed_filename(ELS_C);
+	callback_lineno = zend_get_executed_lineno(ELS_C);
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
-	data = php_gtk_build_value("(VN)", func, extra);
+	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
 	RETURN_LONG(gtk_quit_add_full(main_level, NULL,
-								 (GtkCallbackMarshal)php_gtk_handler_marshal,
-								 data, php_gtk_destroy_notify));
+								  (GtkCallbackMarshal)php_gtk_handler_marshal,
+								  data, php_gtk_destroy_notify));
 }
 %%
 override gtk_input_add_full
@@ -264,36 +271,40 @@ PHP_FUNCTION(wrap_gtk_input_add_full)
 {
     int source;
     GdkInputCondition condition;
-	zval *func = NULL;
+	zval *callback = NULL;
+	zval *extra, *data;
+	char *callback_filename;
+	uint callback_lineno;
+	ELS_FETCH();
 
-	if (ZEND_NUM_ARGS() != 3) {
-		php_error(E_WARNING, "%s() requires exactly 3 arguments, %d given",
+	if (ZEND_NUM_ARGS() < 3) {
+		php_error(E_WARNING, "%s() requires at least 3 arguments, %d given",
 				  get_active_function_name(), ZEND_NUM_ARGS());
 		return;
 	}
 
-	if (!php_gtk_parse_args(3, "iiV", &source, &condition, &func))
+	if (!php_gtk_parse_args(3, "iiV", &source, &condition, &callback))
 		return;
 
-	if (!php_gtk_is_callable(func, NULL)) {
-		php_error(E_WARNING, "%s() expects argument 3 to be callable",
-				  get_active_function_name());
-		return;
-	}
-
+	callback_filename = zend_get_executed_filename(ELS_C);
+	callback_lineno = zend_get_executed_lineno(ELS_C);
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 3, ZEND_NUM_ARGS());
+	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
 	RETURN_LONG(gtk_input_add_full(source, condition, NULL,
 								 (GtkCallbackMarshal)php_gtk_input_marshal,
-								 func, php_gtk_destroy_notify));
+								 data, php_gtk_destroy_notify));
 }
 %%
 override gtk_signal_connect
-PHP_FUNCTION(wrap_gtk_signal_connect)
+static void wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object)
 {
 	char *name = NULL;
-	zval *func = NULL;
+	zval *callback = NULL;
 	zval *extra;
 	zval *data;
-	int signum;
+	char *callback_filename;
+	uint callback_lineno;
+	ELS_FETCH();
 
 	NOT_STATIC_METHOD();
 
@@ -303,61 +314,27 @@ PHP_FUNCTION(wrap_gtk_signal_connect)
 		return;
 	}
 
-	if (!php_gtk_parse_args(2, "sV", &name, &func))
+	if (!php_gtk_parse_args(2, "sV", &name, &callback))
 		return;
 
-	if (!php_gtk_is_callable(func, NULL)) {
-		php_error(E_WARNING, "%s() expects argument 2 to be callable",
-				  get_active_function_name());
-		return;
-	}
-	
+	callback_filename = zend_get_executed_filename(ELS_C);
+	callback_lineno = zend_get_executed_lineno(ELS_C);
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
-	data = php_gtk_build_value("(VNi)", func, extra, 1);
-	signum = gtk_signal_connect_full(PHP_GTK_GET(this_ptr), name, NULL,
-									 (GtkCallbackMarshal)php_gtk_callback_marshal,
-									 data, php_gtk_destroy_notify, FALSE, FALSE);
-	RETURN_LONG(signum);
+	data = php_gtk_build_value("(VNisi)", callback, extra, pass_object, callback_filename, callback_lineno);
+	RETURN_LONG(gtk_signal_connect_full(PHP_GTK_GET(this_ptr), name, NULL,
+										(GtkCallbackMarshal)php_gtk_callback_marshal,
+										data, php_gtk_destroy_notify, FALSE, FALSE));
+}
+
+PHP_FUNCTION(wrap_gtk_signal_connect)
+{
+	wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
 }
 %%
 override gtk_signal_connect_object
 PHP_FUNCTION(wrap_gtk_signal_connect_object)
 {
-	char *name = NULL;
-	char *func;
-	zval *extra, *data, *obj;
-	zval *method;
-	int signum;
-
-	NOT_STATIC_METHOD();
-
-	if (ZEND_NUM_ARGS() < 2) {
-		php_error(E_WARNING, "%s() requires at least 3 arguments, %d given",
-				  get_active_function_name(), ZEND_NUM_ARGS());
-		return;
-	}
-
-	if (!php_gtk_parse_args(3, "ssO", &name, &func, &obj, gtk_object_ce))
-		return;
-
-	MAKE_STD_ZVAL(method);
-	array_init(method);
-	zval_add_ref(&obj);
-	add_next_index_zval(method, obj);
-	add_next_index_string(method, func, 1);
-
-	if (!php_gtk_is_callable(method, NULL)) {
-		php_error(E_WARNING, "%s() expects argument 2 to be callable method of argument 3", get_active_function_name());
-		zval_dtor(method);
-		return;
-	}
-	
-	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 3, ZEND_NUM_ARGS());
-	data = php_gtk_build_value("(VNi)", method, extra, 0);
-	signum = gtk_signal_connect_full(PHP_GTK_GET(this_ptr), name, NULL,
-									 (GtkCallbackMarshal)php_gtk_callback_marshal,
-									 data, php_gtk_destroy_notify, FALSE, FALSE);
-	RETURN_LONG(signum);
+	wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
 }
 %%
 override gtk_widget_intersect
@@ -931,21 +908,24 @@ static void item_factory_callback(zval *callback_data, guint action, GtkWidget *
 {
 	zval *retval = NULL;
 	zval **callback, **extra;
+	zval **callback_filename, **callback_lineno;
 	zval *params;
 	zval ***args;
-	char *callable_name = NULL;
+	gchar *callable_name;
 	ELS_FETCH();
 
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&callback_filename);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&callback_lineno);
 	if (!php_gtk_is_callable(*callback, &callable_name)) {
-		php_error(E_WARNING, "unable to call item factory callback %s", callable_name);
+		php_error(E_WARNING, "unable to call item factory callback '%s' specified in %s on line %d", callable_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
 		g_free(callable_name);
 		return;
 	}
 
 	params = php_gtk_build_value("(iN)", action, php_gtk_new((GtkObject *)widget));
-	if (zend_hash_num_elements(Z_ARRVAL_P(callback_data)) > 1) {
-		zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
+	if (zend_hash_num_elements(Z_ARRVAL_P(callback_data)) > 3) {
+		zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&extra);
 		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
 	}
 
@@ -965,6 +945,9 @@ PHP_FUNCTION(wrap_gtk_item_factory_create_items)
 	GtkItemFactoryEntry entry;
 	GtkItemFactory *factory;
 	int i = 0;
+	char *callback_filename;
+	uint callback_lineno;
+	ELS_FETCH();
 
 	NOT_STATIC_METHOD();
 
@@ -986,10 +969,12 @@ PHP_FUNCTION(wrap_gtk_item_factory_create_items)
 		if (Z_TYPE_P(callback) == IS_NULL)
 			entry.callback = NULL;
 		else {
+			callback_filename = zend_get_executed_filename(ELS_C);
+			callback_lineno = zend_get_executed_lineno(ELS_C);
 			if (extra)
-				callback_data = php_gtk_build_value("(VV)", callback, extra);
+				callback_data = php_gtk_build_value("(VsiV)", callback, callback_filename, callback_lineno, extra);
 			else
-				callback_data = php_gtk_build_value("(V)", callback);
+				callback_data = php_gtk_build_value("(Vsi)", callback, callback_filename, callback_lineno);
 			entry.callback = (GtkItemFactoryCallback)item_factory_callback;
 		}
 

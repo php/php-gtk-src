@@ -462,12 +462,10 @@ class Generator {
 			if ($this->overrides->is_overriden($function->c_name)) {
 				list($function_name, $function_override) = $this->overrides->get_override($function->c_name);
 				fwrite($fp, $function_override . "\n");
-				if (!isset($function_name)) {
-					if ($function->name == $function->c_name)
-						$function_name = substr($function->name, 4);
-					else
-						$function_name = $function->name;
-				}
+				if ($function->name == $function->c_name)
+					$function_name = substr($function->name, 4);
+				else
+					$function_name = $function->name;
 				$function_entry[substr($function->c_name, 0, 3)] .= sprintf($function_entry_tpl, 
 																			strtolower($function_name), 
 																			strtolower($function->c_name), 

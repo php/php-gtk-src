@@ -20,11 +20,6 @@ function close_window($widget)
 	$window->hide();
 }
 
-function destroy($window)
-{
-	Gtk::main_quit();
-}
-
 
 function create_buttons()
 {
@@ -338,7 +333,7 @@ function create_tooltips()
 		$button = &new GtkButton('[?]');
 		$box3->pack_start($button, false, false, 0);
 		$button->show();
-		$button->connect_object('clicked', 'start_query', $tips_query);
+		$button->connect_object('clicked', array($tips_query, 'start_query'));
 		$tooltips->set_tip($button, 'Start the Tooltips Inspector', 'ContextHelp/buttons/?');
 
 		function tips_query_widget_entered($tips_query, $widget, $tip_text,
@@ -566,8 +561,8 @@ function create_main_window()
 	$window->set_usize(200, 400);
 	$window->set_uposition(20, 20);
 
-	$window->connect('destroy', 'destroy');
-	$window->connect('delete-event', 'destroy');
+	$window->connect_object('destroy', array('gtk', 'main_quit'));
+	$window->connect_object('delete-event', array('gtk', 'false'));
 
 	$box1 = &new GtkVBox();
 	$window->add($box1);
@@ -601,7 +596,7 @@ function create_main_window()
 	$box1->pack_start($box2, false);
 
 	$button = &new GtkButton('close');
-	$button->connect('clicked', 'destroy');
+	$button->connect_object('clicked', array('gtk', 'main_quit'));
 	$box2->pack_start($button);
 	$button->set_flags(GTK_CAN_DEFAULT);
 	$button->grab_default();
