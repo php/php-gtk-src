@@ -1,3 +1,68 @@
+2001-03-03  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: News entry.
+
+    * src/php_gtk.c:
+    Move PHP-GTK initialization and shutdown into request functions.
+
+2001-03-03  Frank M. Kromann  <fmk@swwwing.com>
+
+    * generator/override.php:
+    Refixing overrides where function name is changed
+
+2001-03-03  Jan Lehnardt  <jan@lehnardt.de>
+
+    * win32/README.win32.txt:
+    added note, that dl() must be used instead of php.ini sttings
+
+2001-03-03  Frank M. Kromann  <fmk@swwwing.com>
+
+    * test/hello.php: Removing PHP warnings from  Hello World.
+
+    * generator/arg_types.php
+      generator/definitions.php
+      generator/generator.php
+      generator/gtk.overrides
+      generator/scheme.php
+      generator/templates.php: Adding cvs ID
+
+    * generator/override.php:
+    Removing php warnings while parsing gtk.overrides
+
+2001-03-03  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: News entry.
+
+    * src/php_gtk_object.c:
+    Fixed return value of timeout and idle handler marshaller.
+
+    * generator/gtk.overrides:
+    Move GtkCheckButton constructor closer to its peers and add ignore part.
+
+2001-03-03  Jan Lehnardt  <jan@lehnardt.de>
+
+    * generator/gtk.overrides: allowing GtkCheckButton to be labeled.
+
+2001-03-03  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: News entries.
+
+    * TODO
+      generator/arg_types.php
+      generator/gtk.defs
+      generator/gtk.overrides
+      src/php_gtk.h
+      src/php_gtk_object.c: * Fixed returning objects from methods.
+    * Implemented GtkTipsQuery class.
+    * Added GtkObject::connect_object method.
+    * Modified GtkToggleButton constructor to accept optional label.
+
+    * test/gtk.php
+      test/testgtkrc
+      test/testgtkrc2:
+    * Added GtkTooltips and GtkTipsQuery examples to gtk.php.
+    * Added sample RC files.
+
 2001-03-02  Andrei Zmievski  <andrei@ispi.net>
 
     * README: Hopefully, correct some confusion.
