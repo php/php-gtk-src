@@ -9,6 +9,7 @@
   ones).
 * Add missing field defs to gtk.defs.
 * Return by-ref parameters from functions (multiple values or not)
+* Make pixmap support solid.
 
 In PHP
 ------
