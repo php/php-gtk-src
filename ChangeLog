@@ -1,3 +1,24 @@
+2003-08-21  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/extra/extra.overrides
+      ext/extra/php_extra.c
+      ext/extra/sheet.php:
+      add the one and only example of callback registry and
+      php_gtk_simple_signal_callback
+
+    * ext/gtk+/gtk.overrides:
+      relay signal connect through new handler - which checks the callback
+      registry
+
+    * main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_object.c:
+      register_callback code added - this needs to be applied to the ZE2 PORT.. -
+      Its need for gtksheet, and probably removing a few warnings from gtk+ -
+      most of it is a copy/paste from other parts.. - discussed with
+      frank/steph, we will stick it in for the time being as we can test build
+      gtksheet. - revert if necessary...
+
 2003-07-18  Frank M. Kromann  <frank@kromann.info>
 
     * ext/extra/config.m4
