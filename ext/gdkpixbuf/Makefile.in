@@ -9,7 +9,7 @@ include $(top_srcdir)/build/dynlib.mk
 php_gdkpixbuf.o php_gdkpixbuf.lo php_gdkpixbuf.slo: gen_ce_gdkpixbuf.h
 
 gen_gdkpixbuf.c: gdkpixbuf.defs gdkpixbuf.overrides
-	$(PHP) -q $(top_srcdir)/generator/generator.php -o $(srcdir)/gdkpixbuf.overrides -p gdk_pixbuf -c GdkPixbuf -r $(top_srcdir)/ext/gtk%2b/gdk.defs $(srcdir)/gdkpixbuf.defs b> gen_gdkpixbuf.c
+	$(PHP) -q $(top_srcdir)/generator/generator.php -o $(srcdir)/gdkpixbuf.overrides -p gdk_pixbuf -c GdkPixbuf -r $(top_srcdir)/ext/gtk%2b/gdk.defs $(srcdir)/gdkpixbuf.defs > gen_gdkpixbuf.c
 
 gen_ce_gdkpixbuf.h: gen_gdkpixbuf.c
 	grep -h "^PHP_GTK_EXPORT_CE" gen_gdkpixbuf.c | sed -e "s!^!extern !" > gen_ce_gdkpixbuf.h
