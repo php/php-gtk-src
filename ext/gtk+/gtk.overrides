@@ -625,7 +625,7 @@ ignore gtk_check_button_new_with_label
 override gtk_check_button_new
 PHP_FUNCTION(gtk_check_button_new)
 {
-	char *label;
+	char *label = NULL;
 	GtkObject *wrapped_obj;
 #ifdef PHP_WIN32
 	gchar *utf8_label = NULL;
