@@ -1684,8 +1684,8 @@ PHP_FUNCTION(gtk_selection_data_set)
 }
 
 static function_entry php_gtk_selection_data_functions[] = {
-	{"GdkSelectionData", PHP_FN(no_direct_constructor), NULL},
-	{"gdkselectiondata", PHP_FN(no_direct_constructor), NULL},
+	{"GtkSelectionData", PHP_FN(no_direct_constructor), NULL},
+	{"gtkselectiondata", PHP_FN(no_direct_constructor), NULL},
 	{"set", 			 PHP_FN(gtk_selection_data_set), NULL},
 	{NULL, NULL, NULL}
 };
