@@ -250,8 +250,9 @@
 (enum EditorEventType
   (in-module GtkHTML)
   (c-name GtkHTMLEditorEventType)
-  (value (name command) (c-name GTK_HTML_EDITOR_EVENT_COMMAND_BEFORE))
-  (value (name command) (c-name GTK_HTML_EDITOR_EVENT_COMMAND_AFTER))
+; commented out to retain BC with older version of gtkhtml
+;  (value (name command) (c-name GTK_HTML_EDITOR_EVENT_COMMAND_BEFORE))
+;  (value (name command) (c-name GTK_HTML_EDITOR_EVENT_COMMAND_AFTER))
   (value (name image_url) (c-name GTK_HTML_EDITOR_EVENT_IMAGE_URL))
   (value (name delete) (c-name GTK_HTML_EDITOR_EVENT_DELETE))
 )
