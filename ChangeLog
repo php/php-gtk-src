@@ -1,3 +1,27 @@
+2001-08-08  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS
+      main/php_gtk.c
+      test/gtk.php: Changed PHP-visible extension name to 'php-gtk'.
+
+2001-08-08  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/php_gtk.dsp: Adding missing libpaths in debug build
+
+    * win32/php_gtk.dsp: Adding missing libs to debug build
+
+    * win32/scheme.dsp: Fixing reletive paths.
+    Don't trust visual studio
+
+    * win32/php_gtk.dsp
+      win32/scheme.dsp:
+    Fixing compile order and include paths for the debug version
+
+2001-08-08  Andrei Zmievski  <andrei@ispi.net>
+
+    * TODO
+      test/gtk.php: Optimize the access to number of rows in the ctree.
+
 2001-08-07  Frank M. Kromann  <frank@frontbase.com>
 
     * test/gtk.php: Getting rid of some warnings
