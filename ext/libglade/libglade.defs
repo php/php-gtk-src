@@ -1,47 +1,215 @@
+; from /usr/include/libglade-2.0/glade/glade-xml.h
+; struct definitions ...
+(struct Property 
+  (in-module Glade)
+  (c-name GladeProperty)
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *value))
+)
+(struct SignalInfo 
+  (in-module Glade)
+  (c-name GladeSignalInfo)
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *value))
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *handler))
+  (field (type-and-name gchar *object))
+  (field (type-and-name guint after))
+)
+(struct AtkActionInfo 
+  (in-module Glade)
+  (c-name GladeAtkActionInfo)
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *value))
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *handler))
+  (field (type-and-name gchar *object))
+  (field (type-and-name guint after))
+  (field (type-and-name gchar *action_name))
+  (field (type-and-name gchar *description))
+)
+(struct AtkRelationInfo 
+  (in-module Glade)
+  (c-name GladeAtkRelationInfo)
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *value))
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *handler))
+  (field (type-and-name gchar *object))
+  (field (type-and-name guint after))
+  (field (type-and-name gchar *action_name))
+  (field (type-and-name gchar *description))
+  (field (type-and-name gchar *target))
+  (field (type-and-name gchar *type))
+)
+(struct AccelInfo 
+  (in-module Glade)
+  (c-name GladeAccelInfo)
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *value))
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *handler))
+  (field (type-and-name gchar *object))
+  (field (type-and-name guint after))
+  (field (type-and-name gchar *action_name))
+  (field (type-and-name gchar *description))
+  (field (type-and-name gchar *target))
+  (field (type-and-name gchar *type))
+  (field (type-and-name guint key))
+  (field (type-and-name GdkModifierType modifiers))
+  (field (type-and-name gchar *signal))
+)
+(struct WidgetInfo 
+  (in-module Glade)
+  (c-name GladeWidgetInfo)
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *value))
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *handler))
+  (field (type-and-name gchar *object))
+  (field (type-and-name guint after))
+  (field (type-and-name gchar *action_name))
+  (field (type-and-name gchar *description))
+  (field (type-and-name gchar *target))
+  (field (type-and-name gchar *type))
+  (field (type-and-name guint key))
+  (field (type-and-name GdkModifierType modifiers))
+  (field (type-and-name gchar *signal))
+  (field (type-and-name GladeWidgetInfo *parent))
+  (field (type-and-name gchar *classname))
+  (field (type-and-name gchar *name))
+  (field (type-and-name GladeProperty *properties))
+  (field (type-and-name guint n_properties))
+  (field (type-and-name GladeProperty *atk_props))
+  (field (type-and-name guint n_atk_props))
+  (field (type-and-name GladeSignalInfo *signals))
+  (field (type-and-name guint n_signals))
+  (field (type-and-name GladeAtkActionInfo *atk_actions))
+  (field (type-and-name guint n_atk_actions))
+  (field (type-and-name GladeAtkRelationInfo *relations))
+  (field (type-and-name guint n_relations))
+  (field (type-and-name GladeAccelInfo *accels))
+  (field (type-and-name guint n_accels))
+  (field (type-and-name GladeChildInfo *children))
+  (field (type-and-name guint n_children))
+)
+(struct ChildInfo 
+  (in-module Glade)
+  (c-name GladeChildInfo)
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *value))
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *handler))
+  (field (type-and-name gchar *object))
+  (field (type-and-name guint after))
+  (field (type-and-name gchar *action_name))
+  (field (type-and-name gchar *description))
+  (field (type-and-name gchar *target))
+  (field (type-and-name gchar *type))
+  (field (type-and-name guint key))
+  (field (type-and-name GdkModifierType modifiers))
+  (field (type-and-name gchar *signal))
+  (field (type-and-name GladeWidgetInfo *parent))
+  (field (type-and-name gchar *classname))
+  (field (type-and-name gchar *name))
+  (field (type-and-name GladeProperty *properties))
+  (field (type-and-name guint n_properties))
+  (field (type-and-name GladeProperty *atk_props))
+  (field (type-and-name guint n_atk_props))
+  (field (type-and-name GladeSignalInfo *signals))
+  (field (type-and-name guint n_signals))
+  (field (type-and-name GladeAtkActionInfo *atk_actions))
+  (field (type-and-name guint n_atk_actions))
+  (field (type-and-name GladeAtkRelationInfo *relations))
+  (field (type-and-name guint n_relations))
+  (field (type-and-name GladeAccelInfo *accels))
+  (field (type-and-name guint n_accels))
+  (field (type-and-name GladeChildInfo *children))
+  (field (type-and-name guint n_children))
+  (field (type-and-name GladeProperty *properties))
+  (field (type-and-name guint n_properties))
+  (field (type-and-name GladeWidgetInfo *child))
+  (field (type-and-name gchar *internal_child))
+)
+(struct Interface 
+  (in-module Glade)
+  (c-name GladeInterface)
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *value))
+  (field (type-and-name gchar *name))
+  (field (type-and-name gchar *handler))
+  (field (type-and-name gchar *object))
+  (field (type-and-name guint after))
+  (field (type-and-name gchar *action_name))
+  (field (type-and-name gchar *description))
+  (field (type-and-name gchar *target))
+  (field (type-and-name gchar *type))
+  (field (type-and-name guint key))
+  (field (type-and-name GdkModifierType modifiers))
+  (field (type-and-name gchar *signal))
+  (field (type-and-name GladeWidgetInfo *parent))
+  (field (type-and-name gchar *classname))
+  (field (type-and-name gchar *name))
+  (field (type-and-name GladeProperty *properties))
+  (field (type-and-name guint n_properties))
+  (field (type-and-name GladeProperty *atk_props))
+  (field (type-and-name guint n_atk_props))
+  (field (type-and-name GladeSignalInfo *signals))
+  (field (type-and-name guint n_signals))
+  (field (type-and-name GladeAtkActionInfo *atk_actions))
+  (field (type-and-name guint n_atk_actions))
+  (field (type-and-name GladeAtkRelationInfo *relations))
+  (field (type-and-name guint n_relations))
+  (field (type-and-name GladeAccelInfo *accels))
+  (field (type-and-name guint n_accels))
+  (field (type-and-name GladeChildInfo *children))
+  (field (type-and-name guint n_children))
+  (field (type-and-name GladeProperty *properties))
+  (field (type-and-name guint n_properties))
+  (field (type-and-name GladeWidgetInfo *child))
+  (field (type-and-name gchar *internal_child))
+  (field (type-and-name gchar **requires))
+  (field (type-and-name guint n_requires))
+  (field (type-and-name GladeWidgetInfo **toplevels))
+  (field (type-and-name guint n_toplevels))
+  (field (type-and-name GHashTable *names))
+  (field (type-and-name GHashTable *strings))
+)
 ;; -*- scheme -*-
 ; object definitions ...
-(object XML
+(object XML 
   (in-module Glade)
-  (parent Data (Gtk))
-  (c-name GladeXML)
+  (parent GObject)
+  (c-name GladeXML )
 )
 
 ;; Enumerations and flags ...
 
-
-;; From /usr/include/glade/glade-xml.h
-
-(function glade_xml_get_type
+(function glade_xml_get_type 
   (c-name glade_xml_get_type)
-  (return-type GtkType)
+  (return-type GType)
 )
 
-(function glade_xml_new
+(function glade_xml_new 
   (c-name glade_xml_new)
-  (return-type GladeXML*)
-  (parameter (type-and-name const-char* fname))
-  (parameter (type-and-name const-char* root) (null-ok) (default "NULL"))
-)
-
-(function glade_xml_new_with_domain
-  (c-name glade_xml_new_with_domain)
   (is-constructor-of GladeXML)
   (return-type GladeXML*)
   (parameter (type-and-name const-char* fname))
-  (parameter (type-and-name const-char* root) (null-ok) (default "NULL"))
-  (parameter (type-and-name const-char* domain) (null-ok) (default "NULL"))
+  (parameter (type-and-name const-char* root))
+  (parameter (type-and-name const-char* domain))
 )
 
-(function xml_new_from_memory
-  (c-name glade_xml_new_from_memory)
+(function glade_xml_new_from_buffer 
+  (c-name glade_xml_new_from_buffer)
+  (is-constructor-of GladeXML)
   (return-type GladeXML*)
-  (parameter (type-and-name char* buffer))
+  (parameter (type-and-name const-char* buffer))
   (parameter (type-and-name int size))
-  (parameter (type-and-name const-char* root) (null-ok))
-  (parameter (type-and-name const-char* domain) (null-ok))
+  (parameter (type-and-name const-char* root))
+  (parameter (type-and-name const-char* domain))
 )
 
-(method construct
+(method construct 
   (of-object XML (Glade))
   (c-name glade_xml_construct)
   (return-type gboolean)
@@ -50,30 +218,30 @@
   (parameter (type-and-name const-char* domain))
 )
 
-(method signal_connect
+(method signal_connect 
   (of-object XML (Glade))
   (c-name glade_xml_signal_connect)
   (return-type none)
   (parameter (type-and-name const-char* handlername))
-  (parameter (type-and-name GtkSignalFunc func))
+  (parameter (type-and-name GCallback func))
 )
 
-(method signal_connect_data
+(method signal_connect_data 
   (of-object XML (Glade))
   (c-name glade_xml_signal_connect_data)
   (return-type none)
   (parameter (type-and-name const-char* handlername))
-  (parameter (type-and-name GtkSignalFunc func))
+  (parameter (type-and-name GCallback func))
   (parameter (type-and-name gpointer user_data))
 )
 
-(method signal_autoconnect
+(method signal_autoconnect 
   (of-object XML (Glade))
   (c-name glade_xml_signal_autoconnect)
   (return-type none)
 )
 
-(method signal_connect_full
+(method signal_connect_full 
   (of-object XML (Glade))
   (c-name glade_xml_signal_connect_full)
   (return-type none)
@@ -82,7 +250,7 @@
   (parameter (type-and-name gpointer user_data))
 )
 
-(method signal_autoconnect_full
+(method signal_autoconnect_full 
   (of-object XML (Glade))
   (c-name glade_xml_signal_autoconnect_full)
   (return-type none)
@@ -90,49 +258,197 @@
   (parameter (type-and-name gpointer user_data))
 )
 
-(method get_widget
+(method get_widget 
   (of-object XML (Glade))
   (c-name glade_xml_get_widget)
   (return-type GtkWidget*)
   (parameter (type-and-name const-char* name))
 )
 
-(method get_widget_prefix
+(method get_widget_prefix 
   (of-object XML (Glade))
   (c-name glade_xml_get_widget_prefix)
   (return-type GList*)
   (parameter (type-and-name const-char* name))
 )
 
-(method get_widget_by_long_name
-  (of-object XML (Glade))
-  (c-name glade_xml_get_widget_by_long_name)
-  (return-type GtkWidget*)
-  (parameter (type-and-name const-char* longname))
-)
-
-(method relative_file
+(method relative_file 
   (of-object XML (Glade))
   (c-name glade_xml_relative_file)
   (return-type gchar*)
   (parameter (type-and-name const-gchar* filename))
 )
 
-(function get_widget_name
+(function glade_get_widget_name 
   (c-name glade_get_widget_name)
-  (return-type const-gchar*)
+  (return-type char*)
   (parameter (type-and-name GtkWidget* widget))
 )
 
-(function get_widget_long_name
-  (c-name glade_get_widget_long_name)
-  (return-type const-gchar*)
-  (parameter (type-and-name GtkWidget* widget))
-)
-
-(function get_widget_tree
+(function glade_get_widget_tree 
   (c-name glade_get_widget_tree)
   (return-type GladeXML*)
   (parameter (type-and-name GtkWidget* widget))
+)
+
+(function glade_set_custom_handler 
+  (c-name glade_set_custom_handler)
+  (return-type none)
+  (parameter (type-and-name GladeXMLCustomWidgetHandler handler))
+  (parameter (type-and-name gpointer user_data))
+)
+
+(function glade_parser_parse_file 
+  (c-name glade_parser_parse_file)
+  (return-type GladeInterface*)
+  (parameter (type-and-name const-gchar* file))
+  (parameter (type-and-name const-gchar* domain))
+)
+
+(function glade_parser_parse_buffer 
+  (c-name glade_parser_parse_buffer)
+  (return-type GladeInterface*)
+  (parameter (type-and-name const-gchar* buffer))
+  (parameter (type-and-name gint len))
+  (parameter (type-and-name const-gchar* domain))
+)
+
+(function glade_init 
+  (c-name glade_init)
+  (return-type none)
+)
+
+(function glade_require 
+  (c-name glade_require)
+  (return-type none)
+  (parameter (type-and-name const-gchar* library))
+)
+
+(function glade_provide 
+  (c-name glade_provide)
+  (return-type none)
+  (parameter (type-and-name const-gchar* library))
+)
+
+(function glade_register_widget 
+  (c-name glade_register_widget)
+  (return-type none)
+  (parameter (type-and-name GType type))
+  (parameter (type-and-name GladeNewFunc new))
+  (parameter (type-and-name GladeBuildChildrenFunc build_children))
+  (parameter (type-and-name GladeFindInternalChildFunc find_internal_child))
+)
+
+(function glade_register_custom_prop 
+  (c-name glade_register_custom_prop)
+  (return-type none)
+  (parameter (type-and-name GType type))
+  (parameter (type-and-name const-gchar* prop_name))
+  (parameter (type-and-name GladeApplyCustomPropFunc apply_prop))
+)
+
+(method set_toplevel 
+  (of-object XML (Glade))
+  (c-name glade_xml_set_toplevel)
+  (return-type none)
+  (parameter (type-and-name GtkWindow* window))
+)
+
+(method ensure_accel 
+  (of-object XML (Glade))
+  (c-name glade_xml_ensure_accel)
+  (return-type GtkAccelGroup*)
+)
+
+(method handle_widget_prop 
+  (of-object XML (Glade))
+  (c-name glade_xml_handle_widget_prop)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* widget))
+  (parameter (type-and-name const-gchar* prop_name))
+  (parameter (type-and-name const-gchar* value_name))
+)
+
+(method set_packing_property 
+  (of-object XML (Glade))
+  (c-name glade_xml_set_packing_property)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* parent))
+  (parameter (type-and-name GtkWidget* child))
+  (parameter (type-and-name const-char* name))
+  (parameter (type-and-name const-char* value))
+)
+
+(method build_widget 
+  (of-object XML (Glade))
+  (c-name glade_xml_build_widget)
+  (return-type GtkWidget*)
+  (parameter (type-and-name GladeWidgetInfo* info))
+)
+
+(method handle_internal_child 
+  (of-object XML (Glade))
+  (c-name glade_xml_handle_internal_child)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* parent))
+  (parameter (type-and-name GladeChildInfo* child_info))
+)
+
+(method set_common_params 
+  (of-object XML (Glade))
+  (c-name glade_xml_set_common_params)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* widget))
+  (parameter (type-and-name GladeWidgetInfo* info))
+)
+
+(method set_value_from_string 
+  (of-object XML (Glade))
+  (c-name glade_xml_set_value_from_string)
+  (return-type gboolean)
+  (parameter (type-and-name GParamSpec* pspec))
+  (parameter (type-and-name const-gchar* string))
+  (parameter (type-and-name GValue* value))
+)
+
+(function glade_standard_build_widget 
+  (c-name glade_standard_build_widget)
+  (return-type GtkWidget*)
+  (parameter (type-and-name GladeXML* xml))
+  (parameter (type-and-name GType widget_type))
+  (parameter (type-and-name GladeWidgetInfo* info))
+)
+
+(function glade_standard_build_children 
+  (c-name glade_standard_build_children)
+  (return-type none)
+  (parameter (type-and-name GladeXML* self))
+  (parameter (type-and-name GtkWidget* parent))
+  (parameter (type-and-name GladeWidgetInfo* info))
+)
+
+(function glade_enum_from_string 
+  (c-name glade_enum_from_string)
+  (return-type gint)
+  (parameter (type-and-name GType type))
+  (parameter (type-and-name const-char* string))
+)
+
+(function glade_flags_from_string 
+  (c-name glade_flags_from_string)
+  (return-type guint)
+  (parameter (type-and-name GType type))
+  (parameter (type-and-name const-char* string))
+)
+
+(function glade_module_check_version 
+  (c-name glade_module_check_version)
+  (return-type gchar*)
+  (parameter (type-and-name gint version))
+)
+
+(function glade_module_register_widgets 
+  (c-name glade_module_register_widgets)
+  (return-type none)
 )
 
