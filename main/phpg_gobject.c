@@ -40,6 +40,13 @@ static inline void phpg_free_gobject_storage(phpg_gobject_t *object, zend_object
 
     zend_hash_destroy(object->zobj.properties);
     FREE_HASHTABLE(object->zobj.properties);
+
+    /*
+     * Remove cached handle information, since the object wrapper is going away.
+     */
+    g_object_set_qdata(object->obj, gobject_wrapper_handle_key, NULL);
+    g_object_set_qdata(object->obj, gobject_wrapper_handlers_key, NULL);
+
 	if (object->obj && object->dtor)
 		object->dtor(object->obj);
     object->obj = NULL;
@@ -104,7 +111,7 @@ static inline void phpg_sink_object(GObject *obj)
 /* {{{ zval*       phpg_read_property() */
 zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 {
-	phpg_head_t *poh;
+	phpg_head_t *poh = NULL;
 	zval tmp_member;
 	zval result, *result_ptr = NULL;
 	prop_info_t *pi = NULL;
@@ -119,7 +126,7 @@ zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 
 	ret = FAILURE;
 
-	poh = (phpg_head_t *) zend_objects_get_address(object TSRMLS_CC);
+	poh = (phpg_head_t *) zend_object_store_get_object(object TSRMLS_CC);
 	if (poh->pi_hash) {
 		ret = zend_hash_find(poh->pi_hash, Z_STRVAL_P(member), Z_STRLEN_P(member)+1, (void **) &pi);
 	}
@@ -151,7 +158,7 @@ zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 /* {{{ void        phpg_write_property() */
 void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
 {
-	phpg_head_t *poh;
+	phpg_head_t *poh = NULL;
 	zval tmp_member;
 	prop_info_t *pi;
 	int ret;
@@ -164,7 +171,7 @@ void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
 	}
 
     ret = FAILURE;
-	poh = (phpg_head_t *) zend_objects_get_address(object TSRMLS_CC);
+	poh = (phpg_head_t *) zend_object_store_get_object(object TSRMLS_CC);
 	if (poh->pi_hash) {
 		ret = zend_hash_find(poh->pi_hash, Z_STRVAL_P(member), Z_STRLEN_P(member)+1, (void **) &pi);
 	}
@@ -189,12 +196,12 @@ void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
 HashTable* phpg_get_properties(zval *object TSRMLS_DC)
 {
 	HashTable *pi_hash;
-	phpg_head_t *poh;
+	phpg_head_t *poh = NULL;
 	prop_info_t *pi;
 	zval result, *result_ptr;
 	int ret;
 
-	poh = (phpg_head_t *)zend_objects_get_address(object TSRMLS_CC);
+	poh = (phpg_head_t *) zend_object_store_get_object(object TSRMLS_CC);
     pi_hash = poh->pi_hash;
     for (zend_hash_internal_pointer_reset(pi_hash);
          zend_hash_get_current_data(pi_hash, (void **)&pi) == SUCCESS;
@@ -421,7 +428,7 @@ PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC)
 	}
 
     phpg_sink_object(obj);
-    pobj = zend_object_store_get_object(zobj TSRMLS_CC);
+    pobj = (phpg_gobject_t *) zend_object_store_get_object(zobj TSRMLS_CC);
     pobj->obj = obj;
     pobj->dtor = (phpg_dtor_t) g_object_unref;
     g_object_set_qdata(pobj->obj, gobject_wrapper_handle_key, (void*)Z_OBJ_HANDLE_P(zobj));
@@ -472,7 +479,7 @@ PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC)
 		g_object_ref(obj);
 
         phpg_sink_object(obj);
-		pobj = zend_object_store_get_object(*zobj TSRMLS_CC);
+		pobj = (phpg_gobject_t *) zend_object_store_get_object(*zobj TSRMLS_CC);
 		pobj->obj = obj;
 		pobj->dtor = (phpg_dtor_t) g_object_unref;
 		g_object_set_qdata(obj, gobject_wrapper_handle_key, (void*)Z_OBJ_HANDLE_PP(zobj));
