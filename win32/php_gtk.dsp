@@ -139,5 +139,37 @@ SOURCE=..\src\php_gtk_module.h
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # End Group
+# Begin Group "Override Files"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\generator\gdk.defs
+# End Source File
+# Begin Source File
+
+SOURCE=..\generator\gdk.overrides
+# End Source File
+# Begin Source File
+
+SOURCE="..\generator\gtk-extrafuncs.defs"
+# End Source File
+# Begin Source File
+
+SOURCE=..\generator\gtk.defs
+# End Source File
+# Begin Source File
+
+SOURCE=..\generator\gtk.overrides
+# End Source File
+# Begin Source File
+
+SOURCE=..\generator\libglade.defs
+# End Source File
+# Begin Source File
+
+SOURCE=..\generator\libglade.overrides
+# End Source File
+# End Group
 # End Target
 # End Project
