@@ -88,7 +88,7 @@ SOURCE="..\ext\gtk+\gdk.defs"
 
 USERDEP__GDK_D="..\ext\gtk+\gdk.overrides"	"..\ext\gtk+\gdk.defs"	
 # Begin Custom Build
-InputDir=\PHP\php-gtk\ext\gtk+
+InputDir=..\ext\gtk+
 InputPath="..\ext\gtk+\gdk.defs"
 
 "$(InputDir)\gen_gdk.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
@@ -100,7 +100,7 @@ InputPath="..\ext\gtk+\gdk.defs"
 
 USERDEP__GDK_D="..\ext\gtk+\gdk.overrides"	"..\ext\gtk+\gdk.defs"	
 # Begin Custom Build
-InputDir=\PHP\php-gtk\ext\gtk+
+InputDir=..\ext\gtk+
 InputPath="..\ext\gtk+\gdk.defs"
 
 "$(InputDir)\gen_gdk.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
@@ -120,7 +120,7 @@ SOURCE=..\generator\generator.php
 # PROP Ignore_Default_Tool 1
 USERDEP__GENER="..\ext\gtk+\gen_gtk.c"	"..\ext\gtk+\gen_gdk.c"	
 # Begin Custom Build
-InputDir=\PHP\php-gtk\generator
+InputDir=..\generator
 InputPath=..\generator\generator.php
 
 BuildCmds= \
@@ -140,7 +140,7 @@ BuildCmds= \
 
 USERDEP__GENER="..\ext\gtk+\gen_gtk.c"	"..\ext\gtk+\gen_gdk.c"	
 # Begin Custom Build
-InputDir=\PHP\php-gtk\generator
+InputDir=..\generator
 InputPath=..\generator\generator.php
 
 BuildCmds= \
@@ -167,7 +167,7 @@ SOURCE="..\ext\gtk+\gtk.defs"
 
 USERDEP__GTK_D="..\ext\gtk+\gtk.overrides"	"..\ext\gtk+\gtk.defs"	
 # Begin Custom Build
-InputDir=\PHP\php-gtk\ext\gtk+
+InputDir=..\ext\gtk+
 InputPath="..\ext\gtk+\gtk.defs"
 
 "$(InputDir)\gen_gtk.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
@@ -179,7 +179,7 @@ InputPath="..\ext\gtk+\gtk.defs"
 
 USERDEP__GTK_D="..\ext\gtk+\gtk.overrides"	"..\ext\gtk+\gtk.defs"	
 # Begin Custom Build
-InputDir=\PHP\php-gtk\ext\gtk+
+InputDir=..\ext\gtk+
 InputPath="..\ext\gtk+\gtk.defs"
 
 "$(InputDir)\gen_gtk.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
@@ -198,7 +198,7 @@ SOURCE=..\ext\libglade\libglade.defs
 
 USERDEP__LIBGL="..\ext\libglade\libglade.overrides"	"..\ext\libglade\libglade.defs"	
 # Begin Custom Build
-InputDir=\PHP\php-gtk\ext\libglade
+InputDir=..\ext\libglade
 InputPath=..\ext\libglade\libglade.defs
 
 "$(InputDir)\gen_libglade.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
@@ -210,7 +210,7 @@ InputPath=..\ext\libglade\libglade.defs
 
 USERDEP__LIBGL="..\ext\libglade\libglade.overrides"	"..\ext\libglade\libglade.defs"	
 # Begin Custom Build
-InputDir=\PHP\php-gtk\ext\libglade
+InputDir=..\ext\libglade
 InputPath=..\ext\libglade\libglade.defs
 
 "$(InputDir)\gen_libglade.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
