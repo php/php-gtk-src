@@ -14,6 +14,8 @@ Version 0.1.1 "no-holds-barred memento" 24-Sep-2001
     - added support for GtkScintilla, a text-editing widget. (Andrei)
     - implemented GladeXML methods signal_connect_object() and
       signal_autoconnect_object(). (Andrei)
+    - fixed GDK keysym constants warnings by prefixing some of them with
+      underscores. (Frank)
     - changed PHP-visible extension name from 'gtk' to 'php-gtk'. (Andrei)
 
 Version 0.1 "the void which binds" 1-Aug-2001
