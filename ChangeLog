@@ -1,3 +1,20 @@
+2003-01-10  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/gtk+/gtk.overrides:
+      ok this is it - from dericks site:  "What QA did you do on it?" "the
+      usual?" "ah... none :)"
+
+    * ext/gtk+/gtk.overrides:
+      consolidate error message for array mismatch - ok going to get this right
+      eventually
+
+    * ext/gtk+/gtk.overrides:
+      consolidate error message for array mismatch
+
+    * ext/gtk+/gtk.overrides:
+      fixed bug Bug #21538 - segfaults if you give ctree->insert_node too many
+      elements in the text array
+
 2003-01-09  Frank M. Kromann  <frank@kromann.info>
 
     * win32/makedist.cmd:
