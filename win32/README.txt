@@ -1,6 +1,6 @@
 Welcome to php-gtk for Win32.
 
-The binary distribution for php-gtk contains this structure
+The Win32 binary distribution for php-gtk is a zip file with this structure
 
 \php4				->	php and php-gtk binary files
 \winnt				->	the default php.ini file
@@ -9,14 +9,17 @@ README.TXT			->	this file.
 
 How to install install:
 
-copy \php4 to your existing php directory. If this is a new instalation you 
+Copy \php4 to your existing php directory, or a new directory. If this is a new instalation you 
 should create c:\php4 and copy the files to this directory.
 
-copy \winnt to you winnt directory. On Windows NT and Windows 2000 that is c:\winnt.
-On Windows 95/98/XP that is c:\windows. If you have an existing php.ini you dont need to copy this file, but make sure
-you are adding the php-gtk specific options found in \php4\php.ini-gtk.
+Copy \winnt to you winnt directory. On Windows NT and Windows 2000 that is c:\winnt.
+On Windows 95/98/XP that is c:\windows. If you have an existing php.ini you dont need to copy this file, 
+but make sure you are adding the php-gtk specific options found in \php4\php.ini-gtk.
 
-copy \test to the location where you want to run your scripts (c:\php4\test)
+You can also install php.ini in yor php directory. This will reduce conflicts with an existing php.ini file 
+in the windows directory.
+
+Copy \test to the location where you want to run your scripts (c:\php4\test)
 
 How to use:
 
