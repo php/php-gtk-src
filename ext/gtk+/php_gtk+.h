@@ -104,5 +104,10 @@ zval *php_gtk_box_child_new(GtkBoxChild *box_child);
 zval *php_gtk_fixed_child_new(GtkFixedChild *fixed_child);
 zval *php_gtk_clist_row_new(GtkCListRow *clist_row);
 
+void php_gtk_register_constants(int module_number ELS_DC);
+void php_gdk_register_constants(int module_number ELS_DC);
+void php_gtk_register_classes(void);
+void php_gdk_register_classes(void);
+void php_gtk_plus_register_types(int module_number);
 
 #endif	/* _PHP_GTK_PLUS_H */
