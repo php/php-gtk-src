@@ -85,10 +85,8 @@ $prop_check_tpl =
 	}";
 
 $prop_getter_tpl = "
-static void %s_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void %s_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
-
 	*result = SUCCESS;
 
 %s
@@ -114,15 +112,19 @@ PHP_FUNCTION(%s_get_type)
 $register_classes_tpl = "
 void php_%s_register_classes(void)
 {
-	zend_class_entry ce;
 	TSRMLS_FETCH();
 %s
 }\n";
 
 
-$register_class_tpl = "\t%s = zend_register_internal_class_ex(&ce, %s, NULL TSRMLS_CC);\n";
+//$register_class_tpl = "\t%s = zend_register_internal_class_ex(&ce, %s, NULL TSRMLS_CC);\n";
+$register_class_tpl = "
+	%s = php_gtk_register_class(\"%s\", php_%s_functions, %s, %d, 0, %s TSRMLS_CC);\n";
 
 $class_entry_tpl = "PHP_GTK_EXPORT_CE(%s);\n";
+
+$class_prop_list_header = "static char *php_%s_properties[] = {\n";
+$class_prop_list_footer = "\tNULL\n};\n\n";
 
 $struct_init_tpl = "
 zval *PHP_GTK_EXPORT_FUNC(php_%s_new)(%s *obj)

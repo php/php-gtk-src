@@ -1,7 +1,8 @@
 dnl $Id$
 dnl config.m4 for extra module
 
-PHP_GTK_ARG_ENABLE(extra,for Gtkextra support, [  --enable-extra       Enable Gtkextra support])
+PHP_GTK_ARG_ENABLE(extra,for GtkExtra support,
+[  --enable-extra          Enable GtkExtra support])
 
 if test "$PHP_GTK_EXTRA" != "no"; then
   for x in /usr /usr/local; do
@@ -25,5 +26,6 @@ if test "$PHP_GTK_EXTRA" != "no"; then
   else
     PHP_ADD_LIBRARY_WITH_PATH(gtkextra, $EXTRA_LIBDIR, PHP_GTK_SHARED_LIBADD)
   fi
+
   PHP_GTK_EXTENSION(extra, $php_gtk_ext_shared, php_extra.c, gen_extra.c)
 fi

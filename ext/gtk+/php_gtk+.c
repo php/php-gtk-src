@@ -28,6 +28,7 @@
 #include "php_gtk+.h"
 
 PHP_GTK_API int le_gtk_object;
+PHP_GTK_API zend_class_entry *php_gtk_exception_ce;
 
 /* defined in php_gdk.c */
 void php_gdk_register_keysyms(int module_number TSRMLS_DC);
@@ -51,9 +52,9 @@ static void init_gtk(void)
 	}
  
 	/*
-	 * Since track_vars is always on, we just get the argc/argv values from
-	 * there.
+	 * Grab the argc/argv values from $_SERVER array.
 	 */
+	zend_is_auto_global("_SERVER", sizeof("_SERVER")-1 TSRMLS_CC);
 	symbol_table = PG(http_globals)[TRACK_VARS_SERVER]->value.ht;
 	zend_hash_find(symbol_table, "argc", sizeof("argc"), (void **)&z_argc);
 	zend_hash_find(symbol_table, "argv", sizeof("argv"), (void **)&z_argv);
@@ -145,9 +146,22 @@ static void release_gtk_object_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 	gtk_object_unref(obj);
 }
 
+static void register_exception(TSRMLS_D)
+{
+	zend_class_entry ce;
+
+	INIT_CLASS_ENTRY(ce, "PHPGTKException", NULL);
+	php_gtk_exception_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+}
+
 PHP_GTK_XINIT_FUNCTION(gtk_plus)
 {
 	le_gtk_object = zend_register_list_destructors_ex(release_gtk_object_rsrc, NULL, "GtkObject", module_number);
+
+	php_gtk_handlers = zend_get_std_object_handlers();
+	php_gtk_handlers->get_property_zval_ptr = NULL;
+
+	register_exception(TSRMLS_C);
 
 	init_gtk();
 	php_gtk_register_constants(module_number TSRMLS_CC);

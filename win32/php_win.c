@@ -13,21 +13,21 @@ int WINAPI WinMain(
 ) 
 {
 	char *args[4], *prog = NULL;
-	char binary_file[] = "php.exe";
-	char modulepath[_MAX_PATH];
+	char pathbuffer[_MAX_PATH];
+	char searchfile[] = "php.exe";
+	char envvar[] = "PATH";
+	char *path = getenv("PATH");
+	char newpath[2048];
 
-	// Look for php.exe in the same directory as php_win.exe
-	if (GetModuleFileName(NULL, modulepath, _MAX_PATH)) {
-		char *separator_location = strrchr(modulepath, '\\');
-		if (separator_location) {
-			struct stat statbuf;
-			strcpy(separator_location+1, binary_file);
-			if (stat(modulepath, &statbuf) == 0) {
-				if (((statbuf.st_mode & S_IEXEC) == S_IEXEC)) {
-					prog = modulepath;
-				}
-			}
-		}
+	sprintf(newpath, "PATH=c:\\php5;d:\\php5;%s", path);
+	putenv(newpath);
+
+	if (strlen(lpCmdLine) == 0)
+		MessageBox(NULL, "Usage: php_win <path to php-gtk script>\n", "Error", MB_OK);
+	if (!(prog = getenv("PHP_BIN"))) {
+		_searchenv( searchfile, envvar, pathbuffer );
+		if (strlen(pathbuffer))
+			prog = pathbuffer;
 	}
 
 	// Search the path for the file

@@ -1,6 +1,6 @@
 Installing php-gtk on Windows NT/Windows 2000
 
-Building PHP-GTK from scratch requires the PHP4 build environment 
+Building PHP-GTK from scratch requires the PHP5 build environment 
 as well as MS Visual Studio.
 
 Get the latest version of PHP-GTK from the cvs server
@@ -35,7 +35,7 @@ Links to the latest files are found on
 http://www.gimp.org/~tml/gimp/win32/downloads.html
 http://www.zlatkovic.com/projects/libxml/binaries.html
 
-Compile PHP4 as a CLI and/or CGI module and copy at lease these files to c:\php4 (or any directory of your choice).
+Compile PHP5 as a CLI and/or CGI module and copy at lease these files to c:\php5 (or any directory of your choice).
 
 php.exe
 php4ts.dll
@@ -46,7 +46,7 @@ You doo thie by:
 	Select "Options" in the tools menu
 	Select "Directories" tab
 	Select "Ececutable files" in the drop down list
-	Go to the empty line and add the path to php (c:\php4)
+	Go to the empty line and add the path to php (c:\php5)
 	Close the options window.
 
 include_path in php.ini should contain ".;" in addition to other include paths used
@@ -88,12 +88,12 @@ http://prdownloads.sourceforge.net/moleskine/GtkScintilla-0.8.2.tar.gz
 This file contains source files only.
 
 For updated versions of GTK libraries, check http://wingtk.sourceforge.net/
-Updated versions of all libraries can also be found at http://kromann.info/php4-gtk
+Updated versions of all libraries can also be found at http://kromann.info/php5-gtk
 
 Installation:
-Copy all the dll files from <path to development>\php-gtk\win32\Release_TS to c:\php4 (or the directory where you copied the PHP binaries to).
+Copy all the dll files from <path to development>\php-gtk\win32\Release_TS to c:\php5 (or the directory where you copied the PHP binaries to).
 
-Copy these files to c:\php4
+Copy these files to c:\php5
 <path to development>\src\gtk-runtime\bin\libglib-2.0-0.dll
 <path to development>\src\gtk-runtime\bin\libgmodule-2.0-0.dll
 <path to development>\src\gtk-runtime\bin\libgobject-2.0-0.dll
@@ -117,10 +117,10 @@ The extension can also be loaded with the dl() command.
 
 On a command line type:
 	cd \php-gtk\test
-	c:\php4\php -q gtk.php
+	c:\php5\php -q gtk.php
 	
 Or create a shortcut:
-	C:\php4\php.exe -q c:\php-gtk\test\gtk.php
+	C:\php5\php.exe -q c:\php-gtk\test\gtk.php
 
 
 

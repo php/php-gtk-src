@@ -61,10 +61,225 @@ PHP_GTK_EXPORT_CE(gtk_table_child_ce);
 PHP_GTK_EXPORT_CE(gtk_fixed_child_ce);
 PHP_GTK_EXPORT_CE(gtk_clist_row_ce);
 
+static char *php_gdk_window_properties[] = {
+    "width",
+    "height",
+    "colormap",
+    "type",
+    "depth",
+#ifndef PHP_WIN32
+	"xid",
+#endif
+	"x",
+	"y",
+	"pointer",
+	"pointer_state",
+	"parent",
+	"toplevel",
+	"children",
+    NULL
+};
+
+static char *php_gdk_pixmap_properties[] = {
+    "width",
+    "height",
+    "colormap",
+    "type",
+    "depth",
+#ifndef PHP_WIN32
+	"xid",
+#endif
+    NULL
+};
+
+static char *php_gdk_bitmap_properties[] = {
+    "width",
+    "height",
+    "colormap",
+    "type",
+    "depth",
+#ifndef PHP_WIN32
+	"xid",
+#endif
+    NULL
+};
+
+static char *php_gdk_color_properties[] = {
+	"red",
+	"green",
+	"blue",
+	"pixel",
+    NULL
+};
+
+static char *php_gdk_colormap_properties[] = {
+	"colors",
+    NULL
+};
+
+static char *php_gdk_cursor_properties[] = {
+	"type",
+	"name",
+    NULL
+};
+
+static char *php_gdk_visual_properties[] = {
+	"type",
+	"depth",
+	"byte_order",
+	"colormap_size",
+	"bits_per_rgb",
+	"red_mask",
+	"red_shift",
+	"red_prec",
+	"green_mask",
+	"green_shift",
+	"green_prec",
+	"blue_mask",
+	"blue_shift",
+	"blue_prec",
+    NULL
+};
+
+static char *php_gdk_font_properties[] = {
+	"type",
+	"ascent",
+	"descent",
+    NULL
+};
+
+static char *php_gdk_gc_properties[] = {
+	"foreground",
+	"background",
+	"font",
+	"function",
+	"fill",
+	"tile",
+	"stipple",
+	"clip_mask",
+	"subwindow_mode",
+	"ts_x_origin",
+	"ts_y_origin",
+	"clip_x_origin",
+	"clip_y_origin",
+	"graphics_exposures",
+	"line_width",
+	"line_style",
+	"cap_style",
+	"join_style",
+    NULL
+};
+
+static char *php_gdk_drag_context_properties[] = {
+	"protocol",
+	"is_source",
+	"source_window",
+	"dest_window",
+	"targets",
+	"actions",
+	"suggested_action",
+	"action",
+	"start_time",
+    NULL
+};
+
+static char *php_gtk_selection_data_properties[] = {
+	"selection",
+	"target",
+	"type",
+	"format",
+	"length",
+	"data",
+    NULL
+};
+
+static char *php_gtk_ctree_node_properties[] = {
+	"parent",
+	"sibling",
+	"children",
+	"pixmap_closed",
+	"pixmap_opened",
+	"mask_closed",
+	"mask_opened",
+	"level",
+	"is_leaf",
+	"expanded",
+	"row",
+    NULL
+};
+
+static char *php_gtk_style_properties[] = {
+	"black",
+	"white",
+	"font",
+	"black_gc",
+	"white_gc",
+	"colormap",
+	"fg",
+	"bg",
+	"light",
+	"dark",
+	"mid",
+	"text",
+	"base",
+	"fg_gc",
+	"bg_gc",
+	"light_gc",
+	"dark_gc",
+	"mid_gc",
+	"text_gc",
+	"base_gc",
+	"bg_pixmap",
+    NULL
+};
+
+static char *php_gtk_box_child_properties[] = {
+	"widget",
+	"padding",
+	"expand",
+	"fill",
+	"pack",
+    NULL
+};
+
+static char *php_gtk_table_child_properties[] = {
+	"widget",
+	"left_attach",
+	"right_attach",
+	"top_attach",
+	"bottom_attach",
+	"xpadding",
+	"ypadding",
+	"xexpand",
+	"yexpand",
+	"xshrink",
+	"yshrink",
+	"xfill",
+	"yfill",
+    NULL
+};
+
+static char *php_gtk_fixed_child_properties[] = {
+	"widget",
+	"x",
+	"y",
+    NULL
+};
+
+static char *php_gtk_clist_row_properties[] = {
+	"state",
+	"foreground",
+	"background",
+	"style",
+	"fg_set",
+	"bg_set",
+	"selectable",
+    NULL
+};
+
 /* GdkEvent */
 static function_entry php_gdk_event_functions[] = {
 	{"GdkEvent", PHP_FN(no_direct_constructor), NULL},
-	{"gdkevent", PHP_FN(no_direct_constructor), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -82,7 +297,7 @@ zval *php_gdk_event_new(GdkEvent *event)
 	}
 
 	object_init_ex(result, gdk_event_ce);
-	php_gtk_set_object(result, event, le_php_gtk_wrapper);
+	php_gtk_set_object(result, event, NULL, 0);
 
 	add_property_long(result, "type", event->type);
 	
@@ -602,7 +817,6 @@ PHP_FUNCTION(gdk_window_copy_area)
 
 static function_entry php_gdk_window_functions[] = {
 	{"GdkWindow",		PHP_FN(no_direct_constructor), NULL},
-	{"gdkwindow",		PHP_FN(no_direct_constructor), NULL},
 	{"raise", 			PHP_FN(gdk_window_raise), NULL},
 	{"lower", 			PHP_FN(gdk_window_lower), NULL},
 	{"get_pointer", 	PHP_FN(gdk_window_get_pointer), NULL},
@@ -618,7 +832,6 @@ static function_entry php_gdk_window_functions[] = {
 
 static function_entry php_gdk_bitmap_functions[] = {
 	{"GdkBitmap",		PHP_FN(no_direct_constructor), NULL},
-	{"gdkbitmap",		PHP_FN(no_direct_constructor), NULL},
 	{"new_gc", 			PHP_FN(gdk_window_new_gc), NULL},
 	{"copy_area",		PHP_FN(gdk_window_copy_area), NULL},
 	{NULL, NULL, NULL}
@@ -646,12 +859,11 @@ PHP_FUNCTION(gdkpixmap)
 		return;
 	}
 
-	php_gtk_set_object(this_ptr, wrapped_obj, le_gdk_window);
+	php_gtk_set_object(this_ptr, wrapped_obj, (php_gtk_dtor_t)gdk_pixmap_unref, 1);
 }
 
 static function_entry php_gdk_pixmap_functions[] = {
 	{"GdkPixmap",		PHP_FN(gdkpixmap), NULL},
-	{"gdkpixmap",		PHP_FN(gdkpixmap), NULL},
 	{"new_gc", 			PHP_FN(gdk_window_new_gc), NULL},
 	{"property_get", 	PHP_FN(gdk_window_property_get), NULL},
 	{"property_change", PHP_FN(gdk_window_property_change), NULL},
@@ -681,7 +893,7 @@ zval *php_gdk_window_new(GdkWindow *window)
 	object_init_ex(result, gdk_window_ce);
 
 	gdk_window_ref(window);
-	php_gtk_set_object(result, window, le_gdk_window);
+	php_gtk_set_object(result, window, (php_gtk_dtor_t)gdk_window_unref, 1);
 
 	return result;
 }
@@ -707,7 +919,7 @@ zval *php_gdk_pixmap_new(GdkPixmap *pixmap)
 	object_init_ex(result, gdk_pixmap_ce);
 
 	gdk_pixmap_ref(pixmap);
-	php_gtk_set_object(result, pixmap, le_gdk_window);
+	php_gtk_set_object(result, pixmap, (php_gtk_dtor_t)gdk_pixmap_unref, 1);
 
 	return result;
 }
@@ -733,17 +945,17 @@ zval *php_gdk_bitmap_new(GdkWindow *bitmap)
 	object_init_ex(result, gdk_bitmap_ce);
 
 	gdk_bitmap_ref(bitmap);
-	php_gtk_set_object(result, bitmap, le_gdk_bitmap);
+	php_gtk_set_object(result, bitmap, (php_gtk_dtor_t)gdk_bitmap_unref, 1);
 
 	return result;
 }
 
-static void gdk_window_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gdk_window_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GdkWindow *win;
 	gint x, y;
 	GdkModifierType p_mask;
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
+	TSRMLS_FETCH();
 	
 	*result = SUCCESS;
 
@@ -760,7 +972,9 @@ static void gdk_window_get_property(zval *return_value, zval *object, zend_llist
 		gdk_window_get_size(win, NULL, &y);
 		RETURN_LONG(y);
 	} else if (!strcmp(prop_name, "colormap")) {
-		*return_value = *php_gdk_colormap_new(gdk_window_get_colormap(win));
+		if (Z_OBJCE_P(object) != gdk_bitmap_ce) {
+			*return_value = *php_gdk_colormap_new(gdk_window_get_colormap(win));
+		}
 		return;
 	} else if (!strcmp(prop_name, "type")) {
 		RETURN_LONG(gdk_window_get_type(win));
@@ -860,12 +1074,11 @@ PHP_FUNCTION(gdkcolor)
 		}
 	}
 
-	php_gtk_set_object(this_ptr, gdk_color_copy(&color), le_gdk_color);
+	php_gtk_set_object(this_ptr, gdk_color_copy(&color), (php_gtk_dtor_t)gdk_color_free, 0);
 }
 
 static function_entry php_gdk_color_functions[] = {
 	{"GdkColor", PHP_FN(gdkcolor), NULL},
-	{"gdkcolor", PHP_FN(gdkcolor), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -885,15 +1098,14 @@ zval *php_gdk_color_new(GdkColor *color)
 	object_init_ex(result, gdk_color_ce);
 
 	result_obj = gdk_color_copy(color);
-	php_gtk_set_object(result, result_obj, le_gdk_color);
+	php_gtk_set_object(result, result_obj, (php_gtk_dtor_t)gdk_color_free, 0);
 
 	return result;
 }
 
-static void gdk_color_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gdk_color_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GdkColor *color = PHP_GDK_COLOR_GET(object);
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	*result = SUCCESS;
 
@@ -910,10 +1122,9 @@ static void gdk_color_get_property(zval *return_value, zval *object, zend_llist_
 	*result = FAILURE;
 }
 
-static int gdk_color_set_property(zval *object, zend_llist_element **element, zval *value)
+static int gdk_color_set_property(zval *object, char *prop_name, zval *value)
 {
 	GdkColor *color = PHP_GDK_COLOR_GET(object);
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	convert_to_long(value);
 	if (!strcmp(prop_name, "red")) {
@@ -981,7 +1192,6 @@ PHP_FUNCTION(gdk_colormap_alloc)
 
 static function_entry php_gdk_colormap_functions[] = {
 	{"GdkColormap", PHP_FN(no_direct_constructor), NULL},
-	{"gdkcolormap", PHP_FN(no_direct_constructor), NULL},
 	{"size", 		PHP_FN(gdk_colormap_size), NULL},
 	{"alloc",		PHP_FN(gdk_colormap_alloc), NULL},
 	{NULL, NULL, NULL}
@@ -1008,7 +1218,7 @@ zval *php_gdk_colormap_new(GdkColormap *cmap)
 	object_init_ex(result, gdk_colormap_ce);
 
 	gdk_colormap_ref(cmap);
-	php_gtk_set_object(result, cmap, le_gdk_colormap);
+	php_gtk_set_object(result, cmap, (php_gtk_dtor_t)gdk_colormap_unref, 1);
 
 	return result;
 }
@@ -1025,35 +1235,19 @@ static void release_gdk_colormap_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 	gdk_colormap_unref(obj);
 }
 
-static void gdk_colormap_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gdk_colormap_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GdkColormap *cmap = PHP_GDK_COLORMAP_GET(object);
-	zend_overloaded_element *property = (zend_overloaded_element *)(*element)->data;
-	zend_llist_element *next;
-	char *prop_name = Z_STRVAL(property->element);
-	int prop_index, i;
 
 	*result = SUCCESS;
 
 	if (!strcmp(prop_name, "colors") && cmap->colors) {
-		next = (*element)->next;
-		if (next) {
-			property = (zend_overloaded_element *)next->data;
-			if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
-				*element = next;
-				prop_index = Z_LVAL(property->element);
-				if (prop_index < 0 || prop_index >= cmap->size) {
-					php_error(E_WARNING, "colormap index out of range");
-					return;
-				}
-				*return_value = *php_gdk_color_new(&cmap->colors[prop_index]);
-			}
-		} else {
-			array_init(return_value);
-			
-			for (i = 0; i < cmap->size; i++)
-				add_next_index_zval(return_value, php_gdk_color_new(&cmap->colors[i]));
-		}
+        int i;
+
+        array_init(return_value);
+
+        for (i = 0; i < cmap->size; i++)
+            add_next_index_zval(return_value, php_gdk_color_new(&cmap->colors[i]));
 
 		return;
 	}
@@ -1066,7 +1260,6 @@ static void gdk_colormap_get_property(zval *return_value, zval *object, zend_lli
 /* TODO maybe change this to have a real constructor */
 static function_entry php_gdk_atom_functions[] = {
 	{"GdkAtom", PHP_FN(no_direct_constructor), NULL},
-	{"gdkatom", PHP_FN(no_direct_constructor), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -1078,12 +1271,12 @@ zval *php_gdk_atom_new(GdkAtom atom)
 
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gdk_atom_ce);
-	add_property_long_ex(result, "atom", sizeof("atom"), atom);
+	add_property_long_ex(result, "atom", sizeof("atom"), atom TSRMLS_CC);
 	atom_name = gdk_atom_name(atom);
 	if (atom_name)
-		add_property_string_ex(result, "string", sizeof("string"), atom_name, 0);
+		add_property_string_ex(result, "string", sizeof("string"), atom_name, 0 TSRMLS_CC);
 	else
-		add_property_null_ex(result, "string", sizeof("string"));
+		add_property_null_ex(result, "string", sizeof("string") TSRMLS_CC);
 
 	return result;
 }
@@ -1091,7 +1284,6 @@ zval *php_gdk_atom_new(GdkAtom atom)
 /* GdkCursor */
 static function_entry php_gdk_cursor_functions[] = {
 	{"GdkCursor", PHP_FN(no_direct_constructor), NULL},
-	{"gdkcursor", PHP_FN(no_direct_constructor), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -1114,7 +1306,7 @@ zval *php_gdk_cursor_new(GdkCursor *cursor)
 
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gdk_cursor_ce);
-	php_gtk_set_object(result, cursor, le_gdk_cursor);
+	php_gtk_set_object(result, cursor, (php_gtk_dtor_t)gdk_cursor_destroy, 1);
 
 	return result;
 }
@@ -1131,10 +1323,9 @@ static void release_gdk_cursor_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 	gdk_cursor_destroy(obj);
 }
 
-static void gdk_cursor_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gdk_cursor_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GdkCursor *cursor = PHP_GDK_CURSOR_GET(object);
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	*result = SUCCESS;
 
@@ -1158,7 +1349,6 @@ static void gdk_cursor_get_property(zval *return_value, zval *object, zend_llist
 /* GdkVisual */
 static function_entry php_gdk_visual_functions[] = {
 	{"GdkVisual", PHP_FN(no_direct_constructor), NULL},
-	{"gdkvisual", PHP_FN(no_direct_constructor), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -1182,7 +1372,7 @@ zval *php_gdk_visual_new(GdkVisual *visual)
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gdk_visual_ce);
 	gdk_visual_ref(visual);
-	php_gtk_set_object(result, visual, le_gdk_visual);
+	php_gtk_set_object(result, visual, (php_gtk_dtor_t)gdk_visual_unref, 1);
 
 	return result;
 }
@@ -1199,10 +1389,9 @@ static void release_gdk_visual_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 	gdk_visual_unref(obj);
 }
 
-static void gdk_visual_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gdk_visual_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GdkVisual *visual = PHP_GDK_VISUAL_GET(object);
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	*result = SUCCESS;
 
@@ -1296,7 +1485,6 @@ PHP_FUNCTION(gdk_font_extents)
 
 static function_entry php_gdk_font_functions[] = {
 	{"GdkFont",	PHP_FN(no_direct_constructor), NULL},
-	{"gdkfont",	PHP_FN(no_direct_constructor), NULL},
 	{"width", 	PHP_FN(gdk_font_width), NULL},
 	{"height", 	PHP_FN(gdk_font_height), NULL},
 	{"measure", PHP_FN(gdk_font_measure), NULL},
@@ -1324,7 +1512,7 @@ zval *php_gdk_font_new(GdkFont *font)
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gdk_font_ce);
 	gdk_font_ref(font);
-	php_gtk_set_object(result, font, le_gdk_font);
+	php_gtk_set_object(result, font, (php_gtk_dtor_t)gdk_font_unref, 1);
 
 	return result;
 }
@@ -1341,10 +1529,9 @@ static void release_gdk_font_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 	gdk_font_unref(obj);
 }
 
-static void gdk_font_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gdk_font_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GdkFont *font = PHP_GDK_FONT_GET(object);
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	*result = SUCCESS;
 
@@ -1401,7 +1588,6 @@ PHP_FUNCTION(gdk_gc_set_dashes)
 
 static function_entry php_gdk_gc_functions[] = {
 	{"GdkGC",		PHP_FN(no_direct_constructor), NULL},
-	{"gdkgc",		PHP_FN(no_direct_constructor), NULL},
 	{"set_dashes",	PHP_FN(gdk_gc_set_dashes), NULL},
 	{NULL, NULL, NULL}
 };
@@ -1426,7 +1612,7 @@ zval *php_gdk_gc_new(GdkGC *gc)
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gdk_gc_ce);
 	gdk_gc_ref(gc);
-	php_gtk_set_object(result, gc, le_gdk_gc);
+	php_gtk_set_object(result, gc, (php_gtk_dtor_t)gdk_gc_unref, 1);
 
 	return result;
 }
@@ -1491,10 +1677,9 @@ static void gdk_colormap_query_color (GdkColormap *colormap, gulong pixel, GdkCo
 }
 #endif
 
-static void gdk_gc_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gdk_gc_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GdkGC *gc = PHP_GDK_GC_GET(object);
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 	GdkGCValues gcv;
 
 	*result = SUCCESS;
@@ -1551,10 +1736,9 @@ static void gdk_gc_get_property(zval *return_value, zval *object, zend_llist_ele
 	*result = FAILURE;
 }
 
-static int gdk_gc_set_property(zval *object, zend_llist_element **element, zval *value)
+static int gdk_gc_set_property(zval *object, char *prop_name, zval *value)
 {
 	GdkGC *gc = PHP_GDK_GC_GET(object);
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 	zend_bool type_mismatch = 0;
 	int i;
 	static char *props[] = {
@@ -1647,7 +1831,6 @@ static int gdk_gc_set_property(zval *object, zend_llist_element **element, zval 
 /* GdkDragContext */
 static function_entry php_gdk_drag_context_functions[] = {
 	{"GdkDragContext", PHP_FN(no_direct_constructor), NULL},
-	{"gdkdragcontext", PHP_FN(no_direct_constructor), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -1671,7 +1854,7 @@ zval *php_gdk_drag_context_new(GdkDragContext *context)
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gdk_drag_context_ce);
 	gdk_drag_context_ref(context);
-	php_gtk_set_object(result, context, le_gdk_drag_context);
+	php_gtk_set_object(result, context, (php_gtk_dtor_t)gdk_drag_context_unref, 1);
 
 	return result;
 }
@@ -1688,10 +1871,9 @@ static void release_gdk_drag_context_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 	gdk_drag_context_unref(obj);
 }
 
-static void gdk_drag_context_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gdk_drag_context_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GdkDragContext *context = PHP_GDK_DRAG_CONTEXT_GET(object);
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	*result = SUCCESS;
 
@@ -1746,7 +1928,6 @@ PHP_FUNCTION(gtk_selection_data_set)
 
 static function_entry php_gtk_selection_data_functions[] = {
 	{"GtkSelectionData", PHP_FN(no_direct_constructor), NULL},
-	{"gtkselectiondata", PHP_FN(no_direct_constructor), NULL},
 	{"set", 			 PHP_FN(gtk_selection_data_set), NULL},
 	{NULL, NULL, NULL}
 };
@@ -1770,15 +1951,14 @@ zval *php_gtk_selection_data_new(GtkSelectionData *data)
 
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gtk_selection_data_ce);
-	php_gtk_set_object(result, data, le_php_gtk_wrapper);
+	php_gtk_set_object(result, data, NULL, 1);
 
 	return result;
 }
 
-static void gtk_selection_data_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gtk_selection_data_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GtkSelectionData *data = PHP_GTK_SELECTION_DATA_GET(object);
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	*result = SUCCESS;
 
@@ -1805,7 +1985,6 @@ static void gtk_selection_data_get_property(zval *return_value, zval *object, ze
 /* GtkCtreeNode */
 static function_entry php_gtk_ctree_node_functions[] = {
 	{"GtkCTreeNode", PHP_FN(no_direct_constructor), NULL},
-	{"gtkctreenode", PHP_FN(no_direct_constructor), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -1829,7 +2008,7 @@ zval *php_gtk_ctree_node_new(GtkCTreeNode *node)
 
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gtk_ctree_node_ce);
-	php_gtk_set_object(result, node, le_php_gtk_wrapper);
+	php_gtk_set_object(result, node, NULL, 1);
 	if (static_ptr == NULL) {
 		static_ptr = result;
 	}
@@ -1837,11 +2016,10 @@ zval *php_gtk_ctree_node_new(GtkCTreeNode *node)
 	return result;
 }
 
-static void gtk_ctree_node_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gtk_ctree_node_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GtkCTreeNode *node = PHP_GTK_CTREE_NODE_GET(object);
 	GtkCTreeNode *temp;
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	*result = SUCCESS;
 
@@ -1857,35 +2035,15 @@ static void gtk_ctree_node_get_property(zval *return_value, zval *object, zend_l
 		return;
 	} else if (!strcmp(prop_name, "children")) {
 		zval *php_node;
-		zend_overloaded_element *property;
-		zend_llist_element *next = (*element)->next;
-		int prop_index;
 
 		temp = GTK_CTREE_ROW(node)->children;
 
-		if (next) {
-			int i = 0;
-			property = (zend_overloaded_element *)next->data;
-			if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
-				*element = next;
-				prop_index = Z_LVAL(property->element);
-				while (temp) {
-					if (i == prop_index) {
-						*return_value = *php_gtk_ctree_node_new(temp);
-						return;
-					}
-					temp = GTK_CTREE_ROW(temp)->sibling;
-					i++;
-				}
-			}
-		} else {
-			array_init(return_value);
-			while (temp) {
-				php_node = php_gtk_ctree_node_new(temp);
-				add_next_index_zval(return_value, php_node);
-				temp = GTK_CTREE_ROW(temp)->sibling;
-			}
-		}
+        array_init(return_value);
+        while (temp) {
+            php_node = php_gtk_ctree_node_new(temp);
+            add_next_index_zval(return_value, php_node);
+            temp = GTK_CTREE_ROW(temp)->sibling;
+        }
 
 		return;
 	} else if (!strcmp(prop_name, "pixmap_closed")) {
@@ -1934,7 +2092,7 @@ PHP_FUNCTION(gtkaccelgroup)
 	}
 
 	accel_group = gtk_accel_group_new();
-	php_gtk_set_object(this_ptr, accel_group, le_gtk_accel_group);
+	php_gtk_set_object(this_ptr, accel_group, (php_gtk_dtor_t)gtk_accel_group_unref, 1);
 }
 
 PHP_FUNCTION(gtk_accel_group_lock)
@@ -1959,7 +2117,6 @@ PHP_FUNCTION(gtk_accel_group_unlock)
 
 static function_entry php_gtk_accel_group_functions[] = {
 	{"GtkAccelGroup",	PHP_FN(gtkaccelgroup), NULL},
-	{"gtkaccelgroup",	PHP_FN(gtkaccelgroup), NULL},
 	{"lock", 			PHP_FN(gtk_accel_group_lock), NULL},
 	{"unlock", 			PHP_FN(gtk_accel_group_unlock), NULL},
 	{NULL, NULL, NULL}
@@ -1985,7 +2142,7 @@ zval *php_gtk_accel_group_new(GtkAccelGroup *group)
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gtk_accel_group_ce);
 	gtk_accel_group_ref(group);
-	php_gtk_set_object(result, group, le_gtk_accel_group);
+	php_gtk_set_object(result, group, (php_gtk_dtor_t)gtk_accel_group_unref, 1);
 
 	return result;
 }
@@ -2012,7 +2169,7 @@ PHP_FUNCTION(gtkstyle)
 		return;
 
 	ret = gtk_style_new();
-	php_gtk_set_object(this_ptr, ret, le_gtk_style);
+	php_gtk_set_object(this_ptr, ret, (php_gtk_dtor_t)gtk_style_unref, 1);
 }
 
 PHP_FUNCTION(gtk_style_copy)
@@ -2031,7 +2188,6 @@ PHP_FUNCTION(gtk_style_copy)
 
 static function_entry php_gtk_style_functions[] = {
 	{"GtkStyle", PHP_FN(gtkstyle), NULL},
-	{"gtkstyle", PHP_FN(gtkstyle), NULL},
 	{"copy",	 PHP_FN(gtk_style_copy), NULL},
 	{NULL, NULL, NULL}
 };
@@ -2056,7 +2212,7 @@ zval *php_gtk_style_new(GtkStyle *style)
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gtk_style_ce);
 	gtk_style_ref(style);
-	php_gtk_set_object(result, style, le_gtk_style);
+	php_gtk_set_object(result, style, (php_gtk_dtor_t)gtk_style_unref, 1);
 
 	return result;
 }
@@ -2079,91 +2235,45 @@ typedef enum {
 	STYLE_PIXMAP_ARRAY
 } style_array_type;
 
-static void style_helper_get(zval *result, style_array_type type, gpointer array, zend_llist_element **element)
+static void style_helper_get(zval *result, style_array_type type, gpointer array)
 {
-	zend_overloaded_element *property;
-	zend_llist_element *next = (*element)->next;
-	int prop_index;
+    int i;
 
-	if (next) {
-		property = (zend_overloaded_element *)next->data;
-		if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
-			*element = next;
-			prop_index = Z_LVAL(property->element);
-			if (prop_index < 0 || prop_index >= 5) {
-				php_error(E_WARNING, "style index out of range");
-				return;
-			}
+    array_init(result);
+    switch (type) {
+        case STYLE_COLOR_ARRAY:
+            {
+                GdkColor *color_array = (GdkColor *)array;
+                for (i = 0; i < 5; i++)
+                    add_next_index_zval(result, php_gdk_color_new(&color_array[i]));
+            }
+            break;
 
-			switch (type) {
-				case STYLE_COLOR_ARRAY:
-					{
-						GdkColor *color_array = (GdkColor *)array;
-						*result = *php_gdk_color_new(&color_array[prop_index]);
-					}
-					return;
+        case STYLE_GC_ARRAY:
+            {
+                GdkGC **gc_array = (GdkGC **)array;
+                for (i = 0; i < 5; i++)
+                    add_next_index_zval(result, php_gdk_gc_new(gc_array[i]));
+            }
+            break;
 
-				case STYLE_GC_ARRAY:
-					{
-						GdkGC **gc_array = (GdkGC **)array;
-						*result = *php_gdk_gc_new(gc_array[prop_index]);
-					}
-					return;
+        case STYLE_PIXMAP_ARRAY:
+            {
+                GdkWindow **pixmap_array = (GdkWindow **)array;
+                for (i = 0; i < 5; i++)
+                    add_next_index_zval(result, php_gdk_pixmap_new(pixmap_array[i]));
+            }
+            break;
 
-				case STYLE_PIXMAP_ARRAY:
-					{
-						GdkWindow **pixmap_array = (GdkPixmap **)array;
-						if (pixmap_array[prop_index])
-							*result = *php_gdk_pixmap_new(pixmap_array[prop_index]);
-					}
-					return;
-
-				default:
-					g_assert_not_reached();
-					break;
-			}
-		}
-	} else {
-		int i;
-
-		array_init(result);
-		switch (type) {
-			case STYLE_COLOR_ARRAY:
-				{
-					GdkColor *color_array = (GdkColor *)array;
-					for (i = 0; i < 5; i++)
-						add_next_index_zval(result, php_gdk_color_new(&color_array[i]));
-				}
-				break;
-
-			case STYLE_GC_ARRAY:
-				{
-					GdkGC **gc_array = (GdkGC **)array;
-					for (i = 0; i < 5; i++)
-						add_next_index_zval(result, php_gdk_gc_new(gc_array[i]));
-				}
-				break;
-
-			case STYLE_PIXMAP_ARRAY:
-				{
-					GdkWindow **pixmap_array = (GdkWindow **)array;
-					for (i = 0; i < 5; i++)
-						add_next_index_zval(result, php_gdk_pixmap_new(pixmap_array[i]));
-				}
-				break;
-
-			default:
-				g_assert_not_reached();
-				break;
-		}
-	}
+        default:
+            g_assert_not_reached();
+            break;
+    }
 }
 
-static void gtk_style_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gtk_style_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GtkStyle *style = PHP_GTK_STYLE_GET(object);
-	zend_overloaded_element *property = (zend_overloaded_element *)(*element)->data;
-	char *prop_name = Z_STRVAL(property->element);
 
 	*result = SUCCESS;
 
@@ -2187,61 +2297,59 @@ static void gtk_style_get_property(zval *return_value, zval *object, zend_llist_
 			*return_value = *php_gdk_colormap_new(style->colormap);
 		return;
 	} else if (!strcmp(prop_name, "fg")) {
-		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->fg, element);
+		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->fg);
 		return;
 	} else if (!strcmp(prop_name, "bg")) {
-		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->bg, element);
+		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->bg);
 		return;
 	} else if (!strcmp(prop_name, "light")) {
-		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->light, element);
+		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->light);
 		return;
 	} else if (!strcmp(prop_name, "dark")) {
-		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->dark, element);
+		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->dark);
 		return;
 	} else if (!strcmp(prop_name, "mid")) {
-		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->mid, element);
+		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->mid);
 		return;
 	} else if (!strcmp(prop_name, "text")) {
-		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->text, element);
+		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->text);
 		return;
 	} else if (!strcmp(prop_name, "base")) {
-		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->base, element);
+		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->base);
 		return;
 	} else if (!strcmp(prop_name, "fg_gc")) {
-		style_helper_get(return_value, STYLE_GC_ARRAY, style->fg_gc, element);
+		style_helper_get(return_value, STYLE_GC_ARRAY, style->fg_gc);
 		return;
 	} else if (!strcmp(prop_name, "bg_gc")) {
-		style_helper_get(return_value, STYLE_GC_ARRAY, style->bg_gc, element);
+		style_helper_get(return_value, STYLE_GC_ARRAY, style->bg_gc);
 		return;
 	} else if (!strcmp(prop_name, "light_gc")) {
-		style_helper_get(return_value, STYLE_GC_ARRAY, style->light_gc, element);
+		style_helper_get(return_value, STYLE_GC_ARRAY, style->light_gc);
 		return;
 	} else if (!strcmp(prop_name, "dark_gc")) {
-		style_helper_get(return_value, STYLE_GC_ARRAY, style->dark_gc, element);
+		style_helper_get(return_value, STYLE_GC_ARRAY, style->dark_gc);
 		return;
 	} else if (!strcmp(prop_name, "mid_gc")) {
-		style_helper_get(return_value, STYLE_GC_ARRAY, style->mid_gc, element);
+		style_helper_get(return_value, STYLE_GC_ARRAY, style->mid_gc);
 		return;
 	} else if (!strcmp(prop_name, "text_gc")) {
-		style_helper_get(return_value, STYLE_GC_ARRAY, style->text_gc, element);
+		style_helper_get(return_value, STYLE_GC_ARRAY, style->text_gc);
 		return;
 	} else if (!strcmp(prop_name, "base_gc")) {
-		style_helper_get(return_value, STYLE_GC_ARRAY, style->base_gc, element);
+		style_helper_get(return_value, STYLE_GC_ARRAY, style->base_gc);
 		return;
 	} else if (!strcmp(prop_name, "bg_pixmap")) {
-		style_helper_get(return_value, STYLE_PIXMAP_ARRAY, style->bg_pixmap, element);
+		style_helper_get(return_value, STYLE_PIXMAP_ARRAY, style->bg_pixmap);
 		return;
 	}
 
 	*result = FAILURE;
 }
 
-static int style_helper_set(style_array_type type, gpointer array, zval *value, zend_llist_element **element)
+#if 0
+static int style_helper_set(style_array_type type, gpointer array, zval *value, char *prop_name)
 {
 	zend_overloaded_element *property;
-	zend_llist_element *next = (*element)->next;
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
-	int prop_index;
 
 	if (next) {
 		property = (zend_overloaded_element *)next->data;
@@ -2309,11 +2417,11 @@ static int style_helper_set(style_array_type type, gpointer array, zval *value, 
 
 	return SUCCESS;
 }
+#endif
 
-static int gtk_style_set_property(zval *object, zend_llist_element **element, zval *value)
+static int gtk_style_set_property(zval *object, char *prop_name, zval *value)
 {
 	GtkStyle *style = PHP_GTK_STYLE_GET(object);
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	if (!strcmp(prop_name, "font")) {
 		if (php_gtk_check_class(value, gdk_font_ce)) {
@@ -2365,37 +2473,41 @@ static int gtk_style_set_property(zval *object, zend_llist_element **element, zv
 			php_error(E_WARNING, "'%s' property should be a GdkColormap", prop_name);
 			return PG_ERROR;
 		}
-	} else if (!strcmp(prop_name, "fg")) {
-		return style_helper_set(STYLE_COLOR_ARRAY, style->fg, value, element);
+	}
+#if 0
+	else if (!strcmp(prop_name, "fg")) {
+		return style_helper_set(STYLE_COLOR_ARRAY, style->fg, value, prop_name);
 	} else if (!strcmp(prop_name, "bg")) {
-		return style_helper_set(STYLE_COLOR_ARRAY, style->bg, value, element);
+		return style_helper_set(STYLE_COLOR_ARRAY, style->bg, value, prop_name);
 	} else if (!strcmp(prop_name, "light")) {
-		return style_helper_set(STYLE_COLOR_ARRAY, style->light, value, element);
+		return style_helper_set(STYLE_COLOR_ARRAY, style->light, value, prop_name);
 	} else if (!strcmp(prop_name, "dark")) {
-		return style_helper_set(STYLE_COLOR_ARRAY, style->dark, value, element);
+		return style_helper_set(STYLE_COLOR_ARRAY, style->dark, value, prop_name);
 	} else if (!strcmp(prop_name, "mid")) {
-		return style_helper_set(STYLE_COLOR_ARRAY, style->mid, value, element);
+		return style_helper_set(STYLE_COLOR_ARRAY, style->mid, value, prop_name);
 	} else if (!strcmp(prop_name, "text")) {
-		return style_helper_set(STYLE_COLOR_ARRAY, style->text, value, element);
+		return style_helper_set(STYLE_COLOR_ARRAY, style->text, value, prop_name);
 	} else if (!strcmp(prop_name, "base")) {
-		return style_helper_set(STYLE_COLOR_ARRAY, style->base, value, element);
+		return style_helper_set(STYLE_COLOR_ARRAY, style->base, value, prop_name);
 	} else if (!strcmp(prop_name, "fg_gc")) {
-		return style_helper_set(STYLE_GC_ARRAY, style->fg_gc, value, element);
+		return style_helper_set(STYLE_GC_ARRAY, style->fg_gc, value, prop_name);
 	} else if (!strcmp(prop_name, "bg_gc")) {
-		return style_helper_set(STYLE_GC_ARRAY, style->bg_gc, value, element);
+		return style_helper_set(STYLE_GC_ARRAY, style->bg_gc, value, prop_name);
 	} else if (!strcmp(prop_name, "light_gc")) {
-		return style_helper_set(STYLE_GC_ARRAY, style->light_gc, value, element);
+		return style_helper_set(STYLE_GC_ARRAY, style->light_gc, value, prop_name);
 	} else if (!strcmp(prop_name, "dark_gc")) {
-		return style_helper_set(STYLE_GC_ARRAY, style->dark_gc, value, element);
+		return style_helper_set(STYLE_GC_ARRAY, style->dark_gc, value, prop_name);
 	} else if (!strcmp(prop_name, "mid_gc")) {
-		return style_helper_set(STYLE_GC_ARRAY, style->mid_gc, value, element);
+		return style_helper_set(STYLE_GC_ARRAY, style->mid_gc, value, prop_name);
 	} else if (!strcmp(prop_name, "text_gc")) {
-		return style_helper_set(STYLE_GC_ARRAY, style->text_gc, value, element);
+		return style_helper_set(STYLE_GC_ARRAY, style->text_gc, value, prop_name);
 	} else if (!strcmp(prop_name, "base_gc")) {
-		return style_helper_set(STYLE_GC_ARRAY, style->base_gc, value, element);
+		return style_helper_set(STYLE_GC_ARRAY, style->base_gc, value, prop_name);
 	} else if (!strcmp(prop_name, "bg_pixmap")) {
-		return style_helper_set(STYLE_PIXMAP_ARRAY, style->bg_pixmap, value, element);
-	} else {
+		return style_helper_set(STYLE_PIXMAP_ARRAY, style->bg_pixmap, value, prop_name);
+	}
+#endif
+	else {
 		return FAILURE;
 	}
 
@@ -2405,7 +2517,6 @@ static int gtk_style_set_property(zval *object, zend_llist_element **element, zv
 
 static function_entry php_gtk_box_child_functions[] = {
 	{"GtkBoxChild", PHP_FN(no_direct_constructor), NULL},
-	{"gtkboxchild", PHP_FN(no_direct_constructor), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -2428,16 +2539,14 @@ zval *php_gtk_box_child_new(GtkBoxChild *box_child)
 
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gtk_box_child_ce);
-	php_gtk_set_object(result, box_child, le_php_gtk_wrapper);
+	php_gtk_set_object(result, box_child, NULL, 1);
 
 	return result;
 }
 
-static void gtk_box_child_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gtk_box_child_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GtkBoxChild *box_child = PHP_GTK_GET_GENERIC(object, GtkBoxChild*, le_php_gtk_wrapper);
-	zend_overloaded_element *property = (zend_overloaded_element *)(*element)->data;
-	char *prop_name = Z_STRVAL(property->element);
 
 	*result = SUCCESS;
 
@@ -2460,7 +2569,6 @@ static void gtk_box_child_get_property(zval *return_value, zval *object, zend_ll
 /* GtkTableChild */
 static function_entry php_gtk_table_child_functions[] = {
 	{"GtkTableChild", PHP_FN(no_direct_constructor), NULL},
-	{"gtktablechild", PHP_FN(no_direct_constructor), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -2483,16 +2591,14 @@ zval *php_gtk_table_child_new(GtkTableChild *table_child)
 
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gtk_table_child_ce);
-	php_gtk_set_object(result, table_child, le_php_gtk_wrapper);
+	php_gtk_set_object(result, table_child, NULL, 1);
 
 	return result;
 }
 
-static void gtk_table_child_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gtk_table_child_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GtkTableChild *table_child = PHP_GTK_GET_GENERIC(object, GtkTableChild*, le_php_gtk_wrapper);
-	zend_overloaded_element *property = (zend_overloaded_element *)(*element)->data;
-	char *prop_name = Z_STRVAL(property->element);
 
 	*result = SUCCESS;
 
@@ -2531,7 +2637,6 @@ static void gtk_table_child_get_property(zval *return_value, zval *object, zend_
 /* GtkFixedChild */
 static function_entry php_gtk_fixed_child_functions[] = {
 	{"GtkFixedChild", PHP_FN(no_direct_constructor), NULL},
-	{"gtkfixedchild", PHP_FN(no_direct_constructor), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -2554,16 +2659,14 @@ zval *php_gtk_fixed_child_new(GtkFixedChild *fixed_child)
 
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gtk_fixed_child_ce);
-	php_gtk_set_object(result, fixed_child, le_php_gtk_wrapper);
+	php_gtk_set_object(result, fixed_child, NULL, 1);
 
 	return result;
 }
 
-static void gtk_fixed_child_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gtk_fixed_child_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GtkFixedChild *fixed_child = PHP_GTK_GET_GENERIC(object, GtkFixedChild*, le_php_gtk_wrapper);
-	zend_overloaded_element *property = (zend_overloaded_element *)(*element)->data;
-	char *prop_name = Z_STRVAL(property->element);
 
 	*result = SUCCESS;
 
@@ -2583,7 +2686,6 @@ static void gtk_fixed_child_get_property(zval *return_value, zval *object, zend_
 /* GtkCListRow */
 static function_entry php_gtk_clist_row_functions[] = {
 	{"GtkCListRow", PHP_FN(no_direct_constructor), NULL},
-	{"gtkclistrow", PHP_FN(no_direct_constructor), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -2606,16 +2708,14 @@ zval *php_gtk_clist_row_new(GtkCListRow *clist_row)
 
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gtk_clist_row_ce);
-	php_gtk_set_object(result, clist_row, le_php_gtk_wrapper);
+	php_gtk_set_object(result, clist_row, NULL, 1);
 
 	return result;
 }
 
-static void gtk_clist_row_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void gtk_clist_row_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	GtkCListRow *clist_row = PHP_GTK_GET_GENERIC(object, GtkCListRow*, le_php_gtk_wrapper);
-	zend_overloaded_element *property = (zend_overloaded_element *)(*element)->data;
-	char *prop_name = Z_STRVAL(property->element);
 
 	*result = SUCCESS;
 
@@ -2645,9 +2745,10 @@ static void gtk_clist_row_get_property(zval *return_value, zval *object, zend_ll
 
 void php_gtk_plus_register_types(int module_number)
 {
-	zend_class_entry ce;
+    zend_class_entry ce;
 	TSRMLS_FETCH();
 
+    /*
 	le_php_gtk_wrapper = zend_register_list_destructors_ex(NULL, NULL, "Generic PHP-GTK wrapper", module_number);
 	le_gdk_window = zend_register_list_destructors_ex(release_gdk_window_rsrc, NULL, "GdkWindow", module_number);
 	le_gdk_bitmap = zend_register_list_destructors_ex(release_gdk_bitmap_rsrc, NULL, "GdkBitmap", module_number);
@@ -2660,83 +2761,65 @@ void php_gtk_plus_register_types(int module_number)
 	le_gdk_drag_context = zend_register_list_destructors_ex(release_gdk_drag_context_rsrc, NULL, "GdkDragContext", module_number);
 	le_gtk_accel_group = zend_register_list_destructors_ex(release_gtk_accel_group_rsrc, NULL, "GtkAccelGroup", module_number);
 	le_gtk_style = zend_register_list_destructors_ex(release_gtk_style_rsrc, NULL, "GtkStyle", module_number);
+    */
 
-	INIT_CLASS_ENTRY(ce, "gdkevent", php_gdk_event_functions);
-	gdk_event_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gdk_event_ce = php_gtk_register_class("GdkEvent", php_gdk_event_functions, NULL, 0, 0, NULL TSRMLS_CC);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GdkWindow", php_gdk_window_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gdk_window_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GdkPixmap", php_gdk_pixmap_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gdk_pixmap_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GdkBitmap", php_gdk_bitmap_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gdk_bitmap_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+    gdk_window_ce = php_gtk_register_class("GdkWindow", php_gdk_window_functions, NULL, 1, 0, php_gdk_window_properties TSRMLS_CC);
+	gdk_pixmap_ce = php_gtk_register_class("GdkPixmap", php_gdk_pixmap_functions, NULL, 1, 0, php_gdk_pixmap_properties TSRMLS_CC);
+	gdk_bitmap_ce = php_gtk_register_class("GdkBitmap", php_gdk_bitmap_functions, NULL, 1, 0, php_gdk_bitmap_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_window_ce, gdk_window_get_property);
 	php_gtk_register_prop_getter(gdk_pixmap_ce, gdk_window_get_property);
 	php_gtk_register_prop_getter(gdk_bitmap_ce, gdk_window_get_property);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GdkColor", php_gdk_color_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gdk_color_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gdk_color_ce = php_gtk_register_class("GdkColor", php_gdk_color_functions, NULL, 1, 1, php_gdk_color_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_color_ce, gdk_color_get_property);
 	php_gtk_register_prop_setter(gdk_color_ce, gdk_color_set_property);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GdkColormap", php_gdk_colormap_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gdk_colormap_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gdk_colormap_ce = php_gtk_register_class("GdkColormap", php_gdk_colormap_functions, NULL, 1, 0, php_gdk_colormap_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_colormap_ce, gdk_colormap_get_property);
 
 	INIT_CLASS_ENTRY(ce, "GdkAtom", php_gdk_atom_functions);
 	gdk_atom_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 	
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GdkCursor", php_gdk_cursor_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gdk_cursor_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gdk_cursor_ce = php_gtk_register_class("GdkCursor", php_gdk_cursor_functions, NULL, 1, 0, php_gdk_cursor_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_cursor_ce, gdk_cursor_get_property);
 	
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GdkVisual", php_gdk_visual_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gdk_visual_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gdk_visual_ce = php_gtk_register_class("GdkVisual", php_gdk_visual_functions, NULL, 1, 0, php_gdk_visual_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_visual_ce, gdk_visual_get_property);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GdkFont", php_gdk_font_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gdk_font_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gdk_font_ce = php_gtk_register_class("GdkFont", php_gdk_font_functions, NULL, 1, 0, php_gdk_font_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_font_ce, gdk_font_get_property);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GdkGC", php_gdk_gc_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gdk_gc_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gdk_gc_ce = php_gtk_register_class("GdkGC", php_gdk_gc_functions, NULL, 1, 1, php_gdk_gc_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_gc_ce, gdk_gc_get_property);
 	php_gtk_register_prop_setter(gdk_gc_ce, gdk_gc_set_property);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GdkDragContext", php_gdk_drag_context_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gdk_drag_context_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gdk_drag_context_ce = php_gtk_register_class("GdkDragContext", php_gdk_drag_context_functions, NULL, 1, 0, php_gdk_drag_context_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_drag_context_ce, gdk_drag_context_get_property);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GtkSelectionData", php_gtk_selection_data_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gtk_selection_data_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gtk_selection_data_ce = php_gtk_register_class("GtkSelectionData", php_gtk_selection_data_functions, NULL, 1, 0, php_gtk_selection_data_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_selection_data_ce, gtk_selection_data_get_property);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GtkCTreeNode", php_gtk_ctree_node_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gtk_ctree_node_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gtk_ctree_node_ce = php_gtk_register_class("GtkCTreeNode", php_gtk_ctree_node_functions, NULL, 1, 0, php_gtk_ctree_node_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_ctree_node_ce, gtk_ctree_node_get_property);
 
-	INIT_CLASS_ENTRY(ce, "GtkAccelGroup", php_gtk_accel_group_functions);
-	gtk_accel_group_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gtk_accel_group_ce = php_gtk_register_class("GtkAccelGroup", php_gtk_accel_group_functions, NULL, 0, 0, NULL TSRMLS_CC);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GtkStyle", php_gtk_style_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gtk_style_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gtk_style_ce = php_gtk_register_class("GtkStyle", php_gtk_style_functions, NULL, 1, 1, php_gtk_style_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_style_ce, gtk_style_get_property);
 	php_gtk_register_prop_setter(gtk_style_ce, gtk_style_set_property);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GtkBoxChild", php_gtk_box_child_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gtk_box_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gtk_box_child_ce = php_gtk_register_class("GtkBoxChild", php_gtk_box_child_functions, NULL, 1, 0, php_gtk_box_child_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_box_child_ce, gtk_box_child_get_property);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GtkTableChild", php_gtk_table_child_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gtk_table_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gtk_table_child_ce = php_gtk_register_class("GtkTableChild", php_gtk_table_child_functions, NULL, 1, 0, php_gtk_table_child_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_table_child_ce, gtk_table_child_get_property);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GtkFixedChild", php_gtk_fixed_child_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gtk_fixed_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gtk_fixed_child_ce = php_gtk_register_class("GtkFixedChild", php_gtk_fixed_child_functions, NULL, 1, 0, php_gtk_fixed_child_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_fixed_child_ce, gtk_fixed_child_get_property);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "GtkCListRow", php_gtk_clist_row_functions, NULL, php_gtk_get_property, php_gtk_set_property);
-	gtk_clist_row_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	gtk_clist_row_ce = php_gtk_register_class("GtkCListRow", php_gtk_clist_row_functions, NULL, 1, 0, php_gtk_clist_row_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_clist_row_ce, gtk_clist_row_get_property);
 }
 

@@ -513,7 +513,7 @@ PHP_FUNCTION(gtk_scintilla_search_in_target)
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s#", &text, &length))
 		return;
 
-	RETURN_LONG(gtk_search_in_target(GTK_SCINTILLA(PHP_GTK_GET(this_ptr)), length, text));
+	RETURN_LONG(gtk_scintilla_search_in_target(GTK_SCINTILLA(PHP_GTK_GET(this_ptr)), length, text));
 #endif
 }
 %%

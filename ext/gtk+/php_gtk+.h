@@ -29,23 +29,34 @@
 extern php_gtk_ext_entry gtk_plus_ext_entry;
 #define php_gtk_ext_gtk__ptr &gtk_plus_ext_entry
 
+PHP_GTK_API extern zend_object_handlers *php_gtk_handlers;
+PHP_GTK_API extern zend_class_entry *php_gtk_exception_ce;
 PHP_GTK_API extern int le_gtk_object;
-extern int le_php_gtk_wrapper;
-extern int le_gdk_window;
-extern int le_gdk_bitmap;
-extern int le_gdk_color;
-extern int le_gdk_colormap;
-extern int le_gdk_cursor;
-extern int le_gdk_visual;
-extern int le_gdk_font;
-extern int le_gdk_gc;
-extern int le_gdk_drag_context;
-extern int le_gtk_accel_group;
-extern int le_gtk_style;
+PHP_GTK_API extern int le_php_gtk_wrapper;
+PHP_GTK_API extern int le_gdk_window;
+PHP_GTK_API extern int le_gdk_bitmap;
+PHP_GTK_API extern int le_gdk_color;
+PHP_GTK_API extern int le_gdk_colormap;
+PHP_GTK_API extern int le_gdk_cursor;
+PHP_GTK_API extern int le_gdk_visual;
+PHP_GTK_API extern int le_gdk_font;
+PHP_GTK_API extern int le_gdk_gc;
+PHP_GTK_API extern int le_gdk_drag_context;
+PHP_GTK_API extern int le_gtk_accel_group;
+PHP_GTK_API extern int le_gtk_style;
+
+typedef void (*php_gtk_dtor_t)(void *);
+
+typedef struct _php_gtk_object {
+	zend_object zobj;
+	void *obj;
+	php_gtk_dtor_t dtor;
+} php_gtk_object;
 
 static inline GdkAtom php_gdk_atom_get(zval *wrapper)
 {
 	zval **atom;
+	TSRMLS_FETCH();
 	
 	zend_hash_find(Z_OBJPROP_P(wrapper), "atom", sizeof("atom"), (void**)&atom);
 	return (GdkAtom)Z_LVAL_PP(atom);
