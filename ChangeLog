@@ -1,3 +1,7 @@
+2002-09-21  Frank M. Kromann  <frank@kromann.info>
+
+    * main/php_gtk_object.c: Fixing ZTS build
+
 2002-09-19  Andrei Zmievski  <andrei@php.net>
 
     * ext/gtk+/gtk.overrides
