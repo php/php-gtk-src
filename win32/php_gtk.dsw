@@ -15,6 +15,18 @@ Package=<4>
 
 ###############################################################################
 
+Project: "extra"="..\ext\extra\extra.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "gdkpixbuf"="..\ext\gdkpixbuf\gdkpixbuf.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -27,7 +39,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "gtkhtml"="..\ext\gtkhtml\gtkhtml.dsp" - Package Owner=<4>
+Project: "gtkhtml"="..\..\php-gtk-ze1\ext\gtkhtml\gtkhtml.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
