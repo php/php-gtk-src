@@ -166,7 +166,8 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 	//php_gtk_register_constants(module_number TSRMLS_CC);
 	//php_gdk_register_constants(module_number TSRMLS_CC);
 	//php_gdk_register_keysyms(module_number TSRMLS_CC);
-	php_gtk_register_classes();
+	phpg_gtk_register_classes();
+	phpg_atk_register_classes();
 	//php_gdk_register_classes();
 	//php_gtk_plus_register_types(module_number);
 

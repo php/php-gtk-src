@@ -110,7 +110,7 @@ PHP_FUNCTION(%s_get_type)
 }\n\n";
 
 $register_classes_tpl = "
-void php_%s_register_classes(void)
+void phpg_%s_register_classes(void)
 {
 	TSRMLS_FETCH();
 %s

@@ -1,6 +1,7 @@
 /* vim: set ft=cpp fdm=marker: */
 %%
 headers
+#include "gen_atk.h"
 #include "ext/standard/file.h"
 
 %% {{{ ignores
