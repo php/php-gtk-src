@@ -1061,6 +1061,7 @@ getprop GtkBox children
 					add_property_bool(return_value, "expand", box_child->expand);
 					add_property_bool(return_value, "fill", box_child->fill);
 					add_property_long(return_value, "pack", box_child->pack);
+					return;
 				}
 			}
 		}
@@ -1141,6 +1142,7 @@ getprop GtkFixed children
 					add_property_zval(return_value, "widget", php_gtk_new((GtkObject *)fixed_child->widget));
 					add_property_long(return_value, "x", fixed_child->x);
 					add_property_long(return_value, "y", fixed_child->y);
+					return;
 				}
 			}
 		}
@@ -1160,4 +1162,34 @@ getprop GtkFixed children
 	}
 
 	return;
+%%
+getprop GtkList selection
+	GtkListItem *item;
+	zval *php_item;
+	GList *tmp;
+	GList *selection = GTK_LIST(PHP_GTK_GET(object))->selection;
+	zend_overloaded_element *property;
+	zend_llist_element *next = (*element)->next;
+	int prop_index;
 
+	if (next) {
+		int i = 0;
+		property = (zend_overloaded_element *)next->data;
+		if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
+			*element = next;
+			prop_index = Z_LVAL(property->element);
+			for (tmp = selection, i = 0; tmp; tmp = tmp->next, i++) {
+				if (i == prop_index) {
+					*return_value = *php_gtk_new((GtkObject *)tmp->data);
+					return;
+				}
+			}
+		}
+	} else {
+		array_init(return_value);
+		for (tmp = selection; tmp; tmp = tmp->next)
+			add_next_index_zval(return_value, php_gtk_new((GtkObject *)tmp->data));
+	}
+
+	return;
+%%

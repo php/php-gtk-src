@@ -310,6 +310,7 @@
   (in-module Gtk)
   (parent Container (Gtk))
   (c-name GtkList)
+  (field (type-and-name GList* selection))
 )
 
 (object Layout

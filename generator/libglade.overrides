@@ -24,9 +24,9 @@ static void glade_connect_one(const gchar *handler_name, GtkObject *obj, const
 
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&pass_object);
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&callback_filename);
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_lineno);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&pass_object);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_filename);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&callback_lineno);
 
 	if (connect_object) {
 		zval *temp;

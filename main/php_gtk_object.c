@@ -611,30 +611,31 @@ zval php_gtk_get_property(zend_property_reference *property_reference)
 	zval result;
 	zend_overloaded_element *overloaded_property;
 	zend_llist_element *element;
-	zval *object = property_reference->object;
+	zval object = *property_reference->object;
 	prop_getter_t *getter;
 	zend_class_entry *ce;
-	int found = FAILURE;
+	int found;
 
 	for (element=property_reference->elements_list->head; element; element=element->next) {
 		overloaded_property = (zend_overloaded_element *) element->data;
 		if ((Z_TYPE_P(overloaded_property) != OE_IS_OBJECT ||
 			Z_TYPE(overloaded_property->element) != IS_STRING) ||
-			Z_TYPE_P(object) != IS_OBJECT) {
+			Z_TYPE(object) != IS_OBJECT) {
 			convert_to_null(&result);
 			return result;
 		}
 
-		for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
+		found = FAILURE;
+		for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
 			if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
-				(*getter)(&result, object, &element, &found);
+				(*getter)(&result, &object, &element, &found);
 			}
 		}
 		if (found == FAILURE) {
 			convert_to_null(&result);
 			return result;
 		}
-		object = &result;
+		object = result;
 
 		zval_dtor(&overloaded_property->element);
 	}
@@ -652,7 +653,7 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 	prop_getter_t *getter;
 	prop_setter_t *setter;
 	zend_class_entry *ce;
-	int retval, found = FAILURE;
+	int retval, found;
 
 	/*
 	 * We want to stop at the last overloaded object reference - the rest can
@@ -670,6 +671,7 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 			return FAILURE;
 		}
 
+		found = FAILURE;
 		for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
 			if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
 				(*getter)(&result, object, &element, &found);
@@ -677,7 +679,7 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 		}
 		if (found == FAILURE)
 			return FAILURE;
-		object = &result;
+		*object = result;
 
 		zval_dtor(&overloaded_property->element);
 	}
@@ -703,7 +705,7 @@ void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference
 	zval *object = property_reference->object;
 	prop_getter_t *getter;
 	zend_class_entry *ce;
-	int found = FAILURE;
+	int found;
 
 	/*
 	 * We want to stop at the last overloaded object reference - the rest can
@@ -724,6 +726,7 @@ void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference
 			return;
 		}
 
+		found = FAILURE;
 		for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
 			if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
 				(*getter)(&result, object, &element, &found);
@@ -733,7 +736,7 @@ void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference
 			php_error(E_WARNING, "Error invoking method '%s' on property '%s'", Z_STRVAL(method_name), Z_STRVAL(overloaded_property->element));
 			return;
 		}
-		object = &result;
+		*object = result;
 
 		zval_dtor(&overloaded_property->element);
 	}
