@@ -1,3 +1,7 @@
+    - added helper GtkBoxChild class. (Andrei)
+    - added properties for GtkMisc, GtkArrow, GtkBox, GtkCalendar, and GtkCTree
+      classes. (Andrei)
+
 Version 0.0.2 "primordial nucleosynthesis": 7-Mar-2001
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - added 'child' property to GtkBin and its descendants. (Andrei)

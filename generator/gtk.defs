@@ -188,6 +188,7 @@
   (c-name GtkEditable)
   (field (type-and-name guint selection_start_pos))
   (field (type-and-name guint selection_end_pos))
+  (field (type-and-name gboolean has_selection))
 )
 
 (object Text
