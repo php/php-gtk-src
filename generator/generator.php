@@ -435,13 +435,16 @@ class Generator {
 	}
 }
 
+$argc = $HTTP_SERVER_VARS['argc'];
+$argv = $HTTP_SERVER_VARS['argv'];
+
 if ($argc < 2)
 	die("usage: php -q generator.php defsfile [overridesfile [prefix]]\n");
 
 if ($argc > 2) {
 	$overrides = new Overrides($argv[2]);
 	if ($argc > 3)
-		$prefix = $arvv[3];
+		$prefix = $argv[3];
 	else
 		$prefix = 'php_gtk';
 }
