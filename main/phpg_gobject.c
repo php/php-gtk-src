@@ -96,8 +96,22 @@ static inline void phpg_sink_object(GObject *obj)
         && GTK_OBJECT_FLOATING(obj)) {
         g_object_ref(obj);
         gtk_object_sink(GTK_OBJECT(obj));
+        return;
     }
 
+    if (g_type_is_a(G_OBJECT_TYPE(obj), GTK_TYPE_WINDOW)
+        && obj->ref_count == 1
+        && GTK_WINDOW(obj)->has_user_ref_count) {
+        g_object_ref(obj);
+        return;
+    }
+
+    if (g_type_is_a(G_OBJECT_TYPE(obj), GTK_TYPE_INVISIBLE)
+        && obj->ref_count == 1
+        && GTK_INVISIBLE(obj)->has_user_ref_count) {
+        g_object_ref(obj);
+        return;
+    }
 }
 /* }}} */
 
@@ -298,8 +312,10 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
         /* TODO store __gtype object. This is problematic since the shutdown
          * destructor does not know what to do with internal properties that are
          * objects and exits badly. */
+        /*
         zval *g = phpg_gtype_new(gtype);
         zend_hash_update(real_ce->static_members, "__gtype", sizeof("__gtype"), &g, sizeof(zval *), NULL);
+        */
         g_type_set_qdata(gtype, phpg_class_key, real_ce);
     }
 
@@ -326,7 +342,8 @@ void phpg_register_enum(GType gtype, const char *strip_prefix, zend_class_entry 
     for (i = 0; i < eclass->n_values; i++) {
         zval *val;
         
-        MAKE_STD_ZVAL(val);
+        val = (zval *)malloc(sizeof(zval));
+        INIT_PZVAL(val);
         ZVAL_LONG(val, eclass->values[i].value);
         enum_name = eclass->values[i].value_name;
         if (strip_prefix) {
@@ -361,7 +378,8 @@ void phpg_register_flags(GType gtype, const char *strip_prefix, zend_class_entry
     for (i = 0; i < eclass->n_values; i++) {
         zval *val;
         
-        MAKE_STD_ZVAL(val);
+        val = (zval *)malloc(sizeof(zval));
+        INIT_PZVAL(val);
         ZVAL_LONG(val, eclass->values[i].value);
         enum_name = eclass->values[i].value_name;
         if (strip_prefix) {
