@@ -24,6 +24,38 @@
 
 #if HAVE_PHP_GTK
 
+inline char *php_gtk_zval_type_name(zval *arg)
+{
+	switch (Z_TYPE_P(arg)) {
+		case IS_NULL:
+			return "null";
+
+		case IS_LONG:
+			return "integer";
+
+		case IS_DOUBLE:
+			return "double";
+
+		case IS_STRING:
+			return "string";
+
+		case IS_ARRAY:
+			return "array";
+
+		case IS_OBJECT:
+			return Z_OBJCE_P(arg)->name;
+
+		case IS_BOOL:
+			return "boolean";
+
+		case IS_RESOURCE:
+			return "resource";
+
+		default:
+			return "unknown";
+	}
+}
+
 static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
 {
 	char *spec_walk = *spec;
