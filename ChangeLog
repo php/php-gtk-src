@@ -1,3 +1,31 @@
+2001-04-26  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk.h
+      src/php_gtk_object.c:
+    More work on experimental fix for setting object properties.
+
+    * src/php_gtk.h
+      src/php_gtk_object.c: Experimental set property function.
+
+    * docs/en/classes/gtklabel.xml: Watch your spacing.
+
+2001-04-26  Markus Fischer  <mfischer@josefine.ben.tuwien.ac.at>
+
+    * docs/en/classes/gtkcontainer.xml: Wrong <tag> crept in; ty James
+
+2001-04-26  James Moore  <James@phpuk.org>
+
+    * docs/templates/classentry.tpl:
+    Make the HTML show the correct constructor description
+
+2001-04-26  Markus Fischer  <mfischer@josefine.ben.tuwien.ac.at>
+
+    * docs/en/classes/gtkcontainer.xml:
+    Updated description, children() and small info to add()
+
+    * docs/en/classes/gtklabel.xml:
+    set_pattern() documentation now reflects current CVS behaviour
+
 2001-04-25  Markus Fischer  <mfischer@josefine.ben.tuwien.ac.at>
 
     * docs/en/classes/gtklabel.xml: Fixed set_pattern() documentation
