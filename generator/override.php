@@ -32,6 +32,7 @@ class Overrides {
     var $register_classes   = array();
     var $headers            = '';
     var $constants          = '';
+    var $lineinfo           = array();
 
     function Overrides($file_name = null)
     {
@@ -45,25 +46,46 @@ class Overrides {
     {
         $old_dir = getcwd();
 
-        $fp = fopen($file_name, 'r');
-        $contents = fread($fp, filesize($file_name));
-        fclose($fp);
-
-        $blocks = explode('%%', $contents);
-        if (!count($blocks))
-            return;
+        $contents = file($file_name);
 
         $new_dir = dirname(realpath($file_name));
         if ($new_dir != $old_dir)
             chdir($new_dir);
 
-        foreach ($blocks as $block)
-            $this->_parse_block(trim($block));
+        $blocks = array();
+        $block = '';
+        $blocklineno = $lineno = 1;
+        foreach ($contents as $line) {
+            if (substr($line, 0, 2) == '%%') {
+                if ($block) {
+                    $blocks[] = array($block, $blocklineno);
+                }
+                $block = preg_replace('!^%%\n?!', '', $line);
+                if ($block) {
+                    $blocklineno = $lineno;
+                } else {
+                    $blocklineno = $lineno + 1;
+                }
+            } else {
+                $block .= $line;
+            }
+            $lineno++;
+        }
+        if ($block) {
+            $blocks[] = array($block, $blocklineno);
+        }
+        
+        if (!$blocks)
+            return;
+
+        foreach ($blocks as $block_info) {
+            $this->_parse_block($block_info[0], $block_info[1], $file_name);
+        }
 
         chdir($old_dir);
     }
 
-    function _parse_block($block)
+    function _parse_block($block, $blocklineno, $file_name)
     {
         if (strpos($block, "\n"))
             list($line, $rest) = explode("\n", $block, 2);
@@ -100,6 +122,7 @@ class Overrides {
                 else
                     $flags = null;
                 $this->overrides[$func_cname] = array($func_name, $rest, $flags);
+                $this->lineinfo[$func_cname] = array($blocklineno + 1, $file_name);
                 break;
 
             case 'override-prop':
@@ -110,12 +133,14 @@ class Overrides {
                 else
                     $type = 'read';
                 $this->prop_overrides[$class][$prop][$type] = $rest;
+                $this->lineinfo["$class.$prop.$type"] = array($blocklineno + 1, $file_name);
                 break;
 
             case 'override-handler':
                 $class = $words[0];
                 $handler = $words[1];
                 $this->handler_overrides[$class][$handler] = $rest;
+                $this->lineinfo["$class.$handler"] = array($blocklineno + 1, $file_name);
                 break;
 
             case 'include':
@@ -130,26 +155,18 @@ class Overrides {
                 if (count($words) < 2) break;
                 $class = $words[0];
                 $method = $words[1];
-                $this->extra_methods[strtolower($class)][$method] = "\n" . $rest . "\n";
-                break;
-
-            case 'getprop':
-                if (count($words) >= 2) {
-                    list($class_name, $prop_name) = $words;
-                    $this->getprops[$class_name][$prop_name] = $rest;
-                }
+                $this->extra_methods[$class][$method] = $rest;
+                $this->lineinfo["$class.$method"] = array($blocklineno + 1, $file_name);
                 break;
 
             case 'headers':
-                $this->headers .= "\n" . $rest . "\n";
+                $this->headers .= $rest;
+                $this->lineinfo['headers'] = array($blocklineno + 1, $file_name);
                 break;
 
             case 'constants':
-                $this->constants .= "\n" . $rest . "\n";
-                break;
-
-            case 'register_class':
-                $this->register_classes[$words[0]] = $rest;
+                $this->constants .= $rest;
+                $this->lineinfo['constants'] = array($blocklineno + 1, $file_name);
                 break;
         }
     }
@@ -197,9 +214,14 @@ class Overrides {
         return $this->handler_overrides[$class][$handler];
     }
     
+    function have_extra_methods($class)
+    {
+        return isset($this->extra_methods[$class]);
+    }
+
     function get_extra_methods($class)
     {
-        return $this->extra_methods[strtolower($class)];
+        return $this->extra_methods[$class];
     }
 
     function have_get_prop($class_name, $prop_name)
@@ -222,9 +244,9 @@ class Overrides {
         return $this->constants;
     }
 
-    function get_register_classes()
+    function get_line_info($id)
     {
-        return $this->register_classes;
+        return $this->lineinfo[$id];
     }
 }
 

@@ -195,10 +195,10 @@ const register_boxed = "
 
 const class_entry = "PHP_GTK_EXPORT_CE(%s);\n";
 
-const prop_info_header = "\n\nstatic prop_info_t %s_prop_info[] = {\n";
+const prop_info_header = "\nstatic prop_info_t %s_prop_info[] = {\n";
 const prop_info_entry  = "\t{ \"%s\", %s, %s },\n";
 const prop_info_footer = "\t{ NULL, NULL, NULL },
-};\n";
+};\n\n";
 
 const prop_reader = "
 PHPG_PROP_READER(%(class), %(name))
@@ -260,7 +260,6 @@ const register_constants = "
 void phpg_%s_register_constants(const char *strip_prefix)
 {
     TSRMLS_FETCH();
-
 %s
 }\n";
 
