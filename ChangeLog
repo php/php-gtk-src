@@ -1,3 +1,14 @@
+2001-05-22  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/doc_templates.php
+      generator/docgen.php: Added output of static functions.
+
+2001-05-22  Frank M. Kromann  <frank@frontbase.com>
+
+    * src/php_gtk.h
+      src/php_gtk_util.c:
+    Moved function back to .c file and declared it as extern in .h
+
 2001-05-21  Frank M. Kromann  <frank@frontbase.com>
 
     * src/php_gtk.h
