@@ -189,7 +189,7 @@ PHP_FUNCTION(wrap_gtk_timeout_add)
 
 	if (ZEND_NUM_ARGS() < 2) {
 		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
-				  get_active_function_name(), ZEND_NUM_ARGS());
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
 		return;
 	}
 
@@ -216,7 +216,7 @@ PHP_FUNCTION(wrap_gtk_idle_add)
 
 	if (ZEND_NUM_ARGS() < 1) {
 		php_error(E_WARNING, "%s() requires at least 1 argument, %d given",
-				  get_active_function_name(), ZEND_NUM_ARGS());
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
 		return;
 	}
 
@@ -244,7 +244,7 @@ PHP_FUNCTION(wrap_gtk_quit_add)
 
 	if (ZEND_NUM_ARGS() < 2) {
 		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
-				  get_active_function_name(), ZEND_NUM_ARGS());
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
 		return;
 	}
 
@@ -274,7 +274,7 @@ PHP_FUNCTION(wrap_gtk_input_add_full)
 
 	if (ZEND_NUM_ARGS() < 3) {
 		php_error(E_WARNING, "%s() requires at least 3 arguments, %d given",
-				  get_active_function_name(), ZEND_NUM_ARGS());
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
 		return;
 	}
 
@@ -283,7 +283,7 @@ PHP_FUNCTION(wrap_gtk_input_add_full)
 
 	source = zend_list_find(Z_LVAL_P(source_rsrc), &rsrc_type);
 	if (!source || rsrc_type != php_file_le_fopen()) {
-		php_error(E_WARNING, "%s() expects argument 1 to be a valid filehandle resource", get_active_function_name());
+		php_error(E_WARNING, "%s() expects argument 1 to be a valid filehandle resource", get_active_function_name(TSRMLS_C));
 		return;
 	}
 	
@@ -310,7 +310,7 @@ static void wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_
 
 	if (ZEND_NUM_ARGS() < 2) {
 		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
-				  get_active_function_name(), ZEND_NUM_ARGS());
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
 		return;
 	}
 
@@ -362,7 +362,7 @@ PHP_FUNCTION(wrap_gtk_signal_emit)
 	NOT_STATIC_METHOD();
 
 	if (ZEND_NUM_ARGS() < 1) {
-		php_error(E_WARNING, "%s() requires at least 1 argument, 0 given", get_active_function_name());
+		php_error(E_WARNING, "%s() requires at least 1 argument, 0 given", get_active_function_name(TSRMLS_C));
 		return;
 	}
 
@@ -372,14 +372,14 @@ PHP_FUNCTION(wrap_gtk_signal_emit)
 	signal_id = gtk_signal_lookup(name, GTK_OBJECT_TYPE(PHP_GTK_GET(this_ptr)));
 	if (signal_id <= 0) {
 		php_error(E_WARNING, "%s() can't find signal '%s' in class hierarchy",
-				  get_active_function_name(), name);
+				  get_active_function_name(TSRMLS_C), name);
 		return;
 	}
 
 	query = gtk_signal_query(signal_id);
 	if (ZEND_NUM_ARGS() < (int)query->nparams + 1) {
 		php_error(E_WARNING, "%s() requires %d arguments for signal '%s', %d given",
-				  get_active_function_name(), query->nparams, name, ZEND_NUM_ARGS()-1);
+				  get_active_function_name(TSRMLS_C), query->nparams, name, ZEND_NUM_ARGS()-1);
 		g_free(query);
 		return;
 	}
@@ -453,7 +453,7 @@ PHP_FUNCTION(wrap_gtk_object_get)
 
 	if (garg.type == GTK_TYPE_INVALID) {
 		php_error(E_WARNING, "%s(): invalid arg '%s'",
-				  get_active_function_name(), name);
+				  get_active_function_name(TSRMLS_C), name);
 		return;
 	}
 	
@@ -630,13 +630,13 @@ PHP_FUNCTION(wrap_gtk_clist_new)
 	}
 
 	if (columns <= 0) {
-		php_error(E_WARNING, "%s() needs number of columns to be > 0", get_active_function_name());
+		php_error(E_WARNING, "%s() needs number of columns to be > 0", get_active_function_name(TSRMLS_C));
 		return;
 	}
 
 	if (php_titles) {
 		if (zend_hash_num_elements(Z_ARRVAL_P(php_titles)) < columns) {
-			php_error(E_WARNING, "%s(): the array of titles is not long enough", get_active_function_name());
+			php_error(E_WARNING, "%s(): the array of titles is not long enough", get_active_function_name(TSRMLS_C));
 			return;
 		}
 
@@ -655,7 +655,7 @@ PHP_FUNCTION(wrap_gtk_clist_new)
 		wrapped_obj = (GtkObject *)gtk_clist_new(columns);
 
 	if (!wrapped_obj) {
-		php_error(E_WARNING, "%s(): could not create GtkCList object", get_active_function_name());
+		php_error(E_WARNING, "%s(): could not create GtkCList object", get_active_function_name(TSRMLS_C));
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
@@ -680,7 +680,7 @@ PHP_FUNCTION(wrap_gtk_clist_append)
 
 	columns = GTK_CLIST(PHP_GTK_GET(this_ptr))->columns;
 	if (zend_hash_num_elements(Z_ARRVAL_P(php_list)) < columns) {
-		php_error(E_WARNING, "%s(): the array of strings is not long enough", get_active_function_name());
+		php_error(E_WARNING, "%s(): the array of strings is not long enough", get_active_function_name(TSRMLS_C));
 		return;
 	}
 	
@@ -714,7 +714,7 @@ PHP_FUNCTION(wrap_gtk_clist_prepend)
 
 	columns = GTK_CLIST(PHP_GTK_GET(this_ptr))->columns;
 	if (zend_hash_num_elements(Z_ARRVAL_P(php_list)) < columns) {
-		php_error(E_WARNING, "%s(): the array of strings is not long enough", get_active_function_name());
+		php_error(E_WARNING, "%s(): the array of strings is not long enough", get_active_function_name(TSRMLS_C));
 		return;
 	}
 
@@ -748,7 +748,7 @@ PHP_FUNCTION(wrap_gtk_clist_insert)
 
 	columns = GTK_CLIST(PHP_GTK_GET(this_ptr))->columns;
 	if (zend_hash_num_elements(Z_ARRVAL_P(php_list)) < columns) {
-		php_error(E_WARNING, "%s(): the array of strings is not long enough", get_active_function_name());
+		php_error(E_WARNING, "%s(): the array of strings is not long enough", get_active_function_name(TSRMLS_C));
 		return;
 	}
 
@@ -775,7 +775,7 @@ PHP_FUNCTION(wrap_gtk_clist_get_text)
 		return;
 
 	if (!gtk_clist_get_text(GTK_CLIST(PHP_GTK_GET(this_ptr)), row, column, &text)) {
-		php_error(E_WARNING, "%s() cannot get text value", get_active_function_name());
+		php_error(E_WARNING, "%s() cannot get text value", get_active_function_name(TSRMLS_C));
 		return;
 	}
 
@@ -804,7 +804,7 @@ PHP_FUNCTION(wrap_gtk_menu_item_new)
 
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkMenuItem object",
-				  get_active_function_name());
+				  get_active_function_name(TSRMLS_C));
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
@@ -835,7 +835,7 @@ PHP_FUNCTION(wrap_gtk_check_menu_item_new)
 
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkCheckMenuItem object",
-				  get_active_function_name());
+				  get_active_function_name(TSRMLS_C));
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
@@ -859,7 +859,7 @@ PHP_FUNCTION(wrap_gtk_list_append_items)
 		 zend_hash_get_current_data(Z_ARRVAL_P(php_items), (void **)&item) == SUCCESS;
 		 zend_hash_move_forward(Z_ARRVAL_P(php_items)), i++) {
 		if (!php_gtk_check_class(*item, gtk_listitem_ce)) {
-			php_error(E_WARNING, "%s() needs list item #%d to be a GtkListItem", get_active_function_name(), i);
+			php_error(E_WARNING, "%s() needs list item #%d to be a GtkListItem", get_active_function_name(TSRMLS_C), i);
 			g_list_free(items);
 			return;
 		}
@@ -886,7 +886,7 @@ PHP_FUNCTION(wrap_gtk_list_prepend_items)
 		 zend_hash_get_current_data(Z_ARRVAL_P(php_items), (void **)&item) == SUCCESS;
 		 zend_hash_move_forward(Z_ARRVAL_P(php_items)), i++) {
 		if (!php_gtk_check_class(*item, gtk_listitem_ce)) {
-			php_error(E_WARNING, "%s() needs list item #%d to be a GtkListItem", get_active_function_name(), i);
+			php_error(E_WARNING, "%s() needs list item #%d to be a GtkListItem", get_active_function_name(TSRMLS_C), i);
 			g_list_free(items);
 			return;
 		}
@@ -913,7 +913,7 @@ PHP_FUNCTION(wrap_gtk_list_insert_items)
 		 zend_hash_get_current_data(Z_ARRVAL_P(php_items), (void **)&item) == SUCCESS;
 		 zend_hash_move_forward(Z_ARRVAL_P(php_items)), i++) {
 		if (!php_gtk_check_class(*item, gtk_listitem_ce)) {
-			php_error(E_WARNING, "%s() needs list item #%d to be a GtkListItem", get_active_function_name(), i);
+			php_error(E_WARNING, "%s() needs list item #%d to be a GtkListItem", get_active_function_name(TSRMLS_C), i);
 			g_list_free(items);
 			return;
 		}
@@ -946,7 +946,7 @@ PHP_FUNCTION(wrap_gtk_list_item_new)
 
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkListItem object",
-				get_active_function_name());
+				get_active_function_name(TSRMLS_C));
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
@@ -976,7 +976,7 @@ PHP_FUNCTION(wrap_gtk_tree_item_new)
 
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkTreeItem object",
-				get_active_function_name());
+				get_active_function_name(TSRMLS_C));
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
@@ -1006,7 +1006,7 @@ PHP_FUNCTION(wrap_gtk_button_new)
 
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkButton object",
-				  get_active_function_name());
+				  get_active_function_name(TSRMLS_C));
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
@@ -1036,7 +1036,7 @@ PHP_FUNCTION(wrap_gtk_toggle_button_new)
 
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkToggleButton object",
-				  get_active_function_name());
+				  get_active_function_name(TSRMLS_C));
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
@@ -1064,7 +1064,7 @@ PHP_FUNCTION(wrap_gtk_check_button_new)
 		wrapped_obj = (GtkObject *)gtk_check_button_new();
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkCheckButton object",
-				  get_active_function_name());
+				  get_active_function_name(TSRMLS_C));
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
@@ -1096,13 +1096,13 @@ PHP_FUNCTION(wrap_gtk_ctree_new_with_titles)
 	}
 
 	if (columns <= 0) {
-		php_error(E_WARNING, "%s() needs number of columns to be > 0", get_active_function_name());
+		php_error(E_WARNING, "%s() needs number of columns to be > 0", get_active_function_name(TSRMLS_C));
 		return;
 	}
 
 	if (php_titles) {
 		if (zend_hash_num_elements(Z_ARRVAL_P(php_titles)) < columns) {
-			php_error(E_WARNING, "%s(): the array of titles is not long enough", get_active_function_name());
+			php_error(E_WARNING, "%s(): the array of titles is not long enough", get_active_function_name(TSRMLS_C));
 			return;
 		}
 
@@ -1121,7 +1121,7 @@ PHP_FUNCTION(wrap_gtk_ctree_new_with_titles)
 		wrapped_obj = (GtkObject *)gtk_ctree_new(columns, tree_column);
 
 	if (!wrapped_obj) {
-		php_error(E_WARNING, "%s(): could not create GtkCTree object", get_active_function_name());
+		php_error(E_WARNING, "%s(): could not create GtkCTree object", get_active_function_name(TSRMLS_C));
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
@@ -1159,7 +1159,7 @@ PHP_FUNCTION(wrap_gtk_ctree_insert_node)
 	tree = GTK_CTREE(PHP_GTK_GET(this_ptr));
 	columns = GTK_CLIST(tree)->columns;
 	if (zend_hash_num_elements(target_hash) < columns) {
-		php_error(E_WARNING, "%s(): the text array is not long enough", get_active_function_name());
+		php_error(E_WARNING, "%s(): the text array is not long enough", get_active_function_name(TSRMLS_C));
 		return;
 	}
 
@@ -1222,7 +1222,7 @@ static void ctree_callback(GtkCTree *ctree, GtkCTreeNode *node, zval *callback_d
 
 	args = php_gtk_hash_as_array(params);
 
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 1, NULL);
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 1, NULL TSRMLS_CC);
 	if (retval)
 		zval_ptr_dtor(&retval);
 	efree(args);
@@ -1246,7 +1246,7 @@ static void traverse_ctree(INTERNAL_FUNCTION_PARAMETERS, zend_bool use_depth, ze
 
 	if (ZEND_NUM_ARGS() < req_args) {
 		php_error(E_WARNING, "%s() requires at least %d arguments, %d given",
-				  get_active_function_name(), req_args, ZEND_NUM_ARGS());
+				  get_active_function_name(TSRMLS_C), req_args, ZEND_NUM_ARGS());
 		return;
 	}
 
@@ -1328,7 +1328,7 @@ PHP_FUNCTION(wrap_gtk_ctree_get_node_info)
 								 PHP_GTK_CTREE_NODE_GET(node), &text, &spacing,
 								 &pixmap_closed, &mask_closed, &pixmap_opened,
 								 &mask_opened, &is_leaf, &expanded)) {
-		php_error(E_WARNING, "%s() cannot get node info", get_active_function_name());
+		php_error(E_WARNING, "%s() cannot get node info", get_active_function_name(TSRMLS_C));
 		return;
 	}
 
@@ -1388,7 +1388,7 @@ static void item_factory_callback(zval *callback_data, guint action, GtkWidget *
 
 	args = php_gtk_hash_as_array(params);
 
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 1, NULL);
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 1, NULL TSRMLS_CC);
 	if (retval)
 		zval_ptr_dtor(&retval);
 	efree(args);
@@ -1418,7 +1418,7 @@ PHP_FUNCTION(wrap_gtk_item_factory_create_items)
 									 &entry.accelerator, &callback,
 									 &entry.callback_action, &entry.item_type, &extra)) {
 			php_error(E_WARNING, "%s() was unable to parse item #%d in the input array",
-					  get_active_function_name(), i+1);
+					  get_active_function_name(TSRMLS_C), i+1);
 			return;
 		}
 
@@ -1677,7 +1677,7 @@ PHP_FUNCTION(wrap_gtk_radio_menu_item_new)
 
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkRadioMenuItem object",
-				  get_active_function_name());
+				  get_active_function_name(TSRMLS_C));
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
@@ -1717,7 +1717,7 @@ PHP_FUNCTION(wrap_gtk_radio_button_new)
 
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkRadioButton object",
-				  get_active_function_name());
+				  get_active_function_name(TSRMLS_C));
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
@@ -1868,7 +1868,7 @@ PHP_FUNCTION(wrap_gtk_ctree_node_get_text)
 
 	if (!gtk_ctree_node_get_text(GTK_CTREE(PHP_GTK_GET(this_ptr)),
 								 PHP_GTK_CTREE_NODE_GET(node), column, &text)) {
-		php_error(E_WARNING, "%s() cannot get text value", get_active_function_name());
+		php_error(E_WARNING, "%s() cannot get text value", get_active_function_name(TSRMLS_C));
 		return;
 	}
 
@@ -1891,7 +1891,7 @@ PHP_FUNCTION(wrap_gtk_ctree_node_get_pixmap)
 	if (!gtk_ctree_node_get_pixmap(GTK_CTREE(PHP_GTK_GET(this_ptr)),
 								   PHP_GTK_CTREE_NODE_GET(node), column,
 								   &pixmap, &mask)) {
-		php_error(E_WARNING, "%s() cannot get pixmap value", get_active_function_name());
+		php_error(E_WARNING, "%s() cannot get pixmap value", get_active_function_name(TSRMLS_C));
 		return;
 	}
 	
@@ -1919,7 +1919,7 @@ PHP_FUNCTION(wrap_gtk_ctree_node_get_pixtext)
 	if (!gtk_ctree_node_get_pixtext(GTK_CTREE(PHP_GTK_GET(this_ptr)),
 									PHP_GTK_CTREE_NODE_GET(node), column, &text,
 									&spacing, &pixmap, &mask)) {
-		php_error(E_WARNING, "%s() cannot get pixtext value", get_active_function_name());
+		php_error(E_WARNING, "%s() cannot get pixtext value", get_active_function_name(TSRMLS_C));
 		return;
 	}
 
@@ -1963,7 +1963,7 @@ static void php_gtk_menu_position(GtkMenu *menu, int *x, int *y, zval *callback_
 	params = php_gtk_build_value("(Nii)", php_gtk_new(GTK_OBJECT(menu)), *x, *y);
 	args = php_gtk_hash_as_array(params);
 
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 1, NULL);
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 1, NULL TSRMLS_CC);
 
 	if (retval) {
 		if (Z_TYPE_P(retval) == IS_ARRAY &&
@@ -2063,7 +2063,7 @@ PHP_FUNCTION(wrap_gtk_drag_dest_set)
 		if (Z_TYPE_PP(item) != IS_ARRAY ||
 			!php_gtk_parse_args_hash_quiet(*item, "sii", &targets[i].target,
 										   &targets[i].flags, &targets[i].info)) {
-			php_error(E_WARNING, "%s() was unable to parse target #%d in the list of targets", get_active_function_name(), i+1);
+			php_error(E_WARNING, "%s() was unable to parse target #%d in the list of targets", get_active_function_name(TSRMLS_C), i+1);
 			g_free(targets);
 			return;
 		}
@@ -2103,7 +2103,7 @@ PHP_FUNCTION(wrap_gtk_drag_source_set)
 		if (Z_TYPE_PP(item) != IS_ARRAY ||
 			!php_gtk_parse_args_hash_quiet(*item, "sii", &targets[i].target,
 										   &targets[i].flags, &targets[i].info)) {
-			php_error(E_WARNING, "%s() was unable to parse target #%d in the list of targets", get_active_function_name(), i+1);
+			php_error(E_WARNING, "%s() was unable to parse target #%d in the list of targets", get_active_function_name(TSRMLS_C), i+1);
 			g_free(targets);
 			return;
 		}
@@ -2141,7 +2141,7 @@ PHP_FUNCTION(wrap_gtk_drag_begin)
 		if (Z_TYPE_PP(item) != IS_ARRAY ||
 			!php_gtk_parse_args_hash_quiet(*item, "sii", &tents[i].target,
 										   &tents[i].flags, &tents[i].info)) {
-			php_error(E_WARNING, "%s() was unable to parse target #%d in the list of targets", get_active_function_name(), i+1);
+			php_error(E_WARNING, "%s() was unable to parse target #%d in the list of targets", get_active_function_name(TSRMLS_C), i+1);
 			g_free(tents);
 			return;
 		}

@@ -58,11 +58,12 @@ PHP_FUNCTION(wrap_%s)
 %s	wrapped_obj = (GtkObject *)%s(%s);
 	if (!wrapped_obj) {
 		php_error(E_WARNING, \"%%s(): could not create %s object\",
-				  get_active_function_name());
+				  get_active_function_name(TSRMLS_C));
 		return;
 	}
 
 	php_gtk_object_init(wrapped_obj, this_ptr);
+%s
 }\n\n";
 
 $function_entry_tpl = "\t{\"%s\",	PHP_FN(wrap_%s),	%s},\n";
@@ -105,11 +106,12 @@ $register_classes_tpl = "
 void php_%s_register_classes(void)
 {
 	zend_class_entry ce;
+	TSRMLS_FETCH();
 %s
 }\n";
 
 
-$register_class_tpl = "\t%s = zend_register_internal_class_ex(&ce, %s, NULL);\n";
+$register_class_tpl = "\t%s = zend_register_internal_class_ex(&ce, %s, NULL TSRMLS_CC);\n";
 
 $class_entry_tpl = "PHP_GTK_EXPORT_CE(%s);\n";
 

@@ -85,7 +85,7 @@ PHP_RINIT_FUNCTION(gtk)
 	zend_hash_init_ex(&php_gtk_rsrc_hash, 50, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_type_hash, 50, NULL, NULL, 1, 0);
 	
-	zend_unset_timeout();
+	zend_unset_timeout(TSRMLS_C);
 	zend_set_timeout(0);
 
 	if (php_gtk_startup_all_extensions(module_number) == FAILURE) {
@@ -126,13 +126,13 @@ PHP_MINFO_FUNCTION(gtk)
 
 PHP_FUNCTION(wrap_no_constructor)
 {
- 	php_error(E_WARNING, "%s: An abstract or unimplemented class", get_active_function_name());
+ 	php_error(E_WARNING, "%s: An abstract or unimplemented class", get_active_function_name(TSRMLS_C));
 	php_gtk_invalidate(this_ptr);
 }
 
 PHP_FUNCTION(wrap_no_direct_constructor)
 {
-	php_error(E_WARNING, "Class %s cannot be constructed directly", get_active_function_name());
+	php_error(E_WARNING, "Class %s cannot be constructed directly", get_active_function_name(TSRMLS_C));
 	php_gtk_invalidate(this_ptr);
 }
 

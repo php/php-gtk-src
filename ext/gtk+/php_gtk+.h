@@ -43,6 +43,14 @@ extern int le_gdk_drag_context;
 extern int le_gtk_accel_group;
 extern int le_gtk_style;
 
+inline GdkAtom php_gdk_atom_get(zval *wrapper)
+{
+	zval **atom;
+	
+	zend_hash_find(Z_OBJPROP_P(wrapper), "atom", sizeof("atom"), (void**)&atom);
+	return (GdkAtom)Z_LVAL_PP(atom);
+}
+
 #define PHP_GTK_GET(w)				PHP_GTK_GET_GENERIC(w, GtkObject*, le_gtk_object)
 #define PHP_GDK_EVENT_GET(w)		PHP_GTK_GET_GENERIC(w, GdkEvent*, le_php_gtk_wrapper)
 #define PHP_GDK_WINDOW_GET(w)		PHP_GTK_GET_GENERIC(w, GdkWindow*, le_gdk_window)

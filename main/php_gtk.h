@@ -118,7 +118,7 @@ char *php_gtk_zval_type_name(zval *arg);
 
 #define NOT_STATIC_METHOD() \
 	if (!this_ptr) { \
-		php_error(E_WARNING, "%s() is not a static method", get_active_function_name()); \
+		php_error(E_WARNING, "%s() is not a static method", get_active_function_name(TSRMLS_C)); \
 		return; \
 	}
 

@@ -229,12 +229,13 @@ static int parse_arg(int arg_num, zval **arg, va_list *va, char **spec, int quie
 	char buf[1024];
 	char errorbuf[1024];
 	char objtype[1024];
+	TSRMLS_FETCH();
 
 	expected_type = parse_arg_impl(arg, va, spec, errorbuf);
 	if (expected_type) {
 		if (!quiet) {
 			sprintf(buf, "%s() expects argument %d to be %s, %s given",
-					get_active_function_name(), arg_num, expected_type,
+					get_active_function_name(TSRMLS_C), arg_num, expected_type,
 					php_gtk_zval_type_name(*arg));
 			php_error(E_WARNING, buf);
 		}
@@ -251,6 +252,7 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 	int c, i;
 	int min_argc = -1;
 	int max_argc = 0;
+	TSRMLS_FETCH();
 
 	/*
 	 * First we check that the number of arguments matches the number specified
@@ -287,7 +289,7 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 	if (argc < min_argc || argc > max_argc) {
 		if (!quiet) {
 			sprintf(buf, "%s() requires %s %d argument%s, %d given",
-					get_active_function_name(),
+					get_active_function_name(TSRMLS_C),
 					min_argc == max_argc ? "exactly" : argc < min_argc ? "at least" : "at most",
 					argc < min_argc ? min_argc : max_argc,
 					(argc < min_argc ? min_argc : max_argc) == 1 ? "" : "s",
@@ -311,12 +313,13 @@ static int php_gtk_parse_args_impl(int argc, char *format, va_list *va, int quie
 {
 	zval ***args;
 	int retval;
+	TSRMLS_FETCH();
 
 	args = (zval ***)emalloc(argc * sizeof(zval **));
 
 	if (zend_get_parameters_array_ex(argc, args) == FAILURE) {
 		php_error(E_WARNING, "Could not obtain arguments for parsing in %s",
-				  get_active_function_name());
+				  get_active_function_name(TSRMLS_C));
 		efree(args);
 		return 0;
 	}
@@ -493,12 +496,13 @@ zend_bool php_gtk_is_callable(zval *callable, zend_bool syntax_only, char **call
 zval ***php_gtk_func_args(int argc)
 {
 	zval ***args;
+	TSRMLS_FETCH();
 
 	args = (zval ***)emalloc(argc * sizeof(zval **));
 
 	if (zend_get_parameters_array_ex(argc, args) == FAILURE) {
 		php_error(E_WARNING, "Could not obtain arguments in %s",
-				  get_active_function_name());
+				  get_active_function_name(TSRMLS_C));
 		efree(args);
 		return NULL;
 	}
@@ -510,12 +514,13 @@ zval *php_gtk_func_args_as_hash(int argc, int start, int length)
 {
 	zval ***args;
 	zval *hash;
+	TSRMLS_FETCH();
 
 	args = (zval ***)emalloc(argc * sizeof(zval **));
 
 	if (zend_get_parameters_array_ex(argc, args) == FAILURE) {
 		php_error(E_WARNING, "Could not obtain arguments in %s",
-				  get_active_function_name());
+				  get_active_function_name(TSRMLS_C));
 		efree(args);
 		return NULL;
 	}
@@ -573,10 +578,12 @@ static int php_gtk_count_specs(char *format, int endchar)
 {
 	int count = 0;
 	int level = 0;
+	TSRMLS_FETCH();
+
 	while (level > 0 || *format != endchar) {
 		switch (*format) {
 			case '\0':
-				php_error(E_WARNING, "%s(): internal error: unmatched parenthesis in format", get_active_function_name());
+				php_error(E_WARNING, "%s(): internal error: unmatched parenthesis in format", get_active_function_name(TSRMLS_C));
 				return -1;
 
 			case '(':
@@ -614,6 +621,7 @@ static zval *php_gtk_build_hash(char **format, va_list *va, int endchar, int cou
 static zval *php_gtk_build_single(char **format, va_list *va)
 {
 	zval *result;
+	TSRMLS_FETCH();
 
 	for (;;) {
 		switch (*(*format)++) {
@@ -678,7 +686,7 @@ static zval *php_gtk_build_single(char **format, va_list *va)
 				break;
 
 			default:
-				php_error(E_WARNING, "%s(): internal error: bad format spec while building value", get_active_function_name());
+				php_error(E_WARNING, "%s(): internal error: bad format spec while building value", get_active_function_name(TSRMLS_C));
 				return NULL;
 		}
 	}
@@ -689,6 +697,7 @@ static zval *php_gtk_build_hash(char **format, va_list *va, int endchar, int cou
 	zval *result;
 	zval *single;
 	int i;
+	TSRMLS_FETCH();
 
 	if (count < 0)
 		return NULL;
@@ -734,7 +743,7 @@ static zval *php_gtk_build_hash(char **format, va_list *va, int endchar, int cou
 	}
 	if (**format != endchar) {
 		zval_ptr_dtor(&result);
-		php_error(E_WARNING, "%s(): internal error: unmatched parenthesis in format", get_active_function_name());
+		php_error(E_WARNING, "%s(): internal error: unmatched parenthesis in format", get_active_function_name(TSRMLS_C));
 		return NULL;
 	} else if (endchar)
 		++*format;
