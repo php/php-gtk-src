@@ -1,3 +1,14 @@
+2003-09-04  Frank M. Kromann  <frank@kromann.info>
+
+    * (ZE2_PORT)
+      main/php_gtk_object.c:
+      Update to match zend api
+
+2003-09-04  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/canvas/canvas.overrides:
+      add gtkCanvasItem::get_bounds()
+
 2003-08-24  Alan Knowles  <alan@akbkhome.com>
 
     * ext/canvas/canvas.overrides
