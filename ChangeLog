@@ -1,3 +1,16 @@
+2005-03-10  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/phpg_gobject.c:
+      If a closure is connected to the 'destroy' signal, then it will be
+      invalidated after the GObject is destroyed, so we cannot call
+      g_closure_invalidate() on it in phpg_free_gobject_storage(). Instead, we
+      install another invalidation notifier that will remove the closure from
+      the watched list.
+
+    * main/phpg_gobject.c:
+      In phpg_get_properties_helper() we need to set the refcount on read
+      zvals to 1 since the actual read_property handler sets them to 0.
+
 2005-03-05  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/pango.overrides:
