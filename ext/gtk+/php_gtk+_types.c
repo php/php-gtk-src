@@ -57,6 +57,7 @@ PHP_GTK_EXPORT_CE(gtk_ctree_node_ce);
 PHP_GTK_EXPORT_CE(gtk_accel_group_ce);
 PHP_GTK_EXPORT_CE(gtk_style_ce);
 PHP_GTK_EXPORT_CE(gtk_box_child_ce);
+PHP_GTK_EXPORT_CE(gtk_table_child_ce);
 PHP_GTK_EXPORT_CE(gtk_fixed_child_ce);
 PHP_GTK_EXPORT_CE(gtk_clist_row_ce);
 
@@ -2397,6 +2398,76 @@ static void gtk_box_child_get_property(zval *return_value, zval *object, zend_ll
 	*result = FAILURE;
 }
 
+/* GtkTableChild */
+static function_entry php_gtk_table_child_functions[] = {
+	{"GtkTableChild", PHP_FN(no_direct_constructor), NULL},
+	{"gtktablechild", PHP_FN(no_direct_constructor), NULL},
+	{NULL, NULL, NULL}
+};
+
+zval *php_gtk_table_child_new(GtkTableChild *table_child)
+{
+	zval *result;
+	zval **wrapper_ptr;
+	TSRMLS_FETCH();
+
+	if (!table_child) {
+		MAKE_STD_ZVAL(result);
+		ZVAL_NULL(result);
+		return result;
+	}
+
+	if (zend_hash_index_find(&php_gtk_type_hash, (long)table_child, (void **)&wrapper_ptr) == SUCCESS) {
+		zval_add_ref(wrapper_ptr);
+		return *wrapper_ptr;
+	}
+
+	MAKE_STD_ZVAL(result);
+	object_init_ex(result, gtk_table_child_ce);
+	php_gtk_set_object(result, table_child, le_php_gtk_wrapper);
+
+	return result;
+}
+
+static void gtk_table_child_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+{
+	GtkTableChild *table_child = PHP_GTK_GET_GENERIC(object, GtkTableChild*, le_php_gtk_wrapper);
+	zend_overloaded_element *property = (zend_overloaded_element *)(*element)->data;
+	char *prop_name = Z_STRVAL(property->element);
+
+	*result = SUCCESS;
+
+	if (!strcmp(prop_name, "widget")) {
+		*return_value = *php_gtk_new((GtkObject *)table_child->widget);
+		return;
+	} else if (!strcmp(prop_name, "left_attach")) {
+		RETURN_LONG(table_child->left_attach);
+	} else if (!strcmp(prop_name, "right_attach")) {
+		RETURN_LONG(table_child->right_attach);
+	} else if (!strcmp(prop_name, "top_attach")) {
+		RETURN_LONG(table_child->top_attach);
+	} else if (!strcmp(prop_name, "bottom_attach")) {
+		RETURN_LONG(table_child->bottom_attach);
+	} else if (!strcmp(prop_name, "xpadding")) {
+		RETURN_LONG(table_child->xpadding);
+	} else if (!strcmp(prop_name, "ypadding")) {
+		RETURN_LONG(table_child->ypadding);
+	} else if (!strcmp(prop_name, "xexpand")) {
+		RETURN_BOOL(table_child->xexpand);
+	} else if (!strcmp(prop_name, "yexpand")) {
+		RETURN_BOOL(table_child->yexpand);
+	} else if (!strcmp(prop_name, "xshrink")) {
+		RETURN_BOOL(table_child->xshrink);
+	} else if (!strcmp(prop_name, "yshrink")) {
+		RETURN_BOOL(table_child->yshrink);
+	} else if (!strcmp(prop_name, "xfill")) {
+		RETURN_BOOL(table_child->xfill);
+	} else if (!strcmp(prop_name, "yfill")) {
+		RETURN_BOOL(table_child->yfill);
+	}
+
+	*result = FAILURE;
+}
 
 /* GtkFixedChild */
 static function_entry php_gtk_fixed_child_functions[] = {
@@ -2596,6 +2667,10 @@ void php_gtk_plus_register_types(int module_number)
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "GtkBoxChild", NULL, NULL, php_gtk_get_property, php_gtk_set_property);
 	gtk_box_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_box_child_ce, gtk_box_child_get_property);
+
+	INIT_OVERLOADED_CLASS_ENTRY(ce, "GtkTableChild", NULL, NULL, php_gtk_get_property, php_gtk_set_property);
+	gtk_table_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
+	php_gtk_register_prop_getter(gtk_table_child_ce, gtk_table_child_get_property);
 
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "GtkFixedChild", NULL, NULL, php_gtk_get_property, php_gtk_set_property);
 	gtk_fixed_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);

@@ -1710,6 +1710,33 @@ getprop GtkBox children
 		}
 	}
 %%
+getprop GtkTable children
+	GList *tmp;
+	GList *children = GTK_TABLE(PHP_GTK_GET(object))->children;
+	zend_overloaded_element *property;
+	zend_llist_element *next = (*element)->next;
+	int prop_index;
+
+	if (next) {
+		int i = 0;
+		property = (zend_overloaded_element *)next->data;
+		if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
+			*element = next;
+			prop_index = Z_LVAL(property->element);
+			for (tmp = children, i = 0; tmp; tmp = tmp->next, i++) {
+				if (i == prop_index) {
+					*return_value = *php_gtk_table_child_new((GtkTableChild *)tmp->data);
+					return;
+				}
+			}
+		}
+	} else {
+		array_init(return_value);
+		for (tmp = children; tmp; tmp = tmp->next) {
+			add_next_index_zval(return_value, php_gtk_table_child_new((GtkTableChild *)tmp->data));
+		}
+	}
+%%
 getprop GtkCalendar marked_date
 	GtkCalendar *cal = GTK_CALENDAR(PHP_GTK_GET(object));
 	zend_overloaded_element *property;

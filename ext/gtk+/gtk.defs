@@ -248,6 +248,12 @@
   (in-module Gtk)
   (parent Container (Gtk))
   (c-name GtkTable)
+  (field (type-and-name GList* children))
+  (field (type-and-name guint16 nrows))
+  (field (type-and-name guint16 ncols))
+  (field (type-and-name guint16 column_spacing))
+  (field (type-and-name guint16 row_spacing))
+  (field (type-and-name guint homogeneous : 1))
 )
 
 (object Socket

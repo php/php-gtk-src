@@ -86,6 +86,7 @@ extern PHP_GTK_EXPORT_CE(gtk_ctree_node_ce);
 extern PHP_GTK_EXPORT_CE(gtk_accel_group_ce);
 extern PHP_GTK_EXPORT_CE(gtk_style_ce);
 extern PHP_GTK_EXPORT_CE(gtk_box_child_ce);
+extern PHP_GTK_EXPORT_CE(gtk_table_child_ce);
 extern PHP_GTK_EXPORT_CE(gtk_fixed_child_ce);
 extern PHP_GTK_EXPORT_CE(gtk_clist_row_ce);
 extern PHP_GTK_EXPORT_CE(gtk_allocation_ce);
@@ -110,6 +111,7 @@ zval *php_gtk_ctree_node_new(GtkCTreeNode *node);
 zval *php_gtk_accel_group_new(GtkAccelGroup *group);
 zval *php_gtk_style_new(GtkStyle *style);
 zval *php_gtk_box_child_new(GtkBoxChild *box_child);
+zval *php_gtk_table_child_new(GtkTableChild *table_child);
 zval *php_gtk_fixed_child_new(GtkFixedChild *fixed_child);
 zval *php_gtk_clist_row_new(GtkCListRow *clist_row);
 
