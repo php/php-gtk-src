@@ -1,3 +1,36 @@
+2001-11-16  Andrei Zmievski  <andrei@ispi.net>
+
+    * main/php_gtk.c
+      main/php_gtk.h: More work on loading dyna^H^H^H^H shared extensions.
+
+    * main/php_gtk.c: Started work on the loading of dynamic extensions.
+
+    * ext/skeleton/php_skeleton.c:
+    Add the extension retrieval function for skeleton as well.
+
+    * ext/scintilla/php_scintilla.c
+      ext/sqpane/php_sqpane.c
+      main/php_gtk.h
+      ext/libglade/php_libglade.c:
+    Second step towards supporting shared extensions: add function to retrieve
+    extension entry dynamically.
+
+    * ext/scintilla/.cvsignore
+      ext/skeleton/.cvsignore
+      ext/sqpane/.cvsignore
+      ext/libglade/.cvsignore: Ignore generated .slo files.
+
+    * build2/genext.sh
+      ext/libglade/Makefile.in
+      ext/libglade/config.m4
+      ext/scintilla/Makefile.in
+      ext/scintilla/config.m4
+      ext/skeleton/Makefile.in
+      ext/skeleton/config.m4
+      ext/sqpane/Makefile.in
+      ext/sqpane/config.m4
+      php_gtk.m4: First step towards supporting shared extensions.
+
 2001-11-15  Andrei Zmievski  <andrei@ispi.net>
 
     * generator/doc_templates.php
