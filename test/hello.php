@@ -1,6 +1,9 @@
 <?
 
-dl('php_gtk.so');
+if (strtoupper(substr($OS, 0, 3)) == 'WIN')
+	dl('php_gtk.dll');
+else
+	dl('php_gtk.so');
 
 
 /*

@@ -2,7 +2,7 @@
 /*
  * PHP-GTK - The PHP language bindings for GTK+
  *
- * Copyright (C) 2001 Andrei Zmievski <andrei@ispi.net>
+ * Copyright (C) 2001 Andrei Zmievski <andrei@php.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
