@@ -1,3 +1,12 @@
+2003-09-07  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/extra/extra.defs:
+      fix totally irrelivant type in plot defs file
+
+    * ext/canvas/canvas.overrides
+      ext/extra/config.m4:
+      prevent compilation of extra when not requested
+
 2003-09-04  Frank M. Kromann  <frank@kromann.info>
 
     * (ZE2_PORT)
