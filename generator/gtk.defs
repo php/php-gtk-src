@@ -7508,7 +7508,7 @@
   (parameter (type-and-name const-gchar* name))
 )
 
-(method signal_emit_stop
+(method emit_stop
   (of-object Object (Gtk))
   (c-name gtk_signal_emit_stop)
   (return-type none)
