@@ -28,7 +28,7 @@ abstract class Definition {
     /* return true if caller owns return value */
     function guess_return_value_ownership()
     {
-        if ($this->is_constructor_of)
+        if (get_class($this) == 'Function_Def' && $this->is_constructor_of)
             $this->caller_owns_return = true;
         else if (in_array($this->return_type, self::$char_types))
             $this->caller_owns_return = true;
@@ -83,6 +83,7 @@ class Object_Def extends Definition {
     var $fields     = array();
     var $typecode   = null;
     var $implements = array();
+    var $ce_flags   = array();
 
     function Object_Def($args)
     {

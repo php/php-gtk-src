@@ -79,7 +79,7 @@ class Wrapper_Info {
     var $pre_code   = array();
     var $post_code  = array();
 
-    function Wrapper_Info()
+    function __construct()
     {
         $this->var_list = new Var_List;
     }
@@ -339,7 +339,7 @@ class Enum_Arg extends Arg_Type {
     var $typecode = null;
     //var $simple    = null;
 
-    function Enum_Arg($enum_name, $typecode)
+    function __construct($enum_name, $typecode)
     {
         $this->enum_name = $enum_name;
         $this->typecode = $typecode;
@@ -376,7 +376,7 @@ class Enum_Arg extends Arg_Type {
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add('long', 'php_retval');
-        $info->post_code[] = "RETURN_LONG(php_retval);";
+        $info->post_code[] = "\tRETURN_LONG(php_retval);";
     }
 }
 
@@ -385,7 +385,7 @@ class Flags_Arg extends Arg_Type {
     var $flag_name = null;
     var $typecode = null;
 
-    function Flags_Arg($flag_name, $typecode)
+    function __construct($flag_name, $typecode)
     {
         $this->flag_name = $flag_name;
         $this->typecode = $typecode;
@@ -414,7 +414,7 @@ class Flags_Arg extends Arg_Type {
 class Struct_Arg extends Arg_Type {
     var $struct_name = null;
 
-    function Struct_Arg($struct_name)
+    function __construct($struct_name)
     {
         $this->struct_name = $struct_name;
         $this->struct_tpl   =  "    if (!php_%s_get(php_%s, &%s)) {\n" .
@@ -458,12 +458,14 @@ class Struct_Arg extends Arg_Type {
 class Object_Arg extends Arg_Type {
     var $obj_name = null;
     var $cast     = null;
+    var $obj_ce   = null;
     //var $getter   = null;
     //var $gtk_object_descendant;
 
-    function Object_Arg($obj_name, $typecode)
+    function __construct($obj_name, $typecode)
     {
         $this->obj_name = $obj_name;
+        $this->obj_ce = strtolower($obj_name) . '_ce';
         $this->cast = preg_replace('!_TYPE_!', '_', $typecode, 1);
         /*
         if ($gtk_object_descendant) {
@@ -475,52 +477,46 @@ class Object_Arg extends Arg_Type {
         //$this->gtk_object_descendant = $gtk_object_descendant;
     }
 
-    function write_param($type, $name, $default, $null_ok, &$var_list,
-                         &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
+    function write_param($type, $name, $default, $null_ok, $info)
     {
         if ($null_ok) {
-            $getter = sprintf($this->getter, "php_$name");
             if (isset($default)) {
-                $var_list->add($this->obj_name, '*' . $name . ' = ' . $default);
-                $var_list->add('zval', '*php_' . $name . ' = NULL');
-                $extra_pre_code[]   =   "   if (php_$name) {\n" .
+                $info->var_list->add($this->obj_name, '*' . $name . ' = ' . $default);
+                $info->var_list->add('zval', '*php_' . $name . ' = NULL');
+                $info->pre_code[] = "   if (php_$name) {\n" .
                                     "       if (Z_TYPE_P(php_$name) == IS_NULL)\n" .
                                     "           $name = NULL;\n" .
                                     "       else\n" .
-                                    "           $name = $getter;\n" .
+                                    "           $name = $this->cast(PHPG_GET(php_$name));\n" .
                                     "   }\n";
             } else {
-                $var_list->add($this->obj_name, '*' . $name . ' = NULL');
-                $var_list->add('zval', '*php_' . $name);
-                $extra_pre_code[]   =   "   if (Z_TYPE_P(php_$name) != IS_NULL)\n" .
-                                    "       $name = $getter;\n";
+                $info->var_list->add($this->obj_name, '*' . $name . ' = NULL');
+                $info->var_list->add('zval', '*php_' . $name);
+                $info->pre_code[] = "   if (Z_TYPE_P(php_$name) != IS_NULL)\n" .
+                                    "       $name = $this->cast(PHPG_GET(php_$name));\n";
             }
 
-            $parse_list[]   = '&php_' . $name . ', ' . strtolower($this->typename) . '_ce';
-            $arg_list[]     = $name;
-
-            return 'N';
+            $info->add_parse_list('N', '&php_' . $name . ', ' . $this->obj_ce);
+            $info->arg_list[] = $name;
         } else {
             if (isset($default)) {
-                $getter = sprintf($this->getter, "php_$name");
-                $var_list->add($this->obj_name, '*' . $name . ' = ' . $default);
-                $var_list->add('zval', '*php_' . $name . ' = NULL');
-                $parse_list[]   = '&php_' . $name . ', ' . strtolower($this->typename) . '_ce';
-                $arg_list[]     = $name;
-                $extra_pre_code[]   =   "   if (php_$name)\n" .
-                                    "       $name = $getter;\n";
+                $info->var_list->add($this->obj_name, '*' . $name . ' = ' . $default);
+                $info->var_list->add('zval', '*php_' . $name . ' = NULL');
+                $info->add_parse_list('O', '&php_' . $name . ', ' . $this->obj_ce);
+                $info->arg_list[] = $name;
+                $info->pre_code[] = "   if (php_$name)\n" .
+                                    "       $name = $this->cast(PHPG_GET(php_$name));\n";
             } else {
-                $var_list->add('zval', '*' . $name);
-                $parse_list[]   = '&' . $name . ', ' . strtolower($this->typename) . '_ce';
-                $arg_list[]     = sprintf($this->getter, $name);
+                $info->var_list->add('zval', '*' . $name);
+                $info->add_parse_list('O', '&' . $name . ', ' . $this->obj_ce);
+                $info->arg_list[] = "$this->cast(PHPG_GET($name))";
             }
-
-            return 'O';
         }
     }
     
-    function write_return($type, &$var_list, $separate)
+    function write_return($type, $owns_return, $info)
     {
+        /*
         if ($this->gtk_object_descendant) {
             $initializer = 'php_gtk_new((GtkObject *)%s)';
         } else {
@@ -533,6 +529,17 @@ class Object_Arg extends Arg_Type {
         } else {
             return  "   *return_value = *$initializer;\n" .
                     "%s return;";
+        }
+        */
+
+        $info->var_list->add($type, 'php_retval');
+        if ($owns_return) {
+            $info->post_code[] = "    phpg_gobject_new((GObject *)php_retval, &this_ptr);\n" .
+                                 "    if (php_retval != NULL) {\n" .
+                                 "        g_object_unref(php_retval);\n" .
+                                 "    }";
+        } else {
+            $info->post_code[] = "    phpg_gobject_new((GObject *)php_retval, &this_ptr);";
         }
     }
 }
@@ -833,6 +840,8 @@ $matcher->register('gfloat', $arg);
 #$matcher->register_boxed('GtkCTreeNode', 'gtk_ctree_node');
 #$matcher->register_boxed('GtkAccelGroup', 'gtk_accel_group');
 #$matcher->register_boxed('GtkStyle', 'gtk_style');
+
+$matcher->register_object('GObject', 'G_TYPE_OBJECT');
 
 /* vim: set et sts=4: */
 ?>

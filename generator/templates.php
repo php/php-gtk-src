@@ -22,16 +22,17 @@
 /* $Id$ */
 
 class Templates {
-const function_body = "
-PHP_FUNCTION(%s)
-{
-%s	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%s\"%s))
-		return;
-
-%s%s
-}\n\n";
-
 const function_call = "%s(%s)";
+
+const function_body = "
+PHP_METHOD(%(scope), %(name))
+{
+%(var_list)\tif (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list)))
+		return;
+%(pre_code)
+    %(return)%(cname)(%(arg_list));
+%(post_code)
+}\n\n";
 
 const method_body = "
 PHP_METHOD(%(class), %(name))
@@ -45,28 +46,28 @@ PHP_METHOD(%(class), %(name))
 %(post_code)
 }\n\n";
 
+const constructor_body = "
+PHP_METHOD(%(class), %(name))
+{
+%(var_list)\tGObject *wrapped_obj;
+
+    NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
+		return;
+	}
+%(pre_code)
+	wrapped_obj = (GObject *)%(cname)(%(arg_list));
+%(post_code)
+	if (!wrapped_obj) {
+		php_error(E_WARNING, \"could not create %(class) object\");
+		return;
+	}
+    phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+}\n\n";
+
 const method1_call = "%s(%s(PHP_GTK_GET(this_ptr))%s)";
 const method2_call = "%s(PHP_%s_GET(this_ptr)%s)";
-
-const constructor = "
-PHP_FUNCTION(%s)
-{
-%s	NOT_STATIC_METHOD();
-
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%s\"%s)) {
-		php_gtk_invalidate(this_ptr);
-		return;
-	}
-
-%s	wrapped_obj = (%s *)%s(%s);
-	if (!wrapped_obj) {
-		php_error(E_WARNING, \"%%s(): could not create %s object\",
-				  get_active_function_name(TSRMLS_C));
-		php_gtk_invalidate(this_ptr);
-		return;
-	}
-%s%s
-}\n\n";
 
 const gtk_object_init = "
 	php_gtk_object_init(wrapped_obj, this_ptr);\n";
@@ -120,7 +121,7 @@ void phpg_%s_register_classes(void)
 }\n";
 
 const register_class = "
-	%s = phpg_register_class(\"%s\", %s, %s, 0, NULL, NULL, %s TSRMLS_CC);\n";
+	%s = phpg_register_class(\"%s\", %s, %s, %s, NULL, NULL, %s TSRMLS_CC);\n";
 
 const class_entry = "PHP_GTK_EXPORT_CE(%s);\n";
 

@@ -82,7 +82,7 @@ class Generator {
             }
             */
 
-            //TODO $matcher->register_object($object->c_name, $object->typecode);
+            $matcher->register_object($object->c_name, $object->typecode);
         }
 
         foreach ($parser->enums as $enum) {
@@ -186,7 +186,7 @@ class Generator {
         return true;
     }
 
-    function write_constructor($obj_name, $gtk_object_descendant, $constructor)
+    function old_write_constructor($obj_name, $gtk_object_descendant, $constructor)
     {
         global  $matcher,
                 $constructor_tpl,
@@ -565,20 +565,49 @@ class Generator {
                     fwrite($this->fp, $code);
                     $method_defs[] = sprintf(Templates::function_entry,
                                              $object->in_module . $object->name,
-                                             $method->name, 'NULL', 0);
+                                             $method->name, 'NULL', 'ZEND_ACC_PUBLIC');
                 }
             } catch (Exception $e) {
                 fprintf(STDERR, "\tnot generating method %s::%s: %s\n", $object->c_name, $method->name, $e->getMessage());
             }
         }
 
-        if ($method_defs) {
-            fwrite($this->fp, sprintf(Templates::functions_decl, strtolower($object->c_name)));
-            fwrite($this->fp, join('', $method_defs));
-            fwrite($this->fp, Templates::functions_decl_end);
+        return $method_defs;
+    }
+
+    function write_constructor($object)
+    {
+        $ctor = $this->parser->find_constructor($object, $this->overrides);
+
+        $ctor_def = null;
+
+        if ($ctor) {
+            fprintf(STDERR, "Writing constructor for $object->c_name...\n");
+
+            $dict['class'] = $object->c_name;
+            $dict['name'] = '__construct';
+            $ctor_name = $ctor->c_name;
+
+            try {
+                if ($this->overrides->is_overriden($ctor_name)) {
+                } else {
+                    $code = $this->write_callable($ctor, Templates::constructor_body, false, false, $dict);
+                    fwrite($this->fp, $code);
+                    $ctor_def = sprintf(Templates::function_entry,
+                                        $ctor->is_constructor_of,
+                                        '__construct', 'NULL', 'ZEND_ACC_PUBLIC');
+                }
+            } catch (Exception $e) {
+                fprintf(STDERR, "\tnot generating constructor for %s: %s\n", $object->c_name, $e->getMessage());
+                // mark class as abstract
+                $object->ce_flags[] = 'ZEND_ACC_ABSTRACT';
+            }
+        } else {
+            // mark class as abstract
+            $object->ce_flags[] = 'ZEND_ACC_ABSTRACT';
         }
 
-        return $method_defs;
+        return $ctor_def;
     }
 
     function write_objects()
@@ -695,16 +724,14 @@ class Generator {
 
         $register_classes = '';
 
-        if ($this->parser->enums || $this->parser->functions) {
-            //TODO $func_defs = $this->write_functions();
+        if ($this->parser->functions) {
+            $func_defs = $this->write_functions();
 
-            /*
             $register_classes .= sprintf(Templates::register_class,
                                          $this->lprefix . '_ce',
                                          $this->lprefix,
                                          $func_defs ? $this->lprefix . '_methods' : 'NULL',
-                                         'NULL', 0);
-            */
+                                         'NULL', 0, 0);
         }
 
         /* Objects */
@@ -712,13 +739,24 @@ class Generator {
             $object_module = strtolower($object->in_module);
             $object_lname = strtolower($object->name);
 
+            $ctor_def = $this->write_constructor($object);
             $method_defs = $this->write_methods($object);
+            if ($ctor_def) {
+                array_unshift($method_defs, $ctor_def);
+            }
+
+            if ($method_defs) {
+                fwrite($this->fp, sprintf(Templates::functions_decl, strtolower($object->c_name)));
+                fwrite($this->fp, join('', $method_defs));
+                fwrite($this->fp, Templates::functions_decl_end);
+            }
 
             $register_classes .= sprintf(Templates::register_class,
                                          $object->ce,
                                          $object->in_module . $object->name,
                                          $method_defs ? strtolower($object->c_name) . '_methods' : 'NULL',
                                          $object->parent ? strtolower($object->parent) . '_ce' : 'NULL',
+                                         $object->ce_flags ? implode('|', $object->ce_flags) : 0,
                                          $object->typecode);
         }
         $register_classes .= "\n" . implode("\n", $this->overrides->get_register_classes());
@@ -756,11 +794,14 @@ class Generator {
 
         fprintf(STDERR, "Writing functions for $this->prefix...\n");
 
+        $dict['scope'] = $this->lprefix;
+
         foreach ($this->parser->functions as $function) {
             $func_name = $function->name;
             if ($function->name == $function->c_name) {
                 $func_name = substr($function->name, strlen($this->lprefix) + 1);
             }
+            $dict['name'] = $func_name;
 
             /* skip ignored methods */
             if ($this->overrides->is_ignored($function->c_name)) continue;
@@ -768,13 +809,14 @@ class Generator {
             try {
                 if ($this->overrides->is_overriden($function->c_name)) {
                 } else {
-                    //$code = $this->write_callable($function, Templates::function_body, true, false);
+                    $code = $this->write_callable($function, Templates::function_body, true, false, $dict);
+                    fwrite($this->fp, $code);
                     $func_defs[] = sprintf(Templates::function_entry,
                                              $this->lprefix,
-                                             $func_name, 'NULL', 0);
+                                             $func_name, 'NULL', 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
                 }
             } catch (Exception $e) {
-                fprintf(STDERR, 'not generating function %s::%s: %s', $this->lprefix, $function->name, $e->getMessage());
+                fprintf(STDERR, "\tnot generating function %s::%s: %s\n", $this->lprefix, $function->name, $e->getMessage());
             }
         }
 
@@ -890,7 +932,7 @@ class Generator {
         $this->write_class_entries();
         //$this->write_prop_lists();
         //if (!isset($this->parser->objects[$this->function_class]))
-        //    $this->write_functions(true, $dummy);
+        //$this->write_functions(true, $dummy);
         //$this->write_structs();
         $this->write_enums();
         $this->write_classes();
