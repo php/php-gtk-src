@@ -1,3 +1,36 @@
+2001-05-09  Andrei Zmievski  <andrei@ispi.net>
+
+    * docs/en/classes/gtkbutton.xml
+      docs/stylesheets/xsl/html/class.xsl:
+    Tried using non-capitalized first word in shortdesc for methods.
+    Also, tried putting constructor short desc right after it, but it's not
+    coming out on the same line..
+
+    * docs/en/classes/gtkbutton.xml
+      docs/stylesheets/xsl/html/class.xsl
+      docs/stylesheets/xsl/html/name_to_id.xsl: * Fixed XML in gtkbutton.xml.
+    * Removed bolding from signal names in synoptic mode.
+    * Added () after method names in synoptic mode (is it possible to make them
+      part of the link, James?)
+    * Rearranged signal page a bit, 'Conditions:' part - I think it looks good.
+
+2001-05-09  James Moore  <James@phpuk.org>
+
+    * docs/en/classes/gtkscrollbar.xml:  - Shorten this shortdesc too
+
+    * docs/en/classes/gtkarrow.xml:
+     - Shorten the short desc and move the longer description to desc
+
+    * docs/stylesheets/xsl/html/phpweb.xsl
+      docs/udocs.in:  - Adding phpweb stylesheets with nice navigation.
+     - Fixed bug in make stylesheet=phpweb updatexml where saxon wouldnt run.
+
+2001-05-09  Andrei Zmievski  <andrei@ispi.net>
+
+    * docs/stylesheets/xsl/html/class.xsl
+      docs/en/classes/gtkbutton.xml:
+    More work on GtkButton docs, trying out signals.
+
 2001-05-08  Andrei Zmievski  <andrei@ispi.net>
 
     * docs/en/classes/gtkbutton.xml: Start docs on GtkButton.
