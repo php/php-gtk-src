@@ -37,7 +37,7 @@ static void init_gtk(void)
 	HashTable *symbol_table;
 	zval **z_argv = NULL, **z_argc = NULL, **entry;
 	zval *tmp;
-	char **argv;
+	char **argv = NULL;
 	int argc, i;
 	zend_bool no_argc = 0;
 	TSRMLS_FETCH();
@@ -55,14 +55,13 @@ static void init_gtk(void)
 	 * there.
 	 */
 	symbol_table = PG(http_globals)[TRACK_VARS_SERVER]->value.ht;
-
 	zend_hash_find(symbol_table, "argc", sizeof("argc"), (void **)&z_argc);
 	zend_hash_find(symbol_table, "argv", sizeof("argv"), (void **)&z_argv);
 	if (!z_argc || !z_argv || Z_TYPE_PP(z_argc) != IS_LONG || Z_TYPE_PP(z_argv) != IS_ARRAY) {
-		php_error(E_ERROR, "php-gtk: argc/argv are corrupted");
+		argc = 0;
+	} else {
+		argc = Z_LVAL_PP(z_argc);
 	}
-
-	argc = Z_LVAL_PP(z_argc);
 
 	/*
 	 * If the script was called via -f switch and no further arguments were
