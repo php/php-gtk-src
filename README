@@ -16,8 +16,8 @@ As a prerequisite, you should have a CGI binary (command-line) version of PHP
 installed along with the header files and development scripts. They should
 normally be installed when you do 'make install' in the PHP source tree.
 
-PHP-GTK requires PHP 4.0.5 or 4.0.6 for versions earlier than 0.1. For version
-0.1 and later, PHP 4.0.7 or latest CVS version will work.
+Currently, PHP-GTK requires PHP 4.0.5 or greater (latest CVS version will work
+too).
 
 PHP-GTK supports GTK+ v1.2 and requires v1.2.6 or greater. GTK+ v2.0 is not yet
 supported but will be so in the future when v2.0 is out of the development phase
