@@ -1,0 +1,8 @@
+/* vim: set ft=cpp: */
+%%
+headers
+#include <atk/atk.h>
+#include <atk/atk-enum-types.h>
+#include <atk/atknoopobjectfactory.h>
+#include <atk/atknoopobject.h>
+

@@ -1,0 +1,8 @@
+/* vim: set ft=cpp: */
+
+%%
+headers
+#define PANGO_ENABLE_BACKEND
+#define PANGO_ENABLE_ENGINE
+#include <pango/pango.h>
+
