@@ -240,6 +240,7 @@ PHP_GTK_API GType php_gtype_from_zval(zval *value);
 PHP_GTK_API zval* php_gvalue_as_zval(const GValue *gval, zend_bool copy_boxed);
 PHP_GTK_API int php_gvalue_from_zval(GValue *gval, zval *value);
 PHP_GTK_API int php_gvalue_enum_get(GType enum_type, zval *enum_val, gint *result);
+PHP_GTK_API int php_gvalue_flags_get(GType flags_type, zval *flags_val, gint *result);
 
 
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtype_ce);

@@ -231,9 +231,83 @@ PHP_GTK_API int php_gvalue_enum_get(GType enum_type, zval *enum_val, gint *resul
 }
 /* }}} */
 
-gint php_gvalue_flags_get()
+/* {{{ php_gvalue_flags_get() */
+PHP_GTK_API int php_gvalue_flags_get(GType flags_type, zval *flags_val, gint *result)
 {
+    GFlagsClass *fclass = NULL;
+    GFlagsValue *info = NULL;
+
+    if (result == NULL)
+        return FAILURE;
+
+    if (flags_val == NULL) {
+        *result = 0;
+    } else if (Z_TYPE_P(flags_val) == IS_LONG) {
+        *result = Z_LVAL_P(flags_val);
+    } else if (Z_TYPE_P(flags_val) == IS_STRING) {
+        if (flags_type != G_TYPE_NONE) {
+            fclass = G_FLAGS_CLASS(g_type_class_ref(flags_type));
+        } else {
+            php_error(E_WARNING, "PHP-GTK: internal error: could not obtain the type of flags");
+            return FAILURE;
+        }
+
+        info = g_flags_get_value_by_name(fclass, Z_STRVAL_P(flags_val));
+        if (info == NULL) {
+            info = g_flags_get_value_by_nick(fclass, Z_STRVAL_P(flags_val));
+        }
+        g_type_class_unref(fclass);
+
+        if (info != NULL) {
+            *result = info->value;
+        } else {
+            php_error(E_WARNING, "PHP-GTK: internal error: could not convert '%s' to flags", Z_STRVAL_P(flags_val));
+            return FAILURE;
+        }
+    } else if (Z_TYPE_P(flags_val) == IS_ARRAY) {
+		zval **flag;
+
+        *result = 0;
+        if (flags_type != G_TYPE_NONE) {
+            fclass = G_FLAGS_CLASS(g_type_class_ref(flags_type));
+        } else {
+            php_error(E_WARNING, "PHP-GTK: internal error: could not obtain the type of flags");
+            return FAILURE;
+        }
+
+		for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(flags_val));
+			 zend_hash_get_current_data(Z_ARRVAL_P(flags_val), (void **)&flag) == SUCCESS;
+			 zend_hash_move_forward(Z_ARRVAL_P(flags_val))) {
+
+			if (Z_TYPE_PP(flag) == IS_LONG) {
+				*result |= Z_LVAL_PP(flag);
+            } else if (Z_TYPE_PP(flag) == IS_STRING) {
+                info = g_flags_get_value_by_name(fclass, Z_STRVAL_PP(flag));
+                if (info == NULL) {
+                    info = g_flags_get_value_by_nick(fclass, Z_STRVAL_PP(flag));
+                }
+                if (info != NULL) {
+                    *result |= info->value;
+                } else {
+                    php_error(E_WARNING, "PHP-GTK: internal error: could not convert '%s' to flags", Z_STRVAL_PP(flag));
+                    g_type_class_unref(fclass);
+                    return FAILURE;
+                }
+			} else {
+				php_error(E_WARNING, "PHP-GTK: flag arrays can contain only integers or strings");
+                g_type_class_unref(fclass);
+				return 0;
+			}
+		}
+        g_type_class_unref(fclass);
+    } else {
+        php_error(E_WARNING, "PHP-GTK: flags must be strings, integers, or arrays of strings or integers");
+        return FAILURE;
+    }
+
+    return SUCCESS;
 }
+/* }}} */
 
 #endif
 
