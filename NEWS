@@ -1,3 +1,4 @@
+    - added GtkCombo::set_popdown_strings(), GdkPixmap::create_from_xpm().
     - implemented support for creating menus via GtkItemFactory.
     - fixed loading of the extension via php.ini.
     - fixed timeout and idle handler marshaller so that they are called more
