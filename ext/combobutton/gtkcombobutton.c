@@ -804,8 +804,8 @@ gtk_combobutton_button_press (GtkWidget *widget,
 	  gint y;
 	  GdkModifierType mods;
 
-	  x = event->x;
-	  y = event->y;
+	  x = (gint)event->x;
+	  y = (gint)event->y;
 
 	  if (event->window != widget->window)
 	    gdk_window_get_pointer (widget->window, &x, &y, &mods);
@@ -875,8 +875,6 @@ gtk_combobutton_menu_position (GtkMenu *menu,
   GtkComboButton *combobutton;
   gint screen_width;
   gint screen_height;
-  gint ox;
-  gint oy;
   gint mx;
   gint my;
   gint width;
