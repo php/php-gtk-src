@@ -1,3 +1,33 @@
+2001-10-12  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/scheme.dsp: Fixing debug build
+
+    * win32/scheme.dsp: Fixing arg_types for objects on win32
+
+    * generator/arg_types.php: Undo last change to arg_types
+
+    * win32/php_gtk.dsp: Fixing debug build with libGlade
+
+    * generator/arg_types.php: Adding match-handler fro GtkWidget.
+    This makes libGlade happy.
+
+    * win32/makedist.cmd: Updating makedist to include libglade dll's
+
+    * ext/libglade/php_libglade.c
+      ext/libglade/php_libglade.h: Fixing prototypes needed for win32
+
+    * main/php_gtk_ext.w32.c: Including the libglade headers in win32
+
+    * win32/php_gtk.dsp: Defining HABE_LIBGLADE helps a lot
+
+    * win32/php_gtk.dsp: Adding  libglade files to the project
+
+    * main/php_gtk.c:
+    Fixing module structure to match the latest version stuff in PHP
+
+    * ext/libglade/libglade.overrides: adding missing 'void'.
+    This is needed to have libglade working on win32
+
 2001-10-04  Andrei Zmievski  <andrei@ispi.net>
 
     * NEWS: *** empty log message ***
