@@ -90,7 +90,7 @@ SOURCE=..\generator\generator.php
 InputDir=..\src
 InputPath=..\generator\scheme.php
 
-BuildCmds=php.exe -q ..\generator\generator.php ../..//pygtk-0.7.0/gtk/gtk.defs gtk.overrides
+BuildCmds=php.exe -q ..\generator\generator.php ../generator/gtk.defs gtk.overrides
 
 "$(InputDir)\php_gtk_gen.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
    $(BuildCmds)
@@ -103,7 +103,7 @@ BuildCmds=php.exe -q ..\generator\generator.php ../..//pygtk-0.7.0/gtk/gtk.defs 
 InputDir=..\src
 InputPath=..\generator\scheme.php
 
-BuildCmds=php.exe -q ..\generator\generator.php ../..//pygtk-0.7.0/gtk/gtk.defs gtk.overrides
+BuildCmds=php.exe -q ..\generator\generator.php ../generator/gtk.defs gtk.overrides
 
 "$(InputDir)\php_gtk_gen.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
    $(BuildCmds)

@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PHP_GTK_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "..\..\php4" /I "..\..\php4\main" /I "..\..\php4\Zend" /I "..\..\php4\TSRM" /I "..\..\src\gtk+" /I "..\..\src\gtk+\gdk" /I "..\..\src\glib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PHP_GTK_EXPORTS" /D "PHP_WIN32" /D "ZEND_WIN32" /D ZTS=1 /D ZEND_DEBUG=0 /D HAVE_PHP_GTK=1 /D "COMPILE_DL_PHP_GTK" /YX /FD /I /php4" /I /php4/main" /I /php4/Zend" /I /php4/TSRM" /I /src/gtk+" /I /src/gtk+/gdk" /I /src/glib" /I /php4" /I /php4/main" /I /php4/Zend" /I /php4/TSRM" /I /src/gtk+" /I /src/gtk+/gdk" /I /src/glib" " " " " " " " " " " " " " " /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /Ob1 /I "..\..\php4" /I "..\..\php4\main" /I "..\..\php4\Zend" /I "..\..\php4\TSRM" /I "..\..\src\gtk+" /I "..\..\src\gtk+\gdk" /I "..\..\src\glib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PHP_GTK_EXPORTS" /D "PHP_WIN32" /D "ZEND_WIN32" /D ZTS=1 /D ZEND_DEBUG=0 /D HAVE_PHP_GTK=1 /D "COMPILE_DL_PHP_GTK" /YX /FD /I /php4" /I /php4/main" /I /php4/Zend" /I /php4/TSRM" /I /src/gtk+" /I /src/gtk+/gdk" /I /src/glib" /I /php4" /I /php4/main" /I /php4/Zend" /I /php4/TSRM" /I /src/gtk+" /I /src/gtk+/gdk" /I /src/glib" " " " " " " " " " " " " " " /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
