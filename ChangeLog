@@ -1,3 +1,10 @@
+2002-04-15  Andrei Zmievski  <andrei@php.net>
+
+    * NEWS: *** empty log message ***
+
+    * build2/build.mk
+      php_gtk_new.m4: Some build system fixes.
+
 2002-04-11  Andrei Zmievski  <andrei@php.net>
 
     * main/php_gtk_ext.c.in
