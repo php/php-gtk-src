@@ -1,3 +1,13 @@
+2004-11-06  Andrei Zmievski  <andreiz@gravitonic.com>
+
+    * generator/arg_types.php
+      generator/array_printf.php
+      generator/generator.php
+      generator/templates.php
+      main/php_gtk.h:
+      More work on generator. We can now generate some methods - only those
+      that work with strings and integers, basically.
+
 2004-10-26  Andrei Zmievski  <andreiz@gmail.com>
 
     * (PHP_GTK_1)
