@@ -109,7 +109,7 @@ PHP_GTK_API zend_bool phpg_gboxed_check(zval *zobj, GType gtype TSRMLS_DC)
 /* {{{ phpg_gboxed_new() */
 PHP_GTK_API void phpg_gboxed_new(zval **zobj, GType gtype, gpointer boxed, gboolean copy, gboolean own_ref TSRMLS_DC)
 {
-	zend_class_entry *ce = NULL;
+    zend_class_entry *ce = NULL;
     phpg_gboxed_t *pobj = NULL;
 
     assert(zobj != NULL);
