@@ -2842,6 +2842,134 @@ PHP_FUNCTION(gtk_toolbar_insert_item)
 {
 	gtk_toolbar_item_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 2);
 }
+
+%%
+override gtk_toolbar_append_element
+
+static void gtk_toolbar_element_impl(INTERNAL_FUNCTION_PARAMETERS, int action)
+{
+	gchar *text, *tooltip_text, *tooltip_priv_text;
+#ifdef PHP_WIN32
+	gchar *utf8_text, *utf8_tooltip_text, *utf8_tooltip_priv_text;
+#endif
+	zval *php_elem_type = NULL;
+	zval *php_widget = NULL;
+	zval *php_icon = NULL;
+	zval *callback = NULL;
+	zval *extra;
+	zval *data;
+	char *callback_filename;
+	uint callback_lineno;
+	GtkWidget *icon = NULL;
+	GtkWidget *item = NULL;
+	GtkWidget *widget = NULL;
+	GtkToolbarChildType elem_type;
+	int position;
+
+	NOT_STATIC_METHOD();
+
+	if (action == 2) {
+		if (!php_gtk_parse_args(8, "VNsssNiV", &php_elem_type, &php_widget, gtk_widget_ce, &text, &tooltip_text,
+								&tooltip_priv_text, &php_icon, gtk_widget_ce, &position, &callback)) {
+			return;
+		}
+	} else {
+		if (!php_gtk_parse_args(7, "VNsssNV", &php_elem_type, &php_widget, gtk_widget_ce, &text, &tooltip_text,
+								&tooltip_priv_text, &php_icon, gtk_widget_ce, &callback)) {
+			return;
+		}
+	}
+
+#ifdef PHP_WIN32
+	utf8_text 			   = g_convert(text, strlen(text), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+	utf8_tooltip_text 	   = g_convert(tooltip_text, strlen(tooltip_text), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+	utf8_tooltip_priv_text = g_convert(tooltip_priv_text, strlen(tooltip_priv_text), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+	text              = utf8_text;
+	tooltip_text      = utf8_tooltip_text;
+	tooltip_priv_text = utf8_tooltip_priv_text;
+#endif
+
+	if (php_elem_type && !php_gtk_get_enum_value(GTK_TYPE_TOOLBAR_CHILD_TYPE, php_elem_type, (gint *)&elem_type)) {
+		return;
+	}
+
+	if (php_widget && Z_TYPE_P(php_widget) != IS_NULL) {
+		widget = GTK_WIDGET(PHP_GTK_GET(php_widget));
+	}
+
+	if (php_icon && Z_TYPE_P(php_icon) != IS_NULL) {
+		icon = GTK_WIDGET(PHP_GTK_GET(php_icon));
+	}
+
+	if (elem_type == GTK_TOOLBAR_CHILD_BUTTON ||
+		elem_type == GTK_TOOLBAR_CHILD_TOGGLEBUTTON ||
+		elem_type == GTK_TOOLBAR_CHILD_SPACE) {
+		widget = NULL;
+	}
+
+	switch (action) {
+		case 0: /* append */
+			item = gtk_toolbar_append_element(GTK_TOOLBAR(PHP_GTK_GET(this_ptr)), elem_type, widget, text,
+											  tooltip_text, tooltip_priv_text, icon, NULL, NULL);
+			break;
+
+		case 1: /* prepend */
+			item = gtk_toolbar_prepend_element(GTK_TOOLBAR(PHP_GTK_GET(this_ptr)), elem_type, widget, text,
+											   tooltip_text, tooltip_priv_text, icon, NULL, NULL);
+			break;
+
+		case 2: /* insert */
+			item = gtk_toolbar_insert_element(GTK_TOOLBAR(PHP_GTK_GET(this_ptr)), elem_type, widget, text,
+											  tooltip_text, tooltip_priv_text, icon, NULL, NULL, position);
+			break;
+
+		default:
+			assert(0);
+			break;
+	}
+
+	if (item &&
+		(elem_type == GTK_TOOLBAR_CHILD_BUTTON ||
+		 elem_type == GTK_TOOLBAR_CHILD_TOGGLEBUTTON ||
+		 elem_type == GTK_TOOLBAR_CHILD_RADIOBUTTON)) {
+
+		callback_filename = zend_get_executed_filename(TSRMLS_C);
+		callback_lineno = zend_get_executed_lineno(TSRMLS_C);
+		extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), (action==2) ? 8 : 7, ZEND_NUM_ARGS());
+		data = php_gtk_build_value("(VNisi)", callback, extra, 1, callback_filename, callback_lineno);
+
+		gtk_signal_connect_full(GTK_OBJECT(item), "clicked", NULL,
+								(GtkCallbackMarshal)php_gtk_callback_marshal,
+								data, php_gtk_destroy_notify, FALSE, FALSE);
+	}
+
+#ifdef PHP_WIN32
+	g_free(utf8_text);
+	g_free(utf8_tooltip_text);
+	g_free(utf8_tooltip_priv_text);
+#endif
+
+	PHP_GTK_SEPARATE_RETURN(return_value, php_gtk_new((GtkObject *)item));
+}
+
+PHP_FUNCTION(gtk_toolbar_append_element)
+{
+	gtk_toolbar_element_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
+}
+
+%%
+override gtk_toolbar_prepend_element
+PHP_FUNCTION(gtk_toolbar_prepend_element)
+{
+	gtk_toolbar_element_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
+}
+
+%%
+override gtk_toolbar_insert_element
+PHP_FUNCTION(gtk_toolbar_insert_element)
+{
+	gtk_toolbar_element_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 2);
+}
 %% }}}
 
 %% {{{ GtkTreeItem
