@@ -33,14 +33,18 @@ class DocGenerator {
 	var $parser 	= null;
 	var $overrides  = null;
 	var $prefix		= null;
+	var $output_dir = null;
 	var $fp			= null;
 
-	function DocGenerator(&$parser, &$overrides, $prefix)
+	function DocGenerator(&$parser, &$overrides, $prefix, $output_dir)
 	{
-		$this->parser 	 = &$parser;
-		$this->overrides = &$overrides;
-		$this->prefix	 = $prefix;
-		$this->fp		 = fopen('php://stdout', 'w');
+		$this->parser 	 	= &$parser;
+		$this->overrides	= &$overrides;
+		$this->prefix	 	= $prefix;
+		if ($output_dir)
+			$this->output_dir	= $output_dir;
+		else
+			$this->fp = fopen('php://stdout', 'w');
 	}
 
 	function create_docs($classes)
@@ -56,11 +60,29 @@ class DocGenerator {
 		usort($parser_objects, 'sort_objects');
 
 		foreach ($parser_objects as $object) {
-			$object_lcname = strtolower($object->c_name);
+			$object_lcname = strtolower($object->in_module . $object->name);
 			if (count($classes) && !in_array($object_lcname, $classes))
 				continue;
 
-			$this->write_class($object);
+			if ($this->output_dir) {
+				print "Generating $object_lcname.xml...";
+				$this->fp = fopen($this->output_dir.'/'.$object_lcname.'.xml', 'w');
+				$this->write_class($object);
+				fclose($this->fp);
+				print "\n";
+			} else
+				$this->write_class($object);
+		}
+
+		if (count($classes) == 0) {
+			if ($this->output_dir) {
+				print "Generating ".$this->prefix."-functions.xml...";
+				$this->fp = fopen($this->output_dir.'/'.$this->prefix.'-functions.xml', 'w');
+				$this->write_functions();
+				fclose($this->fp);
+				print "\n";
+			} else
+				$this->write_functions();
 		}
 	}
 	
@@ -118,6 +140,15 @@ class DocGenerator {
 
 		if (count($methods))
 			fwrite($this->fp, $methods_end_tpl);
+	}
+
+	function write_functions()
+	{
+		foreach ($this->parser->functions as $function) {
+			if ($this->overrides->is_overriden($function->c_name)) {
+			} else if (!$this->overrides->is_ignored($function->c_name)) {
+			}
+		}
 	}
 
 	function write_constructor($object)
@@ -267,17 +298,34 @@ class DocGenerator {
 
 		if (isset($type_map[$in_type]))
 			return $type_map[$in_type];
-		else
-			return str_replace('*', '', $in_type);
+		else {
+			$in_type = str_replace('*', '', $in_type);
+			$type_handler_class = get_class($type_handler);
+			if ($type_handler_class == 'object_arg' ||
+				$type_handler_class == 'boxed_arg')
+				return "<classname>$in_type</classname>";
+			else if ($type_handler_class == 'enum_arg' ||
+					 $type_handler_class == 'flags_arg')
+				return "<enumname>$in_type</enumname>";
+			else
+				return $in_type;
+		}
 	}
 }
 
 $argc = $HTTP_SERVER_VARS['argc'];
 $argv = $HTTP_SERVER_VARS['argv'];
 
-$result = Console_Getopt::getopt($argv, 'o:p:r:');
+$result = Console_Getopt::getopt($argv, 'o:p:r:d:');
 if (!$result || count($result[1]) < 2)
-	die("usage: php -q generator.php [-o overridesfile] [-p prefix] [-r typesfile] defsfile [class]\n");
+	die(
+"Usage: php -q generator.php [OPTION] defsfile [class ...]
+
+  -o <file>         use overrides in <file>
+  -p <prefix>       use <prefix> for docs
+  -r <file>         register types from <file>
+  -d <path>         output files to this directory
+");
 
 list($opts, $argv) = $result;
 
@@ -294,11 +342,13 @@ foreach ($opts as $opt) {
 		$type_parser = new Defs_Parser($opt_arg);
 		$type_parser->start_parsing();
 		DocGenerator::register_types($type_parser);
+	} else if ($opt_spec == 'd') {
+		$output_dir = $opt_arg;
 	}
 }
 
 $parser = new Defs_Parser($argv[1]);
-$generator = new DocGenerator($parser, $overrides, $prefix);
+$generator = new DocGenerator($parser, $overrides, $prefix, $output_dir);
 $parser->start_parsing();
 $generator->register_types();
 $generator->create_docs(array_slice($argv, 2));
