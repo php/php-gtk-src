@@ -21,7 +21,8 @@
 
 /* $Id$ */
 
-$function_tpl = "
+class Templates {
+const function_body = "
 PHP_FUNCTION(%s)
 {
 %s	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%s\"%s))
@@ -30,23 +31,24 @@ PHP_FUNCTION(%s)
 %s%s
 }\n\n";
 
-$function_call_tpl = "%s(%s)";
+const function_call = "%s(%s)";
 
-$method_tpl = "
-PHP_FUNCTION(%s)
+const method_body = "
+PHP_METHOD(%(class), %(name))
 {
-%s	NOT_STATIC_METHOD();
+%(varlist)\tNOT_STATIC_METHOD();
 
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%s\"%s))
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list)))
 		return;
-
-%s%s
+%(codebefore)
+    %(return)%(cname)(%(cast)PHPG_GET(this_ptr)%(arglist));
+%(codeafter)
 }\n\n";
 
-$method1_call_tpl = "%s(%s(PHP_GTK_GET(this_ptr))%s)";
-$method2_call_tpl = "%s(PHP_%s_GET(this_ptr)%s)";
+const method1_call = "%s(%s(PHP_GTK_GET(this_ptr))%s)";
+const method2_call = "%s(PHP_%s_GET(this_ptr)%s)";
 
-$constructor_tpl = "
+const constructor = "
 PHP_FUNCTION(%s)
 {
 %s	NOT_STATIC_METHOD();
@@ -66,25 +68,26 @@ PHP_FUNCTION(%s)
 %s%s
 }\n\n";
 
-$gtk_object_init_tpl = "
+const gtk_object_init = "
 	php_gtk_object_init(wrapped_obj, this_ptr);\n";
 
-$non_gtk_object_init_tpl = "
+const non_gtk_object_init = "
 	php_gtk_set_object(this_ptr, wrapped_obj, le_%s);\n";
 
-$function_entry_tpl = "\t{\"%s\",	PHP_FN(%s),	%s},\n";
-$functions_decl_tpl = "
+const function_entry = "\tPHP_ME(%s, %s, %s, %s),\n";
+const functions_decl = "
 static function_entry %s_methods[] = {
 ";
+const functions_decl_end = "\t{NULL, NULL, NULL}\n};\n\n";
 
-$register_getter_tpl = "\tphp_gtk_register_prop_getter(%s, %s_get_property);\n";
+const register_getter = "\tphp_gtk_register_prop_getter(%s, %s_get_property);\n";
 
-$prop_check_tpl =
+const prop_check =
 "%sif (!strcmp(prop_name, \"%s\")) {
 	%s
 	}";
 
-$prop_getter_tpl = "
+const prop_getter = "
 static void %s_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
 	*result = SUCCESS;
@@ -94,13 +97,13 @@ static void %s_get_property(zval *return_value, zval *object, char *prop_name, i
 	*result = FAILURE;
 }\n\n";
 
-$init_class_tpl = "
+const init_class = "
 	INIT_OVERLOADED_CLASS_ENTRY(ce, \"%s\", php_%s_functions, NULL, %s, php_gtk_set_property);\n";
 
-$struct_class_tpl = "
+const struct_class = "
 	INIT_CLASS_ENTRY(ce, \"%s\", php_%s_functions);\n";
 
-$get_type_tpl = "
+const get_type = "
 PHP_FUNCTION(%s_get_type)
 {
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"\"))
@@ -109,22 +112,22 @@ PHP_FUNCTION(%s_get_type)
 	RETURN_LONG(%s_get_type());
 }\n\n";
 
-$register_classes_tpl = "
+const register_classes = "
 void phpg_%s_register_classes(void)
 {
 	TSRMLS_FETCH();
 %s
 }\n";
 
-$register_class_tpl = "
-	%s = phpg_register_class(\"%s\", %s_methods, %s, 0, NULL, NULL, %s TSRMLS_CC);\n";
+const register_class = "
+	%s = phpg_register_class(\"%s\", %s, %s, 0, NULL, NULL, %s TSRMLS_CC);\n";
 
-$class_entry_tpl = "PHP_GTK_EXPORT_CE(%s);\n";
+const class_entry = "PHP_GTK_EXPORT_CE(%s);\n";
 
-$class_prop_list_header = "static char *php_%s_properties[] = {\n";
-$class_prop_list_footer = "\tNULL\n};\n\n";
+const class_prop_list_header = "static char *php_%s_properties[] = {\n";
+const class_prop_list_footer = "\tNULL\n};\n\n";
 
-$struct_init_tpl = "
+const struct_init = "
 zval *PHP_GTK_EXPORT_FUNC(php_%s_new)(%s *obj)
 {
 	zval *result;
@@ -143,7 +146,7 @@ zval *PHP_GTK_EXPORT_FUNC(php_%s_new)(%s *obj)
     return result;
 }\n\n";
 
-$struct_construct_tpl = "
+const struct_construct = "
 PHP_FUNCTION(%s)
 {
 %s	NOT_STATIC_METHOD();
@@ -155,7 +158,7 @@ PHP_FUNCTION(%s)
 
 %s}\n\n";
 
-$struct_get_tpl = "
+const struct_get = "
 zend_bool PHP_GTK_EXPORT_FUNC(php_%s_get)(zval *wrapper, %s *obj)
 {
     zval **item;
@@ -168,7 +171,7 @@ zend_bool PHP_GTK_EXPORT_FUNC(php_%s_get)(zval *wrapper, %s *obj)
     return 1;
 }\n\n";
 
-$register_constants_tpl = "
+const register_constants = "
 void phpg_%s_register_constants(const char *strip_prefix)
 {
     TSRMLS_FETCH();
@@ -176,7 +179,9 @@ void phpg_%s_register_constants(const char *strip_prefix)
 %s
 }\n";
 
-$register_enum_tpl = "\tphpg_register_%s(%s, strip_prefix, %s);\n";
+const register_enum = "\tphpg_register_%s(%s, strip_prefix, %s);\n";
+
+}
 
 /* vim: set et sts=4: */
 ?>

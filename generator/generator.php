@@ -38,6 +38,7 @@ require "override.php";
 require "arg_types.php";
 require "scheme.php";
 require "templates.php";
+require "array_printf.php";
 
 class Generator {
     var $parser             = null;
@@ -49,9 +50,6 @@ class Generator {
     var $is_gtk_object      = array('GtkObject' => true);
 
     var $constants          = '';
-    var $register_classes   = '';
-
-    var $functions_decl_end = "\t{NULL, NULL, NULL}\n};\n\n";
 
     function Generator(&$parser, &$overrides, $prefix, $function_class)
     {
@@ -75,40 +73,42 @@ class Generator {
             */
 
         foreach ($parser->objects as $object) {
+            /*
             $gtk_obj_descendant = false;
             if (isset($object->parent) &&
                 isset($this->is_gtk_object[$object->parent[1] . $object->parent[0]])) {
                 $this->is_gtk_object[$object->in_module . $object->name] = $this->is_gtk_object[$object->parent[1] . $object->parent[0]];
                 $gtk_obj_descendant = true;
             }
+            */
 
-            $matcher->register_object($object->c_name, $gtk_obj_descendant);
+            $matcher->register_object($object->c_name, $object->typecode);
         }
 
         foreach ($parser->enums as $enum) {
             if ($enum->def_type == 'flags')
-                $matcher->register_flag($enum->c_name);
+                $matcher->register_flag($enum->c_name, $enum->typecode);
             else
-                $matcher->register_enum($enum->c_name, $enum->simple);
+                $matcher->register_enum($enum->c_name, $enum->typecode);
         }
     }
 
-    function write_constants($fp)
+    function write_constants()
     {
-        fwrite($fp, "\nvoid php_". $this->lprefix . "_register_constants(int module_number TSRMLS_DC)\n");
-        fwrite($fp, "{\n");
+        fwrite($this->fp, "\nvoid php_". $this->lprefix . "_register_constants(int module_number TSRMLS_DC)\n");
+        fwrite($this->fp, "{\n");
         foreach ($this->parser->enums as $enum) {
             if ($this->overrides->is_ignored($enum->c_name)) continue;
-            fwrite($fp, "\n /* " . $enum->def_type . " " . $enum->c_name . " */\n");
+            fwrite($this->fp, "\n /* " . $enum->def_type . " " . $enum->c_name . " */\n");
             foreach ($enum->values as $enum_value) {
-                fwrite($fp, "   REGISTER_LONG_CONSTANT(\"$enum_value[1]\", $enum_value[1], CONST_CS | CONST_PERSISTENT);\n");
+                fwrite($this->fp, "   REGISTER_LONG_CONSTANT(\"$enum_value[1]\", $enum_value[1], CONST_CS | CONST_PERSISTENT);\n");
             }
         }
-        fwrite($fp, $this->overrides->get_constants());
-        fwrite($fp, "}\n\n");
+        fwrite($this->fp, $this->overrides->get_constants());
+        fwrite($this->fp, "}\n\n");
     }
 
-    function write_method($fp, $obj_name, $gtk_object_descendant, $method)
+    function write_method($obj_name, $gtk_object_descendant, $method)
     {
         global  $matcher,
                 $method1_call_tpl,
@@ -181,12 +181,12 @@ class Generator {
                                $extra_pre_code,
                                $return_code);
 
-        fwrite($fp, $method_code);
+        fwrite($this->fp, $method_code);
 
         return true;
     }
 
-    function write_constructor($fp, $obj_name, $gtk_object_descendant, $constructor)
+    function write_constructor($obj_name, $gtk_object_descendant, $constructor)
     {
         global  $matcher,
                 $constructor_tpl,
@@ -252,12 +252,12 @@ class Generator {
                                     $obj_init_code,
                                     $extra_post_code);
 
-        fwrite($fp, $constructor_code);
+        fwrite($this->fp, $constructor_code);
         
         return true;
     }
 
-    function write_function($fp, $function)
+    function write_function($function)
     {
         global  $matcher,
                 $function_call_tpl,
@@ -327,12 +327,12 @@ class Generator {
                                  $extra_pre_code,
                                  $return_code);
 
-        fwrite($fp, $function_code);
+        fwrite($this->fp, $function_code);
 
         return true;
     }
 
-    function write_prop_getter($fp, $object)
+    function write_prop_getter($object)
     {
         global  $matcher,
                 $prop_check_tpl,
@@ -377,12 +377,12 @@ class Generator {
             $else_clause = ' else ';
         }
 
-        fwrite($fp, sprintf($prop_getter_tpl,
+        fwrite($this->fp, sprintf($prop_getter_tpl,
                             strtolower($object->in_module . '_' .  $object->name),
                             $prop_checks));
     }
 
-    function write_structs($fp)
+    function write_structs()
     {
         global  $struct_class_tpl,
                 $struct_init_tpl,
@@ -396,7 +396,7 @@ class Generator {
         foreach ($this->parser->structs as $struct) {
             $struct_module = strtolower($struct->in_module);
             $struct_lname = strtolower(substr(convert_typename($struct->name),1));
-            fwrite($fp, "\n/* struct $struct->c_name */\n");
+            fwrite($this->fp, "\n/* struct $struct->c_name */\n");
 
             /*
             $this->register_classes .= sprintf($struct_class_tpl,
@@ -444,19 +444,19 @@ class Generator {
             }
 
             /* write the initializer */
-            fwrite($fp, sprintf($struct_init_tpl,
+            fwrite($this->fp, sprintf($struct_init_tpl,
                                 $struct_module . '_' . $struct_lname,
                                 $struct->in_module . $struct->name,
                                 $struct->ce, implode('', $init_prop_code)));
             
             /* write getter */
-            fwrite($fp, sprintf($struct_get_tpl,
+            fwrite($this->fp, sprintf($struct_get_tpl,
                                 $struct_module . '_' . $struct_lname,
                                 $struct->in_module . $struct->name,
                                 $struct->ce, implode('', $get_prop_code)));
 
             /* write the constructor */
-            fwrite($fp, sprintf($struct_construct_tpl,
+            fwrite($this->fp, sprintf($struct_construct_tpl,
                                 strtolower($struct->c_name),
                                 $var_list->to_string(),
                                 $specs,
@@ -474,11 +474,53 @@ class Generator {
                                        'NULL');
             */
             $functions_decl .= $this->functions_decl_end;
-            fwrite($fp, $functions_decl);
+            fwrite($this->fp, $functions_decl);
         }
     }
 
-    function write_objects($fp)
+    function write_methods($object)
+    {
+        $method_defs = array();
+
+        foreach ($this->parser->find_methods($object) as $method) {
+            $method_name = $method->c_name;
+            
+            /* skip ignored methods */
+            if ($this->overrides->is_ignored($method_name)) continue;
+
+            try {
+                if ($this->overrides->is_overriden($method_name)) {
+                /* XXX fix
+                    list($method_name, $method_override) = $this->overrides->get_override($method_name);
+                    fwrite($this->fp, $method_override . "\n");
+                    if (!isset($method_name))
+                        $method_name = $method->name;
+                    $functions_decl .= sprintf($function_entry_tpl,
+                                               strtolower($method->name),
+                                               strtolower($method->c_name),
+                                               'NULL');
+                                               */
+                } else {
+                    //$code = $this->write_callable($method, Templates::method_body, true, true);
+                    $method_defs[] = sprintf(Templates::function_entry,
+                                             $object->in_module . $object->name,
+                                             $method->name, 'NULL', 0);
+                }
+            } catch (Exception $e) {
+                fprintf(STDERR, 'not generating method %s::%s: %s', $object->c_name, $method->name, $e->getMessage());
+            }
+        }
+
+        if ($method_defs) {
+            fwrite($this->fp, sprintf(Templates::functions_decl, strtolower($object->c_name)));
+            fwrite($this->fp, join('', $method_defs));
+            fwrite($this->fp, Templates::functions_decl_end);
+        }
+
+        return $method_defs;
+    }
+
+    function write_objects()
     {
         global  $function_entry_tpl,
                 $functions_decl_tpl,
@@ -492,7 +534,7 @@ class Generator {
             $object_module = strtolower($object->in_module);
             $object_lname = strtolower($object->name);
 
-            fwrite($fp, "\n/* object $object->c_name  */\n");
+            fwrite($this->fp, "\n/* object $object->c_name  */\n");
             /*
             $this->register_classes .= sprintf($init_class_tpl,
                                                $object->in_module . $object->name,
@@ -523,7 +565,7 @@ class Generator {
             } else if ($this->overrides->is_overriden($constructor->c_name)) {
                 /*
                 list(, $constructor_override) = $this->overrides->get_override($constructor->c_name);
-                fwrite($fp, $constructor_override . "\n");
+                fwrite($this->fp, $constructor_override . "\n");
                 $functions_decl .= sprintf($function_entry_tpl,
                                            $constructor->is_constructor_of,
                                            strtolower($constructor->c_name),
@@ -532,7 +574,7 @@ class Generator {
             } else if (!$this->overrides->is_ignored($constructor->c_name)) {
                 /* XXX fix */
                 /*
-                if ($this->write_constructor($fp, $object->c_name, $this->is_gtk_object[$object->in_module . $object->name], $constructor)) {
+                if ($this->write_constructor($this->fp, $object->c_name, $this->is_gtk_object[$object->in_module . $object->name], $constructor)) {
                     $functions_decl .= sprintf($function_entry_tpl,
                                                $constructor->is_constructor_of,
                                                strtolower($constructor->c_name),
@@ -556,40 +598,17 @@ class Generator {
                                            'get_type',
                                            $lclass .  '_get_type',
                                            'NULL');
-                fwrite($fp, sprintf($get_type_tpl, $lclass, $lclass));
+                fwrite($this->fp, sprintf($get_type_tpl, $lclass, $lclass));
             }
             */
 
-            /* XXX
-            foreach ($this->parser->find_methods($object) as $method) {
-                if ($this->overrides->is_overriden($method->c_name)) {
-                    list($method_name, $method_override) = $this->overrides->get_override($method->c_name);
-                    fwrite($fp, $method_override . "\n");
-                    if (!isset($method_name))
-                        $method_name = $method->name;
-                    $functions_decl .= sprintf($function_entry_tpl,
-                                               strtolower($method->name),
-                                               strtolower($method->c_name),
-                                               'NULL');
-                }
-                else if (!$this->overrides->is_ignored($method->c_name)) {
-                    if ($this->write_method($fp, $object->c_name,
-                                            $this->is_gtk_object[$object->in_module . $object->name], $method)) {
-                        $functions_decl .= sprintf($function_entry_tpl,
-                                                   strtolower($method->name),
-                                                   strtolower($method->c_name),
-                                                   'NULL');
-                    }
-                }
-
-            }
-            */
+            $this->write_methods($object);
 
             /* XXX fix
             if (isset($this->overrides->extra_methods[$object->c_name])) {
                 foreach ($this->overrides->extra_methods[$object->c_name] as $method_cname => $method_data) {
                     list($method_name, $method_override) = $method_data;
-                    fwrite($fp, $method_override . "\n");
+                    fwrite($this->fp, $method_override . "\n");
                     if (!isset($method_name))
                         $method_name = $method_cname;
                     $functions_decl .= sprintf($function_entry_tpl,
@@ -600,30 +619,58 @@ class Generator {
             }
             */
 
-            if ($object->c_name == $this->function_class) {
-                $this->write_functions($fp, false, $functions_decl);
-            }
-
-            $functions_decl .= $this->functions_decl_end;
-            fwrite($fp, $functions_decl);
-
             /* XXX fix 
             if (count($object->fields))
-                $this->write_prop_getter($fp, $object);
+                $this->write_prop_getter($this->fp, $object);
             */
         }
 
         $this->register_classes .= "\n" . implode("\n", $this->overrides->get_register_classes());
     }
 
-    function write_enums($fp)
+    function write_classes()
     {
-        global $register_constants_tpl,
-               $register_enum_tpl;
+        fprintf(STDERR, "Writing classes...\n");
 
+        $register_classes = '';
+
+        if ($this->parser->enums || $this->parser->functions) {
+            $func_defs = $this->write_functions();
+
+            $register_classes .= sprintf(Templates::register_class,
+                                         $this->lprefix . '_ce',
+                                         $this->lprefix,
+                                         $func_defs ? $this->lprefix . '_methods' : 'NULL',
+                                         'NULL', 0);
+        }
+
+        /* Objects */
+        foreach ($this->parser->objects as $object) {
+            $object_module = strtolower($object->in_module);
+            $object_lname = strtolower($object->name);
+
+            fprintf(STDERR, "Writing methods for $object->c_name...\n");
+            $method_defs = $this->write_methods($object);
+
+            $register_classes .= sprintf(Templates::register_class,
+                                         $object->ce,
+                                         $object->in_module . $object->name,
+                                         $method_defs ? strtolower($object->c_name) . '_methods' : 'NULL',
+                                         $object->parent ? strtolower($object->parent) . '_ce' : 'NULL',
+                                         $object->typecode);
+        }
+        $register_classes .= "\n" . implode("\n", $this->overrides->get_register_classes());
+
+        fwrite($this->fp, sprintf(Templates::register_classes,
+                                  $this->lprefix,
+                                  $register_classes));
+    }
+
+    function write_enums()
+    {
         if (!$this->parser->enums) return;
 
-        fwrite($fp, "\n/* Enums and Flags */\n");
+        fwrite($this->fp, "\n/* Enums and Flags */\n");
 
         $enums_code = '';
 
@@ -633,31 +680,55 @@ class Generator {
                 foreach ($enum->values as $nick => $value) {
                 }
             } else {
-                $enums_code .= sprintf($register_enum_tpl, $enum->def_type,
+                $enums_code .= sprintf(Templates::register_enum, $enum->def_type,
                                        $enum->typecode, $this->lprefix . '_ce');
             }
         }
 
-        fwrite($fp, sprintf($register_constants_tpl, $this->lprefix, $enums_code));
+        fwrite($this->fp, sprintf(Templates::register_constants, $this->lprefix, $enums_code));
     }
 
-    function write_functions($fp, $separate_class, &$functions_decl)
+    function write_functions()
     {
-        global  $function_entry_tpl,
-                $functions_decl_tpl,
-                $class_entry_tpl,
-                $init_class_tpl,
-                $register_class_tpl;
-        
-        $num_functions = 0;
-        if ($separate_class)
-            $functions_decl = sprintf($functions_decl_tpl, $this->lprefix);
+        $func_defs = array();
+
+        fprintf(STDERR, "Writing functions for $this->prefix...\n");
+
+        foreach ($this->parser->functions as $function) {
+            $func_name = $function->name;
+            if ($function->name == $function->c_name) {
+                $func_name = substr($function->name, strlen($this->lprefix) + 1);
+            }
+
+            /* skip ignored methods */
+            if ($this->overrides->is_ignored($function->c_name)) continue;
+
+            try {
+                if ($this->overrides->is_overriden($function->c_name)) {
+                } else {
+                    //$code = $this->write_callable($function, Templates::function_body, true, false);
+                    $func_defs[] = sprintf(Templates::function_entry,
+                                             $this->lprefix,
+                                             $func_name, 'NULL', 0);
+                }
+            } catch (Exception $e) {
+                fprintf(STDERR, 'not generating function %s::%s: %s', $this->lprefix, $function->name, $e->getMessage());
+            }
+        }
+
+        if ($func_defs) {
+            fwrite($this->fp, sprintf(Templates::functions_decl, strtolower($this->lprefix)));
+            fwrite($this->fp, join('', $func_defs));
+            fwrite($this->fp, Templates::functions_decl_end);
+        }
+
+        return $func_defs;
 
         /* XXX fix
         foreach ($this->parser->functions as $function) {
             if ($this->overrides->is_overriden($function->c_name)) {
                 list($function_name, $function_override) = $this->overrides->get_override($function->c_name);
-                fwrite($fp, $function_override . "\n");
+                fwrite($this->fp, $function_override . "\n");
                 if ($function->name == $function->c_name)
                     $function_name = substr($function->name, strlen($this->lprefix) + 1);
                 else
@@ -669,7 +740,7 @@ class Generator {
                 $num_functions++;
             }
             else if (!$this->overrides->is_ignored($function->c_name)) {
-                if ($this->write_function($fp, $function)) {
+                if ($this->write_function($this->fp, $function)) {
                     if ($function->name == $function->c_name)
                         $function_name = substr($function->name, strlen($this->lprefix) + 1);
                     else
@@ -704,70 +775,64 @@ class Generator {
                                                    $this->lprefix . '_ce',
                                                    $this->lprefix, $this->lprefix,
                                                    'NULL', 0);
-                fwrite($fp, $functions_decl);
+                fwrite($this->fp, $functions_decl);
             }
         //}
     }
 
-    function write_prop_lists($fp)
+    function write_prop_lists()
     {
         global  $class_prop_list_header,
                 $class_prop_list_footer;
         
-        fwrite($fp, "\n");
+        fwrite($this->fp, "\n");
         foreach ($this->parser->objects as $object) {
             if (count($object->fields) == 0) continue;
 
-            fwrite($fp, sprintf($class_prop_list_header,
+            fwrite($this->fp, sprintf($class_prop_list_header,
                                 strtolower($object->in_module) . '_' .
                                 strtolower($object->name)));
             foreach ($object->fields as $field_def) {
                 list(, $field_name) = $field_def;
-                fwrite($fp, "\t\"$field_name\",\n");
+                fwrite($this->fp, "\t\"$field_name\",\n");
             }
-            fwrite($fp, $class_prop_list_footer);
+            fwrite($this->fp, $class_prop_list_footer);
         }
     }
 
-    function write_class_entries($fp)
+    function write_class_entries()
     {
-        global  $class_entry_tpl;
-
         /* XXX
         foreach ($this->parser->structs as $struct)
-            fwrite($fp, sprintf($class_entry_tpl, $struct->ce));
+            fwrite($this->fp, sprintf($class_entry_tpl, $struct->ce));
          */
-        foreach ($this->parser->objects as $object)
-            fwrite($fp, sprintf($class_entry_tpl, $object->ce));
+        foreach ($this->parser->objects as $object) {
+            fwrite($this->fp, sprintf(Templates::class_entry, $object->ce));
+        }
         foreach ($this->overrides->get_register_classes() as $ce => $rest)
-            fwrite($fp, sprintf($class_entry_tpl, $ce));
+            fwrite($this->fp, sprintf(Templates::class_entry, $ce));
 
-        fwrite($fp, sprintf($class_entry_tpl, $this->lprefix . '_ce'));
+        if ($this->parser->enums || $this->parser->functions) {
+            fwrite($this->fp, sprintf(Templates::class_entry, $this->lprefix . '_ce'));
+        }
     }
 
-    function create_source($savefile)
+    function write_source($savefile)
     {
-        global  $register_classes_tpl,
-                $register_class_tpl;
-
-        $fp = fopen($savefile, 'w');
-        fwrite($fp, "#include \"php_gtk.h\"");
-        fwrite($fp, "\n#if HAVE_PHP_GTK\n");
-        fwrite($fp, $this->overrides->get_headers());
-        //$this->write_constants($fp);
-        $this->write_class_entries($fp);
-        //$this->write_prop_lists($fp);
+        $this->fp = fopen($savefile, 'w');
+        fwrite($this->fp, "#include \"php_gtk.h\"");
+        fwrite($this->fp, "\n#if HAVE_PHP_GTK\n");
+        fwrite($this->fp, $this->overrides->get_headers());
+        //$this->write_constants();
+        $this->write_class_entries();
+        //$this->write_prop_lists();
         //if (!isset($this->parser->objects[$this->function_class]))
-        //    $this->write_functions($fp, true, $dummy);
-        //$this->write_structs($fp);
-        $this->write_enums($fp);
-        $this->write_functions($fp, true, $dummy);
-        $this->write_objects($fp);
-        fwrite($fp, sprintf($register_classes_tpl,
-                            $this->lprefix,
-                            $this->register_classes));
-        fwrite($fp, "\n#endif /* HAVE_PHP_GTK */\n");
-        fclose($fp);
+        //    $this->write_functions(true, $dummy);
+        //$this->write_structs();
+        $this->write_enums();
+        $this->write_classes();
+        fwrite($this->fp, "\n#endif /* HAVE_PHP_GTK */\n");
+        fclose($this->fp);
     }
 }
 
@@ -796,7 +861,7 @@ function fatal_error($message) {
 }   
 
 
-$old_error_reporting = error_reporting(E_ALL & ~E_NOTICE);
+$old_error_reporting = error_reporting(E_ALL);
 
 if (!isset($_SERVER['argv'])) 
     fatal_error("
@@ -857,7 +922,7 @@ foreach ($register_defs as $defs) {
 }
 $parser->start_parsing();
 $generator->register_types();
-$generator->create_source($savefile);
+$generator->write_source($savefile);
 
 error_reporting($old_error_reporting);
 

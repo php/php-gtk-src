@@ -284,13 +284,12 @@ class Defs_Parser {
         die("unknown node:\n". var_export($node, 1));
     }
 
-    function find_methods($obj)
+    function find_methods($object)
     {
-        $obj_signature = array($obj->name, $obj->in_module);
         $obj_methods = array();
 
         foreach ($this->methods as $method) {
-            if ($method->of_object == $obj_signature)
+            if ($method->of_object == $object->c_name)
                 $obj_methods[] = $method;
         }
 

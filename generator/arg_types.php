@@ -118,14 +118,15 @@ class Wrapper_Info {
 class Arg_Type {
     function write_param($type, $name, $default, $null_ok, $info, $in_constructor)
     {
-        trigger_error("This is an abstract class", E_USER_ERROR);
+        throw new Exception("write_param() not implemented for " . get_class($this));
     }
     
     function write_return($type, $owns_return, $info)
     {
-        trigger_error("This is an abstract class", E_USER_ERROR);
+        throw new Exception("write_return() not implemented for " . get_class($this));
     }
 
+    /*
     function write_to_prop($obj, $name, $source)
     {
         trigger_error("This is an abstract class", E_USER_ERROR);
@@ -135,6 +136,7 @@ class Arg_Type {
     {
         trigger_error("This is an abstract class", E_USER_ERROR);
     }
+    */
 }
 
 class None_Arg extends Arg_Type {
@@ -349,14 +351,13 @@ class Double_Arg extends Arg_Type {
 class Enum_Arg extends Arg_Type {
     var $enum_tpl  = null;
     var $enum_name = null;
-    var $type_code = null;
-    var $simple    = null;
+    var $typecode = null;
+    //var $simple    = null;
 
-    function Enum_Arg($enum_name, $simple)
+    function Enum_Arg($enum_name, $typecode)
     {
         $this->enum_name = $enum_name;
-        $this->type_code = enum_name($enum_name);
-        $this->simple    = $simple;
+        $this->typecode = $typecode;
     }
 
     function write_param($type, $name, $default, $null_ok, &$var_list,
@@ -396,12 +397,12 @@ class Enum_Arg extends Arg_Type {
 class Flags_Arg extends Arg_Type {
     var $flag_tpl  = null;
     var $flag_name = null;
-    var $type_code = null;
+    var $typecode = null;
 
-    function Flags_Arg($flag_name)
+    function Flags_Arg($flag_name, $typecode)
     {
         $this->flag_name = $flag_name;
-        $this->type_code = enum_name($flag_name);
+        $this->typecode = $typecode;
         $this->flag_tpl  = "    if (php_%s && !php_gtk_get_flag_value(%s, php_%s, (gint *)&%s)) {\n" .
                            "        %sreturn;\n" .
                            "    }\n\n";
@@ -476,20 +477,22 @@ class Struct_Arg extends Arg_Type {
 
 class Object_Arg extends Arg_Type {
     var $obj_name = null;
-    var $typename = null;
-    var $getter   = null;
-    var $gtk_object_descendant;
+    var $cast     = null;
+    //var $getter   = null;
+    //var $gtk_object_descendant;
 
-    function Object_Arg($obj_name, $gtk_object_descendant)
+    function Object_Arg($obj_name, $typecode)
     {
         $this->obj_name = $obj_name;
-        $this->typename = substr(convert_typename($obj_name), 1);
+        $this->cast = preg_replace('!_TYPE_!', '_', $typecode, 1);
+        /*
         if ($gtk_object_descendant) {
             $this->getter = $this->typename . "(PHP_GTK_GET(%s))";
         } else {
             $this->getter = "PHP_" . $this->typename . "_GET(%s)";
         }
-        $this->gtk_object_descendant = $gtk_object_descendant;
+        */
+        //$this->gtk_object_descendant = $gtk_object_descendant;
     }
 
     function write_param($type, $name, $default, $null_ok, &$var_list,
@@ -727,14 +730,20 @@ class Arg_Matcher {
         $this->arg_types[$type] = $handler;
     }
 
-    function register_enum($type, $simple)
+    function register_enum($type, $typecode = null)
     {
-        $this->arg_types[$type] = new Enum_Arg($type, $simple);
+        if ($typecode === null) {
+            $typecode = 'G_TYPE_NONE';
+        }
+        $this->register($type, new Enum_Arg($type, $typecode));
     }
 
-    function register_flag($type)
+    function register_flag($type, $typecode = null)
     {
-        $this->arg_types[$type] = new Flags_Arg($type);
+        if ($typecode === null) {
+            $typecode = 'G_TYPE_NONE';
+        }
+        $this->register($type, new Flags_Arg($type, $typecode));
     }
 
     function register_struct($type)
@@ -745,11 +754,14 @@ class Arg_Matcher {
         $this->register('const-' . $type . '*', $struct_arg);
     }
 
-    function register_object($type, $gtk_object_descendant)
+    function register_object($type, $typecode)
     {
-        $obj_arg = new Object_Arg($type, $gtk_object_descendant);
+        $obj_arg = new Object_Arg($type, $typecode);
         $this->register($type, $obj_arg);
         $this->register($type . '*', $obj_arg);
+        if ($type == 'GdkPixmap') {
+            $this->register('GdkBitmap', $obj_arg);
+        }
     }
 
     function register_boxed($type, $php_type)
