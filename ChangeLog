@@ -1,3 +1,8 @@
+2002-10-12  Andrei Zmievski  <andrei@php.net>
+
+    * ext/gtk+/php_gtk+_types.c:
+    Added copy_area() method for GdkWindow/GdkPixmap/GdkBitmap classes.
+
 2002-10-10  Andrei Zmievski  <andrei@php.net>
 
     * ext/gtk+/gtk.overrides:
