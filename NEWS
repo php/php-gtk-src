@@ -1,3 +1,6 @@
+    - added support for accessing GtkObject arguments via get_arg() and
+      set_arg() methods. (Andrei)
+
 Version 0.0.4 "indistinguishable from magic": 05-May-2001
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - improved speed/memory efficiency by having only one wrapper for boxed
