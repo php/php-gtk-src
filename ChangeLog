@@ -1,3 +1,30 @@
+2005-03-22  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.c
+      generator/definitions.php
+      generator/generator.php
+      generator/scheme.php
+      generator/templates.php
+      main/php_gtk.h
+      main/phpg_gobject.c
+      main/phpg_support.c:
+      Whew. It all started with because I had to
+      
+      - Implement GtkFileChooserDialog
+      
+      But then I reliazed that it implemented GtkFileChooser interface so I had
+      to:
+      
+      - Put in support for interfaces and access to object's interface
+        implementations.
+      
+      The rest was easy:
+      
+      - Register stock item constants (Gtk::STOCK_OK, etc)
+
 2005-03-20  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides:
