@@ -791,8 +791,11 @@ if (!isset($_SERVER['argv']))
 	");
 
 
-$argc = $_SERVER['argc'];
-$argv = $_SERVER['argv'];
+if (isset($_SERVER['argc']) &&
+	isset($_SERVER['argv'])) {
+	$argc = $_SERVER['argc'];
+	$argv = $_SERVER['argv'];
+}
 
 /* An ugly hack to counteract PHP's pernicious desire to treat + as an argument
    separator in command-line version. */
