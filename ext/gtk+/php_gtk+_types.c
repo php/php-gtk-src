@@ -273,14 +273,17 @@ PHP_FUNCTION(gdk_window_get_pointer)
 
 PHP_FUNCTION(gdk_window_set_cursor)
 {
-	zval *cursor;
+	zval *php_cursor = NULL;
+	GdkCursor *cursor = NULL;
 
 	NOT_STATIC_METHOD();
 
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &cursor, gdk_cursor_ce))
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|O", &php_cursor, gdk_cursor_ce))
 		return;
 
-	gdk_window_set_cursor(PHP_GDK_WINDOW_GET(this_ptr), PHP_GDK_CURSOR_GET(cursor));
+	if (php_cursor)
+		cursor = PHP_GDK_CURSOR_GET(php_cursor);
+	gdk_window_set_cursor(PHP_GDK_WINDOW_GET(this_ptr), cursor);
 	RETURN_NULL();
 }
 
