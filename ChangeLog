@@ -1,3 +1,39 @@
+2003-07-09  Frank M. Kromann  <frank@kromann.info>
+
+    * (ZE2_PORT)
+      ext/scintilla/.cvsignore
+      ext/scintilla/.cvsignore:
+      Ignore output from Visual Studio
+
+    * (ZE2_PORT)
+      ext/scintilla/scintilla.overrides:
+      Fixing wrong function name
+
+    * (ZE2_PORT)
+      ext/scintilla/scintilla.dsp:
+      Adding missing Win32 project file (ported to ZE2)
+
+    * (ZE2_PORT)
+      ext/combobutton/combobutton.dsp
+      ext/combobutton/combobutton.overrides
+      ext/libglade/libglade.dsp
+      ext/scrollpane/scrollpane.dsp
+      ext/spaned/spaned.dsp
+      ext/sqpane/sqpane.dsp:
+      Make the extensions for the ZE2_PORT work on Win32
+
+    * (ZE2_PORT)
+      ext/combobutton/combobutton.overrides
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      ext/gtk+/php_gtk.dsp
+      main/php_gtk.h
+      main/php_gtk_object.c
+      main/php_gtk_util.c:
+      Make the ZE2_PORT work on Win32
+
 2003-06-28  Alan Knowles  <alan@akbkhome.com>
 
     * ext/extra/extra.defs
