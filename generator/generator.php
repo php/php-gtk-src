@@ -906,7 +906,7 @@ class Generator {
         foreach ($this->handlers as $handler) {
             if ($this->overrides->is_handler_overriden($object->c_name, $handler)) {
                 $override = $this->overrides->get_handler_override($object->c_name, $handler);
-                fwrite($this->fp, $override);
+                fwrite($this->fp, $override . "\n\n");
                 $handlers[] = $handler;
             }
         }

@@ -897,7 +897,7 @@ class Arg_Matcher {
 
     function get($type)
     {
-        /* TODO check for GdkEvent */
+        /* TODO check for GdkEvent**? */
         if (isset($this->arg_types[$type])) {
             return $this->arg_types[$type];
         } else {
