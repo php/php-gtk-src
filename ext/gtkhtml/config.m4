@@ -18,9 +18,12 @@ AC_PATH_PROG(GNOME_CONFIG, gnome-config, no)
 AC_MSG_CHECKING(for gnome-config)
 if test "$GNOME_CONFIG" = "no"; then
   AC_MSG_RESULT(no)
-  ifelse([$2], , :, [$2])
+  AC_MSG_ERROR(unable to locate gnome-config)
 else
   HTML_CFLAGS=`$GNOME_CONFIG  --cflags $module_args`
+  if test "x$?" == "x1"; then
+	AC_MSG_ERROR(gnome-config doesn't seem to have support for gtkhtml)
+  fi
   HTML_LIBS=`$GNOME_CONFIG  --libs $module_args`
   
   HTML_HAVE_GCONFTEST=`$GNOME_CONFIG  --cflags $module_args | grep GTKHTML_HAVE_GCONF`
@@ -39,17 +42,13 @@ PHP_GTK_ARG_ENABLE(gtkhtml,for gtkhtml support,
 
 if test "$PHP_GTK_GTKHTML" != "no"; then
   PHP_PATH_GNOME_CONFIG(have_gnomeconfig=yes,have_gnomeconfig=no)
-  if test "$have_gnomeconfig" != "yes"; then
-    AC_MSG_ERROR(Unable to locate gnome-config)
-  else
-    AC_DEFINE(HAVE_HTML,1,[gtkhtml support])
-    PHP_EVAL_INCLINE($HTML_CFLAGS)
-    if test "$HTML_HAVE_GCONFTEST no" != " no"; then
-      AC_DEFINE(GTKHTML_HAVE_GCONF,1,[  ]) 
-    fi   
-    PHP_EVAL_LIBLINE($HTML_LIBS, HTML_SHARED_LIBADD)
-    PHP_SUBST(HTML_SHARED_LIBADD)
+  AC_DEFINE(HAVE_HTML,1,[gtkhtml support])
+  PHP_EVAL_INCLINE($HTML_CFLAGS)
+  if test "$HTML_HAVE_GCONFTEST no" != " no"; then
+    AC_DEFINE(GTKHTML_HAVE_GCONF,1,[  ]) 
+  fi   
+  PHP_EVAL_LIBLINE($HTML_LIBS, HTML_SHARED_LIBADD)
+  PHP_SUBST(HTML_SHARED_LIBADD)
 
-    PHP_GTK_EXTENSION(gtkhtml, $php_gtk_ext_shared)
-  fi
+  PHP_GTK_EXTENSION(gtkhtml, $php_gtk_ext_shared)
 fi
