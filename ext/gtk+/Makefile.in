@@ -9,7 +9,7 @@ include $(top_srcdir)/build/dynlib.mk
 php_gtk+.o php_gtk+.lo php_gtk+.slo: gen_gtk.h
 
 gen_gtk.c: gtk.defs gtk-extrafuncs.defs gtk.overrides
-	php -q $(top_srcdir)/generator/generator.php -o ext/gtk%2b/gtk.overrides -p Gtk ext/gtk%2b/gtk.defs > gen_gtk.c
+	php -q $(top_srcdir)/generator/generator.php -o ext/gtk%2b/gtk.overrides -p Gtk -r $(top_srcdir)/ext/gtk%2b/gdk.defs ext/gtk%2b/gtk.defs > gen_gtk.c
 
 gen_gdk.c: gdk.defs gdk.overrides
 	php -q $(top_srcdir)/generator/generator.php -o ext/gtk%2b/gdk.overrides -p Gdk ext/gtk%2b/gdk.defs > gen_gdk.c

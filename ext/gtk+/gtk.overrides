@@ -2425,23 +2425,3 @@ PHP_FUNCTION(gtk_box_query_child_packing)
 	add_next_index_long(return_value, padding);
 	add_next_index_long(return_value, pack_type);
 }
-%%
-override gtk_widget_draw
-PHP_FUNCTION(gtk_widget_draw)
-{
-	GdkRectangle area;
-
-	NOT_STATIC_METHOD();
-
-	if (ZEND_NUM_ARGS() == 0) {
-		gtk_widget_draw(GTK_WIDGET(PHP_GTK_GET(this_ptr)), NULL);
-	} else {
-		if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "hhhh", &(area.x), &(area.y), &(area.width), &(area.height))) {
-			php_error(E_WARNING, "%s() requires 0 or 4 arguments, %d given",
-					  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
-			return;
-		}
-		gtk_widget_draw(GTK_WIDGET(PHP_GTK_GET(this_ptr)), &area);
-	}	
-	RETURN_NULL();
-}

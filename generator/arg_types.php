@@ -422,20 +422,6 @@ class Object_Arg extends Arg_Type {
 	}
 }
 
-class Rect_Arg extends Arg_Type {
-	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
-	{
-		$var_list->add(substr($type, 0, -1), $name);
-		$parse_list[] 	= "&($name.x)";
-		$parse_list[] 	= "&($name.y)";
-		$parse_list[] 	= "&($name.width)";
-		$parse_list[] 	= "&($name.height)";
-		$arg_list[] 	= "&$name";
-		return 'hhhh';
-	}
-}
-
 class Boxed_Arg extends Arg_Type {
 	var $type		 = null;
 	var $php_type	 = null;
@@ -689,9 +675,6 @@ $matcher->register('double', $arg);
 $matcher->register('gdouble', $arg);
 $matcher->register('float', $arg);
 $matcher->register('gfloat', $arg);
-
-$arg = new Rect_Arg();
-$matcher->register('GdkRectangle*', $arg);
 
 $arg = new Atom_Arg();
 $matcher->register('GdkAtom', $arg);
