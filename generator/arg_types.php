@@ -838,7 +838,6 @@ $matcher->register('gfloat', $arg);
 #$arg = new Drawable_Arg();
 #$matcher->register('GdkDrawable*', $arg);
 #
-#$matcher->register_boxed('GdkEvent', 'gdk_event');
 #$matcher->register_boxed('GdkWindow', 'gdk_window');
 #$matcher->register_boxed('GdkPixmap', 'gdk_pixmap');
 #$matcher->register_boxed('GdkBitmap', 'gdk_bitmap');

@@ -11,13 +11,17 @@ Generator
 Base Functionality
 ~~~~~~~~~~~~~~~~~~
 - Support signals and closures
-* Make errors messages display Class::Method() instead of just method name
+* Make error messages display Class::Method() instead of just method name
 * Custom boxed types
 * Some classes need to be coded in C entirely, see gtk-types.c
 * Interfaces
 * Pointers
 * Implement __gtype, __doc, and other special properties, if possible
 * Look at how Python engine implements getsets
+
+General
+~~~~~~~
+* Find out why PY_TYPE_OBJECT is boxed
 
 [
   * todo

@@ -194,6 +194,28 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value)
             g_value_set_string(gval, Z_STRVAL_P(value));
             break;
 
+        case G_TYPE_BOXED:
+            if (Z_TYPE_P(value) == IS_NULL) {
+                g_value_set_boxed(gval, NULL);
+            } else if (Z_TYPE_P(value) == IS_OBJECT
+                       && instanceof_function(Z_OBJCE_P(value), gboxed_ce)
+                       && G_VALUE_HOLDS(((phpg_gboxed_t*)PHPG_GET(value))->gtype, G_VALUE_TYPE(value))) {
+                g_value_set_boxed(gval, PHPG_GBOXED_GET(value)->boxed);
+            } else
+                return FAILURE;
+            break;
+
+        case G_TYPE_OBJECT:
+            if (Z_TYPE_P(value) == IS_NULL) {
+                g_value_set_object(gval, NULL);
+            } else if (Z_TYPE_P(value) == IS_OBJECT
+                       && instanceof_function(Z_OBJCE_P(value), gobject_ce)
+                       && G_TYPE_CHECK_INSTANCE_TYPE(PHPG_GOBJECT(value), G_VALUE_TYPE(value))) {
+                g_value_set_object(gval, PHPG_GOBJECT(value));
+            } else
+                return FAILURE;
+            break;
+
         default:
             php_error(E_WARNING, "PHP-GTK internal error: unsupported type %s", g_type_name(G_VALUE_TYPE(gval)));
             return FAILURE;
