@@ -94,6 +94,23 @@
       first upload of gtk-canvas widget bindings - mostly working except polygon
       - which needs more brainpower than I have today :)
 
+2003-05-14  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.defs:
+      Accept any drawable here.
+
+2003-05-07  Alan Knowles  <alan@akbkhome.com>
+
+    * (ZE2_PORT)
+      generator/generator.php:
+      generator should use _SERVER now, as it borks the build when using an old
+      php.ini
+
+2003-04-22  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/scintilla/scintilla.defs:
+      adding in bindings for get_wrap_mode and set_wrap_mode by benjamin smith
+
 2003-03-19  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (ZE2_PORT)
