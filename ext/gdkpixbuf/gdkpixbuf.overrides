@@ -115,6 +115,6 @@ PHP_FUNCTION(gdk_pixbuf_new)
         return;
     }
 
-    php_gtk_set_object(this_ptr, wrapped_obj, le_gdk_pixbuf);
+    php_gtk_set_object(this_ptr, wrapped_obj, le_gdk_pixbuf, 1);
 
 }

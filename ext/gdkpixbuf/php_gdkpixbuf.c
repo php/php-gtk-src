@@ -63,7 +63,7 @@ zval *php_gdk_pixbuf_new(GdkPixbuf *pixbuf)
 	object_init_ex(result, gdk_pixbuf_ce);
 
 	gdk_pixbuf_ref(pixbuf);
-	php_gtk_set_object(result, pixbuf, le_gdk_pixbuf);
+	php_gtk_set_object(result, pixbuf, le_gdk_pixbuf, 1);
 
 	return result;
 }
