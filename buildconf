@@ -2,4 +2,21 @@
 # $Id$
 
 rm -f build2/generated_lists
-${MAKE:-make} -s -f build2/build.mk
+
+PHPIZE=phpize
+
+for bc_option
+do
+	bc_optarg=`expr "x$bc_option" : 'x[^=]*=\(.*\)'`
+
+	case $bc_option in
+		--with-phpize=*)
+		if [ "x$bc_optarg" != "x" ]; then
+			rm -f buildmk.stamp
+			PHPIZE=$bc_optarg
+		fi
+		;;
+	esac
+done
+
+PHPIZE=$PHPIZE ${MAKE:-make} -s -f build2/build.mk
