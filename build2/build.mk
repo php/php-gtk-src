@@ -8,7 +8,7 @@ STAMP = buildmk.stamp
 
 ALWAYS = build2/generated_lists
 
-all: $(STAMP) $(ALWAYS)
+all: $(ALWAYS) $(STAMP)
 	@$(MAKE) -s -f build2/build2.mk
 
 build2/generated_lists:
