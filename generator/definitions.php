@@ -84,6 +84,7 @@ class Object_Def extends Definition {
     var $typecode   = null;
     var $implements = array();
     var $ce_flags   = array();
+    var $has_methods = false;
 
     function Object_Def($args)
     {
@@ -235,6 +236,8 @@ class Boxed_Def extends Definition {
     var $release    = null;
     var $fields     = array();
     var $typecode   = null;
+    var $has_methods = false;
+    var $ce_flags   = array();
 
     function Boxed_Def($args)
     {

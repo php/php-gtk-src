@@ -26,8 +26,8 @@
  * GObject API and helper functions
  */
 
-static const gchar *gobject_class_id   = "phpg_class";
-static GQuark       gobject_class_key  = 0;
+static const gchar *phpg_class_id   = "phpg_class";
+static GQuark       phpg_class_key  = 0;
 static const gchar *gobject_wrapper_id   = "phpg_wrapper";
 static GQuark       gobject_wrapper_key  = 0;
 
@@ -78,7 +78,7 @@ static zend_class_entry* phpg_class_from_gtype(GType gtype)
 	zend_class_entry *ce = NULL;
 
 	while (gtype != G_TYPE_INVALID
-		   && (ce = g_type_get_qdata(gtype, gobject_class_key)) == NULL) {
+		   && (ce = g_type_get_qdata(gtype, phpg_class_key)) == NULL) {
 		gtype = g_type_parent(gtype);
 	}
 	
@@ -268,8 +268,8 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 	HashTable pi_hash;
 	prop_info_t *pi;
 
-	if (!gobject_class_key) {
-		gobject_class_key = g_quark_from_static_string(gobject_class_id);
+	if (!phpg_class_key) {
+		phpg_class_key = g_quark_from_static_string(phpg_class_id);
 	}
 
 	memset(&ce, 0, sizeof(ce));
@@ -319,7 +319,7 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
          * objects and exits badly. */
         zval *g = phpg_gtype_new(gtype);
         zend_hash_update(real_ce->static_members, "__gtype", sizeof("__gtype"), &g, sizeof(zval *), NULL);
-        g_type_set_qdata(gtype, gobject_class_key, real_ce);
+        g_type_set_qdata(gtype, phpg_class_key, real_ce);
     }
 
 	return real_ce;
@@ -416,12 +416,11 @@ PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC)
 /* }}} */
 
 /* {{{ PHP_GTK_API phpg_gobject_new() */
-PHP_GTK_API void phpg_gobject_new(GObject *obj, zval **zobj TSRMLS_DC)
+PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC)
 {
 	zend_class_entry *ce = NULL;
 	phpg_gobject_t *pobj = NULL;
     zend_object_handle handle;
-	TSRMLS_FETCH();
 
 	if (!gobject_wrapper_key) {
 		gobject_wrapper_key = g_quark_from_static_string(gobject_wrapper_id);

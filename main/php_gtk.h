@@ -50,6 +50,13 @@
 
 #include "php_gtk_module.h"
 
+#define PANGO_ENABLE_BACKEND
+#define PANGO_ENABLE_ENGINE
+#include <glib.h>
+#include <glib-object.h>
+#include <gtk/gtk.h>
+
+
 #define PHP_GTK_EXPORT_CE(ce) zend_class_entry *ce
 #define PHP_GTK_EXPORT_FUNC(func) func
 #define PHP_GTK_GET_GENERIC(w, type, le) ((type)php_gtk_get_object(w))
@@ -81,6 +88,14 @@ typedef struct {
 	void *obj;
 	phpg_dtor_t dtor;
 } phpg_gobject_t;
+
+typedef struct {
+	PHPG_OBJ_HEADER
+	GType gtype;
+	gpointer boxed;
+	gboolean free_on_destroy;
+} phpg_gboxed_t;
+
 
 #define PHPG_GET_GOBJECT(zobj, type) \
 	(type)(((phpg_gobject_t*)zend_object_store_get_object((zobj) TSRMLS_CC))->obj)
@@ -124,12 +139,6 @@ struct _php_gtk_ext_entry {
     ZEND_DLEXPORT php_gtk_ext_entry *get_extension(void) { return &name##_ext_entry; }
 
 /* REM #include "ext/gtk+/php_gtk+.h" */
-#define PANGO_ENABLE_BACKEND
-#define PANGO_ENABLE_ENGINE
-#include <glib.h>
-#include <glib-object.h>
-#include <gtk/gtk.h>
-
 /*
  * True globals.
  * */
@@ -142,6 +151,10 @@ extern HashTable php_gtk_type_hash;
 extern HashTable php_gtk_callback_hash;
 extern HashTable php_gtk_prop_desc;
 extern HashTable phpg_prop_info;
+
+/* IDs for type identification */
+extern const gchar *phpg_class_id;
+extern GQuark phpg_class_key;
 
 /* Exceptions */
 extern PHP_GTK_API zend_class_entry *phpg_generic_exception;
@@ -261,12 +274,19 @@ PHP_GTK_API int phpg_gvalue_get_enum(GType enum_type, zval *enum_val, gint *resu
 PHP_GTK_API int phpg_gvalue_get_flags(GType flags_type, zval *flags_val, gint *result);
 
 /* GObject */
-PHP_GTK_API void phpg_gobject_new(GObject *obj, zval **zobj TSRMLS_DC);
+PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC);
 PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC);
 void phpg_gobject_register_self();
 
+/* GBoxed */
+void phpg_gboxed_register_self();
+PHP_GTK_API void phpg_gboxed_new(zval **zobj, GType gtype, gpointer boxed, gboolean copy, gboolean own_ref TSRMLS_DC);
+PHP_GTK_API zend_class_entry* phpg_register_boxed(const char *class_name, function_entry *class_methods, prop_info_t *prop_info, GType gtype TSRMLS_DC);
+PHP_GTK_API gpointer phpg_gboxed_get(zval *zobj, GType gtype TSRMLS_DC);
+
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtype_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gobject_ce);
+PHP_GTK_API extern PHP_GTK_EXPORT_CE(gboxed_ce);
 
 PHP_GTK_API ZEND_EXTERN_MODULE_GLOBALS(gtk);
 

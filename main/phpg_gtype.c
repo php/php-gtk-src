@@ -29,7 +29,7 @@
 typedef struct {
 	PHPG_OBJ_HEADER
 	GType type;
-} php_gtype_t;
+} phpg_gtype_t;
 
 static PHP_METHOD(GType, __construct);
 static int gtype_type_read(void *object, zval *return_value);
@@ -47,7 +47,7 @@ static prop_info_t gtype_props_info[] = {
 
 PHP_GTK_EXPORT_CE(gtype_ce) = NULL;
 
-static void gtype_free_object_storage(php_gtype_t *object TSRMLS_DC)
+static void gtype_free_object_storage(phpg_gtype_t *object TSRMLS_DC)
 {
 	zend_hash_destroy(object->zobj.properties);
 	FREE_HASHTABLE(object->zobj.properties);
@@ -57,9 +57,9 @@ static void gtype_free_object_storage(php_gtype_t *object TSRMLS_DC)
 static zend_object_value gtype_create_object(zend_class_entry *ce TSRMLS_DC)
 {
 	zend_object_value zov;
-	php_gtype_t *object;
+	phpg_gtype_t *object;
 
-	object = emalloc(sizeof(php_gtype_t));
+	object = emalloc(sizeof(phpg_gtype_t));
 	phpg_init_object(object, ce);
 
 	object->type = 0;
@@ -74,7 +74,7 @@ static PHP_METHOD(GType, __construct) {}
 
 static int gtype_type_read(void *object, zval *return_value)
 {
-	ZVAL_LONG(return_value, ((php_gtype_t *)object)->type);
+	ZVAL_LONG(return_value, ((phpg_gtype_t *)object)->type);
 	return SUCCESS;
 }
 
@@ -84,7 +84,7 @@ static int gtype_type_read(void *object, zval *return_value)
 PHP_GTK_API zval* phpg_gtype_new(GType type)
 {
 	zval *wrapper;
-	php_gtype_t *object;
+	phpg_gtype_t *object;
 	TSRMLS_FETCH();
 
 	MAKE_STD_ZVAL(wrapper);
@@ -132,7 +132,7 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 
 		case IS_OBJECT:
 			if (Z_OBJCE_P(value) == gtype_ce) {
-				php_gtype_t *object = zend_object_store_get_object(value TSRMLS_CC);
+				phpg_gtype_t *object = zend_object_store_get_object(value TSRMLS_CC);
 				if (object) {
 					return object->type;
 				}
@@ -142,7 +142,7 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 					&& Z_TYPE_PP(gtype) == IS_OBJECT
 					&& Z_OBJCE_PP(gtype) == gtype_ce) {
 
-					php_gtype_t *object = zend_object_store_get_object(*gtype TSRMLS_CC);
+					phpg_gtype_t *object = zend_object_store_get_object(*gtype TSRMLS_CC);
 					if (object) {
 						return object->type;
 					}

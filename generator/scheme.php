@@ -104,7 +104,7 @@ class Defs_Parser {
     var $methods        = array();  // object methods
     var $enums          = array();  // enums and flags
     var $interfaces     = array();  // interfaces
-    var $boxes          = array();  // boxed types
+    var $boxed          = array();  // boxed types
     var $c_name         = array();  // C names of entities
 
     function Defs_Parser($arg)
@@ -261,7 +261,7 @@ class Defs_Parser {
     function handle_define_boxed($arg)
     {
         $boxed_def          = new Boxed_Def($arg);
-        $this->boxes[]      = &$boxed_def;
+        $this->boxed[]      = &$boxed_def;
         $this->c_name[]     = &$boxed_def->c_name;
     }
 
@@ -324,7 +324,7 @@ class Defs_Parser {
 #var_dump($d->methods);
 #var_dump($d->objects);
 #var_dump($d->enums);
-#var_dump($d->boxes);
+#var_dump($d->boxed);
 #var_dump($d->interfaces);
 
 /* vim: set et sts=4: */

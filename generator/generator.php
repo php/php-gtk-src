@@ -50,6 +50,13 @@ class Generator {
     var $is_gtk_object      = array('GtkObject' => true);
 
     var $constants          = '';
+    var $template_map       = array('Object_Def' => array('constructor' => Templates::constructor_body,
+                                                          'static_constructor' => Templates::static_constructor_body,
+                                                          'method' => Templates::method_body),
+                                    'Boxed_Def'  => array('constructor' => Templates::boxed_constructor_body,
+                                                          'static_constructor' => Templates::boxed_static_constructor_body,
+                                                          'method' => Templates::boxed_method_body),
+                                   );
 
     function Generator(&$parser, &$overrides, $prefix, $function_class)
     {
@@ -90,6 +97,10 @@ class Generator {
                 $matcher->register_flag($enum->c_name, $enum->typecode);
             else
                 $matcher->register_enum($enum->c_name, $enum->typecode);
+        }
+
+        foreach ($parser->boxed as $boxed) {
+            $matcher->register_boxed($boxed->c_name, $boxed->typecode);
         }
     }
 
@@ -544,6 +555,7 @@ class Generator {
         $dict['class'] = $object->c_name;
         $dict['scope'] = $object->c_name;
         $dict['cast'] = preg_replace('!_TYPE_!', '_', $object->typecode, 1);
+        $dict['typecode'] = $object->typecode;
 
         foreach ($methods as $method) {
             $method_name = $method->c_name;
@@ -565,7 +577,8 @@ class Generator {
                         $code = $this->write_callable($method, Templates::function_body, true, false, $dict);
                         $flags = 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC';
                     } else {
-                        $code = $this->write_callable($method, Templates::method_body, true, true, $dict);
+                        $template = $this->template_map[get_class($object)]['method'];
+                        $code = $this->write_callable($method, $template, true, true, $dict);
                         $flags = 'ZEND_ACC_PUBLIC';
                     }
                     fwrite($this->fp, $code);
@@ -591,6 +604,7 @@ class Generator {
             fprintf(STDERR, "Writing constructors for $object->c_name...\n");
 
             $dict['class'] = $object->c_name;
+            $dict['typecode'] = $object->typecode;;
             $first = 1;
 
             foreach ($ctors as $ctor) {
@@ -598,14 +612,16 @@ class Generator {
                 if ($first) {
                     $ctor_fe_name = '__construct';
                     $flags = 'ZEND_ACC_PUBLIC';
-                    $template = Templates::constructor_body;
+                    $template_name = 'constructor';
                 } else {
                     // remove class name from the constructor name, i.e. turn
                     // gtk_button_new_with_mnemonic into new_with_mnemonic
                     $ctor_fe_name = substr($ctor_name, strlen(convert_typename($ctor->is_constructor_of)));
                     $flags = 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC';
-                    $template = Templates::static_constructor_body;
+                    $template_name = 'static_constructor';
                 }
+
+                $template = $this->template_map[get_class($object)][$template_name];
 
                 try {
                     if ($this->overrides->is_overriden($ctor_name)) {
@@ -756,44 +772,60 @@ class Generator {
         if ($this->parser->functions) {
             $func_defs = $this->write_functions();
 
-            $register_classes .= sprintf(Templates::register_class,
-                                         $this->lprefix . '_ce',
-                                         $this->lprefix,
-                                         $func_defs ? $this->lprefix . '_methods' : 'NULL',
-                                         'NULL', 0, 0);
+            $register_classes .= aprintf(Templates::register_class,
+                                         array('ce' => $this->lprefix . '_ce',
+                                               'class' => $this->lprefix,
+                                               'methods' => $func_defs ? $this->lprefix . '_methods' : 'NULL',
+                                               'parent' => 'NULL',
+                                               'ce_flags' => 0,
+                                               'propinfo' => 'NULL',
+                                               'typecode' => 0));
         }
 
-        /* Objects */
+        /* GObject's */
         foreach ($this->parser->objects as $object) {
-            $object_module = strtolower($object->in_module);
-            $object_lname = strtolower($object->name);
-
-            $ctor_defs = $this->write_constructor($object);
-            $method_defs = $this->write_methods($object);
-            sort($method_defs);
-            if ($ctor_defs) {
-                $method_defs = array_merge($ctor_defs, $method_defs);
-            }
-
-            if ($method_defs) {
-                fwrite($this->fp, sprintf(Templates::functions_decl, strtolower($object->c_name)));
-                fwrite($this->fp, join('', $method_defs));
-                fwrite($this->fp, Templates::functions_decl_end);
-            }
-
-            $register_classes .= sprintf(Templates::register_class,
-                                         $object->ce,
-                                         $object->in_module . $object->name,
-                                         $method_defs ? strtolower($object->c_name) . '_methods' : 'NULL',
-                                         $object->parent ? strtolower($object->parent) . '_ce' : 'NULL',
-                                         $object->ce_flags ? implode('|', $object->ce_flags) : 0,
-                                         $object->typecode);
+            $reg_info = $this->write_class($object);
+            $register_classes .= aprintf(Templates::register_class, $reg_info);
         }
+
+        /* GBoxed */
+        foreach ($this->parser->boxed as $object) {
+            $reg_info = $this->write_class($object, 'GBoxed');
+            $register_classes .= aprintf(Templates::register_boxed, $reg_info);
+        }
+
         $register_classes .= "\n" . implode("\n", $this->overrides->get_register_classes());
 
         fwrite($this->fp, sprintf(Templates::register_classes,
                                   $this->lprefix,
                                   $register_classes));
+    }
+    
+    function write_class($object)
+    {
+        $object_module = strtolower($object->in_module);
+        $object_lname = strtolower($object->name);
+
+        $ctor_defs = $this->write_constructor($object);
+        $method_defs = $this->write_methods($object);
+        sort($method_defs);
+        if ($ctor_defs) {
+            $method_defs = array_merge($ctor_defs, $method_defs);
+        }
+
+        if ($method_defs) {
+            fwrite($this->fp, sprintf(Templates::functions_decl, strtolower($object->c_name)));
+            fwrite($this->fp, join('', $method_defs));
+            fwrite($this->fp, Templates::functions_decl_end);
+        }
+
+        return array('ce' => $object->ce,
+                     'class' => $object->in_module . $object->name,
+                     'methods' => $method_defs ? strtolower($object->c_name) . '_methods' : 'NULL',
+                     'parent' => (get_class($object) == 'Object_Def' && $object->parent) ? strtolower($object->parent) . '_ce' : 'NULL',
+                     'ce_flags' => $object->ce_flags ? implode('|', $object->ce_flags) : 0,
+                     'typecode' => $object->typecode,
+                     'propinfo' => 'NULL');
     }
 
     function write_enums()
@@ -949,6 +981,9 @@ class Generator {
          */
         fwrite($this->fp, "\n");
         foreach ($this->parser->objects as $object) {
+            fwrite($this->fp, sprintf(Templates::class_entry, $object->ce));
+        }
+        foreach ($this->parser->boxed as $object) {
             fwrite($this->fp, sprintf(Templates::class_entry, $object->ce));
         }
         foreach ($this->overrides->get_register_classes() as $ce => $rest)

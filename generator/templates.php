@@ -25,7 +25,7 @@ class Templates {
 const function_call = "%s(%s)";
 
 const function_body = "
-PHP_METHOD(%(scope), %(name))
+static PHP_METHOD(%(scope), %(name))
 {
 %(var_list)\tif (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list)))
 		return;
@@ -35,7 +35,7 @@ PHP_METHOD(%(scope), %(name))
 }\n\n";
 
 const method_body = "
-PHP_METHOD(%(class), %(name))
+static PHP_METHOD(%(class), %(name))
 {
 %(var_list)\tNOT_STATIC_METHOD();
 
@@ -47,7 +47,7 @@ PHP_METHOD(%(class), %(name))
 }\n\n";
 
 const constructor_body = "
-PHP_METHOD(%(class), %(name))
+static PHP_METHOD(%(class), %(name))
 {
 %(var_list)\tGObject *wrapped_obj;
 
@@ -64,7 +64,7 @@ PHP_METHOD(%(class), %(name))
 }\n\n";
 
 const static_constructor_body = "
-PHP_METHOD(%(class), %(name))
+static PHP_METHOD(%(class), %(name))
 {
 %(var_list)\tGObject *wrapped_obj;
 
@@ -77,7 +77,55 @@ PHP_METHOD(%(class), %(name))
 	if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
 	}
-    phpg_gobject_new(wrapped_obj, &return_value TSRMLS_CC);
+    phpg_gobject_new(&return_value, wrapped_obj TSRMLS_CC);
+}\n\n";
+
+const boxed_constructor_body = "
+static PHP_METHOD(%(class), %(name))
+{
+%(var_list)\tphpg_gboxed_t *pobj = NULL;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
+	}
+%(pre_code)
+    pobj = zend_object_store_get_object(this_ptr TSRMLS_CC);
+    pobj->gtype = %(typecode);
+    pobj->boxed = %(cname)(%(arg_list));
+%(post_code)
+	if (!pobj->boxed) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
+	}
+    pobj->free_on_destroy = TRUE;
+}\n\n";
+
+const boxed_static_constructor_body = "
+static PHP_METHOD(%(class), %(name))
+{
+%(var_list)\t%(class) *wrapped_obj = NULL;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
+	}
+%(pre_code)
+    wrapped_obj = %(cname)(%(arg_list));
+%(post_code)
+	if (!wrapped_obj) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
+	}
+    phpg_gboxed_new(&return_value, %(typecode), wrapped_obj, FALSE, TRUE TSRMLS_CC);
+}\n\n";
+
+const boxed_method_body = "
+static PHP_METHOD(%(class), %(name))
+{
+%(var_list)\tNOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list)))
+		return;
+%(pre_code)
+    %(return)%(cname)(phpg_gboxed_get(this_ptr, %(typecode))%(arg_list));
+%(post_code)
 }\n\n";
 
 const deprecation_msg = "\n\tphpg_warn_deprecated(%s TSRMLS_CC);\n";
@@ -132,11 +180,13 @@ const register_classes = "
 void phpg_%s_register_classes(void)
 {
 	TSRMLS_FETCH();
-%s
-}\n";
+%s}\n";
 
 const register_class = "
-	%s = phpg_register_class(\"%s\", %s, %s, %s, NULL, NULL, %s TSRMLS_CC);\n";
+	%(ce) = phpg_register_class(\"%(class)\", %(methods), %(parent), %(ce_flags), %(propinfo), NULL, %(typecode) TSRMLS_CC);\n";
+
+const register_boxed = "
+    %(ce) = phpg_register_boxed(\"%(class)\", %(methods), %(propinfo), %(typecode) TSRMLS_CC);\n";
 
 const class_entry = "PHP_GTK_EXPORT_CE(%s);\n";
 

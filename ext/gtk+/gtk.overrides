@@ -178,7 +178,7 @@ ignore
 %% {{{ GtkButton
 %%
 override gtk_button_new
-PHP_METHOD(GtkButton, __construct)
+static PHP_METHOD(GtkButton, __construct)
 {
 	GObject *wrapped_obj;
 	gchar *text = NULL;
@@ -205,7 +205,7 @@ PHP_METHOD(GtkButton, __construct)
 }
 %%
 override gtk_button_new_from_stock new_from_stock ZEND_ACC_PUBLIC|ZEND_ACC_STATIC
-PHP_METHOD(GtkButton, new_from_stock)
+static PHP_METHOD(GtkButton, new_from_stock)
 {
 	GObject *wrapped_obj;
 	gchar *stock = NULL;
@@ -221,14 +221,14 @@ PHP_METHOD(GtkButton, new_from_stock)
 		PHPG_THROW_EXCEPTION(phpg_construct_exception, "could not construct GtkButton object");
 	}
 
-    phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+    phpg_gobject_new(&return_value, wrapped_obj TSRMLS_CC);
 }
 %% }}}
 
 %% {{{ GtkLabel
 %%
 override gtk_label_new
-PHP_METHOD(GtkLabel, __construct)
+static PHP_METHOD(GtkLabel, __construct)
 {
 	GObject *wrapped_obj;
 	gchar *text = NULL;
@@ -256,7 +256,7 @@ PHP_METHOD(GtkLabel, __construct)
 
 %%
 override gtk_label_get
-PHP_METHOD(GtkLabel, get)
+static PHP_METHOD(GtkLabel, get)
 {
 	gchar *text = NULL;
 
@@ -274,7 +274,7 @@ PHP_METHOD(GtkLabel, get)
 }
 %%
 override gtk_label_get_selection_bounds
-PHP_METHOD(GtkLabel, get_selection_bounds)
+static PHP_METHOD(GtkLabel, get_selection_bounds)
 {
 	gint start, end;
 
@@ -288,7 +288,7 @@ PHP_METHOD(GtkLabel, get_selection_bounds)
 }
 %%
 override gtk_label_get_layout_offsets
-PHP_METHOD(GtkLabel, get_layout_offsets)
+static PHP_METHOD(GtkLabel, get_layout_offsets)
 {
 	gint x, y;
 

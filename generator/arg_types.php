@@ -534,81 +534,89 @@ class Object_Arg extends Arg_Type {
 
         $info->var_list->add($type, 'php_retval');
         if ($owns_return) {
-            $info->post_code[] = "    phpg_gobject_new((GObject *)php_retval, &return_value);\n" .
+            $info->post_code[] = "    phpg_gobject_new(&return_value, (GObject *)php_retval TSRMLS_CC);\n" .
                                  "    if (php_retval != NULL) {\n" .
                                  "        g_object_unref(php_retval);\n" .
                                  "    }";
         } else {
-            $info->post_code[] = "    phpg_gobject_new((GObject *)php_retval, &return_value);";
+            $info->post_code[] = "    phpg_gobject_new(&return_value, (GObject *)php_retval TSRMLS_CC);";
         }
     }
 }
 
 class Boxed_Arg extends Arg_Type {
-    var $type        = null;
-    var $php_type    = null;
+    var $boxed_type  = null;
+    var $typecode    = null;
 
-    function Boxed_Arg($type, $php_type)
+    function Boxed_Arg($boxed_type, $typecode)
     {
-        $this->type         = $type;
-        $this->php_type     = $php_type;
+        $this->boxed_type   = $boxed_type;
+        $this->typecode     = $typecode;
     }
 
-    function write_param($type, $name, $default, $null_ok, &$var_list,
-                         &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
+    function write_param($type, $name, $default, $null_ok, $info)
     {
         if ($null_ok) {
             if (isset($default)) {
-                $var_list->add($this->type, '*' . $name . ' = ' . $default);
-                $var_list->add('zval', '*php_' . $name . ' = NULL');
-                $extra_pre_code[]   =   "   if (php_$name) {\n" .
-                                    "       if (Z_TYPE_P(php_$name) == IS_NULL)\n" .
-                                    "           $name = NULL;\n" .
-                                    "       else\n" .
-                                    "           $name = PHP_" . strtoupper($this->php_type). "_GET(php_" . $name . ");\n" .
-                                    "   }\n";
+                $info->var_list->add($this->boxed_type, '*' . $name . ' = ' . $default);
+                $info->var_list->add('zval', '*php_' . $name . ' = NULL');
+                $info->pre_code[] = "    if (php_$name) {\n" .
+                                    "        if (Z_TYPE_P(php_$name) == IS_NULL)\n" .
+                                    "            $name = NULL;\n" .
+                                    "        else {\n" .
+                                    "            $name = (" . $this->boxed_type ." *) phpg_gboxed_get(php_" . $name . ", " . $this->typecode. ");\n" .
+                                    "            if (!$name) { php_error(E_WARNING, \"%s() expects $name to be a valid $this->boxed_type object\", get_active_function_name()); return; }\n" .
+                                    "        }\n" .
+                                    "    }\n";
             } else {
-                $var_list->add($this->type, '*' . $name . ' = NULL');
-                $var_list->add('zval', '*php_' . $name);
-                $extra_pre_code[]   =   "   if (Z_TYPE_P(php_$name) != IS_NULL)\n" .
-                                    "       $name = PHP_" . strtoupper($this->php_type). "_GET(php_" . $name . ");\n";
+                $info->var_list->add($this->boxed_type, '*' . $name . ' = NULL');
+                $info->var_list->add('zval', '*php_' . $name);
+                $info->pre_code[] = "    if (Z_TYPE_P(php_$name) != IS_NULL) {\n" .
+                                    "        $name = (" . $this->boxed_type ." *) phpg_gboxed_get(php_" . $name . ", " . $this->typecode. ");\n" .
+                                    "        if (!$name) { php_error(E_WARNING, \"%s() expects $name to be a valid $this->boxed_type object\", get_active_function_name()); return; }\n" .
+                                    "    }\n";
             }
 
-            $parse_list[]   = '&php_' . $name;
-            $parse_list[]   = $this->php_type . '_ce';
-            $arg_list[]     = $name;
-
-            return 'N';
+            $info->add_parse_list('N', '&php_' . $name . ', gboxed_ce');
+            $typename = preg_replace('!^(const-)?([^*]+)(\*)?$!', '$2', $type);
+            if ($typename != $this->boxed_type) {
+                $info->arg_list[] = '(' . substr($type, 0, -1) . ' *)' . $name;
+            } else {
+                $info->arg_list[] = $name;
+            }
         } else {
             if (isset($default)) {
-                $var_list->add($this->type, '*' . $name . ' = ' . $default);
-                $var_list->add('zval', '*php_' . $name . ' = NULL');
-
-                $parse_list[]   = '&php_' . $name;
-                $parse_list[]   = $this->php_type . '_ce';
-                $arg_list[]     = $name;
-                $extra_pre_code[]   =   "   if (php_$name)\n" .
-                                    "       $name = PHP_" .  strtoupper($this->php_type) . "_GET(" . $name . ");\n";
+                $info->var_list->add($this->boxed_type, '*' . $name . ' = ' . $default);
+                $info->var_list->add('zval', '*php_' . $name . ' = NULL');
+                $info->pre_code[] = "    if (php_$name) {\n" .
+                                    "        $name = (" . $this->boxed_type ." *) phpg_gboxed_get(php_" . $name . ", " . $this->typecode. ");\n" .
+                                    "        if (!$name) { php_error(E_WARNING, \"%s() expects $name to be a valid $this->boxed_type object\", get_active_function_name()); return; }\n" .
+                                    "    }\n";
             } else {
-                $var_list->add('zval', '*' . $name);
-                $parse_list[]   = '&' . $name;
-                $parse_list[]   = $this->php_type . '_ce';
-                $arg_list[]     = 'PHP_' . strtoupper($this->php_type) . '_GET(' . $name . ')';
+                $info->var_list->add($this->boxed_type, '*' . $name . ' = NULL');
+                $info->var_list->add('zval', '*php_' . $name);
+                $info->pre_code[] = "    $name = (" . $this->boxed_type ." *) phpg_gboxed_get(php_" . $name . ", " . $this->typecode. ");\n" .
+                                    "    if (!$name) { php_error(E_WARNING, \"%s() expects $name to be a valid $this->boxed_type object\", get_active_function_name()); return; }\n";
             }
 
-            return 'O';
+            $info->add_parse_list('O', '&php_' . $name . ', gboxed_ce');
+            $info->arg_list[] = $name;
         }
     }
 
-    function write_return($type, &$var_list, $separate)
+    function write_return($type, $owns_return, $info)
     {
-        if ($separate) {
-            return  "   PHP_GTK_SEPARATE_RETURN(return_value, php_" . $this->php_type . "_new(%s));\n" .
-                    "%s return;";
+        if (substr($type, -1) == '*') {
+            $info->var_list->add($this->boxed_type, '*php_retval');
+            $ret = 'php_retval';
         } else {
-            return  "   *return_value = *php_" . $this->php_type . "_new(%s);\n" .
-                    "%s return;";
+            $info->var_list->add($this->boxed_type, 'php_retval');
+            $ret = '&php_retval';
+            $owns_return = false;
         }
+
+        $info->post_code[] = sprintf("    phpg_gboxed_new(&return_value, %s, %s, %s, TRUE);\n",
+                                     $this->typecode, $ret, $owns_return ?  'FALSE' : 'TRUE');
     }
 }
 
@@ -751,16 +759,18 @@ class Arg_Matcher {
         }
     }
 
-    function register_boxed($type, $php_type)
+    function register_boxed($type, $typecode)
     {
-        $handler = new Boxed_Arg($type, $php_type);
-        $this->register($type . '*', $handler);
-        $this->register('const-' . $type . '*', $handler);
+        if (isset($this->arg_types[$type])) return;
+        $boxed_arg = new Boxed_Arg($type, $typecode);
+        $this->register($type, $boxed_arg);
+        $this->register($type . '*', $boxed_arg);
+        $this->register('const-' . $type . '*', $boxed_arg);
     }
 
     function get($type)
     {
-        /* TODO check for GdEvent */
+        /* TODO check for GdkEvent */
         if (isset($this->arg_types[$type])) {
             return $this->arg_types[$type];
         } else {
@@ -818,6 +828,10 @@ $matcher->register('double', $arg);
 $matcher->register('gdouble', $arg);
 $matcher->register('float', $arg);
 $matcher->register('gfloat', $arg);
+
+/* TODO
+ * GdkRectangle(Ptr) args and others
+ */
 
 #$arg = new Atom_Arg();
 #$matcher->register('GdkAtom', $arg);

@@ -1,11 +1,14 @@
 Generator
 ~~~~~~~~~
 * Support boxed types
-  - Custom boxed types too
 * Expose GTK properties
 * Implement '#line' pragma directives for debugging
+* Support for some custom arg types like GdkRectangle*
 
 Base Functionality
 ~~~~~~~~~~~~~~~~~~
 * Support signals and closures
 * Make errors messages display Class::Method() instead of just method name
+* Custom boxed types
+* Some classes need to be coded in C entirely, see gtk-types.c
+
