@@ -98,9 +98,14 @@ function create_labels()
 		$window->connect('delete-event', 'delete_event');
 		$window->set_title('GtkLabel');
 
+		$box = &new GtkVBox(false, 10);
+		$box->set_border_width(10);
+		$window->add($box);
+		$box->show();
+
 		$vbox = &new GtkVBox(false, 5);
 		$hbox = &new GtkHBox(false, 5);
-		$window->add($hbox);
+		$box->pack_start($hbox, false);
 		$hbox->show();
 		$hbox->pack_start($vbox, false, false);
 		$vbox->show();
@@ -178,6 +183,17 @@ function create_labels()
 		$label->show();
 		$vbox->pack_start($frame, false, false);
 		$frame->show();
+
+		$separator = &new GtkHSeparator();
+		$box->pack_start($separator, false);
+		$separator->show();
+
+		$button = &new GtkButton('close');
+		$button->connect('clicked', 'close_window');
+		$box->pack_start($button);
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$button->grab_default();
+		$button->show();
 	}
 	$windows['labels']->show();
 }
@@ -257,8 +273,133 @@ function create_button_box()
 		$hbox->pack_start(create_bbox(false, 'Edge', 30, 85, 20, GTK_BUTTONBOX_EDGE), true, true, 5);
 		$hbox->pack_start(create_bbox(false, 'Start', 30, 85, 20, GTK_BUTTONBOX_START), true, true, 5);
 		$hbox->pack_start(create_bbox(false, 'End', 30, 85, 20, GTK_BUTTONBOX_END), true, true, 5);
+
+		$separator = &new GtkHSeparator();
+		$main_vbox->pack_start($separator, false);
+		$separator->show();
+
+		$button = &new GtkButton('close');
+		$button->connect('clicked', 'close_window');
+		$main_vbox->pack_start($button);
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$button->grab_default();
+		$button->show();
 	}
 	$windows['button_box']->show();
+}
+
+
+function tips_query_widget_entered($tips_query, $widget, $tip_text,
+								   $tip_private, $toggle)
+{
+	if ($toggle->get_active()) {
+		$tips_query->set_text($tip_text ? 'There is a Tip!' : 'There is no Tip!');
+      /* don't let GtkTipsQuery reset its label */
+		$tips_query->emit_stop_by_name('widget_entered');
+	}
+}
+
+
+function tips_query_widget_selected($tips_query, $widget, $tip_text,
+									$tip_private, $event)
+{
+	if ($widget) {
+		print 'Help "';
+		print $tip_private ? $tip_private : 'None';
+		print '" requested for <';
+		print get_class($widget);
+		print ">\n";
+	}
+
+	return true;
+}
+
+
+function create_tooltips()
+{
+	global	$windows;
+
+	if (!isset($windows['tooltips'])) {
+		$window = &new GtkWindow;
+		$windows['tooltips'] = $window;
+		$window->connect('delete-event', 'delete_event');
+		$window->set_title('Tooltips');
+		$window->set_border_width(0);
+		$window->set_policy(true, false, true);
+		$window->set_usize(200, -2);
+
+		$tooltips = &new GtkTooltips();
+
+		$box1 = &new GtkVBox();
+		$window->add($box1);
+		$box1->show();
+
+		$box2 = &new GtkVBox(false, 10);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2);
+		$box2->show();
+
+		$button = &new GtkToggleButton('button1');
+		$box2->pack_start($button);
+		$button->show();
+		$tooltips->set_tip($button, 'This is button 1', 'ContextHelp/buttons/1');
+
+		$button = &new GtkToggleButton('button2');
+		$box2->pack_start($button);
+		$button->show();
+		$tooltips->set_tip($button, "This is button 2.  This is also a really long tooltip which probably won't fit on a single line and will therefore need to be wrapped.  Hopefully the wrapping will work correctly.", 'ContextHelp/buttons/2_long');
+
+		$toggle = &new GtkToggleButton('Override TipsQuery Label');
+		$box2->pack_start($toggle);
+		$toggle->show();
+		$tooltips->set_tip($toggle, 'Toggle TipsQuery view.', 'Hi all!');
+
+		$box3 = &new GtkVBox(false, 5);
+		$box3->set_border_width(5);
+		$box3->show();
+
+		$tips_query = &new GtkTipsQuery();
+		$tips_query->show();
+
+		$button = &new GtkButton('[?]');
+		$box3->pack_start($button, false, false, 0);
+		$button->show();
+		$button->connect_object('clicked', 'start_query', $tips_query);
+		$tooltips->set_tip($button, 'Start the Tooltips Inspector', 'ContextHelp/buttons/?');
+
+		$box3->pack_start($tips_query);
+		$tips_query->set_caller($button);
+		$tips_query->connect('widget_entered', 'tips_query_widget_entered', $toggle);
+		$tips_query->connect('widget_selected', 'tips_query_widget_selected');
+
+		$frame = &new GtkFrame('ToolTips Inspector');
+		$frame->set_label_align(0.5, 0.0);
+		$frame->set_border_width(0);
+		$box2->pack_start($frame, true, true, 10);
+		$frame->add($box3);
+		$frame->show();
+		$box2->set_child_packing($frame, true, true, 10, GTK_PACK_START);
+
+		$separator = &new GtkHSeparator();
+		$box1->pack_start($separator, false);
+		$separator->show();
+
+		$box2 = &new GtkVBox(false, 10);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2, false);
+		$box2->show();
+
+		$button = &new GtkButton('close');
+		$button->connect('clicked', 'close_window');
+		$box2->pack_start($button);
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$button->grab_default();
+		$button->show();
+
+		$tooltips->set_tip($button, 'Push this button to close window', 'push');
+		$tooltips->enable();
+	}
+	$windows['tooltips']->show();
 }
 
 
@@ -271,7 +412,7 @@ function create_main_window()
 					 'toggle buttons'	=> null,
 					 'check buttons'	=> null,
 					 'radio buttons'	=> null,
-					 'tooltips'			=> null,
+					 'tooltips'			=> 'create_tooltips',
 					);
 
 	$window = &new GtkWindow();
@@ -323,6 +464,7 @@ function create_main_window()
 	$window->show_all();
 }
 
+Gtk::rc_parse('testgtkrc');
 create_main_window();
 Gtk::main();
 
