@@ -1,8 +1,0 @@
-LTLIBRARY_NAME = libmain.la
-LTLIBRARY_SOURCES = php_gtk.c php_gtk_object.c php_gtk_util.c php_gtk_ext.c
-
-include $(top_srcdir)/build/ltlib.mk
-
-php_gtk_ext.c: php_gtk_ext.c.in $(top_builddir)/config.status
-	@echo "creating main/php_gtk_ext.c"
-	sh $(top_srcdir)/build2/genext.sh $(srcdir)/php_gtk_ext.c.in $(top_srcdir) "" $(AWK) $(PHP_GTK_EXTENSIONS) > $(srcdir)/php_gtk_ext.c
