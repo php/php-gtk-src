@@ -135,8 +135,7 @@ PHP_RINIT_FUNCTION(gtk)
 	 * Initialize the type system and the GType wrapper class.
 	 */
 	g_type_init();
-	php_gtype_register_self();
-
+	phpg_gtype_register_self();
 	phpg_gobject_register_self(module_number);
 
 	if (php_gtk_startup_all_extensions(module_number) == FAILURE) {

@@ -81,7 +81,7 @@ static int gtype_type_read(void *object, zval *return_value)
 /*
  * External API functions
  */ 
-PHP_GTK_API zval* php_gtype_new(GType type)
+PHP_GTK_API zval* phpg_gtype_new(GType type)
 {
 	zval *wrapper;
 	php_gtype_t *object;
@@ -96,7 +96,7 @@ PHP_GTK_API zval* php_gtype_new(GType type)
 }
 
 /* TODO add support for boxed types */
-PHP_GTK_API GType php_gtype_from_zval(zval *value)
+PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 {
 	GType type;
 
@@ -160,7 +160,7 @@ PHP_GTK_API GType php_gtype_from_zval(zval *value)
 	return 0;
 }
 
-void php_gtype_register_self()
+void phpg_gtype_register_self()
 {
 	if (gtype_ce) return;
 
