@@ -157,6 +157,24 @@ PHP_MINIT_FUNCTION(gtk)
 {
 //	ZEND_INIT_MODULE_GLOBALS(gtk, NULL, NULL);
 
+/* Remove comments if you have entries in php.ini
+	REGISTER_INI_ENTRIES();
+*/
+
+	return SUCCESS;
+}
+
+PHP_MSHUTDOWN_FUNCTION(gtk)
+{
+/* Remove comments if you have entries in php.ini
+	UNREGISTER_INI_ENTRIES();
+*/
+	return SUCCESS;
+}
+
+/* Remove if there's nothing to do at request start */
+PHP_RINIT_FUNCTION(gtk)
+{
 	le_gtk = zend_register_list_destructors_ex(release_gtk_object_rsrc, NULL, "GtkObject", module_number);
 
 	php_gtk_class_hash = g_hash_table_new(g_str_hash, g_str_equal);
@@ -171,33 +189,16 @@ PHP_MINIT_FUNCTION(gtk)
 	zend_unset_timeout();
 	zend_set_timeout(0);
 
-/* Remove comments if you have entries in php.ini
-	REGISTER_INI_ENTRIES();
-*/
-
-	return SUCCESS;
-}
-
-PHP_MSHUTDOWN_FUNCTION(gtk)
-{
-/* Remove comments if you have entries in php.ini
-	UNREGISTER_INI_ENTRIES();
-*/
-	zend_hash_destroy(&php_gtk_prop_getters);
-	zend_hash_destroy(&php_gtk_prop_setters);
-	gtk_exit(0);
-	return SUCCESS;
-}
-
-/* Remove if there's nothing to do at request start */
-PHP_RINIT_FUNCTION(gtk)
-{
 	return SUCCESS;
 }
 
 /* Remove if there's nothing to do at request end */
 PHP_RSHUTDOWN_FUNCTION(gtk)
 {
+	zend_hash_destroy(&php_gtk_prop_getters);
+	zend_hash_destroy(&php_gtk_prop_setters);
+	gtk_exit(0);
+
 	return SUCCESS;
 }
 
