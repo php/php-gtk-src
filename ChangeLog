@@ -1,3 +1,8 @@
+2005-04-05  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      Implement GtkListStore() constructor.
+
 2005-04-04  Christian Weiske  <cweiske@cweiske.de>
 
     * generator/doc_templates.php
