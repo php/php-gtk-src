@@ -1,3 +1,9 @@
+2004-10-26  Andrei Zmievski  <andreiz@gmail.com>
+
+    * (PHP_GTK_1)
+      .cvsignore:
+      Stop ignoring php_gtk.m4
+
 2004-10-21  Andrei Zmievski  <andreiz@gmail.com>
 
     * generator/arg_types.php
