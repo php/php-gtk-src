@@ -81,4 +81,4 @@ PyGTK.
 I'd also like to thank PHP team for making such a great language and the GTK+
 team for developing what has to be the best C-based GUI toolkit.
 
-# vim: set et tw=80 ai:
+# vim: set et tw=80 ai sts=4:

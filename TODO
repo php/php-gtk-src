@@ -1,5 +1,3 @@
-/* vim: set tw=80 ai expandtab: */
-
 * Finish boxed type support.
 * Investigate how to improve h2def.py or modify gdk.defs to define boxed type
   objects (GdkColormap, etc.)
@@ -14,3 +12,6 @@ In PHP
 ------
 * Modify var_dump() and print_r() to check get property handlers when
   dumping information.
+
+# vim: set tw=80 ai et sts=4:
+

@@ -106,7 +106,6 @@ int php_gtk_get_flag_value(GtkType flag_type, zval *flag_val, int *result);
 zval php_gtk_get_property(zend_property_reference *property_reference);
 int php_gtk_set_property(zend_property_reference *property_reference, zval *value);
 void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference *property_reference);
-zend_bool php_gtk_is_callable(zval *callable, char **callable_name);
 
 static inline void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter)
 {
@@ -144,7 +143,7 @@ int php_gtk_parse_args_quiet(int argc, char *format, ...);
 int php_gtk_parse_args_hash(zval *hash, char *format, ...);
 int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce);
 void php_gtk_invalidate(zval *wrapper);
-zend_bool php_gtk_check_callable(zval *function);
+zend_bool php_gtk_is_callable(zval *callable, char **callable_name);
 zval *php_gtk_array_as_hash(zval ***values, int num_values, int start, int length);
 zval ***php_gtk_hash_as_array(zval *hash);
 zval ***php_gtk_func_args(int argc);
