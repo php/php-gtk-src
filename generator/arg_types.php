@@ -77,7 +77,7 @@ class Var_List {
 \*======================================================================*/
 class Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, $in_constructor)
+						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
 	{
 		trigger_error("This is an abstract class", E_USER_ERROR);
 	}
@@ -98,7 +98,7 @@ class None_Arg extends Arg_Type {
 
 class String_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, $in_constructor)
+						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
 	{
 		if (isset($default)) {
 			if ($default != 'NULL')
@@ -107,7 +107,13 @@ class String_Arg extends Arg_Type {
 		} else
 			$var_list->add('char', '*' . $name);
 		$parse_list[] 	= '&' . $name;
-		$arg_list[] 	= $name;
+
+		if (strtoupper(substr(PHP_OS, 0,3) == "WIN")) {
+			$var_list->add('gchar', '*utf8_' . $name);
+			$arg_list[]   = 'utf8_' . $name;
+			$extra_post_code[]   = "\tg_free(utf8_$name);\n";
+			$extra_pre_code[] = "\tutf8_$name = g_convert($name, strlen($name), \"UTF-8\", \"CP1252\", NULL, NULL, NULL);\n";
+		}
 		return 's';
 	}
 	
@@ -116,7 +122,7 @@ class String_Arg extends Arg_Type {
 		if (in_array($type, array('const-gchar*', 'const-char*', 'static_string'))) {
 			$var_list->add('const gchar', '*ret');
 			return "	ret = %s;\n" 							.
-				   "	if (ret) {\n"							.
+				   "%s	if (ret) {\n"							.
 				   "		RETURN_STRING((char *)ret, 1);\n"	.
 				   "	}\n"									.
 				   "	else {\n"								.
@@ -125,7 +131,7 @@ class String_Arg extends Arg_Type {
 		} else {
 			$var_list->add('gchar', '*ret');
 			return "	ret = %s;\n" 					.
-				   "	if (ret) {\n"					.
+				   "%s	if (ret) {\n"					.
 				   "		RETURN_STRING(ret, 1);\n"	.
 				   "		g_free(ret);\n"				.
 				   "	} else\n"						.
@@ -136,7 +142,7 @@ class String_Arg extends Arg_Type {
 
 class Char_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, $in_constructor)
+						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
 	{
 		if (isset($default))
 			$var_list->add('char', $name . ' = \'' . $default . '\'');
@@ -152,13 +158,13 @@ class Char_Arg extends Arg_Type {
 		$var_list->add('gchar', 'ret[2]');
 		return "	ret[0] = %s;\n"    .
 			   "	ret[1] = '\\0';\n" .
-			   "	RETURN_STRINGL(ret, 1, 1);";
+			   "%s	RETURN_STRINGL(ret, 1, 1);";
 	}
 }
 
 class Int_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, $in_constructor)
+						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
 	{
 		if (isset($default))
 			$var_list->add('long', $name . ' = ' . $default);
@@ -173,13 +179,13 @@ class Int_Arg extends Arg_Type {
 	{
 		$var_list->add('long', 'php_retval');
 		return "	php_retval = %s;\n" .
-			   "	RETURN_LONG(php_retval);";
+			   "%s	RETURN_LONG(php_retval);";
 	}
 }
 
 class Bool_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, $in_constructor)
+						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
 	{
 		if (isset($default))
 			$var_list->add('zend_bool', $name . ' = ' . $default);
@@ -194,13 +200,13 @@ class Bool_Arg extends Arg_Type {
 	{
 		$var_list->add('gboolean', 'php_retval');
 		return "	php_retval = %s;\n" .
-			   "	RETURN_BOOL(php_retval);";
+			   "%s	RETURN_BOOL(php_retval);";
 	}
 }
 
 class Double_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, $in_constructor)
+						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
 	{
 		if (isset($default))
 			$var_list->add('double', $name . ' = ' . $default);
@@ -215,7 +221,7 @@ class Double_Arg extends Arg_Type {
 	{
 		$var_list->add('double', 'php_retval');
 		return "	php_retval = %s;\n" .
-			   "	RETURN_DOUBLE(php_retval);";
+			   "%s	RETURN_DOUBLE(php_retval);";
 	}
 }
 
@@ -234,7 +240,7 @@ class Enum_Arg extends Arg_Type {
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, $in_constructor)
+						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
 	{
 		if (isset($default))
 			$var_list->add($this->enum_name, $name . ' = ' . $default);
@@ -243,7 +249,7 @@ class Enum_Arg extends Arg_Type {
 		$var_list->add('zval', '*php_' . $name . ' = NULL');
 		$parse_list[] 	= '&php_' . $name;
 		$arg_list[] 	= $name;
-		$extra_code[] 	= sprintf($this->enum_tpl, $name, $this->type_code, $name, $name,
+		$extra_pre_code[] 	= sprintf($this->enum_tpl, $name, $this->type_code, $name, $name,
 								  $in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "");
 		return 'V';
 	}
@@ -252,7 +258,7 @@ class Enum_Arg extends Arg_Type {
 	{
 		$var_list->add('long', 'php_retval');
 		return "	php_retval = %s;\n" .
-			   "	RETURN_LONG(php_retval);";
+			   "%s	RETURN_LONG(php_retval);";
 	}
 }
 
@@ -271,7 +277,7 @@ class Flags_Arg extends Arg_Type {
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, $in_constructor)
+						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
 	{
 		if (isset($default))
 			$var_list->add($this->flag_name, $name . ' = ' . $default);
@@ -280,7 +286,7 @@ class Flags_Arg extends Arg_Type {
 		$var_list->add('zval', '*php_' . $name . ' = NULL');
 		$parse_list[] 	= '&php_' . $name;
 		$arg_list[] 	= $name;
-		$extra_code[] 	= sprintf($this->flag_tpl, $name, $this->type_code, $name, $name,
+		$extra_pre_code[] 	= sprintf($this->flag_tpl, $name, $this->type_code, $name, $name,
 								  $in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "");
 		return 'V';
 	}
@@ -289,7 +295,7 @@ class Flags_Arg extends Arg_Type {
 	{
 		$var_list->add('long', 'php_retval');
 		return "	php_retval = %s;\n" .
-			   "	RETURN_LONG(php_retval);";
+			   "%s	RETURN_LONG(php_retval);";
 	}
 }
 
@@ -304,13 +310,13 @@ class Object_Arg extends Arg_Type {
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, $in_constructor)
+						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
 	{
 		if ($null_ok) {
 			if (isset($default)) {
 				$var_list->add($this->obj_name, '*' . $name . ' = ' . $default);
 				$var_list->add('zval', '*php_' . $name . ' = NULL');
-				$extra_code[]	=	"	if (php_$name) {\n" .
+				$extra_pre_code[]	=	"	if (php_$name) {\n" .
 									"		if (Z_TYPE_P(php_$name) == IS_NULL)\n" .
 									"			$name = NULL;\n" .
 									"		else\n" .
@@ -319,7 +325,7 @@ class Object_Arg extends Arg_Type {
 			} else {
 				$var_list->add($this->obj_name, '*' . $name . ' = NULL');
 				$var_list->add('zval', '*php_' . $name);
-				$extra_code[]	=	"	if (Z_TYPE_P(php_$name) != IS_NULL)\n" .
+				$extra_pre_code[]	=	"	if (Z_TYPE_P(php_$name) != IS_NULL)\n" .
 									"		$name = $this->cast(PHP_GTK_GET(php_$name));\n";
 			}
 
@@ -333,7 +339,7 @@ class Object_Arg extends Arg_Type {
 				$var_list->add('zval', '*php_' . $name . ' = NULL');
 				$parse_list[] 	= '&php_' . $name . ', ' . strtolower($this->cast) . '_ce';
 				$arg_list[] 	= $name;
-				$extra_code[]	=	"	if (php_$name)\n" .
+				$extra_pre_code[]	=	"	if (php_$name)\n" .
 									"		$name = $this->cast(PHP_GTK_GET(php_$name));\n";
 			} else {
 				$var_list->add('zval', '*' . $name);
@@ -351,13 +357,13 @@ class Object_Arg extends Arg_Type {
 		return 	"	ret = php_gtk_new((GtkObject *)%s);\n" .
 				($separate ?  "	SEPARATE_ZVAL(&ret);\n" : "") .
 				"	*return_value = *ret;\n" .
-				"	return;";
+				"%s	return;";
 	}
 }
 
 class Rect_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, $in_constructor)
+						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
 	{
 		$var_list->add(substr($type, 0, -1), $name);
 		$parse_list[] 	= "&($name.x)";
@@ -380,13 +386,13 @@ class Boxed_Arg extends Arg_Type {
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, $in_constructor)
+						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
 	{
 		if ($null_ok) {
 			if (isset($default)) {
 				$var_list->add($this->type, '*' . $name . ' = ' . $default);
 				$var_list->add('zval', '*php_' . $name . ' = NULL');
-				$extra_code[]	=	"	if (php_$name) {\n" .
+				$extra_pre_code[]	=	"	if (php_$name) {\n" .
 									"		if (Z_TYPE_P(php_$name) == IS_NULL)\n" .
 									"			$name = NULL;\n" .
 									"		else\n" .
@@ -395,7 +401,7 @@ class Boxed_Arg extends Arg_Type {
 			} else {
 				$var_list->add($this->type, '*' . $name . ' = NULL');
 				$var_list->add('zval', '*php_' . $name);
-				$extra_code[]	=	"	if (Z_TYPE_P(php_$name) != IS_NULL)\n" .
+				$extra_pre_code[]	=	"	if (Z_TYPE_P(php_$name) != IS_NULL)\n" .
 									"		$name = PHP_" . strtoupper($this->php_type). "_GET(php_" . $name . ");\n";
 			}
 
@@ -412,7 +418,7 @@ class Boxed_Arg extends Arg_Type {
 				$parse_list[]	= '&php_' . $name;
 				$parse_list[]	= $this->php_type . '_ce';
 				$arg_list[]		= $name;
-				$extra_code[]	=	"	if (php_$name)\n" .
+				$extra_pre_code[]	=	"	if (php_$name)\n" .
 									"		$name = PHP_" .  strtoupper($this->php_type) . "_GET(" . $name . ");\n";
 			} else {
 				$var_list->add('zval', '*' . $name);
@@ -431,7 +437,7 @@ class Boxed_Arg extends Arg_Type {
 		return "	ret = php_" . $this->php_type . "_new(%s);\n" .
 			   ($separate ? "	SEPARATE_ZVAL(&ret);\n" : "") .
 			   "	*return_value = *ret;\n" .
-			   "	return;";
+			   "%s	return;";
 	}
 }
 
@@ -472,7 +478,7 @@ class Drawable_Arg extends Arg_Type {
 						else if(php_gtk_check_class(php_$name, gdk_bitmap_ce))
 							$name = (GdkDrawable *)PHP_GDK_BITMAP_GET(php_$name);
 						else {
-								php_error(E_WARNING, \"%s() expects the drawable to be GdkWindow, GdkPixmap, GdkBitmap, or null\", get_active_function_name());
+								php_error(E_WARNING, \"%s() expects the drawable to be GdkWindow, GdkPixmap, GdkBitmap, or null\", get_active_function_name(TSRMLS_C));
 								return;
 						}
 				";
@@ -505,7 +511,7 @@ class Drawable_Arg extends Arg_Type {
 						else if(php_gtk_check_class(php_$name, gdk_bitmap_ce))
 							$name = (GdkDrawable *)PHP_GDK_BITMAP_GET(php_$name);
 						else {
-								php_error(E_WARNING, \"%s() expects the drawable to be GdkWindow, GdkPixmap, or GdkBitmap\", get_active_function_name());
+								php_error(E_WARNING, \"%s() expects the drawable to be GdkWindow, GdkPixmap, or GdkBitmap\", get_active_function_name(TSRMLS_C));
 								return;
 						}
 				";
