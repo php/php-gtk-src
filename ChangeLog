@@ -1,3 +1,11 @@
+2002-10-29  Andrei Zmievski  <andrei@php.net>
+
+    * ext/gtk+/php_gtk+_types.c
+      ext/gdkpixbuf/gdkpixbuf.defs
+      ext/gdkpixbuf/gdkpixbuf.overrides:
+    - Simplify GdkPixbuf constructor parameters.
+    - Fix check for GdkPixmap when setting style's bg_pixmap property.
+
 2002-10-22  Andrei Zmievski  <andrei@php.net>
 
     * ext/gtk+/php_gtk+_types.c
