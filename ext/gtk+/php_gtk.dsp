@@ -176,7 +176,7 @@ USERDEP__GTK_D="gtk.overrides"	"gtk.defs"
 InputPath=".\gtk.defs"
 
 "gen_gtk.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	php.exe -q ..\..\generator\generator.php -o ext\gtk%%2b\gtk.overrides -p gtk ext\gtk%%2b\gtk.defs >gen_gtk.c
+	php.exe -q ..\..\generator\generator.php -o ext\gtk%%2b\gtk.overrides -p gtk -r ext\gtk%%2b\gdk.defs ext\gtk%%2b\gtk.defs >gen_gtk.c
 
 # End Custom Build
 
@@ -279,11 +279,11 @@ SOURCE="php_gtk+.h"
 # PROP Default_Filter "*.override"
 # Begin Source File
 
-SOURCE="..\ext\gtk+\gdk.overrides"
+SOURCE=.\gdk.overrides
 # End Source File
 # Begin Source File
 
-SOURCE="..\ext\gtk+\gtk.overrides"
+SOURCE=.\gtk.overrides
 # End Source File
 # End Group
 # End Group
