@@ -123,6 +123,8 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
 
         default:
             php_error(E_WARNING, "PHP-GTK internal error: unsupported type %s", g_type_name(G_VALUE_TYPE(gval)));
+            MAKE_STD_ZVAL(*value);
+            ZVAL_NULL(*value);
             return FAILURE;
     }
 
