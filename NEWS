@@ -1,5 +1,5 @@
-Version 0.1 "the void which binds" 01-Aug-2001
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Version 0.1 "the void which binds" 1-Aug-2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - added GDK keysyms constants. (Andrei)
     - fixed bug with GtkStyle::copy() that was not returning the result
       properly. (Andrei)
@@ -24,8 +24,8 @@ Version 0.1 "the void which binds" 01-Aug-2001
     - added support for accessing GtkObject arguments via get_arg() and
       set_arg() methods. (Andrei)
 
-Version 0.0.4 "indistinguishable from magic": 05-May-2001
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Version 0.0.4 "indistinguishable from magic": 5-May-2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - improved speed/memory efficiency by having only one wrapper for boxed
       types, except for GdkEvent, GdkColor and GdkAtom. (Andrei)
     - implemented object overloading emulation layer to correct for Zend
