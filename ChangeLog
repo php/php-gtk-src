@@ -1,3 +1,15 @@
+2002-10-10  Andrei Zmievski  <andrei@php.net>
+
+    * ext/gtk+/gtk.overrides:
+    Added GtkRadioButton/GtkRadioMenuItem methods group() and set_group().
+    group() can be used to find out which group of radio buttons this one
+    belongs to, and set_group() can be used to move button from one group
+    to another.
+
+    * ext/gtk+/gdk.defs:
+    Added gdk::pointer_grab(), gdk::pointer_ungrab(), gdk::keyboard_grab(),
+    gdk::keyboard_ungrab().
+
 2002-09-23  Frank M. Kromann  <frank@kromann.info>
 
     * ext/combobutton/combobutton.dsp: fixing path to .overrides file
