@@ -210,9 +210,8 @@ void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 
 	*GTK_RETLOC_BOOL(args[0]) = FALSE;
 	if (retval) {
-		if (Z_TYPE_P(retval) == IS_NULL ||
-			(Z_TYPE_P(retval) == IS_LONG && Z_LVAL_P(retval) == 0))
-			*GTK_RETLOC_BOOL(args[0]) = FALSE;
+		if (zval_is_true(retval))
+			*GTK_RETLOC_BOOL(args[0]) = TRUE;
 		else
 			*GTK_RETLOC_BOOL(args[0]) = FALSE;
 		zval_ptr_dtor(&retval);
