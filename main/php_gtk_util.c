@@ -190,6 +190,38 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
 	return NULL;
 }
 
+static char *php_gtk_zval_type_name(zval *arg)
+{
+	switch (Z_TYPE_P(arg)) {
+		case IS_NULL:
+			return "null";
+
+		case IS_LONG:
+			return "integer";
+
+		case IS_DOUBLE:
+			return "double";
+
+		case IS_STRING:
+			return "string";
+
+		case IS_ARRAY:
+			return "array";
+
+		case IS_OBJECT:
+			return Z_OBJCE_P(arg)->name;
+
+		case IS_BOOL:
+			return "boolean";
+
+		case IS_RESOURCE:
+			return "resource";
+
+		default:
+			return "unknown";
+	}
+}
+
 static int parse_arg(int arg_num, zval **arg, va_list *va, char **spec, int quiet)
 {
 	char *expected_type;
@@ -200,49 +232,10 @@ static int parse_arg(int arg_num, zval **arg, va_list *va, char **spec, int quie
 
 	expected_type = parse_arg_impl(arg, va, spec, errorbuf);
 	if (expected_type) {
-		switch (Z_TYPE_PP(arg)) {
-			case IS_NULL:
-				actual_type = "NULL";
-				break;
-
-			case IS_LONG:
-				actual_type = "integer";
-				break;
-
-			case IS_DOUBLE:
-				actual_type = "double";
-				break;
-
-			case IS_STRING:
-				actual_type = "string";
-				break;
-
-			case IS_ARRAY:
-				actual_type = "array";
-				break;
-
-			case IS_OBJECT:
-				sprintf(objtype, "object <%s>", Z_OBJCE_PP(arg)->name);
-				actual_type = objtype;
-				break;
-
-			case IS_BOOL:
-				actual_type = "boolean";
-				break;
-
-			case IS_RESOURCE:
-				actual_type = "resource";
-				break;
-
-			default:
-				actual_type = "unknown";
-				break;
-
-		}
-
 		if (!quiet) {
 			sprintf(buf, "%s() expects argument %d to be %s, %s given",
-					get_active_function_name(), arg_num, expected_type, actual_type);
+					get_active_function_name(), arg_num, expected_type,
+					php_gtk_zval_type_name(*arg));
 			php_error(E_WARNING, buf);
 		}
 		return 0;
