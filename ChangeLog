@@ -1,3 +1,19 @@
+2003-10-18  Alan Knowles  <alan@akbkhome.com>
+
+    * (PHP_GTK_1)
+      ext/extra/extra.defs:
+      allow retreiving of the data in the cells.. - obviously nobody has actually
+      used this...
+
+    * (PHP_GTK_1)
+      ext/extra/extra.defs:
+      get_entry to enable changing selections of pulldowns etc.
+
+    * (PHP_GTK_1)
+      ext/extra/extra.overrides:
+      make GTK_TYPE_ITEM_ENTRY available so you can reset the entry type for a
+      sheet
+
 2003-10-15  Alan Knowles  <alan@akbkhome.com>
 
     * ext/gdkpixbuf/gdkpixbuf.overrides
