@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PHP_GTK_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "." /I "..\\" /I "..\..\php4" /I "..\..\php4\main" /I "..\..\php4\Zend" /I "..\..\php4\TSRM" /I "..\..\src\gtk+" /I "..\..\src\gtk+\gdk" /I "..\..\src\glib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PHP_GTK_EXPORTS" /D "PHP_WIN32" /D "ZEND_WIN32" /D ZTS=1 /D ZEND_DEBUG=0 /D HAVE_PHP_GTK=1 /D "COMPILE_DL_PHP_GTK" /YX /FD /I /php4" /I /php4/main" /I /php4/Zend" /I /php4/TSRM" /I /src/gtk+" /I /src/gtk+/gdk" /I /src/glib" /I /php4" /I /php4/main" /I /php4/Zend" /I /php4/TSRM" /I /src/gtk+" /I /src/gtk+/gdk" /I /src/glib" " " " " " " " " " " " " " " /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /I "." /I "..\\" /I "..\main" /I "..\..\php4" /I "..\..\php4\main" /I "..\..\php4\Zend" /I "..\..\php4\TSRM" /I "..\..\src\gtk+" /I "..\..\src\gtk+\gdk" /I "..\..\src\glib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PHP_GTK_EXPORTS" /D "PHP_WIN32" /D "ZEND_WIN32" /D ZTS=1 /D ZEND_DEBUG=0 /D HAVE_PHP_GTK=1 /D "COMPILE_DL_PHP_GTK" /YX /FD /I /php4" /I /php4/main" /I /php4/Zend" /I /php4/TSRM" /I /src/gtk+" /I /src/gtk+/gdk" /I /src/glib" /I /php4" /I /php4/main" /I /php4/Zend" /I /php4/TSRM" /I /src/gtk+" /I /src/gtk+/gdk" /I /src/glib" " " " " " " " " " " " " " " /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -92,23 +92,19 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\src\gen_gdk.c
+SOURCE=..\main\php_gtk.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\gen_gtk.c
+SOURCE=..\main\php_gtk_ext.w32.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\php_gtk.c
+SOURCE=..\main\php_gtk_object.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\php_gtk_object.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\php_gtk_util.c
+SOURCE=..\main\php_gtk_util.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -116,19 +112,11 @@ SOURCE=..\src\php_gtk_util.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\src\php_gtk.h
+SOURCE=..\main\php_gtk.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\php_gtk_gen_reg_items.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\php_gtk_gen_reg_items_decl.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\php_gtk_module.h
+SOURCE=..\main\php_gtk_module.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
@@ -166,6 +154,42 @@ SOURCE=..\generator\libglade.defs
 
 SOURCE=..\generator\libglade.overrides
 # End Source File
+# End Group
+# Begin Group "Gtk+"
+
+# PROP Default_Filter ""
+# Begin Group "Source Files No. 1"
+
+# PROP Default_Filter "*.c"
+# Begin Source File
+
+SOURCE="..\ext\gtk+\gen_ce_gtk.h"
+# End Source File
+# Begin Source File
+
+SOURCE="..\ext\gtk+\gen_gdk.c"
+# End Source File
+# Begin Source File
+
+SOURCE="..\ext\gtk+\gen_gtk.c"
+# End Source File
+# Begin Source File
+
+SOURCE="..\ext\gtk+\php_gtk+.c"
+# End Source File
+# Begin Source File
+
+SOURCE="..\ext\gtk+\php_gtk+_types.c"
+# End Source File
+# End Group
+# Begin Group "Header Files No. 1"
+
+# PROP Default_Filter "*.h"
+# Begin Source File
+
+SOURCE="..\ext\gtk+\php_gtk+.h"
+# End Source File
+# End Group
 # End Group
 # Begin Source File
 

@@ -10,7 +10,7 @@ int WINAPI WinMain(
 {
 	char *args[4], *prog;
 
-	prog = "d:\\php4\\php.exe";
+	prog = "c:\\php4\\php.exe";
 	args[0] = prog;
 	args[1] = "-q";
 	args[2] = lpCmdLine;
