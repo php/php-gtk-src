@@ -1,3 +1,37 @@
+2005-01-27  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides
+      generator/generator.php:
+      - Stop ignoring gtk_style_new constructor.
+      - Fix the class entry flags for abstract classes.
+
+    * main/php_gtk.c
+      main/phpg_gobject.c:
+      - Merge parent's properties into child's table upon registration. This
+        way we can look at any property in the chain quickly.
+      - Fix access to nested properties, like $separator->style->ythickness.
+      - NULL-out the get_property_ptr_ptr handler for now so that writes to
+        nested properties work correctly.
+
+    * ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides
+      generator/generator.php
+      generator/override.php
+      generator/templates.php
+      main/php_gtk.h
+      main/phpg_gobject.c
+      main/phpg_gvalue.c:
+      This started as an attempt to implement property access for boxed types,
+      but turned out supporting regular properties as well. Writing to
+      properties is not yet implemented. Testing is appreciated. Now I damn
+      well deserve a beer.
+
+    * generator/arg_types.php:
+      Switch to using RETVAL_*() macros instead of RETURN_*().
+
+    * TODO2:
+      -** empty log message ***
+
 2005-01-25  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gdk.overrides:
