@@ -1,3 +1,23 @@
+2001-03-28  James Moore  <James@phpuk.org>
+
+    * docs/templates/classentry.tpl: Updaing template slightly
+
+2001-03-28  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/README.win32.txt:
+    Making note on include path needed to build the system on Win32
+
+2001-03-28  Andrei Zmievski  <andrei@ispi.net>
+
+    * test/gtk.php
+      generator/generator.php
+      generator/gtk.defs
+      generator/gtk.overrides: * Added GtkCTree 'clist' property.
+    * Implemented GtkObject::set_data(), GtkObject::get_data(),
+      GtkObject::connect_after(), GtkObject::connect_object_after().
+    * Started on GtkCTree example, which incidentally shows a bunch of other
+      GTK+ stuff.
+
 2001-03-27  James Moore  <James@phpuk.org>
 
     * docs/stylesheets/xsl/html/class.xsl: Typo
