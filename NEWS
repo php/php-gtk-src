@@ -1,5 +1,7 @@
-Version 1.0.1 "you thought we were done?" 07-Aug-2004
+Version 1.0.1 "you thought we were done?" 09-Aug-2004
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - buildconf script now takes an optional --with-phpize=<path> option to
+      specify the location of phpize script. (Andrei)
     - removed support for old build system. PHP 4.3.x is not required to build
       PHP-GTK. (Andrei)
     - implemented append_element(), prepend_element(), insert_element(),
