@@ -116,6 +116,14 @@ static void init_gtk(void)
 		return;
 	}
 
+	/*
+	   We must always call gtk_set_locale() in order to get GTK+/GDK
+	   correctly initialize multilingual support. Otherwise, application
+	   will refuse any letters outside ASCII and font metrics will
+	   be broken.
+	 */
+	gtk_set_locale();
+
 	if (no_argc) {
 		/* The -f switch case, simple. */
 		g_free(argv[0]);
@@ -180,11 +188,13 @@ PHP_RINIT_FUNCTION(gtk)
 	php_gtk_class_hash = g_hash_table_new(g_str_hash, g_str_equal);
 	zend_hash_init_ex(&php_gtk_prop_getters, 20, NULL, NULL, 1, 0);
 	zend_hash_init_ex(&php_gtk_prop_setters, 20, NULL, NULL, 1, 0);
-	php_gtk_register_classes();
+#include "src/php_gtk_gen_reg_items.h"
 	php_gtk_register_types(module_number);
-	php_gtk_register_constants(module_number ELS_CC);
 	
 	init_gtk();
+#if HAVE_LIBGLADE
+	glade_init();
+#endif
 
 	zend_unset_timeout();
 	zend_set_timeout(0);
@@ -216,6 +226,13 @@ PHP_MINFO_FUNCTION(gtk)
 	DISPLAY_INI_ENTRIES();
 	*/
 }
+
+PHP_FUNCTION(wrap_no_constructor)
+{
+ 	php_error(E_WARNING, "%s: An abstract or unimplemented class", get_active_function_name());
+	php_gtk_invalidate(this_ptr);
+}
+
 
 #endif	/* HAVE_PHP_GTK */
 

@@ -199,15 +199,65 @@ main ()
   rm -f conf.gtktest
 ])
 
+dnl PHP_PATH_LIBGLADE([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND [, MODULES]]])
+dnl Test to see if libglade is installed, and define LIBGLADE_CFLAGS, LIBS
+dnl
+AC_DEFUN(PHP_PATH_LIBGLADE,
+[dnl
+dnl Get the cflags and libraries from the libglade-config script
+dnl
+AC_ARG_WITH(libglade-config,
+[  --with-libglade-config=LIBGLADE_CONFIG  Location of libglade-config],
+LIBGLADE_CONFIG="$withval")
+
+module_args=
+for module in . $3; do
+  case "$module" in
+    gnome)
+      module_args="$module_args gnome"
+      ;;
+    bonobo)
+      module_args="$module_args bonobo"
+      ;;
+  esac
+done
+
+AC_PATH_PROG(LIBGLADE_CONFIG, libglade-config, no)
+AC_MSG_CHECKING(for libglade)
+if test "$LIBGLADE_CONFIG" = "no"; then
+  AC_MSG_RESULT(no)
+  ifelse([$2], , :, [$2])
+else
+  if $LIBGLADE_CONFIG --check $module_args; then
+    LIBGLADE_CFLAGS=`$LIBGLADE_CONFIG --cflags $module_args`
+    LIBGLADE_LIBS=`$LIBGLADE_CONFIG --libs $module_args`
+    AC_MSG_RESULT(yes)
+    ifelse([$1], , :, [$1])
+  else
+    echo "*** libglade was not compiled with support for $module_args" 1>&2
+    AC_MSG_RESULT(no)
+    ifelse([$2], , :, [$2])
+  fi
+fi
+AC_SUBST(LIBGLADE_CFLAGS)
+AC_SUBST(LIBGLADE_LIBS)
+])
+
 if test "$PHP_PHP_GTK" != "no"; then
   PHP_EXTENSION(php-gtk, $ext_shared)
 
   PHP_GTK_SOURCE_LIBADD=src/libphp_gtk_src.la
   PHP_GTK_SHARED_LIBADD=$PHP_GTK_SOURCE_LIBADD
 
-  PHP_PATH_GTK(1.2.6,,,)
+  PHP_PATH_GTK(1.2.6,PHP_GTK_MODULES="gtk gdk")
+  PHP_PATH_LIBGLADE(build_libglade=yes,build_libglade=no)
 
-  for arg in $GTK_CFLAGS; do
+  if test "$build_libglade" = "yes"; then
+    PHP_GTK_MODULES="$PHP_GTK_MODULES libglade"
+    AC_DEFINE(HAVE_LIBGLADE, 1, [If libglade support to be compiled in])
+  fi
+
+  for arg in $GTK_CFLAGS $LIBGLADE_CFLAGS; do
 	case $arg in
 	-I*)
 	  n=`echo $ac_n $arg$ac_c|sed s/-I//`
@@ -215,7 +265,7 @@ if test "$PHP_PHP_GTK" != "no"; then
 	  ;;
 	esac
   done
-  for arg in $GTK_LIBS; do
+  for arg in $GTK_LIBS $LIBGLADE_LIBS; do
 	  case "$arg" in
 	  -l*)
 		  n=`echo $ac_n $arg$ac_c|sed s/-l//`
@@ -227,8 +277,14 @@ if test "$PHP_PHP_GTK" != "no"; then
 	  ;;
 	  esac
   done
+
+  for arg in $PHP_GTK_MODULES; do
+    PHP_GTK_GEN_SOURCES="$PHP_GTK_GEN_SOURCES php_gtk_gen_$arg.c"
+  done
   PHP_SUBST(PHP_GTK_SHARED_LIBADD)
   PHP_SUBST(PHP_GTK_SOURCE_LIBADD)
+  PHP_SUBST(PHP_GTK_MODULES)
+  PHP_SUBST(PHP_GTK_GEN_SOURCES)
 
   AC_DEFINE(HAVE_PHP_GTK, 1, [If you want PHP GTK+ support enabled])
   PHP_FAST_OUTPUT($ext_builddir/src/Makefile)

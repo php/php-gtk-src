@@ -150,7 +150,7 @@ void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *
 	zval *retval = NULL;
 	zval *tmp;
 	zval ***signal_args;
-	gchar *callback_name;
+	char *callback_name;
 	ELS_FETCH();
 
 	/* Callback is always passed as the first element. */
@@ -171,12 +171,12 @@ void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *
 		zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&callback_lineno);
 	}
 
-	if (!php_gtk_is_callable(*callback, &callback_name)) {
+	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
 		if (callback_filename)
 			php_error(E_WARNING, "Unable to call signal callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
 		else
 			php_error(E_WARNING, "Unable to call callback '%s'", callback_name);
-		g_free(callback_name);
+		efree(callback_name);
 		return;
 	}
 
@@ -231,7 +231,7 @@ void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 	zval ***handler_args = NULL;
 	int num_handler_args = 0;
 	zval *retval = NULL;
-	gchar *callback_name;
+	char *callback_name;
 	ELS_FETCH();
 
 	/* Callback is always passed as the first element. */
@@ -240,9 +240,9 @@ void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&callback_filename);
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_lineno);
 
-	if (!php_gtk_is_callable(*callback, &callback_name)) {
+	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
 		php_error(E_WARNING, "Unable to call handler callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
-		g_free(callback_name);
+		efree(callback_name);
 		return;
 	}
 
@@ -271,7 +271,7 @@ void php_gtk_input_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 	zval *retval = NULL, **callback, **extra = NULL;
 	zval **callback_filename = NULL, **callback_lineno = NULL;
 	zval ***input_args;
-	gchar *callback_name;
+	char *callback_name;
 	ELS_FETCH();
 
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
@@ -279,9 +279,9 @@ void php_gtk_input_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&callback_filename);
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_lineno);
 
-	if (!php_gtk_is_callable(*callback, &callback_name)) {
+	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
 		php_error(E_WARNING, "Unable to call input callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
-		g_free(callback_name);
+		efree(callback_name);
 		return;
 	}
 

@@ -62,6 +62,9 @@ extern zend_class_entry *gtk_ctree_node_ce;
 extern zend_class_entry *gtk_accel_group_ce;
 extern zend_class_entry *gtk_style_ce;
 
+/* include generated class entries */
+#include "src/php_gtk_gen_ce.h"
+
 typedef void (*prop_getter_t)(zval *return_value, zval *object, zend_llist_element **element, int *found);
 typedef int (*prop_setter_t)(zval *object, zend_llist_element **element, zval *value);
 
@@ -143,7 +146,7 @@ int php_gtk_parse_args_quiet(int argc, char *format, ...);
 int php_gtk_parse_args_hash(zval *hash, char *format, ...);
 int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce);
 void php_gtk_invalidate(zval *wrapper);
-zend_bool php_gtk_is_callable(zval *callable, char **callable_name);
+zend_bool php_gtk_is_callable(zval *callable, zend_bool syntax_only, char **callable_name);
 zval *php_gtk_array_as_hash(zval ***values, int num_values, int start, int length);
 zval ***php_gtk_hash_as_array(zval *hash);
 zval ***php_gtk_func_args(int argc);
@@ -155,6 +158,8 @@ zval *php_gtk_build_value(char *format, ...);
 		php_error(E_WARNING, "%s() is not a static method", get_active_function_name()); \
 		return; \
 	}
+
+PHP_FUNCTION(wrap_no_constructor);
 
 #endif /* HAVE_PHP_GTK */
 
