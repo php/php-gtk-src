@@ -27,7 +27,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "php_gtk"=".\php_gtk.dsp" - Package Owner=<4>
+Project: "php_gtk"="..\ext\gtk+\php_gtk.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
