@@ -1,3 +1,9 @@
+2002-04-25  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/php_gtk+_types.c:
+    Allow set_cursor() to take no parameters thus reverting cursor to the default
+    one.
+
 2002-04-21  Andrei Zmievski  <andrei@php.net>
 
     * TODO: *** empty log message ***
