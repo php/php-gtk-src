@@ -17,7 +17,7 @@ installed along with the header files and development scripts. They should
 normally be installed when you do 'make install' in the PHP source tree.
 
 Currently, PHP-GTK requires PHP 4.0.5 or greater to run, and 4.1.0 or greater to
-build (latest CVS version will work too).
+build.
 
 PHP-GTK supports GTK+ v1.2 and requires v1.2.6 or greater. GTK+ v2.0 is not yet
 supported but will be so in the future when v2.0 is out of the development phase
@@ -59,20 +59,46 @@ This is where you should go to obtain the latest releases and news about
 PHP-GTK.
 
 
-Mailing list
-============
-There is a mailing list for PHP-GTK. To subscribe, send blank email to
-php-gtk-general-subscribe@lists.php.net. The address of the list itself is
-php-gtk-general@lists.php.net. The list is archived at MARC
-(http://marc.theaimsgroup.com/?l=php-gtk-general).
+Mailing lists
+=============
+There are several mailing lists for PHP-GTK.
+
+   * General list
+     ------------
+     This list is for general discussion of PHP-GTK, techniques, problems,
+     development of applications, questions, and other issues.
+
+     List address: php-gtk-general@lists.php.net
+     Subscription: php-gtk-general-subscribe@lists.php.net
+     Archive:      http://marc.theaimsgroup.com/?l=php-gtk-general
+
+   * Developers list
+     ---------------
+     This list is for those wanting to help with development of PHP-GTK and its
+     extensions.
+
+     List address: php-gtk-dev@lists.php.net
+     Subscription: php-gtk-dev-subscribe@lists.php.net
+     Archive:      http://marc.theaimsgroup.com/?l=php-gtk-dev
+
+   * Documenters list
+     ----------------
+     This list is for those discussion and development of PHP-GTK documentation.
+
+     List address: php-gtk-doc@lists.php.net
+     Subscription: php-gtk-doc-subscribe@lists.php.net
+     Archive:      http://marc.theaimsgroup.com/?l=php-gtk-doc
+
+To subscribe to any of the lists, send blank email to the appropriate
+subscription address.
 
 
 Patches and feedback
 ====================
 You can contact me directly at andrei@php.net or through the mailing list.
-Please use mailing list for most of your questions -- many people read it and
-you are more likely to get quicker feedback if you post there first. Patches in
-the unified diff (diff -u) format can be sent via the same means.
+Please use the mailing lists for most of your questions -- many people read them
+and you are more likely to get quicker feedback if you post there first. Patches
+in the unified diff (diff -u) format can be sent via the same means.
 
 
 Acknowledgements

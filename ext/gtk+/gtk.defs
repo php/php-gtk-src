@@ -6699,7 +6699,7 @@
   (of-object Progress (Gtk))
   (c-name gtk_progress_set_show_text)
   (return-type none)
-  (parameter (type-and-name gint show_text))
+  (parameter (type-and-name gboolean show_text))
 )
 
 (method set_text_alignment
@@ -6757,7 +6757,7 @@
   (of-object Progress (Gtk))
   (c-name gtk_progress_set_activity_mode)
   (return-type none)
-  (parameter (type-and-name guint activity_mode))
+  (parameter (type-and-name gboolean activity_mode))
 )
 
 (method get_current_text

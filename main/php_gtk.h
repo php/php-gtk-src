@@ -33,6 +33,8 @@
 
 #if HAVE_PHP_GTK
 
+#define PHP_GTK_VERSION "0.5.0"
+
 #ifdef PHP_WIN32
 # ifdef GTK_SHARED
 #  define PHP_GTK_API __declspec(dllimport)
@@ -44,8 +46,6 @@
 #endif
 
 #include "php_gtk_module.h"
-
-#define PHP_GTK_VERSION "0.1.1"
 
 #define PHP_GTK_EXPORT_CE(ce) zend_class_entry *ce
 #define PHP_GTK_EXPORT_FUNC(func) func

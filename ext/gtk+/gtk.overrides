@@ -158,6 +158,7 @@ ignore
 	gtk_container_queue_resize
 	gtk_container_clear_resize_widgets
 	gtk_container_child_composite_name
+	gtk_progress_bar_update
 %%
 ignore
 	GtkArgFlags
