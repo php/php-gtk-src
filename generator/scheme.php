@@ -34,6 +34,9 @@ function parse($fp)
         $l =0;
 	while ($line = fgets($fp, 4096)) {
                 $l++;
+        if (($l % 100) == 0) {
+            error_log("Loading Line $l");
+        }
 		while (($line = ltrim($line)) != '') {
 			if ($line{0} == '(') {
 				array_push($stack, array());
@@ -121,6 +124,12 @@ class Defs_Parser {
                 $this->defaults = parse_ini_file("{$defs_file}.defaults",true);
             }
 			$this->parse_tree = parse(fopen($defs_file, 'r'));
+			if (file_exists("{$defs_file}.extra")) {
+                  $this->parse_tree = array_merge($this->parse_tree,
+                      parse(fopen($defs_file.'.extra', 'r')));
+            }
+			
+			
                 
 		}
                 
