@@ -4,6 +4,7 @@
 if (!extension_loaded('gtk')) {
 	dl( 'php_gtk.' . PHP_SHLIB_SUFFIX);
 }
+error_reporting(E_ALL);
 
 $windows = array();
 
@@ -87,9 +88,10 @@ function build_option_menu($items, $history = null)
 }
 
 
-function toggle_reorderable($button, $clist)
+function toggle_reorderable($button, $clist) 
 {
-	$clist->set_reorderable($button->get_active());
+	var_dump(func_get_args());
+    $clist->set_reorderable($button->get_active());
 }
 
 

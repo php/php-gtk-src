@@ -3117,9 +3117,9 @@ void php_gtk_plus_register_types(int module_number)
 	/*
 	gtk_accel_label_ce = php_gtk_register_class("GtkLabelGroup", php_gtk_accel_label_functions, NULL, 0, 0, NULL TSRMLS_CC);
 	*/
-	//gtk_style_ce = php_gtk_register_class("GtkStyle", php_gtk_style_functions, NULL, 1, 1, php_gtk_style_properties TSRMLS_CC);
-	//php_gtk_register_prop_getter(gtk_style_ce, gtk_style_get_property);
-	//php_gtk_register_prop_setter(gtk_style_ce, gtk_style_set_property);
+	gtk_style_ce = php_gtk_register_class("GtkStyle", php_gtk_style_functions, NULL, 1, 1, php_gtk_style_properties TSRMLS_CC);
+	php_gtk_register_prop_getter(gtk_style_ce, gtk_style_get_property);
+	php_gtk_register_prop_setter(gtk_style_ce, gtk_style_set_property);
 
 	gtk_rc_style_ce = php_gtk_register_class("GtkRcStyle", php_gtk_rc_style_functions, NULL, 0, 0, NULL TSRMLS_CC);
 

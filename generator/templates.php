@@ -70,7 +70,7 @@ $gtk_object_init_tpl = "
 	php_gtk_object_init(wrapped_obj, this_ptr);\n";
 
 $non_gtk_object_init_tpl = "
-	php_gtk_set_object(this_ptr, wrapped_obj, le_%s);\n";
+	php_gtk_set_object(this_ptr, wrapped_obj, le_%s, 0);\n";
 
 $function_entry_tpl = "\t{\"%s\",	PHP_FN(%s),	%s},\n";
 $functions_decl_tpl = "

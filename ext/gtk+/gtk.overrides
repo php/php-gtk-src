@@ -30,7 +30,7 @@ ignore
 	GtkAccelGroup
 	GtkAccelGroupEntry
 	GtkAccessible
-	
+
 	 
 	 
 	
@@ -211,8 +211,7 @@ ignore
 	
 	gtk_size_group_new
 	
-	gtk_style_new
-	gtk_style_copy
+	GtkStyle	 
 	
 	gtk_text_buffer_create_child_anchor
 	gtk_text_buffer_create_mark
