@@ -9,7 +9,7 @@ include $(top_srcdir)/build/dynlib.mk
 php_sqpane.o php_sqpane.lo php_sqpane.slo: gen_ce_sqpane.h
 
 gen_sqpane.c: sqpane.defs sqpane.overrides
-	php -q $(top_srcdir)/generator/generator.php -o $(srcdir)/sqpane.overrides -p SQPane -r $(top_srcdir)/ext/gtk%2b/gtk.defs $(srcdir)/sqpane.defs > gen_sqpane.c
+	$(PHP) -q $(top_srcdir)/generator/generator.php -o $(srcdir)/sqpane.overrides -p SQPane -r $(top_srcdir)/ext/gtk%2b/gtk.defs $(srcdir)/sqpane.defs > gen_sqpane.c
 
 gen_ce_sqpane.h: gen_sqpane.c
 	grep -h "^PHP_GTK_EXPORT_CE" gen_sqpane.c | sed -e "s!^!extern !" > gen_ce_sqpane.h
