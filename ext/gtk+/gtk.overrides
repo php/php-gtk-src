@@ -264,7 +264,7 @@ static PHP_METHOD(GtkLabel, get)
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
 		return;
 
-	gtk_label_get(GTK_LABEL(PHP_GTK_GET(this_ptr)), &text);
+	gtk_label_get(GTK_LABEL(PHPG_GOBJECT(this_ptr)), &text);
 	if (text) {
 		RETURN_STRING(text, 1);
 	} else {
@@ -282,7 +282,7 @@ static PHP_METHOD(GtkLabel, get_selection_bounds)
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
 		return;
 
-	gtk_label_get_selection_bounds(GTK_LABEL(PHP_GTK_GET(this_ptr)), &start, &end);
+	gtk_label_get_selection_bounds(GTK_LABEL(PHPG_GOBJECT(this_ptr)), &start, &end);
 	php_gtk_build_value(&return_value, "(ii)", start, end);
 }
 %%
@@ -296,7 +296,7 @@ static PHP_METHOD(GtkLabel, get_layout_offsets)
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
 		return;
 
-	gtk_label_get_layout_offsets(GTK_LABEL(PHP_GTK_GET(this_ptr)), &x, &y);
+	gtk_label_get_layout_offsets(GTK_LABEL(PHPG_GOBJECT(this_ptr)), &x, &y);
 	php_gtk_build_value(&return_value, "(ii)", x, y);
 }
 %% }}}
