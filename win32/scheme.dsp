@@ -221,6 +221,39 @@ InputPath=..\ext\libglade\libglade.defs
 !ENDIF 
 
 # End Source File
+# Begin Source File
+
+SOURCE=..\ext\sqpane\sqpane.defs
+
+!IF  "$(CFG)" == "Scheme - Win32 Release_TS"
+
+USERDEP__LIBGL="..\ext\sqpane\sqpane.overrides"	"..\ext\sqpane\sqpane.defs"	
+# Begin Custom Build
+InputDir=..\ext\sqpane
+InputPath=..\ext\sqpane\sqpane.defs
+
+"$(InputDir)\gen_sqpane.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	php.exe -q ..\generator\generator.php -o ext\sqpane\sqpane.overrides -p SQPane -r ext\gtk%%2b\gtk.defs ext\sqpane\sqpane.defs >..\ext\sqpane\gen_sqpane.c \
+	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\sqpane\gen_sqpane.c | sed -e "s/^/extern /" > ..\ext\sqpane\gen_ce_sqpane.h \
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "Scheme - Win32 Debug_TS"
+
+USERDEP__LIBGL="..\ext\sqpane\sqpane.overrides"	"..\ext\sqpane\sqpane.defs"	
+# Begin Custom Build
+InputDir=..\ext\sqpane
+InputPath=..\ext\sqpane\sqpane.defs
+
+"$(InputDir)\gen_sqpane.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	php.exe -q ..\generator\generator.php -o ext\sqpane\sqpane.overrides -p SQPane -r ext\gtk%%2b\gtk.defs ext\sqpane\sqpane.defs >..\ext\sqpane\gen_sqpane.c \
+	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\sqpane\gen_sqpane.c | sed -e "s/^/extern /" > ..\ext\sqpane\gen_ce_sqpane.h \
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # End Group
 # End Target
 # End Project
