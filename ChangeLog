@@ -1,3 +1,22 @@
+2003-12-06  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * .cvsignore:
+      -** empty log message ***
+
+    * config.m4
+      php_gtk.m4
+      php_gtk_new.m4
+      php_gtk_old.m4
+      build2/build.mk
+      build2/build2.mk
+      ext/gtk+/config.m4:
+      - No longer need two versions of php_gtk.m4 as PHP 4 has only one build
+        system.
+      - Start using external aclocal macros for Gtk+ checks. This requires
+        gathering all extension config.m4 files and configure.in into
+        configure.ac, because aclocal won't find them otherwise. This might
+        result in a warning from aclocal too but it's okay for now.
+
 2003-12-04  Alan Knowles  <alan@akbkhome.com>
 
     * (GTK2)
