@@ -82,7 +82,7 @@ LIB32=link.exe -lib
 # PROP Default_Filter "php"
 # Begin Source File
 
-SOURCE=..\generator\generator.php
+SOURCE=..\generator\scheme.php
 
 !IF  "$(CFG)" == "Scheme - Win32 Release_TS"
 
@@ -90,9 +90,12 @@ SOURCE=..\generator\generator.php
 InputDir=..\src
 InputPath=..\generator\scheme.php
 
-BuildCmds=php.exe -q ..\generator\generator.php ../generator/gtk.defs gtk.overrides
+BuildCmds=php.exe -q ..\generator\generator.php ../generator/gtk.defs ../generator/gtk.overrides
 
 "$(InputDir)\php_gtk_gen.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
+
+"$(InputDir)\php_gtk_gen.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
    $(BuildCmds)
 
 # End Custom Build
@@ -103,9 +106,12 @@ BuildCmds=php.exe -q ..\generator\generator.php ../generator/gtk.defs gtk.overri
 InputDir=..\src
 InputPath=..\generator\scheme.php
 
-BuildCmds=php.exe -q ..\generator\generator.php ../generator/gtk.defs gtk.overrides
+BuildCmds=php.exe -q ..\generator\generator.php ../generator/gtk.defs ../generator/gtk.overrides
 
 "$(InputDir)\php_gtk_gen.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+   $(BuildCmds)
+
+"$(InputDir)\php_gtk_gen.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
    $(BuildCmds)
 
 # End Custom Build
