@@ -171,8 +171,12 @@ if test "$PHP_GTK_GDKPIXBUF" != "no"; then
   else
     AC_DEFINE(HAVE_GDKPIXBUF,1,[gdk-pixbuf support])
     PHP_EVAL_INCLINE($GDK_PIXBUF_CFLAGS)
-    PHP_EVAL_LIBLINE($GDK_PIXBUF_LIBS, GDK_PIXBUF_SHARED_LIBADD)
-    PHP_SUBST(GDK_PIXBUF_SHARED_LIBADD)
-    PHP_GTK_EXTENSION(gdkpixbuf, $php_gtk_ext_shared)
+	if test $php_gtk_ext_shared = "yes"; then
+		PHP_EVAL_LIBLINE($GDK_PIXBUF_LIBS, GDK_PIXBUF_SHARED_LIBADD)
+		PHP_SUBST(GDK_PIXBUF_SHARED_LIBADD)
+	else
+		PHP_EVAL_LIBLINE($GDK_PIXBUF_LIBS, PHP_GTK_SHARED_LIBADD)
+	fi
+    PHP_GTK_EXTENSION(gdkpixbuf, $php_gtk_ext_shared, php_gdkpixbuf.c, gen_gdkpixbuf.c)
   fi
 fi
