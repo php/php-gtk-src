@@ -2716,6 +2716,206 @@ PHP_FUNCTION(gtk_widget_intersect)
 	}
 }
 %%
+override gtk_font_selection_dialog_set_filter
+PHP_FUNCTION(gtk_font_selection_dialog_set_filter)
+{
+	set_filter(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
+}
+%%
+override gtk_font_selection_set_filter
+/* Convert a ZVAL to an array of gchar strings terminated with NULL */
+int php_gtk_array_to_gchar_array(zval *zvalue, gchar ***gchar_array)
+{
+	/* If either no value was passed or its the PHP NULL value, return NULL
+	 * too. This is not an error but just an empty gchar array. */
+	if (zvalue == NULL || Z_TYPE_P(zvalue) == IS_NULL) {
+		*gchar_array = NULL;
+		return 1;
+	}
+
+	/* Even when a normal string is passed we create an array with just one
+	 * entry so you don't have to write array('string') just for one entry. */
+	if (Z_TYPE_P(zvalue) == IS_STRING) {
+		*gchar_array = emalloc(sizeof(gchar *) * 2);
+		(*gchar_array)[0] = estrndup(Z_STRVAL_P(zvalue), Z_STRLEN_P(zvalue));
+		(*gchar_array)[1] = NULL;
+		return 1;
+	/* If the array is empty, just return NULL (see above for NULL value).
+	 * Else reset the internal array pointer and iterate through its element,
+	 * separate and convert them to strings and finally build the gchar array. */
+	} else if (Z_TYPE_P(zvalue) == IS_ARRAY) {
+		HashTable *array;
+		zval **temp_text;
+		int i = 0;
+
+		array = HASH_OF(zvalue);
+		if (zend_hash_num_elements(array) == 0) {
+			*gchar_array = NULL;
+			return 1;
+		}
+		*gchar_array = emalloc(sizeof(gchar *) * (zend_hash_num_elements(array) + 1));
+		i = 0;
+		zend_hash_internal_pointer_reset(array);
+		while (zend_hash_get_current_data(array, (void**)&temp_text) == SUCCESS) {
+			convert_to_string_ex(temp_text);
+			(*gchar_array)[i++] = estrndup(Z_STRVAL_PP(temp_text), Z_STRLEN_PP(temp_text));
+			zend_hash_move_forward(array);
+		}
+		(*gchar_array)[i] = NULL;
+		return 1;
+	}
+	/* Error indication */
+	return 0;
+}
+
+/* Simply traverse the array and free what is available. If you know you haven't allocated
+ * all of the entries you can pass the actual number of entries allocated; else just
+ * pass the maximum size (but be sure to have proper initialized the array to 0 first). */
+void php_gtk_free_gchar_array(gchar ***gchar_array, int num_elements)
+{
+	int i, j;
+
+	for (i = 0; i < num_elements; i++) {
+		if (gchar_array[i]) {
+			j = 0;
+			while (gchar_array[i][j]) {
+				efree(gchar_array[i][j++]);
+			}
+			efree(gchar_array[i]);
+		}
+	}
+	efree(gchar_array);
+}
+
+static void set_filter(INTERNAL_FUNCTION_PARAMETERS, int which)
+{
+	zval *php_filter_type,					/* ZVAL of the GTK+ enum; must be ZVAL so it can
+											   be passed to php_gtk_get_enum_value */
+		 *php_font_type = NULL,				/* The same as above; but since its optional we
+											   default it to NULL and check for this later */
+		 *php_args[6];						/* The rest of the parameters passed to the method,
+											   stored in an array for loop traversion */
+	GtkFontFilterType filter_type;			/* The real filer type we get back from php_gtk_get_enum_value
+											   and pass to the real GTK+ function */
+	GtkFontType font_type = GTK_FONT_ALL;	/* Again, the same, but with a default value so we don't need
+											   to specify it if we don't explicetely need it */
+	gchar ***parameters;					/* The parameters we build during runtime to be passed to
+											   the real GTK+ function */
+	int i, j, num_parameters = 6;			/* The number of parameters; could be a constant */
+
+	NOT_STATIC_METHOD();
+
+	parameters = ecalloc(sizeof(gchar *), num_parameters);	/* Allocate the memory for the parameters
+															   we build and initialize the memory to 0 */
+	memset(php_args, 0, sizeof(zval *) * num_parameters);	/* The same is true for the ZVAL array */
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V|VVVVVVV", &php_filter_type, &php_font_type,
+							&(php_args[0]), &(php_args[1]), &(php_args[2]),
+							&(php_args[3]), &(php_args[4]), &(php_args[5]))) {
+		return;
+	}
+
+	/* See if we got a valid enum value */
+	if (!php_gtk_get_enum_value(GTK_TYPE_FONT_FILTER_TYPE, php_filter_type, (gint *)&filter_type)) {
+		return;
+	}
+
+	/* See if we got a valid enum value; this one is optional and has a
+	 * default value */
+	if (php_font_type && !php_gtk_get_enum_value(GTK_TYPE_FONT_TYPE, php_font_type, (gint *)&font_type)) {
+		return;
+	}
+
+	/* Process each parameter passe after the two enums and see if we can
+	 * build a list of char pointers of it. Single strings are converted to an
+	 * array too. NULL is also valid, in which case we just set the parameter
+	 * to NULL. */
+	for (i = 0; i < num_parameters; i++) {
+		if (!php_gtk_array_to_gchar_array(php_args[i], &(parameters[i]))) {
+			php_error(E_WARNING, "%s() expected argument %d to be NULL, string or array of strings; %s given",
+					  get_active_function_name(TSRMLS_C), 3 + i, php_gtk_zval_type_name(php_args[i]));
+			php_gtk_gchar_ptr_ptr_free(parameters, i - 1);
+			return;
+		}
+	}
+
+	/* Call the GTK+ function */
+	switch( which) {
+		case 0:
+			gtk_font_selection_dialog_set_filter(GTK_FONT_SELECTION_DIALOG(PHP_GTK_GET(this_ptr)),
+												 filter_type, font_type, 
+												 parameters[0], parameters[1], parameters[2],
+												 parameters[3], parameters[4], parameters[5]);
+			break;
+		case 1:
+			gtk_font_selection_set_filter(GTK_FONT_SELECTION(PHP_GTK_GET(this_ptr)),
+										  filter_type, font_type, 
+										  parameters[0], parameters[1], parameters[2],
+										  parameters[3], parameters[4], parameters[5]);
+			break;
+		default:
+			php_error(E_WARNING, "%s() internal error, don't know which subfunction (%d) to call",
+					  get_active_function_name(TSRMLS_C), which);
+			/* return missing intentionally */
+	}
+
+	/* Free the parameters we previously allocated */
+	php_gtk_free_gchar_array(parameters, num_parameters);
+}
+
+PHP_FUNCTION(gtk_font_selection_set_filter)
+{
+	set_filter(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
+}
+%%
+override gtk_button_box_get_child_size_default
+PHP_FUNCTION(gtk_button_box_get_child_size_default)
+{
+	gint min_width, min_height;
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+		return;
+	}
+
+	gtk_button_box_get_child_size_default(&min_width, &min_height);
+	array_init(return_value);
+	add_next_index_long(return_value, min_width);
+	add_next_index_long(return_value, min_height);
+}
+%%
+override button_box_get_child_ipadding_default
+PHP_FUNCTION(button_box_get_child_ipadding_default)
+{
+	gint ipad_x, ipad_y;
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+		return;
+	}
+
+	gtk_button_box_get_child_ipadding_default(&ipad_x, &ipad_y);
+	array_init(return_value);
+	add_next_index_long(return_value, ipad_x);
+	add_next_index_long(return_value, ipad_y);
+}
+%%
+override gtk_widget_get_pointer
+PHP_FUNCTION(gtk_widget_get_pointer)
+{
+	gint x, y;
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+		return;
+	}
+
+	gtk_widget_get_pointer(GTK_WIDGET(PHP_GTK_GET(this_ptr)), &x, &y);
+	array_init(return_value);
+	add_next_index_long(return_value, x);
+	add_next_index_long(return_value, y);
+}
+%%
 ignore
   gtk_drag_source_handle_event gtk_drag_dest_handle_event
   gtk_selection_request gtk_selection_notify gtk_selection_property_notify
