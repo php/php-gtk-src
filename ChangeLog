@@ -1,3 +1,26 @@
+2003-06-28  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/extra/extra.defs
+      ext/extra/extra.overrides:
+      gtksheet->get_active_cell returns array(row,col)
+
+    * NEWS:
+      updating News to match current situation at end of June 2003
+
+    * ext/skeleton/config.m4:
+      making life easier for extension builders - putting in missing "then"
+
+    * ext/extra/Makefile.frag
+      ext/extra/Makefile.in
+      ext/extra/config.m4
+      ext/extra/extra.defs
+      ext/extra/extra.overrides
+      ext/extra/php_extra.c
+      ext/extra/php_extra.h
+      ext/extra/plot.php
+      ext/extra/sheet.php:
+      uploading Angel Maza s bindings for gtkextra - have added gtksheet to it.
+
 2003-06-23  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (ZE2_PORT)
