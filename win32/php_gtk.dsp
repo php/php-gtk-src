@@ -92,6 +92,10 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE="..\ext\gtk+\php_gdk.c"
+# End Source File
+# Begin Source File
+
 SOURCE=..\main\php_gtk.c
 # End Source File
 # Begin Source File
@@ -185,6 +189,10 @@ SOURCE="..\ext\gtk+\php_gtk+_types.c"
 # Begin Group "Header Files No. 1"
 
 # PROP Default_Filter "*.h"
+# Begin Source File
+
+SOURCE="..\ext\gtk+\gen_gtk.h"
+# End Source File
 # Begin Source File
 
 SOURCE="..\ext\gtk+\php_gtk+.h"
