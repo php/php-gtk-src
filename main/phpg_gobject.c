@@ -342,8 +342,12 @@ PHP_GTK_API zval* phpg_gobject_new(GObject *obj)
 		object_init_ex(zobj, ce);
 		g_object_ref(obj);
 
-		/* TODO turn into a sink function */
-		if (GTK_OBJECT_FLOATING(obj)) {
+        /*
+         * For now, do a check for GTK_TYPE_OBJECT's and sink them. More generic
+         * system can be implemented later.
+         */
+        if (g_type_is_a(G_OBJECT_TYPE(obj), GTK_TYPE_OBJECT)
+            && GTK_OBJECT_FLOATING(obj)) {
 			g_object_ref(obj);
 			gtk_object_sink(GTK_OBJECT(obj));
 		}
