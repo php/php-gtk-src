@@ -1762,7 +1762,7 @@ PHP_FUNCTION(gtk_curve_set_vector)
 	zend_hash_internal_pointer_reset(target_hash);
 	i = 0;
 	while (zend_hash_get_current_data(target_hash, (void **)&temp_vector) == SUCCESS) {
-		vector[i++] = Z_DVAL_PP(temp_vector);
+		vector[i++] = (gfloat)Z_DVAL_PP(temp_vector);
 		zend_hash_move_forward(target_hash);
 	}
 	

@@ -489,7 +489,7 @@ PHP_FUNCTION(gdk_window_property_change)
 					 zend_hash_get_current_data(Z_ARRVAL_P(php_data), (void **)&data_temp);
 					 zend_hash_move_forward(Z_ARRVAL_P(php_data))) {
 					convert_to_long_ex(data_temp);
-					data16[i++] = Z_LVAL_PP(data_temp); 
+					data16[i++] = (guint16)Z_LVAL_PP(data_temp); 
 				}
 			}	
 			break;

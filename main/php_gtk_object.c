@@ -595,7 +595,7 @@ int php_gtk_arg_from_value(GtkArg *arg, zval *value)
 
 		case GTK_TYPE_FLOAT:
 			convert_to_double(value);
-			GTK_VALUE_FLOAT(*arg) = Z_DVAL_P(value);
+			GTK_VALUE_FLOAT(*arg) = (gfloat)Z_DVAL_P(value);
 			break;
 
 		case GTK_TYPE_DOUBLE:
@@ -872,7 +872,7 @@ void php_gtk_ret_from_value(GtkArg *ret, zval *value)
 
 		case GTK_TYPE_FLOAT:
 			convert_to_double(value);
-			*GTK_RETLOC_FLOAT(*ret) = Z_DVAL_P(value);
+			*GTK_RETLOC_FLOAT(*ret) = (gfloat)Z_DVAL_P(value);
 			break;
 
 		case GTK_TYPE_DOUBLE:
