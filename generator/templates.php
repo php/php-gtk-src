@@ -145,7 +145,8 @@ const gtk_object_init = "
 const non_gtk_object_init = "
 	php_gtk_set_object(this_ptr, wrapped_obj, le_%s);\n";
 
-const function_entry = "\tPHP_ME(%s, %s, %s, %s)\n";
+const method_entry = "\tPHP_ME(%s, %s, %s, %s)\n";
+const function_entry = "\tPHP_ME_MAPPING(%s, %s, NULL)\n";
 const functions_decl = "
 static function_entry %s_methods[] = {
 ";

@@ -571,7 +571,7 @@ class Generator {
                     fwrite($this->fp, $method_override . "\n");
                     if (!isset($method_name))
                         $method_name = $method->name;
-                    $method_defs[] = sprintf(Templates::function_entry,
+                    $method_defs[] = sprintf(Templates::method_entry,
                                              $object->in_module . $object->name,
                                              $method->name, 'NULL', $flags ?  $flags : 'ZEND_ACC_PUBLIC');
                 } else {
@@ -584,7 +584,7 @@ class Generator {
                         $flags = 'ZEND_ACC_PUBLIC';
                     }
                     fwrite($this->fp, $code);
-                    $method_defs[] = sprintf(Templates::function_entry,
+                    $method_defs[] = sprintf(Templates::method_entry,
                                              $object->in_module . $object->name,
                                              $method->name, 'NULL', $flags);
                 }
@@ -636,22 +636,22 @@ class Generator {
                         $code = $this->write_callable($ctor, $template, false, false, $dict);
                         fwrite($this->fp, $code);
                     }
-                    $ctor_defs[] = sprintf(Templates::function_entry,
+                    $ctor_defs[] = sprintf(Templates::method_entry,
                                            $ctor->is_constructor_of,
                                            $ctor_fe_name, 'NULL', $flags);
                 } catch (Exception $e) {
                     fprintf(STDERR, "\tnot generating constructor %s for %s: %s\n", $ctor_fe_name, $object->c_name, $e->getMessage());
-                    // mark class as abstract if we were trying to generate
-                    // default constructor
+                    // mark class as non-instantiable directly if we were trying
+                    // to generate default constructor
                     if ($ctor_fe_name == '__construct') {
-                        $object->ce_flags[] = 'ZEND_ACC_EXPLICIT_ABSTRACT_CLASS';
+                        $ctor_defs[] = sprintf(Templates::function_entry, $ctor_fe_name, 'no_direct_constructor');
                     }
                 }
                 $first = 0;
             }
         } else {
-            // mark class as abstract
-            $object->ce_flags[] = 'ZEND_ACC_EXPLICIT_ABSTRACT_CLASS';
+            // mark class as non-instantiable directly
+            $ctor_defs[] = sprintf(Templates::function_entry, '__construct', 'no_direct_constructor');
         }
 
         return $ctor_defs;
@@ -956,13 +956,13 @@ class Generator {
                     fwrite($this->fp, $function_override . "\n");
                     if ($func_name == $function->c_name)
                         $func_name = $function->name;
-                    $func_defs[] = sprintf(Templates::function_entry,
+                    $func_defs[] = sprintf(Templates::method_entry,
                                            $this->lprefix,
                                            $func_name, 'NULL', $flags ? $flags : 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
                 } else {
                     $code = $this->write_callable($function, Templates::function_body, true, false, $dict);
                     fwrite($this->fp, $code);
-                    $func_defs[] = sprintf(Templates::function_entry,
+                    $func_defs[] = sprintf(Templates::method_entry,
                                            $this->lprefix,
                                            $func_name, 'NULL', 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
                 }
