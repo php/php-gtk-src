@@ -1737,3 +1737,18 @@ PHP_FUNCTION(wrap_gtk_menu_popup)
 		gtk_menu_popup(GTK_MENU(PHP_GTK_GET(this_ptr)), pms, pmi, NULL, NULL,
 					   button, time);
 }
+%%
+override gtk_editable_insert_text
+PHP_FUNCTION(wrap_gtk_editable_insert_text)
+{
+	char *text;
+	int len, pos;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s#i", &text, &len, &pos))
+		return;
+
+	gtk_editable_insert_text(GTK_EDITABLE(PHP_GTK_GET(this_ptr)), text, len, &pos);
+	RETURN_LONG(pos);
+}
