@@ -267,6 +267,34 @@ static void release_gdk_window_rsrc(zend_rsrc_list_entry *rsrc)
 }
 
 
+PHP_FUNCTION(gdkcolor)
+{
+	char *color_spec;
+	int red, green, blue;
+	GdkColor color;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "hhh", &color.red, &color.green, &color.blue)) {
+		if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "s", &color_spec)) {
+			php_error(E_WARNING, "%s() requires a color spec or RGB triplet", get_active_function_name());
+			php_gtk_invalidate(this_ptr);
+			return;
+		} else if (!gdk_color_parse(color_spec, &color)) {
+			php_error(E_WARNING, "%s() could not parse color spec '%s'", get_active_function_name(), color_spec);
+			php_gtk_invalidate(this_ptr);
+			return;
+		}
+	}
+
+	php_gtk_set_object(this_ptr, gdk_color_copy(&color), le_gdk_color);
+}
+
+static function_entry php_gdk_color_functions[] = {
+	{"gdkcolor", PHP_FN(gdkcolor), NULL},
+	{NULL, NULL, NULL}
+};
+
 zval *php_gdk_color_new(GdkColor *obj)
 {
 	zval *result;
@@ -303,6 +331,19 @@ static void gdk_color_get_property(zval *result, zval *object, char *prop_name)
 	}
 }
 
+static void gdk_color_set_property(zval *object, char *prop_name, zval *value)
+{
+	GdkColor *color = PHP_GDK_COLOR_GET(object);
+
+	convert_to_long(value);
+	if (!strcmp(prop_name, "red")) {
+		color->red = (gushort)Z_LVAL_P(value);
+	} else if (!strcmp(prop_name, "green")) {
+		color->green = (gushort)Z_LVAL_P(value);
+	} else if (!strcmp(prop_name, "blue")) {
+		color->blue = (gushort)Z_LVAL_P(value);
+	}
+}
 
 static void release_gdk_color_rsrc(zend_rsrc_list_entry *rsrc)
 {
@@ -311,9 +352,9 @@ static void release_gdk_color_rsrc(zend_rsrc_list_entry *rsrc)
 }
 
 
-zval php_gtk_get_property(zend_property_reference *property_reference)
+static zval php_gtk_get_property(zend_property_reference *property_reference)
 {
-	zval result, *value;
+	zval result;
 	zend_overloaded_element *overloaded_property;
 	zend_llist_element *element;
 	zval *object = property_reference->object;
@@ -343,6 +384,45 @@ zval php_gtk_get_property(zend_property_reference *property_reference)
     return result;
 }
 
+static int php_gtk_set_property(zend_property_reference *property_reference, zval *value)
+{
+	zval result;
+	zend_overloaded_element *overloaded_property;
+	zend_llist_element *element;
+	zval *object = property_reference->object;
+	int retval;
+
+	for (element=property_reference->elements_list->head; element && element!=property_reference->elements_list->tail; element=element->next) {
+		overloaded_property = (zend_overloaded_element *) element->data;
+		if (Z_TYPE_P(overloaded_property) != OE_IS_OBJECT ||
+			Z_TYPE(overloaded_property->element) != IS_STRING ||
+			Z_TYPE_P(object) != IS_OBJECT) {
+			return FAILURE;
+		}
+
+		if (Z_OBJCE_P(object) == gdk_window_ce) {
+			gdk_window_get_property(&result, object, Z_STRVAL(overloaded_property->element));
+		} else if (Z_OBJCE_P(object) == gdk_color_ce) {
+			gdk_color_get_property(&result, object, Z_STRVAL(overloaded_property->element));
+		} else {
+			return FAILURE;
+		}
+		object = &result;
+
+		zval_dtor(&overloaded_property->element);
+	}
+
+	retval = FAILURE;
+	overloaded_property = (zend_overloaded_element *) element->data;
+	if (Z_OBJCE_P(object) == gdk_color_ce) {
+		gdk_color_set_property(object, Z_STRVAL(overloaded_property->element), value);
+		retval =  SUCCESS;
+	}
+
+	zval_dtor(&overloaded_property->element);
+	return retval;
+}
+
 void php_gtk_register_types(int module_number)
 {
 	zend_class_entry ce;
@@ -357,7 +437,7 @@ void php_gtk_register_types(int module_number)
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkwindow", NULL, NULL, php_gtk_get_property, NULL);
 	gdk_window_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkcolor", NULL, NULL, php_gtk_get_property, NULL);
+	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkcolor", php_gdk_color_functions, NULL, php_gtk_get_property, php_gtk_set_property);
 	gdk_color_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 }
 

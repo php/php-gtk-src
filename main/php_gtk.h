@@ -70,6 +70,7 @@ zval *php_gdk_color_new(GdkColor *obj);
 
 /* Utility functions. */
 int php_gtk_parse_args(int argc, char *format, ...);
+int php_gtk_parse_args_quiet(int argc, char *format, ...);
 int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce);
 void php_gtk_invalidate(zval *wrapper);
 zend_bool php_gtk_check_callable(zval *function);

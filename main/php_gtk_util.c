@@ -23,6 +23,16 @@
 static char *parse_arg_impl(zval **arg, va_list *va, int spec, char *buf)
 {
 	switch (spec) {
+		case 'h':
+			{
+				short *p = va_arg(*va, short *);
+				if (Z_TYPE_PP(arg) != IS_LONG && Z_TYPE_PP(arg) != IS_BOOL)
+					return "integer";
+				else
+					*p = (short)Z_LVAL_PP(arg);
+			}
+			break;
+
 		case 'i':
 			{
 				int *p = va_arg(*va, int *);
@@ -129,7 +139,7 @@ static char *parse_arg_impl(zval **arg, va_list *va, int spec, char *buf)
 	return NULL;
 }
 
-static int parse_arg(int arg_num, zval **arg, va_list *va, int spec)
+static int parse_arg(int arg_num, zval **arg, va_list *va, int spec, int quiet)
 {
 	char *expected_type;
 	char *actual_type;
@@ -179,16 +189,18 @@ static int parse_arg(int arg_num, zval **arg, va_list *va, int spec)
 
 		}
 
-		sprintf(buf, "%s() expects argument %d to be %s, %s given",
-				get_active_function_name(), arg_num, expected_type, actual_type);
-		php_error(E_WARNING, buf);
+		if (!quiet) {
+			sprintf(buf, "%s() expects argument %d to be %s, %s given",
+					get_active_function_name(), arg_num, expected_type, actual_type);
+			php_error(E_WARNING, buf);
+		}
 		return 0;
 	}
 
 	return 1;
 }
 
-static int parse_va_args(int argc, zval ***args, char *format, va_list *va)
+static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int quiet)
 {
 	char *format_walk;
 	char buf[1024];
@@ -207,7 +219,7 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va)
 				min_argc = max_argc;
 				break;
 
-			case 'i': case 'c':
+			case 'i': case 'h': case 'c':
 			case 's': case 'd': case 'b':
 			case 'a': case 'N':
 			case 'O': case 'o': case 'V':
@@ -224,30 +236,31 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va)
 		min_argc = max_argc;
 
 	if (argc < min_argc || argc > max_argc) {
-		sprintf(buf, "%s() requires %s %d argument%s, %d given",
-				get_active_function_name(),
-				min_argc == max_argc ? "exactly" : argc < min_argc ? "at least" : "at most",
-				argc < min_argc ? min_argc : max_argc,
-				(argc < min_argc ? min_argc : max_argc) == 1 ? "" : "s",
-				argc);
-		php_error(E_WARNING, buf);
+		if (!quiet) {
+			sprintf(buf, "%s() requires %s %d argument%s, %d given",
+					get_active_function_name(),
+					min_argc == max_argc ? "exactly" : argc < min_argc ? "at least" : "at most",
+					argc < min_argc ? min_argc : max_argc,
+					(argc < min_argc ? min_argc : max_argc) == 1 ? "" : "s",
+					argc);
+			php_error(E_WARNING, buf);
+		}
 		return 0;
 	}
 
 	for (i = 0; i < argc; i++, format++) {
 		if (*format == '|')
 			format++;
-		if (!parse_arg(i+1, args[i], va, *format))
+		if (!parse_arg(i+1, args[i], va, *format, quiet))
 			return 0;
 	}
 
 	return 1;
 }
 
-int php_gtk_parse_args(int argc, char *format, ...)
+static int php_gtk_parse_args_impl(int argc, char *format, va_list *va, int quiet)
 {
 	zval ***args;
-	va_list va;
 	int retval;
 
 	args = (zval ***)emalloc(argc * sizeof(zval **));
@@ -259,10 +272,32 @@ int php_gtk_parse_args(int argc, char *format, ...)
 		return 0;
 	}
 
-	va_start(va, format);
-	retval = parse_va_args(argc, args, format, &va);
-	va_end(va);
+	retval = parse_va_args(argc, args, format, va, quiet);
 	efree(args);
+
+	return retval;
+}
+
+int php_gtk_parse_args(int argc, char *format, ...)
+{
+	va_list va;
+	int retval;
+
+	va_start(va, format);
+	retval = php_gtk_parse_args_impl( argc, format, &va, 0);
+	va_end(va);
+
+	return retval;
+}
+
+int php_gtk_parse_args_quiet(int argc, char *format, ...)
+{
+	va_list va;
+	int retval;
+
+	va_start(va, format);
+	retval = php_gtk_parse_args_impl(argc, format, &va, 1);
+	va_end(va);
 
 	return retval;
 }

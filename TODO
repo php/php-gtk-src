@@ -1,5 +1,4 @@
 /* vim: set tw=80 ai expandtab: */
 
-* Implement GdkColor set attribute overload function.
-* Modify GdkColor to copy attributes into properties instead of having overload
-  get property function.
+* Modify generator to strip 'gdk_' from some functions.
+* Modify generic set/set property handlers to handle array index accesses.
