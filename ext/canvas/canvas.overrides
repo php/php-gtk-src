@@ -760,10 +760,7 @@ override gtk_canvas_item_get_bounds
 PHP_FUNCTION(gtk_canvas_item_get_bounds)
 {
 	double x1, y1, x2, y2;
-	 
-	
-	
-	
+ 
 	
 	NOT_STATIC_METHOD();
  
