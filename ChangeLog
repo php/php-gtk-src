@@ -1,3 +1,9 @@
+2003-06-23  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * (ZE2_PORT)
+      main/php_gtk.h:
+      -** empty log message ***
+
 2003-06-16  Alan Knowles  <alan@akbkhome.com>
 
     * generator/generator.php:
