@@ -21,7 +21,7 @@ function delete_event()
  * functions. Note that all constructors must be assigned by reference.
  */
 $window = &new GtkWindow();
-$window->connect_object('destroy', array('gtk', 'main_quit');
+$window->connect_object('destroy', array('gtk', 'main_quit'));
 $window->connect('delete-event', delete_event);
 
 /*
