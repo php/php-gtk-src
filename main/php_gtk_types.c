@@ -208,6 +208,43 @@ zval *php_gdk_event_new(GdkEvent *obj)
 
 
 /* GdkWindow */
+PHP_FUNCTION(gdk_window_raise)
+{
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	gdk_window_raise(PHP_GDK_WINDOW_GET(this_ptr));
+}
+
+PHP_FUNCTION(gdk_window_lower)
+{
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	gdk_window_lower(PHP_GDK_WINDOW_GET(this_ptr));
+}
+
+PHP_FUNCTION(gdk_window_get_pointer)
+{
+	guint32 deviceid;
+    gdouble x = 0.0, y = 0.0, pressure = 0.0, xtilt = 0.0, ytilt = 0.0;
+    GdkModifierType mask = 0;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &deviceid))
+		return;
+
+    gdk_input_window_get_pointer(PHP_GDK_WINDOW_GET(this_ptr), deviceid, &x, &y, &pressure, &xtilt, &ytilt, &mask);
+    *return_value = * php_gtk_build_value("(dddddi)", x, y, pressure, xtilt, ytilt, mask);
+}
+
+static function_entry php_gdk_window_functions[] = {
+	/* TODO implement other functions similar to PyGtk */
+	{"raise", PHP_FN(gdk_window_raise), NULL},
+	{"lower", PHP_FN(gdk_window_lower), NULL},
+	{"get_pointer", PHP_FN(gdk_window_get_pointer), NULL},
+	{NULL, NULL, NULL}
+};
+
 zval *php_gdk_window_new(GdkWindow *obj)
 {
 	zval *result;
@@ -593,7 +630,7 @@ void php_gtk_register_types(int module_number)
 	INIT_CLASS_ENTRY(ce, "gdkevent", NULL);
 	gdk_event_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkwindow", NULL, NULL, php_gtk_get_property, NULL);
+	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkwindow", php_gdk_window_functions, NULL, php_gtk_get_property, NULL);
 	gdk_window_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkcolor", php_gdk_color_functions, NULL, php_gtk_get_property, php_gtk_set_property);
