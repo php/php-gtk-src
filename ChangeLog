@@ -1,3 +1,18 @@
+2001-05-11  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk_object.c:
+    Support exotic types rudimentarily (is that a word?).
+
+    * NEWS: Update.
+
+    * generator/gtk.defs
+      generator/gtk.overrides
+      src/php_gtk.h
+      src/php_gtk_object.c
+      src/php_gtk_util.c:
+    Added support for getting and setting GtkObject arguments via get_arg() and
+    set_arg() methods.
+
 2001-05-10  James Moore  <James@phpuk.org>
 
     * docs/stylesheets/xsl/html/class.xsl
