@@ -1,3 +1,10 @@
+2004-01-04  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * php_gtk.m4
+      main/php_gtk.h
+      main/php_gvalue.c:
+      Some GValue functions.
+
 2003-12-31  Andrei Zmievski  <andrei@gravitonic.com>
 
     * php_gtk.m4
