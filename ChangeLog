@@ -1,3 +1,79 @@
+2003-10-10  Frank M. Kromann  <frank@kromann.info>
+
+    * win32/php_gtk.dsw:
+      Adding GtkExtra project to workspace
+
+    * ext/extra/extra.overrides:
+      Free unused memory
+
+    * ext/extra/extra.dsp:
+      Fixing debug build
+
+    * (PHP_GTK_1)
+      ext/extra/extra.dsp:
+      Adding missing library to debug build
+
+    * (PHP_GTK_1)
+      ext/extra/extra.overrides:
+      Free alocated memory
+
+    * (PHP_GTK_1)
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      main/php_gtk.h:
+      Adding a few PHP_GTK_API's needed for GtkExtra
+
+2003-10-10  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/gtkhtml/gtkhtml.defs
+      ext/gtkhtml/gtkhtml.overrides:
+      merge gtkhtml search changes from php4 branch
+
+    * (PHP_GTK_1)
+      ext/gtkhtml/gtkhtml.defs
+      ext/gtkhtml/gtkhtml.overrides:
+      add search capabilites to gtkhtml (Radko Sharkov)
+
+2003-10-10  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO
+      ext/combobutton/combobutton.dsp
+      ext/extra/config.m4
+      ext/extra/extra.dsp
+      ext/extra/php_extra.h
+      ext/extra/plot.php
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      ext/gtk+/php_gtk.dsp
+      ext/libglade/libglade.dsp
+      ext/scintilla/scintilla.dsp
+      ext/scintilla/scintilla.overrides
+      ext/scrollpane/scrollpane.dsp
+      ext/spaned/spaned.dsp
+      ext/sqpane/sqpane.dsp
+      generator/arg_types.php
+      generator/generator.php
+      generator/scheme.php
+      generator/templates.php
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_object.c
+      main/php_gtk_util.c
+      test/hello.php
+      test/list.php
+      test/scribble.php
+      win32/README.win32.txt
+      win32/php_win.c:
+      Merged ZE2_PORT branch to HEAD. All PHP4 specific work needs to be done
+      on PHP_GTK_1 branch now.
+
+    * (ZE2_PORT)
+      ext/extra/config.m4:
+      -** empty log message ***
+
 2003-10-09  Alan Knowles  <alan@akbkhome.com>
 
     * (GTK2)
