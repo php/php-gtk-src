@@ -1,3 +1,9 @@
+2002-04-03  Andrei Zmievski  <andrei@php.net>
+
+    * NEWS: *** empty log message ***
+
+    * ext/gtk+/gtk.overrides: Make gtk::input_add() work with PHP streams.
+
 2002-03-29  Andrei Zmievski  <andrei@php.net>
 
     * makedist: *** empty log message ***
