@@ -1938,6 +1938,317 @@ function create_entry()
 	$windows['entry']->show();
 }
 
+function toggle_resize($child)
+{
+	$paned = $child->parent;
+
+	$is_child1 = ($child == $paned->child1);
+
+	$resize = $is_child1 ? $paned->child1_resize : $paned->child2_resize;
+	$shrink = $is_child1 ? $paned->child1_shrink : $paned->child2_shrink;
+
+	$child->ref();
+
+	// Zend doesn't yet support overloaded method calls
+	$parent = $child->parent;
+	$parent->remove($child);
+
+	if ($is_child1)
+		$paned->pack1($child, !$resize, $shrink);
+	else
+		$paned->pack2($child, !$resize, $shrink);
+
+	$child->unref();
+}
+
+function toggle_shrink($child)
+{
+	$paned = $child->parent;
+	
+	$is_child1 = ($child == $paned->child1);
+
+	$resize = $is_child1 ? $paned->child1_resize : $paned->child2_resize;
+	$shrink = $is_child1 ? $paned->child1_shrink : $paned->child2_shrink;
+
+	$child->ref();
+
+	// Zend doesn't yet support overloaded method calls
+	$parent = $child->parent;
+	$parent->remove($child);
+
+	if ($is_child1)
+		$paned->pack1($child, $resize, !$shrink);
+	else
+		$paned->pack2($child, $resize, !$shrink);
+
+	$child->unref();
+}
+
+function create_pane_options($paned, $frame_label, $label1, $label2)
+{
+	$frame = &new GtkFrame($frame_label);
+	$frame->set_border_width(0);
+
+	$table = &new GtkTable(3, 2, true);
+	$frame->add($table);
+
+	$label = &new GtkLabel($label1);
+	$table->attach_defaults($label, 0, 1, 0, 1);
+
+	$check_button = &new GtkCheckButton('Resize');
+	$table->attach_defaults($check_button, 0, 1, 1, 2);
+	$check_button->connect_object('toggled', 'toggle_resize', $paned->child1);
+
+	$check_button = &new GtkCheckButton('Shrink');
+	$table->attach_defaults($check_button, 0, 1, 2, 3);
+	$check_button->set_active( true);
+	$check_button->connect_object('toggled', 'toggle_shrink', $paned->child1);
+
+	$label = &new GtkLabel($label2);
+	$table->attach_defaults($label,1,2,0,1);
+
+	$check_button = &new GtkCheckButton('Resize');
+	$table->attach_defaults($check_button, 1, 2, 1, 2);
+	$check_button->set_active( true);
+	$check_button->connect_object('toggled', 'toggle_resize', $paned->child2);
+
+	$check_button = &new GtkCheckButton('Shrink');
+	$table->attach_defaults($check_button, 1, 2, 2, 3);
+	$check_button->set_active( true);
+	$check_button->connect_object('toggled', 'toggle_shrink', $paned->child2);
+
+	return $frame;
+}
+
+function create_panes()
+{
+	global $windows;
+
+	if (!isset($windows['panes'])) {
+		$window = &new GtkWindow;
+		$windows['panes'] = $window;
+		$window->connect('delete_event', 'delete_event');
+		$window->set_title('GtkPane');
+
+		$vbox = &new GtkVBox;
+		$window->add( $vbox);
+
+		$vpaned = &new GtkVPaned;
+		$vbox->pack_start($vpaned, true, true, 0);
+		$vpaned->set_border_width( 5);
+
+		$hpaned = &new GtkHPaned;
+		$vpaned->add1($hpaned);
+
+		$frame = &new GtkFrame;
+		$frame->set_shadow_type(GTK_SHADOW_IN);
+		$frame->set_usize(60, 60);
+		$hpaned->add1($frame);
+
+		$button = &new GtkButton('Hi there');
+		$frame->add($button);
+
+		$frame = &new GtkFrame;
+		$frame->set_shadow_type(GTK_SHADOW_IN);
+		$frame->set_usize(80, 60);
+		$hpaned->add2($frame);
+
+		$frame = &new GtkFrame;
+		$frame->set_shadow_type(GTK_SHADOW_IN);
+		$frame->set_usize(60, 80);
+		$vpaned->add2($frame);
+
+		$vbox->pack_start(
+			create_pane_options(
+				$hpaned,
+				'Horizontal',
+				'Left',
+				'Right'),
+			false, false, 0);
+
+		$vbox->pack_start(
+			create_pane_options(
+				$vpaned,
+				'Vertical',
+				'Top',
+				'Bottom'),
+			false, false, 0);
+
+		$separator = &new GtkHSeparator();
+		$vbox->pack_start($separator, false);
+
+		$button = &new GtkButton('Close');
+		$button->connect('clicked', 'close_window');
+		$vbox->pack_start($button);
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$button->grab_default();
+		$button->show();
+	}
+	$windows['panes']->show_all();
+}
+
+function create_file_selection()
+{
+	static $window;
+
+	if (!$window)
+	{
+		function file_selection_ok($button, $fs)
+		{
+			print "selected '" . $fs->get_filename() . "'\n";
+			$fs->destroy();
+		}
+
+		$window = new GtkFileSelection('File selection dialog');
+		$window->hide_fileop_buttons();
+		$window->set_position(GTK_WIN_POS_MOUSE);
+		$window->connect_object('destroy',create_function('&$w','$w=null;'), $window);
+
+		$button_ok = $window->ok_button;
+		$button_ok->connect('clicked','file_selection_ok', $window);
+
+		$button_cancel = $window->cancel_button;
+		$button_cancel->connect_object('clicked', array(&$window, 'destroy'));
+
+		$action_area = $window->action_area;
+
+		$button = &new GtkButton('Hide Fileops');
+		$button->connect_object('clicked', create_function('$w', '$w->hide_fileop_buttons();'), $window);
+		$action_area->pack_start($button, false, false, 0);
+		$button->show();
+
+		$button = &new GtkButton('Show Fileops');
+		$button->connect_object('clicked', create_function('$w', '$w->show_fileop_buttons();'), $window);
+		$action_area->pack_start($button, false, false, 0);
+		$button->show();
+	}
+
+	if (!($window->flags() & GTK_VISIBLE))
+		$window->show_all();
+	else 
+		$window->destroy();
+}
+
+function label_toggle( $dialog, $label, $dialog)
+{
+	if (!$label)
+	{
+		$label = new GtkLabel('Dialog Test');
+		$label->set_padding(10, 10);
+		$label->connect_object('destroy', create_function('$w', '$w=null;'), &$label);
+		$vbox = $dialog->vbox;
+		$vbox->pack_start($label, true, true, 0);
+		$label->show();
+	} else
+		$label->destroy();
+}
+
+function create_dialog()
+{
+	static $dialog = null;
+	static $label = null;
+
+	if (!$dialog)
+	{
+		$dialog = new GtkDialog;
+		$dialog->set_title('GtkDialog');
+		$dialog->set_border_width(0);
+		$dialog->set_usize(200,110);
+		$dialog->connect_object('destroy', create_function('$w', '$w = null;'), &$dialog);
+
+		$button = &new GtkButton('Ok');
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$button->connect( 'clicked', 'close_window');
+
+		$action_area = $dialog->action_area;
+		$action_area->pack_start($button, true, true, 0);
+		$button->grab_default();
+		$button->show();
+
+		$button = &new GtkButton('Toggle');
+		$button->connect('clicked', 'label_toggle', &$label, $dialog);
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$action_area->pack_start($button, true, true, 0);
+		$button->show();
+	}
+
+	if (!($dialog->flags() & GTK_VISIBLE))
+		$dialog->show();
+	else
+		$dialog->destroy();
+}
+
+function event_watcher( $object, $signal_id)
+{
+	echo 'Event watch: ' . gtk::signal_name( $signal_id) . ' emitted for ' . gtk::type_name( $object->get_type()) . "\n";
+	return true;
+}
+
+function event_watcher_toggle(&$event_watcher_enter_id, &$event_watcher_leave_id)
+{
+	var_dump($event_watcher_enter_id);
+	if ($event_watcher_enter_id)
+		event_watcher_down($event_watcher_enter_id, $event_watcher_leave_id);
+	else
+	{
+		$signal_id = Gtk::signal_lookup( 'enter_notify_event', GtkWidget::get_type());
+		$event_watcher_enter_id = gtk::signal_add_emission_hook( $signal_id, 'event_watcher');
+		$signal_id = Gtk::signal_lookup( 'leave_notify_event', GtkWidget::get_type());
+		$event_watcher_leave_id = gtk::signal_add_emission_hook( $signal_id, 'event_watcher');
+	}
+}
+
+function event_watcher_down(&$event_watcher_enter_id, &$event_watcher_leave_id)
+{
+	if ($event_watcher_enter_id)
+	{
+		$signal_id = Gtk::signal_lookup( 'enter_notify_event', GtkWidget::get_type());
+		gtk::signal_remove_emission_hook($signal_id, $event_watcher_enter_id);
+		$event_watcher_enter_id = 0;
+		$signal_id = Gtk::signal_lookup( 'leave_notify_event', GtkWidget::get_type());
+		gtk::signal_remove_emission_hook($signal_id, $event_watcher_leave_id);
+		$event_watcher_leave_id = 0;
+	}
+}
+		
+function create_event_watcher()
+{
+	static $dialog = null;
+	static $event_watcher_enter_id = 0;
+	static $event_watcher_leave_id = 0;
+
+	if (!$dialog)
+	{
+		$dialog = new GtkDialog;
+		$dialog->connect_object('delete_event','event_watcher_down', $event_watcher_enter_id, $event_watcher_leave_id);
+		$dialog->connect_object('delete_event', 'delete_event');
+		$dialog->set_title('Event Watcher');
+		$dialog->set_border_width(0);
+		$dialog->set_usize(200, 110);
+
+		$vbox = $dialog->vbox;
+		$action_area = $dialog->action_area;
+
+		$button = &new GtkToggleButton('Activate Watch');
+		$button->connect_object('clicked', 'event_watcher_toggle', $event_watcher_enter_id, $event_watcher_leave_id);
+		$button->set_border_width(10);
+		$vbox->pack_start($button);
+		$button->show();
+
+		$button = &new GtkButton('Close');
+		$button->connect_object('clicked', 'event_watcher_down', $event_watcher_enter_id, $event_watcher_leave_id);
+		$button->connect('clicked', 'close_window');
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$action_area->pack_start($button);
+		$button->grab_default();
+		$button->show();
+	}
+
+	if (!($dialog->flags() & GTK_VISIBLE))
+		$dialog->show();
+	else
+		$dialog->destroy();
+}
 
 function create_main_window()
 {
@@ -1954,12 +2265,12 @@ function create_main_window()
 					 'color selection'	=> 'create_color_selection',
 					 'cursors'			=> 'create_cursor_test',
 					 'ctree'			=> 'create_ctree',
-					 'event watcher'	=> null,
+					 'event watcher'	=> 'create_event_watcher',
 					 'notebook'			=> null,
 					 'drawing area'		=> null,
-					 'file selection'	=> null,
-					 'dialog'			=> null,
-					 'panes'			=> null,
+					 'file selection'	=> 'create_file_selection',
+					 'dialog'			=> 'create_dialog',
+					 'panes'			=> 'create_panes',
 					 'pixmap'			=> 'create_pixmap',
 					 'drag\'n\'drop'	=> 'create_dnd',
 					);

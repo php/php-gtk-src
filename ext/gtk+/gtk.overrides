@@ -9,7 +9,6 @@ ignore-glob
 	gtk_arg_*
 	gtk_args_*
 	gtk_signal_connect*
-	gtk_signal_add_emission_hook*
 	gtk_signal_new*
 	gtk_init_add_*
 	gtk_quit_add_*
@@ -43,8 +42,8 @@ ignore
 	gtk_accel_group_create_remove
 	gtk_accel_groups_from_object
 	gtk_accel_group_entries_from_object
+	gtk_signal_add_emission_hook_full
 	gtk_signal_set_funcs
-	gtk_signal_lookup
 	gtk_signal_disconnect_by_func
 	gtk_signal_disconnect_by_data
 	gtk_signal_handler_block_by_func
@@ -54,8 +53,6 @@ ignore
 	gtk_signal_handler_pending_by_func
 	gtk_signal_n_emissions
 	gtk_signal_n_emissions_by_name
-	gtk_signal_name
-	gtk_signal_remove_emission_hook
 	gtk_signal_query
 	gtk_signal_emit
 	gtk_signal_emit_by_name
@@ -295,6 +292,103 @@ PHP_FUNCTION(gtk_input_add_full)
 	RETURN_LONG(gtk_input_add_full(*source, condition, NULL,
 								 (GtkCallbackMarshal)php_gtk_input_marshal,
 								 data, php_gtk_destroy_notify));
+}
+%%
+override gtk_signal_add_emission_hook
+
+static void php_gtk_emission_hook_marshal(GtkObject *o, guint signal_id, guint nargs, GtkArg *args, gpointer data)
+{
+	zval *callback_data = (zval *)data;
+	zval *gtk_args;
+	zval **callback, **extra = NULL;
+	zval **callback_filename = NULL, **callback_fileno = NULL;
+	zval ***hook_args;
+	zval *wrapper = NULL;
+	zval *params;
+	zval *retval = NULL;
+	char *callback_name;
+	TSRMLS_FETCH();
+
+	/* Callback is always passed as the first element. */
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void**)&callback);
+
+	/* Extra parametrers are always passed as the second element. */
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void**)&extra);
+
+	/* Third and fourth parameter are always filename and the line number where
+	 * the callback was specified. */
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void**)&callback_filename);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void**)&callback_fileno);
+
+	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
+		php_error(E_WARNING, "Unable to call emission hook '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_fileno));
+		efree(callback_name);
+		return;
+	}
+
+	wrapper = php_gtk_new(o);
+
+	/* Prepare the parameters to be passed to the user function. */
+	MAKE_STD_ZVAL(params);
+	array_init(params);
+	/* Pass the object which emitted the signal as first parameer. */
+	add_next_index_zval(params, wrapper);
+	/* Pass the signal id as second parameter. */
+	add_next_index_long(params, signal_id);
+
+	gtk_args = php_gtk_args_as_hash(nargs, args);
+	php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0);
+
+	zval_ptr_dtor(&gtk_args);
+
+	/*
+	 * If there are extra arguments specified by user, add them to the parameter
+	 * array.
+	 */
+	if (extra)
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+	
+	hook_args = php_gtk_hash_as_array(params);
+
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval,
+						  zend_hash_num_elements(Z_ARRVAL_P(params)), hook_args,
+						  0, NULL TSRMLS_CC);
+	
+	if (retval) {
+		if (args)
+			php_gtk_ret_from_value(&args[nargs], retval);
+		zval_ptr_dtor(&retval);
+	}
+
+	efree(hook_args);
+	zval_ptr_dtor(&params);
+}
+
+PHP_FUNCTION(gtk_signal_add_emission_hook)
+{
+	guint signal_id;
+	zval  *callback;
+	char  *callback_filename;
+	uint  callback_lineno;
+	zval  *extra;
+	zval  *data;
+
+	if (ZEND_NUM_ARGS() < 2) {
+		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+		return;
+	}
+
+	if (!php_gtk_parse_args(2, "iV", &signal_id, &callback))
+		return;
+	
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno   = zend_get_executed_lineno(TSRMLS_C);
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
+	data  = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
+	RETURN_LONG(gtk_signal_add_emission_hook_full(signal_id,
+												  (GtkEmissionHook)php_gtk_emission_hook_marshal,
+												  data, php_gtk_destroy_notify));
 }
 %%
 override gtk_signal_connect
@@ -1260,7 +1354,7 @@ static void ctree_callback(GtkCTree *ctree, GtkCTreeNode *node, zval *callback_d
 
 	args = php_gtk_hash_as_array(params);
 
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 1, NULL TSRMLS_CC);
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 0, NULL TSRMLS_CC);
 	if (retval)
 		zval_ptr_dtor(&retval);
 	efree(args);
@@ -1426,7 +1520,7 @@ static void item_factory_callback(zval *callback_data, guint action, GtkWidget *
 
 	args = php_gtk_hash_as_array(params);
 
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 1, NULL TSRMLS_CC);
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 0, NULL TSRMLS_CC);
 	if (retval)
 		zval_ptr_dtor(&retval);
 	efree(args);
@@ -2001,7 +2095,7 @@ static void php_gtk_menu_position(GtkMenu *menu, int *x, int *y, zval *callback_
 	params = php_gtk_build_value("(Nii)", php_gtk_new(GTK_OBJECT(menu)), *x, *y);
 	args = php_gtk_hash_as_array(params);
 
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 1, NULL TSRMLS_CC);
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 0, NULL TSRMLS_CC);
 
 	if (retval) {
 		if (Z_TYPE_P(retval) == IS_ARRAY &&

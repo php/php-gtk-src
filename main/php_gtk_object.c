@@ -218,7 +218,7 @@ void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *
 	
 	signal_args = php_gtk_hash_as_array(params);
 
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), signal_args, 1, NULL TSRMLS_CC);
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), signal_args, 0, NULL TSRMLS_CC);
 
 	if (retval) {
 		if (args)
@@ -256,7 +256,7 @@ void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 	handler_args = php_gtk_hash_as_array(*extra);
 	num_handler_args = zend_hash_num_elements(Z_ARRVAL_PP(extra));
 
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval, num_handler_args, handler_args, 1, NULL TSRMLS_CC);
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, num_handler_args, handler_args, 0, NULL TSRMLS_CC);
 
 	*GTK_RETLOC_BOOL(args[0]) = FALSE;
 	if (retval) {
@@ -297,7 +297,7 @@ void php_gtk_input_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
 	input_args = php_gtk_hash_as_array(params);
 
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), input_args, 1, NULL TSRMLS_CC);
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), input_args, 0, NULL TSRMLS_CC);
 	if (retval)
 		zval_ptr_dtor(&retval);
 	efree(input_args);
@@ -510,9 +510,11 @@ zval *php_gtk_arg_as_value(GtkArg *arg)
 			break;
 
 		case GTK_TYPE_POINTER:
-			php_error(E_WARNING, "%s(): internal error: GTK_TYPE_POINTER unsupported",
+			php_error(E_NOTICE, "%s(): internal error: GTK_TYPE_POINTER unsupported",
 					  get_active_function_name(TSRMLS_C));
-			return NULL;
+			MAKE_STD_ZVAL(value);
+			ZVAL_NULL(value);
+			break;
 
 		case GTK_TYPE_BOXED:
 			if (arg->type == GTK_TYPE_GDK_EVENT)
@@ -801,9 +803,11 @@ zval *php_gtk_ret_as_value(GtkArg *ret)
 			break;
 
 		case GTK_TYPE_POINTER:
-			php_error(E_WARNING, "%s(): internal error: GTK_TYPE_POINTER unsupported",
+			php_error(E_NOTICE, "%s(): internal error: GTK_TYPE_POINTER unsupported",
 					  get_active_function_name(TSRMLS_C));
-			return NULL;
+			MAKE_STD_ZVAL(value);
+			ZVAL_NULL(value);
+			break;
 
 		case GTK_TYPE_BOXED:
 			if (ret->type == GTK_TYPE_GDK_EVENT)
