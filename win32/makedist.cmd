@@ -21,6 +21,7 @@ copy \php\php-gtk\test\fileselection.php samples
 copy \php\php-gtk\test\gtk.php samples
 copy \php\php-gtk\test\hello.php samples
 copy \php\php-gtk\test\list.php samples
+copy \php\php-gtk\test\scribble.php samples
 copy \php\php-gtk\test\testgtkrc samples
 copy \php\php-gtk\test\testgtkrc2 samples
 copy \php\php-gtk\win32\README.txt 
