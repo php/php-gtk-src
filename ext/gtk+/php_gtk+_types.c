@@ -1927,6 +1927,7 @@ PHP_FUNCTION(gtkstyle)
 PHP_FUNCTION(gtk_style_copy)
 {
 	GtkStyle *style;
+	zval *ret;
 
 	NOT_STATIC_METHOD();
 
@@ -1934,7 +1935,7 @@ PHP_FUNCTION(gtk_style_copy)
 		return;
 
 	style = gtk_style_copy(PHP_GTK_STYLE_GET(this_ptr));
-	*return_value = *php_gtk_style_new(style);
+	PHP_GTK_SEPARATE_RETURN(return_value, php_gtk_style_new(style));
 	gtk_style_unref(style);
 }
 

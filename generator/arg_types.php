@@ -412,11 +412,13 @@ class Object_Arg extends Arg_Type {
 	
 	function write_return($type, &$var_list, $separate)
 	{
-		$var_list->add('zval', '*ret');
-		return 	"	ret = php_gtk_new((GtkObject *)%s);\n" .
-				($separate ?  "	SEPARATE_ZVAL(&ret);\n" : "") .
-				"	*return_value = *ret;\n" .
-				"%s	return;";
+		if ($separate) {
+			return 	"	PHP_GTK_SEPARATE_RETURN(return_value, php_gtk_new((GtkObject *)%s));\n" .
+					"%s	return;";
+		} else {
+			return 	"	*return_value = *php_gtk_new((GtkObject *)%s);\n" .
+					"%s	return;";
+		}
 	}
 }
 
@@ -492,11 +494,13 @@ class Boxed_Arg extends Arg_Type {
 
 	function write_return($type, &$var_list, $separate)
 	{
-		$var_list->add('zval', '*ret');
-		return "	ret = php_" . $this->php_type . "_new(%s);\n" .
-			   ($separate ? "	SEPARATE_ZVAL(&ret);\n" : "") .
-			   "	*return_value = *ret;\n" .
-			   "%s	return;";
+		if ($separate) {
+			return 	"	PHP_GTK_SEPARATE_RETURN(return_value, php_" . $this->php_type . "_new(%s));\n" .
+					"%s	return;";
+		} else {
+			return 	"	*return_value = *php_" . $this->php_type . "_new(%s);\n" .
+					"%s	return;";
+		}
 	}
 }
 
@@ -508,6 +512,8 @@ class Atom_Arg extends Int_Arg {
 	}
 }
 
+/* This is a hack -- the $default handling doesn't work, neither does
+   write_return(). */ 
 class Drawable_Arg extends Arg_Type {
 	var $type = 'GdkDrawable';
 
