@@ -1,3 +1,54 @@
+2001-03-20  Andrei Zmievski  <andrei@ispi.net>
+
+    * test/fileselection.php: Showing how to get the filename.
+
+2001-03-20  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/makedist.cmd: makedist should be reletive to current disk
+
+2001-03-20  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: Prepare for release.
+
+2001-03-20  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/classset.titlepage.xml
+      docs/stylesheets/xsl/html/classset.titlepage.xsl:
+    No more need of manual editing of classset stylesheet when
+    created from classset.titlepage.xml
+
+    * docs/stylesheets/xsl/html/toc.xsl: Adding the TOC overrides
+
+2001-03-20  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: News update.
+
+    * generator/gdk.overrides
+      generator/gtk.defs
+      generator/gtk.overrides
+      src/php_gtk_types.c: * Added gdk::pixmap_create_from_xpm_d().
+    * Added GtkCList properties: sort_column, sort_type, selection, selection_mode.
+    * Some constructors did not invalidate objects upon errors, fixed now.
+    * Added GtkRadioMenuItem, GtkRadioButton constructors.
+
+    * test/gtk.php: Finished GtkCList example.
+
+2001-03-20  James Moore  <James@phpuk.org>
+
+    * docs/makedocs: A shell script for making docs from java
+
+2001-03-20  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS
+      generator/gtk.defs
+      generator/gtk.overrides
+      generator/libglade.overrides
+      test/gtk.php:
+    * Added GladeXML::signal_autoconnect(), docs later.
+    * Added GtkWidget 'style' property;
+    * Added GtkCList::prepend() and GtkCList::insert().
+    * Added single row insertion to CList example in gtk.php.
+
 2001-03-18  James Moore  <James@phpuk.org>
 
     * docs/stylesheets/xsl/html/class.xsl
