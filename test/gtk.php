@@ -572,6 +572,43 @@ function create_clist()
 		$vbox->pack_start($hbox, false, false);
 		$hbox->show();
 
+		function insert_row_clist($button, $clist)
+		{
+			static	$style1, $style2, $style3;
+
+			$text = array('This', 'is an', 'inserted', 'row.',
+						  'This', 'is an', 'inserted', 'row.',
+						  'This', 'is an', 'inserted', 'row.');
+
+			if ($clist->focus_row >= 0)
+				$row = $clist->insert($clist->focus_row, $text);
+			else
+				$row = $clist->prepend($text);
+
+			if (!isset($style1)) {
+				$col1 = &new GdkColor(0, 56000, 0);
+				$col2 = &new GdkColor(32000, 0, 56000);
+
+				$style = $clist->style;
+				$style1 = $style->copy();
+				$style1->base[GTK_STATE_NORMAL] = $col1;
+				$style1->base[GTK_STATE_SELECTED] = $col2;
+
+				$style2 = $style->copy();
+				$style2->fg[GTK_STATE_NORMAL] = $col1;
+				$style2->fg[GTK_STATE_SELECTED] = $col2;
+
+				$style3 = $style->copy();
+				$style3->fg[GTK_STATE_NORMAL] = $col1;
+				$style3->base[GTK_STATE_NORMAL] = $col2;
+				$style3->font = gdk::font_load ("-*-courier-medium-*-*-*-*-120-*-*-*-*-*-*");
+			}
+
+			$clist->set_cell_style($row, 3, $style1);
+			$clist->set_cell_style($row, 4, $style2);
+			$clist->set_cell_style($row, 0, $style3);
+		}
+
 		$button = &new GtkButton('Insert Row');
 		$button->connect('clicked', 'insert_row_clist', $clist);
 		$hbox->pack_start($button);

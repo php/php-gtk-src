@@ -1,5 +1,6 @@
+    - added GtkCList::prepend() and GtkClist::insert(). (Andrei)
     - added GtkCList example to gtk.php. (Andrei)
-    - added initial libglade support. (Andrei)
+    - added libglade support. (Andrei)
     - made Gdk::input_add() work with file resources. (Andrei)
     - fixed GDK locale support. (Alex Bokovoy)
     - reworked the generator to make it more generalized. (Andrei)

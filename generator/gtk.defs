@@ -40,6 +40,7 @@
   (in-module Gtk)
   (parent Object (Gtk))
   (c-name GtkWidget)
+  (field (type-and-name GtkStyle* style))
 )
 
 (object Separator

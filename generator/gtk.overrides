@@ -544,6 +544,74 @@ PHP_FUNCTION(wrap_gtk_clist_append)
 	efree(list);
 }
 %%
+override gtk_clist_prepend
+PHP_FUNCTION(wrap_gtk_clist_prepend)
+{
+	gint columns, i, res;
+	gchar **list;
+	zval *php_list, **text;
+	HashTable *target_hash;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a/", &php_list)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	columns = GTK_CLIST(PHP_GTK_GET(this_ptr))->columns;
+	if (zend_hash_num_elements(Z_ARRVAL_P(php_list)) < columns) {
+		php_error(E_WARNING, "%s(): the array of strings is not long enough", get_active_function_name());
+		return;
+	}
+
+	target_hash = HASH_OF(php_list);
+	list = emalloc(sizeof(gchar *) * columns);
+	i = 0;
+	zend_hash_internal_pointer_reset(target_hash);
+	while (zend_hash_get_current_data(target_hash, (void **)&text) == SUCCESS) {
+		convert_to_string_ex(text);
+		list[i++] = estrndup(Z_STRVAL_PP(text), Z_STRLEN_PP(text));
+		zend_hash_move_forward(target_hash);
+	}
+	ZVAL_LONG(return_value, gtk_clist_prepend(GTK_CLIST(PHP_GTK_GET(this_ptr)), list));
+	efree(list);
+}
+%%
+override gtk_clist_insert
+PHP_FUNCTION(wrap_gtk_clist_insert)
+{
+	gint columns, i, row, res;
+	gchar **list;
+	zval *php_list, **text;
+	HashTable *target_hash;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ia/", &row, &php_list)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	columns = GTK_CLIST(PHP_GTK_GET(this_ptr))->columns;
+	if (zend_hash_num_elements(Z_ARRVAL_P(php_list)) < columns) {
+		php_error(E_WARNING, "%s(): the array of strings is not long enough", get_active_function_name());
+		return;
+	}
+
+	target_hash = HASH_OF(php_list);
+	list = emalloc(sizeof(gchar *) * columns);
+	i = 0;
+	zend_hash_internal_pointer_reset(target_hash);
+	while (zend_hash_get_current_data(target_hash, (void **)&text) == SUCCESS) {
+		convert_to_string_ex(text);
+		list[i++] = estrndup(Z_STRVAL_PP(text), Z_STRLEN_PP(text));
+		zend_hash_move_forward(target_hash);
+	}
+	ZVAL_LONG(return_value, gtk_clist_insert(GTK_CLIST(PHP_GTK_GET(this_ptr)), row, list));
+	efree(list);
+}
+%%
 override gtk_clist_get_text
 PHP_FUNCTION(wrap_gtk_clist_get_text)
 {
