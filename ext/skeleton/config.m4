@@ -6,14 +6,14 @@ dnl  [  --enable-skeleton       Enable GtkSkeleton support])
 
 dnl  if test "$PHP_GTK_SKELETON" != "no"; then
 dnl    for x in /usr/local /usr; do
-dnl  	  if test -f $x/include/gtkskeleton.h; then
-dnl  		  SKELETON_DIR=$x
-dnl  		  SKELETON_INCDIR=$x/include
-dnl  	  fi
+dnl      if test -f $x/include/gtkskeleton.h; then
+dnl        SKELETON_DIR=$x
+dnl        SKELETON_INCDIR=$x/include
+dnl      fi
 dnl    done
 dnl  
 dnl    if test -z "$SKELETON_DIR"; then
-dnl  	  AC_MSG_ERROR(Cannot locate Skeleton)
+dnl      AC_MSG_ERROR(Cannot locate Skeleton)
 dnl    fi
 dnl  
 dnl    SKELETON_LIBDIR=$SKELETON_DIR/lib
