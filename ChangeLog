@@ -1,3 +1,13 @@
+2003-12-31  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * php_gtk.m4
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_object.c
+      main/php_gtype.c
+      main/phpg_exceptions.c:
+      -** empty log message ***
+
 2003-12-21  Alan Knowles  <alan@akbkhome.com>
 
     * (GTK2)
