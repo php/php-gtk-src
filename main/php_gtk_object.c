@@ -359,6 +359,53 @@ zval *php_gtk_args_as_hash(int nargs, GtkArg *args)
 	return hash;
 }
 
+GtkArg *php_gtk_hash_as_args(zval *hash, GtkType type, gint *nargs)
+{
+	int i;
+	zval **item;
+	gchar *err, buf[255];
+	ulong num_key;
+	GtkArg *arg = NULL;
+	GtkArgInfo *info;
+	HashTable *ht = HASH_OF(hash);
+
+	gtk_type_class(type);
+	*nargs = zend_hash_num_elements(ht);
+	arg = g_new(GtkArg, *nargs);
+
+	for (zend_hash_internal_pointer_reset(ht), i = 0;
+		 zend_hash_get_current_data(ht, (void **)&item) == SUCCESS;
+		 zend_hash_move_forward(ht), i++) {
+		if (zend_hash_get_current_key(ht, &arg[i].name, &num_key, 0) != HASH_KEY_IS_STRING) {
+			php_error(E_WARNING, "array keys must be strings");
+			g_free(arg);
+			return NULL;
+		}
+
+		err = gtk_object_arg_get_info(type, arg[i].name, &info);
+		if (!info) {
+			php_error(E_WARNING, err);
+			g_free(err);
+			g_free(arg);
+			return NULL;
+		}
+
+		arg[i].type = info->type;
+		arg[i].name = info->name;
+
+		if (!php_gtk_arg_from_value(&arg[i], *item)) {
+			g_snprintf(buf, 255, "arg '%s': expected type %s, found %s",
+					   arg[i].name, gtk_type_name(arg[i].type),
+					   php_gtk_zval_type_name(*item));
+			php_error(E_WARNING, buf);
+			g_free(arg);
+			return NULL;
+		}
+	}
+
+	return arg;
+}
+
 zval *php_gtk_arg_as_value(GtkArg *arg)
 {
 	zval *value;
@@ -476,6 +523,172 @@ zval *php_gtk_arg_as_value(GtkArg *arg)
 	return value;
 }
 
+int php_gtk_arg_from_value(GtkArg *arg, zval *value)
+{
+	switch (GTK_FUNDAMENTAL_TYPE(arg->type)) {
+		case GTK_TYPE_NONE:
+		case GTK_TYPE_INVALID:
+			GTK_VALUE_INT(*arg) = 0;
+			break;
+
+		case GTK_TYPE_BOOL:
+			convert_to_boolean(value);
+			GTK_VALUE_BOOL(*arg) = Z_BVAL_P(value);
+			break;
+
+		case GTK_TYPE_CHAR:
+		case GTK_TYPE_UCHAR:
+			convert_to_string(value);
+			GTK_VALUE_CHAR(*arg) = Z_STRVAL_P(value)[0];
+			break;
+
+		case GTK_TYPE_ENUM:
+			if (!php_gtk_get_enum_value(arg->type, value, &(GTK_VALUE_ENUM(*arg))))
+				return 0;
+			break;
+
+		case GTK_TYPE_FLAGS:
+			if (!php_gtk_get_flag_value(arg->type, value, &(GTK_VALUE_FLAGS(*arg))))
+				return 0;
+			break;
+
+		case GTK_TYPE_INT:
+			convert_to_long(value);
+			GTK_VALUE_INT(*arg) = Z_LVAL_P(value);
+			break;
+
+		case GTK_TYPE_UINT:
+			convert_to_long(value);
+			GTK_VALUE_UINT(*arg) = Z_LVAL_P(value);
+			break;
+
+		case GTK_TYPE_LONG:
+			convert_to_long(value);
+			GTK_VALUE_LONG(*arg) = Z_LVAL_P(value);
+			break;
+
+		case GTK_TYPE_ULONG:
+			convert_to_long(value);
+			GTK_VALUE_ULONG(*arg) = Z_LVAL_P(value);
+			break;
+
+		case GTK_TYPE_FLOAT:
+			convert_to_double(value);
+			GTK_VALUE_FLOAT(*arg) = Z_DVAL_P(value);
+			break;
+
+		case GTK_TYPE_DOUBLE:
+			convert_to_double(value);
+			GTK_VALUE_DOUBLE(*arg) = Z_DVAL_P(value);
+			break;
+
+		case GTK_TYPE_STRING:
+			convert_to_string(value);
+			GTK_VALUE_STRING(*arg) = Z_STRVAL_P(value);
+			break;
+
+		case GTK_TYPE_OBJECT:
+			if (Z_TYPE_P(value) == IS_OBJECT && php_gtk_check_class(value, gtk_object_ce))
+				GTK_VALUE_OBJECT(*arg) = PHP_GTK_GET(value);
+			else
+				return 0;
+			break;
+
+		case GTK_TYPE_BOXED:
+			if (arg->type == GTK_TYPE_GDK_EVENT) {
+				if (php_gtk_check_class(value, gdk_event_ce))
+					GTK_VALUE_BOXED(*arg) = PHP_GDK_EVENT_GET(value);
+				else
+					return 0;
+			} else if (arg->type == GTK_TYPE_GDK_WINDOW) {
+				if (php_gtk_check_class(value, gdk_window_ce))
+					GTK_VALUE_BOXED(*arg) = PHP_GDK_WINDOW_GET(value);
+				else
+					return 0;
+			} else if (arg->type == GTK_TYPE_GDK_COLOR) {
+				if (php_gtk_check_class(value, gdk_color_ce))
+					GTK_VALUE_BOXED(*arg) = PHP_GDK_COLOR_GET(value);
+				else
+					return 0;
+			} else if (arg->type == GTK_TYPE_GDK_COLORMAP) {
+				if (php_gtk_check_class(value, gdk_colormap_ce))
+					GTK_VALUE_BOXED(*arg) = PHP_GDK_COLORMAP_GET(value);
+				else
+					return 0;
+			} else if (arg->type == GTK_TYPE_GDK_VISUAL) {
+				if (php_gtk_check_class(value, gdk_visual_ce))
+					GTK_VALUE_BOXED(*arg) = PHP_GDK_VISUAL_GET(value);
+				else
+					return 0;
+			} else if (arg->type == GTK_TYPE_GDK_FONT) {
+				if (php_gtk_check_class(value, gdk_font_ce))
+					GTK_VALUE_BOXED(*arg) = PHP_GDK_FONT_GET(value);
+				else
+					return 0;
+			} else if (arg->type == GTK_TYPE_GDK_DRAG_CONTEXT) {
+				if (php_gtk_check_class(value, gdk_drag_context_ce))
+					GTK_VALUE_BOXED(*arg) = PHP_GDK_DRAG_CONTEXT_GET(value);
+				else
+					return 0;
+			} else if (arg->type == GTK_TYPE_ACCEL_GROUP) {
+				if (php_gtk_check_class(value, gtk_accel_group_ce))
+					GTK_VALUE_BOXED(*arg) = PHP_GTK_ACCEL_GROUP_GET(value);
+				else
+					return 0;
+			} else if (arg->type == GTK_TYPE_STYLE) {
+				if (php_gtk_check_class(value, gtk_style_ce))
+					GTK_VALUE_BOXED(*arg) = PHP_GTK_STYLE_GET(value);
+				else
+					return 0;
+			} else if (arg->type == GTK_TYPE_SELECTION_DATA) {
+				if (php_gtk_check_class(value, gtk_selection_data_ce))
+					GTK_VALUE_BOXED(*arg) = PHP_GTK_SELECTION_DATA_GET(value);
+				else
+					return 0;
+			} else if (arg->type == GTK_TYPE_CTREE_NODE) {
+				if (php_gtk_check_class(value, gtk_ctree_node_ce))
+					GTK_VALUE_BOXED(*arg) = PHP_GTK_CTREE_NODE_GET(value);
+				else
+					return 0;
+			} else
+				return 0;
+			break;
+
+		case GTK_TYPE_FOREIGN:
+			zval_add_ref(&value);
+			GTK_VALUE_FOREIGN(*arg).data = value;
+			GTK_VALUE_FOREIGN(*arg).notify = php_gtk_destroy_notify;
+			break;
+
+		case GTK_TYPE_SIGNAL:
+			if (php_gtk_is_callable(value, 1, NULL)) {
+				zval_add_ref(&value);
+				GTK_VALUE_SIGNAL(*arg).f = NULL;
+				GTK_VALUE_SIGNAL(*arg).d = value;
+			} else
+				return 0;
+			break;
+
+		case GTK_TYPE_CALLBACK:
+			if (php_gtk_is_callable(value, 1, NULL)) {
+				zval_add_ref(&value);
+				GTK_VALUE_CALLBACK(*arg).marshal = php_gtk_callback_marshal;
+				GTK_VALUE_CALLBACK(*arg).data = value;
+				GTK_VALUE_CALLBACK(*arg).notify = php_gtk_destroy_notify;
+			} else
+				return 0;
+			break;
+
+		case GTK_TYPE_ARGS:
+		case GTK_TYPE_C_CALLBACK:
+			php_error(E_WARNING, "Unsupported type");
+			g_assert_not_reached();
+			return 0;
+	}
+
+	return 1;
+}
+
 void php_gtk_ret_from_value(GtkArg *ret, zval *value)
 {
 	switch (GTK_FUNDAMENTAL_TYPE(ret->type)) {
@@ -539,7 +752,7 @@ void php_gtk_ret_from_value(GtkArg *ret, zval *value)
 			break;
 
 		case GTK_TYPE_OBJECT:
-			if (Z_TYPE_P(value) == IS_OBJECT && php_gtk_check_class(value, g_hash_table_lookup(php_gtk_class_hash, "GtkObject")))
+			if (Z_TYPE_P(value) == IS_OBJECT && php_gtk_check_class(value, gtk_object_ce))
 				*GTK_RETLOC_OBJECT(*ret) = PHP_GTK_GET(value);
 			else
 				*GTK_RETLOC_OBJECT(*ret) = NULL;

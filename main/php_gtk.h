@@ -169,6 +169,7 @@ zval ***php_gtk_hash_as_array(zval *hash);
 zval ***php_gtk_func_args(int argc);
 zval *php_gtk_func_args_as_hash(int argc, int start, int length);
 zval *php_gtk_build_value(char *format, ...);
+char *php_gtk_zval_type_name(zval *arg);
 
 #define NOT_STATIC_METHOD() \
 	if (!this_ptr) { \

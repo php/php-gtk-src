@@ -6098,7 +6098,7 @@
   (parameter (type-and-name GtkArg* args))
 )
 
-(method get
+(method get_arg
   (of-object Object (Gtk))
   (c-name gtk_object_get)
   (return-type none)
@@ -6106,7 +6106,7 @@
   (varargs t)
 )
 
-(method set
+(method set_arg
   (of-object Object (Gtk))
   (c-name gtk_object_set)
   (return-type none)
