@@ -1,3 +1,7 @@
+2001-08-30  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/php_win.c: Adding a "nice" error message if PHP.EXE was not found
+
 2001-08-29  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/gtk.overrides:
