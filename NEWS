@@ -1,4 +1,5 @@
-php-gtk-0.0.2: 7-Mar-2001
+Version 0.0.2 "primordial nucleosynthesis": 7-Mar-2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - added 'child' property to GtkBin and its descendants. (Andrei)
     - all callbacks now take user supplied extra arguments and better error
       messages are shown if the callbacks are not valid. (Andrei)
@@ -13,7 +14,10 @@ php-gtk-0.0.2: 7-Mar-2001
     - fixed a silent crash that was happening due to object corruption. (Andrei)
     - implemented GtkTipsQuery class. (Andrei)
 
-php-gtk-0.0.1: 1-Mar-2001
+
+Version 0.0.1 "Genesis": 1-Mar-2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - first release. (Andrei)
+
 
 # vim: set et tw=80 ai sts=4:
