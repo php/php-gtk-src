@@ -1,3 +1,22 @@
+2004-07-22  Andrei Zmievski  <andreiz@gmail.com>
+
+    * main/phpg_object.c:
+      Sink only GTK_TYPE_OBJECT.
+
+    * main/php_gtk.h
+      main/phpg_object.c:
+      - Adjust to PHP 5 API
+      * Use g_object_unref() as GObject dtor.
+
+    * php_gtk.m4
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_object.c
+      main/php_gtype.c
+      main/phpg_object.c:
+      - Adjust to PHP 5 release API.
+      * Move generic object management functions into phpg_object.c.
+
 2004-07-20  Andrei Zmievski  <andreiz@gmail.com>
 
     * main/php_gtk_util.c:
