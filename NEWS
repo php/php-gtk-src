@@ -1,14 +1,28 @@
+Version 1.0.1 "you thought we were done?" 07-Aug-2004
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - implemented append_element(), prepend_element(), insert_element(),
+      append_item(), prepend_item(), and insert_item() methods of GtkToolbar
+      class. (Andrei)
+    - exposed the following (read-only) GtkToolbar properties: (Andrei)
+        * style
+        * space_style
+        * space_size
+        * orientation
+    - reimplemented Gdk::cursor_new_from_pixmap() so it actually works. (Tom
+      Rogers <trogers@kwikin.com>, Andrei)
+    
+
 Version 1.0.0 "mountain view special" 23-Oct-2003
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     - added support for GtkCanvas widget (Alan)
-     - added support for GdkImLib toolkit - experimental (Alan)
-     - added support for GtkExtra widgets, GtkPlot, GtkSheet and many
-       others (Angel Maza, Alan)
-     - added get_wrap_mode, set_wrap_mode to GtkScintilla (Benjamin Smith)
-     - fixed segfault when providing GtkCtree::insert_node wrong parameters
-     - added GtkScintilla, GtkComboButton, GtkSpaned, GtkScrollpane to
-       Win32 distribution (Frank)
-     - fixed warning on GtkNotebook::switch-page signal (Alan)
+    - added support for GtkCanvas widget. (Alan)
+    - added support for GdkImLib toolkit - experimental. (Alan)
+    - added support for GtkExtra widgets, GtkPlot, GtkSheet and many
+      others. (Angel Maza, Alan)
+    - added get_wrap_mode, set_wrap_mode to GtkScintilla. (Benjamin Smith)
+    - fixed segfault when providing GtkCtree::insert_node wrong parameters
+    - added GtkScintilla, GtkComboButton, GtkSpaned, GtkScrollpane to
+      Win32 distribution. (Frank)
+    - fixed warning on GtkNotebook::switch-page signal. (Alan)
 	 
 Version 0.5.2 "Bass does a body good" 01-Nov-2002
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,3 +1,57 @@
+2004-08-06  Andrei Zmievski  <andreiz@gmail.com>
+
+    * (PHP_GTK_1)
+      ext/gtk+/gdk.defs
+      ext/gtk+/gdk.overrides:
+      Reimplement gdk::cursor_new_from_pixmap() so it actually works. (Tom
+      Rogers <trogers@kwikin.com>).
+
+2004-08-01  Andrei Zmievski  <andreiz@gmail.com>
+
+    * (PHP_GTK_1)
+      ext/gtk+/gtk.defs:
+      Expose the following (read-only) GtkToolbar properties:
+        - style
+        - space_style
+        - space_size
+        - orientation
+      
+      To set these, use the API calls.
+
+2004-07-29  Andrei Zmievski  <andreiz@gmail.com>
+
+    * (PHP_GTK_1)
+      ext/gtk+/gtk.overrides:
+      Implement append_element(), prepend_element(), and insert_element()
+      methods of GtkToolbar class.
+
+    * (PHP_GTK_1)
+      ext/gtk+/gtk.overrides:
+      Implement GtkToolbar::prepend_item() and GtkToolbar::insert_item().
+
+    * (PHP_GTK_1)
+      ext/canvas/canvas.php:
+      Update.
+
+    * (PHP_GTK_1)
+      ext/extra/plot.php:
+      Update example.
+
+    * (PHP_GTK_1)
+      ext/extra/extra.overrides
+      ext/extra/php_extra.c
+      ext/extra/sheet.php
+      ext/gtk+/php_gtk+.c
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_object.c:
+      Revert Alan's callback registry patch until later.
+
+    * (PHP_GTK_1)
+      ext/gtk+/gtk.overrides:
+      - Implement GtkToolbar::append_item().
+      * Revert Alan's callback registry patch until later.
+
 2003-10-09  Alan Knowles  <alan@akbkhome.com>
 
     * (GTK2)
@@ -4233,11 +4287,11 @@
       generator/make_reg_items.php
       generator/templates.php:
     Generalized the generator system:
-    	* removed all static content into templates
-    	* everything is now generated just from defs, overrides, and prefix
-    	* removed byref parsing, since it will be transformed into something new
-    	* added ability to specify defs files to register types from
-    	* split out gdk part of overrides into gdk.overrides
+		* removed all static content into templates
+		* everything is now generated just from defs, overrides, and prefix
+		* removed byref parsing, since it will be transformed into something new
+		* added ability to specify defs files to register types from
+		* split out gdk part of overrides into gdk.overrides
 
     Basically, all the generation is based on a concept of a module. For each
     module there is .defs file and .overrides file. The generated file is
