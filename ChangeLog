@@ -1,3 +1,9 @@
+2004-01-13  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk.h
+      main/php_gvalue.c:
+      Implemented php_gvalue_flags_get().
+
 2004-01-05  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/php_gtk.h
