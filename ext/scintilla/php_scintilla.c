@@ -22,22 +22,21 @@
 
 #include "php_gtk.h"
 
-#if HAVE_PHP_GTK
+#if HAVE_SCINTILLA
 
-#include "ext/gtk+/php_gtk+.h"
-@EXT_INCLUDE_CODE@
-
-php_gtk_ext_entry *php_gtk_extensions[] = {
-	php_gtk_ext_gtk__ptr,
-@EXT_PTRS@
-};
-
-#define EXTCOUNT (sizeof(php_gtk_extensions)/sizeof(php_gtk_ext_entry *))
-	
-
-int php_gtk_startup_all_extensions(int module_number)
+PHP_GTK_XINIT_FUNCTION(scintilla)
 {
-	return php_gtk_startup_extensions(php_gtk_extensions, EXTCOUNT, module_number);
+	glade_init();
+	php_scintilla_register_constants(module_number TSRMLS_CC);
+	php_scintilla_register_classes();
+
+	return SUCCESS;
 }
 
-#endif /* HAVE_PHP_GTK */
+php_gtk_ext_entry scintilla_ext_entry = {
+	"scintilla",
+	PHP_GTK_XINIT(scintilla),
+	NULL,
+};
+
+#endif	/* HAVE_SCINTILLA */

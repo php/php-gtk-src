@@ -1,0 +1,2072 @@
+;; -*- scheme -*-
+; object definitions ...
+(object Scintilla
+  (in-module Gtk)
+  (parent Frame (Gtk))
+  (c-name GtkScintilla)
+)
+
+;; Enumerations and flags ...
+
+
+;; From /usr/include/gtkscintilla.h
+
+(function gtk_scintilla_get_type
+  (c-name gtk_scintilla_get_type)
+  (return-type guint)
+)
+
+(function gtk_scintilla_new
+  (c-name gtk_scintilla_new)
+  (is-constructor-of GtkScintilla)
+  (return-type GtkWidget*)
+)
+
+(method find_text
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_find_text)
+  (return-type long)
+  (parameter (type-and-name int flags))
+  (parameter (type-and-name char* text))
+  (parameter (type-and-name long chrg_min))
+  (parameter (type-and-name long chrg_max))
+  (parameter (type-and-name long* text_min))
+  (parameter (type-and-name long* text_max))
+)
+
+(method add_text
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_add_text)
+  (return-type none)
+  (parameter (type-and-name int length))
+  (parameter (type-and-name const-char* text))
+)
+
+(method insert_text
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_insert_text)
+  (return-type none)
+  (parameter (type-and-name long pos))
+  (parameter (type-and-name const-char* text))
+)
+
+(method clear_all
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_clear_all)
+  (return-type none)
+)
+
+(method clear_document_style
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_clear_document_style)
+  (return-type none)
+)
+
+(method get_length
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_length)
+  (return-type int)
+)
+
+(method get_char_at
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_char_at)
+  (return-type int)
+  (parameter (type-and-name long pos))
+)
+
+(method get_current_pos
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_current_pos)
+  (return-type long)
+)
+
+(method get_anchor
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_anchor)
+  (return-type long)
+)
+
+(method get_style_at
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_style_at)
+  (return-type int)
+  (parameter (type-and-name long pos))
+)
+
+(method redo
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_redo)
+  (return-type none)
+)
+
+(method set_undo_collection
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_undo_collection)
+  (return-type none)
+  (parameter (type-and-name int collect_undo))
+)
+
+(method select_all
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_select_all)
+  (return-type none)
+)
+
+(method set_save_point
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_save_point)
+  (return-type none)
+)
+
+(method can_redo
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_can_redo)
+  (return-type int)
+)
+
+(method marker_line_from_handle
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_marker_line_from_handle)
+  (return-type int)
+  (parameter (type-and-name int handle))
+)
+
+(method marker_delete_handle
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_marker_delete_handle)
+  (return-type none)
+  (parameter (type-and-name int handle))
+)
+
+(method get_undo_collection
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_undo_collection)
+  (return-type int)
+)
+
+(method get_view_ws
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_view_ws)
+  (return-type int)
+)
+
+(method set_view_ws
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_view_ws)
+  (return-type none)
+  (parameter (type-and-name int view_ws))
+)
+
+(method position_from_point
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_position_from_point)
+  (return-type int)
+  (parameter (type-and-name int x))
+  (parameter (type-and-name int y))
+)
+
+(method goto_line
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_goto_line)
+  (return-type none)
+  (parameter (type-and-name int line))
+)
+
+(method goto_pos
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_goto_pos)
+  (return-type none)
+  (parameter (type-and-name long pos))
+)
+
+(method set_anchor
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_anchor)
+  (return-type none)
+  (parameter (type-and-name long pos_anchor))
+)
+
+(method get_cur_line
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_cur_line)
+  (return-type int)
+  (parameter (type-and-name int length))
+  (parameter (type-and-name char* text))
+)
+
+(method get_end_styled
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_end_styled)
+  (return-type long)
+)
+
+(method convert_eols
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_convert_eols)
+  (return-type none)
+  (parameter (type-and-name int eol_mode))
+)
+
+(method get_eol_mode
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_eol_mode)
+  (return-type int)
+)
+
+(method set_eol_mode
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_eol_mode)
+  (return-type none)
+  (parameter (type-and-name int eol_mode))
+)
+
+(method start_styling
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_start_styling)
+  (return-type none)
+  (parameter (type-and-name long pos))
+  (parameter (type-and-name int mask))
+)
+
+(method set_styling
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_styling)
+  (return-type none)
+  (parameter (type-and-name int length))
+  (parameter (type-and-name int style))
+)
+
+(method get_buffered_draw
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_buffered_draw)
+  (return-type int)
+)
+
+(method set_buffered_draw
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_buffered_draw)
+  (return-type none)
+  (parameter (type-and-name int buffered))
+)
+
+(method set_tab_width
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_tab_width)
+  (return-type none)
+  (parameter (type-and-name int tab_width))
+)
+
+(method get_tab_width
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_tab_width)
+  (return-type int)
+)
+
+(method set_code_page
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_code_page)
+  (return-type none)
+  (parameter (type-and-name int code_page))
+)
+
+(method set_use_palette
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_use_palette)
+  (return-type none)
+  (parameter (type-and-name int use_palette))
+)
+
+(method marker_define
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_marker_define)
+  (return-type none)
+  (parameter (type-and-name int marker_number))
+  (parameter (type-and-name int marker_symbol))
+)
+
+(method marker_set_fore
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_marker_set_fore)
+  (return-type none)
+  (parameter (type-and-name int marker_number))
+  (parameter (type-and-name long fore))
+)
+
+(method marker_set_back
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_marker_set_back)
+  (return-type none)
+  (parameter (type-and-name int marker_number))
+  (parameter (type-and-name long back))
+)
+
+(method marker_add
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_marker_add)
+  (return-type none)
+  (parameter (type-and-name int line))
+  (parameter (type-and-name int marker_number))
+)
+
+(method marker_delete
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_marker_delete)
+  (return-type none)
+  (parameter (type-and-name int line))
+  (parameter (type-and-name int marker_number))
+)
+
+(method marker_delete_all
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_marker_delete_all)
+  (return-type none)
+  (parameter (type-and-name int marker_number))
+)
+
+(method marker_get
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_marker_get)
+  (return-type int)
+  (parameter (type-and-name int line))
+)
+
+(method marker_next
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_marker_next)
+  (return-type int)
+  (parameter (type-and-name int line_start))
+  (parameter (type-and-name int marker_mask))
+)
+
+(method marker_previous
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_marker_previous)
+  (return-type int)
+  (parameter (type-and-name int line_start))
+  (parameter (type-and-name int marker_mask))
+)
+
+(method set_margin_type_n
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_margin_type_n)
+  (return-type none)
+  (parameter (type-and-name int margin))
+  (parameter (type-and-name int margin_type))
+)
+
+(method get_margin_type_n
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_margin_type_n)
+  (return-type int)
+  (parameter (type-and-name int margin))
+)
+
+(method set_margin_width_n
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_margin_width_n)
+  (return-type none)
+  (parameter (type-and-name int margin))
+  (parameter (type-and-name int pixel_width))
+)
+
+(method get_margin_width_n
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_margin_width_n)
+  (return-type int)
+  (parameter (type-and-name int margin))
+)
+
+(method set_margin_mask_n
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_margin_mask_n)
+  (return-type none)
+  (parameter (type-and-name int margin))
+  (parameter (type-and-name int mask))
+)
+
+(method get_margin_mask_n
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_margin_mask_n)
+  (return-type int)
+  (parameter (type-and-name int margin))
+)
+
+(method set_margin_sensitive_n
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_margin_sensitive_n)
+  (return-type none)
+  (parameter (type-and-name int margin))
+  (parameter (type-and-name int sensitive))
+)
+
+(method get_margin_sensitive_n
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_margin_sensitive_n)
+  (return-type int)
+  (parameter (type-and-name int margin))
+)
+
+(method style_clear_all
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_style_clear_all)
+  (return-type none)
+)
+
+(method style_set_fore
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_style_set_fore)
+  (return-type none)
+  (parameter (type-and-name int style))
+  (parameter (type-and-name long fore))
+)
+
+(method style_set_back
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_style_set_back)
+  (return-type none)
+  (parameter (type-and-name int style))
+  (parameter (type-and-name long back))
+)
+
+(method style_set_bold
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_style_set_bold)
+  (return-type none)
+  (parameter (type-and-name int style))
+  (parameter (type-and-name int bold))
+)
+
+(method style_set_italic
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_style_set_italic)
+  (return-type none)
+  (parameter (type-and-name int style))
+  (parameter (type-and-name int italic))
+)
+
+(method style_set_size
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_style_set_size)
+  (return-type none)
+  (parameter (type-and-name int style))
+  (parameter (type-and-name int size_points))
+)
+
+(method style_set_font
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_style_set_font)
+  (return-type none)
+  (parameter (type-and-name int style))
+  (parameter (type-and-name const-char* font_name))
+)
+
+(method style_set_eol_filled
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_style_set_eol_filled)
+  (return-type none)
+  (parameter (type-and-name int style))
+  (parameter (type-and-name int filled))
+)
+
+(method style_reset_default
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_style_reset_default)
+  (return-type none)
+)
+
+(method style_set_underline
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_style_set_underline)
+  (return-type none)
+  (parameter (type-and-name int style))
+  (parameter (type-and-name int underline))
+)
+
+(method style_set_case
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_style_set_case)
+  (return-type none)
+  (parameter (type-and-name int style))
+  (parameter (type-and-name int case_force))
+)
+
+(method style_set_character_set
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_style_set_character_set)
+  (return-type none)
+  (parameter (type-and-name int style))
+  (parameter (type-and-name int character_set))
+)
+
+(method set_sel_fore
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_sel_fore)
+  (return-type none)
+  (parameter (type-and-name int use_setting))
+  (parameter (type-and-name long fore))
+)
+
+(method set_sel_back
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_sel_back)
+  (return-type none)
+  (parameter (type-and-name int use_setting))
+  (parameter (type-and-name long back))
+)
+
+(method set_caret_fore
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_caret_fore)
+  (return-type none)
+  (parameter (type-and-name long fore))
+)
+
+(method clear_all_cmd_keys
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_clear_all_cmd_keys)
+  (return-type none)
+)
+
+(method set_styling_ex
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_styling_ex)
+  (return-type none)
+  (parameter (type-and-name int length))
+  (parameter (type-and-name const-char* styles))
+)
+
+(method style_set_visible
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_style_set_visible)
+  (return-type none)
+  (parameter (type-and-name int style))
+  (parameter (type-and-name int visible))
+)
+
+(method get_caret_period
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_caret_period)
+  (return-type int)
+)
+
+(method set_caret_period
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_caret_period)
+  (return-type none)
+  (parameter (type-and-name int period_milliseconds))
+)
+
+(method set_word_chars
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_word_chars)
+  (return-type none)
+  (parameter (type-and-name const-char* characters))
+)
+
+(method begin_undo_action
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_begin_undo_action)
+  (return-type none)
+)
+
+(method end_undo_action
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_end_undo_action)
+  (return-type none)
+)
+
+(method indic_set_style
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_indic_set_style)
+  (return-type none)
+  (parameter (type-and-name int indic))
+  (parameter (type-and-name int style))
+)
+
+(method indic_get_style
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_indic_get_style)
+  (return-type int)
+  (parameter (type-and-name int indic))
+)
+
+(method indic_set_fore
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_indic_set_fore)
+  (return-type none)
+  (parameter (type-and-name int indic))
+  (parameter (type-and-name long fore))
+)
+
+(method indic_get_fore
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_indic_get_fore)
+  (return-type long)
+  (parameter (type-and-name int indic))
+)
+
+(method set_style_bits
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_style_bits)
+  (return-type none)
+  (parameter (type-and-name int bits))
+)
+
+(method get_style_bits
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_style_bits)
+  (return-type int)
+)
+
+(method set_line_state
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_line_state)
+  (return-type none)
+  (parameter (type-and-name int line))
+  (parameter (type-and-name int state))
+)
+
+(method get_line_state
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_line_state)
+  (return-type int)
+  (parameter (type-and-name int line))
+)
+
+(method get_max_line_state
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_max_line_state)
+  (return-type int)
+)
+
+(method get_caret_line_visible
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_caret_line_visible)
+  (return-type int)
+)
+
+(method set_caret_line_visible
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_caret_line_visible)
+  (return-type none)
+  (parameter (type-and-name int show))
+)
+
+(method get_caret_line_back
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_caret_line_back)
+  (return-type long)
+)
+
+(method set_caret_line_back
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_caret_line_back)
+  (return-type none)
+  (parameter (type-and-name long back))
+)
+
+(method autoc_show
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_show)
+  (return-type none)
+  (parameter (type-and-name int len_entered))
+  (parameter (type-and-name const-char* item_list))
+)
+
+(method autoc_cancel
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_cancel)
+  (return-type none)
+)
+
+(method autoc_active
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_active)
+  (return-type int)
+)
+
+(method autoc_pos_start
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_pos_start)
+  (return-type long)
+)
+
+(method autoc_complete
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_complete)
+  (return-type none)
+)
+
+(method autoc_stops
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_stops)
+  (return-type none)
+  (parameter (type-and-name const-char* character_set))
+)
+
+(method autoc_set_separator
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_set_separator)
+  (return-type none)
+  (parameter (type-and-name int separator_character))
+)
+
+(method autoc_get_separator
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_get_separator)
+  (return-type int)
+)
+
+(method autoc_select
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_select)
+  (return-type none)
+  (parameter (type-and-name const-char* text))
+)
+
+(method autoc_set_cancel_at_start
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_set_cancel_at_start)
+  (return-type none)
+  (parameter (type-and-name int cancel))
+)
+
+(method autoc_get_cancel_at_start
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_get_cancel_at_start)
+  (return-type int)
+)
+
+(method autoc_set_fill_ups
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_set_fill_ups)
+  (return-type none)
+  (parameter (type-and-name const-char* character_set))
+)
+
+(method autoc_set_choose_single
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_set_choose_single)
+  (return-type none)
+  (parameter (type-and-name int choose_single))
+)
+
+(method autoc_get_choose_single
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_get_choose_single)
+  (return-type int)
+)
+
+(method autoc_set_ignore_case
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_set_ignore_case)
+  (return-type none)
+  (parameter (type-and-name int ignore_case))
+)
+
+(method autoc_get_ignore_case
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_get_ignore_case)
+  (return-type int)
+)
+
+(method user_list_show
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_user_list_show)
+  (return-type none)
+  (parameter (type-and-name int list_type))
+  (parameter (type-and-name const-char* item_list))
+)
+
+(method autoc_set_auto_hide
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_set_auto_hide)
+  (return-type none)
+  (parameter (type-and-name int auto_hide))
+)
+
+(method autoc_get_auto_hide
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_autoc_get_auto_hide)
+  (return-type int)
+)
+
+(method set_indent
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_indent)
+  (return-type none)
+  (parameter (type-and-name int indent_size))
+)
+
+(method get_indent
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_indent)
+  (return-type int)
+)
+
+(method set_use_tabs
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_use_tabs)
+  (return-type none)
+  (parameter (type-and-name int use_tabs))
+)
+
+(method get_use_tabs
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_use_tabs)
+  (return-type int)
+)
+
+(method set_line_indentation
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_line_indentation)
+  (return-type none)
+  (parameter (type-and-name int line))
+  (parameter (type-and-name int indent_size))
+)
+
+(method get_line_indentation
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_line_indentation)
+  (return-type int)
+  (parameter (type-and-name int line))
+)
+
+(method get_line_indent_position
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_line_indent_position)
+  (return-type long)
+  (parameter (type-and-name int line))
+)
+
+(method get_column
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_column)
+  (return-type int)
+  (parameter (type-and-name long pos))
+)
+
+(method set_h_scroll_bar
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_h_scroll_bar)
+  (return-type none)
+  (parameter (type-and-name int show))
+)
+
+(method get_h_scroll_bar
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_h_scroll_bar)
+  (return-type int)
+)
+
+(method set_indentation_guides
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_indentation_guides)
+  (return-type none)
+  (parameter (type-and-name int show))
+)
+
+(method get_indentation_guides
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_indentation_guides)
+  (return-type int)
+)
+
+(method set_highlight_guide
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_highlight_guide)
+  (return-type none)
+  (parameter (type-and-name int column))
+)
+
+(method get_highlight_guide
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_highlight_guide)
+  (return-type int)
+)
+
+(method get_line_end_position
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_line_end_position)
+  (return-type int)
+  (parameter (type-and-name int line))
+)
+
+(method get_code_page
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_code_page)
+  (return-type int)
+)
+
+(method get_caret_fore
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_caret_fore)
+  (return-type long)
+)
+
+(method get_use_palette
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_use_palette)
+  (return-type int)
+)
+
+(method get_read_only
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_read_only)
+  (return-type int)
+)
+
+(method set_current_pos
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_current_pos)
+  (return-type none)
+  (parameter (type-and-name long pos))
+)
+
+(method set_selection_start
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_selection_start)
+  (return-type none)
+  (parameter (type-and-name long pos))
+)
+
+(method get_selection_start
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_selection_start)
+  (return-type long)
+)
+
+(method set_selection_end
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_selection_end)
+  (return-type none)
+  (parameter (type-and-name long pos))
+)
+
+(method get_selection_end
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_selection_end)
+  (return-type long)
+)
+
+(method set_print_magnification
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_print_magnification)
+  (return-type none)
+  (parameter (type-and-name int magnification))
+)
+
+(method get_print_magnification
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_print_magnification)
+  (return-type int)
+)
+
+(method set_print_colour_mode
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_print_colour_mode)
+  (return-type none)
+  (parameter (type-and-name int mode))
+)
+
+(method get_print_colour_mode
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_print_colour_mode)
+  (return-type int)
+)
+
+(method get_first_visible_line
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_first_visible_line)
+  (return-type int)
+)
+
+(method get_line
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_line)
+  (return-type int)
+  (parameter (type-and-name int line))
+  (parameter (type-and-name char* text))
+)
+
+(method get_line_count
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_line_count)
+  (return-type int)
+)
+
+(method set_margin_left
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_margin_left)
+  (return-type none)
+  (parameter (type-and-name int pixel_width))
+)
+
+(method get_margin_left
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_margin_left)
+  (return-type int)
+)
+
+(method set_margin_right
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_margin_right)
+  (return-type none)
+  (parameter (type-and-name int pixel_width))
+)
+
+(method get_margin_right
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_margin_right)
+  (return-type int)
+)
+
+(method get_modify
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_modify)
+  (return-type int)
+)
+
+(method set_sel
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_sel)
+  (return-type none)
+  (parameter (type-and-name long start))
+  (parameter (type-and-name long end))
+)
+
+(method get_sel_text
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_sel_text)
+  (return-type int)
+  (parameter (type-and-name char* text))
+)
+
+(method hide_selection
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_hide_selection)
+  (return-type none)
+  (parameter (type-and-name int normal))
+)
+
+(method point_x_from_position
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_point_x_from_position)
+  (return-type int)
+  (parameter (type-and-name long pos))
+)
+
+(method point_y_from_position
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_point_y_from_position)
+  (return-type int)
+  (parameter (type-and-name long pos))
+)
+
+(method line_from_position
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_line_from_position)
+  (return-type int)
+  (parameter (type-and-name long pos))
+)
+
+(method position_from_line
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_position_from_line)
+  (return-type int)
+  (parameter (type-and-name int line))
+)
+
+(method line_scroll
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_line_scroll)
+  (return-type none)
+  (parameter (type-and-name int columns))
+  (parameter (type-and-name int lines))
+)
+
+(method scroll_caret
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_scroll_caret)
+  (return-type none)
+)
+
+(method replace_sel
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_replace_sel)
+  (return-type none)
+  (parameter (type-and-name const-char* text))
+)
+
+(method set_read_only
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_read_only)
+  (return-type none)
+  (parameter (type-and-name int read_only))
+)
+
+(method null
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_null)
+  (return-type none)
+)
+
+(method can_paste
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_can_paste)
+  (return-type int)
+)
+
+(method can_undo
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_can_undo)
+  (return-type int)
+)
+
+(method empty_undo_buffer
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_empty_undo_buffer)
+  (return-type none)
+)
+
+(method undo
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_undo)
+  (return-type none)
+)
+
+(method cut
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_cut)
+  (return-type none)
+)
+
+(method copy
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_copy)
+  (return-type none)
+)
+
+(method paste
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_paste)
+  (return-type none)
+)
+
+(method clear
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_clear)
+  (return-type none)
+)
+
+(method set_text
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_text)
+  (return-type none)
+  (parameter (type-and-name const-char* text))
+)
+
+(method get_text
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_text)
+  (return-type int)
+  (parameter (type-and-name int length))
+  (parameter (type-and-name char* text))
+)
+
+(method get_text_length
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_text_length)
+  (return-type int)
+)
+
+(method get_direct_function
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_direct_function)
+  (return-type int)
+)
+
+(method get_direct_pointer
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_direct_pointer)
+  (return-type int)
+)
+
+(method set_overtype
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_overtype)
+  (return-type none)
+  (parameter (type-and-name int overtype))
+)
+
+(method get_overtype
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_overtype)
+  (return-type int)
+)
+
+(method set_caret_width
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_caret_width)
+  (return-type none)
+  (parameter (type-and-name int pixel_width))
+)
+
+(method get_caret_width
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_caret_width)
+  (return-type int)
+)
+
+(method set_target_start
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_target_start)
+  (return-type none)
+  (parameter (type-and-name long pos))
+)
+
+(method get_target_start
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_target_start)
+  (return-type long)
+)
+
+(method set_target_end
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_target_end)
+  (return-type none)
+  (parameter (type-and-name long pos))
+)
+
+(method get_target_end
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_target_end)
+  (return-type long)
+)
+
+(method replace_target
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_replace_target)
+  (return-type int)
+  (parameter (type-and-name int length))
+  (parameter (type-and-name const-char* text))
+)
+
+(method replace_target_re
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_replace_target_re)
+  (return-type int)
+  (parameter (type-and-name int length))
+  (parameter (type-and-name const-char* text))
+)
+
+(method search_in_target
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_search_in_target)
+  (return-type int)
+  (parameter (type-and-name int length))
+  (parameter (type-and-name const-char* text))
+)
+
+(method set_search_flags
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_search_flags)
+  (return-type none)
+  (parameter (type-and-name int flags))
+)
+
+(method get_search_flags
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_search_flags)
+  (return-type int)
+)
+
+(method call_tip_show
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_call_tip_show)
+  (return-type none)
+  (parameter (type-and-name long pos))
+  (parameter (type-and-name const-char* definition))
+)
+
+(method call_tip_cancel
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_call_tip_cancel)
+  (return-type none)
+)
+
+(method call_tip_active
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_call_tip_active)
+  (return-type int)
+)
+
+(method call_tip_pos_start
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_call_tip_pos_start)
+  (return-type long)
+)
+
+(method call_tip_set_hlt
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_call_tip_set_hlt)
+  (return-type none)
+  (parameter (type-and-name int start))
+  (parameter (type-and-name int end))
+)
+
+(method call_tip_set_back
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_call_tip_set_back)
+  (return-type none)
+  (parameter (type-and-name long back))
+)
+
+(method visible_from_doc_line
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_visible_from_doc_line)
+  (return-type int)
+  (parameter (type-and-name int line))
+)
+
+(method doc_line_from_visible
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_doc_line_from_visible)
+  (return-type int)
+  (parameter (type-and-name int line_display))
+)
+
+(method set_fold_level
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_fold_level)
+  (return-type none)
+  (parameter (type-and-name int line))
+  (parameter (type-and-name int level))
+)
+
+(method get_fold_level
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_fold_level)
+  (return-type int)
+  (parameter (type-and-name int line))
+)
+
+(method get_last_child
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_last_child)
+  (return-type int)
+  (parameter (type-and-name int line))
+  (parameter (type-and-name int level))
+)
+
+(method get_fold_parent
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_fold_parent)
+  (return-type int)
+  (parameter (type-and-name int line))
+)
+
+(method show_lines
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_show_lines)
+  (return-type none)
+  (parameter (type-and-name int line_start))
+  (parameter (type-and-name int line_end))
+)
+
+(method hide_lines
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_hide_lines)
+  (return-type none)
+  (parameter (type-and-name int line_start))
+  (parameter (type-and-name int line_end))
+)
+
+(method get_line_visible
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_line_visible)
+  (return-type int)
+  (parameter (type-and-name int line))
+)
+
+(method set_fold_expanded
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_fold_expanded)
+  (return-type none)
+  (parameter (type-and-name int line))
+  (parameter (type-and-name int expanded))
+)
+
+(method get_fold_expanded
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_fold_expanded)
+  (return-type int)
+  (parameter (type-and-name int line))
+)
+
+(method toggle_fold
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_toggle_fold)
+  (return-type none)
+  (parameter (type-and-name int line))
+)
+
+(method ensure_visible
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_ensure_visible)
+  (return-type none)
+  (parameter (type-and-name int line))
+)
+
+(method set_fold_flags
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_fold_flags)
+  (return-type none)
+  (parameter (type-and-name int flags))
+)
+
+(method set_tab_indents
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_tab_indents)
+  (return-type none)
+  (parameter (type-and-name int tab_indents))
+)
+
+(method get_tab_indents
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_tab_indents)
+  (return-type int)
+)
+
+(method set_backspace_unindents
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_backspace_unindents)
+  (return-type none)
+  (parameter (type-and-name int bs_unindents))
+)
+
+(method get_backspace_unindents
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_backspace_unindents)
+  (return-type int)
+)
+
+(method line_down
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_line_down)
+  (return-type none)
+)
+
+(method line_down_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_line_down_extend)
+  (return-type none)
+)
+
+(method line_up
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_line_up)
+  (return-type none)
+)
+
+(method line_up_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_line_up_extend)
+  (return-type none)
+)
+
+(method char_left
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_char_left)
+  (return-type none)
+)
+
+(method char_left_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_char_left_extend)
+  (return-type none)
+)
+
+(method char_right
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_char_right)
+  (return-type none)
+)
+
+(method char_right_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_char_right_extend)
+  (return-type none)
+)
+
+(method word_left
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_word_left)
+  (return-type none)
+)
+
+(method word_left_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_word_left_extend)
+  (return-type none)
+)
+
+(method word_right
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_word_right)
+  (return-type none)
+)
+
+(method word_right_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_word_right_extend)
+  (return-type none)
+)
+
+(method home
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_home)
+  (return-type none)
+)
+
+(method home_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_home_extend)
+  (return-type none)
+)
+
+(method line_end
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_line_end)
+  (return-type none)
+)
+
+(method line_end_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_line_end_extend)
+  (return-type none)
+)
+
+(method document_start
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_document_start)
+  (return-type none)
+)
+
+(method document_start_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_document_start_extend)
+  (return-type none)
+)
+
+(method document_end
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_document_end)
+  (return-type none)
+)
+
+(method document_end_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_document_end_extend)
+  (return-type none)
+)
+
+(method page_up
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_page_up)
+  (return-type none)
+)
+
+(method page_up_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_page_up_extend)
+  (return-type none)
+)
+
+(method page_down
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_page_down)
+  (return-type none)
+)
+
+(method page_down_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_page_down_extend)
+  (return-type none)
+)
+
+(method edit_toggle_overtype
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_edit_toggle_overtype)
+  (return-type none)
+)
+
+(method cancel
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_cancel)
+  (return-type none)
+)
+
+(method delete_back
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_delete_back)
+  (return-type none)
+)
+
+(method tab
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_tab)
+  (return-type none)
+)
+
+(method back_tab
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_back_tab)
+  (return-type none)
+)
+
+(method new_line
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_new_line)
+  (return-type none)
+)
+
+(method form_feed
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_form_feed)
+  (return-type none)
+)
+
+(method v_c_home
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_v_c_home)
+  (return-type none)
+)
+
+(method v_c_home_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_v_c_home_extend)
+  (return-type none)
+)
+
+(method zoom_in
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_zoom_in)
+  (return-type none)
+)
+
+(method zoom_out
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_zoom_out)
+  (return-type none)
+)
+
+(method del_word_left
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_del_word_left)
+  (return-type none)
+)
+
+(method del_word_right
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_del_word_right)
+  (return-type none)
+)
+
+(method line_cut
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_line_cut)
+  (return-type none)
+)
+
+(method line_delete
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_line_delete)
+  (return-type none)
+)
+
+(method line_transpose
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_line_transpose)
+  (return-type none)
+)
+
+(method lower_case
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_lower_case)
+  (return-type none)
+)
+
+(method upper_case
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_upper_case)
+  (return-type none)
+)
+
+(method line_scroll_down
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_line_scroll_down)
+  (return-type none)
+)
+
+(method line_scroll_up
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_line_scroll_up)
+  (return-type none)
+)
+
+(method move_caret_inside_view
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_move_caret_inside_view)
+  (return-type none)
+)
+
+(method line_length
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_line_length)
+  (return-type int)
+  (parameter (type-and-name int line))
+)
+
+(method brace_highlight
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_brace_highlight)
+  (return-type none)
+  (parameter (type-and-name long pos1))
+  (parameter (type-and-name long pos2))
+)
+
+(method brace_bad_light
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_brace_bad_light)
+  (return-type none)
+  (parameter (type-and-name long pos))
+)
+
+(method brace_match
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_brace_match)
+  (return-type long)
+  (parameter (type-and-name long pos))
+)
+
+(method get_view_eol
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_view_eol)
+  (return-type int)
+)
+
+(method set_view_eol
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_view_eol)
+  (return-type none)
+  (parameter (type-and-name int visible))
+)
+
+(method get_doc_pointer
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_doc_pointer)
+  (return-type int)
+)
+
+(method set_doc_pointer
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_doc_pointer)
+  (return-type none)
+  (parameter (type-and-name int pointer))
+)
+
+(method set_mod_event_mask
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_mod_event_mask)
+  (return-type none)
+  (parameter (type-and-name int mask))
+)
+
+(method get_edge_column
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_edge_column)
+  (return-type int)
+)
+
+(method set_edge_column
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_edge_column)
+  (return-type none)
+  (parameter (type-and-name int column))
+)
+
+(method get_edge_mode
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_edge_mode)
+  (return-type int)
+)
+
+(method set_edge_mode
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_edge_mode)
+  (return-type none)
+  (parameter (type-and-name int mode))
+)
+
+(method get_edge_colour
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_edge_colour)
+  (return-type long)
+)
+
+(method set_edge_colour
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_edge_colour)
+  (return-type none)
+  (parameter (type-and-name long edge_colour))
+)
+
+(method search_anchor
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_search_anchor)
+  (return-type none)
+)
+
+(method search_next
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_search_next)
+  (return-type int)
+  (parameter (type-and-name int flags))
+  (parameter (type-and-name const-char* text))
+)
+
+(method search_prev
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_search_prev)
+  (return-type int)
+  (parameter (type-and-name int flags))
+  (parameter (type-and-name const-char* text))
+)
+
+(method set_caret_policy
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_caret_policy)
+  (return-type none)
+  (parameter (type-and-name int caret_policy))
+  (parameter (type-and-name int caret_slop))
+)
+
+(method lines_on_screen
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_lines_on_screen)
+  (return-type int)
+)
+
+(method use_pop_up
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_use_pop_up)
+  (return-type none)
+  (parameter (type-and-name int allow_pop_up))
+)
+
+(method selection_is_rectangle
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_selection_is_rectangle)
+  (return-type int)
+)
+
+(method set_zoom
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_zoom)
+  (return-type none)
+  (parameter (type-and-name int zoom))
+)
+
+(method get_zoom
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_zoom)
+  (return-type int)
+)
+
+(method create_document
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_create_document)
+  (return-type int)
+)
+
+(method add_ref_document
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_add_ref_document)
+  (return-type none)
+  (parameter (type-and-name int doc))
+)
+
+(method release_document
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_release_document)
+  (return-type none)
+  (parameter (type-and-name int doc))
+)
+
+(method get_mod_event_mask
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_mod_event_mask)
+  (return-type int)
+)
+
+(method set_focus
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_focus)
+  (return-type none)
+  (parameter (type-and-name int focus))
+)
+
+(method get_focus
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_focus)
+  (return-type int)
+)
+
+(method set_status
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_status)
+  (return-type none)
+  (parameter (type-and-name int status_code))
+)
+
+(method get_status
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_status)
+  (return-type int)
+)
+
+(method set_mouse_down_captures
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_mouse_down_captures)
+  (return-type none)
+  (parameter (type-and-name int captures))
+)
+
+(method get_mouse_down_captures
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_mouse_down_captures)
+  (return-type int)
+)
+
+(method set_cursor
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_cursor)
+  (return-type none)
+  (parameter (type-and-name int cursor_type))
+)
+
+(method get_cursor
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_cursor)
+  (return-type int)
+)
+
+(method word_part_left
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_word_part_left)
+  (return-type none)
+)
+
+(method word_part_left_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_word_part_left_extend)
+  (return-type none)
+)
+
+(method word_part_right
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_word_part_right)
+  (return-type none)
+)
+
+(method word_part_right_extend
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_word_part_right_extend)
+  (return-type none)
+)
+
+(method set_visible_policy
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_visible_policy)
+  (return-type none)
+  (parameter (type-and-name int visible_policy))
+  (parameter (type-and-name int visible_slop))
+)
+
+(method del_line_left
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_del_line_left)
+  (return-type none)
+)
+
+(method del_line_right
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_del_line_right)
+  (return-type none)
+)
+
+(method grab_focus
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_grab_focus)
+  (return-type none)
+)
+
+(method start_record
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_start_record)
+  (return-type none)
+)
+
+(method stop_record
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_stop_record)
+  (return-type none)
+)
+
+(method set_lexer
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_lexer)
+  (return-type none)
+  (parameter (type-and-name int lexer))
+)
+
+(method get_lexer
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_lexer)
+  (return-type int)
+)
+
+(method colourise
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_colourise)
+  (return-type none)
+  (parameter (type-and-name long start))
+  (parameter (type-and-name long end))
+)
+
+(method set_property
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_property)
+  (return-type none)
+  (parameter (type-and-name const-char* key))
+  (parameter (type-and-name const-char* value))
+)
+
+(method set_keywords
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_keywords)
+  (return-type none)
+  (parameter (type-and-name int keyword_set))
+  (parameter (type-and-name const-char* key_words))
+)
+
+(method set_lexer_language
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_lexer_language)
+  (return-type none)
+  (parameter (type-and-name const-char* language))
+)
+
+

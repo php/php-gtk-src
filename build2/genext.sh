@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# $Id: genext.sh,v 1.1 2001-07-10 18:27:45 andrei Exp $
+# $Id: genext.sh,v 1.2 2001-08-11 05:42:40 andrei Exp $
 # replacement for genif.pl
 
 infile="$1"
@@ -23,6 +23,9 @@ olddir=`pwd`
 cd $srcdir
 
 for ext in ${1+"$@"} ; do
+	if test "$ext" == "gtk+"; then
+		continue
+	fi
 	ext_canonical=`echo ${ext} | sed -e 's![^a-zA-Z0-9_]!_!'`
 	module_ptrs="	php_gtk_ext_${ext_canonical}_ptr,@NEWLINE@$module_ptrs"
 	header_list="$header_list ext/$ext/*.h"

@@ -43,6 +43,7 @@ class Generator {
 
 	var $constants	= '';
 	var $register_classes = '';
+	var $register_function_wrapper_ce = true;
 
 	var $functions_decl_end = "\t{NULL, NULL, NULL}\n};\n\n";
 
@@ -557,16 +558,11 @@ class Generator {
 	{
 		global	$function_entry_tpl,
 				$functions_decl_tpl,
+				$class_entry_tpl,
 				$init_class_tpl,
 				$register_class_tpl;
 		
-		$this->register_classes .= sprintf($init_class_tpl,
-										   $this->prefix,
-										   $this->lprefix,
-										   'NULL');
-		$this->register_classes .= sprintf($register_class_tpl,
-										   $this->lprefix . '_ce',
-										   'NULL');
+		$num_functions = 0;
 		$functions_decl = sprintf($functions_decl_tpl, $this->lprefix);
 
 		foreach ($this->parser->functions as $function) {
@@ -581,6 +577,7 @@ class Generator {
 										   strtolower($function_name), 
 										   strtolower($function->c_name), 
 										   'NULL');
+				$num_functions++;
 			}
 			else if (!$this->overrides->is_ignored($function->c_name)) {
 				if ($this->write_function($fp, $function)) {
@@ -592,18 +589,30 @@ class Generator {
 											   $function_name, 
 											   strtolower($function->c_name), 
 											   'NULL');
+					$num_functions++;
 				}
 			}
 		}
 		$functions_decl .= $this->functions_decl_end;
-		fwrite($fp, $functions_decl);
+
+		if ($num_functions > 0) {
+			$this->register_classes .= sprintf($init_class_tpl,
+											   $this->prefix,
+											   $this->lprefix,
+											   'NULL');
+			$this->register_classes .= sprintf($register_class_tpl,
+											   $this->lprefix . '_ce',
+											   'NULL');
+			fwrite($fp, sprintf($class_entry_tpl, $this->lprefix . '_ce'));
+			fwrite($fp, $functions_decl);
+		} else
+			$this->register_function_wrapper_ce = false;
 	}
 
 	function write_class_entries($fp)
 	{
 		global	$class_entry_tpl;
 
-		fwrite($fp, sprintf($class_entry_tpl, $this->lprefix . '_ce'));
 		foreach ($this->parser->structs as $struct)
 			fwrite($fp, sprintf($class_entry_tpl, $struct->ce));
 		foreach ($this->parser->objects as $object)

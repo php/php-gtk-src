@@ -50,14 +50,13 @@ PHP_GTK_ARG_ENABLE(libglade,for libglade support,
 
 if test "$PHP_GTK_LIBGLADE" != "no"; then
   PHP_PATH_LIBGLADE(have_libglade=yes,have_libglade=no)
-  AC_DEFINE(HAVE_LIBGLADE,1,[libglade support])
   if test "$have_libglade" != "yes"; then
     AC_MSG_ERROR(Unable to locate libglade)
   else
+	AC_DEFINE(HAVE_LIBGLADE,1,[libglade support])
 	PHP_EVAL_INCLINE($LIBGLADE_CFLAGS)
 	PHP_EVAL_LIBLINE($LIBGLADE_LIBS, LIBGLADE_SHARED_LIBADD)
 	PHP_SUBST(LIBGLADE_SHARED_LIBADD)
-	PHP_SUBST(LIBGLADE_GEN_SOURCES)
 	PHP_GTK_EXTENSION(libglade)
   fi
 fi

@@ -20,24 +20,22 @@
  
 /* $Id$: */
 
+#ifndef PHP_SCINTILLA_H
+#define PHP_SCINTILLA_H
+
 #include "php_gtk.h"
 
-#if HAVE_PHP_GTK
+#if HAVE_SCINTILLA
 
-#include "ext/gtk+/php_gtk+.h"
-@EXT_INCLUDE_CODE@
+extern php_gtk_ext_entry scintilla_ext_entry;
+#define scintilla_ext_ptr &scintilla_ext_entry
 
-php_gtk_ext_entry *php_gtk_extensions[] = {
-	php_gtk_ext_gtk__ptr,
-@EXT_PTRS@
-};
+#else
 
-#define EXTCOUNT (sizeof(php_gtk_extensions)/sizeof(php_gtk_ext_entry *))
-	
+#define scintilla_ext_ptr NULL
 
-int php_gtk_startup_all_extensions(int module_number)
-{
-	return php_gtk_startup_extensions(php_gtk_extensions, EXTCOUNT, module_number);
-}
+#endif	/* HAVE_SCINTILLA */
 
-#endif /* HAVE_PHP_GTK */
+#define php_gtk_ext_scintilla_ptr scintilla_ext_ptr
+
+#endif	/* PHP_SCINTILLA_H */
