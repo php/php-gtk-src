@@ -83,7 +83,7 @@ function draw_brush($widget, $x, $y)
 
 	gdk::draw_arc($pixmap, $widget->style->black_gc,
 				  true, $x - 4, $y - 4, 8, 8, 0, 64 * 360); 
-	$widget->draw($x - 4, $y - 4, 8, 8);
+	$widget->draw(new GdkRectangle($x - 4, $y - 4, 8, 8));
 }
 
 
