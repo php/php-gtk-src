@@ -1,0 +1,1872 @@
+
+;; -*- scheme -*-
+; object definitions ...
+(object Plot
+  (in-module Gtk)
+  (parent Widget (Gtk))
+  (c-name GtkPlot)
+)
+
+(object PlotCanvas
+  (in-module Gtk)
+  (parent Fixed (Gtk))
+  (c-name GtkPlotCanvas)
+)
+
+(object PlotData
+  (in-module Gtk)
+  (parent Widget (Gtk))
+  (c-name GtkPlotData)
+)
+
+(object PlotAxis 
+  (in-module Gtk)
+  (parent Object (Gtk))
+  (c-name GtkPlotAxis )
+)
+
+
+;; Enumerations and flags ...
+
+(enum 
+  (in-module Gtkplot)
+  (value (name tk_plot_gradient_h) (c-name GTK_PLOT_GRADIENT_H))
+  (value (name tk_plot_gradient_v) (c-name GTK_PLOT_GRADIENT_V))
+  (value (name tk_plot_gradient_s) (c-name GTK_PLOT_GRADIENT_S))
+)
+
+(enum Scale
+  (in-module Gtkplot)
+  (c-name GtkPlotScale)
+  (value (name linear) (c-name GTK_PLOT_SCALE_LINEAR))
+  (value (name log10) (c-name GTK_PLOT_SCALE_LOG10))
+)
+
+(enum SymbolType
+  (in-module Gtkplot)
+  (c-name GtkPlotSymbolType)
+  (value (name none) (c-name GTK_PLOT_SYMBOL_NONE))
+  (value (name square) (c-name GTK_PLOT_SYMBOL_SQUARE))
+  (value (name circle) (c-name GTK_PLOT_SYMBOL_CIRCLE))
+  (value (name up_triangle) (c-name GTK_PLOT_SYMBOL_UP_TRIANGLE))
+  (value (name down_triangle) (c-name GTK_PLOT_SYMBOL_DOWN_TRIANGLE))
+  (value (name right_triangle) (c-name GTK_PLOT_SYMBOL_RIGHT_TRIANGLE))
+  (value (name left_triangle) (c-name GTK_PLOT_SYMBOL_LEFT_TRIANGLE))
+  (value (name diamond) (c-name GTK_PLOT_SYMBOL_DIAMOND))
+  (value (name plus) (c-name GTK_PLOT_SYMBOL_PLUS))
+  (value (name cross) (c-name GTK_PLOT_SYMBOL_CROSS))
+  (value (name star) (c-name GTK_PLOT_SYMBOL_STAR))
+  (value (name dot) (c-name GTK_PLOT_SYMBOL_DOT))
+  (value (name impulse) (c-name GTK_PLOT_SYMBOL_IMPULSE))
+)
+
+(enum SymbolStyle
+  (in-module Gtkplot)
+  (c-name GtkPlotSymbolStyle)
+  (value (name empty) (c-name GTK_PLOT_SYMBOL_EMPTY))
+  (value (name filled) (c-name GTK_PLOT_SYMBOL_FILLED))
+  (value (name opaque) (c-name GTK_PLOT_SYMBOL_OPAQUE))
+)
+
+(enum BorderStyle
+  (in-module Gtkplot)
+  (c-name GtkPlotBorderStyle)
+  (value (name none) (c-name GTK_PLOT_BORDER_NONE))
+  (value (name line) (c-name GTK_PLOT_BORDER_LINE))
+  (value (name shadow) (c-name GTK_PLOT_BORDER_SHADOW))
+)
+
+(enum LineStyle
+  (in-module Gtkplot)
+  (c-name GtkPlotLineStyle)
+  (value (name none) (c-name GTK_PLOT_LINE_NONE))
+  (value (name solid) (c-name GTK_PLOT_LINE_SOLID))
+  (value (name dotted) (c-name GTK_PLOT_LINE_DOTTED))
+  (value (name dashed) (c-name GTK_PLOT_LINE_DASHED))
+  (value (name dot_dash) (c-name GTK_PLOT_LINE_DOT_DASH))
+  (value (name dot_dot_dash) (c-name GTK_PLOT_LINE_DOT_DOT_DASH))
+  (value (name dot_dash_dash) (c-name GTK_PLOT_LINE_DOT_DASH_DASH))
+)
+
+(enum Connector
+  (in-module Gtkplot)
+  (c-name GtkPlotConnector)
+  (value (name none) (c-name GTK_PLOT_CONNECT_NONE))
+  (value (name straight) (c-name GTK_PLOT_CONNECT_STRAIGHT))
+  (value (name spline) (c-name GTK_PLOT_CONNECT_SPLINE))
+  (value (name hv_step) (c-name GTK_PLOT_CONNECT_HV_STEP))
+  (value (name vh_step) (c-name GTK_PLOT_CONNECT_VH_STEP))
+  (value (name middle_step) (c-name GTK_PLOT_CONNECT_MIDDLE_STEP))
+)
+
+(enum LabelPos
+  (in-module Gtkplot)
+  (c-name GtkPlotLabelPos)
+  (value (name none) (c-name GTK_PLOT_LABEL_NONE))
+  (value (name in) (c-name GTK_PLOT_LABEL_IN))
+  (value (name out) (c-name GTK_PLOT_LABEL_OUT))
+)
+
+(enum Error
+  (in-module Gtkplot)
+  (c-name GtkPlotError)
+  (value (name tk_plot_error_div_zero) (c-name GTK_PLOT_ERROR_DIV_ZERO))
+)
+
+(enum Orientation
+  (in-module Gtkplot)
+  (c-name GtkPlotOrientation)
+  (value (name tk_plot_axis_x) (c-name GTK_PLOT_AXIS_X))
+  (value (name tk_plot_axis_y) (c-name GTK_PLOT_AXIS_Y))
+  (value (name tk_plot_axis_z) (c-name GTK_PLOT_AXIS_Z))
+)
+
+(enum AxisPos
+  (in-module Gtkplot)
+  (c-name GtkPlotAxisPos)
+  (value (name left) (c-name GTK_PLOT_AXIS_LEFT))
+  (value (name right) (c-name GTK_PLOT_AXIS_RIGHT))
+  (value (name top) (c-name GTK_PLOT_AXIS_TOP))
+  (value (name bottom) (c-name GTK_PLOT_AXIS_BOTTOM))
+)
+
+(enum LabelStyle
+  (in-module Gtkplot)
+  (c-name GtkPlotLabelStyle)
+  (value (name float) (c-name GTK_PLOT_LABEL_FLOAT))
+  (value (name exp) (c-name GTK_PLOT_LABEL_EXP))
+  (value (name pow) (c-name GTK_PLOT_LABEL_POW))
+)
+
+(enum TicksPos
+  (in-module Gtkplot)
+  (c-name GtkPlotTicksPos)
+  (value (name none) (c-name GTK_PLOT_TICKS_NONE))
+  (value (name in) (c-name GTK_PLOT_TICKS_IN))
+  (value (name out) (c-name GTK_PLOT_TICKS_OUT))
+)
+
+(enum 
+  (in-module Gtkplotcanvas)
+  (value (name select) (c-name GTK_PLOT_CANVAS_CAN_SELECT))
+  (value (name select_item) (c-name GTK_PLOT_CANVAS_CAN_SELECT_ITEM))
+  (value (name select_point) (c-name GTK_PLOT_CANVAS_CAN_SELECT_POINT))
+  (value (name dnd) (c-name GTK_PLOT_CANVAS_CAN_DND))
+  (value (name dnd_point) (c-name GTK_PLOT_CANVAS_CAN_DND_POINT))
+)
+
+(enum Action
+  (in-module Gtkplotcanvas)
+  (c-name GtkPlotCanvasAction)
+  (value (name inactive) (c-name GTK_PLOT_CANVAS_ACTION_INACTIVE))
+  (value (name selection) (c-name GTK_PLOT_CANVAS_ACTION_SELECTION))
+  (value (name drag) (c-name GTK_PLOT_CANVAS_ACTION_DRAG))
+  (value (name resize) (c-name GTK_PLOT_CANVAS_ACTION_RESIZE))
+)
+
+(enum Flag
+  (in-module Gtkplotcanvas)
+  (c-name GtkPlotCanvasFlag)
+  (value (name frozen) (c-name GTK_PLOT_CANVAS_FROZEN))
+  (value (name can_move) (c-name GTK_PLOT_CANVAS_CAN_MOVE))
+  (value (name can_x_resize) (c-name GTK_PLOT_CANVAS_CAN_X_RESIZE))
+  (value (name can_y_resize) (c-name GTK_PLOT_CANVAS_CAN_Y_RESIZE))
+)
+
+(enum Arrow
+  (in-module Gtkplotcanvas)
+  (c-name GtkPlotCanvasArrow)
+  (value (name none) (c-name GTK_PLOT_ARROW_NONE))
+  (value (name origin) (c-name GTK_PLOT_ARROW_ORIGIN))
+  (value (name end) (c-name GTK_PLOT_ARROW_END))
+)
+
+(enum Selection
+  (in-module Gtkplotcanvas)
+  (c-name GtkPlotCanvasSelection)
+  (value (name none) (c-name GTK_PLOT_CANVAS_SELECT_NONE))
+  (value (name markers) (c-name GTK_PLOT_CANVAS_SELECT_MARKERS))
+  (value (name target) (c-name GTK_PLOT_CANVAS_SELECT_TARGET))
+)
+
+(enum SelectionMode
+  (in-module Gtkplotcanvas)
+  (c-name GtkPlotCanvasSelectionMode)
+  (value (name tk_plot_canvas_select_click_1) (c-name GTK_PLOT_CANVAS_SELECT_CLICK_1))
+  (value (name tk_plot_canvas_select_click_2) (c-name GTK_PLOT_CANVAS_SELECT_CLICK_2))
+)
+
+(enum Type
+  (in-module Gtkplotcanvas)
+  (c-name GtkPlotCanvasType)
+  (value (name none) (c-name GTK_PLOT_CANVAS_NONE))
+  (value (name plot) (c-name GTK_PLOT_CANVAS_PLOT))
+  (value (name axis) (c-name GTK_PLOT_CANVAS_AXIS))
+  (value (name legends) (c-name GTK_PLOT_CANVAS_LEGENDS))
+  (value (name title) (c-name GTK_PLOT_CANVAS_TITLE))
+  (value (name text) (c-name GTK_PLOT_CANVAS_TEXT))
+  (value (name data) (c-name GTK_PLOT_CANVAS_DATA))
+  (value (name line) (c-name GTK_PLOT_CANVAS_LINE))
+  (value (name rectangle) (c-name GTK_PLOT_CANVAS_RECTANGLE))
+  (value (name ellipse) (c-name GTK_PLOT_CANVAS_ELLIPSE))
+  (value (name pixmap) (c-name GTK_PLOT_CANVAS_PIXMAP))
+  (value (name marker) (c-name GTK_PLOT_CANVAS_MARKER))
+  (value (name custom) (c-name GTK_PLOT_CANVAS_CUSTOM))
+)
+
+(enum Pos
+  (in-module Gtkplotcanvas)
+  (c-name GtkPlotCanvasPos)
+  (value (name out) (c-name GTK_PLOT_CANVAS_OUT))
+  (value (name in) (c-name GTK_PLOT_CANVAS_IN))
+  (value (name left) (c-name GTK_PLOT_CANVAS_LEFT))
+  (value (name right) (c-name GTK_PLOT_CANVAS_RIGHT))
+  (value (name top) (c-name GTK_PLOT_CANVAS_TOP))
+  (value (name bottom) (c-name GTK_PLOT_CANVAS_BOTTOM))
+  (value (name top_left) (c-name GTK_PLOT_CANVAS_TOP_LEFT))
+  (value (name top_right) (c-name GTK_PLOT_CANVAS_TOP_RIGHT))
+  (value (name bottom_left) (c-name GTK_PLOT_CANVAS_BOTTOM_LEFT))
+  (value (name bottom_right) (c-name GTK_PLOT_CANVAS_BOTTOM_RIGHT))
+)
+
+
+(function GtkPlotFunc 
+  (c-name GtkPlotFunc)
+  (return-type gdouble*)
+  (parameter (type-and-name GtkPlot*        plot))
+  (parameter (type-and-name GtkPlotData*        data))
+  (parameter (type-and-name gdouble x))
+  (parameter (type-and-name gboolean*        error))
+)
+
+(function GtkPlotFunc3D 
+  (c-name GtkPlotFunc3D)
+  (return-type gdouble*)
+  (parameter (type-and-name GtkPlot*        plot))
+  (parameter (type-and-name GtkPlotData*        data))
+  (parameter (type-and-name gdouble x))
+  (parameter (type-and-name gdouble y))
+  (parameter (type-and-name gboolean*        error))
+)
+
+(function GtkPlotIterator 
+  (c-name GtkPlotIterator)
+  (return-type void*)
+  (parameter (type-and-name GtkPlot*        plot))
+  (parameter (type-and-name GtkPlotData*        data))
+  (parameter (type-and-name gint iter))
+  (parameter (type-and-name gdouble*        x))
+  (parameter (type-and-name gdouble*        y))
+  (parameter (type-and-name gdouble*        z))
+  (parameter (type-and-name gdouble*        a))
+  (parameter (type-and-name gdouble*        dx))
+  (parameter (type-and-name gdouble*        dy))
+  (parameter (type-and-name gdouble*        dz))
+  (parameter (type-and-name gdouble*        da))
+  (parameter (type-and-name gchar*        *label))
+  (parameter (type-and-name gboolean*        error))
+)
+
+
+;; Canvas-------------------------------------------------------------------
+
+(function gtk_plot_canvas_new
+  (c-name gtk_plot_canvas_new)
+  (is-constructor-of GtkPlotCanvas)
+  (return-type GtkPlotCanvas*)
+  (parameter (type-and-name gint width))
+  (parameter (type-and-name gint height))
+  (parameter (type-and-name gdouble magnification))
+
+)
+
+(method set_active_plot
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_set_active_plot)
+  (return-type none)
+  (parameter (type-and-name GtkPlot* plot))
+)
+
+(method add_plot
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_add_plot)
+  (return-type none)
+  (parameter (type-and-name GtkPlot* plot))
+  (parameter (type-and-name gdouble x))
+  (parameter (type-and-name gdouble y))
+
+
+)
+
+(method paint
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_paint)
+  (return-type none)
+)
+(method refresh
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_refresh)
+  (return-type none)
+)
+
+(function gtk_plot_canvas_get_type 
+  (c-name gtk_plot_canvas_get_type)
+  (return-type GtkType)
+)
+
+(function gtk_plot_canvas_child_get_type 
+  (c-name gtk_plot_canvas_child_get_type)
+  (return-type GtkType)
+)
+
+(function gtk_plot_canvas_new 
+  (c-name gtk_plot_canvas_new)
+  (is-constructor-of GtkPlotCanvas)
+  (return-type GtkWidget*)
+  (parameter (type-and-name gint width))
+  (parameter (type-and-name gint height))
+  (parameter (type-and-name gdouble magnification))
+)
+
+(method construct 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_construct)
+  (return-type none)
+  (parameter (type-and-name gint width))
+  (parameter (type-and-name gint height))
+  (parameter (type-and-name gdouble magnification))
+)
+
+(method set_pc 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_set_pc)
+  (return-type none)
+  (parameter (type-and-name GtkPlotPC*        pc))
+)
+
+(method freeze 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_freeze)
+  (return-type none)
+)
+
+(method thaw 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_thaw)
+  (return-type none)
+)
+
+(method grid_set_step 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_grid_set_step)
+  (return-type none)
+  (parameter (type-and-name gdouble step))
+)
+
+
+(method cancel_action 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_cancel_action)
+  (return-type none)
+)
+
+(method unselect 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_unselect)
+  (return-type none)
+)
+
+(method get_active_point 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_get_active_point)
+  (return-type gint)
+  (parameter (type-and-name gdouble*        x))
+  (parameter (type-and-name gdouble*        y))
+)
+
+(method set_size 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_set_size)
+  (return-type none)
+  (parameter (type-and-name gint width))
+  (parameter (type-and-name gint height))
+)
+
+(method set_magnification 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_set_magnification)
+  (return-type none)
+  (parameter (type-and-name gdouble magnification))
+)
+
+(method set_background 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_set_background)
+  (return-type none)
+  (parameter (type-and-name const-GdkColor*        background))
+)
+
+(method get_pixel 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_get_pixel)
+  (return-type none)
+  (parameter (type-and-name gdouble px))
+  (parameter (type-and-name gdouble py))
+  (parameter (type-and-name gint*        x))
+  (parameter (type-and-name gint*        y))
+)
+
+(method get_position 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_get_position)
+  (return-type none)
+  (parameter (type-and-name gint x))
+  (parameter (type-and-name gint y))
+  (parameter (type-and-name gdouble*        px))
+  (parameter (type-and-name gdouble*        py))
+)
+
+(method remove_child 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_remove_child)
+  (return-type gboolean)
+  (parameter (type-and-name GtkPlotCanvasChild*        child))
+)
+
+(function gtk_plot_canvas_line_set_attributes 
+  (c-name gtk_plot_canvas_line_set_attributes)
+  (return-type none)
+  (parameter (type-and-name GtkPlotCanvasChild*        child))
+  (parameter (type-and-name GtkPlotLineStyle style))
+  (parameter (type-and-name gfloat width))
+  (parameter (type-and-name const-GdkColor*        color))
+  (parameter (type-and-name GtkPlotCanvasArrow mask))
+)
+
+(function gtk_plot_canvas_rectangle_set_attributes 
+  (c-name gtk_plot_canvas_rectangle_set_attributes)
+  (return-type none)
+  (parameter (type-and-name GtkPlotCanvasChild*        child))
+  (parameter (type-and-name GtkPlotLineStyle style))
+  (parameter (type-and-name gfloat width))
+  (parameter (type-and-name const-GdkColor*        fg))
+  (parameter (type-and-name const-GdkColor*        bg))
+  (parameter (type-and-name GtkPlotBorderStyle border))
+  (parameter (type-and-name gboolean fill))
+)
+
+(function gtk_plot_canvas_ellipse_set_attributes 
+  (c-name gtk_plot_canvas_ellipse_set_attributes)
+  (return-type none)
+  (parameter (type-and-name GtkPlotCanvasChild*        child))
+  (parameter (type-and-name GtkPlotLineStyle style))
+  (parameter (type-and-name gfloat width))
+  (parameter (type-and-name const-GdkColor*        fg))
+  (parameter (type-and-name const-GdkColor*        bg))
+  (parameter (type-and-name gboolean fill))
+)
+
+(method put_child 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_put_child)
+  (return-type none)
+  (parameter (type-and-name GtkPlotCanvasChild*        child))
+  (parameter (type-and-name gdouble x1))
+  (parameter (type-and-name gdouble y1))
+  (parameter (type-and-name gdouble x2))
+  (parameter (type-and-name gdouble y2))
+)
+
+(method child_move 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_child_move)
+  (return-type none)
+  (parameter (type-and-name GtkPlotCanvasChild*        child))
+  (parameter (type-and-name gdouble x1))
+  (parameter (type-and-name gdouble y1))
+)
+
+(method child_move_resize 
+  (of-object PlotCanvas (Gtk))
+  (c-name gtk_plot_canvas_child_move_resize)
+  (return-type none)
+  (parameter (type-and-name GtkPlotCanvasChild*        child))
+  (parameter (type-and-name gdouble x1))
+  (parameter (type-and-name gdouble y1))
+  (parameter (type-and-name gdouble x2))
+  (parameter (type-and-name gdouble y2))
+)
+
+(method d_set_selection 
+  (of-object PlotCanvasChild (Gtk))
+  (c-name gtk_plot_canvas_child_set_selection)
+  (return-type none)
+  (parameter (type-and-name GtkPlotCanvasSelection selection))
+)
+
+(method d_set_selection_mode 
+  (of-object PlotCanvasChild (Gtk))
+  (c-name gtk_plot_canvas_child_set_selection_mode)
+  (return-type none)
+  (parameter (type-and-name GtkPlotCanvasSelectionMode mode))
+)
+
+
+
+;; Plot---------------------------------------------------------------------
+
+(function gtk_plot_new_with_size
+  (c-name gtk_plot_new_with_size)
+  (is-constructor-of GtkPlot)
+  (return-type GtkPlot*)
+  (parameter (type-and-name GdkDrawable* drawable) (null-ok)(default "NULL"))
+  (parameter (type-and-name gdouble width))
+  (parameter (type-and-name gdouble height))
+)
+
+(method set_range
+  (of-object Plot (Gtk))
+  (c-name gtk_plot_set_range)
+  (return-type none)
+  (parameter (type-and-name gdouble xmin))
+  (parameter (type-and-name gdouble xmax))
+  (parameter (type-and-name gdouble ymin))
+  (parameter (type-and-name gdouble ymax))
+
+)
+
+
+(method add_data
+  (of-object Plot (Gtk))
+  (c-name gtk_plot_add_data)
+  (return-type none)
+  (parameter (type-and-name GtkPlotData* data))
+)
+
+(method set_xrange
+  (of-object Plot (Gtk))
+  (c-name gtk_plot_set_xrange)
+  (return-type none)
+  (parameter (type-and-name gdouble xmin))
+  (parameter (type-and-name gdouble xmax))
+)
+
+(method set_yrange
+  (of-object Plot (Gtk))
+  (c-name gtk_plot_set_yrange)
+  (return-type none)
+  (parameter (type-and-name gdouble ymin))
+  (parameter (type-and-name gdouble ymax))
+)
+
+(method get_xrange
+  (of-object Plot (Gtk))
+  (c-name gtk_plot_set_xrange)
+  (return-type none)
+  (parameter (type-and-name gdouble* xmin))
+  (parameter (type-and-name gdouble* xmax))
+)
+
+(method get_yrange
+  (of-object Plot (Gtk))
+  (c-name gtk_plot_set_yrange)
+  (return-type none)
+  (parameter (type-and-name gdouble* ymin))
+  (parameter (type-and-name gdouble* ymax))
+)
+
+(method legends_move
+  (of-object Plot (Gtk))
+  (c-name gtk_plot_legends_move)
+  (return-type none)
+  (parameter (type-and-name gdouble x))
+  (parameter (type-and-name gdouble y))
+)
+
+(method axis_set_visible
+  (of-object Plot (Gtk))
+  (c-name gtk_plot_axis_set_visible)
+  (return-type none)
+  (parameter (type-and-name GtkPlotAxisPos pos))
+  (parameter (type-and-name gboolean visible))
+)
+(method axis_visible
+  (of-object Plot (Gtk))
+  (c-name gtk_plot_axis_visible)
+  (return-type gboolean)
+  (parameter (type-and-name GtkPlotAxisPos pos))
+)
+
+
+(method axis_set_title
+  (of-object Plot (Gtk))
+  (c-name gtk_plot_axis_set_title)
+  (return-type none)
+  (parameter (type-and-name GtkPlotAxisPos pos))
+  (parameter (type-and-name gchar * title))
+)
+(method axis_show_title
+  (of-object Plot (Gtk))
+  (c-name gtk_plot_axis_show_title)
+  (return-type none)
+  (parameter (type-and-name GtkPlotAxisPos pos))
+)
+(method axis_hide_title
+  (of-object Plot (Gtk))
+  (c-name gtk_plot_axis_hide_title)
+  (return-type none)
+  (parameter (type-and-name GtkPlotAxisPos pos))
+)
+
+(method axis_move_title
+  (of-object Plot (Gtk))
+  (c-name gtk_plot_axis_move_title)
+  (return-type none)
+  (parameter (type-and-name GtkPlotAxisPos pos))
+  (parameter (type-and-name gint angle))
+  (parameter (type-and-name gdouble x))
+  (parameter (type-and-name gdouble y))
+)
+  
+
+;; PlotData-----------------------------------------------------------------
+(function gtk_plot_data_get_type 
+  (c-name gtk_plot_data_get_type)
+  (return-type GtkType)
+)
+
+(function gtk_plot_data_new
+  (c-name gtk_plot_data_new)
+  (is-constructor-of GtkPlotData)
+  (return-type GtkWidget*)
+)
+
+(method paint
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_paint)
+  (return-type none)
+)
+
+(method update
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_update)
+  (return-type none)
+)
+
+(method draw_points
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_draw_points)
+  (return-type none)
+  (parameter (type-and-name gint n))
+)
+
+(method draw_symbol
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_draw_symbol)
+  (return-type none)
+  (parameter (type-and-name gdouble x))
+  (parameter (type-and-name gdouble y))
+)
+
+
+
+(method set_points
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_points)
+  (return-type none)
+  (parameter (type-and-name gpointer x))
+  (parameter (type-and-name gpointer y))
+  (parameter (type-and-name gpointer dx))
+  (parameter (type-and-name gpointer dy))
+  (parameter (type-and-name gint num_points))
+)
+
+(method set_legend
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_legend)
+  (return-type none)
+  (parameter (type-and-name const-gchar* name))
+)
+
+;; fabricado Plot data ///////////////////////////////////////////
+(function gtk_plot_data_new_function 
+  (c-name gtk_plot_data_new_function)
+  (is-constructor-of GtkPlotData)
+  (return-type GtkWidget*)
+  (parameter (type-and-name GtkPlotFunc function))
+)
+
+(method construct_function 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_construct_function)
+  (return-type none)
+  (parameter (type-and-name GtkPlotFunc function))
+)
+
+(function gtk_plot_data_new_iterator 
+  (c-name gtk_plot_data_new_iterator)
+  (is-constructor-of GtkPlotData)
+  (return-type GtkWidget*)
+  (parameter (type-and-name GtkPlotIterator iter))
+  (parameter (type-and-name gint npoints))
+  (parameter (type-and-name guint16 iterator_mask))
+)
+
+(method construct_iterator 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_construct_iterator)
+  (return-type none)
+  (parameter (type-and-name GtkPlotIterator iter))
+  (parameter (type-and-name gint npoints))
+  (parameter (type-and-name guint16 iterator_mask))
+)
+
+
+
+
+;;(method set_points 
+;;  (of-object PlotData (Gtk))
+;;  (c-name gtk_plot_data_set_points)
+;;  (return-type none)
+;;  (parameter (type-and-name gdouble*        x))
+;;  (parameter (type-and-name gdouble*        y))
+;;  (parameter (type-and-name gdouble*        dx))
+;;  (parameter (type-and-name gdouble*        dy))
+;;  (parameter (type-and-name gint num_points))
+;;)
+
+(method get_points 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_get_points)
+  (return-type none)
+  (parameter (type-and-name gdouble*        *x))
+  (parameter (type-and-name gdouble*        *y))
+  (parameter (type-and-name gdouble*        *dx))
+  (parameter (type-and-name gdouble*        *dy))
+  (parameter (type-and-name gint*        num_points))
+)
+
+(method get_point 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_get_point)
+  (return-type none)
+  (parameter (type-and-name gint n))
+  (parameter (type-and-name gdouble*        x))
+  (parameter (type-and-name gdouble*        y))
+  (parameter (type-and-name gdouble*        z))
+  (parameter (type-and-name gdouble*        a))
+  (parameter (type-and-name gdouble*        dx))
+  (parameter (type-and-name gdouble*        dy))
+  (parameter (type-and-name gdouble*        dz))
+  (parameter (type-and-name gdouble*        da))
+  (parameter (type-and-name gchar*        *label))
+  (parameter (type-and-name gboolean*        error))
+)
+
+(method set_x 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_x)
+  (return-type none)
+  (parameter (type-and-name gdouble*        x))
+)
+
+(method set_y 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_y)
+  (return-type none)
+  (parameter (type-and-name gdouble*        y))
+)
+
+(method set_z 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_z)
+  (return-type none)
+  (parameter (type-and-name gdouble*        z))
+)
+
+(method set_a 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_a)
+  (return-type none)
+  (parameter (type-and-name gdouble*        z))
+)
+
+(method set_dx 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_dx)
+  (return-type none)
+  (parameter (type-and-name gdouble*        dx))
+)
+
+(method set_dy 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_dy)
+  (return-type none)
+  (parameter (type-and-name gdouble*        dy))
+)
+
+(method set_dz 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_dz)
+  (return-type none)
+  (parameter (type-and-name gdouble*        dz))
+)
+
+(method set_da 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_da)
+  (return-type none)
+  (parameter (type-and-name gdouble*        da))
+)
+
+(method set_a_scale 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_a_scale)
+  (return-type none)
+  (parameter (type-and-name gdouble a_scale))
+)
+
+(method set_labels 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_labels)
+  (return-type none)
+  (parameter (type-and-name gchar*        *labels))
+)
+
+(method get_a_scale 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_get_a_scale)
+  (return-type gdouble)
+)
+
+(method show_labels 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_show_labels)
+  (return-type none)
+  (parameter (type-and-name gboolean show_labels))
+)
+
+(method labels_set_attributes 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_labels_set_attributes)
+  (return-type none)
+  (parameter (type-and-name const-gchar*        font))
+  (parameter (type-and-name gint height))
+  (parameter (type-and-name gint angle))
+  (parameter (type-and-name const-GdkColor*        foreground))
+  (parameter (type-and-name const-GdkColor*        background))
+)
+
+(method set_numpoints 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_numpoints)
+  (return-type none)
+  (parameter (type-and-name gint num_points))
+)
+
+(method get_numpoints 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_get_numpoints)
+  (return-type gint)
+)
+
+(method set_symbol 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_symbol)
+  (return-type none)
+  (parameter (type-and-name GtkPlotSymbolType type))
+  (parameter (type-and-name GtkPlotSymbolStyle style))
+  (parameter (type-and-name gint size))
+  (parameter (type-and-name gfloat line_width))
+  (parameter (type-and-name const-GdkColor*        color))
+  (parameter (type-and-name const-GdkColor*        border_color))
+)
+
+(method get_symbol 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_get_symbol)
+  (return-type none)
+  (parameter (type-and-name GtkPlotSymbolType*        type))
+  (parameter (type-and-name GtkPlotSymbolStyle*        style))
+  (parameter (type-and-name gint*        size))
+  (parameter (type-and-name gfloat*        line_width))
+  (parameter (type-and-name GdkColor*        color))
+  (parameter (type-and-name GdkColor*        border_color))
+)
+
+(method set_connector 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_connector)
+  (return-type none)
+  (parameter (type-and-name GtkPlotConnector connector))
+)
+
+(method get_connector 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_get_connector)
+  (return-type gint)
+)
+
+(method set_line_attributes 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_line_attributes)
+  (return-type none)
+  (parameter (type-and-name GtkPlotLineStyle style))
+  (parameter (type-and-name gfloat width))
+  (parameter (type-and-name const-GdkColor*        color))
+)
+
+(method get_line_attributes 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_get_line_attributes)
+  (return-type none)
+  (parameter (type-and-name GtkPlotLineStyle*        style))
+  (parameter (type-and-name gfloat*        width))
+  (parameter (type-and-name GdkColor*        color))
+)
+
+(method set_x_attributes 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_x_attributes)
+  (return-type none)
+  (parameter (type-and-name GtkPlotLineStyle style))
+  (parameter (type-and-name gfloat width))
+  (parameter (type-and-name const-GdkColor*        color))
+)
+
+(method set_y_attributes 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_y_attributes)
+  (return-type none)
+  (parameter (type-and-name GtkPlotLineStyle style))
+  (parameter (type-and-name gfloat width))
+  (parameter (type-and-name const-GdkColor*        color))
+)
+
+(method set_z_attributes 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_z_attributes)
+  (return-type none)
+  (parameter (type-and-name GtkPlotLineStyle style))
+  (parameter (type-and-name gfloat width))
+  (parameter (type-and-name const-GdkColor*        color))
+)
+
+(method show_xerrbars 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_show_xerrbars)
+  (return-type none)
+)
+
+(method show_yerrbars 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_show_yerrbars)
+  (return-type none)
+)
+
+(method show_zerrbars 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_show_zerrbars)
+  (return-type none)
+)
+
+(method hide_xerrbars 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_hide_xerrbars)
+  (return-type none)
+)
+
+(method hide_yerrbars 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_hide_yerrbars)
+  (return-type none)
+)
+
+(method hide_zerrbars 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_hide_zerrbars)
+  (return-type none)
+)
+
+(method fill_area 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_fill_area)
+  (return-type none)
+  (parameter (type-and-name gboolean fill))
+)
+
+(method area_is_filled 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_area_is_filled)
+  (return-type gboolean)
+)
+
+(method show_legend 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_show_legend)
+  (return-type none)
+)
+
+(method hide_legend 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_hide_legend)
+  (return-type none)
+)
+
+(method set_legend_precision 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_legend_precision)
+  (return-type none)
+  (parameter (type-and-name gint precision))
+)
+
+(method get_legend_precision 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_get_legend_precision)
+  (return-type gint)
+)
+
+(method set_name 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_name)
+  (return-type none)
+  (parameter (type-and-name const-gchar*        name))
+)
+
+(method set_gradient_mask 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_gradient_mask)
+  (return-type none)
+  (parameter (type-and-name gint mask))
+)
+
+(method get_gradient_mask 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_get_gradient_mask)
+  (return-type gint)
+)
+
+(method gradient_set_visible 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_gradient_set_visible)
+  (return-type none)
+  (parameter (type-and-name gboolean visible))
+)
+
+(method gradient_visible 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_gradient_visible)
+  (return-type gboolean)
+)
+
+(method draw_gradient 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_draw_gradient)
+  (return-type none)
+  (parameter (type-and-name gint x))
+  (parameter (type-and-name gint y))
+)
+
+(method gradient_autoscale_a 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_gradient_autoscale_a)
+  (return-type none)
+)
+
+(method gradient_autoscale_da 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_gradient_autoscale_da)
+  (return-type none)
+)
+
+(method gradient_autoscale_z 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_gradient_autoscale_z)
+  (return-type none)
+)
+
+(method set_gradient_colors 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_gradient_colors)
+  (return-type none)
+  (parameter (type-and-name const-GdkColor*        min))
+  (parameter (type-and-name const-GdkColor*        max))
+)
+
+(method get_gradient_colors 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_get_gradient_colors)
+  (return-type none)
+  (parameter (type-and-name GdkColor*        min))
+  (parameter (type-and-name GdkColor*        max))
+)
+
+(method set_gradient 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_gradient)
+  (return-type none)
+  (parameter (type-and-name gdouble min))
+  (parameter (type-and-name gdouble max))
+  (parameter (type-and-name gint nlevels))
+  (parameter (type-and-name gint nsublevels))
+)
+
+(method get_gradient 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_get_gradient)
+  (return-type none)
+  (parameter (type-and-name gdouble*        min))
+  (parameter (type-and-name gdouble*        max))
+  (parameter (type-and-name gint*        nlevels))
+  (parameter (type-and-name gint*        nsublevels))
+)
+
+(method get_gradient_level 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_get_gradient_level)
+  (return-type none)
+  (parameter (type-and-name gdouble level))
+  (parameter (type-and-name GdkColor*        color))
+)
+
+(method set_link 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_set_link)
+  (return-type none)
+  (parameter (type-and-name gpointer link))
+)
+
+(method get_link 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_get_link)
+  (return-type gpointer)
+)
+
+(method remove_link 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_remove_link)
+  (return-type none)
+)
+
+(method remove_marker 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_remove_marker)
+  (return-type gboolean)
+  (parameter (type-and-name GtkPlotMarker*        marker))
+)
+
+(method remove_markers 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_remove_markers)
+  (return-type none)
+)
+
+(method show_markers 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_show_markers)
+  (return-type none)
+  (parameter (type-and-name gboolean show))
+)
+
+(method markers_visible 
+  (of-object PlotData (Gtk))
+  (c-name gtk_plot_data_markers_visible)
+  (return-type gboolean)
+)
+
+; from /usr/include/gtkextra/gtksheet.h
+;; -*- scheme -*-
+; object definitions ...
+(object Sheet 
+  (in-module Gtk)
+  (parent Container (Gtk))
+  (c-name GtkSheet )
+)
+;gtk_sheet_new 				(guint rows, guint columns, const gchar *title);
+
+(function gtk_sheet_new
+  (c-name gtk_sheet_new)
+  (is-constructor-of GtkSheet)
+  (return-type GtkSheet*)
+  (parameter (type-and-name guint rows))
+  (parameter (type-and-name guint columns))
+  (parameter (type-and-name const-gchar* title))
+)
+
+;; Enumerations and flags ...
+
+(enum AttrType
+  (in-module Gtksheet)
+  (c-name GtkSheetAttrType)
+  (value (name foreground) (c-name GTK_SHEET_FOREGROUND))
+  (value (name background) (c-name GTK_SHEET_BACKGROUND))
+  (value (name font) (c-name GTK_SHEET_FONT))
+  (value (name justification) (c-name GTK_SHEET_JUSTIFICATION))
+  (value (name border) (c-name GTK_SHEET_BORDER))
+  (value (name border_color) (c-name GTK_SHEET_BORDER_COLOR))
+  (value (name is_editable) (c-name GTK_SHEET_IS_EDITABLE))
+  (value (name is_visible) (c-name GTK_SHEET_IS_VISIBLE))
+)
+
+(enum 
+  (in-module Gtksheet)
+  (value (name locked) (c-name GTK_SHEET_IS_LOCKED))
+  (value (name frozen) (c-name GTK_SHEET_IS_FROZEN))
+  (value (name xdrag) (c-name GTK_SHEET_IN_XDRAG))
+  (value (name ydrag) (c-name GTK_SHEET_IN_YDRAG))
+  (value (name drag) (c-name GTK_SHEET_IN_DRAG))
+  (value (name selection) (c-name GTK_SHEET_IN_SELECTION))
+  (value (name resize) (c-name GTK_SHEET_IN_RESIZE))
+  (value (name clip) (c-name GTK_SHEET_IN_CLIP))
+  (value (name _frozen) (c-name GTK_SHEET_ROW_FROZEN))
+  (value (name umn_frozen) (c-name GTK_SHEET_COLUMN_FROZEN))
+  (value (name oresize) (c-name GTK_SHEET_AUTORESIZE))
+  (value (name p_text) (c-name GTK_SHEET_CLIP_TEXT))
+  (value (name _titles_visible) (c-name GTK_SHEET_ROW_TITLES_VISIBLE))
+  (value (name _titles_visible) (c-name GTK_SHEET_COL_TITLES_VISIBLE))
+  (value (name o_scroll) (c-name GTK_SHEET_AUTO_SCROLL))
+  (value (name tify_entry) (c-name GTK_SHEET_JUSTIFY_ENTRY))
+)
+
+(function gtk_sheet_get_type 
+  (c-name gtk_sheet_get_type)
+  (return-type GtkType)
+)
+
+(function gtk_sheet_range_get_type 
+  (c-name gtk_sheet_range_get_type)
+  (return-type GtkType)
+)
+
+(method construct 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_construct)
+  (return-type none)
+  (parameter (type-and-name guint rows))
+  (parameter (type-and-name guint columns))
+  (parameter (type-and-name const-gchar*        title))
+)
+
+(method construct_browser 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_construct_browser)
+  (return-type none)
+  (parameter (type-and-name guint rows))
+  (parameter (type-and-name guint columns))
+  (parameter (type-and-name const-gchar*        title))
+)
+
+(method construct_with_custom_entry 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_construct_with_custom_entry)
+  (return-type none)
+  (parameter (type-and-name guint rows))
+  (parameter (type-and-name guint columns))
+  (parameter (type-and-name const-gchar*        title))
+  (parameter (type-and-name GtkType entry_type))
+)
+
+(method set_hadjustment 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_hadjustment)
+  (return-type none)
+  (parameter (type-and-name GtkAdjustment*        adjustment))
+)
+
+(method set_vadjustment 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_vadjustment)
+  (return-type none)
+  (parameter (type-and-name GtkAdjustment*        adjustment))
+)
+
+(method change_entry 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_change_entry)
+  (return-type none)
+  (parameter (type-and-name GtkType entry_type))
+)
+
+(method get_state 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_get_state)
+  (return-type gint)
+)
+
+(method get_columns_count 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_get_columns_count)
+  (return-type guint)
+)
+
+(method get_rows_count 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_get_rows_count)
+  (return-type guint)
+)
+
+(method get_visible_range 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_get_visible_range)
+  (return-type none)
+  (parameter (type-and-name GtkSheetRange*        range))
+)
+
+(method set_selection_mode 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_selection_mode)
+  (return-type none)
+  (parameter (type-and-name gint mode))
+)
+
+(method set_title 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_title)
+  (return-type none)
+  (parameter (type-and-name const-gchar*        title))
+)
+
+(method freeze 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_freeze)
+  (return-type none)
+)
+
+(method thaw 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_thaw)
+  (return-type none)
+)
+
+(method set_background 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_background)
+  (return-type none)
+  (parameter (type-and-name GdkColor*        bg_color))
+)
+
+(method set_grid 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_grid)
+  (return-type none)
+  (parameter (type-and-name GdkColor*        grid_color))
+)
+
+(method show_grid 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_show_grid)
+  (return-type none)
+  (parameter (type-and-name gboolean show))
+)
+
+(method grid_visible 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_grid_visible)
+  (return-type gboolean)
+)
+
+(method set_column_title 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_column_title)
+  (return-type none)
+  (parameter (type-and-name gint column))
+  (parameter (type-and-name const-gchar*        title))
+)
+
+(method set_row_title 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_row_title)
+  (return-type none)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name const-gchar*        title))
+)
+
+(method row_button_add_label 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_row_button_add_label)
+  (return-type none)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name const-gchar*        label))
+)
+
+(method column_button_add_label 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_column_button_add_label)
+  (return-type none)
+  (parameter (type-and-name gint column))
+  (parameter (type-and-name const-gchar*        label))
+)
+
+(method row_button_justify 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_row_button_justify)
+  (return-type none)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name GtkJustification justification))
+)
+
+(method column_button_justify 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_column_button_justify)
+  (return-type none)
+  (parameter (type-and-name gint column))
+  (parameter (type-and-name GtkJustification justification))
+)
+
+(method moveto 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_moveto)
+  (return-type none)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint column))
+  (parameter (type-and-name gfloat row_align))
+  (parameter (type-and-name gfloat col_align))
+)
+
+(method set_row_titles_width 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_row_titles_width)
+  (return-type none)
+  (parameter (type-and-name guint width))
+)
+
+(method set_column_titles_height 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_column_titles_height)
+  (return-type none)
+  (parameter (type-and-name guint height))
+)
+
+(method show_column_titles 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_show_column_titles)
+  (return-type none)
+)
+
+(method show_row_titles 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_show_row_titles)
+  (return-type none)
+)
+
+(method hide_column_titles 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_hide_column_titles)
+  (return-type none)
+)
+
+(method hide_row_titles 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_hide_row_titles)
+  (return-type none)
+)
+
+(method column_set_sensitivity 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_column_set_sensitivity)
+  (return-type none)
+  (parameter (type-and-name gint column))
+  (parameter (type-and-name gboolean sensitive))
+)
+
+(method columns_set_sensitivity 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_columns_set_sensitivity)
+  (return-type none)
+  (parameter (type-and-name gboolean sensitive))
+)
+
+(method row_set_sensitivity 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_row_set_sensitivity)
+  (return-type none)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gboolean sensitive))
+)
+
+(method rows_set_sensitivity 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_rows_set_sensitivity)
+  (return-type none)
+  (parameter (type-and-name gboolean sensitive))
+)
+
+(method column_set_visibility 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_column_set_visibility)
+  (return-type none)
+  (parameter (type-and-name gint column))
+  (parameter (type-and-name gboolean visible))
+)
+
+(method column_label_set_visibility 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_column_label_set_visibility)
+  (return-type none)
+  (parameter (type-and-name gint column))
+  (parameter (type-and-name gboolean visible))
+)
+
+(method columns_labels_set_visibility 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_columns_labels_set_visibility)
+  (return-type none)
+  (parameter (type-and-name gboolean visible))
+)
+
+(method row_set_visibility 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_row_set_visibility)
+  (return-type none)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gboolean visible))
+)
+
+(method row_label_set_visibility 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_row_label_set_visibility)
+  (return-type none)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gboolean visible))
+)
+
+(method rows_labels_set_visibility 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_rows_labels_set_visibility)
+  (return-type none)
+  (parameter (type-and-name gboolean visible))
+)
+
+(method select_row 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_select_row)
+  (return-type none)
+  (parameter (type-and-name gint row))
+)
+
+(method select_column 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_select_column)
+  (return-type none)
+  (parameter (type-and-name gint column))
+)
+
+(method clip_range 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_clip_range)
+  (return-type none)
+  (parameter (type-and-name const-GtkSheetRange*        range))
+)
+
+(method unclip_range 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_unclip_range)
+  (return-type none)
+)
+
+(method select_range 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_select_range)
+  (return-type none)
+  (parameter (type-and-name const-GtkSheetRange*        range))
+)
+
+(method unselect_range 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_unselect_range)
+  (return-type none)
+)
+
+(method set_active_cell 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_active_cell)
+  (return-type gboolean)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint column))
+)
+
+(method get_active_cell 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_get_active_cell)
+  (return-type none)
+  (parameter (type-and-name gint*        row))
+  (parameter (type-and-name gint*        column))
+)
+
+(method set_cell 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_cell)
+  (return-type none)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint col))
+  (parameter (type-and-name GtkJustification justification))
+  (parameter (type-and-name const-gchar*        text))
+)
+
+(method set_cell_text 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_cell_text)
+  (return-type none)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint col))
+  (parameter (type-and-name const-gchar*        text))
+)
+
+(method cell_clear 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_cell_clear)
+  (return-type none)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint col))
+)
+
+(method cell_delete 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_cell_delete)
+  (return-type none)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint col))
+)
+
+(method range_clear 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_range_clear)
+  (return-type none)
+  (parameter (type-and-name const-GtkSheetRange*        range))
+)
+
+(method range_delete 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_range_delete)
+  (return-type none)
+  (parameter (type-and-name const-GtkSheetRange*        range))
+)
+
+(method cell_get_state 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_cell_get_state)
+  (return-type GtkStateType)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint col))
+)
+
+(method link_cell 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_link_cell)
+  (return-type none)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint col))
+  (parameter (type-and-name gpointer link))
+)
+
+(method get_link 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_get_link)
+  (return-type gpointer)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint col))
+)
+
+(method remove_link 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_remove_link)
+  (return-type none)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint col))
+)
+
+(method get_pixel_info 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_get_pixel_info)
+  (return-type gboolean)
+  (parameter (type-and-name gint x))
+  (parameter (type-and-name gint y))
+  (parameter (type-and-name gint*        row))
+  (parameter (type-and-name gint*        column))
+)
+
+(method get_cell_area 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_get_cell_area)
+  (return-type gboolean)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint column))
+  (parameter (type-and-name GdkRectangle*        area))
+)
+
+(method set_column_width 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_column_width)
+  (return-type none)
+  (parameter (type-and-name gint column))
+  (parameter (type-and-name guint width))
+)
+
+(method set_row_height 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_set_row_height)
+  (return-type none)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name guint height))
+)
+
+(method add_column 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_add_column)
+  (return-type none)
+  (parameter (type-and-name guint ncols))
+)
+
+(method add_row 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_add_row)
+  (return-type none)
+  (parameter (type-and-name guint nrows))
+)
+
+(method insert_rows 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_insert_rows)
+  (return-type none)
+  (parameter (type-and-name guint row))
+  (parameter (type-and-name guint nrows))
+)
+
+(method insert_columns 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_insert_columns)
+  (return-type none)
+  (parameter (type-and-name guint col))
+  (parameter (type-and-name guint ncols))
+)
+
+(method delete_rows 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_delete_rows)
+  (return-type none)
+  (parameter (type-and-name guint row))
+  (parameter (type-and-name guint nrows))
+)
+
+(method delete_columns 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_delete_columns)
+  (return-type none)
+  (parameter (type-and-name guint col))
+  (parameter (type-and-name guint ncols))
+)
+
+(method range_set_background 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_range_set_background)
+  (return-type none)
+  (parameter (type-and-name const-GtkSheetRange*        range))
+  (parameter (type-and-name const-GdkColor*        color))
+)
+
+(method range_set_foreground 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_range_set_foreground)
+  (return-type none)
+  (parameter (type-and-name const-GtkSheetRange*        range))
+  (parameter (type-and-name const-GdkColor*        color))
+)
+
+(method range_set_justification 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_range_set_justification)
+  (return-type none)
+  (parameter (type-and-name const-GtkSheetRange*        range))
+  (parameter (type-and-name GtkJustification justification))
+)
+
+(method column_set_justification 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_column_set_justification)
+  (return-type none)
+  (parameter (type-and-name gint column))
+  (parameter (type-and-name GtkJustification justification))
+)
+
+(method range_set_editable 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_range_set_editable)
+  (return-type none)
+  (parameter (type-and-name const-GtkSheetRange*        range))
+  (parameter (type-and-name gint editable))
+)
+
+(method range_set_visible 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_range_set_visible)
+  (return-type none)
+  (parameter (type-and-name const-GtkSheetRange*        range))
+  (parameter (type-and-name gboolean visible))
+)
+
+(method range_set_border 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_range_set_border)
+  (return-type none)
+  (parameter (type-and-name const-GtkSheetRange*        range))
+  (parameter (type-and-name gint mask))
+  (parameter (type-and-name guint width))
+  (parameter (type-and-name gint line_style))
+)
+
+(method range_set_border_color 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_range_set_border_color)
+  (return-type none)
+  (parameter (type-and-name const-GtkSheetRange*        range))
+  (parameter (type-and-name const-GdkColor*        color))
+)
+
+(method range_set_font 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_range_set_font)
+  (return-type none)
+  (parameter (type-and-name const-GtkSheetRange*        range))
+  (parameter (type-and-name GdkFont*        font))
+)
+
+(method get_attributes 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_get_attributes)
+  (return-type gboolean)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint col))
+  (parameter (type-and-name GtkSheetCellAttr*        attributes))
+)
+
+(method attach 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_attach)
+  (return-type none)
+  (parameter (type-and-name GtkWidget*        widget))
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint col))
+  (parameter (type-and-name gfloat x_align))
+  (parameter (type-and-name gfloat y_align))
+)
+
+(method move_child 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_move_child)
+  (return-type none)
+  (parameter (type-and-name GtkWidget*        widget))
+  (parameter (type-and-name gint x))
+  (parameter (type-and-name gint y))
+)
+
+(method button_attach 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_button_attach)
+  (return-type none)
+  (parameter (type-and-name GtkWidget*        widget))
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint col))
+  (parameter (type-and-name gfloat x_align))
+  (parameter (type-and-name gfloat y_align))
+)
+
