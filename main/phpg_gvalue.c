@@ -188,9 +188,48 @@ PHP_GTK_API int php_gvalue_from_zval(GValue *gval, zval *value)
 }
 /* }}} */
 
-gint php_gvalue_enum_get()
+/* {{{ php_gvalue_enum_get() */
+PHP_GTK_API int php_gvalue_enum_get(GType enum_type, zval *enum_val, gint *result)
 {
+    if (result == NULL)
+        return FAILURE;
+
+    if (enum_val == NULL) {
+        *result = 0;
+    } else if (Z_TYPE_P(enum_val) == IS_LONG) {
+        *result = Z_LVAL_P(enum_val);
+    } else if (Z_TYPE_P(enum_val) == IS_STRING) {
+        GEnumClass *eclass = NULL;
+        GEnumValue *info = NULL;
+
+        if (enum_type != G_TYPE_NONE) {
+            eclass = G_ENUM_CLASS(g_type_class_ref(enum_type));
+        } else {
+            php_error(E_WARNING, "PHP-GTK: internal error: could not obtain the type of enum");
+            return FAILURE;
+        }
+
+        info = g_enum_get_value_by_name(eclass, Z_STRVAL_P(enum_val));
+
+        if (info == NULL) {
+            info = g_enum_get_value_by_nick(eclass, Z_STRVAL_P(enum_val));
+        }
+        g_type_class_unref(eclass);
+        
+        if (info != NULL) {
+            *result = info->value;
+        } else {
+            php_error(E_WARNING, "PHP-GTK: internal error: could not convert '%s' to enum", Z_STRVAL_P(enum_val));
+            return FAILURE;
+        }
+    } else {
+        php_error(E_WARNING, "PHP-GTK: internal error: enums must be strings or integers");
+        return FAILURE;
+    }
+
+    return SUCCESS;
 }
+/* }}} */
 
 gint php_gvalue_flags_get()
 {
