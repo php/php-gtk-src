@@ -514,6 +514,7 @@ PHP_GTK_API zval *php_gtk_new(GtkObject *obj)
 	wrapper->dtor = (php_gtk_dtor_t)gtk_object_unref;
 	zend_objects_store_add_ref(zobj TSRMLS_CC);
 	gtk_object_set_data(obj, php_gtk_wrapper_key, zobj);
+	zval_add_ref(&zobj);
 
 	return zobj;
 }
