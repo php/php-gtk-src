@@ -3,7 +3,7 @@ dnl config.m4 for canvas module
 
 PHP_GTK_ARG_ENABLE(canvas,for GtkCanvas support,
 [
-  --enable-canvas      Enable GtkCanvas support])
+  --enable-canvas         Enable GtkCanvas support])
 
 if test "$PHP_GTK_CANVAS" != "no"; then
   for x in /usr /usr/local; do
