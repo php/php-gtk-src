@@ -1,3 +1,10 @@
+2001-07-16  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      generator/templates.php
+      main/php_gtk.h: Try to fix compilation problem for at least one person.
+
 2001-07-15  Frank M. Kromann  <frank@frontbase.com>
 
     * win32/makedist.cmd:
