@@ -1,3 +1,13 @@
+2003-10-09  Alan Knowles  <alan@akbkhome.com>
+
+    * (GTK2)
+      generator/generator.php:
+      sync with ZE2_PORT - oops do it properly
+
+    * (GTK2)
+      generator/generator.php:
+      sync with ZE2_PORT
+
 2003-10-08  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (ZE2_PORT)
