@@ -497,7 +497,7 @@
   (parameter (type-and-name gdouble y2))
 )
 
-(method d_set_selection 
+(method set_selection 
   (of-object PlotCanvasChild (Gtk))
   (c-name gtk_plot_canvas_child_set_selection)
   (return-type none)
