@@ -18,5 +18,7 @@
 * Gnome support
 * GtkHtml support
 
+* GtkTableChild
+
 # vim: set tw=80 ai et sts=4:
 
