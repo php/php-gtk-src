@@ -2404,7 +2404,7 @@
   (parameter (type-and-name gint row))
   (parameter (type-and-name gint column))
   (parameter (type-and-name GdkPixmap* pixmap))
-  (parameter (type-and-name GdkBitmap* mask))
+  (parameter (type-and-name GdkBitmap* mask) (null-ok))
 )
 
 (method get_pixmap
