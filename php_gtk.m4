@@ -83,7 +83,7 @@ AC_DEFUN(PHP_GTK_ARG_WITH,[
 PHP_GTK_REAL_ARG_WITH([$1],[$2],[$3],[$4],PHP_GTK_[]translit($1,a-z0-9-,A-Z0-9_))
 ])
 
-AC_DEFUN(PHP_REAL_ARG_WITH,[
+AC_DEFUN(PHP_GTK_REAL_ARG_WITH,[
 AC_MSG_CHECKING([$2])
 AC_ARG_WITH($1,[$3],$5=[$]withval,$5=ifelse($4,,no,$4))
 PHP_GTK_ARG_ANALYZE($5)

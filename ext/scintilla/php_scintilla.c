@@ -20,7 +20,7 @@
  
 /* $Id$: */
 
-#include "php_gtk.h"
+#include "php_scintilla.h"
 
 #if HAVE_SCINTILLA
 
