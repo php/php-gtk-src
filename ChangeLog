@@ -1,3 +1,22 @@
+2005-03-13  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * generator/arg_types.php
+      generator/generator.php:
+      -** empty log message ***
+
+    * TODO2:
+      Update.
+
+    * ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      main/php_gtk.h
+      main/phpg_closure.c
+      main/phpg_gboxed.c
+      main/phpg_gvalue.c:
+      Implement support for fine-grained custom marshalling of boxed types,
+      which will usually happen when invoking callbacks.
+
 2005-03-12  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/php_gtk.h
