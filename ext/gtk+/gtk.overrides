@@ -87,6 +87,7 @@ ignore
 	gtk_draw_slider
 	gtk_draw_tab
 	gtk_exit
+	gtk_false
 	gtk_file_chooser_dialog_new
 	gtk_get_current_event
 	gtk_get_event_widget
@@ -157,6 +158,7 @@ ignore
 	gtk_tooltips_data_get
 	gtk_trace_referencing
 	gtk_tree_view_new_with_model
+	gtk_true
 	gtk_type_check_class_cast
 	gtk_type_check_object_cast
 	gtk_type_register_enum
