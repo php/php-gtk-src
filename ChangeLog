@@ -1,3 +1,29 @@
+2005-01-24  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2:
+      Some edits.
+
+    * TODO
+      TODO2
+      php_gtk.m4
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides
+      generator/arg_types.php
+      generator/definitions.php
+      generator/generator.php
+      generator/scheme.php
+      generator/templates.php
+      main/php_gtk.c
+      main/php_gtk.h
+      main/phpg_gboxed.c
+      main/phpg_gobject.c
+      main/phpg_gtype.c:
+      Initial support for boxed types. Things will compile, but there is still
+      work to be done.
+
+    * TODO2:
+      -** empty log message ***
+
 2005-01-20  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/phpg_gobject.c:
