@@ -8,9 +8,6 @@ PHP_ARG_ENABLE(php-gtk,for PHP-GTK support,
   --enable-php-gtk        Enable PHP-GTK support])
 
 if test "$PHP_PHP_GTK" != "no"; then
-  AC_PROG_AWK
-  PHP_SUBST(AWK)
-
   PHP_PREFIX=`$PHP_CONFIG --prefix`
   AC_MSG_CHECKING(for PHP executable in $PHP_PREFIX/bin)
   if test -x $PHP_PREFIX/bin/php; then
@@ -20,6 +17,9 @@ if test "$PHP_PHP_GTK" != "no"; then
     AC_MSG_ERROR(Could not locate PHP executable)
   fi
   PHP_SUBST(PHP)
+
+  AC_PROG_AWK
+  PHP_SUBST(AWK)
 
   BSD_MAKEFILE=no
   case $host_alias in
