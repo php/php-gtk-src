@@ -1,7 +1,10 @@
+    - improved speed/memory efficiency by having only one wrapper for boxed
+      types, except for GdkColor and GdkAtom. (Andrei)
     - implemented object overloading emulation layer to correct for Zend
       engine's problems, now it's possible to assign and read custom properties
       on Gtk+ objects. (Andrei)
     - added GtkAspectFrame class definition. (Andrei)
+    - added GtkCTree traversal functions. (Andrei)
     - optimized internal resource handling, this should save on memory. (Andrei)
     - fixed a bug that would corrupt object type when setting cascaded property.
       (Andrei)
