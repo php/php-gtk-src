@@ -1,8 +1,8 @@
 <?php
 /* $Id$ */
 
-	if (!class_exists('gtk')) {
-		dl( 'php_gtk.' . (strstr( PHP_OS, 'WIN') ? 'dll' : 'so'));
+	if (!extension_loaded('gtk')) {
+		dl( 'php_gtk.' . PHP_SHLIB_SUFFIX);
 	}
 
 

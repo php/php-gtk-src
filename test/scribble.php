@@ -1,11 +1,8 @@
 <?php
 /* $Id$ */
 
-if (!class_exists('gtk')) {
-	if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN')
-		dl('php_gtk.dll');
-	else
-		dl('php_gtk.so');
+if (!extension_loaded('gtk')) {
+	dl( 'php_gtk.' . PHP_SHLIB_SUFFIX);
 }
 
 $pixmap = null;

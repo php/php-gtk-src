@@ -1,8 +1,9 @@
 <?php
 /* $Id$ */
 
-    if (!extension_loaded('gtk'))
-        dl( 'php_gtk.' . (strstr( PHP_OS, 'WIN') ? 'dll' : 'so'));
+	if (!extension_loaded('gtk')) {
+		dl( 'php_gtk.' . PHP_SHLIB_SUFFIX);
+	}
 
     $w = &new GtkWindow;
     $w->set_title('Comparing GtkPaned and GtkSPaned');
