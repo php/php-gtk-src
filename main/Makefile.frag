@@ -9,3 +9,10 @@ cvsclean:
 	done
 	@rm -f $(SUBDIRS) 2>/dev/null || true
 
+clean-caches:
+	find ext -name gen\*.cache | xargs rm -f
+
+clean-gen:
+	find ext -name gen\*.[ch] | xargs rm -f
+
+.PHONY: clean-caches clean-gen
