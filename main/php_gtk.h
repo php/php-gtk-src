@@ -31,7 +31,7 @@
 #include <gtk/gtk.h>
 
 extern int le_gtk;
-extern int le_gdk_event;
+extern int le_php_gtk_wrapper;
 extern int le_gdk_window;
 extern int le_gdk_bitmap;
 extern int le_gdk_color;
@@ -41,8 +41,6 @@ extern int le_gdk_visual;
 extern int le_gdk_font;
 extern int le_gdk_gc;
 extern int le_gdk_drag_context;
-extern int le_gtk_selection_data;
-extern int le_gtk_ctree_node;
 extern int le_gtk_accel_group;
 extern int le_gtk_style;
 
@@ -62,6 +60,9 @@ extern zend_class_entry *gtk_selection_data_ce;
 extern zend_class_entry *gtk_ctree_node_ce;
 extern zend_class_entry *gtk_accel_group_ce;
 extern zend_class_entry *gtk_style_ce;
+extern zend_class_entry *gtk_box_child_ce;
+extern zend_class_entry *gtk_fixed_child_ce;
+extern zend_class_entry *gtk_clist_row_ce;
 
 /* include generated class entries */
 #include "src/php_gtk_gen_ce.h"
@@ -73,23 +74,24 @@ typedef void (*prop_getter_t)(zval *return_value, zval *object, zend_llist_eleme
 typedef int (*prop_setter_t)(zval *object, zend_llist_element **element, zval *value);
 
 /* Useful macros. */
-#define PHP_GTK_GET(w) 			((GtkObject *)php_gtk_get_object(w, le_gtk))
-#define PHP_GDK_EVENT_GET(w)	((GdkEvent *)php_gtk_get_object(w, le_gdk_event))
-#define PHP_GDK_WINDOW_GET(w)	((GdkWindow *)php_gtk_get_object(w, le_gdk_window))
-#define PHP_GDK_PIXMAP_GET(w)	((GdkPixmap *)php_gtk_get_object(w, le_gdk_window))
-#define PHP_GDK_BITMAP_GET(w)	((GdkBitmap *)php_gtk_get_object(w, le_gdk_bitmap))
-#define PHP_GDK_COLOR_GET(w)	((GdkColor *)php_gtk_get_object(w, le_gdk_color))
-#define PHP_GDK_COLORMAP_GET(w)	((GdkColormap *)php_gtk_get_object(w, le_gdk_colormap))
+#define PHP_GTK_GET_GENERIC(w, type, le) ((type)php_gtk_get_object(w, le))
+#define PHP_GTK_GET(w) 			PHP_GTK_GET_GENERIC(w, GtkObject*, le_gtk)
+#define PHP_GDK_EVENT_GET(w)	PHP_GTK_GET_GENERIC(w, GdkEvent*, le_php_gtk_wrapper)
+#define PHP_GDK_WINDOW_GET(w)	PHP_GTK_GET_GENERIC(w, GdkWindow*, le_gdk_window)
+#define PHP_GDK_PIXMAP_GET(w)	PHP_GTK_GET_GENERIC(w, GdkPixmap*, le_gdk_window)
+#define PHP_GDK_BITMAP_GET(w)	PHP_GTK_GET_GENERIC(w, GdkBitmap*, le_gdk_bitmap)
+#define PHP_GDK_COLOR_GET(w)	PHP_GTK_GET_GENERIC(w, GdkColor*, le_gdk_color)
+#define PHP_GDK_COLORMAP_GET(w)	PHP_GTK_GET_GENERIC(w, GdkColormap*, le_gdk_colormap)
 #define PHP_GDK_ATOM_GET(w)		(php_gdk_atom_get(w))
-#define PHP_GDK_CURSOR_GET(w)	((GdkCursor *)php_gtk_get_object(w, le_gdk_cursor))
-#define PHP_GDK_VISUAL_GET(w)	((GdkVisual *)php_gtk_get_object(w, le_gdk_visual))
-#define PHP_GDK_FONT_GET(w)		((GdkFont *)php_gtk_get_object(w, le_gdk_font))
-#define PHP_GDK_GC_GET(w)		((GdkGC *)php_gtk_get_object(w, le_gdk_gc))
-#define PHP_GDK_DRAG_CONTEXT_GET(w)	((GdkDragContext *)php_gtk_get_object(w, le_gdk_drag_context))
-#define PHP_GTK_SELECTION_DATA_GET(w) ((GtkSelectionData *)php_gtk_get_object(w, le_gtk_selection_data))
-#define PHP_GTK_CTREE_NODE_GET(w) ((GtkCTreeNode *)php_gtk_get_object(w, le_gtk_ctree_node))
-#define PHP_GTK_ACCEL_GROUP_GET(w) ((GtkAccelGroup *)php_gtk_get_object(w, le_gtk_accel_group))
-#define PHP_GTK_STYLE_GET(w) ((GtkStyle *)php_gtk_get_object(w, le_gtk_style))
+#define PHP_GDK_CURSOR_GET(w)	PHP_GTK_GET_GENERIC(w, GdkCursor*, le_gdk_cursor)
+#define PHP_GDK_VISUAL_GET(w)	PHP_GTK_GET_GENERIC(w, GdkVisual*, le_gdk_visual)
+#define PHP_GDK_FONT_GET(w)		PHP_GTK_GET_GENERIC(w, GdkFont*, le_gdk_font)
+#define PHP_GDK_GC_GET(w)		PHP_GTK_GET_GENERIC(w, GdkGC*, le_gdk_gc)
+#define PHP_GDK_DRAG_CONTEXT_GET(w) PHP_GTK_GET_GENERIC(w, GdkDragContext*, le_gdk_drag_context)
+#define PHP_GTK_SELECTION_DATA_GET(w) PHP_GTK_GET_GENERIC(w, GtkSelectionData*, le_php_gtk_wrapper)
+#define PHP_GTK_CTREE_NODE_GET(w) PHP_GTK_GET_GENERIC(w, GtkCTreeNode*, le_php_gtk_wrapper)
+#define PHP_GTK_ACCEL_GROUP_GET(w) PHP_GTK_GET_GENERIC(w, GtkAccelGroup*, le_gtk_accel_group)
+#define PHP_GTK_STYLE_GET(w) PHP_GTK_GET_GENERIC(w, GtkStyle*, le_gtk_style)
 
 /* True globals. */
 extern GHashTable *php_gtk_class_hash;
@@ -145,6 +147,9 @@ zval *php_gtk_selection_data_new(GtkSelectionData *data);
 zval *php_gtk_ctree_node_new(GtkCTreeNode *node);
 zval *php_gtk_accel_group_new(GtkAccelGroup *group);
 zval *php_gtk_style_new(GtkStyle *style);
+zval *php_gtk_box_child_new(GtkBoxChild *box_child);
+zval *php_gtk_fixed_child_new(GtkFixedChild *fixed_child);
+zval *php_gtk_clist_row_new(GtkCListRow *clist_row);
 
 /* Utility functions. */
 int php_gtk_parse_args(int argc, char *format, ...);

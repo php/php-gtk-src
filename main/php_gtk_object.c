@@ -215,7 +215,8 @@ void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *
 	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), signal_args, 1, NULL);
 
 	if (retval) {
-		php_gtk_ret_from_value(&args[nargs], retval);
+		if (nargs)
+			php_gtk_ret_from_value(&args[nargs], retval);
 		zval_ptr_dtor(&retval);
 	}
 

@@ -165,14 +165,6 @@ ignore
 	gtk_draw_slider
 	gtk_draw_handle
 %%
-register_class gtk_box_child_ce
-	INIT_CLASS_ENTRY(ce, "gtkboxchild", NULL);
-	gtk_box_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
-%%
-register_class gtk_fixed_child_ce
-	INIT_CLASS_ENTRY(ce, "gtkfixedchild", NULL);
-	gtk_fixed_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
-%%
 override gtk_true
 PHP_FUNCTION(wrap_gtk_true)
 {
@@ -1168,8 +1160,6 @@ PHP_FUNCTION(wrap_gtk_label_get)
 }
 %%
 getprop GtkBox children
-	GtkBoxChild *box_child;
-	zval *php_box_child;
 	GList *tmp;
 	GList *children = GTK_BOX(PHP_GTK_GET(object))->children;
 	zend_overloaded_element *property;
@@ -1184,14 +1174,7 @@ getprop GtkBox children
 			prop_index = Z_LVAL(property->element);
 			for (tmp = children, i = 0; tmp; tmp = tmp->next, i++) {
 				if (i == prop_index) {
-					box_child = (GtkBoxChild *)tmp->data;
-					object_init_ex(return_value, gtk_box_child_ce);
-
-					add_property_zval(return_value, "widget", php_gtk_new((GtkObject *)box_child->widget));
-					add_property_long(return_value, "padding", box_child->padding);
-					add_property_bool(return_value, "expand", box_child->expand);
-					add_property_bool(return_value, "fill", box_child->fill);
-					add_property_long(return_value, "pack", box_child->pack);
+					*return_value = *php_gtk_box_child_new((GtkBoxChild *)tmp->data);
 					return;
 				}
 			}
@@ -1199,17 +1182,7 @@ getprop GtkBox children
 	} else {
 		array_init(return_value);
 		for (tmp = children; tmp; tmp = tmp->next) {
-			box_child = (GtkBoxChild *)tmp->data;
-			MAKE_STD_ZVAL(php_box_child);
-			object_init_ex(php_box_child, gtk_box_child_ce);
-
-			add_property_zval(php_box_child, "widget", php_gtk_new((GtkObject *)box_child->widget));
-			add_property_long(php_box_child, "padding", box_child->padding);
-			add_property_bool(php_box_child, "expand", box_child->expand);
-			add_property_bool(php_box_child, "fill", box_child->fill);
-			add_property_long(php_box_child, "pack", box_child->pack);
-
-			add_next_index_zval(return_value, php_box_child);
+			add_next_index_zval(return_value, php_gtk_box_child_new((GtkBoxChild *)tmp->data));
 		}
 	}
 %%
@@ -1247,8 +1220,6 @@ PHP_FUNCTION(wrap_gtk_calendar_get_date)
 }
 %%
 getprop GtkFixed children
-	GtkFixedChild *fixed_child;
-	zval *php_fixed_child;
 	GList *tmp;
 	GList *children = GTK_FIXED(PHP_GTK_GET(object))->children;
 	zend_overloaded_element *property;
@@ -1263,12 +1234,7 @@ getprop GtkFixed children
 			prop_index = Z_LVAL(property->element);
 			for (tmp = children, i = 0; tmp; tmp = tmp->next, i++) {
 				if (i == prop_index) {
-					fixed_child = (GtkFixedChild *)tmp->data;
-					object_init_ex(return_value, gtk_fixed_child_ce);
-
-					add_property_zval(return_value, "widget", php_gtk_new((GtkObject *)fixed_child->widget));
-					add_property_long(return_value, "x", fixed_child->x);
-					add_property_long(return_value, "y", fixed_child->y);
+					*return_value = *php_gtk_fixed_child_new((GtkFixedChild *)tmp->data);
 					return;
 				}
 			}
@@ -1276,15 +1242,7 @@ getprop GtkFixed children
 	} else {
 		array_init(return_value);
 		for (tmp = children; tmp; tmp = tmp->next) {
-			fixed_child = (GtkFixedChild *)tmp->data;
-			MAKE_STD_ZVAL(php_fixed_child);
-			object_init_ex(php_fixed_child, gtk_fixed_child_ce);
-
-			add_property_zval(php_fixed_child, "widget", php_gtk_new((GtkObject *)fixed_child->widget));
-			add_property_long(php_fixed_child, "x", fixed_child->x);
-			add_property_long(php_fixed_child, "y", fixed_child->y);
-
-			add_next_index_zval(return_value, php_fixed_child);
+			add_next_index_zval(return_value, php_gtk_fixed_child_new((GtkFixedChild *)tmp->data));
 		}
 	}
 %%
@@ -1464,13 +1422,7 @@ getprop GtkCTree clist
 	SEPARATE_ZVAL(&ret);
 	*return_value = *ret;
 %%
-register_class gtk_clistrow_ce
-	INIT_CLASS_ENTRY(ce, "gtkclistrow", NULL);
-	gtk_clistrow_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
-%%
 getprop GtkCList row_list
-	GtkCListRow *clist_row;
-	zval *php_clist_row;
 	GList *tmp;
 	GList *row_list = GTK_CLIST(PHP_GTK_GET(object))->row_list;
 	zend_overloaded_element *property;
@@ -1485,17 +1437,7 @@ getprop GtkCList row_list
 			prop_index = Z_LVAL(property->element);
 			for (tmp = row_list, i = 0; tmp; tmp = tmp->next, i++) {
 				if (i == prop_index) {
-					clist_row = (GtkCListRow *)tmp->data;
-					object_init_ex(return_value, gtk_clistrow_ce);
-
-					/* TODO add 'data' and 'cell' here */
-					add_property_long(return_value, "state", clist_row->state);
-					add_property_zval(return_value, "foreground", php_gdk_color_new(&clist_row->foreground));
-					add_property_zval(return_value, "background", php_gdk_color_new(&clist_row->background));
-					add_property_zval(return_value, "style", php_gtk_style_new(clist_row->style));
-					add_property_bool(return_value, "fg_set", clist_row->fg_set);
-					add_property_bool(return_value, "bg_set", clist_row->bg_set);
-					add_property_bool(return_value, "selectable", clist_row->selectable);
+					*return_value = *php_gtk_clist_row_new((GtkCListRow *)tmp->data);
 					return;
 				}
 			}
@@ -1503,20 +1445,7 @@ getprop GtkCList row_list
 	} else {
 		array_init(return_value);
 		for (tmp = row_list; tmp; tmp = tmp->next) {
-			clist_row = (GtkCListRow *)tmp->data;
-			MAKE_STD_ZVAL(php_clist_row);
-			object_init_ex(php_clist_row, gtk_clistrow_ce);
-
-			/* TODO add 'data' and 'cell' here */
-			add_property_long(php_clist_row, "state", clist_row->state);
-			add_property_zval(php_clist_row, "foreground", php_gdk_color_new(&clist_row->foreground));
-			add_property_zval(php_clist_row, "background", php_gdk_color_new(&clist_row->background));
-			add_property_zval(php_clist_row, "style", php_gtk_style_new(clist_row->style));
-			add_property_bool(php_clist_row, "fg_set", clist_row->fg_set);
-			add_property_bool(php_clist_row, "bg_set", clist_row->bg_set);
-			add_property_bool(php_clist_row, "selectable", clist_row->selectable);
-			
-			add_next_index_zval(return_value, php_clist_row);
+			add_next_index_zval(return_value, php_gtk_clist_row_new((GtkCListRow *)tmp->data));
 		}
 	}
 %%

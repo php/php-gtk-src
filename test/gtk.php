@@ -87,9 +87,7 @@ function create_ctree()
 										  $ctree_data['mask2'], false, true);
 
 			$style = &new GtkStyle();
-			$style->base[GTK_STATE_NORMAL]->red = 0;
-			$style->base[GTK_STATE_NORMAL]->green = 45000;
-			$style->base[GTK_STATE_NORMAL]->blue = 55000;
+			$style->base[GTK_STATE_NORMAL] = new GdkColor(0, 45000, 55000);
 			$ctree->node_set_row_data($parent, $style);
 
 			if ($ctree->line_style == GTK_CTREE_LINES_TABBED)
@@ -97,7 +95,7 @@ function create_ctree()
 
 			build_recursive($ctree, 1, $d, $b, $p, $parent);
 			$clist->thaw();
-			//after_press($ctree, null);
+			after_press($ctree);
 		}
 
 		function build_recursive($ctree, $cur_depth, $depth, $num_books,
@@ -113,11 +111,8 @@ function create_ctree()
 											   $ctree_data['pixmap3'],
 											   $ctree_data['mask3'], null, null,
 											   true, false);
-				/*
-				   if (parent && ctree->line_style == GTK_CTREE_LINES_TABBED)
-				   gtk_ctree_node_set_row_style (ctree, sibling,
-				   GTK_CTREE_ROW (parent)->row.style);
-			    */
+				if ($parent && $ctree->line_style == GTK_CTREE_LINES_TABBED)
+					$ctree->node_set_row_style($sibling, $parent->row->style);
 			}
 
 			if ($cur_depth == $depth)
@@ -135,9 +130,128 @@ function create_ctree()
 											   $ctree_data['mask2'],
 											   false, false);
 
+				$style = &new GtkStyle();
+				switch ($cur_depth % 3) {
+					case 0:
+						$color = &new GdkColor(10000 * ($cur_depth % 6),
+											   0,
+											   65535 - (($i * 10000) % 65535));
+						$style->base[GTK_STATE_NORMAL] = $color;
+						break;
+
+					case 1:
+						$color = &new GdkColor(10000 * ($cur_depth % 6),
+											   65535 - (($i * 10000) % 65535),
+											   0);
+						$style->base[GTK_STATE_NORMAL] = $color;
+						break;
+
+					default:
+						$color = &new GdkColor(65535 - (($i * 10000) % 65535),
+											   0,
+											   10000 * ($cur_depth % 6));
+						$style->base[GTK_STATE_NORMAL] = $color;
+						break;
+				}
+
+				$ctree->node_set_row_data($sibling, $style);
+				if ($ctree->line_style == GTK_CTREE_LINES_TABBED)
+					$ctree->node_set_row_style($sibling, $style);
+				
 				build_recursive($ctree, $cur_depth + 1, $depth, $num_books,
 								$num_pages, $sibling);
 			}
+		}
+
+		function after_press($ctree)
+		{
+			global	$ctree_data;
+
+			$clist = $ctree->clist;
+			$ctree_data['sel_label']->set_text((string)count($clist->selection));
+			$ctree_data['vis_label']->set_text((string)count($clist->row_list));
+			$ctree_data['book_label']->set_text((string)$ctree_data['books']);
+			$ctree_data['page_label']->set_text((string)$ctree_data['pages']);
+		}
+
+		function ctree_click_column($ctree, $column)
+		{
+			$clist = $ctree->clist;
+
+			if ($column == $clist->sort_column) {
+				if ($clist->sort_type == GTK_SORT_ASCENDING)
+					$clist->set_sort_type(GTK_SORT_DESCENDING);
+				else
+					$clist->set_sort_type(GTK_SORT_ASCENDING);
+			} else
+				$clist->set_sort_column($column);
+
+			$ctree->sort_recursive();
+		}
+
+		function change_row_height($adj, $clist)
+		{
+			$clist->set_row_height((int)$adj->value);
+		}
+
+		function change_indent($adj, $ctree)
+		{
+			$ctree->set_indent((int)$adj->value);
+		}
+
+		function change_spacing($adj, $ctree)
+		{
+			$ctree->set_spacing((int)$adj->value);
+		}
+
+		function expand_all($button, $ctree)
+		{
+			$ctree->expand_recursive();
+			after_press($ctree);
+		}
+
+		function collapse_all($button, $ctree)
+		{
+			$ctree->collapse_recursive();
+			after_press($ctree);
+		}
+
+		function change_style($button, $ctree)
+		{
+			static $style1, $style2;
+
+			$clist = $ctree->clist;
+
+			fixme
+
+			if ($clist->focus_row >= 0)
+				$node = $clist->row_list[$clist->focus_row];
+			else
+				$node = $clist->row_list[0];
+
+			if (!is_object($node))
+				return;
+
+			if (!isset($style1)) {
+				$col1 = &new GdkColor(0, 56000, 0);
+				$col2 = &new GdkColor(32000, 0, 56000);
+
+				$style1 = &new GtkStyle();
+				$style1->base[GTK_STATE_NORMAL] = $col1;
+				$style1->fg[GTK_STATE_SELECTED] = $col2;
+
+				$style2 = &new GtkStyle();
+				$style2->base[GTK_STATE_SELECTED] = $col2;
+				$style2->fg[GTK_STATE_NORMAL] = $col1;
+				$style2->base[GTK_STATE_NORMAL] = $col2;
+				$style2->font = gdk::font_load("-*-courier-medium-*-*-*-*-300-*-*-*-*-*-*");
+			}
+			
+			$ctree->node_set_cell_style($node, 1, $style1);
+			$ctree->node_set_cell_style($node, 0, $style2);
+
+			if ($node->children)
+				$ctree->node_set_row_style($node->children, $style2);
 		}
 
 		$window = &new GtkWindow;
@@ -250,7 +364,7 @@ function create_ctree()
 		$adj = &new GtkAdjustment(20.0, 12.0, 100.0, 1.0, 10.0, 0.0);
 		$spinner = &new GtkSpinButton($adj, 0.0, 0);
 		$tooltips->set_tip($spinner, 'Row height of list items.', '');
-		$adj->connect('value_changed', 'change_row_height', $ctree);
+		$adj->connect('value_changed', 'change_row_height', $clist);
 		$clist->set_row_height((int)$adj->value);
 		$mbox->pack_start($spinner, false, false, 5);
 		$spinner->show();
@@ -461,9 +575,9 @@ function create_ctree()
 		$hbox2->pack_start($label, false);
 		$label->show();
 
-		$book_label = &new GtkLabel((string)$ctree_data['books']);
-		$hbox2->pack_start($book_label, false, true, 5);
-		$book_label->show();
+		$ctree_data['book_label'] = &new GtkLabel((string)$ctree_data['books']);
+		$hbox2->pack_start($ctree_data['book_label'], false, true, 5);
+		$ctree_data['book_label']->show();
 
 		$frame = &new GtkFrame();
 		$frame->set_shadow_type(GTK_SHADOW_IN);
@@ -479,9 +593,9 @@ function create_ctree()
 		$hbox2->pack_start($label, false);
 		$label->show();
 
-		$page_label = &new GtkLabel((string)$ctree_data['pages']);
-		$hbox2->pack_start($page_label, false, true, 5);
-		$page_label->show();
+		$ctree_data['page_label'] = &new GtkLabel((string)$ctree_data['pages']);
+		$hbox2->pack_start($ctree_data['page_label'], false, true, 5);
+		$ctree_data['page_label']->show();
 
 		$frame = &new GtkFrame();
 		$frame->set_shadow_type(GTK_SHADOW_IN);
@@ -497,9 +611,9 @@ function create_ctree()
 		$hbox2->pack_start($label, false);
 		$label->show();
 
-		$sel_label = &new GtkLabel((string)count($clist->selection));
-		$hbox2->pack_start($sel_label, false, true, 5);
-		$sel_label->show();
+		$ctree_data['sel_label'] = &new GtkLabel((string)count($clist->selection));
+		$hbox2->pack_start($ctree_data['sel_label'], false, true, 5);
+		$ctree_data['sel_label']->show();
 
 		$frame = &new GtkFrame();
 		$frame->set_shadow_type(GTK_SHADOW_IN);
@@ -515,9 +629,9 @@ function create_ctree()
 		$hbox2->pack_start($label, false);
 		$label->show();
 
-		$vis_label = &new GtkLabel((string)count($clist->row_list));
-		$hbox2->pack_start($vis_label, false, true, 5);
-		$vis_label->show();
+		$ctree_data['vis_label'] = &new GtkLabel((string)count($clist->row_list));
+		$hbox2->pack_start($ctree_data['vis_label'], false, true, 5);
+		$ctree_data['vis_label']->show();
 		
 		rebuild_tree(null, $ctree);
 	}

@@ -439,21 +439,59 @@ class Rect_Arg extends Arg_Type {
 }
 
 class Boxed_Arg extends Arg_Type {
+	var $type		 = null;
 	var $php_type	 = null;
 
-	function Boxed_Arg($php_type)
+	function Boxed_Arg($type, $php_type)
 	{
+		$this->type			= $type;
 		$this->php_type 	= $php_type;
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
 						 &$parse_list, &$arg_list, &$extra_code, &$after_code, &$array_code)
 	{
-		$var_list->add('zval', '*' . $name);
-		$parse_list[]	= '&' . $name;
-	    $parse_list[]	= $this->php_type . '_ce';
-		$arg_list[]		= 'PHP_' . strtoupper($this->php_type) . '_GET(' . $name . ')';
-		return 'O';
+		if ($null_ok) {
+			if (isset($default)) {
+				$var_list->add($this->type, '*' . $name . ' = ' . $default);
+				$var_list->add('zval', '*php_' . $name . ' = NULL');
+				$extra_code[]	=	"	if (php_$name) {\n" .
+									"		if (Z_TYPE_P(php_$name) == IS_NULL)\n" .
+									"			$name = NULL;\n" .
+									"		else\n" .
+									"			$name = PHP_" . strtoupper($this->php_type). "_GET(php_" . $name . ");\n" .
+									"	}\n";
+			} else {
+				$var_list->add($this->type, '*' . $name . ' = NULL');
+				$var_list->add('zval', '*php_' . $name);
+				$extra_code[]	=	"	if (Z_TYPE_P(php_$name) != IS_NULL)\n" .
+									"		$name = PHP_" . strtoupper($this->php_type). "_GET(php_" . $name . ");\n";
+			}
+
+			$parse_list[]	= '&php_' . $name;
+			$parse_list[] 	= $this->php_type . '_ce';
+			$arg_list[]		= $name;
+
+			return 'N';
+		} else {
+			if (isset($default)) {
+				$var_list->add($this->type, '*' . $name . ' = ' . $default);
+				$var_list->add('zval', '*php_' . $name . ' = NULL');
+
+				$parse_list[]	= '&php_' . $name;
+				$parse_list[]	= $this->php_type . '_ce';
+				$arg_list[]		= $name;
+				$extra_code[]	=	"	if (php_$name)\n" .
+									"		$name = PHP_" .  strtoupper($this->php_type) . "_GET(" . $name . ");\n";
+			} else {
+				$var_list->add('zval', '*' . $name);
+				$parse_list[]	= '&' . $name;
+				$parse_list[]	= $this->php_type . '_ce';
+				$arg_list[]		= 'PHP_' . strtoupper($this->php_type) . '_GET(' . $name . ')';
+			}
+
+			return 'O';
+		}
 	}
 
 	function write_return($type, &$var_list)
@@ -502,7 +540,7 @@ class Arg_Matcher {
 
 	function register_boxed($type, $php_type)
 	{
-		$handler = new Boxed_Arg($php_type);
+		$handler = new Boxed_Arg($type, $php_type);
 		$this->register($type . '*', $handler);
 	}
 

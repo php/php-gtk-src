@@ -27,7 +27,7 @@
 #include <gdk/gdkx.h>
 #endif
 
-int le_gdk_event;
+int le_php_gtk_wrapper;
 int le_gdk_window;
 int le_gdk_bitmap;
 int le_gdk_color;
@@ -37,8 +37,6 @@ int le_gdk_visual;
 int le_gdk_font;
 int le_gdk_gc;
 int le_gdk_drag_context;
-int le_gtk_selection_data;
-int le_gtk_ctree_node;
 int le_gtk_accel_group;
 int le_gtk_style;
 
@@ -58,6 +56,9 @@ zend_class_entry *gtk_selection_data_ce;
 zend_class_entry *gtk_ctree_node_ce;
 zend_class_entry *gtk_accel_group_ce;
 zend_class_entry *gtk_style_ce;
+zend_class_entry *gtk_box_child_ce;
+zend_class_entry *gtk_fixed_child_ce;
+zend_class_entry *gtk_clist_row_ce;
 
 static PHP_FUNCTION(wrap_no_direct_constructor)
 {
@@ -86,7 +87,7 @@ zval *php_gdk_event_new(GdkEvent *event)
 
 	object_init_ex(result, gdk_event_ce);
 
-	php_gtk_set_object(result, event, le_gdk_event);
+	php_gtk_set_object(result, event, le_php_gtk_wrapper);
 
 	add_property_long(result, "type", event->type);
 	
@@ -1529,7 +1530,7 @@ zval *php_gtk_selection_data_new(GtkSelectionData *data)
 	}
 
 	object_init_ex(result, gtk_selection_data_ce);
-	php_gtk_set_object(result, data, le_gtk_selection_data);
+	php_gtk_set_object(result, data, le_php_gtk_wrapper);
 
 	return result;
 }
@@ -1578,7 +1579,7 @@ zval *php_gtk_ctree_node_new(GtkCTreeNode *node)
 	}
 
 	object_init_ex(result, gtk_ctree_node_ce);
-	php_gtk_set_object(result, node, le_gtk_ctree_node);
+	php_gtk_set_object(result, node, le_php_gtk_wrapper);
 
 	return result;
 }
@@ -1616,6 +1617,8 @@ static void gtk_ctree_node_get_property(zval *return_value, zval *object, zend_l
 		ZVAL_BOOL(return_value, GTK_CTREE_ROW(node)->is_leaf);
 	} else if (!strcmp(prop_name, "expanded")) {
 		ZVAL_BOOL(return_value, GTK_CTREE_ROW(node)->expanded);
+	} else if (!strcmp(prop_name, "row")) {
+		*return_value = *php_gtk_clist_row_new(&GTK_CTREE_ROW(node)->row);
 	} else {
 		*found = FAILURE;
 	}
@@ -2052,11 +2055,169 @@ static int gtk_style_set_property(zval *object, zend_llist_element **element, zv
 }
 
 
+/* GtkBoxChild */
+static function_entry php_gtk_box_child_functions[] = {
+	{"gtkboxchild", PHP_FN(wrap_no_direct_constructor), NULL},
+	{NULL, NULL, NULL}
+};
+
+zval *php_gtk_box_child_new(GtkBoxChild *box_child)
+{
+	zval *result;
+
+	MAKE_STD_ZVAL(result);
+
+	if (!box_child) {
+		ZVAL_NULL(result);
+		return result;
+	}
+
+	object_init_ex(result, gtk_box_child_ce);
+	php_gtk_set_object(result, box_child, le_php_gtk_wrapper);
+
+	return result;
+}
+
+static void gtk_box_child_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
+{
+	GtkBoxChild *box_child = PHP_GTK_GET_GENERIC(object, GtkBoxChild*, le_php_gtk_wrapper);
+	zend_overloaded_element *property = (zend_overloaded_element *)(*element)->data;
+	char *prop_name = Z_STRVAL(property->element);
+
+	ZVAL_NULL(return_value);
+	*found = SUCCESS;
+
+	if (!strcmp(prop_name, "widget")) {
+		zval *ret;
+
+		ret = php_gtk_new((GtkObject *)box_child->widget);
+		SEPARATE_ZVAL(&ret);
+		*return_value = *ret;
+		return;
+	} else if (!strcmp(prop_name, "padding")) {
+		RETURN_LONG(box_child->padding);
+	} else if (!strcmp(prop_name, "expand")) {
+		RETURN_BOOL(box_child->expand);
+	} else if (!strcmp(prop_name, "fill")) {
+		RETURN_BOOL(box_child->fill);
+	} else if (!strcmp(prop_name, "pack")) {
+		RETURN_BOOL(box_child->pack);
+	}
+
+	*found = FAILURE;
+}
+
+
+/* GtkFixedChild */
+static function_entry php_gtk_fixed_child_functions[] = {
+	{"gtkfixedchild", PHP_FN(wrap_no_direct_constructor), NULL},
+	{NULL, NULL, NULL}
+};
+
+zval *php_gtk_fixed_child_new(GtkFixedChild *fixed_child)
+{
+	zval *result;
+
+	MAKE_STD_ZVAL(result);
+
+	if (!fixed_child) {
+		ZVAL_NULL(result);
+		return result;
+	}
+
+	object_init_ex(result, gtk_fixed_child_ce);
+	php_gtk_set_object(result, fixed_child, le_php_gtk_wrapper);
+
+	return result;
+}
+
+static void gtk_fixed_child_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
+{
+	GtkFixedChild *fixed_child = PHP_GTK_GET_GENERIC(object, GtkFixedChild*, le_php_gtk_wrapper);
+	zend_overloaded_element *property = (zend_overloaded_element *)(*element)->data;
+	char *prop_name = Z_STRVAL(property->element);
+
+	ZVAL_NULL(return_value);
+	*found = SUCCESS;
+
+	if (!strcmp(prop_name, "widget")) {
+		zval *ret;
+
+		ret = php_gtk_new((GtkObject *)fixed_child->widget);
+		SEPARATE_ZVAL(&ret);
+		*return_value = *ret;
+		return;
+	} else if (!strcmp(prop_name, "x")) {
+		RETURN_LONG(fixed_child->x);
+	} else if (!strcmp(prop_name, "y")) {
+		RETURN_LONG(fixed_child->y);
+	}
+
+	*found = FAILURE;
+}
+
+
+/* GtkCListRow */
+static function_entry php_gtk_clist_row_functions[] = {
+	{"gtkclistrow", PHP_FN(wrap_no_direct_constructor), NULL},
+	{NULL, NULL, NULL}
+};
+
+zval *php_gtk_clist_row_new(GtkCListRow *clist_row)
+{
+	zval *result;
+
+	MAKE_STD_ZVAL(result);
+
+	if (!clist_row) {
+		ZVAL_NULL(result);
+		return result;
+	}
+
+	object_init_ex(result, gtk_clist_row_ce);
+	php_gtk_set_object(result, clist_row, le_php_gtk_wrapper);
+
+	return result;
+}
+
+static void gtk_clist_row_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
+{
+	GtkCListRow *clist_row = PHP_GTK_GET_GENERIC(object, GtkCListRow*, le_php_gtk_wrapper);
+	zend_overloaded_element *property = (zend_overloaded_element *)(*element)->data;
+	char *prop_name = Z_STRVAL(property->element);
+
+	ZVAL_NULL(return_value);
+	*found = SUCCESS;
+
+	/* TODO add 'data' and 'cell' here */
+	if (!strcmp(prop_name, "state")) {
+		RETURN_LONG(clist_row->state);
+	} else if (!strcmp(prop_name, "foreground")) {
+		*return_value = *php_gdk_color_new(&clist_row->foreground);
+		return;
+	} else if (!strcmp(prop_name, "background")) {
+		*return_value = *php_gdk_color_new(&clist_row->background);
+		return;
+	} else if (!strcmp(prop_name, "style")) {
+		*return_value = *php_gtk_style_new(clist_row->style);
+		return;
+	} else if (!strcmp(prop_name, "fg_set")) {
+		RETURN_BOOL(clist_row->fg_set);
+	} else if (!strcmp(prop_name, "bg_set")) {
+		RETURN_BOOL(clist_row->bg_set);
+	} else if (!strcmp(prop_name, "selectable")) {
+		RETURN_BOOL(clist_row->selectable);
+	}
+	
+	*found = FAILURE;
+}
+
+
 void php_gtk_register_types(int module_number)
 {
 	zend_class_entry ce;
 
-	le_gdk_event = zend_register_list_destructors_ex(NULL, NULL, "GdkEvent", module_number);
+	le_php_gtk_wrapper = zend_register_list_destructors_ex(NULL, NULL, "Generic wrapper", module_number);
 	le_gdk_window = zend_register_list_destructors_ex(release_gdk_window_rsrc, NULL, "GdkWindow", module_number);
 	le_gdk_bitmap = zend_register_list_destructors_ex(release_gdk_bitmap_rsrc, NULL, "GdkBitmap", module_number);
 	le_gdk_color = zend_register_list_destructors_ex(release_gdk_color_rsrc, NULL, "GdkColor", module_number);
@@ -2066,8 +2227,6 @@ void php_gtk_register_types(int module_number)
 	le_gdk_font = zend_register_list_destructors_ex(release_gdk_font_rsrc, NULL, "GdkFont", module_number);
 	le_gdk_gc = zend_register_list_destructors_ex(release_gdk_gc_rsrc, NULL, "GdkGC", module_number);
 	le_gdk_drag_context = zend_register_list_destructors_ex(release_gdk_drag_context_rsrc, NULL, "GdkDragContext", module_number);
-	le_gtk_selection_data = zend_register_list_destructors_ex(NULL, NULL, "GtkSelectionData", module_number);
-	le_gtk_ctree_node = zend_register_list_destructors_ex(NULL, NULL, "GtkCTreeNode", module_number);
 	le_gtk_accel_group = zend_register_list_destructors_ex(release_gtk_accel_group_rsrc, NULL, "GtkAccelGroup", module_number);
 	le_gtk_style = zend_register_list_destructors_ex(release_gtk_style_rsrc, NULL, "GtkStyle", module_number);
 
@@ -2133,6 +2292,18 @@ void php_gtk_register_types(int module_number)
 	gtk_style_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 	php_gtk_register_prop_getter(gtk_style_ce, gtk_style_get_property);
 	php_gtk_register_prop_setter(gtk_style_ce, gtk_style_set_property);
+
+	INIT_OVERLOADED_CLASS_ENTRY(ce, "gtkboxchild", NULL, NULL, php_gtk_get_property, NULL);
+	gtk_box_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+	php_gtk_register_prop_getter(gtk_box_child_ce, gtk_box_child_get_property);
+
+	INIT_OVERLOADED_CLASS_ENTRY(ce, "gtkfixedchild", NULL, NULL, php_gtk_get_property, NULL);
+	gtk_fixed_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+	php_gtk_register_prop_getter(gtk_fixed_child_ce, gtk_fixed_child_get_property);
+
+	INIT_OVERLOADED_CLASS_ENTRY(ce, "gtkclistrow", NULL, NULL, php_gtk_get_property, NULL);
+	gtk_clist_row_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+	php_gtk_register_prop_getter(gtk_clist_row_ce, gtk_clist_row_get_property);
 }
 
 #endif
