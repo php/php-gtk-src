@@ -3804,6 +3804,7 @@
 )
 
 (define-function pixbuf_new_from_file
+  (is-constructor-of GdkPixbuf)
   (c-name "gdk_pixbuf_new_from_file")
   (return-type "GdkPixbuf*")
   (caller-owns-return #t)
@@ -3814,6 +3815,7 @@
 )
 
 (define-function pixbuf_new_from_file_at_size
+  (is-constructor-of GdkPixbuf)
   (c-name "gdk_pixbuf_new_from_file_at_size")
   (return-type "GdkPixbuf*")
   (caller-owns-return #t)
@@ -3826,6 +3828,7 @@
 )
 
 (define-function pixbuf_new_from_data
+  (is-constructor-of GdkPixbuf)
   (c-name "gdk_pixbuf_new_from_data")
   (return-type "GdkPixbuf*")
   (caller-owns-return #t)
@@ -3843,6 +3846,7 @@
 )
 
 (define-function pixbuf_new_from_array
+  (is-constructor-of GdkPixbuf)
   (c-name "gdk_pixbuf_new_from_array")
   (return-type "GdkPixbuf*")
   (caller-owns-return #t)
@@ -3854,6 +3858,7 @@
 )
 
 (define-function pixbuf_new_from_xpm_data
+  (is-constructor-of GdkPixbuf)
   (c-name "gdk_pixbuf_new_from_xpm_data")
   (return-type "GdkPixbuf*")
   (caller-owns-return #t)
@@ -3863,6 +3868,7 @@
 )
 
 (define-function pixbuf_new_from_inline
+  (is-constructor-of GdkPixbuf)
   (c-name "gdk_pixbuf_new_from_inline")
   (return-type "GdkPixbuf*")
   (caller-owns-return #t)
