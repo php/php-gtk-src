@@ -1,5 +1,7 @@
 Version 1.0.1 "you thought we were done?" 07-Aug-2004
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - removed support for old build system. PHP 4.3.x is not required to build
+      PHP-GTK. (Andrei)
     - implemented append_element(), prepend_element(), insert_element(),
       append_item(), prepend_item(), and insert_item() methods of GtkToolbar
       class. (Andrei)
