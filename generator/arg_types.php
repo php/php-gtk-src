@@ -29,7 +29,7 @@
 \*======================================================================*/
 function convert_typename($typename)
 {
-	preg_match_all('![A-Z]{1,2}[^A-Z]*!', $typename, $match);
+	preg_match_all('![A-Z]+[^A-Z]*!', $typename, $match);
 	return '_' . strtoupper(implode('_', $match[0]));
 }
 
