@@ -215,7 +215,7 @@ PHP_GTK_API void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nar
 		MAKE_STD_ZVAL(params);
 		array_init(params);
 		zend_hash_next_index_insert(Z_ARRVAL_P(params), &wrapper, sizeof(zval *), NULL);
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0 TSRMLS_CC);
 		zval_ptr_dtor(&gtk_args);
 	} else
 		/* Otherwise, the only parameters will be GTK signal arguments. */
@@ -226,7 +226,7 @@ PHP_GTK_API void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nar
 	 * array.
 	 */
 	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 	
 	signal_args = php_gtk_hash_as_array(params);
 
