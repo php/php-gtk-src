@@ -1,3 +1,5 @@
+Version 0.0.3 "slow glass": 20-Mar-2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - added libglade support. (Andrei)
     - fixed cascading property access in objects. (Andrei)
     - added GtkRadioMenuItem, GtkRadioButton constructors. (Andrei)
@@ -12,6 +14,7 @@
     - added helper GtkBoxChild, GtkFixedChild classes. (Andrei)
     - added some properties for GtkWidget, GtkBin, GtkMisc, GtkArrow, GtkBox,
       GtkCalendar, GtkCTree, GtkList, and GtkCList classes. (Andrei)
+
 
 Version 0.0.2 "primordial nucleosynthesis": 7-Mar-2001
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
