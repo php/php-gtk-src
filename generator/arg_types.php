@@ -119,10 +119,10 @@ class String_Arg extends Arg_Type {
 		$parse_list[] 	= '&' . $name;
 
 		if (strtoupper(substr(PHP_OS, 0,3) == "WIN")) {
-			$var_list->add('gchar', '*utf8_' . $name);
+			$var_list->add('gchar', '*utf8_' . $name . ' = NULL');
 			$arg_list[]   = 'utf8_' . $name;
-			$extra_post_code[]   = "\tg_free(utf8_$name);\n";
-			$extra_pre_code[] = "\tutf8_$name = g_convert($name, strlen($name), \"UTF-8\", \"CP1252\", NULL, NULL, NULL);\n";
+			$extra_post_code[]   = "\tif (utf8_$name) g_free(utf8_$name);\n";
+			$extra_pre_code[] = "\tif ($name) utf8_$name = g_convert($name, strlen($name), \"UTF-8\", \"CP1252\", NULL, NULL, NULL);\n";
 		} else
 			$arg_list[] = $name;
 
