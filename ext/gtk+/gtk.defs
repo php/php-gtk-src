@@ -185,8 +185,8 @@
   (c-name "gtk_accel_label_new")
   (is-constructor-of "GtkAccelLabel")
   (return-type "GtkWidget*")
-  (properties
-   '("label" (argname "string"))
+  (parameters
+   '("const-gchar*" "string")
   )
 )
 
@@ -388,11 +388,11 @@
   (c-name "gtk_action_new")
   (is-constructor-of "GtkAction")
   (return-type "GtkAction*")
-  (properties
-   '("name")
-   '("label")
-   '("tooltip")
-   '("stock_id")
+  (parameters
+   '("const-gchar*" "name")
+   '("const-gchar*" "label")
+   '("const-gchar*" "tooltip")
+   '("const-gchar*" "stock_id")
   )
 )
 
@@ -538,8 +538,8 @@
   (c-name "gtk_action_group_new")
   (is-constructor-of "GtkActionGroup")
   (return-type "GtkActionGroup*")
-  (properties
-   '("name")
+  (parameters
+   '("const-gchar*" "name")
   )
 )
 
@@ -728,13 +728,13 @@
   (c-name "gtk_adjustment_new")
   (is-constructor-of "GtkAdjustment")
   (return-type "GtkObject*")
-  (properties
-    '("value" (optional))
-    '("lower" (optional))
-    '("upper" (optional))
-    '("step_increment" (argname "step_incr") (optional))
-    '("page_increment" (argname "page_incr") (optional))
-    '("page_size" (optional))
+  (parameters
+    '("gdouble" "value")
+    '("gdouble" "lower")
+    '("gdouble" "upper")
+    '("gdouble" "step_increment")
+    '("gdouble" "page_increment")
+    '("gdouble" "page_size")
   )
 )
 
@@ -788,11 +788,11 @@
   (c-name "gtk_alignment_new")
   (is-constructor-of "GtkAlignment")
   (return-type "GtkWidget*")
-  (properties
-    '("xalign" (optional))
-    '("yalign" (optional))
-    '("xscale" (optional))
-    '("yscale" (optional))
+  (parameters
+    '("gfloat" "xalign" (default "0.5"))
+    '("gfloat" "yalign" (default "0.5"))
+    '("gfloat" "xscale" (default "1.0"))
+    '("gfloat" "yscale" (default "1.0"))
   )
 )
 
@@ -845,9 +845,9 @@
   (c-name "gtk_arrow_new")
   (is-constructor-of "GtkArrow")
   (return-type "GtkWidget*")
-  (properties
-    '("arrow_type")
-    '("shadow_type")
+  (parameters
+    '("GtkArrowType" "arrow_type")
+    '("GtkShadowType" "shadow_type")
   )
 )
 
@@ -874,12 +874,12 @@
   (c-name "gtk_aspect_frame_new")
   (is-constructor-of "GtkAspectFrame")
   (return-type "GtkWidget*")
-  (properties
-    '("label" (optional))
-    '("xalign" (optional))
-    '("yalign" (optional))
-    '("ratio" (optional))
-    '("obey_child" (optional))
+  (parameters
+    '("const-gchar*" "label" (default "NULL"))
+    '("gfloat" "xalign" (default "0.5"))
+    '("gfloat" "yalign" (default "0.5"))
+    '("gfloat" "ratio" (default "1.0"))
+    '("gboolean" "obey_child" (default "TRUE"))
   )
 )
 
@@ -3086,8 +3086,8 @@
   (c-name "gtk_color_selection_dialog_new")
   (is-constructor-of "GtkColorSelectionDialog")
   (return-type "GtkWidget*")
-  (properties
-    '("title")
+  (parameters
+    '("const-gchar*" "title" (default "NULL"))
   )
 )
 
@@ -5268,8 +5268,8 @@
   (c-name "gtk_expander_new")
   (is-constructor-of "GtkExpander")
   (return-type "GtkWidget*")
-  (properties
-    '("label")
+  (parameters
+    '("const-gchar*" "label")
   )
 )
 
@@ -5872,8 +5872,8 @@
   (c-name "gtk_file_selection_new")
   (is-constructor-of "GtkFileSelection")
   (return-type "GtkWidget*")
-  (properties
-    '("title" (optional))
+  (parameters
+    '("const-gchar*" "title" (default "NULL"))
   )
 )
 
@@ -6546,8 +6546,8 @@
   (c-name "gtk_font_selection_dialog_new")
   (is-constructor-of "GtkFontSelectionDialog")
   (return-type "GtkWidget*")
-  (properties
-    '("title")
+  (parameters
+    '("const-gchar*" "title" (optional))
   )
 )
 
@@ -6601,8 +6601,8 @@
   (c-name "gtk_frame_new")
   (is-constructor-of "GtkFrame")
   (return-type "GtkWidget*")
-  (properties
-    '("label" (optional))
+  (parameters
+    '("const-gchar*" "label" (default "NULL"))
   )
 )
 
@@ -6827,9 +6827,9 @@
   (c-name "gtk_hbox_new")
   (is-constructor-of "GtkHBox")
   (return-type "GtkWidget*")
-  (properties
-    '("homogeneous" (optional))
-    '("spacing" (optional))
+  (parameters
+    '("gboolean" "homogeneous" (default "FALSE"))
+    '("gint" "spacing" (default "0"))
   )
 )
 
@@ -6875,8 +6875,8 @@
   (c-name "gtk_hscale_new")
   (is-constructor-of "GtkHScale")
   (return-type "GtkWidget*")
-  (properties
-    '("adjustment" (optional))
+  (parameters
+    '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
   )
 )
 
@@ -6904,8 +6904,8 @@
   (c-name "gtk_hscrollbar_new")
   (is-constructor-of "GtkHScrollbar")
   (return-type "GtkWidget*")
-  (properties
-    '("adjustment" (optional))
+  (parameters
+    '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
   )
 )
 
@@ -8289,8 +8289,8 @@
   (c-name "gtk_label_new")
   (is-constructor-of "GtkLabel")
   (return-type "GtkWidget*")
-  (properties
-    '("label" (argname "str") (optional))
+  (parameters
+    '("const-char*" "string" (default "NULL"))
   )
 )
 
@@ -8559,9 +8559,9 @@
   (c-name "gtk_layout_new")
   (is-constructor-of "GtkLayout")
   (return-type "GtkWidget*")
-  (properties
-    '("hadjustment" (optional))
-    '("vadjustment" (optional))
+  (parameters
+    '("GtkAdjustment*" "hadjustment" (null-ok) (default "NULL"))
+    '("GtkAdjustment*" "vadjustment" (null-ok) (default "NULL"))
   )
 )
 
@@ -11050,12 +11050,12 @@
   (c-name "gtk_radio_action_new")
   (is-constructor-of "GtkRadioAction")
   (return-type "GtkRadioAction*")
-  (properties
-    '("name")
-    '("label")
-    '("tooltip")
-    '("stock_id")
-    '("value")
+  (parameters
+    '("const-gchar*" "name")
+    '("const-gchar*" "label")
+    '("const-gchar*" "tooltip")
+    '("const-gchar*" "stock_id")
+    '("gint" "value")
   )
 )
 
@@ -11764,9 +11764,9 @@
   (c-name "gtk_scrolled_window_new")
   (is-constructor-of "GtkScrolledWindow")
   (return-type "GtkWidget*")
-  (properties
-    '("hadjustment" (optional))
-    '("vadjustment" (optional))
+  (parameters
+    '("GtkAdjustment" "hadjustment" (null-ok) (default "NULL"))
+    '("GtkAdjustment" "vadjustment" (null-ok) (default "NULL"))
   )
 )
 
@@ -12264,8 +12264,8 @@
   (c-name "gtk_size_group_new")
   (is-constructor-of "GtkSizeGroup")
   (return-type "GtkSizeGroup*")
-  (properties
-    '("mode")
+  (parameters
+    '("GtkSizeGroupMode" "mode")
   )
 )
 
@@ -12366,10 +12366,10 @@
   (c-name "gtk_spin_button_new")
   (is-constructor-of "GtkSpinButton")
   (return-type "GtkWidget*")
-  (properties
-    '("adjustment" (optional))
-    '("climb_rate" (optional))
-    '("digits" (optional))
+  (parameters
+    '("GtkAdjustment" "adjustment" (null-ok) (default "NULL"))
+    '("gdouble" "climb_rate" (default "0.0"))
+    '("guint" "digits" (default "0"))
   )
 )
 
@@ -13559,10 +13559,10 @@
   (c-name "gtk_table_new")
   (is-constructor-of "GtkTable")
   (return-type "GtkWidget*")
-  (properties
-    '("n_rows" (argname "rows") (optional))
-    '("n_columns" (argname "columns") (optional))
-    '("homogeneous" (optional))
+  (parameters
+    '("guint" "n_rows" (default "1"))
+    '("guint" "n_columns" (default "1"))
+    '("gboolean" "homogeneous" (default "FALSE"))
   )
 )
 
@@ -13719,8 +13719,8 @@
   (c-name "gtk_text_buffer_new")
   (is-constructor-of "GtkTextBuffer")
   (return-type "GtkTextBuffer*")
-  (properties
-    '("tag_table" (argname "table") (optional))
+  (parameters
+    '("GtkTextTagTable" "tag_table" (null-ok) (default "NULL"))
   )
 )
 
@@ -15018,8 +15018,8 @@
   (c-name "gtk_text_tag_new")
   (is-constructor-of "GtkTextTag")
   (return-type "GtkTextTag*")
-  (properties
-    '("name" (optional))
+  (parameters
+    '("const-gchar*" "name" (null-ok) (default "NULL"))
   )
 )
 
@@ -15703,11 +15703,11 @@
   (c-name "gtk_toggle_action_new")
   (is-constructor-of "GtkToggleAction")
   (return-type "GtkToggleAction*")
-  (properties
-    '("name")
-    '("label")
-    '("tooltip")
-    '("stock_id")
+  (parameters
+    '("const-gchar*" "name")
+    '("const-gchar*" "label")
+    '("const-gchar*" "tooltip")
+    '("const-gchar*" "stock_id")
   )
 )
 
@@ -17256,8 +17256,8 @@
   (c-name "gtk_tree_model_sort_new_with_model")
   (is-constructor-of "GtkTreeModelSort")
   (return-type "GtkTreeModel*")
-  (properties
-    '("model" (argname "child_model"))
+  (parameters
+    '("GtkTreeModel*" "model")
   )
 )
 
@@ -18955,9 +18955,9 @@
   (c-name "gtk_vbox_new")
   (is-constructor-of "GtkVBox")
   (return-type "GtkWidget*")
-  (properties
-    '("homogeneous" (optional))
-    '("spacing" (optional))
+  (parameters
+    '("gboolean" "homogeneous" (default "FALSE"))
+    '("gint" "spacing" (default "0"))
   )
 )
 
@@ -18978,9 +18978,9 @@
   (c-name "gtk_viewport_new")
   (is-constructor-of "GtkViewport")
   (return-type "GtkWidget*")
-  (properties
-    '("hadjustment" (optional))
-    '("vadjustment" (optional))
+  (parameters
+    '("GtkAdjustment*" "hadjustment" (null-ok) (default "NULL"))
+    '("GtkAdjustment*" "vadjustment" (null-ok) (default "NULL"))
   )
 )
 
@@ -19072,8 +19072,8 @@
   (c-name "gtk_vscale_new")
   (is-constructor-of "GtkVScale")
   (return-type "GtkWidget*")
-  (properties
-    '("adjustment" (optional))
+  (parameters
+    '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
   )
 )
 
@@ -19101,8 +19101,8 @@
   (c-name "gtk_vscrollbar_new")
   (is-constructor-of "GtkVScrollbar")
   (return-type "GtkWidget*")
-  (properties
-    '("adjustment" (optional))
+  (parameters
+    '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
   )
 )
 
@@ -20187,8 +20187,8 @@
   (c-name "gtk_window_new")
   (is-constructor-of "GtkWindow")
   (return-type "GtkWidget*")
-  (properties
-    '("type" (optional))
+  (parameters
+    '("GtkWindowType" "type" (default "GTK_WINDOW_TOPLEVEL"))
   )
 )
 

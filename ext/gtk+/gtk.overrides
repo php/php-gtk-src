@@ -6,6 +6,10 @@ headers
 #include "gen_pango.h"
 #include "ext/standard/file.h"
 
+/* TODO
+ * implement gtk_adjustment_set_all
+ * implement gtk_radio_tool_button_new
+ */
 %% {{{ ignores
 
 %%
@@ -22,6 +26,7 @@ ignore-glob
 	gtk_idle_add_*
 	gtk_accelerator_*
 	gtk_target_list_*
+	gtk_radio_tool_button_new*
 %%
 ignore
 	gtk_init
@@ -158,6 +163,7 @@ ignore
 	gtk_container_clear_resize_widgets
 	gtk_container_child_composite_name
 	gtk_progress_bar_update
+	gtk_adjustment_set_all
 %%
 ignore
 	GtkArgFlags
