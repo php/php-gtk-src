@@ -1,3 +1,47 @@
+2005-03-26  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk_util.c:
+      Modify parameter parsing: if ^ is encountered before a specifier,
+      perform all the necessary checks, but return the parameter as zval. This
+      is necessary for property-based constructors.
+
+    * ext/gtk+/gtk.overrides:
+      Ignore gtk_true/false.
+
+    * ext/gtk+/gtk.overrides
+      main/php_gtk.h
+      main/phpg_gobject.c
+      main/phpg_support.c:
+      - Move generic phpg_handler_marshal() to phpg_support.c.
+      - Implement gtk::quit_add().
+
+    * generator/generator.php:
+      Typo.
+
+    * ext/gtk+/gtk.overrides:
+      Adjust to use g_object_new() for instantiation. First move towards
+      complete freedom of widget subclassing.
+
+    * ext/gtk+/config.m4:
+      Require newer versions of libraries.
+
+    * generator/generator.php:
+      -** empty log message ***
+
+    * generator/generator.php
+      generator/lineoutput.php:
+      Implementn coverage statistics.
+
+    * main/phpg_support.c:
+      Ah, what the hell, let's support interfaces too in phpg_create_class().
+
+    * main/php_gtk.h
+      main/phpg_support.c:
+      - Implement phpg_create_class() (no interface support yet).
+      - Use phpg_create_class() to register PHP class wrappers for those
+        GType's that are not listed in .defs files but can find their way to
+        userland.
+
 2005-03-25  Andrei Zmievski  <andrei@gravitonic.com>
 
     * generator/generator.php:
