@@ -1,3 +1,27 @@
+2001-08-14  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/Makefile.in
+      ext/scintilla/php_scintilla.c
+      build2/genext.sh
+      php_gtk.m4:
+    - Remove erroneous glade_init() call from php_scintilla.c.
+    - Fix comparison test in genext.sh.
+    - Make sure that ext/gtk+ always comes first in compilation.
+
+    * ext/gtk+/gtk.defs:
+    Add a few more very very useful fields to GtkPaned. :)
+
+    * ext/gtk+/gtk.defs:
+    Add some properties to GtkPaned.
+
+    * ext/gtk+/gtk.defs:
+    Provide access to widget's parent.
+
+    * ext/scintilla/scintilla.overrides
+      main/php_gtk_util.c:
+    - Add 'l' specifier to argument parsing routine.
+    - Add the last non-generated method, find_text().
+
 2001-08-13  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/gtk.overrides
