@@ -1303,7 +1303,10 @@ PHP_FUNCTION(gtk_ctree_insert_node)
 		php_error(E_WARNING, "%s(): the text array is not long enough", get_active_function_name(TSRMLS_C));
 		return;
 	}
-
+	if (zend_hash_num_elements(target_hash) > columns) {
+		php_error(E_WARNING, "%s(): the text array is too long", get_active_function_name(TSRMLS_C));
+		return;
+	}
 	if (Z_TYPE_P(php_parent) != IS_NULL)
 		parent			= PHP_GTK_CTREE_NODE_GET(php_parent);
 	if (Z_TYPE_P(php_sibling) != IS_NULL)
