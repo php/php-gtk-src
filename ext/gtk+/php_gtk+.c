@@ -29,6 +29,7 @@
 
 PHP_GTK_API int le_gtk_object;
 PHP_GTK_API zend_class_entry *php_gtk_exception_ce;
+extern zend_class_entry *gtk_ce;
 
 /* defined in php_gdk.c */
 void php_gdk_register_keysyms(int module_number TSRMLS_DC);
@@ -151,6 +152,36 @@ static void register_exception(TSRMLS_D)
 }
 */
 
+static void register_stock_constants()
+{
+	GSList *stock_ids, *item;
+	char buf[128];
+	char *id, *p;
+	int i, n;
+
+	stock_ids = gtk_stock_list_ids();
+
+	item = stock_ids;
+	while (item) {
+		id = (char *)item->data;
+		p = strchr(id, '-');
+		if (p) {
+			n = snprintf(buf, sizeof(buf), "STOCK%s", p);
+			for (i = sizeof("STOCK")-1; buf[i]; i++) {
+				if (buf[i] == '-')
+					buf[i] ='_';
+				else
+					buf[i] = toupper(buf[i]);
+			}
+			phpg_register_string_constant(gtk_ce, buf, n, id, strlen(id));
+		}
+		g_free(id);
+		item = item->next;
+	}
+
+	g_slist_free(stock_ids);
+}
+
 PHP_GTK_XINIT_FUNCTION(gtk_plus)
 {
 	//register_exception(TSRMLS_C);
@@ -165,6 +196,7 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 	phpg_pango_register_constants("PANGO_");
 	phpg_gdk_register_constants("GDK_");
 	phpg_gtk_register_constants("GTK_");
+	register_stock_constants();
 
 	php_gtk_plus_register_types();
 

@@ -50,15 +50,17 @@ class Generator {
     var $logfile            = null;
     var $diversions         = null;
 
-    var $constants          = '';
-    var $template_map       = array('Object_Def' => array('constructor' => Templates::constructor_body,
-                                                          'static_constructor' => Templates::static_constructor_body,
-                                                          'method' => Templates::method_body,
-                                                          'prop' => Templates::prop_access),
-                                    'Boxed_Def'  => array('constructor' => Templates::boxed_constructor_body,
-                                                          'static_constructor' => Templates::boxed_static_constructor_body,
-                                                          'method' => Templates::boxed_method_body,
-                                                          'prop' => Templates::boxed_prop_access),
+    var $gtype_constants    = '';
+
+    var $template_map       = array('object' => array('constructor' => Templates::constructor_body,
+                                                      'static_constructor' => Templates::static_constructor_body,
+                                                      'method' => Templates::method_body,
+                                                      'prop' => Templates::prop_access),
+                                    'boxed'  => array('constructor' => Templates::boxed_constructor_body,
+                                                      'static_constructor' => Templates::boxed_static_constructor_body,
+                                                      'method' => Templates::boxed_method_body,
+                                                      'prop' => Templates::boxed_prop_access),
+                                    'interface' => array('method' => Templates::method_body),
                                    );
     var $handlers           = array('read_property', 'write_property', 'get_properties');
 
@@ -206,10 +208,10 @@ class Generator {
 
     function write_methods($object)
     {
-        $method_defs = array();
-
         $this->log_print("  %-20s ", "methods");
+
         $num_written = $num_skipped = 0;
+        $method_entries = array();
 
         $methods = $this->parser->find_methods($object);
 
@@ -217,12 +219,13 @@ class Generator {
         $dict['scope'] = $object->c_name;
         $dict['typecode'] = $object->typecode;
 
-        switch ($def_type = get_class($object)) {
-            case 'Object_Def':
+        switch ($object->def_type) {
+            case 'object':
+            case 'interface':
                 $dict['cast'] = preg_replace('!_TYPE_!', '_', $object->typecode, 1);
                 break;
 
-            case 'Boxed_Def':
+            case 'boxed':
                 $dict['cast'] = $object->c_name . ' *';
                 break;
 
@@ -230,6 +233,8 @@ class Generator {
                 throw new Exception("unhandled definition type");
                 break;
         }
+
+        $object->methods = array();
 
         foreach ($methods as $method) {
             $method_name = $method->c_name;
@@ -244,25 +249,24 @@ class Generator {
                         $method_name = $method->name;
                     $method_override = preg_replace('!^.*(PHP_METHOD).*$!m', "static $1($object->in_module$object->name, $method_name)", $method_override);
                     $this->write_override($method_override, $method->c_name);
-                    $method_defs[] = sprintf(Templates::method_entry,
-                                             $object->in_module . $object->name,
-                                             $method_name, 'NULL', $flags ?  $flags : 'ZEND_ACC_PUBLIC');
+                    $method_entries[$method_name] = array($object->in_module . $object->name,
+                                                          $method_name, 'NULL', $flags ?  $flags : 'ZEND_ACC_PUBLIC');
                 } else {
                     if ($method->static) {
                         $code = $this->write_callable($method, Templates::function_body, true, false, $dict);
                         $flags = 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC';
                     } else {
-                        $template = $this->template_map[get_class($object)]['method'];
+                        $template = $this->template_map[$object->def_type]['method'];
                         $code = $this->write_callable($method, $template, true, true, $dict);
                         $flags = 'ZEND_ACC_PUBLIC';
                     }
                     $this->fp->write($code);
-                    $method_defs[] = sprintf(Templates::method_entry,
-                                             $object->in_module . $object->name,
-                                             $method->name, 'NULL', $flags);
+                    $method_entries[$method->name] = array($object->in_module . $object->name,
+                                                           $method->name, 'NULL', $flags);
                 }
                 $this->divert("gen", "%s  %-11s %s::%s\n", $overriden ? "%%":"  ", "method", $object->c_name, $method->name);
                 $num_written++;
+                $object->methods[$method->name] = 1;
             } catch (Exception $e) {
                 $this->divert("notgen", "  %-11s %s::%s: %s\n", "method", $object->c_name, $method->name, $e->getMessage());
                 $num_skipped++;
@@ -271,7 +275,7 @@ class Generator {
 
         $this->log_print("(%d written, %d skipped)\n", $num_written, $num_skipped);
 
-        return $method_defs;
+        return $method_entries;
     }
 
     function write_constructor($object)
@@ -302,7 +306,7 @@ class Generator {
                     $template_name = 'static_constructor';
                 }
 
-                $template = $this->template_map[get_class($object)][$template_name];
+                $template = $this->template_map[$object->def_type][$template_name];
 
                 try {
                     if (($overriden = $this->overrides->is_overriden($ctor_name))) {
@@ -361,15 +365,24 @@ class Generator {
                                                'typecode' => 0));
         }
 
+        /* GInterface's */
+        $this->log_print("\n\n" . $this->make_header("Interfaces", 50, '-'));
+        foreach ($this->parser->interfaces as $interface) {
+            $reg_info = $this->write_class($interface);
+            $register_classes .= aprintf(Templates::register_interface, $reg_info);
+        }
+
         /* GObject's */
+        $this->log_print("\n\n" . $this->make_header("Objects", 50, '-'));
         foreach ($this->parser->objects as $object) {
             $reg_info = $this->write_class($object);
             $register_classes .= aprintf(Templates::register_class, $reg_info);
         }
 
         /* GBoxed */
+        $this->log_print("\n\n" . $this->make_header("Boxed Types", 50, '-'));
         foreach ($this->parser->boxed as $object) {
-            $reg_info = $this->write_class($object, 'GBoxed');
+            $reg_info = $this->write_class($object);
             $register_classes .= aprintf(Templates::register_boxed, $reg_info);
         }
 
@@ -385,6 +398,7 @@ class Generator {
         if (!$object->fields) {
             return 'NULL';
         }
+
         $this->log_print("  %-20s ", "property accessors");
         $num_written = $num_skipped = 0;
 
@@ -392,12 +406,12 @@ class Generator {
         $prop_defs = array();
         $dict = array();
 
-        switch ($def_type = get_class($object)) {
-            case 'Object_Def':
+        switch ($object->def_type) {
+            case 'object':
                 $dict['cast'] = preg_replace('!_TYPE_!', '_', $object->typecode, 1);
                 break;
 
-            case 'Boxed_Def':
+            case 'boxed':
                 $dict['cast'] = $object->c_name . ' *';
                 break;
 
@@ -440,7 +454,7 @@ class Generator {
                                                     'var_list' => $info->get_var_list(),
                                                     'pre_code' => $info->get_pre_code(),
                                                     'post_code' => $info->get_post_code(),
-                                                    'prop_access' => aprintf($this->template_map[$def_type]['prop'], $dict)
+                                                    'prop_access' => aprintf($this->template_map[$object->def_type]['prop'], $dict)
                                                    )));
                     $this->divert("gen", "    %-11s %s->%s\n", "reader for", $object->c_name, $field_name);
                 }
@@ -481,12 +495,12 @@ class Generator {
             return array('NULL', '');
 
         $dict['class'] = strtolower($object->in_module . $object->name);
-        switch ($def_type = get_class($object)) {
-            case 'Object_Def':
+        switch ($object->def_type) {
+            case 'object':
                 $dict['create_func'] = 'phpg_create_gobject';
                 break;
 
-            case 'Boxed_Def':
+            case 'boxed':
                 $dict['create_func'] = 'phpg_create_gboxed';
                 break;
 
@@ -507,38 +521,90 @@ class Generator {
         return array($create_func, $extra_reg_info);
     }
 
-    function write_class($object)
+    function make_method_defs($class, $method_entries)
     {
-        $this->log_print("\n%s\n%s\n", $object->c_name, str_repeat('~', 50));
+        $method_defs = array();
 
-        $object_module = strtolower($object->in_module);
-        $object_lname = strtolower($object->name);
+        if ($class->def_type == 'object') {
+            foreach ($method_entries as $me) {
+                $method_defs[] = vsprintf(Templates::method_entry, $me);
+            }
+            if ($class->implements) {
+                foreach ($class->implements as $interface_name) {
+                    $interface = $this->parser->interfaces[$interface_name];
+                    $iface_methods = array_diff_key($interface->methods, $method_entries);
+                    $method_defs[] = "\n\t/***   $interface_name interface implementations   ***/\n\n";
+                    foreach ($iface_methods as $iface_method=>$dummy) {
+                        $method_defs[] = sprintf(Templates::alias_entry,
+                                                 $interface_name, $iface_method,
+                                                 $iface_method, 'NULL', 'ZEND_ACC_PUBLIC');
+                    }
+                }
+            }
+        } else if ($class->def_type == 'boxed') {
+            foreach ($method_entries as $me) {
+                $method_defs[] = vsprintf(Templates::method_entry, $me);
+            }
+        } else if ($class->def_type == 'interface') {
+            foreach ($method_entries as $me) {
+                $method_defs[] = vsprintf(Templates::abs_method_entry, $me);
+            }
+        }
 
-        $extra_ref_info = '';
+        return $method_defs;
+    }
 
-        $ctor_defs = $this->write_constructor($object);
-        $method_defs = $this->write_methods($object);
-        sort($method_defs);
+    function write_class($class)
+    {
+        $this->log_print("\n%s\n%s\n", $class->c_name, str_repeat('~', 50));
+
+        $class_module = strtolower($class->in_module);
+        $class_lname = strtolower($class->name);
+
+        $create_func = 'NULL';
+        $extra_reg_info = '';
+        $ctor_defs = null;
+        $prop_info = 'NULL';
+
+        if ($class->def_type != 'interface') {
+            /* interfaces don't have these */
+            $ctor_defs = $this->write_constructor($class);
+            $prop_info = $this->write_prop_handlers($class);
+            list($create_func, $extra_reg_info) = $this->write_object_handlers($class);
+        }
+
+        $method_entries = $this->write_methods($class);
+        ksort($method_entries);
+        $method_defs = $this->make_method_defs($class, $method_entries);
+
         if ($ctor_defs) {
             $method_defs = array_merge($ctor_defs, $method_defs);
         }
 
         if ($method_defs) {
-            $this->fp->write(sprintf(Templates::functions_decl, strtolower($object->c_name)));
+            $this->fp->write(sprintf(Templates::functions_decl, strtolower($class->c_name)));
             $this->fp->write(join('', $method_defs));
             $this->fp->write(Templates::functions_decl_end);
         }
 
-        $prop_info = $this->write_prop_handlers($object);
+        if ($class->def_type == 'object' && $class->implements) {
+            $iface_entries = array();
+            foreach ($class->implements as $interface) {
+                $iface_entries[] = strtolower($interface) . '_ce';
+            }
+            $extra_reg_info .= aprintf(Templates::implement_interface,
+                                       array('ce' => $class->ce,
+                                             'ifaces' => join(', ', $iface_entries),
+                                             'num_ifaces' => count($iface_entries)));
+        }
+        $this->gtype_constants .= sprintf(Templates::gtype_constant, $class->ce, $class->typecode);
 
-        list($create_func, $extra_reg_info) = $this->write_object_handlers($object);
-
-        return array('ce' => $object->ce,
-                     'class' => $object->in_module . $object->name,
-                     'methods' => $method_defs ? strtolower($object->c_name) . '_methods' : 'NULL',
-                     'parent' => (get_class($object) == 'Object_Def' && $object->parent) ? strtolower($object->parent) . '_ce' : 'NULL',
-                     'ce_flags' => $object->ce_flags ? implode('|', $object->ce_flags) : 0,
-                     'typecode' => $object->typecode,
+        return array('ce' => $class->ce,
+                     'class' => $class->in_module . $class->name,
+                     'methods' => $method_defs ? strtolower($class->c_name) . '_methods' : 'NULL',
+                     'parent' => ($class->def_type == 'object' && $class->parent) ? strtolower($class->parent) . '_ce' : 'NULL',
+                     'ce_flags' => $class->ce_flags ? implode('|', $class->ce_flags) : 0,
+                     'typecode' => $class->typecode,
                      'create_func' => $create_func,
                      'extra_reg_info' => $extra_reg_info,
                      'propinfo' => $prop_info);
@@ -559,7 +625,9 @@ class Generator {
             }
         }
 
-        $this->fp->write(sprintf(Templates::register_constants, $this->lprefix, $enums_code . "\n" . $this->overrides->get_constants()));
+        $this->fp->write(sprintf(Templates::register_constants, $this->lprefix,
+                                 $enums_code . "\n" . $this->overrides->get_constants(),
+                                 $this->gtype_constants));
     }
 
     function write_functions()
@@ -652,6 +720,10 @@ class Generator {
     function write_class_entries()
     {
         $this->fp->write("\n");
+        foreach ($this->parser->interfaces as $interface) {
+            $this->fp->write(sprintf(Templates::class_entry, $interface->ce));
+        }
+
         foreach ($this->parser->objects as $object) {
             $this->fp->write(sprintf(Templates::class_entry, $object->ce));
         }
@@ -663,11 +735,11 @@ class Generator {
         }
     }
 
-    function make_header($string)
+    function make_header($string, $width = 72, $char = '=')
     {
-        $res = str_repeat('=', 72) . "\n";
-        $res .= str_pad($string, 72, " ", STR_PAD_BOTH) . "\n";
-        $res .= str_repeat('=', 72) . "\n";
+        $res = "\n" . str_repeat($char, $width) . "\n";
+        $res .= str_pad($string, $width, " ", STR_PAD_BOTH) . "\n";
+        $res .= str_repeat($char, $width) . "\n";
 
         return $res;
     }
@@ -682,8 +754,8 @@ class Generator {
         $this->fp->write("\n#if HAVE_PHP_GTK\n");
         $this->fp->write($this->overrides->get_headers());
         $this->write_class_entries();
-        $this->write_constants();
         $this->write_classes();
+        $this->write_constants();
         $this->fp->write("\n#endif /* HAVE_PHP_GTK */\n");
 
         $this->log("\n\n");

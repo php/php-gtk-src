@@ -207,23 +207,6 @@ extern PHP_GTK_API zend_object_handlers php_gtk_handlers;
 int php_gtk_startup_all_extensions(int module_number);
 int php_gtk_startup_extensions(php_gtk_ext_entry **ext, int ext_count, int module_number);
 
-PHP_GTK_API zval *php_gtk_new(GObject *obj);
-/*
-static inline void php_gtk_set_object(zval *zobj, void *obj, php_gtk_dtor_t dtor, zend_bool boxed)
-{
-	php_gtk_object *wrapper;
-	TSRMLS_FETCH();
-
-	wrapper= (php_gtk_object *) zend_object_store_get_object(zobj TSRMLS_CC);
-	wrapper->obj = obj;
-	wrapper->dtor = dtor;
-	//zend_objects_store_add_ref(zobj TSRMLS_CC);
-	if (boxed) {
-		zend_hash_index_update(&php_gtk_type_hash, (long)obj, (void *)&zobj, sizeof(zval *), NULL);
-	}
-}
-*/
-
 zval *phpg_read_property(zval *object, zval *member, int type TSRMLS_DC);
 void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC);
 HashTable* phpg_get_properties(zval *object TSRMLS_DC);
@@ -251,6 +234,7 @@ void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference
 */
 
 PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name, function_entry *class_functions, zend_class_entry *parent, zend_uint ce_flags, prop_info_t *prop_info, create_object_func_t create_obj_func, GType gtype TSRMLS_DC);
+PHP_GTK_API zend_class_entry* phpg_register_interface(const char *iface_name, function_entry *iface_methods, GType gtype TSRMLS_DC);
 PHP_GTK_API void phpg_init_object(void *pobj, zend_class_entry *ce);
 
 PHP_GTK_API void phpg_register_prop_getter(zend_class_entry *ce, prop_getter_t getter);
@@ -287,6 +271,15 @@ static inline zend_bool phpg_object_check(zval *zobj, zend_class_entry *ce TSRML
 	return TRUE;
 }
 
+static inline zend_class_entry* phpg_class_from_gtype(GType gtype)
+{
+	zend_class_entry *ce = NULL;
+
+	ce = g_type_get_qdata(gtype, phpg_class_key);
+	
+	assert(ce != NULL);
+	return ce;
+}
 #define NOT_STATIC_METHOD() \
 	if (!this_ptr) { \
 		php_error(E_WARNING, "%s::%s() is not a static method", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C)); \
@@ -322,6 +315,7 @@ extern char *php_gtk_zval_type_name(zval *arg);
 PHP_GTK_API void phpg_register_enum(GType gtype, const char *strip_prefix, zend_class_entry *ce);
 PHP_GTK_API void phpg_register_flags(GType gtype, const char *strip_prefix, zend_class_entry *ce);
 PHP_GTK_API void phpg_register_int_constant(zend_class_entry *ce, char *name, int name_len, long value);
+PHP_GTK_API void phpg_register_string_constant(zend_class_entry *ce, char *name, int name_len, char *value, int value_len);
 
 void phpg_gtype_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gtype_new(zval *zobj, GType type TSRMLS_DC);

@@ -57,7 +57,7 @@ static PHP_METHOD(%(class), %(name))
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
 	}
 %(pre_code)
-	wrapped_obj = (GObject *)%(cname)(%(arg_list));
+	wrapped_obj = (GObject *) %(cname)(%(arg_list));
 %(post_code)
 	if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
@@ -74,7 +74,7 @@ static PHP_METHOD(%(class), %(name))
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
 	}
 %(pre_code)
-	wrapped_obj = (GObject *)%(cname)(%(arg_list));
+	wrapped_obj = (GObject *) %(cname)(%(arg_list));
 %(post_code)
 	if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
@@ -143,7 +143,9 @@ const non_gtk_object_init = "
 	php_gtk_set_object(this_ptr, wrapped_obj, le_%s);\n";
 
 const method_entry = "\tPHP_ME(%s, %s, %s, %s)\n";
+const abs_method_entry = "\tZEND_ABSTRACT_ME(%s, %s, %s)\n";
 const function_entry = "\tPHP_ME_MAPPING(%s, %s, NULL)\n";
+const alias_entry = "\tPHP_MALIAS(%s, %s, %s, %s, %s)\n";
 const functions_decl = "
 static function_entry %s_methods[] = {
 ";
@@ -193,6 +195,12 @@ const register_class = "
 const register_boxed = "
     %(ce) = phpg_register_boxed(\"%(class)\", %(methods), %(propinfo), %(create_func), %(typecode) TSRMLS_CC);\n%(extra_reg_info)";
 
+const register_interface = "
+	%(ce) = phpg_register_interface(\"%(class)\", %(methods), %(typecode) TSRMLS_CC);\n%(extra_reg_info)";
+
+const implement_interface = "\tzend_class_implements(%(ce) TSRMLS_CC, %(num_ifaces), %(ifaces));\n";
+const gtype_constant = "\tphpg_register_int_constant(%s, \"gtype\", sizeof(\"gtype\")-1, %s);\n";
+
 const class_entry = "PHP_GTK_EXPORT_CE(%s);\n";
 
 const prop_info_header = "\nstatic prop_info_t %s_prop_info[] = {\n";
@@ -212,54 +220,13 @@ PHPG_PROP_READER(%(class), %(name))
 const prop_access = "%(cast)(((phpg_gobject_t *)object)->obj)->%(name)";
 const boxed_prop_access = "((%(cast))((phpg_gboxed_t *)object)->boxed)->%(name)";
 
-const struct_init = "
-zval *PHP_GTK_EXPORT_FUNC(php_%s_new)(%s *obj)
-{
-	zval *result;
-	TSRMLS_FETCH();
-
-    if (!obj) {
-        MAKE_STD_ZVAL(result);
-        ZVAL_NULL(result);
-        return result;
-    }
-
-    MAKE_STD_ZVAL(result);
-    object_init_ex(result, %s);
-
-%s
-    return result;
-}\n\n";
-
-const struct_construct = "
-PHP_FUNCTION(%s)
-{
-%s	NOT_STATIC_METHOD();
-
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%s\"%s)) {
-		php_gtk_invalidate(this_ptr);
-		return;
-	}
-
-%s}\n\n";
-
-const struct_get = "
-zend_bool PHP_GTK_EXPORT_FUNC(php_%s_get)(zval *wrapper, %s *obj)
-{
-    zval **item;
-	TSRMLS_FETCH();
-
-    if (!php_gtk_check_class(wrapper, %s))
-        return 0;
-
-%s
-    return 1;
-}\n\n";
-
 const register_constants = "
 void phpg_%s_register_constants(const char *strip_prefix)
 {
     TSRMLS_FETCH();
+%s
+    /* register gtype constants for all classes */
+
 %s
 }\n";
 

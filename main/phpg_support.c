@@ -274,21 +274,32 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
     zend_hash_add(&phpg_prop_info, ce.name, ce.name_length+1, &pi_hash, sizeof(HashTable), NULL);
 
     if (gtype) {
-        /*
-         * Since Zend engine does not let internal classes have constants or
-         * static variables that are objects, we are forced to store the gtype
-         * integer instead of the wrapper. What a fecking shame.
-         */
-        zval *g;
-        g = (zval *)malloc(sizeof(zval));
-        INIT_PZVAL(g);
-        ZVAL_LONG(g, gtype);
-        zend_hash_update(&real_ce->constants_table, "gtype", sizeof("gtype"), &g, sizeof(zval *), NULL);
-
         g_type_set_qdata(gtype, phpg_class_key, real_ce);
     }
 
 	return real_ce;
+}
+/* }}} */
+
+/* {{{ phpg_register_interface() */
+PHP_GTK_API zend_class_entry* phpg_register_interface(const char *iface_name,
+                                                      function_entry *iface_methods,
+                                                      GType gtype TSRMLS_DC)
+{
+	zend_class_entry ce, *real_ce;
+
+    memset(&ce, 0, sizeof(ce));
+    ce.name = strdup(iface_name);
+    ce.name_length = strlen(iface_name);
+    ce.builtin_functions = iface_methods;
+
+    real_ce = zend_register_internal_interface(&ce TSRMLS_CC);
+
+    if (gtype) {
+        g_type_set_qdata(gtype, phpg_class_key, real_ce);
+    }
+
+    return real_ce;
 }
 /* }}} */
 
@@ -377,6 +388,23 @@ PHP_GTK_API void phpg_register_int_constant(zend_class_entry *ce, char *name, in
     zvalue = (zval *)malloc(sizeof(zval));
     INIT_PZVAL(zvalue);
     ZVAL_LONG(zvalue, value);
+    zend_hash_update(&ce->constants_table, name, name_len+1, &zvalue, sizeof(zval *), NULL);
+}
+/* }}} */
+
+/* {{{ phpg_register_string_constant */
+PHP_GTK_API void phpg_register_string_constant(zend_class_entry *ce, char *name, int name_len, char *value, int value_len)
+{
+    zval *zvalue;
+
+    phpg_return_if_fail(ce != NULL);
+    phpg_return_if_fail(name != NULL);
+
+    zvalue = (zval *)malloc(sizeof(zval));
+    INIT_PZVAL(zvalue);
+    Z_TYPE_P(zvalue) = IS_STRING;
+    Z_STRLEN_P(zvalue) = value_len;
+    Z_STRVAL_P(zvalue) = zend_strndup(value, value_len);
     zend_hash_update(&ce->constants_table, name, name_len+1, &zvalue, sizeof(zval *), NULL);
 }
 /* }}} */

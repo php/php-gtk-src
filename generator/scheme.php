@@ -254,7 +254,7 @@ class Defs_Parser {
     function handle_define_interface($arg)
     {
         $interface_def      = new Interface_Def($arg);
-        $this->interfaces[$interface_def->in_module . $interface_def->name] = &$interface_def;
+        $this->interfaces[$interface_def->c_name] = &$interface_def;
         $this->c_name[]     = &$interface_def->c_name;
     }
 

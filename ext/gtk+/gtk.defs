@@ -5749,8 +5749,10 @@
   (varargs #t)
 )
 
+
 (define-function file_chooser_dialog_new_with_backend
   (c-name "gtk_file_chooser_dialog_new_with_backend")
+  (is-constructor-of "GtkFileChooserDialog")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "title")
@@ -5761,7 +5763,6 @@
   )
   (varargs #t)
 )
-
 
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkfilechooserwidget.h

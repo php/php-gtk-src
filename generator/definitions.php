@@ -228,6 +228,7 @@ class Function_Def extends Definition {
 }
 
 class Boxed_Def extends Definition {
+    var $def_type   = 'boxed';
     var $name       = null;
     var $in_module  = null;
     var $c_name     = null;
@@ -266,11 +267,13 @@ class Boxed_Def extends Definition {
 }
 
 class Interface_Def extends Definition {
+    var $def_type   = 'interface';
     var $name       = null;
     var $in_module  = null;
     var $c_name     = null;
     var $ce         = null;
     var $typecode   = null;
+    var $ce_flags   = array();
 
     function Interface_Def($args)
     {
@@ -288,7 +291,7 @@ class Interface_Def extends Definition {
                 $this->typecode = $arg[1];
         }
 
-        $this->ce = strtolower($this->in_module . convert_typename($this->name) . '_ce');
+        $this->ce = strtolower($this->c_name) . '_ce';
     }
 }
 

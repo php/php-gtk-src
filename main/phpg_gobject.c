@@ -70,21 +70,6 @@ static inline void phpg_free_gobject_storage(phpg_gobject_t *object, zend_object
 }
 /* }}} */
 
-/* {{{ static      phpg_class_from_gtype() */
-static zend_class_entry* phpg_class_from_gtype(GType gtype)
-{
-	zend_class_entry *ce = NULL;
-
-	while (gtype != G_TYPE_INVALID
-		   && (ce = g_type_get_qdata(gtype, phpg_class_key)) == NULL) {
-		gtype = g_type_parent(gtype);
-	}
-	
-	assert(ce != NULL);
-	return ce;
-}
-/* }}} */
-
 /* {{{ static      phpg_sink_object() */
 static inline void phpg_sink_object(GObject *obj)
 {
