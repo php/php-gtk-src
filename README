@@ -6,8 +6,8 @@ goals behind it was to prove that PHP is a capable general-purpose scripting
 language that is suited for more than just Web applications.
 
 This extension will _not_ allow you to display GTK+ programs in a Web browser,
-and cannot be used in the Web environment. It is intended for creating
-standalone GUI applications.
+and can be used in the Web environment only if you are running the webserver
+locally. It is intended for creating standalone GUI applications.
 
 
 Requirements
@@ -30,17 +30,19 @@ Installation and testing
 After unpacking the distribution or checking out the sources from the CVS,
 change into the base directory and do the following.
 
-First, run the 'phpize' script that should have been installed along with PHP.
-It will set up necessary files and create 'configure' script for you. Next, run
-'./configure'. It will check that you have proper version of GTK+ and other
-files required for compilation and create the Makefile's.
+First, run './buildconf' script that comes with PHP-GTK. It will set up
+necessary files and create 'configure' script for you.  Next, run './configure'.
+It will check that you have proper version of GTK+ and other files required for
+compilation and create the Makefile's.
+
+PHP-GTK supports extensions which can be configured via 'configure' script
+switches that you can see by running './configure --help'.
 
 Finally, run 'make' to compile the extension. Some source files are generated
 from .defs files by the code generator. If you see messages like "Could not
 write...", that just means that certain GTK+ objects or features are not yet
 supported. If the compilation is successful, run 'make install' to install the
-extension into your default PHP extension directory (usually
-/usr/local/lib/php/extensions).
+extension into your default PHP extension directory.
 
 To test the extension, try running the example scripts in the test/ directory,
 especially gtk.php. These are also good for showing how the extension can be
@@ -68,7 +70,9 @@ php-gtk@lists.php.net. The list is archived at MARC
 Patches and feedback
 ====================
 You can contact me directly at andrei@php.net or through the mailing list.
-Patches in the unified diff (diff -u) format can be sent via the same means.
+Please use mailing list for most of your questions -- many people read it and
+you are more likely to get quicker feedback if you post there first. Patches in
+the unified diff (diff -u) format can be sent via the same means.
 
 
 Acknowledgements
