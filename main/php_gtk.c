@@ -46,7 +46,7 @@ ZEND_GET_MODULE(gtk)
 #endif
 
 PHP_INI_BEGIN()
-	STD_PHP_INI_ENTRY    ("gtk.codepage",	"CP1252",	PHP_INI_SYSTEM,	OnUpdateString, codepage,	zend_gtk_globals,	gtk_globals)
+	STD_PHP_INI_ENTRY    ("php-gtk.codepage", "CP1252",	PHP_INI_SYSTEM,	OnUpdateString, codepage,	zend_gtk_globals,	gtk_globals)
 PHP_INI_END()
 
 
