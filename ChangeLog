@@ -1,3 +1,55 @@
+2001-04-15  James Moore  <James@phpuk.org>
+
+    * docs/scripts/CommonFuncs.inc
+      docs/stylesheets/xsl/html/chunk-common.xsl
+      docs/stylesheets/xsl/html/class.xsl
+      docs/stylesheets/xsl/html/hierarchy.xsl
+      docs/stylesheets/xsl/html/html.xsl
+      docs/templates/classentry.tpl
+      docs/en/classes/gtkdata.xml
+      docs/en/classes/gtkitemfactory.xml
+      docs/en/classes/gtkobject.xml
+      docs/en/classes/gtkwidget.xml:
+    - Object Hierarchy is now derived from XML rather than a php-gtk script.
+
+    * docs/stylesheets/xsl/gen_name_to_id.xsl
+      docs/stylesheets/xsl/html/chunk-common.xsl
+      docs/stylesheets/xsl/html/class.xsl
+      docs/stylesheets/xsl/html/name_to_id.xsl
+      docs/en/classes/gtkcontainer.xml
+      docs/en/classes/gtkdata.xml
+      docs/en/classes/gtkobject.xml
+      docs/en/classes/gtktipsquery.xml
+      docs/en/classes/gtkwidget.xml:
+    Attributes and signals are now highlighted properly with links to their definitions.
+
+
+    * docs/stylesheets/xsl/html/class.xsl
+      docs/stylesheets/xsl/html/name_to_id.xsl
+      docs/en/classes/gtkaccellabel.xml
+      docs/en/classes/gtkcontainer.xml
+      docs/en/classes/gtkitemfactory.xml
+      docs/en/classes/gtklabel.xml
+      docs/en/classes/gtkmisc.xml
+      docs/en/classes/gtkobject.xml
+      docs/en/classes/gtktipsquery.xml
+      docs/en/classes/gtkwidget.xml
+      docs/stylesheets/xsl/gen_name_to_id.xsl:
+    Functions are now linked to their definition too.
+
+    * docs/stylesheets/xsl/gen_name_to_id.xsl
+      docs/stylesheets/xsl/html/class.xsl
+      docs/stylesheets/xsl/html/html.xsl
+      docs/stylesheets/xsl/html/name_to_id.xsl:
+    If a class name is marked up with <classname> it is now liked if there is an
+    appropraite manual page for it to link to.
+
+    * docs/Makefile.in
+      docs/stylesheets/xsl/gen_name_to_id.xsl
+      docs/stylesheets/xsl/html/name_to_id.xsl:
+    - Added utility xsl stylesheet for converting classnames to their id for making
+      links and hierarchy.
+
 2001-04-14  James Moore  <James@phpuk.org>
 
     * docs/stylesheets/xsl/chunk.xsl.in
