@@ -1,3 +1,5 @@
+Version 0.1 "the void which binds" 01-Aug-2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - added GDK keysyms constants. (Andrei)
     - fixed bug with GtkStyle::copy() that was not returning the result
       properly. (Andrei)
