@@ -556,8 +556,17 @@ class Generator {
 
         $dict['class'] = $object->c_name;
         $dict['scope'] = $object->c_name;
-        $dict['cast'] = preg_replace('!_TYPE_!', '_', $object->typecode, 1);
         $dict['typecode'] = $object->typecode;
+
+        switch ($def_type = get_class($object)) {
+            case 'Object_Def':
+                $dict['cast'] = preg_replace('!_TYPE_!', '_', $object->typecode, 1);
+                break;
+
+            case 'Boxed_Def':
+                $dict['cast'] = $object->c_name . ' *';
+                break;
+        }
 
         foreach ($methods as $method) {
             $method_name = $method->c_name;

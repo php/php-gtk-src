@@ -32,7 +32,8 @@ typedef struct {
 } phpg_gtype_t;
 
 static PHP_METHOD(GType, __construct);
-static int gtype_type_read(void *object, zval *return_value);
+PHPG_PROP_READER(GType, type);
+PHPG_PROP_READER(GType, name);
 
 /* XXX possibly make constructor public */
 static zend_function_entry gtype_methods[] = {
@@ -41,7 +42,8 @@ static zend_function_entry gtype_methods[] = {
 };
 
 static prop_info_t gtype_props_info[] = {
-	{ "type", gtype_type_read, NULL },
+	{ "type", PHPG_PROP_READ_FN(GType, type), NULL },
+	{ "name", PHPG_PROP_READ_FN(GType, name), NULL },
 	{ NULL, NULL, NULL },
 };
 
@@ -72,28 +74,30 @@ static zend_object_value gtype_create_object(zend_class_entry *ce TSRMLS_DC)
 
 static PHP_METHOD(GType, __construct) {}
 
-static int gtype_type_read(void *object, zval *return_value)
+PHPG_PROP_READER(GType, type)
 {
 	ZVAL_LONG(return_value, ((phpg_gtype_t *)object)->type);
+	return SUCCESS;
+}
+
+PHPG_PROP_READER(GType, name)
+{
+	ZVAL_STRING(return_value, (char *)g_type_name(((phpg_gtype_t *)object)->type), 1);
 	return SUCCESS;
 }
 
 /*
  * External API functions
  */ 
-PHP_GTK_API zval* phpg_gtype_new(GType type)
+PHP_GTK_API void phpg_gtype_new(zval *zobj, GType type TSRMLS_DC)
 {
-	zval *wrapper;
 	phpg_gtype_t *object;
 	TSRMLS_FETCH();
 
-	wrapper = (zval*)malloc(sizeof(zval));
-	INIT_PZVAL(wrapper);
-	object_init_ex(wrapper, gtype_ce);
-	object = zend_object_store_get_object(wrapper TSRMLS_CC);
+    assert(zobj != NULL);
+	object_init_ex(zobj, gtype_ce);
+	object = zend_object_store_get_object(zobj TSRMLS_CC);
 	object->type = type;
-
-	return wrapper;
 }
 
 /* TODO add support for boxed types */
@@ -102,15 +106,24 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 	GType type;
 
 	if (!value) {
-		PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_type_exception, "cannot get type from NULL value", 0);
+		php_error(E_WARNING, "PHP-GTK internal error: could not get typecode from value");
+		return 0;
 	}
 
 	switch (Z_TYPE_P(value)) {
 		case IS_NULL:
 			return G_TYPE_NONE;
 
+		/*
+		 * We check if the number corresponds to a valid GType. Returning the
+		 * corresponding type, if it does, assume a G_TYPE_INT otherwise.
+		 */
 		case IS_LONG:
-			return G_TYPE_INT;
+		{
+			GTypeQuery tq;
+			g_type_query(Z_LVAL_P(value), &tq);
+			return tq.type ? tq.type : G_TYPE_INT;
+		}
 
 		case IS_DOUBLE:
 			return G_TYPE_DOUBLE;
@@ -138,14 +151,10 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 				}
 			} else {
 				zval **gtype;
-				if (zend_hash_find(Z_OBJPROP_P(value), "__gtype", sizeof("__gtype"), (void**)&gtype) == SUCCESS
-					&& Z_TYPE_PP(gtype) == IS_OBJECT
-					&& Z_OBJCE_PP(gtype) == gtype_ce) {
+				if (zend_hash_find(&Z_OBJCE_P(value)->constants_table, "gtype", sizeof("gtype"), (void**)&gtype) == SUCCESS
+					&& Z_TYPE_PP(gtype) == IS_LONG) {
 
-					phpg_gtype_t *object = zend_object_store_get_object(*gtype TSRMLS_CC);
-					if (object) {
-						return object->type;
-					}
+						return Z_LVAL_PP(gtype);
 				}
 
 				return G_TYPE_OBJECT;

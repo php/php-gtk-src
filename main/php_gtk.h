@@ -103,13 +103,9 @@ typedef struct _phpg_closure_t phpg_closure_t;
 #define PHPG_GET(zobj) \
 	zend_object_store_get_object((zobj) TSRMLS_CC)
 
-#define PHPG_GOBJECT_GET(zobj) \
-	((phpg_gobject_t*)PHPG_GET(zobj))
-#define PHPG_GOBJECT(zobj) (GObject *)PHPG_GOBJECT_GET(zobj)->obj
+#define PHPG_GOBJECT(zobj) (GObject *)phpg_gobject_get(zobj TSRMLS_CC)->obj
 
-#define PHPG_GBOXED_GET(zobj) \
-	((phpg_gboxed_t*)PHPG_GET(zobj))
-#define PHPG_GBOXED(zobj, type) phpg_gboxed_get(zobj, type TSRMLS_CC)
+#define PHPG_GBOXED(zobj) phpg_gboxed_get(zobj TSRMLS_CC)->boxed
 
 /*
  * Property read/write function types
@@ -285,7 +281,7 @@ PHP_GTK_API void phpg_register_enum(GType gtype, const char *strip_prefix, zend_
 PHP_GTK_API void phpg_register_flags(GType gtype, const char *strip_prefix, zend_class_entry *ce);
 
 void phpg_gtype_register_self();
-PHP_GTK_API zval* phpg_gtype_new(GType type);
+PHP_GTK_API void phpg_gtype_new(zval *zobj, GType type TSRMLS_DC);
 PHP_GTK_API GType phpg_gtype_from_zval(zval *value);
 
 
@@ -302,11 +298,31 @@ PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC);
 PHP_GTK_API void phpg_gobject_watch_closure(zval *zobj, GClosure *closure TSRMLS_DC);
 void phpg_gobject_register_self();
 
+static inline phpg_gobject_t* phpg_gobject_get(zval *zobj TSRMLS_DC)
+{
+    phpg_gobject_t *pobj = zend_object_store_get_object(zobj TSRMLS_CC);
+    if (pobj->obj == NULL) {
+        php_error(E_ERROR, "Internal object missing in %s wrapper", Z_OBJCE_P(zobj)->name);
+    }
+    return pobj;
+}
+
+
 /* GBoxed */
 void phpg_gboxed_register_self();
 PHP_GTK_API void phpg_gboxed_new(zval **zobj, GType gtype, gpointer boxed, gboolean copy, gboolean own_ref TSRMLS_DC);
 PHP_GTK_API zend_class_entry* phpg_register_boxed(const char *class_name, function_entry *class_methods, prop_info_t *prop_info, GType gtype TSRMLS_DC);
-PHP_GTK_API gpointer phpg_gboxed_get(zval *zobj, GType gtype TSRMLS_DC);
+PHP_GTK_API zend_bool phpg_gboxed_check(zval *zobj, GType gtype TSRMLS_DC);
+
+static inline phpg_gboxed_t* phpg_gboxed_get(zval *zobj TSRMLS_DC)
+{
+    phpg_gboxed_t *pobj = zend_object_store_get_object(zobj TSRMLS_CC);
+    if (pobj->boxed == NULL) {
+        php_error(E_ERROR, "Internal object missing in %s wrapper", Z_OBJCE_P(zobj)->name);
+    }
+    return pobj;
+}
+
 
 /* Closures */
 PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, zend_bool use_signal_object TSRMLS_DC);

@@ -261,7 +261,7 @@ class Boxed_Def extends Definition {
                 $this->fields = array_slice($arg, 1);
         }
 
-        $this->ce = strtolower($this->in_module . convert_typename($this->name) . '_ce');
+        $this->ce = strtolower($this->c_name) . '_ce';
     }
 }
 

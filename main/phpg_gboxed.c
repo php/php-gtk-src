@@ -49,8 +49,8 @@ static zend_function_entry gboxed_methods[] = {
 	{NULL, NULL, NULL}
 };
 
-/* {{{ gboxed_free_object_storage() */
-static void gboxed_free_object_storage(phpg_gboxed_t *object TSRMLS_DC)
+/* {{{ phpg_free_gboxed_storage() */
+static void phpg_free_gboxed_storage(phpg_gboxed_t *object TSRMLS_DC)
 {
 	zend_hash_destroy(object->zobj.properties);
 	FREE_HASHTABLE(object->zobj.properties);
@@ -76,7 +76,7 @@ static zend_object_value gboxed_create_object(zend_class_entry *ce TSRMLS_DC)
 	object->free_on_destroy = FALSE;
 
 	zov.handlers = &php_gtk_handlers;
-	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) gboxed_free_object_storage, NULL TSRMLS_CC);
+	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_free_gboxed_storage, NULL TSRMLS_CC);
 
 	return zov;
 }
@@ -92,20 +92,16 @@ PHP_GTK_API zend_class_entry* phpg_register_boxed(const char *class_name,
 }
 /* }}} */
 
-/* {{{ phpg_gboxed_get() */
-PHP_GTK_API gpointer phpg_gboxed_get(zval *zobj, GType gtype TSRMLS_DC)
+/* {{{ phpg_gboxed_check() */
+PHP_GTK_API zend_bool phpg_gboxed_check(zval *zobj, GType gtype TSRMLS_DC)
 {
-    phpg_gboxed_t *pobj = NULL;
+    phpg_gboxed_t *pobj;
 
-    g_return_val_if_fail(zobj != NULL, NULL);
-    g_return_val_if_fail(Z_TYPE_P(zobj) != IS_OBJECT, NULL);
-    g_return_val_if_fail(instanceof_function(Z_OBJCE_P(zobj), gboxed_ce TSRMLS_CC), NULL);
+    g_return_val_if_fail(zobj != NULL, FALSE);
 
-    pobj = zend_object_store_get_object(zobj TSRMLS_CC);
-    if (!pobj || pobj->gtype != gtype) {
-        return NULL;
-    }
-    return pobj->boxed;
+    pobj = phpg_gboxed_get(zobj TSRMLS_CC);
+
+    return (pobj->gtype == gtype);
 }
 /* }}} */
 

@@ -1,4 +1,4 @@
-/* vim: set ft=cpp: */
+/* vim: set ft=cpp et: */
 
 %%
 headers
@@ -7,8 +7,12 @@ headers
 #include <pango/pango.h>
 
 %%
+ignore-glob
+    *_get_type
+
+%%
 override pango_color_parse
 PHP_METHOD(PangoColor, __construct)
 {
-	/* TODO */
+    /* TODO */
 }

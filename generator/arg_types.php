@@ -534,22 +534,6 @@ class Object_Arg extends Arg_Type {
     
     function write_return($type, $owns_return, $info)
     {
-        /*
-        if ($this->gtk_object_descendant) {
-            $initializer = 'php_gtk_new((GtkObject *)%s)';
-        } else {
-            $initializer = 'php_' . strtolower($this->typename) . '_new(%s)';
-        }
-
-        if ($separate) {
-            return  "   PHP_GTK_SEPARATE_RETURN(return_value, $initializer);\n" .
-                    "%s return;";
-        } else {
-            return  "   *return_value = *$initializer;\n" .
-                    "%s return;";
-        }
-        */
-
         $info->var_list->add($type, 'php_retval');
         if ($owns_return) {
             $info->post_code[] = "    phpg_gobject_new(&return_value, (GObject *)php_retval TSRMLS_CC);\n" .
@@ -565,6 +549,48 @@ class Object_Arg extends Arg_Type {
 
 /* {{{ Boxed_Arg */
 class Boxed_Arg extends Arg_Type {
+    const check_tpl = "
+    if (phpg_gboxed_check(php_%(name), %(typecode) TSRMLS_CC)) {
+        %(name) = (%(typename) *) PHPG_GBOXED(php_%(name));
+    } else {
+        php_error(E_WARNING, \"%s() expects %(name) argument to be a valid %(typename) object\",
+                  get_active_function_name(TSRMLS_C));
+        return;
+    }\n";
+    const check_default_tpl = "
+    if (php_%(name)) {
+        if (phpg_gboxed_check(php_%(name), %(typecode) TSRMLS_CC)) {
+            %(name) = (%(typename) *) PHPG_GBOXED(php_%(name));
+        } else {
+            php_error(E_WARNING, \"%s() expects %(name) argument to be a valid %(typename) object\",
+                      get_active_function_name(TSRMLS_C));
+            return;
+        }
+    }\n";
+    const check_null_tpl = "
+    if (Z_TYPE_P(php_%(name)) != IS_NULL) {
+        if (phpg_gboxed_check(php_%(name), %(typecode) TSRMLS_CC)) {
+            %(name) = (%(typename) *) PHPG_GBOXED(php_%(name));
+        } else {
+            php_error(E_WARNING, \"%s() expects %(name) argument to be a valid %(typename) object or null\",
+                      get_active_function_name(TSRMLS_C));
+            return;
+        }
+    }\n";
+    const check_null_default_tpl = "
+    if (php_%(name)) {
+        if (Z_TYPE_P(php_%(name)) == IS_NULL) {
+            %(name) = NULL;
+        } else {
+            if (phpg_gboxed_check(php_%(name), %(typecode) TSRMLS_CC)) {
+                %(name) = (%(typename) *) PHPG_GBOXED(php_%(name));
+            } else {
+                php_error(E_WARNING, \"%s() expects %(name) argument to be a valid %(typename) object or null\",
+                          get_active_function_name(TSRMLS_C));
+                return;
+            }
+        }
+    }\n";
     var $boxed_type  = null;
     var $typecode    = null;
 
@@ -580,21 +606,15 @@ class Boxed_Arg extends Arg_Type {
             if (isset($default)) {
                 $info->var_list->add($this->boxed_type, '*' . $name . ' = ' . $default);
                 $info->var_list->add('zval', '*php_' . $name . ' = NULL');
-                $info->pre_code[] = "    if (php_$name) {\n" .
-                                    "        if (Z_TYPE_P(php_$name) == IS_NULL)\n" .
-                                    "            $name = NULL;\n" .
-                                    "        else {\n" .
-                                    "            $name = (" . $this->boxed_type ." *) phpg_gboxed_get(php_" . $name . ", " . $this->typecode. ");\n" .
-                                    "            if (!$name) { php_error(E_WARNING, \"%s() expects $name to be a valid $this->boxed_type object\", get_active_function_name()); return; }\n" .
-                                    "        }\n" .
-                                    "    }\n";
+                $info->pre_code[] = aprintf(self::check_null_default_tpl, array('typecode' => $this->typecode,
+                                                                                'typename' => $this->boxed_type,
+                                                                                'name' => $name));
             } else {
                 $info->var_list->add($this->boxed_type, '*' . $name . ' = NULL');
                 $info->var_list->add('zval', '*php_' . $name);
-                $info->pre_code[] = "    if (Z_TYPE_P(php_$name) != IS_NULL) {\n" .
-                                    "        $name = (" . $this->boxed_type ." *) phpg_gboxed_get(php_" . $name . ", " . $this->typecode. ");\n" .
-                                    "        if (!$name) { php_error(E_WARNING, \"%s() expects $name to be a valid $this->boxed_type object\", get_active_function_name()); return; }\n" .
-                                    "    }\n";
+                $info->pre_code[] = aprintf(self::check_null_tpl, array('typecode' => $this->typecode,
+                                                                        'typename' => $this->boxed_type,
+                                                                        'name' => $name));
             }
 
             $info->add_parse_list('N', '&php_' . $name . ', gboxed_ce');
@@ -608,15 +628,15 @@ class Boxed_Arg extends Arg_Type {
             if (isset($default)) {
                 $info->var_list->add($this->boxed_type, '*' . $name . ' = ' . $default);
                 $info->var_list->add('zval', '*php_' . $name . ' = NULL');
-                $info->pre_code[] = "    if (php_$name) {\n" .
-                                    "        $name = (" . $this->boxed_type ." *) phpg_gboxed_get(php_" . $name . ", " . $this->typecode. ");\n" .
-                                    "        if (!$name) { php_error(E_WARNING, \"%s() expects $name to be a valid $this->boxed_type object\", get_active_function_name()); return; }\n" .
-                                    "    }\n";
+                $info->pre_code[] = aprintf(self::check_default_tpl, array('typecode' => $this->typecode,
+                                                                           'typename' => $this->boxed_type,
+                                                                           'name' => $name));
             } else {
                 $info->var_list->add($this->boxed_type, '*' . $name . ' = NULL');
                 $info->var_list->add('zval', '*php_' . $name);
-                $info->pre_code[] = "    $name = (" . $this->boxed_type ." *) phpg_gboxed_get(php_" . $name . ", " . $this->typecode. ");\n" .
-                                    "    if (!$name) { php_error(E_WARNING, \"%s() expects $name to be a valid $this->boxed_type object\", get_active_function_name()); return; }\n";
+                $info->pre_code[] = aprintf(self::check_tpl, array('typecode' => $this->typecode,
+                                                                   'typename' => $this->boxed_type,
+                                                                   'name' => $name));
             }
 
             $info->add_parse_list('O', '&php_' . $name . ', gboxed_ce');
@@ -742,6 +762,28 @@ class Drawable_Arg extends Arg_Type {
 }
 /* }}} */
 
+
+/* {{{ GType_Arg */
+class GType_Arg extends Arg_Type {
+    function write_param($type, $name, $default, $null_ok, $info)
+    {
+        $info->var_list->add('GType', $name);
+        $info->var_list->add('zval', '*php_' . $name . ' = NULL');
+        $info->arg_list[] = $name;
+        $info->add_parse_list('V', '&php_' . $name);
+        $info->pre_code[] = "    if (($name = phpg_gtype_from_zval(php_$name)) == 0) {\n" .
+                            "        return;\n" .
+                            "    }\n";
+    }
+
+    function write_return($type, $owns_return, $info)
+    {
+        $info->var_list->add('GType', 'php_retval');
+        $info->post_code[] = "    phpg_gtype_new(return_value, php_retval TSRMLS_CC);\n";
+    }
+}
+/* }}} */
+
 /* {{{ Arg_Matcher */
 class Arg_Matcher {
     var $arg_types = array();
@@ -806,6 +848,7 @@ class Arg_Matcher {
 }
 /* }}} */
 
+/* {{{ type registration */
 $matcher = new Arg_Matcher();
 
 $arg = new None_Arg();
@@ -882,6 +925,9 @@ $matcher->register('gfloat', $arg);
 #$matcher->register_boxed('GtkStyle', 'gtk_style');
 
 $matcher->register_object('GObject', 'G_TYPE_OBJECT');
+$matcher->register('GType', new GType_Arg());
+
+/* }}} */
 
 /* vim: set et sts=4 fdm=marker: */
 ?>

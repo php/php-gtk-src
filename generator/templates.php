@@ -131,7 +131,7 @@ static PHP_METHOD(%(class), %(name))
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list)))
 		return;
 %(pre_code)
-    %(return)%(cname)(phpg_gboxed_get(this_ptr, %(typecode))%(arg_list));
+    %(return)%(cname)((%(cast))phpg_gboxed_get(this_ptr TSRMLS_CC)%(arg_list));
 %(post_code)
 }\n\n";
 

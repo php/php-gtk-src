@@ -22,6 +22,10 @@ extern PHP_GTK_EXPORT_CE(gtkwidget_ce);
 #include "gen_pango.h"
 
 %%
+ignore-glob
+    *_get_type
+
+%%
 ignore
     GdkDebugFlag
     GdkColorInfoFlags

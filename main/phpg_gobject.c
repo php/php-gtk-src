@@ -61,6 +61,7 @@ static zend_object_value phpg_create_gobject(zend_class_entry *ce TSRMLS_DC)
 
 	object = emalloc(sizeof(phpg_gobject_t));
 	phpg_init_object(object, ce);
+
 	object->obj  = NULL;
 	object->dtor = NULL;
 	object->closures = NULL;
@@ -314,13 +315,17 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
     zend_hash_add(&phpg_prop_info, ce.name, ce.name_length+1, &pi_hash, sizeof(HashTable), NULL);
 
     if (gtype) {
-        /* TODO store __gtype object. This is problematic since the shutdown
-         * destructor does not know what to do with internal properties that are
-         * objects and exits badly. */
         /*
-        zval *g = phpg_gtype_new(gtype);
-        zend_hash_update(real_ce->static_members, "__gtype", sizeof("__gtype"), &g, sizeof(zval *), NULL);
-        */
+         * Since Zend engine does not let internal classes have constants or
+         * static variables that are objects, we are forced to store the gtype
+         * integer instead of the wrapper. What a fecking shame.
+         */
+        zval *g;
+        g = (zval *)malloc(sizeof(zval));
+        INIT_PZVAL(g);
+        ZVAL_LONG(g, gtype);
+        zend_hash_update(&real_ce->constants_table, "gtype", sizeof("gtype"), &g, sizeof(zval *), NULL);
+
         g_type_set_qdata(gtype, phpg_class_key, real_ce);
     }
 
@@ -334,7 +339,7 @@ void phpg_register_enum(GType gtype, const char *strip_prefix, zend_class_entry 
     GEnumClass *eclass;
     char *enum_name;
     int i, j;
-    int prefix_len;
+    int prefix_len = 0;
 
     g_return_if_fail(ce != NULL);
     g_return_if_fail(g_type_is_a(gtype, G_TYPE_ENUM));
@@ -371,7 +376,7 @@ void phpg_register_flags(GType gtype, const char *strip_prefix, zend_class_entry
     GFlagsClass *eclass;
     char *enum_name;
     int i, j;
-    int prefix_len;
+    int prefix_len = 0;
 
     g_return_if_fail(ce != NULL);
     g_return_if_fail(g_type_is_a(gtype, G_TYPE_FLAGS));
