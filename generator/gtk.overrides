@@ -20,6 +20,7 @@ ignore
 	gtk_init_check
 	gtk_exit
 	gtk_set_locale
+	gtk_accel_group_new
 	gtk_accel_group_ref
 	gtk_accel_group_unref
 	gtk_accel_group_lock

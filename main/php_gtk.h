@@ -41,6 +41,7 @@ extern int le_gdk_font;
 extern int le_gdk_gc;
 extern int le_gtk_selection_data;
 extern int le_gtk_ctree_node;
+extern int le_gtk_accel_group;
 
 extern zend_class_entry *gdk_event_ce;
 extern zend_class_entry *gdk_window_ce;
@@ -55,6 +56,7 @@ extern zend_class_entry *gdk_font_ce;
 extern zend_class_entry *gdk_gc_ce;
 extern zend_class_entry *gtk_selection_data_ce;
 extern zend_class_entry *gtk_ctree_node_ce;
+extern zend_class_entry *gtk_accel_group_ce;
 
 /* Useful macros. */
 #define PHP_GTK_GET(w) 			((GtkObject *)php_gtk_get_object(w, le_gtk))
@@ -69,6 +71,7 @@ extern zend_class_entry *gtk_ctree_node_ce;
 #define PHP_GDK_GC_GET(w)		((GdkGC *)php_gtk_get_object(w, le_gdk_gc))
 #define PHP_GTK_SELECTION_DATA_GET(w) ((GtkSelectionData *)php_gtk_get_object(w, le_gtk_selection_data))
 #define PHP_GTK_CTREE_NODE_GET(w) ((GtkCTreeNode *)php_gtk_get_object(w, le_gtk_ctree_node))
+#define PHP_GTK_ACCEL_GROUP_GET(w) ((GtkAccelGroup *)php_gtk_get_object(w, le_gtk_accel_group))
 
 /* True globals. */
 extern GHashTable *php_gtk_class_hash;
@@ -91,17 +94,18 @@ int php_gtk_get_flag_value(GtkType flag_type, zval *flag_val, int *result);
 /* Constructors and initializers. */
 void php_gtk_object_init(GtkObject *obj, zval *wrapper);
 zval *php_gtk_new(GtkObject *obj);
-zval *php_gdk_event_new(GdkEvent *obj);
-zval *php_gdk_window_new(GdkWindow *obj);
-zval *php_gdk_color_new(GdkColor *obj);
-zval *php_gdk_colormap_new(GdkColormap *obj);
-zval *php_gdk_atom_new(GdkAtom obj);
-zval *php_gdk_cursor_new(GdkCursor *obj);
-zval *php_gdk_visual_new(GdkVisual *obj);
-zval *php_gdk_font_new(GdkFont *obj);
-zval *php_gdk_gc_new(GdkGC *obj);
+zval *php_gdk_event_new(GdkEvent *event);
+zval *php_gdk_window_new(GdkWindow *window);
+zval *php_gdk_color_new(GdkColor *color);
+zval *php_gdk_colormap_new(GdkColormap *cmap);
+zval *php_gdk_atom_new(GdkAtom atom);
+zval *php_gdk_cursor_new(GdkCursor *cursor);
+zval *php_gdk_visual_new(GdkVisual *visual);
+zval *php_gdk_font_new(GdkFont *font);
+zval *php_gdk_gc_new(GdkGC *gc);
 zval *php_gtk_selection_data_new(GtkSelectionData *data);
 zval *php_gtk_ctree_node_new(GtkCTreeNode *node);
+zval *php_gtk_accel_group_new(GtkAccelGroup *group);
 
 /* Utility functions. */
 int php_gtk_parse_args(int argc, char *format, ...);

@@ -34,6 +34,7 @@ int le_gdk_font;
 int le_gdk_gc;
 int le_gtk_selection_data;
 int le_gtk_ctree_node;
+int le_gtk_accel_group;
 
 zend_class_entry *gdk_event_ce;
 zend_class_entry *gdk_window_ce;
@@ -48,34 +49,47 @@ zend_class_entry *gdk_font_ce;
 zend_class_entry *gdk_gc_ce;
 zend_class_entry *gtk_selection_data_ce;
 zend_class_entry *gtk_ctree_node_ce;
+zend_class_entry *gtk_accel_group_ce;
+
+static PHP_FUNCTION(wrap_no_direct_constructor)
+{
+	php_error(E_WARNING, "Class %s cannot be constructed directly",
+			  get_active_function_name());
+	php_gtk_invalidate(this_ptr);
+}
 
 /* GdkEvent */
-zval *php_gdk_event_new(GdkEvent *obj)
+static function_entry php_gdk_event_functions[] = {
+	{"gdkevent", PHP_FN(wrap_no_direct_constructor), NULL},
+	{NULL, NULL, NULL}
+};
+
+zval *php_gdk_event_new(GdkEvent *event)
 {
 	zval *result;
 	zval *value;
 
 	MAKE_STD_ZVAL(result);
 
-	if (!obj) {
+	if (!event) {
 		ZVAL_NULL(result);
 		return result;
 	}
 
 	object_init_ex(result, gdk_event_ce);
 
-	php_gtk_set_object(result, obj, le_gdk_event);
+	php_gtk_set_object(result, event, le_gdk_event);
 
-	add_property_long(result, "type", obj->type);
+	add_property_long(result, "type", event->type);
 	
-	if (obj->any.window) {
-		value = php_gdk_window_new(obj->any.window);
+	if (event->any.window) {
+		value = php_gdk_window_new(event->any.window);
 		add_property_zval(result, "window", value);
 	} else
 		add_property_null(result, "window");
-	add_property_bool(result, "send_event", obj->any.send_event);
+	add_property_bool(result, "send_event", event->any.send_event);
 
-	switch (obj->type) {
+	switch (event->type) {
 		case GDK_NOTHING:
 		case GDK_DELETE:
 		case GDK_DESTROY:
@@ -83,82 +97,82 @@ zval *php_gdk_event_new(GdkEvent *obj)
 
 		case GDK_EXPOSE:
 			value = php_gtk_build_value("(iiii)",
-										obj->expose.area.x,
-										obj->expose.area.y,
-										obj->expose.area.width,
-										obj->expose.area.height);
+										event->expose.area.x,
+										event->expose.area.y,
+										event->expose.area.width,
+										event->expose.area.height);
 			zend_hash_update(Z_OBJPROP_P(result), "area", sizeof("area"), &value, sizeof(zval *), NULL);
-			add_property_long(result, "count", obj->expose.count);
+			add_property_long(result, "count", event->expose.count);
 			break;
 
 		case GDK_MOTION_NOTIFY:
-			add_property_long(result, "time", obj->motion.time);
-			add_property_double(result, "x", obj->motion.x);
-			add_property_double(result, "y", obj->motion.y);
-			add_property_double(result, "pressure", obj->motion.pressure);
-			add_property_double(result, "xtilt", obj->motion.xtilt);
-			add_property_double(result, "ytilt", obj->motion.ytilt);
-			add_property_long(result, "state", obj->motion.state);
-			add_property_long(result, "is_hint", obj->motion.is_hint);
-			add_property_long(result, "source", obj->motion.source);
-			add_property_long(result, "deviceid", obj->motion.deviceid);
-			add_property_double(result, "x_root", obj->motion.x_root);
-			add_property_double(result, "y_root", obj->motion.y_root);
+			add_property_long(result, "time", event->motion.time);
+			add_property_double(result, "x", event->motion.x);
+			add_property_double(result, "y", event->motion.y);
+			add_property_double(result, "pressure", event->motion.pressure);
+			add_property_double(result, "xtilt", event->motion.xtilt);
+			add_property_double(result, "ytilt", event->motion.ytilt);
+			add_property_long(result, "state", event->motion.state);
+			add_property_long(result, "is_hint", event->motion.is_hint);
+			add_property_long(result, "source", event->motion.source);
+			add_property_long(result, "deviceid", event->motion.deviceid);
+			add_property_double(result, "x_root", event->motion.x_root);
+			add_property_double(result, "y_root", event->motion.y_root);
 			break;
 
 		case GDK_BUTTON_PRESS:      /*GdkEventButton            button*/
 		case GDK_2BUTTON_PRESS:     /*GdkEventButton            button*/
 		case GDK_3BUTTON_PRESS:     /*GdkEventButton            button*/
 		case GDK_BUTTON_RELEASE:    /*GdkEventButton            button*/
-			add_property_long(result, "time", obj->button.time);
-			add_property_double(result, "x", obj->button.x);
-			add_property_double(result, "y", obj->button.y);
-			add_property_double(result, "pressure", obj->button.pressure);
-			add_property_double(result, "xtilt", obj->button.xtilt);
-			add_property_double(result, "ytilt", obj->button.ytilt);
-			add_property_long(result, "state", obj->button.state);
-			add_property_long(result, "button", obj->button.button);
-			add_property_long(result, "source", obj->button.source);
-			add_property_long(result, "deviceid", obj->button.deviceid);
-			add_property_double(result, "x_root", obj->button.x_root);
-			add_property_double(result, "y_root", obj->button.y_root);
+			add_property_long(result, "time", event->button.time);
+			add_property_double(result, "x", event->button.x);
+			add_property_double(result, "y", event->button.y);
+			add_property_double(result, "pressure", event->button.pressure);
+			add_property_double(result, "xtilt", event->button.xtilt);
+			add_property_double(result, "ytilt", event->button.ytilt);
+			add_property_long(result, "state", event->button.state);
+			add_property_long(result, "button", event->button.button);
+			add_property_long(result, "source", event->button.source);
+			add_property_long(result, "deviceid", event->button.deviceid);
+			add_property_double(result, "x_root", event->button.x_root);
+			add_property_double(result, "y_root", event->button.y_root);
 			break;
 
 		case GDK_KEY_PRESS:
 		case GDK_KEY_RELEASE:
-			add_property_long(result, "time", obj->key.time);
-			add_property_long(result, "state", obj->key.state);
-			add_property_long(result, "keyval", obj->key.keyval);
-			add_property_stringl(result, "string", obj->key.string, obj->key.length, 1);
+			add_property_long(result, "time", event->key.time);
+			add_property_long(result, "state", event->key.state);
+			add_property_long(result, "keyval", event->key.keyval);
+			add_property_stringl(result, "string", event->key.string, event->key.length, 1);
 			break;
 
 		case GDK_ENTER_NOTIFY:
 		case GDK_LEAVE_NOTIFY:
-			if (obj->crossing.subwindow) {
-				value = php_gdk_window_new(obj->crossing.subwindow);
+			if (event->crossing.subwindow) {
+				value = php_gdk_window_new(event->crossing.subwindow);
 				add_property_zval(result, "subwindow", value);
 			} else
 				add_property_null(result, "subwindow");
-			add_property_long(result, "time", obj->crossing.time);
-			add_property_double(result, "x", obj->crossing.x);
-			add_property_double(result, "y", obj->crossing.y);
-			add_property_double(result, "x_root", obj->crossing.x_root);
-			add_property_double(result, "y_root", obj->crossing.y_root);
-			add_property_long(result, "mode", obj->crossing.mode);
-			add_property_long(result, "detail", obj->crossing.detail);
-			add_property_bool(result, "focus", obj->crossing.focus);
-			add_property_long(result, "state", obj->crossing.state);
+			add_property_long(result, "time", event->crossing.time);
+			add_property_double(result, "x", event->crossing.x);
+			add_property_double(result, "y", event->crossing.y);
+			add_property_double(result, "x_root", event->crossing.x_root);
+			add_property_double(result, "y_root", event->crossing.y_root);
+			add_property_long(result, "mode", event->crossing.mode);
+			add_property_long(result, "detail", event->crossing.detail);
+			add_property_bool(result, "focus", event->crossing.focus);
+			add_property_long(result, "state", event->crossing.state);
 			break;
 
 		case GDK_FOCUS_CHANGE:
-			add_property_bool(result, "in", obj->focus_change.in);
+			add_property_bool(result, "in", event->focus_change.in);
 			break;
 
 		case GDK_CONFIGURE:
-			add_property_long(result, "x", obj->configure.x);
-			add_property_long(result, "y", obj->configure.y);
-			add_property_long(result, "width", obj->configure.width);
-			add_property_long(result, "height", obj->configure.height);
+			add_property_long(result, "x", event->configure.x);
+			add_property_long(result, "y", event->configure.y);
+			add_property_long(result, "width", event->configure.width);
+			add_property_long(result, "height", event->configure.height);
 			break;
 
 		case GDK_MAP:
@@ -166,26 +180,26 @@ zval *php_gdk_event_new(GdkEvent *obj)
 			break;
 
 		case GDK_PROPERTY_NOTIFY:
-			add_property_zval(result, "atom", php_gdk_atom_new(obj->property.atom));
-			add_property_long(result, "time", obj->property.time);
-			add_property_long(result, "state", obj->property.state);
+			add_property_zval(result, "atom", php_gdk_atom_new(event->property.atom));
+			add_property_long(result, "time", event->property.time);
+			add_property_long(result, "state", event->property.state);
 			break;
 
 		case GDK_SELECTION_CLEAR:
 		case GDK_SELECTION_REQUEST:
 		case GDK_SELECTION_NOTIFY:
-			add_property_zval(result, "selection", php_gdk_atom_new(obj->selection.selection));
-			add_property_zval(result, "target", php_gdk_atom_new(obj->selection.target));
-			add_property_zval(result, "property", php_gdk_atom_new(obj->selection.property));
-			add_property_long(result, "requestor", obj->selection.requestor);
-			add_property_long(result, "time", obj->selection.time);
+			add_property_zval(result, "selection", php_gdk_atom_new(event->selection.selection));
+			add_property_zval(result, "target", php_gdk_atom_new(event->selection.target));
+			add_property_zval(result, "property", php_gdk_atom_new(event->selection.property));
+			add_property_long(result, "requestor", event->selection.requestor);
+			add_property_long(result, "time", event->selection.time);
 			break;
 
 		case GDK_PROXIMITY_IN:
 		case GDK_PROXIMITY_OUT:
-			add_property_long(result, "time", obj->proximity.time);
-			add_property_long(result, "source", obj->proximity.source);
-			add_property_long(result, "deviceid", obj->proximity.deviceid);
+			add_property_long(result, "time", event->proximity.time);
+			add_property_long(result, "source", event->proximity.source);
+			add_property_long(result, "deviceid", event->proximity.deviceid);
 			break;
 
 		case GDK_DRAG_ENTER:
@@ -195,19 +209,19 @@ zval *php_gdk_event_new(GdkEvent *obj)
 		case GDK_DROP_START:
 		case GDK_DROP_FINISHED:
 			/* TODO add context property */
-			add_property_long(result, "time", obj->dnd.time);
-			add_property_long(result, "x_root", obj->dnd.x_root);
-			add_property_long(result, "y_root", obj->dnd.y_root);
+			add_property_long(result, "time", event->dnd.time);
+			add_property_long(result, "x_root", event->dnd.x_root);
+			add_property_long(result, "y_root", event->dnd.y_root);
 			break;
 
 		case GDK_CLIENT_EVENT:
-			add_property_zval(result, "message_type", php_gdk_atom_new(obj->client.message_type));
-			add_property_long(result, "data_format", obj->client.data_format);
-			add_property_stringl(result, "data", obj->client.data.b, 20, 1);
+			add_property_zval(result, "message_type", php_gdk_atom_new(event->client.message_type));
+			add_property_long(result, "data_format", event->client.data_format);
+			add_property_stringl(result, "data", event->client.data.b, 20, 1);
 			break;
 
 		case GDK_VISIBILITY_NOTIFY:
-			add_property_long(result, "state", obj->visibility.state);
+			add_property_long(result, "state", event->visibility.state);
 			break;
 
 		case GDK_NO_EXPOSE:
@@ -358,31 +372,199 @@ PHP_FUNCTION(gdk_window_new_gc)
 	gdk_gc_unref(gc);
 }
 
+PHP_FUNCTION(gdk_window_property_get)
+{
+	GdkAtom property, type = 0;
+	gint delete = FALSE;
+	GdkAtom atype;
+	gint aformat, alength;
+	guchar *data;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "O|Oi", &property, gdk_atom_ce, &type, gdk_atom_ce, &delete)) {
+		gchar *prop_name;
+
+		if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s|Oi", &prop_name, &type, gdk_atom_ce, &delete))
+			return;
+
+		property = gdk_atom_intern(prop_name, FALSE);
+	}
+
+	if (gdk_property_get(PHP_GDK_WINDOW_GET(this_ptr), property, type, 0, 9999, delete,
+						 &atype, &aformat, &alength, &data)) {
+		zval *php_data;
+		int i;
+		guint16 *data16;
+		guint32 *data32;
+
+		MAKE_STD_ZVAL(php_data);
+
+		switch (aformat) {
+			case 8:
+				ZVAL_STRINGL(php_data, data, alength, 1);
+				break;
+				
+			case 16:
+				data16 = (guint16 *)data;
+				array_init(php_data);
+				for (i = 0; i < alength; i++)
+					add_next_index_long(php_data, data16[i]);
+				break;
+
+			case 32:
+				data32 = (guint32 *)data;
+				array_init(php_data);
+				for (i = 0; i < alength; i++)
+					add_next_index_long(php_data, data32[i]);
+				break;
+
+			default:
+				php_error(E_WARNING, "%s() got property format != 8, 16, or 32",
+						  get_active_function_name());
+				break;
+		}
+		g_free(data);
+		*return_value = *php_gtk_build_value("(NiN)", php_gdk_atom_new(atype), aformat, php_data);
+	}
+}
+
+PHP_FUNCTION(gdk_window_property_change)
+{
+	GdkAtom property, type;
+	gint format;
+	zval *php_mode, *php_data;
+	GdkPropMode mode;
+	guchar *data = NULL;
+	gint n_elements;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OOiVV", &property, gdk_atom_ce,
+							&type, gdk_atom_ce, &format, &php_mode, &php_data)) {
+		gchar *prop_name;
+
+		if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "sOiVV/", &prop_name, &type,
+								gdk_atom_ce, &format, &php_mode, &php_data))
+			return;
+
+			property = gdk_atom_intern(prop_name, FALSE);
+	}
+
+	if (!php_gtk_get_enum_value(GTK_TYPE_GDK_PROP_MODE, php_mode, (gint *)&mode))
+		return;
+
+	switch (format) {
+		case 8:
+			if (Z_TYPE_P(php_data) != IS_STRING) {
+				php_error(E_WARNING, "%s() expects data to be a string for format=8", get_active_function_name());
+				return;
+			}
+			data = Z_STRVAL_P(php_data);
+			n_elements = Z_STRLEN_P(php_data);
+			break;
+
+		case 16:
+			{
+				guint16 *data16;
+				zval **data_temp;
+				int i;
+
+				if (Z_TYPE_P(php_data) != IS_ARRAY) {
+					php_error(E_WARNING, "%s() expects data to be an array for format=16", get_active_function_name());
+					return;
+				}
+				n_elements = zend_hash_num_elements(Z_ARRVAL_P(php_data));
+				data16 = g_new(guint16, n_elements);
+				i = 0;
+				for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_data));
+					 zend_hash_get_current_data(Z_ARRVAL_P(php_data), (void **)&data_temp);
+					 zend_hash_move_forward(Z_ARRVAL_P(php_data))) {
+					convert_to_long_ex(data_temp);
+					data16[i++] = Z_LVAL_PP(data_temp); 
+				}
+			}	
+			break;
+
+		case 32:
+			{
+				guint32 *data32;
+				zval **data_temp;
+				int i;
+
+				if (Z_TYPE_P(php_data) != IS_ARRAY) {
+					php_error(E_WARNING, "%s() expects data to be an array for format=32", get_active_function_name());
+					return;
+				}
+				n_elements = zend_hash_num_elements(Z_ARRVAL_P(php_data));
+				data32 = g_new(guint32, n_elements);
+				i = 0;
+				for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_data));
+					 zend_hash_get_current_data(Z_ARRVAL_P(php_data), (void **)&data_temp);
+					 zend_hash_move_forward(Z_ARRVAL_P(php_data))) {
+					convert_to_long_ex(data_temp);
+					data32[i++] = Z_LVAL_PP(data_temp); 
+				}
+			}	
+			break;
+
+		default:
+			php_error(E_WARNING, "%s() expects format to be 8, 16, or 32", get_active_function_name());
+			break;
+	}
+
+	gdk_property_change(PHP_GDK_WINDOW_GET(this_ptr), property, type, format,
+						mode, data, n_elements);
+	if (format != 8)
+		g_free(data);
+}
+
+PHP_FUNCTION(gdk_window_property_delete)
+{
+	GdkAtom property;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "O", &property, gdk_atom_ce)) {
+		gchar *prop_name;
+
+		if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "s", &prop_name))
+			return;
+
+		property = gdk_atom_intern(prop_name, FALSE);
+	}
+
+	gdk_property_delete(PHP_GDK_WINDOW_GET(this_ptr), property);
+}
+
 static function_entry php_gdk_window_functions[] = {
-	/* TODO implement other functions similar to PyGtk */
-	{"raise", 		PHP_FN(gdk_window_raise), NULL},
-	{"lower", 		PHP_FN(gdk_window_lower), NULL},
-	{"get_pointer", PHP_FN(gdk_window_get_pointer), NULL},
-	{"set_cursor", 	PHP_FN(gdk_window_set_cursor), NULL},
-	{"new_gc", 		PHP_FN(gdk_window_new_gc), NULL},
+	{"gdkwindow",		PHP_FN(wrap_no_direct_constructor), NULL},
+	{"raise", 			PHP_FN(gdk_window_raise), NULL},
+	{"lower", 			PHP_FN(gdk_window_lower), NULL},
+	{"get_pointer", 	PHP_FN(gdk_window_get_pointer), NULL},
+	{"set_cursor", 		PHP_FN(gdk_window_set_cursor), NULL},
+	{"new_gc", 			PHP_FN(gdk_window_new_gc), NULL},
+	{"property_get", 	PHP_FN(gdk_window_property_get), NULL},
+	{"property_change", PHP_FN(gdk_window_property_change), NULL},
+	{"property_delete", PHP_FN(gdk_window_property_delete), NULL},
 	{NULL, NULL, NULL}
 };
 
-zval *php_gdk_window_new(GdkWindow *obj)
+zval *php_gdk_window_new(GdkWindow *window)
 {
 	zval *result;
 
 	MAKE_STD_ZVAL(result);
 
-	if (!obj) {
+	if (!window) {
 		ZVAL_NULL(result);
 		return result;
 	}
 
 	object_init_ex(result, gdk_window_ce);
 
-	gdk_window_ref(obj);
-	php_gtk_set_object(result, obj, le_gdk_window);
+	gdk_window_ref(window);
+	php_gtk_set_object(result, window, le_gdk_window);
 
 	return result;
 }
@@ -485,21 +667,21 @@ static function_entry php_gdk_color_functions[] = {
 	{NULL, NULL, NULL}
 };
 
-zval *php_gdk_color_new(GdkColor *obj)
+zval *php_gdk_color_new(GdkColor *color)
 {
 	zval *result;
 	GdkColor *result_obj;
 
 	MAKE_STD_ZVAL(result);
 
-	if (!obj) {
+	if (!color) {
 		ZVAL_NULL(result);
 		return result;
 	}
 
 	object_init_ex(result, gdk_color_ce);
 
-	result_obj = gdk_color_copy(obj);
+	result_obj = gdk_color_copy(color);
 	php_gtk_set_object(result, result_obj, le_gdk_color);
 
 	return result;
@@ -582,26 +764,27 @@ PHP_FUNCTION(gdk_colormap_alloc)
 }
 
 static function_entry php_gdk_colormap_functions[] = {
-	{"size", 	PHP_FN(gdk_colormap_size), NULL},
-	{"alloc",	PHP_FN(gdk_colormap_alloc), NULL},
+	{"gdkcolormap", PHP_FN(wrap_no_direct_constructor), NULL},
+	{"size", 		PHP_FN(gdk_colormap_size), NULL},
+	{"alloc",		PHP_FN(gdk_colormap_alloc), NULL},
 	{NULL, NULL, NULL}
 };
 
-zval *php_gdk_colormap_new(GdkColormap *obj)
+zval *php_gdk_colormap_new(GdkColormap *cmap)
 {
 	zval *result;
 
 	MAKE_STD_ZVAL(result);
 
-	if (!obj) {
+	if (!cmap) {
 		ZVAL_NULL(result);
 		return result;
 	}
 
 	object_init_ex(result, gdk_colormap_ce);
 
-	gdk_colormap_ref(obj);
-	php_gtk_set_object(result, obj, le_gdk_colormap);
+	gdk_colormap_ref(cmap);
+	php_gtk_set_object(result, cmap, le_gdk_colormap);
 
 	return result;
 }
@@ -646,6 +829,12 @@ static void gdk_colormap_get_property(zval *result, zval *object, zend_llist_ele
 
 
 /* GdkAtom */
+/* TODO maybe change this to have a real constructor */
+static function_entry php_gdk_atom_functions[] = {
+	{"gdkatom", PHP_FN(wrap_no_direct_constructor), NULL},
+	{NULL, NULL, NULL}
+};
+
 inline GdkAtom php_gdk_atom_get(zval *wrapper)
 {
 	zval **atom;
@@ -654,17 +843,17 @@ inline GdkAtom php_gdk_atom_get(zval *wrapper)
 	return (GdkAtom)Z_LVAL_PP(atom);
 }
 
-zval *php_gdk_atom_new(GdkAtom obj)
+zval *php_gdk_atom_new(GdkAtom atom)
 {
 	zval *result;
 	gchar *atom_name;
 
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gdk_atom_ce);
-	add_property_long_ex(result, "atom", sizeof("atom"), obj);
-	atom_name = gdk_atom_name(obj);
+	add_property_long_ex(result, "atom", sizeof("atom"), atom);
+	atom_name = gdk_atom_name(atom);
 	if (atom_name)
-		add_property_string_ex(result, "string", sizeof("string"), gdk_atom_name(obj), 0);
+		add_property_string_ex(result, "string", sizeof("string"), atom_name, 0);
 	else
 		add_property_null_ex(result, "string", sizeof("string"));
 
@@ -672,19 +861,24 @@ zval *php_gdk_atom_new(GdkAtom obj)
 }
 
 /* GdkCursor */
-zval *php_gdk_cursor_new(GdkCursor *obj)
+static function_entry php_gdk_cursor_functions[] = {
+	{"gdkcursor", PHP_FN(wrap_no_direct_constructor), NULL},
+	{NULL, NULL, NULL}
+};
+
+zval *php_gdk_cursor_new(GdkCursor *cursor)
 {
 	zval *result;
 
 	MAKE_STD_ZVAL(result);
 
-	if (!obj) {
+	if (!cursor) {
 		ZVAL_NULL(result);
 		return result;
 	}
 
 	object_init_ex(result, gdk_cursor_ce);
-	php_gtk_set_object(result, obj, le_gdk_cursor);
+	php_gtk_set_object(result, cursor, le_gdk_cursor);
 
 	return result;
 }
@@ -718,20 +912,25 @@ static void gdk_cursor_get_property(zval *result, zval *object, zend_llist_eleme
 
 
 /* GdkVisual */
-zval *php_gdk_visual_new(GdkVisual *obj)
+static function_entry php_gdk_visual_functions[] = {
+	{"gdkvisual", PHP_FN(wrap_no_direct_constructor), NULL},
+	{NULL, NULL, NULL}
+};
+
+zval *php_gdk_visual_new(GdkVisual *visual)
 {
 	zval *result;
 
 	MAKE_STD_ZVAL(result);
 
-	if (!obj) {
+	if (!visual) {
 		ZVAL_NULL(result);
 		return result;
 	}
 
 	object_init_ex(result, gdk_visual_ce);
-	gdk_visual_ref(obj);
-	php_gtk_set_object(result, obj, le_gdk_visual);
+	gdk_visual_ref(visual);
+	php_gtk_set_object(result, visual, le_gdk_visual);
 
 	return result;
 }
@@ -836,6 +1035,7 @@ PHP_FUNCTION(gdk_font_extents)
 }
 
 static function_entry php_gdk_font_functions[] = {
+	{"gdkfont",	PHP_FN(wrap_no_direct_constructor), NULL},
 	{"width", 	PHP_FN(gdk_font_width), NULL},
 	{"height", 	PHP_FN(gdk_font_height), NULL},
 	{"measure", PHP_FN(gdk_font_measure), NULL},
@@ -843,20 +1043,20 @@ static function_entry php_gdk_font_functions[] = {
 	{NULL, NULL, NULL}
 };
 
-zval *php_gdk_font_new(GdkFont *obj)
+zval *php_gdk_font_new(GdkFont *font)
 {
 	zval *result;
 
 	MAKE_STD_ZVAL(result);
 
-	if (!obj) {
+	if (!font) {
 		ZVAL_NULL(result);
 		return result;
 	}
 
 	object_init_ex(result, gdk_font_ce);
-	gdk_font_ref(obj);
-	php_gtk_set_object(result, obj, le_gdk_font);
+	gdk_font_ref(font);
+	php_gtk_set_object(result, font, le_gdk_font);
 
 	return result;
 }
@@ -924,24 +1124,25 @@ PHP_FUNCTION(gdk_gc_set_dashes)
 }
 
 static function_entry php_gdk_gc_functions[] = {
-	{"set_dashes", PHP_FN(gdk_gc_set_dashes), NULL},
+	{"gdkgc",		PHP_FN(wrap_no_direct_constructor), NULL},
+	{"set_dashes",	PHP_FN(gdk_gc_set_dashes), NULL},
 	{NULL, NULL, NULL}
 };
 
-zval *php_gdk_gc_new(GdkGC *obj)
+zval *php_gdk_gc_new(GdkGC *gc)
 {
 	zval *result;
 
 	MAKE_STD_ZVAL(result);
 
-	if (!obj) {
+	if (!gc) {
 		ZVAL_NULL(result);
 		return result;
 	}
 
 	object_init_ex(result, gdk_gc_ce);
-	gdk_gc_ref(obj);
-	php_gtk_set_object(result, obj, le_gdk_gc);
+	gdk_gc_ref(gc);
+	php_gtk_set_object(result, gc, le_gdk_gc);
 
 	return result;
 }
@@ -1099,7 +1300,8 @@ PHP_FUNCTION(gtk_selection_data_set)
 }
 
 static function_entry php_gtk_selection_data_functions[] = {
-	{"set", PHP_FN(gtk_selection_data_set), NULL},
+	{"gdkselectiondata", PHP_FN(wrap_no_direct_constructor), NULL},
+	{"set", 			 PHP_FN(gtk_selection_data_set), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -1143,6 +1345,11 @@ static void gtk_selection_data_get_property(zval *result, zval *object, zend_lli
 }
 
 /* GtkCtreeNode */
+static function_entry php_gtk_ctree_node_functions[] = {
+	{"gtkctreenode", PHP_FN(wrap_no_direct_constructor), NULL},
+	{NULL, NULL, NULL}
+};
+
 zval *php_gtk_ctree_node_new(GtkCTreeNode *node)
 {
 	zval *result;
@@ -1195,6 +1402,73 @@ static void gtk_ctree_node_get_property(zval *result, zval *object, zend_llist_e
 		ZVAL_BOOL(result, GTK_CTREE_ROW(node)->expanded);
 	}
 }
+
+
+/* GtkAccelGroup */
+PHP_FUNCTION(gtkaccelgroup)
+{
+	GtkAccelGroup *accel_group;
+	
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	accel_group = gtk_accel_group_new();
+	*return_value = *php_gtk_accel_group_new(accel_group);
+}
+
+PHP_FUNCTION(gtk_accel_group_lock)
+{
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	gtk_accel_group_lock(PHP_GTK_ACCEL_GROUP_GET(this_ptr));
+}
+
+PHP_FUNCTION(gtk_accel_group_unlock)
+{
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	gtk_accel_group_unlock(PHP_GTK_ACCEL_GROUP_GET(this_ptr));
+}
+
+static function_entry php_gtk_accel_group_functions[] = {
+	{"gtkaccelgroup",	PHP_FN(gtkaccelgroup), NULL},
+	{"lock", 			PHP_FN(gtk_accel_group_lock), NULL},
+	{"unlock", 			PHP_FN(gtk_accel_group_unlock), NULL},
+	{NULL, NULL, NULL}
+};
+
+zval *php_gtk_accel_group_new(GtkAccelGroup *group)
+{
+	zval *result;
+
+	MAKE_STD_ZVAL(result);
+
+	if (!group) {
+		ZVAL_NULL(result);
+		return result;
+	}
+
+	object_init_ex(result, gtk_accel_group_ce);
+	gtk_accel_group_ref(group);
+	php_gtk_set_object(result, group, le_gtk_accel_group);
+
+	return result;
+}
+
+static void release_gtk_accel_group_rsrc(zend_rsrc_list_entry *rsrc)
+{
+	GtkAccelGroup *group = (GtkAccelGroup *)rsrc->ptr;
+	gtk_accel_group_unref(group);
+}
+
 
 
 /* Generic get/set property handlers. */
@@ -1319,9 +1593,10 @@ void php_gtk_register_types(int module_number)
 	le_gdk_gc = zend_register_list_destructors_ex(release_gdk_gc_rsrc, NULL, "GdkGC", module_number);
 	le_gtk_selection_data = zend_register_list_destructors_ex(NULL, NULL, "GtkSelectionData", module_number);
 	le_gtk_ctree_node = zend_register_list_destructors_ex(NULL, NULL, "GtkCTreeNode", module_number);
+	le_gtk_accel_group = zend_register_list_destructors_ex(release_gtk_accel_group_rsrc, NULL, "GtkAccelGroup", module_number);
 
 
-	INIT_CLASS_ENTRY(ce, "gdkevent", NULL);
+	INIT_CLASS_ENTRY(ce, "gdkevent", php_gdk_event_functions);
 	gdk_event_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkwindow", php_gdk_window_functions, NULL, php_gtk_get_property, NULL);
@@ -1337,13 +1612,13 @@ void php_gtk_register_types(int module_number)
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkcolormap", php_gdk_colormap_functions, NULL, php_gtk_get_property, php_gtk_set_property);
 	gdk_colormap_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 
-	INIT_CLASS_ENTRY(ce, "gdkatom", NULL);
+	INIT_CLASS_ENTRY(ce, "gdkatom", php_gdk_atom_functions);
 	gdk_atom_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 	
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkcursor", NULL, NULL, php_gtk_get_property, NULL);
+	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkcursor", php_gdk_cursor_functions, NULL, php_gtk_get_property, NULL);
 	gdk_cursor_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 	
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkvisual", NULL, NULL, php_gtk_get_property, NULL);
+	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkvisual", php_gdk_visual_functions, NULL, php_gtk_get_property, NULL);
 	gdk_visual_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkfont", php_gdk_font_functions, NULL, php_gtk_get_property, NULL);
@@ -1355,8 +1630,11 @@ void php_gtk_register_types(int module_number)
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gtkselectiondata", php_gtk_selection_data_functions, NULL, php_gtk_get_property, NULL);
 	gtk_selection_data_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 
-	INIT_OVERLOADED_CLASS_ENTRY(ce, "gtkctreenode", NULL, NULL, php_gtk_get_property, NULL);
+	INIT_OVERLOADED_CLASS_ENTRY(ce, "gtkctreenode", php_gtk_ctree_node_functions, NULL, php_gtk_get_property, NULL);
 	gtk_ctree_node_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+
+	INIT_CLASS_ENTRY(ce, "gtkaccelgroup", php_gtk_accel_group_functions);
+	gtk_accel_group_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 }
 
 #endif
