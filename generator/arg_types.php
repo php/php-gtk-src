@@ -222,9 +222,9 @@ class Bool_Arg extends Arg_Type {
 						 $in_constructor)
 	{
 		if (isset($default))
-			$var_list->add('int', $name . ' = ' . $default);
+			$var_list->add('zend_bool', $name . ' = ' . $default);
 		else
-			$var_list->add('int', $name);
+			$var_list->add('zend_bool', $name);
 		$parse_list[] 	= '&' . $name;
 		$parse_type[]	= " ";
 		$arg_list[] 	= "($type)$name";
