@@ -1178,7 +1178,7 @@ gtk_sqpane_button_release (GtkWidget *widget, GdkEventButton *event)
     {
 	  if(sqpane->in_drag&1==1)
         gtk_sqpane_vxor_line (sqpane);
-	  if(sqpane->in_drag&2==2)
+	  if((sqpane->in_drag&2)==2)
         gtk_sqpane_hxor_line (sqpane);
       sqpane->in_drag = 0;
       sqpane->position_set = TRUE;
