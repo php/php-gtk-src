@@ -1,3 +1,11 @@
+2001-11-17  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * test/gtk.php
+      test/hello.php
+      test/list.php
+      test/scribble.php
+      test/sqpane.php: Do proper checking if class already exists or not.
+
 2001-11-16  Andrei Zmievski  <andrei@ispi.net>
 
     * main/php_gtk.c
