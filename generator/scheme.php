@@ -104,6 +104,11 @@ class Defs_Parser {
 			$this->handle($node);
 	}
 
+	function merge($parser)
+	{
+		$this->parse_tree = array_merge($this->parse_tree, $parser->parse_tree);
+	}
+
 	function handle($node)
 	{
 		global	$char_table,
@@ -191,7 +196,7 @@ class Defs_Parser {
 	function find_parent($obj)
 	{
 		foreach ($this->objects as $object) {
-			if ($object->name == $obj->parent)
+			if ($object->name == $obj->parent[0])
 				return $object;
 		}
 	}

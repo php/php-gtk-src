@@ -83,8 +83,12 @@ class Object_Def {
 
 			if ($arg[0] == 'in-module')
 				$this->in_module = $arg[1];
-			else if ($arg[0] == 'parent')
-				$this->parent = $arg[1];
+			else if ($arg[0] == 'parent') {
+				if (count($arg) > 2)
+					$this->parent = array($arg[1], $arg[2][0]);
+				else
+					$this->parent = array($arg[1], null);
+			}
 			else if ($arg[0] == 'c-name')
 				$this->c_name = $arg[1];
 			else if ($arg[0] == 'field') {
