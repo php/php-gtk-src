@@ -78,6 +78,20 @@ void *php_gtk_get_object(zval *wrapper, int rsrc_type)
 	return obj;
 }
 
+int php_gtk_get_simple_enum_value(zval *enum_val, int *result)
+{
+	if (!enum_val)
+		return 0;
+
+	if (Z_TYPE_P(enum_val) == IS_LONG) {
+		*result = Z_LVAL_P(enum_val);
+		return 1;
+	}
+
+	php_error(E_WARNING, "simple enum values must be integers");
+	return 0;
+}
+
 int php_gtk_get_enum_value(GtkType enum_type, zval *enum_val, int *result)
 {
 	if (!enum_val)

@@ -27,6 +27,7 @@ class Enum_Def {
 	var $in_module 	= null;
 	var $c_name 	= null;
 	var $values		= array();
+	var $simple		= true;
 
 	function Enum_Def($args)
 	{
@@ -64,14 +65,15 @@ class Flag_Def extends Enum_Def {
 }
 
 class Object_Def {
-	var $def_type 	= 'object';
-	var $name 		= null;
-	var $in_module 	= null;
+	var $def_type	= 'object';
+	var $name		= null;
+	var $in_module	= null;
 	var $parent		= null;
-	var $c_name 	= null;
+	var $c_name		= null;
 	var $ce			= null;
 	var $fields		= array();
 	var $methods	= array();
+	var $gtk_object_descendant = false;
 
 	function Object_Def($args)
 	{

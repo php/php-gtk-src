@@ -43,7 +43,8 @@ PHP_FUNCTION(%s)
 %s%s
 }\n\n";
 
-$method_call_tpl = "%s(%s(PHP_GTK_GET(this_ptr))%s)";
+$method1_call_tpl = "%s(%s(PHP_GTK_GET(this_ptr))%s)";
+$method2_call_tpl = "%s(PHP_%s_GET(this_ptr)%s)";
 
 $constructor_tpl = "
 PHP_FUNCTION(%s)
@@ -55,17 +56,21 @@ PHP_FUNCTION(%s)
 		return;
 	}
 
-%s	wrapped_obj = (GtkObject *)%s(%s);
+%s	wrapped_obj = (%s *)%s(%s);
 	if (!wrapped_obj) {
 		php_error(E_WARNING, \"%%s(): could not create %s object\",
 				  get_active_function_name(TSRMLS_C));
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
-
-	php_gtk_object_init(wrapped_obj, this_ptr);
-%s
+%s%s
 }\n\n";
+
+$gtk_object_init_tpl = "
+	php_gtk_object_init(wrapped_obj, this_ptr);\n";
+
+$non_gtk_object_init_tpl = "
+	php_gtk_set_object(this_ptr, wrapped_obj, le_%s);\n";
 
 $function_entry_tpl = "\t{\"%s\",	PHP_FN(%s),	%s},\n";
 $functions_decl_tpl = "

@@ -12,7 +12,8 @@
 
 * gdk-pixbuf support
 * Gnome support
-* GtkHtml support
+
+* Clean up and optimize generator
 
 # vim: set tw=80 ai et sts=4:
 

@@ -150,6 +150,8 @@ class Defs_Parser {
 	function handle_enum($arg)
 	{
 		$enum_def 		= &new Enum_Def($arg);
+		if (basename($this->file_path) == 'gtk+')
+			$enum_def->simple = false;
 		$this->enums[] 	= &$enum_def;
 		$this->c_name[] = &$enum_def->c_name;
 	}
@@ -181,8 +183,16 @@ class Defs_Parser {
 	function handle_object($arg)
 	{
 		$object_def			= &new Object_Def($arg);
-		$this->objects[]	= &$object_def;
+		$this->objects[$object_def->in_module . $object_def->name] = &$object_def;
 		$this->c_name[] 	= &$object_def->c_name;
+
+		if ($object_def->in_module == 'Gtk' && $object_def->name == 'Object') {
+			$object_def->gtk_object_descendant = true;
+		} else {
+			if ($parent_def = $this->find_parent($object_def)) {
+				$object_def->gtk_object_descendant = $parent_def->gtk_object_descendant;
+			}
+		}
 	}
 
 	function handle_struct($arg)
@@ -228,9 +238,8 @@ class Defs_Parser {
 
 	function find_parent($obj)
 	{
-		foreach ($this->objects as $object) {
-			if ($object->name == $obj->parent[0])
-				return $object;
+		if (isset($obj->parent)) {
+			return $this->objects[$obj->parent[1] . $obj->parent[0]];
 		}
 	}
 }

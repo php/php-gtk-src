@@ -40,19 +40,20 @@ class Generator {
 	var $overrides  = null;
 	var $prefix		= null;
 	var $lprefix	= null;
+	var $function_class = null;
 
 	var $constants	= '';
 	var $register_classes = '';
-	var $register_function_wrapper_ce = true;
 
 	var $functions_decl_end = "\t{NULL, NULL, NULL}\n};\n\n";
 
-	function Generator(&$parser, &$overrides, $prefix)
+	function Generator(&$parser, &$overrides, $prefix, $function_class)
 	{
 		$this->parser 	 = &$parser;
 		$this->overrides = &$overrides;
 		$this->prefix	 = $prefix;
 		$this->lprefix	 = strtolower($prefix);
+		$this->function_class = $function_class;
 	}
 	
 	function register_types($parser = null)
@@ -66,13 +67,14 @@ class Generator {
 			$matcher->register_struct($struct->c_name);
 
 		foreach ($parser->objects as $object)
-			$matcher->register_object($object->c_name);
+			$matcher->register_object($object->c_name,
+									  $object->gtk_object_descendant);
 
 		foreach ($parser->enums as $enum) {
 			if ($enum->def_type == 'flags')
 				$matcher->register_flag($enum->c_name);
 			else
-				$matcher->register_enum($enum->c_name);
+				$matcher->register_enum($enum->c_name, $enum->simple);
 		}
 	}
 
@@ -91,10 +93,11 @@ class Generator {
 		fwrite($fp, "}\n\n");
 	}
 
-	function write_method($fp, $obj_name, $method)
+	function write_method($fp, $obj_name, $gtk_object_descendant, $method)
 	{
 		global	$matcher,
-				$method_call_tpl,
+				$method1_call_tpl,
+				$method2_call_tpl,
 				$method_tpl;
 
 		$specs 		= '';
@@ -135,10 +138,16 @@ class Generator {
 		$extra_pre_code = implode('', $extra_pre_code);
 		$extra_post_code = implode('', $extra_post_code);
 
-		$method_call = sprintf($method_call_tpl,
-							   $method->c_name,
-							   substr(convert_typename($obj_name), 1),
-							   $arg_list);
+		if ($gtk_object_descendant)
+			$method_call = sprintf($method1_call_tpl,
+								   $method->c_name,
+								   substr(convert_typename($obj_name), 1),
+								   $arg_list);
+		else
+			$method_call = sprintf($method2_call_tpl,
+								   $method->c_name,
+								   substr(convert_typename($obj_name), 1),
+								   $arg_list);
 		$ret_handler = &$matcher->get($method->return_type);
 		if ($ret_handler === null) {
 			error_log("Could not write method $obj_name::$method->name (return type $method->return_type)");
@@ -162,10 +171,12 @@ class Generator {
 		return true;
 	}
 
-	function write_constructor($fp, $obj_name, $constructor)
+	function write_constructor($fp, $obj_name, $gtk_object_descendant, $constructor)
 	{
 		global	$matcher,
-				$constructor_tpl;
+				$constructor_tpl,
+				$gtk_object_init_tpl,
+				$non_gtk_object_init_tpl;
 
 		$specs 		= '';
 		$var_list 	= new Var_List();
@@ -202,7 +213,16 @@ class Generator {
 		$extra_pre_code = implode('', $extra_pre_code);
 		$extra_post_code = implode('', $extra_post_code);
 
-		$var_list->add('GtkObject', '*wrapped_obj');
+		if ($gtk_object_descendant) {
+			$cast = 'GtkObject';
+			$var_list->add('GtkObject', '*wrapped_obj');
+			$obj_init_code = $gtk_object_init_tpl;
+		} else {
+			$cast = $obj_name;
+			$var_list->add($obj_name, '*wrapped_obj');
+			$obj_init_code = sprintf($non_gtk_object_init_tpl,
+									strtolower(substr(convert_typename($obj_name), 1)));
+		}
 
 		$constructor_code = sprintf($constructor_tpl,
 									strtolower($constructor->c_name),
@@ -210,9 +230,11 @@ class Generator {
 									$specs,
 									$parse_list,
 									$extra_pre_code,
+									$cast,
 									$constructor->c_name,
 									$arg_list,
 									$obj_name,
+									$obj_init_code,
 									$extra_post_code);
 
 		fwrite($fp, $constructor_code);
@@ -257,10 +279,6 @@ class Generator {
 											$extra_pre_code,
 											$extra_post_code,
 											false);
-		}
-
-		if ($function->name == 'gtk_rc_parse') {
-			var_dump($arg_list); exit;
 		}
 
 		$arg_list 	= implode(', ', $arg_list);
@@ -490,7 +508,7 @@ class Generator {
 										   strtolower($constructor->c_name),
 										   'NULL');
 			} else if (!$this->overrides->is_ignored($constructor->c_name)) {
-				if ($this->write_constructor($fp, $object->c_name, $constructor)) {
+				if ($this->write_constructor($fp, $object->c_name, $object->gtk_object_descendant, $constructor)) {
 					$functions_decl .= sprintf($function_entry_tpl,
 											   $constructor->is_constructor_of,
 											   strtolower($constructor->c_name),
@@ -509,13 +527,18 @@ class Generator {
 				}
 			}
 
-			/* insert get_type() as class method */
-			$lclass = strtolower(substr(convert_typename($object->c_name), 1));
-			$functions_decl .= sprintf($function_entry_tpl,
-									   'get_type',
-									   $lclass .  '_get_type',
-									   'NULL');
-			fwrite($fp, sprintf($get_type_tpl, $lclass, $lclass));
+			/*
+			 * Insert get_type() as class method if the object is descended from
+			 * GtkObject.
+			 */
+			if ($object->gtk_object_descendant) {
+				$lclass = strtolower(substr(convert_typename($object->c_name), 1));
+				$functions_decl .= sprintf($function_entry_tpl,
+										   'get_type',
+										   $lclass .  '_get_type',
+										   'NULL');
+				fwrite($fp, sprintf($get_type_tpl, $lclass, $lclass));
+			}
 
 			foreach ($this->parser->find_methods($object) as $method) {
 				if ($this->overrides->is_overriden($method->c_name)) {
@@ -529,7 +552,8 @@ class Generator {
 											   'NULL');
 				}
 				else if (!$this->overrides->is_ignored($method->c_name)) {
-					if ($this->write_method($fp, $object->c_name, $method)) {
+					if ($this->write_method($fp, $object->c_name,
+											$object->gtk_object_descendant, $method)) {
 						$functions_decl .= sprintf($function_entry_tpl,
 												   strtolower($method->name),
 												   strtolower($method->c_name),
@@ -552,6 +576,10 @@ class Generator {
 				}
 			}
 
+			if ($object->c_name == $this->function_class) {
+				$this->write_functions($fp, false, $functions_decl);
+			}
+
 			$functions_decl .= $this->functions_decl_end;
 			fwrite($fp, $functions_decl);
 
@@ -562,7 +590,7 @@ class Generator {
 		$this->register_classes .= "\n" . implode("\n", $this->overrides->get_register_classes());
 	}
 
-	function write_functions($fp)
+	function write_functions($fp, $separate_class, &$functions_decl)
 	{
 		global	$function_entry_tpl,
 				$functions_decl_tpl,
@@ -571,7 +599,8 @@ class Generator {
 				$register_class_tpl;
 		
 		$num_functions = 0;
-		$functions_decl = sprintf($functions_decl_tpl, $this->lprefix);
+		if ($separate_class)
+			$functions_decl = sprintf($functions_decl_tpl, $this->lprefix);
 
 		foreach ($this->parser->functions as $function) {
 			if ($this->overrides->is_overriden($function->c_name)) {
@@ -601,20 +630,22 @@ class Generator {
 				}
 			}
 		}
-		$functions_decl .= $this->functions_decl_end;
+		if ($separate_class)
+			$functions_decl .= $this->functions_decl_end;
 
 		if ($num_functions > 0) {
-			$this->register_classes .= sprintf($init_class_tpl,
-											   $this->prefix,
-											   $this->lprefix,
-											   'NULL');
-			$this->register_classes .= sprintf($register_class_tpl,
-											   $this->lprefix . '_ce',
-											   'NULL');
-			fwrite($fp, sprintf($class_entry_tpl, $this->lprefix . '_ce'));
-			fwrite($fp, $functions_decl);
-		} else
-			$this->register_function_wrapper_ce = false;
+			if ($separate_class) {
+				$this->register_classes .= sprintf($init_class_tpl,
+												   $this->prefix,
+												   $this->lprefix,
+												   'NULL');
+				$this->register_classes .= sprintf($register_class_tpl,
+												   $this->lprefix . '_ce',
+												   'NULL');
+				fwrite($fp, sprintf($class_entry_tpl, $this->lprefix . '_ce'));
+				fwrite($fp, $functions_decl);
+			}
+		}
 	}
 
 	function write_class_entries($fp)
@@ -639,7 +670,8 @@ class Generator {
 		fwrite($fp, $this->overrides->get_headers());
 		$this->write_constants($fp);
 		$this->write_class_entries($fp);
-		$this->write_functions($fp);
+		if (!isset($this->parser->objects[$this->function_class]))
+			$this->write_functions($fp, true, $dummy);
 		$this->write_structs($fp);
 		$this->write_objects($fp);
 		fwrite($fp, sprintf($register_classes_tpl,
@@ -657,15 +689,16 @@ $argv = $HTTP_SERVER_VARS['argv'];
    separator in command-line version. */
 array_walk($argv, create_function('&$x', '$x = urldecode($x);'));
 
-$result = Console_Getopt::getopt($argv, 'o:p:r:');
+$result = Console_Getopt::getopt($argv, 'o:p:c:r:');
 if (!$result || count($result[1]) < 2)
-	die("usage: php -q generator.php [-o overridesfile] [-p prefix] [-r typesfile] defsfile\n");
+	die("usage: php -q generator.php [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] defsfile\n");
 
 list($opts, $argv) = $result;
 
 chdir('..');
 
 $prefix = 'Gtk';
+$function_class = null;
 $overrides = new Overrides();
 
 foreach ($opts as $opt) {
@@ -674,6 +707,8 @@ foreach ($opts as $opt) {
 		$overrides = new Overrides($opt_arg);
 	} else if ($opt_spec == 'p') {
 		$prefix = $opt_arg;
+	} else if ($opt_spec == 'c') {
+		$function_class = $opt_arg;
 	} else if ($opt_spec == 'r') {
 		$type_parser = new Defs_Parser($opt_arg);
 		$type_parser->start_parsing();
@@ -682,7 +717,7 @@ foreach ($opts as $opt) {
 }
 
 $parser = new Defs_Parser($argv[1]);
-$generator = new Generator($parser, $overrides, $prefix);
+$generator = new Generator($parser, $overrides, $prefix, $function_class);
 $parser->start_parsing();
 $generator->register_types();
 $generator->create_source();
