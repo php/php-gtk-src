@@ -1,3 +1,26 @@
+2003-05-27  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/canvas/canvas.php:
+      updated example with the polygon
+
+    * ext/canvas/canvas.defs
+      ext/canvas/canvas.overrides
+      ext/canvas/config.m4
+      ext/canvas/php_canvas.c:
+      supprised myself there - solved the polygon points problem - polygons now
+      work..
+
+    * ext/canvas/.cvsignore
+      ext/canvas/Makefile.in
+      ext/canvas/canvas.defs
+      ext/canvas/canvas.overrides
+      ext/canvas/canvas.php
+      ext/canvas/config.m4
+      ext/canvas/php_canvas.c
+      ext/canvas/php_canvas.h:
+      first upload of gtk-canvas widget bindings - mostly working except polygon
+      - which needs more brainpower than I have today :)
+
 2003-03-19  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (ZE2_PORT)
