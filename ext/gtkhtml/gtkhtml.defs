@@ -7,7 +7,7 @@
 
 (object HTML 
   (in-module Gtk)
-  (parent Widget (Gtk))
+  (parent Layout (Gtk))
   (c-name GtkHTML)
 )
 
@@ -689,6 +689,15 @@
   (c-name gtk_html_get_font_color)
   (return-type GdkColor)
 )
+ 
+(method set_cursor_xy
+  (of-object HTML (Gtk))
+  (c-name gtk_html_set_cursor_xy)
+  (return-type none)
+  (parameter (type-and-name gint x))
+  (parameter (type-and-name gint y))
+)
+ 
  
 ; links !
 

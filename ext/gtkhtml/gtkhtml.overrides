@@ -10,6 +10,9 @@ headers
 #include <gtkhtml/htmlengine-edit-cut-and-paste.h>
 #include <gtkhtml/htmlcolor.h>
 #include <gtkhtml/htmltypes.h>
+#include <gtkhtml/htmlobject.h>
+#include <gtkhtml/htmlcursor.h>
+#include <gtkhtml/htmlengine-edit-movement.h>
 
 #include "ext/gtk+/php_gtk+.h"
 #include "ext/gtkhtml/php_gtkhtml.h"
@@ -407,12 +410,6 @@ gboolean gtk_htmleditorapi_check_word(GtkHTML *html, const gchar *word,  gpointe
 	TSRMLS_FETCH();				
  	 					
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&cb_check_word);		
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&cb_suggestion_request);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&cb_add_to_session);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&cb_add_to_personal);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&cb_command);		
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 5, (void **)&cb_event);			
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 6, (void **)&cb_create_input_line);	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 7, (void **)&extra);			
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 8, (void **)&callback_filename);	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 9, (void **)&callback_lineno);		
@@ -465,13 +462,7 @@ void gtk_htmleditorapi_suggestion_request(GtkHTML *html, const gchar *word, gpoi
 						
 	TSRMLS_FETCH();				
  	 					
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&cb_check_word);		
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&cb_suggestion_request);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&cb_add_to_session);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&cb_add_to_personal);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&cb_command);		
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 5, (void **)&cb_event);			
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 6, (void **)&cb_create_input_line);	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 7, (void **)&extra);			
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 8, (void **)&callback_filename);	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 9, (void **)&callback_lineno);		
@@ -520,13 +511,7 @@ void gtk_htmleditorapi_add_to_session(GtkHTML *html, const gchar *word, gpointer
 						
 	TSRMLS_FETCH();				
  	 					
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&cb_check_word);		
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&cb_suggestion_request);	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&cb_add_to_session);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&cb_add_to_personal);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&cb_command);		
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 5, (void **)&cb_event);			
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 6, (void **)&cb_create_input_line);	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 7, (void **)&extra);			
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 8, (void **)&callback_filename);	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 9, (void **)&callback_lineno);		
@@ -577,13 +562,7 @@ void gtk_htmleditorapi_add_to_personal(GtkHTML *html, const gchar *word, gpointe
 						
 	TSRMLS_FETCH();				
  	 					
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&cb_check_word);		
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&cb_suggestion_request);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&cb_add_to_session);	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&cb_add_to_personal);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&cb_command);		
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 5, (void **)&cb_event);			
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 6, (void **)&cb_create_input_line);	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 7, (void **)&extra);			
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 8, (void **)&callback_filename);	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 9, (void **)&callback_lineno);		
@@ -635,13 +614,8 @@ gboolean gtk_htmleditorapi_command(GtkHTML *html, GtkHTMLCommandType com_type, g
 						
 	TSRMLS_FETCH();				
  	 					
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&cb_check_word);		
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&cb_suggestion_request);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&cb_add_to_session);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&cb_add_to_personal);	
+	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&cb_command);		
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 5, (void **)&cb_event);			
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 6, (void **)&cb_create_input_line);	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 7, (void **)&extra);			
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 8, (void **)&callback_filename);	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 9, (void **)&callback_lineno);		
@@ -697,13 +671,9 @@ GtkArg *gtk_htmleditorapi_event(GtkHTML *html, GtkHTMLEditorEventType event_type
 						
 	TSRMLS_FETCH();				
  	 					
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&cb_check_word);		
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&cb_suggestion_request);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&cb_add_to_session);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&cb_add_to_personal);	
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&cb_command);		
+ 		
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 5, (void **)&cb_event);			
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 6, (void **)&cb_create_input_line);	
+ 	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 7, (void **)&extra);			
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 8, (void **)&callback_filename);	
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 9, (void **)&callback_lineno);		
@@ -1063,6 +1033,45 @@ PHP_FUNCTION(gtk_html_get_target)
 		RETURN_NULL();
 	}
 }
+%%override gtk_html_set_cursor_xy
+
+/* direct copy from gtkhtml.c */
+
+static GtkWidget *
+php_gtk_shift_to_iframe_parent (GtkWidget *widget, gint *x, gint *y)
+{
+	while (GTK_HTML (widget)->iframe_parent) {
+		if (x)
+			*x += widget->allocation.x;
+		if (y)
+			*y += widget->allocation.y;
+		widget = GTK_HTML (widget)->iframe_parent;
+	}
+
+	return widget;
+}
 
 
+PHP_FUNCTION(gtk_html_set_cursor_xy)
+{
+	GtkWidget *widget;
+	HTMLEngine *engine;
+	gint x, y;
+     
+	NOT_STATIC_METHOD();
+	
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &x,&y))
+		return;
+        
+	/* from shift_to_iframe_parent - not exposed by headers */
+	widget = GTK_WIDGET(PHP_GTK_GET(this_ptr));
+	widget = php_gtk_shift_to_iframe_parent (widget, &x, &y);
 
+	engine = GTK_HTML (widget)->engine;
+	if (GTK_HTML (widget)->button1_pressed && html_engine_get_editable (engine))
+		html_engine_jump_at (engine,
+				     x + engine->x_offset,
+				     y + engine->y_offset);
+	
+	RETURN_NULL();
+}
