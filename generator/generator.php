@@ -851,7 +851,12 @@ if (!isset($_SERVER['argv']))
         register_argc_argv = On 	
         ");
 
-
+if (isset($_SERVER['argc']) &&
+	isset($_SERVER['argv'])) {
+	$argc = $_SERVER['argc'];
+	$argv = $_SERVER['argv'];
+}
+ 
 $argc = $_SERVER['argc'];
 $argv = $_SERVER['argv'];
 
