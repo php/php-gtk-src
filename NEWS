@@ -1,4 +1,5 @@
-    - implemented GtkCTree::node_get_pixtext(). (Andrei)
+    - implemented GtkCTree methods node_get_pixtext() and get_node_info().
+      (Andrei)
     - implemented GtkObject::emit(), thus allowing programmatical emission of
       signals. (Andrei)
     - added support for accessing GtkObject arguments via get_arg() and
