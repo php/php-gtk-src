@@ -11,6 +11,8 @@
 * Have a separate _init() function for each module(). Also have .ini setting
   that automatically inits modules. Or make loadable modules.
 
+* Test GdkRGB functionality.
+
 * gdk-pixbuf support
 * Gnome support
 * GtkHtml support

@@ -1,3 +1,4 @@
+    - added GtkCList::get_selection_info() method. (Andrei)
     - made type checking of parameters passed to PHP-GTK functions more
       forgiving. (Andrei)
     - added GtkNotebook::query_tab_label_packing(),
