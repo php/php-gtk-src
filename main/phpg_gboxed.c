@@ -167,7 +167,7 @@ PHP_GTK_API void phpg_gboxed_register_custom(GType type, boxed_from_zval_t from_
 /* {{{ PHP_GTK_API phpg_gboxed_lookup_custom */
 PHP_GTK_API phpg_gboxed_marshal_t* phpg_gboxed_lookup_custom(GType type)
 {
-    return (phpg_gboxed_marshal_t *) g_type_get_qdatea(type, custom_boxed_marshal_key);
+    return (phpg_gboxed_marshal_t *) g_type_get_qdata(type, custom_boxed_marshal_key);
 }
 /* }}} */
 
