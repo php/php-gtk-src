@@ -1800,25 +1800,6 @@
   )
 )
 
-(define-function pango_language_from_string
-  (c-name "pango_language_from_string1")
-  (return-type "PangoLanguage*")
-  (parameters
-    '("const-char*" "language")
-  )
-  (deprecated "use PangoLanguage() constructor instead")
-)
-
-(define-function pango_language_matches
-  (c-name "pango_language_matches1")
-  (return-type "gboolean")
-  (parameters
-    '("PangoLanguage*" "language" (null-ok))
-    '("const-char*" "range_list")
-  )
-  (deprecated "use PangoLanguage::matches() instead")
-)
-
 (define-method matches
   (of-object "PangoLanguage")
   (c-name "pango_language_matches")

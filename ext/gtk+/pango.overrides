@@ -6,3 +6,9 @@ headers
 #define PANGO_ENABLE_ENGINE
 #include <pango/pango.h>
 
+%%
+override pango_color_parse
+PHP_METHOD(PangoColor, __construct)
+{
+	/* TODO */
+}
