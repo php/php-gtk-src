@@ -1,3 +1,9 @@
+2001-09-25  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: forgot that one
+
+    * NEWS: Releasing 0.1.1.
+
 2001-09-21  Andrei Zmievski  <andrei@ispi.net>
 
     * main/php_gtk.c: Fix compilation error.
