@@ -1,3 +1,9 @@
+2001-12-10  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * generator/generator.php
+      generator/definitions.php:
+    - Fix problem with sTuDyCaPs in struct definnitions.
+
 2001-12-08  Markus Fischer  <mfischer@guru.josefine.at>
 
     * generator/generator.php: - Wrong variable passed to constructor.
