@@ -121,4 +121,8 @@ void php_gtk_register_classes(void);
 void php_gdk_register_classes(void);
 void php_gtk_plus_register_types(int module_number);
 
+int php_gtk_array_to_gchar_array(zval *zvalue, gchar ***gchar_array);
+void php_gtk_free_gchar_array(gchar **gchar_array);
+void php_gtk_free_gchar_ptr_array(gchar ***gchar_ptr_array, int num_elements);
+
 #endif	/* _PHP_GTK_PLUS_H */

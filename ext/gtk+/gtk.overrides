@@ -2768,23 +2768,29 @@ int php_gtk_array_to_gchar_array(zval *zvalue, gchar ***gchar_array)
 	return 0;
 }
 
+/* Free a NULL terminated list of gchar pointers */
+void php_gtk_free_gchar_array(gchar **gchar_array)
+{
+	int i = 0;
+	while (gchar_array[i]) {
+		efree(gchar_array[i++]);
+	}
+}
+
 /* Simply traverse the array and free what is available. If you know you haven't allocated
  * all of the entries you can pass the actual number of entries allocated; else just
  * pass the maximum size (but be sure to have proper initialized the array to 0 first). */
-void php_gtk_free_gchar_array(gchar ***gchar_array, int num_elements)
+void php_gtk_free_gchar_ptr_array(gchar ***gchar_ptr_array, int num_elements)
 {
 	int i, j;
 
 	for (i = 0; i < num_elements; i++) {
-		if (gchar_array[i]) {
-			j = 0;
-			while (gchar_array[i][j]) {
-				efree(gchar_array[i][j++]);
-			}
-			efree(gchar_array[i]);
+		if (gchar_ptr_array[i]) {
+			php_gtk_free_gchar_array(gchar_ptr_array[i]);
+			efree(gchar_ptr_array[i]);
 		}
 	}
-	efree(gchar_array);
+	efree(gchar_ptr_array);
 }
 
 static void set_filter(INTERNAL_FUNCTION_PARAMETERS, int which)
@@ -2834,7 +2840,7 @@ static void set_filter(INTERNAL_FUNCTION_PARAMETERS, int which)
 		if (!php_gtk_array_to_gchar_array(php_args[i], &(parameters[i]))) {
 			php_error(E_WARNING, "%s() expected argument %d to be NULL, string or array of strings; %s given",
 					  get_active_function_name(TSRMLS_C), 3 + i, php_gtk_zval_type_name(php_args[i]));
-			php_gtk_free_gchar_array(parameters, i - 1);
+			php_gtk_free_gchar_ptr_array(parameters, i - 1);
 			return;
 		}
 	}
@@ -2860,7 +2866,7 @@ static void set_filter(INTERNAL_FUNCTION_PARAMETERS, int which)
 	}
 
 	/* Free the parameters we previously allocated */
-	php_gtk_free_gchar_array(parameters, num_parameters);
+	php_gtk_free_gchar_ptr_array(parameters, num_parameters);
 }
 
 PHP_FUNCTION(gtk_font_selection_set_filter)
