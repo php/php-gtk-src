@@ -73,7 +73,7 @@ class Generator {
         $this->lprefix   = strtolower($prefix);
         $this->function_class = $function_class;
 
-        $this->cover["funcs"] = new Coverage("Static methods");
+        $this->cover["funcs"] = new Coverage("Functions");
         $this->cover["methods"] = new Coverage("Methods");
         $this->cover["ctors"] = new Coverage("Constructors");
         $this->cover["props"] = new Coverage("Property accessors");
