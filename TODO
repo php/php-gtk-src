@@ -10,8 +10,6 @@
 * Add missing field defs to gtk.defs.
 * Document limitation of not being able to assign color components directly in
   cascaded overloads, i.e. $style->base[GTK_STATE_NORMAL]->red = 55555.
-* Think about how to minimize creation of resources for something like
-  count($clist->row_list).
 
 In PHP
 ------

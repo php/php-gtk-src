@@ -3445,7 +3445,7 @@
   (c-name gtk_ctree_node_set_row_style)
   (return-type none)
   (parameter (type-and-name GtkCTreeNode* node))
-  (parameter (type-and-name GtkStyle* style))
+  (parameter (type-and-name GtkStyle* style) (null-ok))
 )
 
 (method node_get_row_style

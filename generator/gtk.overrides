@@ -655,12 +655,12 @@ PHP_FUNCTION(wrap_gtk_clist_get_text)
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &row, &column))
 		return;
 
-	if (gtk_clist_get_text(GTK_CLIST(PHP_GTK_GET(this_ptr)), row, column, &text)) {
-		RETURN_STRING(text, 1);
+	if (!gtk_clist_get_text(GTK_CLIST(PHP_GTK_GET(this_ptr)), row, column, &text)) {
+		php_error(E_WARNING, "%s() cannot get text value", get_active_function_name());
+		return;
 	}
-	else
-		RETURN_NULL();
 
+	RETURN_STRING(text, 1);
 }
 %%
 ignore gtk_menu_item_new_with_label 
@@ -1022,6 +1022,119 @@ PHP_FUNCTION(wrap_gtk_ctree_insert_node)
 	*return_value = *php_gtk_ctree_node_new(ret);
 }
 %%
+override gtk_ctree_post_recursive
+static void ctree_callback(GtkCTree *ctree, GtkCTreeNode *node, zval *callback_data)
+{
+	zval *retval = NULL;
+	zval **callback = NULL, **extra = NULL;
+	zval **callback_filename = NULL, **callback_lineno = NULL;
+	zval ***args, *params;
+	char *callback_name;
+	ELS_FETCH();
+
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&callback_filename);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_lineno);
+
+	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
+		php_error(E_WARNING, "Unable to call ctree callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
+		efree(callback_name);
+		return;
+	}
+
+	params = php_gtk_build_value("(NN)", php_gtk_new((GtkObject *)ctree),
+								 php_gtk_ctree_node_new(node));
+	if (extra)
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+
+	args = php_gtk_hash_as_array(params);
+
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 1, NULL);
+	if (retval)
+		zval_ptr_dtor(&retval);
+	efree(args);
+	zval_ptr_dtor(&params);
+}
+
+static void traverse_ctree(INTERNAL_FUNCTION_PARAMETERS, zend_bool use_depth, zend_bool pre_order)
+{
+	zval *ctree, *php_node, *callback;
+	zval *data, *extra;
+	GtkCTreeNode *node = NULL;
+	gint depth;
+	int req_args = 2;
+	char *callback_filename;
+	uint callback_lineno;
+
+	NOT_STATIC_METHOD();
+
+	if (use_depth)
+		req_args = 3;
+
+	if (ZEND_NUM_ARGS() < req_args) {
+		php_error(E_WARNING, "%s() requires at least %d arguments, %d given",
+				  get_active_function_name(), req_args, ZEND_NUM_ARGS());
+		return;
+	}
+
+	if (use_depth) {
+		if (!php_gtk_parse_args(3, "NiV", &php_node, gtk_ctree_node_ce, &depth, &callback))
+			return;
+	} else {
+		if (!php_gtk_parse_args(2, "NV", &php_node, gtk_ctree_node_ce, &callback))
+			return;
+	}
+
+	if (Z_TYPE_P(php_node) != IS_NULL)
+		node = PHP_GTK_CTREE_NODE_GET(php_node);
+
+	callback_filename = zend_get_executed_filename(ELS_C);
+	callback_lineno = zend_get_executed_lineno(ELS_C);
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
+	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
+	if (pre_order) {
+		if (use_depth)
+			gtk_ctree_pre_recursive_to_depth(GTK_CTREE(PHP_GTK_GET(this_ptr)),
+											 node, depth,
+											 (GtkCTreeFunc)ctree_callback, data);
+		else
+			gtk_ctree_pre_recursive(GTK_CTREE(PHP_GTK_GET(this_ptr)), node,
+									(GtkCTreeFunc)ctree_callback, data);
+	} else {
+		if (use_depth)
+			gtk_ctree_post_recursive_to_depth(GTK_CTREE(PHP_GTK_GET(this_ptr)),
+											  node, depth,
+											  (GtkCTreeFunc)ctree_callback, data);
+		else
+			gtk_ctree_post_recursive(GTK_CTREE(PHP_GTK_GET(this_ptr)), node,
+									 (GtkCTreeFunc)ctree_callback, data);
+	}
+}
+
+PHP_FUNCTION(wrap_gtk_ctree_post_recursive)
+{
+	traverse_ctree(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0, 0);
+}
+%%
+override gtk_ctree_post_recursive_to_depth
+PHP_FUNCTION(wrap_gtk_ctree_post_recursive_to_depth)
+{
+	traverse_ctree(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1, 0);
+}
+%%
+override gtk_ctree_pre_recursive
+PHP_FUNCTION(wrap_gtk_ctree_pre_recursive)
+{
+	traverse_ctree(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0, 1);
+}
+%%
+override gtk_ctree_pre_recursive_to_depth
+PHP_FUNCTION(wrap_gtk_ctree_pre_recursive_to_depth)
+{
+	traverse_ctree(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1, 1);
+}
+%%
 override gtk_container_children
 PHP_FUNCTION(wrap_gtk_container_children)
 {
@@ -1248,7 +1361,6 @@ getprop GtkFixed children
 %%
 getprop GtkList selection
 	GtkListItem *item;
-	zval *php_item;
 	GList *tmp;
 	GList *selection = GTK_LIST(PHP_GTK_GET(object))->selection;
 	zend_overloaded_element *property;
@@ -1275,7 +1387,6 @@ getprop GtkList selection
 	}
 %%
 getprop GtkCList selection
-	zval *php_item;
 	GList *tmp;
 	GList *selection = GTK_CLIST(PHP_GTK_GET(object))->selection;
 	zend_overloaded_element *property;
@@ -1301,7 +1412,6 @@ getprop GtkCList selection
 	}
 %%
 getprop GtkCTree selection
-	zval *php_item;
 	GList *tmp;
 	GList *selection = GTK_CLIST(PHP_GTK_GET(object))->selection;
 	zend_overloaded_element *property;
@@ -1316,7 +1426,7 @@ getprop GtkCTree selection
 			prop_index = Z_LVAL(property->element);
 			for (tmp = selection, i = 0; tmp; tmp = tmp->next, i++) {
 				if (i == prop_index) {
-					*return_value = *php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp));
+					*return_value = *php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp->data));
 					return;
 				}
 			}
@@ -1324,7 +1434,7 @@ getprop GtkCTree selection
 	} else {
 		array_init(return_value);
 		for (tmp = selection; tmp; tmp = tmp->next)
-			add_next_index_zval(return_value, php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp)));
+			add_next_index_zval(return_value, php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp->data)));
 	}
 %%
 ignore gtk_radio_menu_item_new_with_label
@@ -1539,6 +1649,27 @@ PHP_FUNCTION(wrap_gtk_ctree_node_get_row_data)
 	} else {
 		RETURN_NULL();
 	}
+}
+%%
+override gtk_ctree_node_get_text
+PHP_FUNCTION(wrap_gtk_ctree_node_get_text)
+{
+	zval *node;
+	gint column;
+	gchar *text = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oi", &node, gtk_ctree_node_ce, &column))
+		return;
+
+	if (!gtk_ctree_node_get_text(GTK_CTREE(PHP_GTK_GET(this_ptr)),
+								 PHP_GTK_CTREE_NODE_GET(node), column, &text)) {
+		php_error(E_WARNING, "%s() cannot get text value", get_active_function_name());
+		return;
+	}
+
+	RETURN_STRING(text, 1);
 }
 %%
 override gtk_menu_popup

@@ -74,9 +74,8 @@ function create_ctree()
 			$ctree_data['books'] = 1;
 			$ctree_data['pages'] = 0;
 
-			$clist = $ctree->clist;
-			$clist->freeze();
-			$clist->clear();
+			$ctree->freeze();
+			$ctree->clear();
 
 			$text = array('Root', '');
 
@@ -94,7 +93,7 @@ function create_ctree()
 				$ctree->node_set_row_style($parent, $style);
 
 			build_recursive($ctree, 1, $d, $b, $p, $parent);
-			$clist->thaw();
+			$ctree->thaw();
 			after_press($ctree);
 		}
 
@@ -175,22 +174,20 @@ function create_ctree()
 
 		function ctree_click_column($ctree, $column)
 		{
-			$clist = $ctree->clist;
-
-			if ($column == $clist->sort_column) {
-				if ($clist->sort_type == GTK_SORT_ASCENDING)
-					$clist->set_sort_type(GTK_SORT_DESCENDING);
+			if ($column == $ctree->sort_column) {
+				if ($ctree->sort_type == GTK_SORT_ASCENDING)
+					$ctree->set_sort_type(GTK_SORT_DESCENDING);
 				else
-					$clist->set_sort_type(GTK_SORT_ASCENDING);
+					$ctree->set_sort_type(GTK_SORT_ASCENDING);
 			} else
-				$clist->set_sort_column($column);
+				$ctree->set_sort_column($column);
 
 			$ctree->sort_recursive();
 		}
 
-		function change_row_height($adj, $clist)
+		function change_row_height($adj, $ctree)
 		{
-			$clist->set_row_height((int)$adj->value);
+			$ctree->set_row_height((int)$adj->value);
 		}
 
 		function change_indent($adj, $ctree)
@@ -219,12 +216,10 @@ function create_ctree()
 		{
 			static $style1, $style2;
 
-			$clist = $ctree->clist;
-
-			if ($clist->focus_row >= 0)
-				$node = $clist->row_list[$clist->focus_row];
+			if ($ctree->focus_row >= 0)
+				$node = $ctree->row_list[$ctree->focus_row];
 			else
-				$node = $clist->row_list[0];
+				$node = $ctree->row_list[0];
 
 			if (!is_object($node))
 				return;
@@ -263,24 +258,85 @@ function create_ctree()
 			after_press($ctree);
 		}
 
+		function count_items($ctree, $node)
+		{
+			global	$ctree_data;
+
+			if ($node->is_leaf)
+				$ctree_data['pages']--;
+			else
+				$ctree_data['books']--;
+		}
+
 		function remove_selection($button, $ctree)
 		{
 			global	$ctree_data;
 
-			$clist = $ctree->clist;
-			$clist->freeze();
+			$ctree->freeze();
 
-			while (($node = $clist->selection[0]) !== null) {
-				if ($node->is_leaf) {
+			while (($node = $ctree->selection[0]) !== null) {
+				if ($node->is_leaf)
 					$ctree_data['pages']--;
-				}
+				else
+					$ctree->post_recursive($node, 'count_items');
 
 				$ctree->remove_node($node);
-				if ($clist->selection_mode == GTK_SELECTION_BROWSE)
+
+				if ($ctree->selection_mode == GTK_SELECTION_BROWSE)
 					break;
 			}
 
-			$clist->thaw();
+			if ($ctree->selection_mode == GTK_SELECTION_EXTENDED &&
+				$ctree->selection[0] === null && $ctree->focus_row >= 0) {
+				$node = $ctree->node_nth($ctree->focus_row);
+				if ($node)
+					$ctree->select($node);
+			}
+
+			$ctree->thaw();
+			after_press($ctree);
+		}
+
+		function set_background($ctree, $node)
+		{
+			if (!$node)
+				return;
+
+			if ($ctree->line_style != GTK_CTREE_LINES_TABBED) {
+				if (!$node->is_leaf)
+					$style = $ctree->node_get_row_data($node);
+				else
+					$style = $ctree->node_get_row_data($node->parent);
+			}
+
+			$ctree->node_set_row_style($node, $style);
+		}
+
+		function ctree_toggle_line_style($menu_item, $ctree, $line_style)
+		{
+			if (($ctree->line_style == GTK_CTREE_LINES_TABBED &&
+				 $line_style != GTK_CTREE_LINES_TABBED) ||
+				($ctree->line_style != GTK_CTREE_LINES_TABBED &&
+				 $line_style == GTK_CTREE_LINES_TABBED)) {
+				$ctree->pre_recursive(null, 'set_background');
+			}
+
+			$ctree->set_line_style($line_style);
+		}
+
+		function ctree_toggle_expander_style($menu_item, $ctree, $expander_style)
+		{
+			$ctree->set_expander_style($expander_style);
+		}
+
+		function ctree_toggle_justify($menu_item, $ctree, $justification)
+		{
+			$ctree->set_column_justification($ctree->tree_column, $justification);
+		}
+
+		function ctree_toggle_sel_mode($menu_item, $ctree, $sel_mode)
+		{
+			$ctree->set_selection_mode($sel_mode);
 			after_press($ctree);
 		}
 
@@ -347,10 +403,9 @@ function create_ctree()
 		$scrolled_win->add($ctree);
 		$ctree->show();
 
-		$clist = $ctree->clist;
-		$clist->set_column_auto_resize(0, true);
-		$clist->set_column_width(1, 200);
-		$clist->set_selection_mode(GTK_SELECTION_EXTENDED);
+		$ctree->set_column_auto_resize(0, true);
+		$ctree->set_column_width(1, 200);
+		$ctree->set_selection_mode(GTK_SELECTION_EXTENDED);
 		$ctree->set_line_style(GTK_CTREE_LINES_DOTTED);
 		$line_style = GTK_CTREE_LINES_DOTTED;
 
@@ -394,8 +449,8 @@ function create_ctree()
 		$adj = &new GtkAdjustment(20.0, 12.0, 100.0, 1.0, 10.0, 0.0);
 		$spinner = &new GtkSpinButton($adj, 0.0, 0);
 		$tooltips->set_tip($spinner, 'Row height of list items.', '');
-		$adj->connect('value_changed', 'change_row_height', $clist);
-		$clist->set_row_height((int)$adj->value);
+		$adj->connect('value_changed', 'change_row_height', $ctree);
+		$ctree->set_row_height((int)$adj->value);
 		$mbox->pack_start($spinner, false, false, 5);
 		$spinner->show();
 
@@ -462,7 +517,7 @@ function create_ctree()
 
 		$check = &new GtkCheckButton('Reorderable');
 		$tooltips->set_tip($check, 'Tree items can be reordered by dragging.', '');
-		$check->connect('clicked', 'toggle_reorderable', $clist);
+		$check->connect('clicked', 'toggle_reorderable', $ctree);
 		$check->set_active(true);
 		$hbox->pack_start($check, false);
 		$check->show();
@@ -471,35 +526,35 @@ function create_ctree()
 		$mbox->pack_start($hbox, false, false);
 		$hbox->show();
 
-		$items1 = array('No lines'	=> array('clist_toggle_line_style', $ctree, GTK_CTREE_LINES_NONE),
-						'Solid'		=> array('clist_toggle_line_style', $ctree, GTK_CTREE_LINES_SOLID),
-						'Dotted'	=> array('clist_toggle_line_style', $ctree, GTK_CTREE_LINES_DOTTED),
-						'Tabbed'	=> array('clist_toggle_line_style', $ctree, GTK_CTREE_LINES_TABBED));
+		$items1 = array('No lines'	=> array('ctree_toggle_line_style', $ctree, GTK_CTREE_LINES_NONE),
+						'Solid'		=> array('ctree_toggle_line_style', $ctree, GTK_CTREE_LINES_SOLID),
+						'Dotted'	=> array('ctree_toggle_line_style', $ctree, GTK_CTREE_LINES_DOTTED),
+						'Tabbed'	=> array('ctree_toggle_line_style', $ctree, GTK_CTREE_LINES_TABBED));
 		$omenu1 = build_option_menu($items1, 2);
 		$tooltips->set_tip($omenu1, "The tree's line style.", '');
 		$hbox->pack_start($omenu1, false);
 		$omenu1->show();
 
-		$items2 = array('None'		=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_EXPANDER_NONE),
-						'Square'	=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_EXPANDER_SQUARE),
-						'Triangle'	=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_EXPANDER_TRIANGLE),
-						'Circular'	=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_EXPANDER_CIRCULAR));
+		$items2 = array('None'		=> array('ctree_toggle_expander_style', $ctree, GTK_CTREE_EXPANDER_NONE),
+						'Square'	=> array('ctree_toggle_expander_style', $ctree, GTK_CTREE_EXPANDER_SQUARE),
+						'Triangle'	=> array('ctree_toggle_expander_style', $ctree, GTK_CTREE_EXPANDER_TRIANGLE),
+						'Circular'	=> array('ctree_toggle_expander_style', $ctree, GTK_CTREE_EXPANDER_CIRCULAR));
 		$omenu2 = build_option_menu($items2, 2);
 		$tooltips->set_tip($omenu1, "The tree's expander style.", '');
 		$hbox->pack_start($omenu2, false);
 		$omenu2->show();
 
-		$items3 = array('Left'	=> array('clist_toggle_justify', $clist, GTK_JUSTIFY_LEFT),
-						'Right'	=> array('clist_toggle_justify', $clist, GTK_JUSTIFY_RIGHT));
+		$items3 = array('Left'	=> array('ctree_toggle_justify', $ctree, GTK_JUSTIFY_LEFT),
+						'Right'	=> array('ctree_toggle_justify', $ctree, GTK_JUSTIFY_RIGHT));
 		$omenu3 = build_option_menu($items3, 0);
 		$tooltips->set_tip($omenu1, "The tree's justification.", '');
 		$hbox->pack_start($omenu3, false);
 		$omenu3->show();
 
-		$items4 = array('Single'	=> array('clist_toggle_sel_mode', $clist, GTK_SELECTION_SINGLE),
-						'Browse'	=> array('clist_toggle_sel_mode', $clist, GTK_SELECTION_BROWSE),
-						'Multiple'	=> array('clist_toggle_sel_mode', $clist, GTK_SELECTION_MULTIPLE),
-						'Extended'	=> array('clist_toggle_sel_mode', $clist, GTK_SELECTION_EXTENDED));
+		$items4 = array('Single'	=> array('ctree_toggle_sel_mode', $ctree, GTK_SELECTION_SINGLE),
+						'Browse'	=> array('ctree_toggle_sel_mode', $ctree, GTK_SELECTION_BROWSE),
+						'Multiple'	=> array('ctree_toggle_sel_mode', $ctree, GTK_SELECTION_MULTIPLE),
+						'Extended'	=> array('ctree_toggle_sel_mode', $ctree, GTK_SELECTION_EXTENDED));
 		$omenu4 = build_option_menu($items4, 1);
 		$tooltips->set_tip($omenu1, "The list's selection mode.", '');
 		$hbox->pack_start($omenu4, false);
