@@ -796,9 +796,6 @@ function fatal_error($message) {
 
 $old_error_reporting = error_reporting(E_ALL & ~E_NOTICE);
 
-/* For backwards compatibility. */
-chdir(dirname(__FILE__));
-
 if (!isset($_SERVER['argv'])) 
     fatal_error("
         Could not read command line arguments for generator.php 
@@ -823,8 +820,6 @@ if (!$result || count($result[1]) < 2)
     fatal_error("usage: php -q generator.php [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] defsfile\n");
 
 list($opts, $argv) = $result;
-
-chdir('..');
 
 $prefix = 'Gtk';
 $function_class = null;
