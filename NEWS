@@ -1,4 +1,4 @@
-php-gtk-0.0.2: x-Mar-2001
+php-gtk-0.0.2: 7-Mar-2001
     - added 'child' property to GtkBin and its descendants. (Andrei)
     - all callbacks now take user supplied extra arguments and better error
       messages are shown if the callbacks are not valid. (Andrei)
