@@ -1,3 +1,99 @@
+2001-03-06  James Moore  <James@phpuk.org>
+
+    * docs/en/chapters/install.xml:
+    whoops forgot an endtag.. should really build before I commit ;)
+
+    * docs/en/chapters/install.xml: Win32 Install instructions
+
+    * docs/en/chapters/install.xml
+      docs/en/language-defs.ent
+      docs/dbxml/COPYRIGHT
+      docs/dbxml/ChangeLog
+      docs/dbxml/README
+      docs/dbxml/VERSION
+      docs/dbxml/calstblx.dtd
+      docs/dbxml/dbcentx.mod
+      docs/dbxml/dbgenent.ent
+      docs/dbxml/dbhierx.mod
+      docs/dbxml/dbnotnx.mod
+      docs/dbxml/dbpoolx.mod
+      docs/dbxml/dbtblcals.dtd
+      docs/dbxml/dbtblxchg.dtd
+      docs/dbxml/docbookx.dtd
+      docs/dbxml/ent/ChangeLog
+      docs/dbxml/ent/iso-amsa.ent
+      docs/dbxml/ent/iso-amsb.ent
+      docs/dbxml/ent/iso-amsc.ent
+      docs/dbxml/ent/iso-amsn.ent
+      docs/dbxml/ent/iso-amso.ent
+      docs/dbxml/ent/iso-amsr.ent
+      docs/dbxml/ent/iso-box.ent
+      docs/dbxml/ent/iso-cyr1.ent
+      docs/dbxml/ent/iso-cyr2.ent
+      docs/dbxml/ent/iso-dia.ent
+      docs/dbxml/ent/iso-grk1.ent
+      docs/dbxml/ent/iso-grk2.ent
+      docs/dbxml/ent/iso-grk3.ent
+      docs/dbxml/ent/iso-grk4.ent
+      docs/dbxml/ent/iso-lat1.ent
+      docs/dbxml/ent/iso-lat2.ent
+      docs/dbxml/ent/iso-num.ent
+      docs/dbxml/ent/iso-pub.ent
+      docs/dbxml/ent/iso-tech.ent
+      docs/dbxml/soextblx.dtd
+      docs/dbxml/tblcals.xml
+      docs/dbxml/tblxchg.xml
+      docs/dbxml/test.xml
+      docs/Makefile.in
+      docs/bightml.xsl.in
+      docs/checkdoc.in
+      docs/common.dsl.in
+      docs/configure.in
+      docs/global.ent
+      docs/html-common.dsl
+      docs/html-locale.dsl.in
+      docs/html.dsl.in
+      docs/html.xsl.in
+      docs/htmlhelp.xsl.in
+      docs/manual.xml.in
+      docs/pdflevels.dsl
+      docs/phpdoc.dcl
+      docs/phpdocxml.dcl
+      docs/phpweb.dsl.in
+      docs/print.dsl.in
+      docs/print.xsl.in
+      docs/quickref.dsl.in
+      docs/version.dsl
+      docs/version.ent.in:    Initial import of to documenation structure it needs a
+    slight clean up but it works
+
+2001-03-06  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/php_gtk.dsw
+      win32/php_win.c
+      win32/php_win.dsp
+      win32/scheme.dsp:
+    Adding a small project that allows you to run Gtk applications without the console window.
+
+    * test/fileselection.php: Adding sample code for GtkFileSelection
+
+    * generator/gtk.overrides:
+    Removing overridden constructor for GtkFileSelection
+
+2001-03-06  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: News entry.
+
+    * generator/gtk.overrides
+      src/php_gtk_types.c
+      src/php_gtk_util.c
+      test/gtk.php:
+    * Each factory item can now specify as the last entry an array of
+      additional arguments to be passed to the callback.
+    * Implemented GtkCombo::set_popdown_strings(), see gtk.php for example.
+    * Added GdkPixmap::create_from_xpm().
+    * Added toggle buttons and entry examples to gtk.php.
+
 2001-03-05  Frank M. Kromann  <frank@frontbase.com>
 
     * generator/arg_types.php
