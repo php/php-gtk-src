@@ -6,6 +6,7 @@ Generator
 * Support for some custom arg types like GdkRectangle*
 * Interfaces
 * Pointers
+* Allow for templatization of PHP_METHOD() declarations in overrides
 
 Base Functionality
 ~~~~~~~~~~~~~~~~~~
@@ -16,6 +17,7 @@ Base Functionality
 * Interfaces
 * Pointers
 * Implement __gtype, __doc, and other special properties, if possible
+* Look at how Python engine implements getsets
 
 [
   * todo
