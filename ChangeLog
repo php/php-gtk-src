@@ -1,3 +1,12 @@
+2001-05-14  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/class.xsl:
+     - Stop space after function name being linked
+
+2001-05-14  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/gtk.overrides: Implemented GtkCTree::node_get_pixtext().
+
 2001-05-12  James Moore  <James@phpuk.org>
 
     * docs/stylesheets/xsl/html/phpweb.xsl:  Whitespace
