@@ -535,16 +535,20 @@ static int php_gtk_count_specs(char *format, int endchar)
 				return -1;
 
 			case '(':
+			case '{':
 				if (level == 0)
 					count++;
 				level++;
 				break;
 
 			case ')':
+			case '}':
 				level--;
 				break;
 
 			case '#':
+			case ':':
+			case ',':
 			case ' ':
 			case '\t':
 				break;
@@ -552,7 +556,6 @@ static int php_gtk_count_specs(char *format, int endchar)
 			default:
 				if (level == 0)
 					count++;
-				break;
 		}
 		format++;
 	}
@@ -571,6 +574,9 @@ static zval *php_gtk_build_single(char **format, va_list *va)
 		switch (*(*format)++) {
 			case '(':
 				return php_gtk_build_hash(format, va, ')', php_gtk_count_specs(*format, ')'));
+
+			case '{':
+				return php_gtk_build_hash(format, va, '}', php_gtk_count_specs(*format, '}'));
 
 			case 'b':
 				MAKE_STD_ZVAL(result);
@@ -620,6 +626,8 @@ static zval *php_gtk_build_single(char **format, va_list *va)
 					zval_add_ref(&result);
 				return result;
 
+			case ':':
+			case ',':
 			case ' ':
 			case '\t':
 				break;
@@ -643,16 +651,44 @@ static zval *php_gtk_build_hash(char **format, va_list *va, int endchar, int cou
 	MAKE_STD_ZVAL(result);
 	array_init(result);
 
-	for (i = 0; i < count; i++) {
-		single = php_gtk_build_single(format, va);
-		if (!single) {
-			zval_dtor(result);
-			return NULL;
+	if (endchar == ')') {
+		for (i = 0; i < count; i++) {
+			single = php_gtk_build_single(format, va);
+			if (!single) {
+				zval_ptr_dtor(&result);
+				return NULL;
+			}
+			zend_hash_next_index_insert(Z_ARRVAL_P(result), &single, sizeof(zval *), NULL);
 		}
-		zend_hash_next_index_insert(Z_ARRVAL_P(result), &single, sizeof(zval *), NULL);
+	} else if (endchar == '}') {
+		zval *key;
+
+		for (i = 0; i < count; i += 2) {
+			key = php_gtk_build_single(format, va);
+			if (!key) {
+				zval_ptr_dtor(&result);
+				return NULL;
+			}
+
+			single = php_gtk_build_single(format, va);
+			if (!single) {
+				zval_ptr_dtor(&key);
+				zval_ptr_dtor(&result);
+				return NULL;
+			}
+
+			if (Z_TYPE_P(key) != IS_STRING && Z_TYPE_P(key) != IS_LONG)
+				convert_to_string(key);
+
+			if (Z_TYPE_P(key) == IS_LONG)
+				add_index_zval(result, Z_LVAL_P(key), single);
+			else
+				add_assoc_zval_ex(result, Z_STRVAL_P(key), Z_STRLEN_P(key)+1, single);
+			zval_ptr_dtor(&key);
+		}
 	}
 	if (**format != endchar) {
-		zval_dtor(result);
+		zval_ptr_dtor(&result);
 		php_error(E_WARNING, "%s(): internal error: unmatched parenthesis in format", get_active_function_name());
 		return NULL;
 	} else if (endchar)
@@ -667,9 +703,7 @@ zval *php_gtk_build_value(char *format, ...)
 	zval *result;
 	va_list va;
 
-	if (count < 0)
-		return NULL;
-	else if (count == 0) {
+	if (count <= 0) {
 		MAKE_STD_ZVAL(result);
 		ZVAL_NULL(result);
 		return result;
@@ -683,6 +717,12 @@ zval *php_gtk_build_value(char *format, ...)
 		result = php_gtk_build_hash(&format, &va, '\0', count);
 
 	va_end(va);
+
+	if (result == NULL) {
+		MAKE_STD_ZVAL(result);
+		ZVAL_NULL(result);
+	}
+
 	return result;
 }
 
