@@ -76,25 +76,16 @@ static function_entry php_gdk_event_functions[] = {
 zval *php_gdk_event_new(GdkEvent *event)
 {
 	zval *result;
-	zval **wrapper_ptr;
 	zval *value;
 
+	MAKE_STD_ZVAL(result);
+
 	if (!event) {
-		MAKE_STD_ZVAL(result);
 		ZVAL_NULL(result);
 		return result;
 	}
 
-	if (zend_hash_index_find(&php_gtk_type_hash, (long)event, (void **)&wrapper_ptr) == SUCCESS) {
-		zval_add_ref(wrapper_ptr);
-		return *wrapper_ptr;
-	}
-	
-	MAKE_STD_ZVAL(result);
-
 	object_init_ex(result, gdk_event_ce);
-
-	php_gtk_set_object(result, event, le_php_gtk_wrapper);
 
 	add_property_long(result, "type", event->type);
 	

@@ -1,5 +1,7 @@
+Version 0.0.4 "indistinguishable from magic": 05-May-2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - improved speed/memory efficiency by having only one wrapper for boxed
-      types, except for GdkColor and GdkAtom. (Andrei)
+      types, except for GdkEvent, GdkColor and GdkAtom. (Andrei)
     - implemented object overloading emulation layer to correct for Zend
       engine's problems, now it's possible to assign and read custom properties
       on Gtk+ objects. (Andrei)
