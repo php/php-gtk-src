@@ -39,14 +39,14 @@ ignore
 
 %%
 override gdk_color_new
-PHP_METHOD(GdkColor, __construct)
+PHP_METHOD
 {
     /* TODO */
 }
 
 %%
 override gdk_text_extents
-PHP_METHOD(GdkFont, extents)
+PHP_METHOD
 {
 	char *text;
 	int length, lbearing, rbearing, width, ascent, descent;
@@ -62,7 +62,7 @@ PHP_METHOD(GdkFont, extents)
 
 %%
 override gdk_rectangle_new
-PHP_METHOD(GdkRectangle, __construct)
+PHP_METHOD
 {
     phpg_gboxed_t *pobj = NULL;
     GdkRectangle rect = { 0, 0, 0, 0 };
@@ -80,14 +80,14 @@ PHP_METHOD(GdkRectangle, __construct)
 
 %%
 override gdk_rectangle_intersect
-PHP_METHOD(GdkRectangle, intersect)
+PHP_METHOD
 {
     /* TODO */
 }
 
 %%
 override-prop GdkDrawable xid
-PHPG_PROP_READER(GdkDrawable, xid)
+PHPG_PROP_READER
 {
 #if defined(GDK_WINDOWING_X11)
 	RETVAL_LONG(GDK_DRAWABLE_XID(((GdkDrawable *)((phpg_gobject_t *)object)->obj)));
@@ -98,7 +98,7 @@ PHPG_PROP_READER(GdkDrawable, xid)
 }
 
 %%override-prop GdkPixbuf pixel_array
-PHPG_PROP_READER(GdkPixbuf, pixel_array)
+PHPG_PROP_READER
 {
     /* TODO */
     return SUCCESS;

@@ -1,7 +1,7 @@
 
 %%
 override-prop GtkStyle fg
-PHPG_PROP_READER(GtkStyle, fg)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -12,7 +12,7 @@ PHPG_PROP_READER(GtkStyle, fg)
 
 %%
 override-prop GtkStyle bg
-PHPG_PROP_READER(GtkStyle, bg)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -23,7 +23,7 @@ PHPG_PROP_READER(GtkStyle, bg)
 
 %%
 override-prop GtkStyle light
-PHPG_PROP_READER(GtkStyle, light)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -34,7 +34,7 @@ PHPG_PROP_READER(GtkStyle, light)
 
 %%
 override-prop GtkStyle dark
-PHPG_PROP_READER(GtkStyle, dark)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -45,7 +45,7 @@ PHPG_PROP_READER(GtkStyle, dark)
 
 %%
 override-prop GtkStyle mid
-PHPG_PROP_READER(GtkStyle, mid)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -56,7 +56,7 @@ PHPG_PROP_READER(GtkStyle, mid)
 
 %%
 override-prop GtkStyle text
-PHPG_PROP_READER(GtkStyle, text)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -67,7 +67,7 @@ PHPG_PROP_READER(GtkStyle, text)
 
 %%
 override-prop GtkStyle text_aa
-PHPG_PROP_READER(GtkStyle, text_aa)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -78,7 +78,7 @@ PHPG_PROP_READER(GtkStyle, text_aa)
 
 %%
 override-prop GtkStyle base
-PHPG_PROP_READER(GtkStyle, base)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -89,7 +89,7 @@ PHPG_PROP_READER(GtkStyle, base)
 
 %%
 override-prop GtkStyle fg_gc
-PHPG_PROP_READER(GtkStyle, fg_gc)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -100,7 +100,7 @@ PHPG_PROP_READER(GtkStyle, fg_gc)
 
 %%
 override-prop GtkStyle bg_gc
-PHPG_PROP_READER(GtkStyle, bg_gc)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -111,7 +111,7 @@ PHPG_PROP_READER(GtkStyle, bg_gc)
 
 %%
 override-prop GtkStyle light_gc
-PHPG_PROP_READER(GtkStyle, light_gc)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -122,7 +122,7 @@ PHPG_PROP_READER(GtkStyle, light_gc)
 
 %%
 override-prop GtkStyle dark_gc
-PHPG_PROP_READER(GtkStyle, dark_gc)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -133,7 +133,7 @@ PHPG_PROP_READER(GtkStyle, dark_gc)
 
 %%
 override-prop GtkStyle mid_gc
-PHPG_PROP_READER(GtkStyle, mid_gc)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -144,7 +144,7 @@ PHPG_PROP_READER(GtkStyle, mid_gc)
 
 %%
 override-prop GtkStyle text_gc
-PHPG_PROP_READER(GtkStyle, text_gc)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -155,7 +155,7 @@ PHPG_PROP_READER(GtkStyle, text_gc)
 
 %%
 override-prop GtkStyle text_aa_gc
-PHPG_PROP_READER(GtkStyle, text_aa_gc)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -166,7 +166,7 @@ PHPG_PROP_READER(GtkStyle, text_aa_gc)
 
 %%
 override-prop GtkStyle base_gc
-PHPG_PROP_READER(GtkStyle, base_gc)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 
@@ -177,7 +177,7 @@ PHPG_PROP_READER(GtkStyle, base_gc)
 
 %%
 override-prop GtkStyle bg_pixmap
-PHPG_PROP_READER(GtkStyle, bg_pixmap)
+PHPG_PROP_READER
 {
 	GtkStyle *style = GTK_STYLE(((phpg_gobject_t *)object)->obj);
 

@@ -233,12 +233,13 @@ class Generator {
             try {
                 if (($overriden = $this->overrides->is_overriden($method_name))) {
                     list($method_name, $method_override, $flags) = $this->overrides->get_override($method_name);
-                    $this->write_override($method_override, $method->c_name);
                     if (!isset($method_name))
                         $method_name = $method->name;
+                    $method_override = preg_replace('!^.*(PHP_METHOD).*$!m', "static $1($object->in_module$object->name, $method_name)", $method_override);
+                    $this->write_override($method_override, $method->c_name);
                     $method_defs[] = sprintf(Templates::method_entry,
                                              $object->in_module . $object->name,
-                                             $method->name, 'NULL', $flags ?  $flags : 'ZEND_ACC_PUBLIC');
+                                             $method_name, 'NULL', $flags ?  $flags : 'ZEND_ACC_PUBLIC');
                 } else {
                     if ($method->static) {
                         $code = $this->write_callable($method, Templates::function_body, true, false, $dict);
@@ -301,6 +302,7 @@ class Generator {
                         list(, $ctor_override, $ctor_flags) = $this->overrides->get_override($ctor_name);
                         if (!empty($ctor_flags))
                             $flags = $ctor_flags;
+                        $ctor_override = preg_replace('!^.*(PHP_METHOD).*$!m', "static $1($ctor->is_constructor_of, $ctor_fe_name)", $ctor_override);
                         $this->write_override($ctor_override, $ctor->c_name);
                     } else {
                         $dict['name'] = $ctor_fe_name;
@@ -380,9 +382,6 @@ class Generator {
         $num_written = $num_skipped = 0;
 
         $class = strtolower($object->c_name);
-        $read_prefix  = 'phpg_' . $class .'_read_';
-        $write_prefix = 'phpg_' . $class .'_write_';
-
         $prop_defs = array();
         $dict = array();
 
@@ -411,14 +410,15 @@ class Generator {
                 if ($this->overrides->is_prop_overriden($object->c_name, $field_name)) {
                     $overrides = $this->overrides->get_prop_override($object->c_name, $field_name);
                     if (isset($overrides['read'])) {
-                        $this->write_override($overrides['read'], $object->c_name, $field_name, 'read');
+                        $read_override = preg_replace('!^.*(PHPG_PROP_READER).*$!m', "$1($object->c_name, $field_name)", $overrides['read']);
+                        $this->write_override($read_override, $object->c_name, $field_name, 'read');
                         $this->divert("gen", "%%%%  %-11s %s->%s\n", "reader for", $object->c_name, $field_name);
                     } else {
                         $read_func = 'NULL';
                     }
                     if (isset($overrides['write'])) {
+                        $write_override = preg_replace('!^.*(PHPG_PROP_WRITER).*$!m', "static $1($object->c_name, $field_name)", $overrides['write']);
                         $this->write_override($overrides['read'], $object->c_name, $field_name, 'write');
-                        $write_func = $write_prefix . $field_name;
                         $this->divert("gen ", "%%%%  %-11s %s->%s\n", "writer for", $object->c_name, $field_name);
                     }
                 } else {
@@ -577,9 +577,10 @@ class Generator {
             try {
                 if (($overriden = $this->overrides->is_overriden($function->c_name))) {
                     list($func_name, $function_override, $flags) = $this->overrides->get_override($function->c_name);
-                    $this->write_override($function_override, $function->c_name);
-                    if ($func_name == $function->c_name)
+                    if (empty($func_name) || $func_name == $function->c_name)
                         $func_name = $function->name;
+                    $function_override = preg_replace('!^.*(PHP_METHOD).*$!m', "static $1($this->prefix, $func_name)", $function_override);
+                    $this->write_override($function_override, $function->c_name);
                     $func_defs[] = sprintf(Templates::method_entry,
                                            $this->prefix,
                                            $func_name, 'NULL', $flags ? $flags : 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
@@ -600,6 +601,7 @@ class Generator {
 
         if ($this->overrides->have_extra_methods($this->prefix)) {
             foreach ($this->overrides->get_extra_methods($this->prefix) as $func_name => $func_body) {
+                $func_body = preg_replace('!^.*(PHP_METHOD).*$!m', "static $1($this->prefix, $func_name)", $func_body);
                 $this->write_override($func_body, $this->prefix, $func_name);
                 $func_defs[] = sprintf(Templates::method_entry,
                                        $this->prefix,

@@ -116,7 +116,7 @@ class Overrides {
                 if (isset($words[1])) 
                     $func_name = $words[1];
                 else
-                    $func_name = $func_cname;
+                    $func_name = null;
                 if (isset($words[2]))
                     $flags = $words[2];
                 else

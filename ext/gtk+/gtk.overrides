@@ -270,14 +270,14 @@ static void phpg_gtk_timeout_add_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool wi
 	RETURN_LONG(handler_id);
 }
 
-static PHP_METHOD(Gtk, timeout_add)
+PHP_METHOD
 {
 	phpg_gtk_timeout_add_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
 }
 
 %%
 add Gtk timeout_add_priority
-static PHP_METHOD(Gtk, timeout_add_priority)
+PHP_METHOD
 {
 	phpg_gtk_timeout_add_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
 }
@@ -287,7 +287,7 @@ static PHP_METHOD(Gtk, timeout_add_priority)
 %% {{{ GtkButton
 %%
 override gtk_button_new
-static PHP_METHOD(GtkButton, __construct)
+PHP_METHOD
 {
 	GObject *wrapped_obj;
 	gchar *text = NULL;
@@ -314,7 +314,7 @@ static PHP_METHOD(GtkButton, __construct)
 }
 %%
 override gtk_button_new_from_stock new_from_stock ZEND_ACC_PUBLIC|ZEND_ACC_STATIC
-static PHP_METHOD(GtkButton, new_from_stock)
+PHP_METHOD
 {
 	GObject *wrapped_obj;
 	gchar *stock = NULL;
@@ -337,7 +337,7 @@ static PHP_METHOD(GtkButton, new_from_stock)
 %% {{{ GtkLabel
 %%
 override gtk_label_new
-static PHP_METHOD(GtkLabel, __construct)
+PHP_METHOD
 {
 	GObject *wrapped_obj;
 	gchar *text = NULL;
@@ -365,7 +365,7 @@ static PHP_METHOD(GtkLabel, __construct)
 
 %%
 override gtk_label_get
-static PHP_METHOD(GtkLabel, get)
+PHP_METHOD
 {
 	gchar *text = NULL;
 
@@ -383,7 +383,7 @@ static PHP_METHOD(GtkLabel, get)
 }
 %%
 override gtk_label_get_selection_bounds
-static PHP_METHOD(GtkLabel, get_selection_bounds)
+PHP_METHOD
 {
 	gint start, end;
 
@@ -397,7 +397,7 @@ static PHP_METHOD(GtkLabel, get_selection_bounds)
 }
 %%
 override gtk_label_get_layout_offsets
-static PHP_METHOD(GtkLabel, get_layout_offsets)
+PHP_METHOD
 {
 	gint x, y;
 
@@ -419,7 +419,7 @@ static PHP_METHOD(GtkLabel, get_layout_offsets)
 
 %%
 override-prop GtkTextAttributes bg_color
-PHPG_PROP_READER(GtkTextAttributes, bg_color)
+PHPG_PROP_READER
 {
 	GdkColor php_retval;
 
@@ -431,7 +431,7 @@ PHPG_PROP_READER(GtkTextAttributes, bg_color)
 
 %%
 override-prop GtkTextAttributes fg_color
-PHPG_PROP_READER(GtkTextAttributes, fg_color)
+PHPG_PROP_READER
 {
 	GdkColor php_retval;
 
@@ -443,7 +443,7 @@ PHPG_PROP_READER(GtkTextAttributes, fg_color)
 
 %%
 override-prop GtkTextAttributes bg_stipple
-PHPG_PROP_READER(GtkTextAttributes, bg_stipple)
+PHPG_PROP_READER
 {
 	GdkBitmap *php_retval;
 
@@ -455,7 +455,7 @@ PHPG_PROP_READER(GtkTextAttributes, bg_stipple)
 
 %%
 override-prop GtkTextAttributes fg_stipple
-PHPG_PROP_READER(GtkTextAttributes, fg_stipple)
+PHPG_PROP_READER
 {
 	GdkBitmap *php_retval;
 
@@ -467,7 +467,7 @@ PHPG_PROP_READER(GtkTextAttributes, fg_stipple)
 
 %%
 override-prop GtkTextAttributes rise
-PHPG_PROP_READER(GtkTextAttributes, rise)
+PHPG_PROP_READER
 {
 	RETVAL_LONG(((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.rise);
 
@@ -476,7 +476,7 @@ PHPG_PROP_READER(GtkTextAttributes, rise)
 
 %%
 override-prop GtkTextAttributes underline
-PHPG_PROP_READER(GtkTextAttributes, underline)
+PHPG_PROP_READER
 {
 	RETVAL_LONG(((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.underline);
 
@@ -485,7 +485,7 @@ PHPG_PROP_READER(GtkTextAttributes, underline)
 
 %%
 override-prop GtkTextAttributes strikethrough
-PHPG_PROP_READER(GtkTextAttributes, strikethrough)
+PHPG_PROP_READER
 {
 	RETVAL_LONG(((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.strikethrough);
 
@@ -494,7 +494,7 @@ PHPG_PROP_READER(GtkTextAttributes, strikethrough)
 
 %%
 override-prop GtkTextAttributes draw_bg
-PHPG_PROP_READER(GtkTextAttributes, draw_bg)
+PHPG_PROP_READER
 {
 	RETVAL_BOOL(((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.draw_bg);
 
@@ -505,7 +505,7 @@ PHPG_PROP_READER(GtkTextAttributes, draw_bg)
 %% {{{ GtkWidget
 %%
 override gtk_widget_intersect
-PHP_METHOD(GtkWidget, intersect)
+PHP_METHOD
 {
 	zval *php_area;
 	GdkRectangle area, intersection;

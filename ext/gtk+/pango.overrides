@@ -12,7 +12,7 @@ ignore-glob
 
 %%
 override pango_color_parse
-PHP_METHOD(PangoColor, __construct)
+PHP_METHOD
 {
     /* TODO */
 }
@@ -21,7 +21,7 @@ PHP_METHOD(PangoColor, __construct)
 ignore pango_font_description_new_from_string
 %%
 override pango_font_description_new
-PHP_METHOD(PangoFontDescription, __construct)
+PHP_METHOD
 {
 	char *str = NULL;
 	PangoFontDescription *wrapped_obj = NULL;
@@ -48,7 +48,7 @@ PHP_METHOD(PangoFontDescription, __construct)
 
 %%
 override pango_layout_get_pixel_extents
-PHP_METHOD(PangoLayout, get_pixel_extents)
+PHP_METHOD
 {
     PangoRectangle ink, logical;
 

@@ -2,22 +2,21 @@ Generator
 ~~~~~~~~~
 + Support boxed types
 + Expose GTK properties
-* Implement '#line' pragma directives for debugging
++ Implement '#line' pragma directives for debugging
 + Support for some custom arg types like GdkRectangle*
++ Allow for templatization of PHP_METHOD() declarations in overrides
 * Interfaces
 * Pointers
-* Allow for templatization of PHP_METHOD() declarations in overrides
 
 Base Functionality
 ~~~~~~~~~~~~~~~~~~
 + Support signal connection and closures
-* Make error messages display Class::Method() instead of just method name
 + Custom boxed types
+* Make error messages display Class::Method() instead of just method name
 * Some classes need to be coded in C entirely, see gtk-types.c
 * Interfaces
 * Pointers
 * Implement __gtype, __doc, and other special properties, if possible
-* Look at how Python engine implements getsets
 * Deal with clone() handler in Zend
 
 General
@@ -42,10 +41,6 @@ Thoughts on reference counting and wrappers
    destroyed and save a pointer to the wrapper in the gobject with notification
    turned on, so that when gobject is destroyed by Gtk+ our wrapper is destroyed
    as well.
-
-3. Just to make sure that our closure data is destroyed properly, we should
-   put closure object in the object store where it will get cleaned up on exit.
-
 
 [
   * todo

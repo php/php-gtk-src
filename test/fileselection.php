@@ -2,7 +2,7 @@
 /* $Id$ */
 
 if (!extension_loaded('gtk')) {
-	dl( 'php_gtk.' . PHP_SHLIB_SUFFIX);
+	dl( 'php_gtk2.' . PHP_SHLIB_SUFFIX);
 }
 
 function shutdown() {
