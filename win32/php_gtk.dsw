@@ -3,7 +3,7 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
-Project: "Scheme"=".\scheme.dsp" - Package Owner=<4>
+Project: "combobutton"="..\ext\combobutton\combobutton.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -35,9 +35,6 @@ Package=<5>
 
 Package=<4>
 {{{
-    Begin Project Dependency
-    Project_Dep_Name Scheme
-    End Project Dependency
 }}}
 
 ###############################################################################
