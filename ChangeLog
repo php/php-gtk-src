@@ -1,3 +1,20 @@
+2002-10-17  Andrei Zmievski  <andrei@php.net>
+
+    * main/php_gtk_object.c
+      ext/gtk+/gtk.overrides
+      ext/libglade/libglade.overrides:
+    Fix a bunch of compilation warnings. Helps to enable -Wall.
+
+    * ext/gtk+/php_gtk+_types.c:
+    - Make depth parameter of GdkPixmap() constructor optional.
+    - Do better type checking of copy_area() src_window parameter.
+    - Fixed up warnings unveiled with -Wall flag.
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+_types.c:
+    - Failure to allocate color should really be a notice.
+    - Fix GtkCheckButton constructor.
+
 2002-10-12  Andrei Zmievski  <andrei@php.net>
 
     * ext/gtk+/php_gtk+_types.c:
