@@ -51,7 +51,7 @@ PHP_FUNCTION(gtk_plot_data_set_points)
 	hash = HASH_OF(php_x);
 	x =  emalloc( n_elems * sizeof( gdouble )); j = 0;
 	zend_hash_internal_pointer_reset( hash );
-	while( zend_hash_get_current_data( hash, (void **)&temp) == SUCCESS )
+	while( j < n_elems && zend_hash_get_current_data( hash, (void **)&temp) == SUCCESS )
 	{
 		x[j++] = (gdouble) Z_DVAL_PP( temp );
 		zend_hash_move_forward(hash);
@@ -59,7 +59,7 @@ PHP_FUNCTION(gtk_plot_data_set_points)
 	hash = HASH_OF(php_y);
 	y =  emalloc( n_elems * sizeof( gdouble )); j = 0;
 	zend_hash_internal_pointer_reset( hash );
-	while( zend_hash_get_current_data( hash, (void **)&temp) == SUCCESS )
+	while( j < n_elems && zend_hash_get_current_data( hash, (void **)&temp) == SUCCESS )
 	{
 		y[j++] = (gdouble) Z_DVAL_PP( temp );
 		zend_hash_move_forward(hash);
@@ -67,7 +67,7 @@ PHP_FUNCTION(gtk_plot_data_set_points)
 	hash = HASH_OF(php_dx);
 	dx = emalloc( n_elems * sizeof( gdouble )); j = 0;
 	zend_hash_internal_pointer_reset( hash );
-	while( zend_hash_get_current_data( hash, (void **)&temp) == SUCCESS )
+	while( j < n_elems && zend_hash_get_current_data( hash, (void **)&temp) == SUCCESS )
 	{
 		dx[j++] = (gdouble) Z_DVAL_PP( temp );
 		zend_hash_move_forward(hash);
@@ -75,15 +75,17 @@ PHP_FUNCTION(gtk_plot_data_set_points)
 	hash = HASH_OF(php_dy);
 	dy = emalloc( n_elems * sizeof( gdouble )); j = 0;
 	zend_hash_internal_pointer_reset( hash );
-	while( zend_hash_get_current_data( hash, (void **)&temp) == SUCCESS )
+	while( j < n_elems && zend_hash_get_current_data( hash, (void **)&temp) == SUCCESS )
 	{
 		dy[j++] = (gdouble) Z_DVAL_PP( temp );
 		zend_hash_move_forward(hash);
-		if( j > n_elems) break;
 	}		
 
 	gtk_plot_data_set_points( GTK_PLOT_DATA(PHP_GTK_GET(this_ptr)),x, y, dx, dy, n_elems);
 	efree( x );
+	efree( y );
+	efree( dx );
+	efree( dy );
 	RETURN_NULL();
 }
 %% 
