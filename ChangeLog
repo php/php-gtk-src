@@ -1,3 +1,7 @@
+2001-08-19  Andrei Zmievski  <andrei@ispi.net>
+
+    * test/gtk.php: Fix gtk.php.
+
 2001-08-18  Andrei Zmievski  <andrei@ispi.net>
 
     * test/gtk.php:
