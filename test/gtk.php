@@ -251,7 +251,7 @@ function create_ctree()
 			global	$ctree_data;
 
 			$ctree_data['sel_label']->set_text((string)count($ctree->selection));
-			$ctree_data['vis_label']->set_text((string)count($ctree->row_list));
+			$ctree_data['vis_label']->set_text((string)$ctree->clist->rows);
 			$ctree_data['book_label']->set_text((string)$ctree_data['books']);
 			$ctree_data['page_label']->set_text((string)$ctree_data['pages']);
 		}
@@ -798,7 +798,7 @@ function create_ctree()
 		$hbox2->pack_start($label, false);
 		$label->show();
 
-		$ctree_data['vis_label'] = &new GtkLabel((string)count($ctree->row_list));
+		$ctree_data['vis_label'] = &new GtkLabel((string)$ctree->clist->rows);
 		$hbox2->pack_start($ctree_data['vis_label'], false, true, 5);
 		$ctree_data['vis_label']->show();
 		
