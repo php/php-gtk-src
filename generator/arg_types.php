@@ -715,6 +715,4 @@ $matcher->register_boxed('GtkCTreeNode', 'gtk_ctree_node');
 $matcher->register_boxed('GtkAccelGroup', 'gtk_accel_group');
 $matcher->register_boxed('GtkStyle', 'gtk_style');
 
-$matcher->register_object('GtkWidget');
-
 ?>
