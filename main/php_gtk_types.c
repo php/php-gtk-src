@@ -1595,16 +1595,14 @@ static void gtk_ctree_node_get_property(zval *return_value, zval *object, zend_l
 
 	if (!strcmp(prop_name, "parent")) {
 		temp = GTK_CTREE_ROW(node)->parent;
-		if (temp) {
+		if (temp)
 			*return_value = *php_gtk_ctree_node_new(temp);
-			return;
-		}
+		return;
 	} else if (!strcmp(prop_name, "sibling")) {
 		temp = GTK_CTREE_ROW(node)->sibling;
-		if (temp) {
+		if (temp)
 			*return_value = *php_gtk_ctree_node_new(temp);
-			return;
-		}
+		return;
 	} else if (!strcmp(prop_name, "children")) {
 		zval *php_node;
 		zend_overloaded_element *property;
@@ -1638,6 +1636,26 @@ static void gtk_ctree_node_get_property(zval *return_value, zval *object, zend_l
 			}
 		}
 
+		return;
+	} else if (!strcmp(prop_name, "pixmap_closed")) {
+		GdkPixmap *pixmap = GTK_CTREE_ROW(node)->pixmap_closed;
+		if (pixmap)
+			*return_value = *php_gdk_pixmap_new(pixmap);
+		return;
+	} else if (!strcmp(prop_name, "pixmap_opened")) {
+		GdkPixmap *pixmap = GTK_CTREE_ROW(node)->pixmap_opened;
+		if (pixmap)
+			*return_value = *php_gdk_pixmap_new(pixmap);
+		return;
+	} else if (!strcmp(prop_name, "mask_closed")) {
+		GdkBitmap *mask = GTK_CTREE_ROW(node)->mask_closed;
+		if (mask)
+			*return_value = *php_gdk_bitmap_new(mask);
+		return;
+	} else if (!strcmp(prop_name, "mask_opened")) {
+		GdkBitmap *mask = GTK_CTREE_ROW(node)->mask_opened;
+		if (mask)
+			*return_value = *php_gdk_bitmap_new(mask);
 		return;
 	} else if (!strcmp(prop_name, "level")) {
 		RETURN_LONG(GTK_CTREE_ROW(node)->level);
