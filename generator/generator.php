@@ -85,14 +85,12 @@ class Generator {
             //TODO $matcher->register_object($object->c_name, $object->typecode);
         }
 
-        /*
         foreach ($parser->enums as $enum) {
             if ($enum->def_type == 'flags')
-                $matcher->register_flag($enum->c_name, $enum->typecode);
+                ;//$matcher->register_flag($enum->c_name, $enum->typecode);
             else
                 $matcher->register_enum($enum->c_name, $enum->typecode);
         }
-        */
     }
 
     function write_constants()
@@ -700,11 +698,13 @@ class Generator {
         if ($this->parser->enums || $this->parser->functions) {
             //TODO $func_defs = $this->write_functions();
 
+            /*
             $register_classes .= sprintf(Templates::register_class,
                                          $this->lprefix . '_ce',
                                          $this->lprefix,
                                          $func_defs ? $this->lprefix . '_methods' : 'NULL',
                                          'NULL', 0);
+            */
         }
 
         /* Objects */

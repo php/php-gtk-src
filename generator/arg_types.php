@@ -220,24 +220,20 @@ class String_Arg extends Arg_Type {
 }
 
 class Char_Arg extends Arg_Type {
-    function write_param($type, $name, $default, $null_ok, &$var_list,
-                         &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
+    function write_param($type, $name, $default, $null_ok, $info)
     {
         if (isset($default))
-            $var_list->add('char', $name . ' = \'' . $default . '\'');
+            $info->var_list->add('char', $name . ' = \'' . $default . '\'');
         else
-            $var_list->add('char', $name);
-        $parse_list[]   = '&' . $name;
-        $arg_list[]     = $name;
-        return 'c';
+            $info->var_list->add('char', $name);
+        $info->arg_list[] = $name;
+        $info->add_parse_list('c', '&' . $name);
     }
     
-    function write_return($type, &$var_list, $separate)
+    function write_return($type, $owns_return, $info)
     {
-        $var_list->add('gchar', 'ret[2]');
-        return "    ret[0] = %s;\n"    .
-               "    ret[1] = '\\0';\n" .
-               "%s  RETURN_STRINGL(ret, 1, 1);";
+        $info->var_list->add('gchar', 'php_retval');
+        $info->post_code[] =  "\tRETURN_STRINGL((char*)&ret, 1, 1);";
     }
 }
 
@@ -274,23 +270,20 @@ class Int_Arg extends Arg_Type {
 }
 
 class Bool_Arg extends Arg_Type {
-    function write_param($type, $name, $default, $null_ok, &$var_list,
-                         &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
+    function write_param($type, $name, $default, $null_ok, $info)
     {
         if (isset($default))
-            $var_list->add('zend_bool', $name . ' = ' . $default);
+            $info->var_list->add('zend_bool', $name . ' = ' . $default);
         else
-            $var_list->add('zend_bool', $name);
-        $parse_list[]   = '&' . $name;
-        $arg_list[]     = "($type)$name";
-        return 'b';
+            $info->var_list->add('zend_bool', $name);
+        $info->arg_list[] = "($type)$name";
+        $info->add_parse_list('b', '&' . $name);
     }
     
-    function write_return($type, &$var_list, $separate)
+    function write_return($type, $owns_return, $info)
     {
-        $var_list->add('gboolean', 'php_retval');
-        return "    php_retval = %s;\n" .
-               "%s  RETURN_BOOL(php_retval);";
+        $info->var_list->add('gboolean', 'php_retval');
+        $info->post_code[] = "\tRETURN_BOOL(php_retval);";
     }
 
     function write_to_prop($obj, $name, $source)
@@ -309,23 +302,20 @@ class Bool_Arg extends Arg_Type {
 }
 
 class Double_Arg extends Arg_Type {
-    function write_param($type, $name, $default, $null_ok, &$var_list,
-                         &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
+    function write_param($type, $name, $default, $null_ok, $info)
     {
         if (isset($default))
-            $var_list->add('double', $name . ' = ' . $default);
+            $info->var_list->add('double', $name . ' = ' . $default);
         else
-            $var_list->add('double', $name);
-        $parse_list[]   = '&' . $name;
-        $arg_list[]     = "(float)$name";
-        return 'd';
+            $info->var_list->add('double', $name);
+        $info->arg_list[] = "(float)$name";
+        $info->add_parse_list('d', '&' . $name);
     }
     
-    function write_return($type, &$var_list, $separate)
+    function write_return($type, $owns_return, $info)
     {
-        $var_list->add('double', 'php_retval');
-        return "    php_retval = %s;\n" .
-               "%s  RETURN_DOUBLE(php_retval);";
+        $info->var_list->add('double', 'php_retval');
+        $info->post_code[] = "\tRETURN_DOUBLE(php_retval);";
     }
 
     function write_to_prop($obj, $name, $source)
@@ -344,7 +334,7 @@ class Double_Arg extends Arg_Type {
 }
 
 class Enum_Arg extends Arg_Type {
-    var $enum_tpl  = null;
+    static $enum_tpl  = "\n\tif (php_%(name) && !php_gtk_get_enum_value(%(typecode), php_%(name), (gint *)&%(name))) {\n\t\treturn;\n\t}\n";
     var $enum_name = null;
     var $typecode = null;
     //var $simple    = null;
@@ -355,16 +345,18 @@ class Enum_Arg extends Arg_Type {
         $this->typecode = $typecode;
     }
 
-    function write_param($type, $name, $default, $null_ok, &$var_list,
-                         &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
+    function write_param($type, $name, $default, $null_ok, $info)
     {
         if (isset($default))
-            $var_list->add($this->enum_name, $name . ' = ' . $default);
+            $info->var_list->add($this->enum_name, $name . ' = ' . $default);
         else
-            $var_list->add($this->enum_name, $name);
-        $var_list->add('zval', '*php_' . $name . ' = NULL');
-        $parse_list[]   = '&php_' . $name;
-        $arg_list[]     = $name;
+            $info->var_list->add($this->enum_name, $name);
+        $info->var_list->add('zval', '*php_' . $name . ' = NULL');
+        $info->arg_list[] = $name;
+        $info->add_parse_list('V', '&php_' . $name);
+        $info->pre_code[] = aprintf(self::$enum_tpl, array('typecode' => $this->typecode,
+                                                           'name' => $name));
+        /*
         if ($this->simple) {
             $enum_tpl = "   if (php_%s && !php_gtk_get_simple_enum_value(php_%s, (gint *)&%s)) {\n" .
                         "       %sreturn;\n" .
@@ -378,14 +370,13 @@ class Enum_Arg extends Arg_Type {
             $extra_pre_code[]   = sprintf($enum_tpl, $name, $this->type_code, $name, $name,
                                           $in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "");
         }
-        return 'V';
+        */
     }
     
-    function write_return($type, &$var_list, $separate)
+    function write_return($type, $owns_return, $info)
     {
-        $var_list->add('long', 'php_retval');
-        return "    php_retval = %s;\n" .
-               "%s  RETURN_LONG(php_retval);";
+        $info->var_list->add('long', 'php_retval');
+        $info->post_code[] = "RETURN_LONG(php_retval);";
     }
 }
 
@@ -794,10 +785,10 @@ $matcher->register('unsigned-char*', $arg);
 $matcher->register('guchar*', $arg);
 $matcher->register('const-guchar*', $arg);
 
-#$arg = new Char_Arg();
-#$matcher->register('char', $arg);
-#$matcher->register('gchar', $arg);
-#$matcher->register('guchar', $arg);
+$arg = new Char_Arg();
+$matcher->register('char', $arg);
+$matcher->register('gchar', $arg);
+$matcher->register('guchar', $arg);
 
 $arg = new Int_Arg();
 $matcher->register('int', $arg);
@@ -818,15 +809,15 @@ $matcher->register('guint32', $arg);
 $matcher->register('gint32', $arg);
 $matcher->register('GtkType', $arg);
 
-#$arg = new Bool_Arg();
-#$matcher->register('gboolean', $arg);
-#
-#$arg = new Double_Arg();
-#$matcher->register('double', $arg);
-#$matcher->register('gdouble', $arg);
-#$matcher->register('float', $arg);
-#$matcher->register('gfloat', $arg);
-#
+$arg = new Bool_Arg();
+$matcher->register('gboolean', $arg);
+
+$arg = new Double_Arg();
+$matcher->register('double', $arg);
+$matcher->register('gdouble', $arg);
+$matcher->register('float', $arg);
+$matcher->register('gfloat', $arg);
+
 #$arg = new Atom_Arg();
 #$matcher->register('GdkAtom', $arg);
 #
