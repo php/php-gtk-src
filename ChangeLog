@@ -1,3 +1,21 @@
+2001-03-10  James Moore  <James@phpuk.org>
+
+    * docs/Makefile.in
+      docs/checkdoc.in
+      docs/configure.in
+      docs/html-common.dsl
+      docs/html.dsl.in
+      docs/phpweb.dsl.in
+      docs/quickref.dsl.in
+      docs/version.dsl:
+    Bit of a clean up. Removing redundant files or files that will be replaced]
+    with php-gtk specific versions.
+
+    * docs/en/classes/gtkobject.xml
+      docs/manual.xml.in:
+    How the objects ref will *probably* end up. (If your building docs
+    I know it looks ugly but Ill do stylesheet for them later).
+
 2001-03-09  Andrei Zmievski  <andrei@ispi.net>
 
     * NEWS
