@@ -52,9 +52,9 @@ static void init_gtk(void)
 	}
  
 	/*
-	 * Since track_vars is always on, we just get the argc/argv values from
-	 * there.
+	 * Grab the argc/argv values from $_SERVER array.
 	 */
+	zend_is_auto_global("_SERVER", sizeof("_SERVER")-1 TSRMLS_CC);
 	symbol_table = PG(http_globals)[TRACK_VARS_SERVER]->value.ht;
 	zend_hash_find(symbol_table, "argc", sizeof("argc"), (void **)&z_argc);
 	zend_hash_find(symbol_table, "argv", sizeof("argv"), (void **)&z_argv);

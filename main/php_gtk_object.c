@@ -148,7 +148,7 @@ static void php_gtk_write_property(zval *object, zval *member, zval *value TSRML
 	}
 }
 
-static zval *php_gtk_read_property(zval *object, zval *member, int type TSRMLS_DC)
+static zval *php_gtk_read_property(zval *object, zval *member TSRMLS_DC)
 {
 	php_gtk_object *wrapper;
 	zval tmp_member;
@@ -164,7 +164,7 @@ static zval *php_gtk_read_property(zval *object, zval *member, int type TSRMLS_D
 	wrapper = (php_gtk_object *) zend_object_store_get_object(object TSRMLS_CC);
 	rv = invoke_getter(object, Z_STRVAL_P(member));
 	if (!rv) {
-		rv = std_object_handlers.read_property(object, member, type TSRMLS_CC);
+		rv = std_object_handlers.read_property(object, member TSRMLS_CC);
 	}
 
 	if (member == &tmp_member) {

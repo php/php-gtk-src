@@ -112,7 +112,6 @@ PHP_FUNCTION(%s_get_type)
 $register_classes_tpl = "
 void php_%s_register_classes(void)
 {
-	zend_class_entry ce;
 	TSRMLS_FETCH();
 %s
 }\n";
