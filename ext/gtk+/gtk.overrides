@@ -150,7 +150,6 @@ ignore
 	gtk_signal_n_emissions_by_name
 	gtk_signal_query
 	gtk_signal_set_funcs
-	gtk_style_new
 	gtk_text_view_new_with_buffer
 	gtk_tooltips_data_get
 	gtk_trace_referencing

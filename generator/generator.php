@@ -644,14 +644,14 @@ class Generator {
                     // mark class as abstract if we were trying to generate
                     // default constructor
                     if ($ctor_fe_name == '__construct') {
-                        $object->ce_flags[] = 'ZEND_ACC_ABSTRACT';
+                        $object->ce_flags[] = 'ZEND_ACC_EXPLICIT_ABSTRACT_CLASS';
                     }
                 }
                 $first = 0;
             }
         } else {
             // mark class as abstract
-            $object->ce_flags[] = 'ZEND_ACC_ABSTRACT';
+            $object->ce_flags[] = 'ZEND_ACC_EXPLICIT_ABSTRACT_CLASS';
         }
 
         return $ctor_defs;
