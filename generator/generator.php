@@ -783,7 +783,7 @@ $old_error_reporting = error_reporting(E_ALL & ~E_NOTICE);
 /* For backwards compatibility. */
 chdir(dirname(__FILE__));
 
-if (!isset($HTTP_SERVER_VARS['argv'])) 
+if (!isset($_SERVER['argv'])) 
 	fatal_error("
         Could not read command line arguments for generator.php 
         Please ensure that this option is set in your php.ini
@@ -791,8 +791,8 @@ if (!isset($HTTP_SERVER_VARS['argv']))
 	");
 
 
-$argc = $HTTP_SERVER_VARS['argc'];
-$argv = $HTTP_SERVER_VARS['argv'];
+$argc = $_SERVER['argc'];
+$argv = $_SERVER['argv'];
 
 /* An ugly hack to counteract PHP's pernicious desire to treat + as an argument
    separator in command-line version. */
