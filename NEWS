@@ -1,3 +1,5 @@
+    - fixed property and method access on GdkBitmap. (Andrei)
+
 Version 0.5.0 "monday starts on saturday" 24-Jan-2002
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - added new widgets with samples: GtkComboButton, GtkSPaned, GtkScrollPane
