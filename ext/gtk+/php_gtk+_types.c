@@ -288,7 +288,8 @@ PHP_FUNCTION(gdk_window_new_gc)
 	zval *php_values = NULL;
 	zval **value;
 	char *key;
-	ulong key_len, num_key;
+	uint key_len;
+	ulong num_key;
 	HashTable *hash;
 	GdkGCValues values;
 	GdkGCValuesMask mask = 0;
