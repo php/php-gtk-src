@@ -1,7 +1,7 @@
 /* vim: set ft=cpp: */
 %%
 headers
-#include <gtkextra.h>
+#include <gtkextra/gtkextra.h>
 #include "ext/gtk+/php_gtk+.h"
 
 
