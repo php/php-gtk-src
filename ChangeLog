@@ -1,3 +1,47 @@
+2001-04-27  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk_object.c: More work.
+
+    * src/php_gtk_object.c:
+    Now the explicit property chain support is getting into shape.
+
+2001-04-27  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/en/classes/gtkarrow.xml
+      docs/en/classes/gtkbox.xml
+      docs/en/classes/gtkbuttonbox.xml
+      docs/en/classes/gtkdialog.xml
+      docs/en/classes/gtkeventbox.xml
+      docs/en/classes/gtkhandlebox.xml
+      docs/en/classes/gtkhbuttonbox.xml
+      docs/en/classes/gtkinputdialog.xml
+      docs/en/classes/gtklabel.xml
+      docs/en/classes/gtkplug.xml
+      docs/en/classes/gtkscrolledwindow.xml
+      docs/en/classes/gtkvbox.xml
+      docs/en/classes/gtkvbuttonbox.xml
+      docs/en/classes/gtkviewport.xml
+      docs/stylesheets/xsl/html/name_to_id.xsl
+      docs/manual.xml.in:
+    SHELLSUIT#03 plus a coupla typo corrections from previous
+
+    * docs/en/classes/gtkcolorselectiondialog.xml
+      docs/en/classes/gtkdialog.xml
+      docs/en/classes/gtkfileselection.xml
+      docs/en/classes/gtkfontselectiondialog.xml
+      docs/en/classes/gtkinputdialog.xml
+      docs/en/classes/gtkinvisible.xml
+      docs/en/classes/gtklistitem.xml
+      docs/en/classes/gtkradiomenuitem.xml
+      docs/en/classes/gtktearoffmenuitem.xml
+      docs/en/classes/gtktreeitem.xml
+      docs/manual.xml.in
+      docs/stylesheets/xsl/html/name_to_id.xsl: SHELLSUIT#02
+
+2001-04-27  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk_object.c: More hacking on that property problem.
+
 2001-04-26  Andrei Zmievski  <andrei@ispi.net>
 
     * src/php_gtk.h
