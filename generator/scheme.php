@@ -185,14 +185,6 @@ class Defs_Parser {
 		$object_def			= &new Object_Def($arg);
 		$this->objects[$object_def->in_module . $object_def->name] = &$object_def;
 		$this->c_name[] 	= &$object_def->c_name;
-
-		if ($object_def->in_module == 'Gtk' && $object_def->name == 'Object') {
-			$object_def->gtk_object_descendant = true;
-		} else {
-			if ($parent_def = $this->find_parent($object_def)) {
-				$object_def->gtk_object_descendant = $parent_def->gtk_object_descendant;
-			}
-		}
 	}
 
 	function handle_struct($arg)

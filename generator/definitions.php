@@ -73,7 +73,6 @@ class Object_Def {
 	var $ce			= null;
 	var $fields		= array();
 	var $methods	= array();
-	var $gtk_object_descendant = false;
 
 	function Object_Def($args)
 	{

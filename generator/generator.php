@@ -36,14 +36,16 @@ require "scheme.php";
 require "templates.php";
 
 class Generator {
-	var $parser 	= null;
-	var $overrides  = null;
-	var $prefix		= null;
-	var $lprefix	= null;
-	var $function_class = null;
+	var $parser				= null;
+	var $overrides			= null;
+	var $prefix				= null;
+	var $lprefix			= null;
+	var $function_class		= null;
 
-	var $constants	= '';
-	var $register_classes = '';
+	var $is_gtk_object		= array('GtkObject' => true);
+
+	var $constants			= '';
+	var $register_classes   = '';
 
 	var $functions_decl_end = "\t{NULL, NULL, NULL}\n};\n\n";
 
@@ -66,9 +68,16 @@ class Generator {
 		foreach ($parser->structs as $struct)
 			$matcher->register_struct($struct->c_name);
 
-		foreach ($parser->objects as $object)
-			$matcher->register_object($object->c_name,
-									  $object->gtk_object_descendant);
+		foreach ($parser->objects as $object) {
+			$gtk_obj_descendant = false;
+			if (isset($object->parent) &&
+				isset($this->is_gtk_object[$object->parent[1] . $object->parent[0]])) {
+				$this->is_gtk_object[$object->in_module . $object->name] = $this->is_gtk_object[$object->parent[1] . $object->parent[0]];
+				$gtk_obj_descendant = true;
+			}
+
+			$matcher->register_object($object->c_name, $gtk_obj_descendant);
+		}
 
 		foreach ($parser->enums as $enum) {
 			if ($enum->def_type == 'flags')
@@ -508,7 +517,7 @@ class Generator {
 										   strtolower($constructor->c_name),
 										   'NULL');
 			} else if (!$this->overrides->is_ignored($constructor->c_name)) {
-				if ($this->write_constructor($fp, $object->c_name, $object->gtk_object_descendant, $constructor)) {
+				if ($this->write_constructor($fp, $object->c_name, $this->is_gtk_object[$object->in_module . $object->name], $constructor)) {
 					$functions_decl .= sprintf($function_entry_tpl,
 											   $constructor->is_constructor_of,
 											   strtolower($constructor->c_name),
@@ -531,7 +540,7 @@ class Generator {
 			 * Insert get_type() as class method if the object is descended from
 			 * GtkObject.
 			 */
-			if ($object->gtk_object_descendant) {
+			if ($this->is_gtk_object[$object->in_module . $object->name]) {
 				$lclass = strtolower(substr(convert_typename($object->c_name), 1));
 				$functions_decl .= sprintf($function_entry_tpl,
 										   'get_type',
@@ -553,7 +562,7 @@ class Generator {
 				}
 				else if (!$this->overrides->is_ignored($method->c_name)) {
 					if ($this->write_method($fp, $object->c_name,
-											$object->gtk_object_descendant, $method)) {
+											$this->is_gtk_object[$object->in_module . $object->name], $method)) {
 						$functions_decl .= sprintf($function_entry_tpl,
 												   strtolower($method->name),
 												   strtolower($method->c_name),
@@ -700,6 +709,7 @@ chdir('..');
 $prefix = 'Gtk';
 $function_class = null;
 $overrides = new Overrides();
+$register_defs = array();
 
 foreach ($opts as $opt) {
 	list($opt_spec, $opt_arg) = $opt;
@@ -710,14 +720,17 @@ foreach ($opts as $opt) {
 	} else if ($opt_spec == 'c') {
 		$function_class = $opt_arg;
 	} else if ($opt_spec == 'r') {
-		$type_parser = new Defs_Parser($opt_arg);
-		$type_parser->start_parsing();
-		Generator::register_types($type_parser);
+		$register_defs[] = $opt_arg;
 	}
 }
 
 $parser = new Defs_Parser($argv[1]);
 $generator = new Generator($parser, $overrides, $prefix, $function_class);
+foreach ($register_defs as $defs) {
+	$type_parser = new Defs_Parser($opt_arg);
+	$type_parser->start_parsing();
+	$generator->register_types($type_parser);
+}
 $parser->start_parsing();
 $generator->register_types();
 $generator->create_source();
