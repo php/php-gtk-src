@@ -1,3 +1,16 @@
+2001-03-26  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/class.xsl: Find correct prev and next links
+
+    * docs/manual.xml.in: whitespace
+
+    * docs/scripts/TemplateParser.class
+      docs/templates/classentry.tpl:
+    Adding LTE for parsing templates and a test template
+
+    * docs/stylesheets/xsl/html/class.xsl:
+    New cleaner output of PHP from classentries
+
 2001-03-24  Andrei Zmievski  <andrei@ispi.net>
 
     * NEWS: News update.
