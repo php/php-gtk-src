@@ -101,7 +101,7 @@ USERDEP__COMBO="combobutton.overrides"	"combobutton.defs"
 InputPath=.\combobutton.defs
 
 "gen_combobutton.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	php.exe -q ..\..\generator\generator.php -o ext\combobutton\combobutton.overrides -p combobutton -r ext\gtk%%2b\gtk.defs ext\combobutton\combobutton.defs >gen_combobutton.c 
+	php.exe -q ..\..\generator\generator.php -o ext\combobutton\combobutton.overrides -p ComboButton -r ext\gtk%%2b\gtk.defs ext\combobutton\combobutton.defs >gen_combobutton.c 
 	grep -h "^PHP_GTK_EXPORT_CE" gen_combobutton.c | sed -e "s/^/extern /" > gen_ce_combobutton.h 
 	
 # End Custom Build
@@ -113,7 +113,7 @@ USERDEP__COMBO="combobutton.overrides"	"combobutton.defs"
 InputPath=.\combobutton.defs
 
 "gen_combobutton.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	php.exe -q ..\..\generator\generator.php -o ext\combobutton\combobutton.overrides -p combobutton -r ext\gtk%%2b\gtk.defs ext\combobutton\combobutton.defs >gen_combobutton.c 
+	php.exe -q ..\..\generator\generator.php -o ext\combobutton\combobutton.overrides -p ComboButton -r ext\gtk%%2b\gtk.defs ext\combobutton\combobutton.defs >gen_combobutton.c 
 	grep -h "^PHP_GTK_EXPORT_CE" gen_combobutton.c | sed -e "s/^/extern /" > gen_ce_combobutton.h 
 	
 # End Custom Build
@@ -147,6 +147,10 @@ SOURCE=.\gen_ce_combobutton.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\gtkcombobutton.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\php_combobutton.h
 # End Source File
 # End Group
@@ -159,7 +163,7 @@ SOURCE=.\php_combobutton.h
 # PROP Default_Filter "*.override"
 # Begin Source File
 
-SOURCE=..\ext\combobutton\combobutton.overrides
+SOURCE=.\combobutton.overrides
 # End Source File
 # End Group
 # End Target
