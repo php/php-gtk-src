@@ -928,6 +928,31 @@ PHP_FUNCTION(gtk_clist_get_text)
 	RETURN_STRING(text, 1);
 }
 %%
+override gtk_clist_get_pixmap
+PHP_FUNCTION(gtk_clist_get_pixmap)
+{
+	zval *php_pixmap = NULL, *php_mask = NULL;
+	int column, row;
+	GdkPixmap *pixmap = NULL;
+	GdkBitmap *mask = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &row, &column))
+		return;
+
+	if (!gtk_clist_get_pixmap(GTK_CLIST(PHP_GTK_GET(this_ptr)), row, column,
+							  &pixmap, &mask)) {
+		php_error(E_WARNING, "%s() cannot get pixmap value", get_active_function_name(TSRMLS_C));
+		return;
+	}
+
+	php_pixmap = php_gdk_pixmap_new(pixmap);
+	php_mask = php_gdk_bitmap_new(mask);
+
+	*return_value = *php_gtk_build_value("(NN)", php_pixmap, php_mask);
+}
+%%
 override gtk_clist_set_row_data
 PHP_FUNCTION(gtk_clist_set_row_data)
 {
@@ -1004,7 +1029,6 @@ PHP_FUNCTION(gtk_clist_get_pixtext)
 
 	*return_value = *php_gtk_build_value("(siNN)", text, (int)spacing,
 										 php_pixmap, php_mask);
-
 }
 %%
 ignore gtk_menu_item_new_with_label 
