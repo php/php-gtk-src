@@ -1,3 +1,20 @@
+2001-11-21  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/skeleton/Makefile.in
+      ext/sqpane/Makefile.in
+      ext/gtk+/Makefile.in
+      ext/libglade/Makefile.in
+      config.m4:
+    Use php-config --prefix to locate PHP executable.
+
+    * generator/scheme.php:
+    Suppress warnings on checking cache file existence.
+
+    * TODO: Some accomplished stuff removal action.
+
+    * ext/scintilla/php_scintilla.c
+      php_gtk.m4: A couple of small fixes.
+
 2001-11-20  Andrei Zmievski  <andrei@ispi.net>
 
     * README: Update README.
