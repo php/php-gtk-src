@@ -1,3 +1,4 @@
+    - added GDK keysyms constants. (Andrei)
     - fixed bug with GtkStyle::copy() that was not returning the result
       properly. (Andrei)
     - implemented support for struct based classes (GdkRectangle, GtkAllocation,

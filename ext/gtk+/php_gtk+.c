@@ -29,6 +29,9 @@
 
 int le_gtk_object;
 
+/* defined in php_gdk.c */
+void php_gdk_register_keysyms(int module_number TSRMLS_DC);
+
 static void init_gtk(void)
 {
 	HashTable *symbol_table;
@@ -147,6 +150,7 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 	init_gtk();
 	php_gtk_register_constants(module_number TSRMLS_CC);
 	php_gdk_register_constants(module_number TSRMLS_CC);
+	php_gdk_register_keysyms(module_number TSRMLS_CC);
 	php_gtk_register_classes();
 	php_gdk_register_classes();
 	php_gtk_plus_register_types(module_number);
