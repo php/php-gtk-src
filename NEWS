@@ -1,3 +1,5 @@
+    - fixed timeout and idle handler marshaller so that they are called more
+      than once.
     - added connect_object() method that allows calling an object method as a
       signal callback.
     - fixed a silent crash that was happening due to object corruption.
