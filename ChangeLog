@@ -1,3 +1,29 @@
+2002-12-26  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      generator/generator.php
+      generator/templates.php
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_object.c
+      test/hello.php:
+      Made property reading work, but not for boxed types yet. As expected,
+      $button->child->get() works as a charm under ZE2.
+
+    * ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      generator/generator.php
+      generator/templates.php
+      main/php_gtk.h
+      main/php_gtk_object.c
+      main/php_gtk_util.c
+      test/hello.php
+      test/list.php:
+      First shot at making the object system work under ZE2. Boxed types don't
+      work yet, neither does property access. But hello.php runs.
+
 2002-12-10  Frank M. Kromann  <frank@kromann.info>
 
     * ext/spaned/gtkshpaned.c
