@@ -16,7 +16,11 @@
 COMMONDEFS=$(srcdir)/gtk-types.defs $(srcdir)/gdk-types.defs \
 		   $(srcdir)/atk-types.defs $(srcdir)/pango-types.defs
 
-$(srcdir)/gen_gtk.c: $(srcdir)/gtk.defs $(COMMONDEFS) $(srcdir)/gtk-extrafuncs.defs $(srcdir)/gtk.overrides
+GTK_OVERRIDES = \
+	$(srcdir)/gtk.overrides \
+	$(srcdir)/gtkstyle.overrides
+
+$(srcdir)/gen_gtk.c: $(srcdir)/gtk.defs $(COMMONDEFS) $(srcdir)/gtk-extrafuncs.defs $(GTK_OVERRIDES)
 $(srcdir)/gen_gdk.c: $(srcdir)/gdk.defs $(COMMONDEFS) $(srcdir)/gdk.overrides
 $(srcdir)/gen_atk.c: $(COMMONDEFS) $(srcdir)/atk.overrides
 $(srcdir)/gen_pango.c: $(COMMONDEFS) $(srcdir)/pango.overrides

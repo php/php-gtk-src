@@ -38,6 +38,13 @@ class Overrides {
         if (!isset($file_name))
             return;
 
+        $this->read_file($file_name);
+    }
+
+    function read_file($file_name)
+    {
+        $old_dir = getcwd();
+
         $fp = fopen($file_name, 'r');
         $contents = fread($fp, filesize($file_name));
         fclose($fp);
@@ -46,8 +53,14 @@ class Overrides {
         if (!count($blocks))
             return;
 
+        $new_dir = dirname(realpath($file_name));
+        if ($new_dir != $old_dir)
+            chdir($new_dir);
+
         foreach ($blocks as $block)
             $this->_parse_block(trim($block));
+
+        chdir($old_dir);
     }
 
     function _parse_block($block)
@@ -103,6 +116,14 @@ class Overrides {
                 $class = $words[0];
                 $handler = $words[1];
                 $this->handler_overrides[$class][$handler] = $rest;
+                break;
+
+            case 'include':
+                $file_name = $words[0];
+                $this->read_file($file_name);
+                foreach (preg_split(',\s+,', $rest, -1, PREG_SPLIT_NO_EMPTY) as $file_name) {
+                    $this->read_file($file_name);
+                }
                 break;
 
             case 'getprop':
