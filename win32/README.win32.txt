@@ -23,6 +23,8 @@ You doo thie by:
 	Go to the empty line and add the path to php (c:\php4)
 	Close the options window.
 
+include_path in php.ini should contain ".;" in addition to other include paths used
+
 Compile php-gtk:
 Open the workspace php-gtk.dsw
 Compile the project. This process will execute a php-script and the output from this is
