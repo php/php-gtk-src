@@ -413,7 +413,7 @@ PHP_GTK_API zval *php_gtk_new(GtkObject *obj)
 
 }
 
-zval *php_gtk_args_as_hash(int nargs, GValue *args)
+zval *php_gtk_args_as_hash(int nargs, const GValue *args)
 {
 	zval *hash;
 	zval *item;
@@ -629,7 +629,9 @@ zval *php_gtk_arg_as_value(const GValue *arg)
 */
 
 		default:
-			g_assert_not_reached();
+			//g_assert_not_reached();
+			php_error(E_NOTICE, "internal error: Type %d unsupported in %s Line:%d",
+				(int) G_VALUE_TYPE(arg), __FILE__, __LINE__	);
 			return NULL;
 	}
 
@@ -1404,18 +1406,16 @@ PHP_GTK_API void php_gtk_closure_marshal(
 	//printf("attempt to call %s\n",callback_name);
 	//return;
 	
-	MAKE_STD_ZVAL(params);
-	array_init(params);
-	
-	
-	//gtk_args = php_gtk_args_as_hash(n_param_values, param_values);
+	 
+	gtk_args = php_gtk_args_as_hash((int) n_param_values,  param_values);
 	
 	/*
 	 * If pass_object flag is not specified, or it's specified and true, and we
 	 * have the actual object, construct the wrapper around it.
 	 */
-	//if ((!php_gtk_closure->pass_object || Z_LVAL_PP(php_gtk_closure->pass_object)) && o)
-	// wrapper = php_gtk_new(o);
+	if (closure->object) {
+		wrapper = php_gtk_new_base_gobject(closure->object);
+	}
 	
 	// we need to sort out here if the first arg ... param_values[0] is the object and !pass_object
 	// then remove it from the args...
@@ -1424,15 +1424,16 @@ PHP_GTK_API void php_gtk_closure_marshal(
 	 * If there is a wrapper (eg. gobject as the first param), construct array of parameters, set wrapper as
 	 * the first parameter, and append the array of GTK signal arguments to it.
 	 */
-	//if (wrapper) {
-	//	MAKE_STD_ZVAL(params);
-	//	array_init(params);
-	//	zend_hash_next_index_insert(Z_ARRVAL_P(params), &wrapper, sizeof(zval *), NULL);
-	//	php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0 TSRMLS_CC);
-	//		zval_ptr_dtor(&gtk_args);
-	//} else
+	if (wrapper) {
+		MAKE_STD_ZVAL(params);
+		array_init(params);
+		zend_hash_next_index_insert(Z_ARRVAL_P(params), &wrapper, sizeof(zval *), NULL);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0 TSRMLS_CC);
+			zval_ptr_dtor(&gtk_args);
+	} else {
 	//	/* Otherwise, the only parameters will be GTK signal arguments. */
-	//	params = gtk_args;
+		params = gtk_args;
+	}
 
 	/*
 	 * If there are extra arguments specified by user, add them to the parameter
@@ -1527,7 +1528,7 @@ PHP_GTK_API void php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int p
 	((php_gtk_closure *)closure)->callback_filename 	= zend_get_executed_filename(TSRMLS_C);
         ((php_gtk_closure *)closure)->callback_lineno 		= zend_get_executed_lineno(TSRMLS_C);
         ((php_gtk_closure *)closure)->extra 			= php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
-	((php_gtk_closure *)closure)->pass_object 		= pass_object;
+	((php_gtk_closure *)closure)->object			= pass_object ? G_OBJECT(PHP_GTK_GET(this_ptr)) : NULL;
 	
 	// this check to see if we have registered a manual handler...
 	ce = Z_OBJCE_P(this_ptr);

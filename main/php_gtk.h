@@ -98,7 +98,7 @@ struct _php_gtk_closure {
     char	*callback_filename;
     uint 	callback_lineno;
     zval 	*extra;
-    int		pass_object;
+    GObject	*object;
 };
 
 
@@ -154,7 +154,7 @@ PHP_GTK_API void php_gtk_closure_marshal(
 					gpointer 	marshal_data
 					);
 void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args);
-zval *php_gtk_args_as_hash(int nargs, GValue *args);
+zval *php_gtk_args_as_hash(int nargs, const GValue *args);
 GtkArg *php_gtk_hash_as_args(zval *hash, GType type, gint *nargs);
 int php_gtk_args_from_hash(GValue *args, int nparams, zval *hash);
 zval *php_gtk_arg_as_value(const GValue *arg);

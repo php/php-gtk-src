@@ -61,6 +61,7 @@ function delete_event($window, $event)
 
 function close_window($widget)
 {
+	print_R($widget);
 	$window = $widget->get_toplevel();
 	$window->hide();
 }
@@ -104,8 +105,7 @@ function create_dnd()
 
 		function dnd_drag_data_get($widget, $context, $selection_data, $info, $time)
 		{
-			  print_r(func_get_args());
-              $dnd_string = "Perl is the only language that looks\nthe same before and after RSA encryption";
+			$dnd_string = "Perl is the only language that looks\nthe same before and after RSA encryption";
 			$selection_data->set($selection_data->target, 8, $dnd_string);
 		}
 
@@ -157,7 +157,7 @@ function create_dnd()
 		$button = &new GtkButton('To');
 		$box3->pack_start($button);
 		$button->show();
-		//$button->realize();
+		$button->realize();
 		$button->connect('drag_data_received', 'dnd_drag_data_received');
 		$button->drag_dest_set(GTK_DEST_DEFAULT_ALL, $targets, GDK_ACTION_COPY);
 
@@ -173,13 +173,13 @@ function create_dnd()
 		$button = &new GtkButton('close');
 		$button->connect('clicked', 'close_window');
 		$box2->pack_start($button);
-		////$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 		$button->show();
 	}
-//	if ($windows['dnd']->flags() & GTK_VISIBLE)
-//		$windows['dnd']->hide();
-//	else
+	if ($windows['dnd']->flags() & GTK_VISIBLE)
+		$windows['dnd']->hide();
+	else
 		$windows['dnd']->show();
 }
 
@@ -653,7 +653,7 @@ function create_ctree()
 
 		$check = &new GtkCheckButton('Reorderable');
 		$tooltips->set_tip($check, 'Tree items can be reordered by dragging.', '');
-		$check->connect('clicked', 'toggle_reorderable', $check,$ctree);
+		$check->connect('clicked', 'toggle_reorderable', $ctree);
 		$check->set_active(true);
 		$hbox->pack_start($check, false);
 		$check->show();
@@ -812,9 +812,9 @@ function create_ctree()
 		
 		rebuild_tree(null, $ctree);
 	}
-//	if ($windows['ctree']->flags() & GTK_VISIBLE)//
-//		$windows['ctree']->hide();
-//	else
+	if ($windows['ctree']->flags() & GTK_VISIBLE)
+		$windows['ctree']->hide();
+	else
 		$windows['ctree']->show();
 }
 
@@ -868,13 +868,13 @@ function create_pixmap()
 		$button = &new GtkButton('close');
 		$button->connect('clicked', 'close_window');
 		$box2->pack_start($button);
-		////$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 		$button->show();
 	}
-//	if ($windows['pixmap']->flags() & GTK_VISIBLE)
-//		$windows['pixmap']->hide();
-//	else
+	if ($windows['pixmap']->flags() & GTK_VISIBLE)
+		$windows['pixmap']->hide();
+	else
 		$windows['pixmap']->show();
 }
 
@@ -983,15 +983,15 @@ function create_cursor_test()
 		$button = &new GtkButton('close');
 		$button->connect('clicked', 'close_window');
 		$vbox->pack_start($button);
-		////$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 		$button->show();
 
 		$darea->connect_object('realize', 'set_cursor', $spinner, $darea, $cur_name);
 	}
-//	if ($windows['cursor_test']->flags() & GTK_VISIBLE)
-//		$windows['cursor_test']->hide();
-//	else
+	if ($windows['cursor_test']->flags() & GTK_VISIBLE)
+		$windows['cursor_test']->hide();
+	else
 		$windows['cursor_test']->show();
 }
 
@@ -1015,9 +1015,9 @@ function create_color_selection()
 		$ok_button = $window->ok_button;
 		$ok_button->connect('clicked', 'close_window');
 	}
-//	if ($windows['color_selection']->flags() & GTK_VISIBLE)
-//		$windows['color_selection']->hide();
-//	else
+	if ($windows['color_selection']->flags() & GTK_VISIBLE)
+		$windows['color_selection']->hide();
+	else
 		$windows['color_selection']->show();
 }
 
@@ -1064,13 +1064,13 @@ function create_radio_buttons()
 		$button = &new GtkButton('close');
 		$button->connect('clicked', 'close_window');
 		$box2->pack_start($button);
-		////$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 		$button->show();
 	}
-//	if ($windows['radio_buttons']->flags() & GTK_VISIBLE)
-//		$windows['radio_buttons']->hide();
-//	else
+	if ($windows['radio_buttons']->flags() & GTK_VISIBLE)
+		$windows['radio_buttons']->hide();
+	else
 		$windows['radio_buttons']->show();
 }
 
@@ -1113,13 +1113,13 @@ function create_check_buttons()
 		$button = &new GtkButton('close');
 		$button->connect('clicked', 'close_window');
 		$box2->pack_start($button);
-		////$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 		$button->show();
 	}
-//	if ($windows['check_buttons']->flags() & GTK_VISIBLE)
-//		$windows['check_buttons']->hide();
-//	else
+	if ($windows['check_buttons']->flags() & GTK_VISIBLE)
+		$windows['check_buttons']->hide();
+	else
 		$windows['check_buttons']->show();
 }
 
@@ -1356,7 +1356,7 @@ function create_clist()
 		$button->show();
 
 		$button = &new GtkCheckButton('Reorderable');
-		$button->connect('clicked', 'toggle_reorderable', $button,$clist);
+		$button->connect('clicked', 'toggle_reorderable', $clist);
 		$button->set_active(true);
 		$hbox->pack_start($button, false);
 		$button->show();
@@ -1404,7 +1404,6 @@ function create_clist()
 
 		$col1 = &new GdkColor(56000, 0, 0);
 		$col2 = &new GdkColor(0, 56000, 32000);
-/*
 		$style = &new GtkStyle;
 		$style->fg[GTK_STATE_NORMAL] = $col1;
 		$style->base[GTK_STATE_NORMAL] = $col2;
@@ -1424,7 +1423,7 @@ function create_clist()
 					break;
 			}
 		}
-*/
+
 		$separator = &new GtkHSeparator();
 		$vbox->pack_start($separator, false);
 		$separator->show();
@@ -1436,7 +1435,7 @@ function create_clist()
 		$button = &new GtkButton('close');
 		$button->connect('clicked', 'close_window');
 		$hbox->pack_start($button);
-		////$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 		$button->show();
 	}
@@ -1501,13 +1500,13 @@ function create_buttons()
 		$button = &new GtkButton('close');
 		$button->connect('clicked', 'close_window');
 		$box2->pack_start($button);
-		////$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 		$button->show();
 	}
-//	if ($windows['buttons']->flags() & GTK_VISIBLE)
-//		$windows['buttons']->hide();
-//	else
+	if ($windows['buttons']->flags() & GTK_VISIBLE)
+		$windows['buttons']->hide();
+	else
 		$windows['buttons']->show();
 }
 
@@ -1600,7 +1599,7 @@ function create_labels()
 
 		$frame = &new GtkFrame('Underlined label');
 		$label = &new GtkLabel("This label is underlined!\n".
-							   "This one is underlined in ÆüËÜžì€ÎÆþÍÑquite a funky fashion");
+							   "This one is underlined in ÆüËÜ¸ì¤ÎÆþÍÑquite a funky fashion");
 		$label->set_justify(GTK_JUSTIFY_LEFT);
 		$label->set_pattern('_________________________ _ _________ _ _____ _ __ __  ___ ____ _____');
 		$frame->add($label);
@@ -1615,7 +1614,7 @@ function create_labels()
 		$button = &new GtkButton('close');
 		$button->connect('clicked', 'close_window');
 		$box->pack_start($button);
-		////$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 		$button->show();
 	}
@@ -1708,7 +1707,7 @@ function create_button_box()
 		$button = &new GtkButton('close');
 		$button->connect('clicked', 'close_window');
 		$main_vbox->pack_start($button);
-		////$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 		$button->show();
 	}
@@ -1822,7 +1821,7 @@ function create_tooltips()
 		$button = &new GtkButton('close');
 		$button->connect('clicked', 'close_window');
 		$box2->pack_start($button);
-		//$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 		$button->show();
 
@@ -1874,7 +1873,7 @@ function create_toggle_buttons()
 		$button = &new GtkButton('close');
 		$button->connect('clicked', 'close_window');
 		$box2->pack_start($button);
-		////$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 		$button->show();
 	}
@@ -1976,7 +1975,7 @@ function create_entry()
 		$button = &new GtkButton('close');
 		$button->connect('clicked', 'close_window');
 		$box2->pack_start($button);
-		////$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 		$button->show();
 	}
@@ -2145,7 +2144,7 @@ function create_panes()
 		$button->show();
 		$button->connect('clicked', 'close_window');
 		$vbox->pack_start($button);
-		////$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 	}
 	if ($windows['panes']->flags() & GTK_VISIBLE)
@@ -2223,7 +2222,7 @@ function create_dialog()
 		$dialog->connect('delete_event', 'delete_event');
 
 		$button = &new GtkButton('Ok');
-		//$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->connect('clicked', 'close_window');
 
 		$action_area = $dialog->action_area;
@@ -2233,7 +2232,7 @@ function create_dialog()
 
 		$button = &new GtkButton('Toggle');
 		$button->connect('clicked', 'label_toggle', &$label, $dialog);
-		//$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$action_area->pack_start($button, true, true, 0);
 		$button->show();
 	}
@@ -2301,7 +2300,7 @@ function create_event_watcher()
 		$button = &new GtkButton('Close');
 		$button->connect_object('clicked', 'event_watcher_down', &$event_watcher_enter_id, &$event_watcher_leave_id);
 		$button->connect_object('clicked', array($dialog, 'destroy'));
-		//$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$action_area->pack_start($button);
 		$button->grab_default();
 		$button->show();
@@ -2574,7 +2573,7 @@ function create_notebook()
 		$button->set_border_width(5);
 		$button->connect('clicked', 'close_window');
 		$box1->pack_start($button, false, false, 0);
-		//$button->set_flags(GTK_CAN_DEFAULT);
+		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
 	}
 	if ($windows['notebook']->flags() & GTK_VISIBLE)
@@ -2651,13 +2650,13 @@ function create_main_window()
 	$button = &new GtkButton('close');
 	$button->connect_object('clicked', array('gtk', 'main_quit'));
 	$box2->pack_start($button);
-	//$button->set_flags(GTK_CAN_DEFAULT);
+	$button->set_flags(GTK_CAN_DEFAULT);
 	$button->grab_default();
 
 	$window->show_all();
 }
 
-//#Gtk::rc_parse(dirname($argv[0]).'/testgtkrc');
+Gtk::rc_parse(dirname($argv[0]).'/testgtkrc');
 create_main_window();
 Gtk::main();
 
