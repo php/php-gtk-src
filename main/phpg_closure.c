@@ -60,8 +60,66 @@ static void phpg_closure_marshal(GClosure *closure,
                                  gpointer marshal_data)
 {
     phpg_closure_t *phpg_closure = (phpg_closure_t *)closure;
+	char *callback_name;
+    zval ***params = NULL;
+    zval *retval = NULL;
+    uint n_params = 0, i;
+	TSRMLS_FETCH();
 
-    /* TODO */
+	if (!zend_is_callable(phpg_closure->callback, 0, &callback_name)) {
+		if (phpg_closure->src_filename)
+			php_error(E_WARNING, "Unable to invoke signal callback '%s' specified in %s on line %d", callback_name,
+                      phpg_closure->src_filename, phpg_closure->src_lineno);
+		else
+			php_error(E_WARNING, "Unable to invoke signal callback '%s'", callback_name);
+		efree(callback_name);
+		return;
+	}
+
+	if (!phpg_closure->use_signal_object) {
+        /* skip first parameter */
+        n_param_values--;
+        param_values++;
+    }
+    n_params = n_param_values;
+    
+    if (phpg_closure->user_args) {
+        n_params += zend_hash_num_elements(Z_ARRVAL_P(phpg_closure->user_args));
+    }
+
+	params = (zval ***)emalloc(n_params * sizeof(zval **));
+    for (i = 0; i < n_param_values ; ) {
+        zval **item = emalloc(sizeof(zval *));
+        if (phpg_gvalue_to_zval(&param_values[i], item, FALSE TSRMLS_CC) != SUCCESS) {
+            goto err_marshal;
+		}
+        params[i++] = item;
+    }
+
+    if (phpg_closure->user_args) {
+        for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(phpg_closure->user_args));
+             zend_hash_get_current_data(Z_ARRVAL_P(phpg_closure->user_args), (void **)&params[i]) == SUCCESS;
+             zend_hash_move_forward(Z_ARRVAL_P(phpg_closure->user_args)), i++);
+        /* empty body */
+    }
+    assert(i == n_params);
+
+    call_user_function_ex(EG(function_table), NULL, phpg_closure->callback,
+                          &retval, n_params, params, 0, NULL TSRMLS_CC);
+
+	if (retval) {
+		if (return_value)
+			phpg_gvalue_from_zval(return_value, retval);
+		zval_ptr_dtor(&retval);
+	}
+
+err_marshal:
+    efree(callback_name);
+    for (i = 0; i < n_param_values; i++) {
+        zval_ptr_dtor(params[i]);
+        efree(params[i]);
+    }
+    efree(params);
 }
 
 PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, zend_bool use_signal_object TSRMLS_DC)

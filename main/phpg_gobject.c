@@ -43,11 +43,21 @@ HashTable php_gtk_callback_hash;
 /* {{{ static      phpg_free_object_storage() */
 static inline void phpg_free_object_storage(phpg_gobject_t *object, zend_object_handle handle TSRMLS_DC)
 {
+    GSList *tmp;
+
     zend_hash_destroy(object->zobj.properties);
     FREE_HASHTABLE(object->zobj.properties);
 	if (object->obj && object->dtor)
 		object->dtor(object->obj);
     object->obj = NULL;
+
+    tmp = object->closures;
+    while (tmp) {
+        g_closure_invalidate((GClosure *)tmp->data);
+        tmp = tmp->next;
+    }
+    object->closures = NULL;
+
     efree(object);
 }
 /* }}} */
@@ -62,6 +72,7 @@ static zend_object_value phpg_create_object(zend_class_entry *ce TSRMLS_DC)
 	phpg_init_object(object, ce);
 	object->obj  = NULL;
 	object->dtor = NULL;
+	object->closures = NULL;
 
 	zov.handlers = &php_gtk_handlers;
 	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_free_object_storage, NULL TSRMLS_CC);
@@ -288,7 +299,7 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 	real_ce = zend_register_internal_class_ex(&ce, parent, NULL TSRMLS_CC);
     real_ce->ce_flags = ce_flags;
 
-    zend_hash_init(&pi_hash, 1, NULL, NULL, 0);
+    zend_hash_init(&pi_hash, 1, NULL, NULL, 1);
     if (prop_info) {
         pi = prop_info;
         /*
@@ -406,7 +417,6 @@ PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC)
 	}
 
     phpg_sink_object(obj);
-    //zend_objects_store_add_ref(zobj TSRMLS_CC);
     pobj = zend_object_store_get_object(zobj TSRMLS_CC);
     pobj->obj = obj;
     pobj->dtor = (phpg_dtor_t) g_object_unref;
@@ -459,6 +469,22 @@ PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC)
 		pobj->dtor = (phpg_dtor_t) g_object_unref;
 		g_object_set_qdata(obj, gobject_wrapper_key, (void*)Z_OBJ_HANDLE_PP(zobj));
 	}
+}
+/* }}} */
+
+/* {{{ PHP_GTK_API phpg_gobject_watch_closure() */
+PHP_GTK_API void phpg_gobject_watch_closure(zval *zobj, GClosure *closure TSRMLS_DC)
+{
+    phpg_gobject_t *pobj = NULL;
+
+    g_return_if_fail(zobj != NULL);
+    g_return_if_fail(Z_TYPE_P(zobj) == IS_OBJECT && instanceof_function(Z_OBJCE_P(zobj), gobject_ce TSRMLS_CC));
+    g_return_if_fail(closure != NULL);
+
+    pobj = zend_object_store_get_object(zobj TSRMLS_CC);
+    g_return_if_fail(g_slist_find(pobj->closures, closure) == NULL);
+
+    pobj->closures = g_slist_prepend(pobj->closures, closure);
 }
 /* }}} */
 

@@ -87,6 +87,7 @@ typedef struct {
 	PHPG_OBJ_HEADER
 	void *obj;
 	phpg_dtor_t dtor;
+	GSList *closures;
 } phpg_gobject_t;
 
 typedef struct {
@@ -282,14 +283,16 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value);
 
 
 /* GValue */
-PHP_GTK_API zval* phpg_gvalue_as_zval(const GValue *gval, zend_bool copy_boxed);
+PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool copy_boxed TSRMLS_DC);
 PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value);
+PHP_GTK_API zval *phpg_gvalues_to_array(const GValue *values, uint n_values);
 PHP_GTK_API int phpg_gvalue_get_enum(GType enum_type, zval *enum_val, gint *result);
 PHP_GTK_API int phpg_gvalue_get_flags(GType flags_type, zval *flags_val, gint *result);
 
 /* GObject */
 PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC);
 PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC);
+PHP_GTK_API void phpg_gobject_watch_closure(zval *zobj, GClosure *closure TSRMLS_DC);
 void phpg_gobject_register_self();
 
 /* GBoxed */

@@ -29,88 +29,92 @@
 /* TODO G_TYPE_POINTER, G_TYPE_BOXED, G_TYPE_PARAM */
 
 /* {{{ PHP_GTK_API phpg_gvalue_to_zval() */
-PHP_GTK_API zval* phpg_gvalue_to_zval(const GValue *gval, zend_bool copy_boxed)
+PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool copy_boxed TSRMLS_DC)
 {
-    zval *value = NULL;
+    assert(value != NULL);
+    *value = NULL;
 
     switch (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(gval))) {
         case G_TYPE_NONE:
-            MAKE_STD_ZVAL(value);
-            ZVAL_NULL(value);
+            MAKE_STD_ZVAL(*value);
+            ZVAL_NULL(*value);
             break;
 
         case G_TYPE_CHAR:
             {
                 gchar val = g_value_get_char(gval);
-                MAKE_STD_ZVAL(value);
-                ZVAL_STRINGL(value, (char *)&val, 1, 1);
+                MAKE_STD_ZVAL(*value);
+                ZVAL_STRINGL(*value, (char *)&val, 1, 1);
             }
 
         case G_TYPE_UCHAR:
             {
                 guchar val = g_value_get_uchar(gval);
-                MAKE_STD_ZVAL(value);
-                ZVAL_STRINGL(value, (char *)&val, 1, 1);
+                MAKE_STD_ZVAL(*value);
+                ZVAL_STRINGL(*value, (char *)&val, 1, 1);
             }
             break;
 
         case G_TYPE_BOOLEAN:
-            MAKE_STD_ZVAL(value);
-            ZVAL_BOOL(value, g_value_get_boolean(gval));
+            MAKE_STD_ZVAL(*value);
+            ZVAL_BOOL(*value, g_value_get_boolean(gval));
             break;
 
         case G_TYPE_INT:
-            MAKE_STD_ZVAL(value);
-            ZVAL_LONG(value, (long)g_value_get_int(gval));
+            MAKE_STD_ZVAL(*value);
+            ZVAL_LONG(*value, (long)g_value_get_int(gval));
             break;
 
         case G_TYPE_LONG:
-            MAKE_STD_ZVAL(value);
-            ZVAL_LONG(value, (long)g_value_get_long(gval));
+            MAKE_STD_ZVAL(*value);
+            ZVAL_LONG(*value, (long)g_value_get_long(gval));
             break;
 
         case G_TYPE_UINT:
-            MAKE_STD_ZVAL(value);
-            ZVAL_LONG(value, (long)g_value_get_uint(gval));
+            MAKE_STD_ZVAL(*value);
+            ZVAL_LONG(*value, (long)g_value_get_uint(gval));
             break;
 
         case G_TYPE_ULONG:
-            MAKE_STD_ZVAL(value);
-            ZVAL_LONG(value, (long)g_value_get_ulong(gval));
+            MAKE_STD_ZVAL(*value);
+            ZVAL_LONG(*value, (long)g_value_get_ulong(gval));
             break;
 
         case G_TYPE_FLOAT:
-            MAKE_STD_ZVAL(value);
-            ZVAL_DOUBLE(value, (double)g_value_get_float(gval));
+            MAKE_STD_ZVAL(*value);
+            ZVAL_DOUBLE(*value, (double)g_value_get_float(gval));
             break;
 
         case G_TYPE_DOUBLE:
-            MAKE_STD_ZVAL(value);
-            ZVAL_DOUBLE(value, (double)g_value_get_double(gval));
+            MAKE_STD_ZVAL(*value);
+            ZVAL_DOUBLE(*value, (double)g_value_get_double(gval));
             break;
 
         case G_TYPE_ENUM:
-            MAKE_STD_ZVAL(value);
-            ZVAL_LONG(value, (long)g_value_get_enum(gval));
+            MAKE_STD_ZVAL(*value);
+            ZVAL_LONG(*value, (long)g_value_get_enum(gval));
             break;
 
         case G_TYPE_FLAGS:
-            MAKE_STD_ZVAL(value);
-            ZVAL_LONG(value, (long)g_value_get_flags(gval));
+            MAKE_STD_ZVAL(*value);
+            ZVAL_LONG(*value, (long)g_value_get_flags(gval));
             break;
 
         case G_TYPE_STRING:
             {
                 const gchar *str = g_value_get_string(gval);
-                MAKE_STD_ZVAL(value);
+                MAKE_STD_ZVAL(*value);
 
                 if (str != NULL) {
-                    ZVAL_STRING(value, (char *)str, 1);
+                    ZVAL_STRING(*value, (char *)str, 1);
                 } else
-                    ZVAL_NULL(value);
+                    ZVAL_NULL(*value);
             }
             break;
 
+        case G_TYPE_OBJECT:
+            phpg_gobject_new(value, g_value_get_object(gval) TSRMLS_CC);
+            break;
 
             /*
         case G_TYPE_INTERFACE:
@@ -119,10 +123,10 @@ PHP_GTK_API zval* phpg_gvalue_to_zval(const GValue *gval, zend_bool copy_boxed)
 
         default:
             php_error(E_WARNING, "PHP-GTK internal error: unsupported type %s", g_type_name(G_VALUE_TYPE(gval)));
-            break;
+            return FAILURE;
     }
 
-    return value;
+    return SUCCESS;
 }
 /* }}} */
 
@@ -187,6 +191,28 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value)
     }
 
     return SUCCESS;
+}
+/* }}} */
+
+/* {{{ PHP_GTK_API phpg_gvalues_to_array() */
+PHP_GTK_API zval *phpg_gvalues_to_array(const GValue *values, uint n_values)
+{
+	zval *hash;
+	zval *item;
+	int i;
+
+	MAKE_STD_ZVAL(hash);
+	array_init(hash);
+	for (i = 0; i < n_values; i++) {
+		//item = phpg_gvalue_to_zval(&values[i], FALSE);
+		if (!item) {
+			MAKE_STD_ZVAL(item);
+			ZVAL_NULL(item);
+		}
+		zend_hash_next_index_insert(Z_ARRVAL_P(hash), &item, sizeof(zval *), NULL);
+	}
+
+	return hash;
 }
 /* }}} */
 
