@@ -1,3 +1,18 @@
+2001-11-13  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/php_gtk.dsp: Cleanup override files
+
+    * ext/gtk+/gtk.overrides: Fix UTF8 texts on WIn32 in GtkCList
+
+2001-11-13  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtk.defs: Add support for GtkTableChild (Steph Fox).
+
+    * ext/gtk+/gtk.overrides: Fix compilation.
+
 2001-11-12  Frank M. Kromann  <frank@frontbase.com>
 
     * ext/gtk+/gtk.overrides: Fixing string problems in win32.
