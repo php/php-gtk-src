@@ -1,3 +1,54 @@
+2001-05-06  James Moore  <James@phpuk.org>
+
+    * docs/de/chapters/widget.xml
+      docs/de/chapters/widgets.xml:  - Sync with en/
+
+    * docs/stylesheets/xsl/html/class.xsl
+      docs/dbxml/phpgtkdoc.dtd:  - Supprt <userfunc> tag in signals..
+
+2001-05-06  Markus Fischer  <mfischer@josefine.ben.tuwien.ac.at>
+
+    * docs/en/classes/gtkeditable.xml: Filled most methods
+
+2001-05-06  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/class.xsl:
+     - Whoops missed this last time, constructor will now actally appear as a separate page as it was meant to.
+
+    * docs/Makefile.in
+      docs/en/chapters/widget.xml
+      docs/en/chapters/widgets.xml
+      docs/en/classes/gtkfontselectiondialog.xml
+      docs/en/classes/gtksocket.xml
+      docs/en/classes/gtkwindow.xml
+      docs/manual.xml.in
+      docs/udocs.in:
+     - Added another option to the makefile, make updatexml this detects which
+       xml files have been modified and updates them, this is useful after a cvs
+       update but only if xml files have been modified NOT added, if there are new
+       xml files you need to do a proper make. This option once again accepts a
+       stylesheet=phpweb if you want to update your phpweb build otherwise it defaults
+       to the chunk stylesheet.
+
+
+    * docs/Makefile.in
+      docs/udocs.in:
+     - Allow the additional parameter to make to tell the update to use phpweb or chunk stylesheet
+
+    * docs/Makefile.in:
+    Allow the choice of update or quick from the make file.
+
+    * docs/stylesheets/xsl/.cvsignore
+      docs/Makefile.in
+      docs/udocs.in:
+     - Make sure the correct files are deleted in a make distclean and cvs ignores generated files
+
+    * docs/Makefile.in
+      docs/stylesheets/xsl/update.xsl.in
+      docs/udocs.in:  - Updated makefile dependencies
+     - Added update option to update html files in build/html dirs, this is
+       slightly slower than the other option and will use more memory
+
 2001-05-05  Andrei Zmievski  <andrei@ispi.net>
 
     * generator/gtk.overrides: Add insert_text() method back in.
