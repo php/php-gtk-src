@@ -75,13 +75,13 @@ static glade_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object)
 	RETURN_NULL();
 }
 
-PHP_FUNCTION(wrap_glade_xml_signal_connect)
+PHP_FUNCTION(glade_xml_signal_connect)
 {
 	glade_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
 }
 %%
 override glade_xml_signal_connect_object signal_connect_object GladeXML
-PHP_FUNCTION(wrap_glade_xml_signal_connect_object)
+PHP_FUNCTION(glade_xml_signal_connect_object)
 {
 	glade_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
 }
@@ -167,13 +167,13 @@ static glade_signal_autoconnect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_obje
 									  (GladeXMLConnectFunc)glade_connect_auto, ac_data);
 }
 
-PHP_FUNCTION(wrap_glade_xml_signal_autoconnect)
+PHP_FUNCTION(glade_xml_signal_autoconnect)
 {
 	glade_signal_autoconnect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
 }
 %%
 override glade_xml_signal_autoconnect_object signal_autoconnect_object GladeXML
-PHP_FUNCTION(wrap_glade_xml_signal_autoconnect_object)
+PHP_FUNCTION(glade_xml_signal_autoconnect_object)
 {
 	glade_signal_autoconnect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
 }

@@ -22,7 +22,7 @@
 /* $Id$ */
 
 $function_tpl = "
-PHP_FUNCTION(wrap_%s)
+PHP_FUNCTION(%s)
 {
 %s	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%s\"%s))
 		return;
@@ -33,7 +33,7 @@ PHP_FUNCTION(wrap_%s)
 $function_call_tpl = "%s(%s)";
 
 $method_tpl = "
-PHP_FUNCTION(wrap_%s)
+PHP_FUNCTION(%s)
 {
 %s	NOT_STATIC_METHOD();
 
@@ -46,7 +46,7 @@ PHP_FUNCTION(wrap_%s)
 $method_call_tpl = "%s(%s(PHP_GTK_GET(this_ptr))%s)";
 
 $constructor_tpl = "
-PHP_FUNCTION(wrap_%s)
+PHP_FUNCTION(%s)
 {
 %s	NOT_STATIC_METHOD();
 
@@ -66,7 +66,7 @@ PHP_FUNCTION(wrap_%s)
 %s
 }\n\n";
 
-$function_entry_tpl = "\t{\"%s\",	PHP_FN(wrap_%s),	%s},\n";
+$function_entry_tpl = "\t{\"%s\",	PHP_FN(%s),	%s},\n";
 $functions_decl_tpl = "
 static function_entry php_%s_functions[] = {
 ";
@@ -97,7 +97,7 @@ $struct_class_tpl = "
 	INIT_CLASS_ENTRY(ce, \"%s\", php_%s_functions);\n";
 
 $get_type_tpl = "
-PHP_FUNCTION(wrap_%s_get_type)
+PHP_FUNCTION(%s_get_type)
 {
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"\"))
 		return;
@@ -138,7 +138,7 @@ zval *PHP_GTK_EXPORT_FUNC(php_%s_new)(%s *obj)
 }\n\n";
 
 $struct_construct_tpl = "
-PHP_FUNCTION(wrap_%s)
+PHP_FUNCTION(%s)
 {
 %s	NOT_STATIC_METHOD();
 

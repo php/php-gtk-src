@@ -39,6 +39,7 @@ class Generator {
 	var $parser 	= null;
 	var $overrides  = null;
 	var $prefix		= null;
+	var $lprefix	= null;
 
 	var $constants	= '';
 	var $register_classes = '';
@@ -50,6 +51,7 @@ class Generator {
 		$this->parser 	 = &$parser;
 		$this->overrides = &$overrides;
 		$this->prefix	 = $prefix;
+		$this->lprefix	 = strtolower($prefix);
 	}
 	
 	function register_types($parser = null)
@@ -75,7 +77,7 @@ class Generator {
 
 	function write_constants($fp)
 	{
-		fwrite($fp, "\nvoid php_". $this->prefix . "_register_constants(int module_number TSRMLS_DC)\n");
+		fwrite($fp, "\nvoid php_". $this->lprefix . "_register_constants(int module_number TSRMLS_DC)\n");
 		fwrite($fp, "{\n");
 		foreach ($this->parser->enums as $enum) {
 			if ($this->overrides->is_ignored($enum->c_name)) continue;
@@ -350,7 +352,7 @@ class Generator {
 			fwrite($fp, "\n/* struct $struct->c_name */\n");
 
 			$this->register_classes .= sprintf($struct_class_tpl,
-											   $struct_module . $struct_lname,
+											   $struct->in_module . $struct->name,
 											   $struct_module . '_' . $struct_lname);
 			$this->register_classes .= sprintf($register_class_tpl, $struct->ce, 'NULL');
 
@@ -409,6 +411,10 @@ class Generator {
 								implode('', $construct_prop_code)));
 			$functions_decl = sprintf($functions_decl_tpl, $struct_module . '_' . $struct_lname);
 			$functions_decl .= sprintf($function_entry_tpl,
+									   $struct->in_module . $struct->name,
+									   strtolower($struct->c_name),
+									   'NULL');
+			$functions_decl .= sprintf($function_entry_tpl,
 									   $struct_module . $struct_lname,
 									   strtolower($struct->c_name),
 									   'NULL');
@@ -432,7 +438,7 @@ class Generator {
 
 			fwrite($fp, "\n/* object $object->c_name  */\n");
 			$this->register_classes .= sprintf($init_class_tpl,
-											   $object_module . $object_lname,
+											   $object->in_module . $object->name,
 											   $object_module . '_' . $object_lname,
 											   count($object->fields) ? 'php_gtk_get_property' : 'NULL');
 			if ($object->parent === null)
@@ -458,11 +464,18 @@ class Generator {
 			$constructor = $this->parser->find_constructor($object);
 			if (!$constructor || $this->overrides->is_ignored($constructor->c_name)) {
 				$functions_decl .= sprintf($function_entry_tpl,
-										   strtolower($object->c_name),
+										   $object->in_module . $object->name,
+										   'no_constructor', 'NULL');
+				$functions_decl .= sprintf($function_entry_tpl,
+										   $object_module . $object_lname,
 										   'no_constructor', 'NULL');
 			} else if ($this->overrides->is_overriden($constructor->c_name)) {
 				list(, $constructor_override) = $this->overrides->get_override($constructor->c_name);
 				fwrite($fp, $constructor_override . "\n");
+				$functions_decl .= sprintf($function_entry_tpl,
+										   $constructor->is_constructor_of,
+										   strtolower($constructor->c_name),
+										   'NULL');
 				$functions_decl .= sprintf($function_entry_tpl,
 										   strtolower($constructor->is_constructor_of),
 										   strtolower($constructor->c_name),
@@ -470,10 +483,17 @@ class Generator {
 			} else if (!$this->overrides->is_ignored($constructor->c_name)) {
 				if ($this->write_constructor($fp, $object->c_name, $constructor)) {
 					$functions_decl .= sprintf($function_entry_tpl,
+											   $constructor->is_constructor_of,
+											   strtolower($constructor->c_name),
+											   'NULL');
+					$functions_decl .= sprintf($function_entry_tpl,
 											   strtolower($constructor->is_constructor_of),
 											   strtolower($constructor->c_name),
 											   'NULL');
 				} else {
+					$functions_decl .= sprintf($function_entry_tpl,
+											   $constructor->is_constructor_of,
+											   'no_constructor', 'NULL');
 					$functions_decl .= sprintf($function_entry_tpl,
 											   strtolower($constructor->is_constructor_of),
 											   'no_constructor', 'NULL');
@@ -542,19 +562,19 @@ class Generator {
 		
 		$this->register_classes .= sprintf($init_class_tpl,
 										   $this->prefix,
-										   $this->prefix,
+										   $this->lprefix,
 										   'NULL');
 		$this->register_classes .= sprintf($register_class_tpl,
-										   $this->prefix . '_ce',
+										   $this->lprefix . '_ce',
 										   'NULL');
-		$functions_decl = sprintf($functions_decl_tpl, $this->prefix);
+		$functions_decl = sprintf($functions_decl_tpl, $this->lprefix);
 
 		foreach ($this->parser->functions as $function) {
 			if ($this->overrides->is_overriden($function->c_name)) {
 				list($function_name, $function_override) = $this->overrides->get_override($function->c_name);
 				fwrite($fp, $function_override . "\n");
 				if ($function->name == $function->c_name)
-					$function_name = substr($function->name, strlen($this->prefix) + 1);
+					$function_name = substr($function->name, strlen($this->lprefix) + 1);
 				else
 					$function_name = $function->name;
 				$functions_decl .= sprintf($function_entry_tpl, 
@@ -565,7 +585,7 @@ class Generator {
 			else if (!$this->overrides->is_ignored($function->c_name)) {
 				if ($this->write_function($fp, $function)) {
 					if ($function->name == $function->c_name)
-						$function_name = substr($function->name, strlen($this->prefix) + 1);
+						$function_name = substr($function->name, strlen($this->lprefix) + 1);
 					else
 						$function_name = $function->name;
 					$functions_decl .= sprintf($function_entry_tpl, 
@@ -583,7 +603,7 @@ class Generator {
 	{
 		global	$class_entry_tpl;
 
-		fwrite($fp, sprintf($class_entry_tpl, $this->prefix . '_ce'));
+		fwrite($fp, sprintf($class_entry_tpl, $this->lprefix . '_ce'));
 		foreach ($this->parser->structs as $struct)
 			fwrite($fp, sprintf($class_entry_tpl, $struct->ce));
 		foreach ($this->parser->objects as $object)
@@ -606,7 +626,7 @@ class Generator {
 		$this->write_structs($fp);
 		$this->write_objects($fp);
 		fwrite($fp, sprintf($register_classes_tpl,
-							$this->prefix,
+							$this->lprefix,
 							$this->register_classes));
 		fwrite($fp, "\n#endif /* HAVE_PHP_GTK */\n");
 		fclose($fp);
@@ -628,7 +648,7 @@ list($opts, $argv) = $result;
 
 chdir('..');
 
-$prefix = 'gtk';
+$prefix = 'Gtk';
 $overrides = new Overrides();
 
 foreach ($opts as $opt) {

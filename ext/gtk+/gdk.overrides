@@ -8,7 +8,7 @@ ignore
 	gdk_pixmap_new
 %%
 override gdk_color_parse
-PHP_FUNCTION(wrap_gdk_color_parse)
+PHP_FUNCTION(gdk_color_parse)
 {
 	gchar *color_spec;
 	GdkColor color;
@@ -24,7 +24,7 @@ PHP_FUNCTION(wrap_gdk_color_parse)
 }
 %%
 override gdk_pixmap_create_from_xpm
-PHP_FUNCTION(wrap_gdk_pixmap_create_from_xpm)
+PHP_FUNCTION(gdk_pixmap_create_from_xpm)
 {
 	zval *php_window, *php_trans_color;
 	gchar *filename;
@@ -54,7 +54,7 @@ PHP_FUNCTION(wrap_gdk_pixmap_create_from_xpm)
 }
 %%
 override gdk_pixmap_create_from_xpm_d
-PHP_FUNCTION(wrap_gdk_pixmap_create_from_xpm_d)
+PHP_FUNCTION(gdk_pixmap_create_from_xpm_d)
 {
 	zval *php_window, *php_trans_color, *php_data;
 	zval **line;
@@ -96,7 +96,7 @@ PHP_FUNCTION(wrap_gdk_pixmap_create_from_xpm_d)
 }
 %%
 override gdk_pixmap_colormap_create_from_xpm
-PHP_FUNCTION(wrap_gdk_pixmap_colormap_create_from_xpm)
+PHP_FUNCTION(gdk_pixmap_colormap_create_from_xpm)
 {
 	zval *php_window, *php_trans_color, *php_colormap;
 	gchar *filename;
@@ -130,7 +130,7 @@ PHP_FUNCTION(wrap_gdk_pixmap_colormap_create_from_xpm)
 }
 %%
 override gdk_pixmap_colormap_create_from_xpm_d
-PHP_FUNCTION(wrap_gdk_pixmap_colormap_create_from_xpm_d)
+PHP_FUNCTION(gdk_pixmap_colormap_create_from_xpm_d)
 {
 	zval *php_window, *php_colormap,
 		 *php_trans_color, *php_data;
