@@ -30,6 +30,9 @@
 extern php_gtk_ext_entry sqpane_ext_entry;
 #define sqpane_ext_ptr &sqpane_ext_entry
 
+void php_sqpane_register_constants(int module_number TSRMLS_DC);
+void php_sqpane_register_classes();
+
 #else
 
 #define sqpane_ext_ptr NULL
