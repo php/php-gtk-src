@@ -25,7 +25,6 @@
 
 #include "php_gtk_module.h"
 #include "gtk/gtkinvisible.h"
-#include "ext/standard/file.h "
 
 #if HAVE_PHP_GTK
 

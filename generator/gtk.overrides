@@ -1,5 +1,8 @@
 /* vim: set ft=cpp: */
 %%
+headers
+#include "ext/standard/file.h "
+%%
 ignore-glob
 	*_get_type
 	gtk_marshal_*
