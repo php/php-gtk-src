@@ -2739,7 +2739,8 @@ PHP_FUNCTION(gtk_toggle_button_new)
 %% {{{ GtkToolbar
 %%
 override gtk_toolbar_append_item
-PHP_FUNCTION(gtk_toolbar_append_item)
+
+static void gtk_toolbar_item_impl(INTERNAL_FUNCTION_PARAMETERS, int action)
 {
 	gchar *text, *tooltip_text, *tooltip_priv_text;
 #ifdef PHP_WIN32
@@ -2753,12 +2754,20 @@ PHP_FUNCTION(gtk_toolbar_append_item)
 	uint callback_lineno;
 	GtkWidget *icon = NULL;
 	GtkWidget *item = NULL;
+	int position;
 
 	NOT_STATIC_METHOD();
 
-	if (!php_gtk_parse_args(5, "sssNV", &text, &tooltip_text,
-							&tooltip_priv_text, &php_icon, gtk_widget_ce, &callback)) {
-		return;
+	if (action == 2) {
+		if (!php_gtk_parse_args(6, "sssNiV", &text, &tooltip_text,
+								&tooltip_priv_text, &php_icon, gtk_widget_ce, &position, &callback)) {
+			return;
+		}
+	} else {
+		if (!php_gtk_parse_args(5, "sssNV", &text, &tooltip_text,
+								&tooltip_priv_text, &php_icon, gtk_widget_ce, &callback)) {
+			return;
+		}
 	}
 
 #ifdef PHP_WIN32
@@ -2774,13 +2783,32 @@ PHP_FUNCTION(gtk_toolbar_append_item)
 		icon = GTK_WIDGET(PHP_GTK_GET(php_icon));
 	}
 
-	item = gtk_toolbar_append_item(GTK_TOOLBAR(PHP_GTK_GET(this_ptr)), text, tooltip_text,
-								   tooltip_priv_text, icon, NULL, NULL);
+	switch (action) {
+		case 0: /* append */
+			item = gtk_toolbar_append_item(GTK_TOOLBAR(PHP_GTK_GET(this_ptr)), text, tooltip_text,
+										   tooltip_priv_text, icon, NULL, NULL);
+			break;
+
+		case 1: /* prepend */
+			item = gtk_toolbar_prepend_item(GTK_TOOLBAR(PHP_GTK_GET(this_ptr)), text, tooltip_text,
+											tooltip_priv_text, icon, NULL, NULL);
+			break;
+
+		case 2: /* insert */
+			item = gtk_toolbar_insert_item(GTK_TOOLBAR(PHP_GTK_GET(this_ptr)), text, tooltip_text,
+										   tooltip_priv_text, icon, NULL, NULL, position);
+			break;
+
+		default:
+			assert(0);
+			break;
+	}
+
 	if (item) {
 		callback_filename = zend_get_executed_filename(TSRMLS_C);
 		callback_lineno = zend_get_executed_lineno(TSRMLS_C);
-		extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 5, ZEND_NUM_ARGS());
-		data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
+		extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), (action==2) ? 6 : 5, ZEND_NUM_ARGS());
+		data = php_gtk_build_value("(VNisi)", callback, extra, 1, callback_filename, callback_lineno);
 
 		gtk_signal_connect_full(GTK_OBJECT(item), "clicked", NULL,
 								(GtkCallbackMarshal)php_gtk_callback_marshal,
@@ -2794,6 +2822,25 @@ PHP_FUNCTION(gtk_toolbar_append_item)
 #endif
 
     PHP_GTK_SEPARATE_RETURN(return_value, php_gtk_new((GtkObject *)item));
+}
+
+PHP_FUNCTION(gtk_toolbar_append_item)
+{
+	gtk_toolbar_item_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
+}
+
+%%
+override gtk_toolbar_prepend_item
+PHP_FUNCTION(gtk_toolbar_prepend_item)
+{
+	gtk_toolbar_item_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
+}
+
+%%
+override gtk_toolbar_insert_item
+PHP_FUNCTION(gtk_toolbar_insert_item)
+{
+	gtk_toolbar_item_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 2);
 }
 %% }}}
 
