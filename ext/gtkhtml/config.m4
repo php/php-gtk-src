@@ -16,7 +16,7 @@ module_args=gtkhtml
  
 AC_PATH_PROG(GNOME_CONFIG, gnome-config, no)
 AC_MSG_CHECKING(for gnome-config)
-if test "$GNOME_CONFIG " = "no"; then
+if test "$GNOME_CONFIG" = "no"; then
   AC_MSG_RESULT(no)
   ifelse([$2], , :, [$2])
 else
