@@ -1,0 +1,115 @@
+;; -*- scheme -*-
+; object definitions ...
+(object PieMenu
+  (in-module Gtk)
+  (parent Menu (Gtk))
+  (c-name GtkPieMenu)
+)
+
+;; Enumerations and flags ...
+
+(enum PieCompass
+  (in-module Gtk)
+  (c-name GtkPieCompass)
+  (value (name n) (c-name GTK_PIE_N))
+  (value (name nne) (c-name GTK_PIE_NNE))
+  (value (name ne) (c-name GTK_PIE_NE))
+  (value (name nee) (c-name GTK_PIE_NEE))
+  (value (name e) (c-name GTK_PIE_E))
+  (value (name see) (c-name GTK_PIE_SEE))
+  (value (name se) (c-name GTK_PIE_SE))
+  (value (name sse) (c-name GTK_PIE_SSE))
+  (value (name s) (c-name GTK_PIE_S))
+  (value (name ssw) (c-name GTK_PIE_SSW))
+  (value (name sw) (c-name GTK_PIE_SW))
+  (value (name sww) (c-name GTK_PIE_SWW))
+  (value (name w) (c-name GTK_PIE_W))
+  (value (name nww) (c-name GTK_PIE_NWW))
+  (value (name nw) (c-name GTK_PIE_NW))
+  (value (name nnw) (c-name GTK_PIE_NNW))
+)
+
+
+;; From gtkpiemenu.h
+
+(function gtk_pie_menu_get_type
+  (c-name gtk_pie_menu_get_type)
+  (return-type GtkType)
+)
+
+(function gtk_pie_menu_new_with_refinement
+  (c-name gtk_pie_menu_new_with_refinement)
+  (is-constructor-of GtkPieMenu)
+  (return-type GtkWidget*)
+  (parameter (type-and-name gint refinement) (default "4"))
+)
+
+(method append
+  (of-object PieMenu (Gtk))
+  (c-name gtk_pie_menu_append)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* child))
+)
+
+(method put
+  (of-object PieMenu (Gtk))
+  (c-name gtk_pie_menu_put)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* child))
+  (parameter (type-and-name gint position))
+)
+
+(method put_with_compass
+  (of-object PieMenu (Gtk))
+  (c-name gtk_pie_menu_put_with_compass)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* child))
+  (parameter (type-and-name GtkPieCompass compass))
+)
+
+(method put_in_refinement
+  (of-object PieMenu (Gtk))
+  (c-name gtk_pie_menu_put_in_refinement)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* child))
+  (parameter (type-and-name gint position))
+  (parameter (type-and-name gint refinement))
+)
+
+(method set_refinement
+  (of-object PieMenu (Gtk))
+  (c-name gtk_pie_menu_set_refinement)
+  (return-type none)
+  (parameter (type-and-name gint refinement))
+)
+
+(method set_spacing
+  (of-object PieMenu (Gtk))
+  (c-name gtk_pie_menu_set_spacing)
+  (return-type none)
+  (parameter (type-and-name gint spacing))
+)
+
+(method set_radius
+  (of-object PieMenu (Gtk))
+  (c-name gtk_pie_menu_set_radius)
+  (return-type none)
+  (parameter (type-and-name gint radius))
+)
+
+(method popup
+  (of-object PieMenu (Gtk))
+  (c-name gtk_pie_menu_popup)
+  (return-type none)
+  (parameter (type-and-name guint button))
+  (parameter (type-and-name guint32 activate_time))
+)
+
+(method set_title
+  (of-object PieMenu (Gtk))
+  (c-name gtk_pie_menu_set_title)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* child))
+)
+
+
