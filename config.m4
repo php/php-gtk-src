@@ -2,7 +2,10 @@ dnl $Id$
 dnl config.m4 for extension php-gtk
 
 PHP_ARG_ENABLE(php-gtk,for PHP-GTK support,
-[  --enable-php-gtk        Enable PHP-GTK support])
+[
+                             PHP-GTK Options
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  --enable-php-gtk        Enable PHP-GTK support])
 
 if test "$PHP_PHP_GTK" != "no"; then
   AC_PROG_AWK

@@ -2,7 +2,11 @@ dnl $Id$
 dnl config.m4 for sqpane module
 
 PHP_GTK_ARG_ENABLE(sqpane,for GtkSQPane support,
-[  --disable-sqpane        Disable GtkSQPane support],yes)
+[
+  --disable-sqpane        Disable GtkSQPane support
+
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+],yes)
 
 if test "$PHP_GTK_SQPANE" != "no"; then
 

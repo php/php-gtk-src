@@ -2,7 +2,8 @@ dnl $Id$
 dnl config.m4 for scintilla module
 
 PHP_GTK_ARG_ENABLE(scintilla,for Scintilla support,
-[  --enable-scintilla      Enable Scintilla support])
+[
+  --enable-scintilla      Enable Scintilla support])
 
 if test "$PHP_GTK_SCINTILLA" != "no"; then
   for x in /usr /usr/local; do
