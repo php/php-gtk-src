@@ -1,3 +1,28 @@
+2001-12-08  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * generator/generator.php: - Wrong variable passed to constructor.
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.h:
+    - Separate to a more finer grained function and make them available for
+      other extensions.
+
+    * ext/gtk+/gtk.overrides: - Function has been renamed.
+
+    * ext/piemenu/php_piemenu.h
+      ext/scintilla/php_scintilla.h
+      ext/scrollpane/php_scrollpane.h
+      ext/skeleton/php_skeleton.h
+      ext/spaned/php_spaned.h
+      ext/sqpane/php_sqpane.h
+      ext/combobutton/php_combobutton.h
+      ext/gtkhtml/php_gtkhtml.h
+      ext/libglade/php_libglade.h: - Add missing includes.
+
+    * ext/skeleton/config.m4: - Wrong path order.
+
+    * ext/skeleton/config.m4: - Removed tabs.
+
 2001-12-07  Markus Fischer  <mfischer@guru.josefine.at>
 
     * ext/gdkpixbuf/config.m4: - Format configure --help output.
