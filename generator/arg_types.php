@@ -92,7 +92,7 @@ class Arg_Type {
 		trigger_error("This is an abstract class", E_USER_ERROR);
 	}
 
-	function write_from_prop($name)
+	function write_from_prop($name, $type)
 	{
 		trigger_error("This is an abstract class", E_USER_ERROR);
 	}
@@ -227,10 +227,10 @@ class Int_Arg extends Arg_Type {
 		return "	add_property_long($obj, \"$name\", $source);\n";
 	}
 
-	function write_from_prop($name)
+	function write_from_prop($name, $type)
 	{
 		return "	if (zend_hash_find(Z_OBJPROP_P(wrapper), \"$name\", sizeof(\"$name\"), (void **)&item) == SUCCESS && Z_TYPE_PP(item) == IS_LONG)\n" .
-        	   "		obj->$name = Z_LVAL_PP(item);\n" .
+        	   "		obj->$name = ($type)Z_LVAL_PP(item);\n" .
     		   "	else\n" .
         	   "		return 0;\n\n";
 
@@ -262,10 +262,10 @@ class Bool_Arg extends Arg_Type {
 		return "	add_property_bool($obj, \"$name\", $source);\n";
 	}
 
-	function write_from_prop($name)
+	function write_from_prop($name, $type)
 	{
 		return "	if (zend_hash_find(Z_OBJPROP_P(wrapper), \"$name\", sizeof(\"$name\"), (void **)&item) == SUCCESS && Z_TYPE_PP(item) == IS_BOOL)\n" .
-        	   "		obj->$name = Z_BVAL_PP(item);\n" .
+        	   "		obj->$name = ($type)Z_BVAL_PP(item);\n" .
     		   "	else\n" .
         	   "		return 0;\n\n";
 
@@ -281,7 +281,7 @@ class Double_Arg extends Arg_Type {
 		else
 			$var_list->add('double', $name);
 		$parse_list[] 	= '&' . $name;
-		$arg_list[] 	= $name;
+		$arg_list[] 	= "(float)$name";
 		return 'd';
 	}
 	
@@ -297,10 +297,10 @@ class Double_Arg extends Arg_Type {
 		return "	add_property_double($obj, \"$name\", $source);\n";
 	}
 
-	function write_from_prop($name)
+	function write_from_prop($name, $type)
 	{
 		return "	if (zend_hash_find(Z_OBJPROP_P(wrapper), \"$name\", sizeof(\"$name\"), (void **)&item) == SUCCESS && Z_TYPE_PP(item) == IS_DOUBLE)\n" .
-        	   "		obj->$name = Z_DVAL_PP(item);\n" .
+        	   "		obj->$name = ($type)Z_DVAL_PP(item);\n" .
     		   "	else\n" .
         	   "		return 0;\n\n";
 

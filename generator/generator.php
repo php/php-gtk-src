@@ -416,7 +416,7 @@ class Generator {
 				}
 
 				$init_prop_code[] = $handler->write_to_prop('result', $field_name, "obj->$field_name");
-				$get_prop_code[] = $handler->write_from_prop($field_name);
+				$get_prop_code[] = $handler->write_from_prop($field_name, $field_type);
 				$construct_prop_code[] = $handler->write_to_prop('this_ptr', $field_name, $field_name);
 
 				$specs .= $handler->write_param($field_type,
