@@ -121,10 +121,6 @@ ignore
 	gtk_item_factory_create_items_ac
 	gtk_item_factory_create_menu_entries
 	gtk_menu_attach_to_widget
-	gtk_radio_menu_item_group
-	gtk_radio_menu_item_set_group
-	gtk_radio_button_group
-	gtk_radio_button_set_group
 	gtk_style_new
 	gtk_clist_construct
 	gtk_object_new
@@ -2541,6 +2537,43 @@ PHP_FUNCTION(gtk_radio_button_new)
 
 	php_gtk_object_init(wrapped_obj, this_ptr);	
 }
+
+%%
+override gtk_radio_button_group
+PHP_FUNCTION(gtk_radio_button_group)
+{
+	zval *php_button;
+	GtkRadioButton *button;
+	GSList *list, *tmp;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	button = GTK_RADIO_BUTTON(PHP_GTK_GET(this_ptr));
+
+	array_init(return_value);
+	list = gtk_radio_button_group(button);
+	for (tmp = list; tmp; tmp = tmp->next) {
+		add_next_index_zval(return_value, php_gtk_new(tmp->data));
+	}
+}
+
+%%
+override gtk_radio_button_set_group
+PHP_FUNCTION(gtk_radio_button_set_group)
+{
+	zval *php_button;
+	GList *list;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &php_button, gtk_radiobutton_ce))
+		return;
+
+	list = gtk_radio_button_group(GTK_RADIO_BUTTON(PHP_GTK_GET(php_button)));
+	gtk_radio_button_set_group(GTK_RADIO_BUTTON(PHP_GTK_GET(this_ptr)), list);
+}
+
 %% }}}
 
 %% {{{ GtkRadioMenuItem
@@ -2596,6 +2629,43 @@ PHP_FUNCTION(gtk_radio_menu_item_new)
 
 	php_gtk_object_init(wrapped_obj, this_ptr);	
 }
+
+%%
+override gtk_radio_menu_item_group
+PHP_FUNCTION(gtk_radio_menu_item_group)
+{
+	zval *php_menu_item;
+	GtkRadioMenuItem *menu_item;
+	GSList *list, *tmp;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	menu_item = GTK_RADIO_MENU_ITEM(PHP_GTK_GET(this_ptr));
+
+	array_init(return_value);
+	list = gtk_radio_menu_item_group(menu_item);
+	for (tmp = list; tmp; tmp = tmp->next) {
+		add_next_index_zval(return_value, php_gtk_new(tmp->data));
+	}
+}
+
+%%
+override gtk_radio_menu_item_set_group
+PHP_FUNCTION(gtk_radio_menu_item_set_group)
+{
+	zval *php_menu_item;
+	GList *list;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &php_menu_item, gtk_radiomenuitem_ce))
+		return;
+
+	list = gtk_radio_menu_item_group(GTK_RADIO_MENU_ITEM(PHP_GTK_GET(php_menu_item)));
+	gtk_radio_menu_item_set_group(GTK_RADIO_MENU_ITEM(PHP_GTK_GET(this_ptr)), list);
+}
+
 %% }}}
 
 %% {{{ GtkTable
