@@ -6,12 +6,12 @@
 
 STAMP = buildmk.stamp
 
-ALWAYS = generated_lists
+ALWAYS = build2/generated_lists
 
 all: $(STAMP) $(ALWAYS)
 	@$(MAKE) -s -f build2/build2.mk
 
-generated_lists:
+build2/generated_lists:
 	@echo config_m4_files = ext/*/config*.m4 >> $@
 
 $(STAMP):

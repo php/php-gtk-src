@@ -1,7 +1,7 @@
 # $Id$ 
 #
 
-include generated_lists
+include build2/generated_lists
 
 all: configure config.h
 
