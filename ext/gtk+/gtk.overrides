@@ -10,19 +10,37 @@ headers
  * implement gtk_adjustment_set_all
  * implement gtk_radio_tool_button_new
  */
-%% {{{ ignores
+%% {{{ ignores [confirmed]
 
 %%
 ignore-glob
+	*_ref
+	*_unref
 	*_get_type
-	gtk_marshal_*
 	gtk_arg_*
 	gtk_args_*
-	gtk_signal_connect*
-	gtk_signal_new*
-	gtk_init_add*
+	gtk_init_add_*
+	gtk_marshal_*
 	gtk_quit_add_*
+	gtk_radio_button_new_*
+	gtk_signal_*
 	gtk_timeout_add_*
+
+%%
+ignore
+	gtk_button_new_with_label
+	gtk_button_new_with_mnemonic
+	gtk_dialog_new
+	gtk_exit
+	gtk_false
+	gtk_init
+	gtk_init_check
+	gtk_true
+%% }}}
+	
+%% {{{ ignores [tbd]
+%%
+ignore-glob
 	gtk_idle_add_*
 	gtk_accelerator_*
 	gtk_target_list_*
@@ -50,8 +68,6 @@ ignore
 	gtk_accel_group_unlock_entry
 	gtk_accel_group_unref
 	gtk_adjustment_set_all
-	gtk_button_new_with_label
-	gtk_button_new_with_mnemonic
 	gtk_clist_construct
 	gtk_clist_set_row_data_full
 	gtk_container_add_child_arg_type
@@ -73,7 +89,6 @@ ignore
 	gtk_container_get_toplevels
 	gtk_container_query_child_args
 	gtk_container_queue_resize
-	gtk_dialog_new
 	gtk_draw_box_gap
 	gtk_draw_check
 	gtk_draw_cross
@@ -86,14 +101,10 @@ ignore
 	gtk_draw_shadow_gap
 	gtk_draw_slider
 	gtk_draw_tab
-	gtk_exit
-	gtk_false
 	gtk_file_chooser_dialog_new
 	gtk_get_current_event
 	gtk_get_event_widget
 	gtk_idle_remove_by_data
-	gtk_init
-	gtk_init_check
 	gtk_item_factory_create_item
 	gtk_item_factory_create_items_ac
 	gtk_item_factory_create_menu_entries
@@ -158,7 +169,6 @@ ignore
 	gtk_tooltips_data_get
 	gtk_trace_referencing
 	gtk_tree_view_new_with_model
-	gtk_true
 	gtk_type_check_class_cast
 	gtk_type_check_object_cast
 	gtk_type_register_enum
@@ -624,6 +634,45 @@ PHP_METHOD
 
 %% {{{ GtkRadioButton
 %%
+override gtk_radio_button_new
+PHP_METHOD
+{
+	zval *php_group = NULL;
+	char *label = NULL;
+	zend_bool use_underline = 0;
+	GtkRadioButton *group = NULL;
+	GObject *wrapped_obj;
+	GType gtype = phpg_gtype_from_zval(this_ptr);
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Nsb", &php_group, gtkradiobutton_ce, &label, &use_underline)) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRadioButton);
+	}
+
+	if (php_group && Z_TYPE_P(php_group) != NULL) {
+		group = GTK_RADIO_BUTTON(PHPG_GOBJECT(php_group));
+	}
+
+	if (group) {
+		if (label) {
+			wrapped_obj = (GObject *) g_object_new(gtype, "group", group, "label", label,
+												   "use-underline", use_underline, NULL);
+		} else {
+			wrapped_obj = (GObject *) g_object_new(gtype, "group", group);
+		}
+	} else {
+		if (label) {
+			wrapped_obj = (GObject *) g_object_new(gtype, "label", label, "use-underline",
+												   use_underline, NULL);
+		} else {
+			wrapped_obj = (GObject *) g_object_new(gtype, NULL);
+		}
+	}
+
+	if (!wrapped_obj) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRadioButton);
+	}
+	phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+}
 
 %% }}}
 

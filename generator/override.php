@@ -177,7 +177,7 @@ class Overrides {
             return true;
 
         foreach ($this->glob_ignores as $glob) {
-            if (preg_match('!' . str_replace('*', '.*', $glob) . '!', $name))
+            if (preg_match('!^' . str_replace('*', '.*', $glob) . '$!', $name))
                 return true;
         }
 

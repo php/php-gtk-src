@@ -108,4 +108,3 @@ sinclude(ext.m4)
 
 PHP_ADD_SOURCES_X(/main, php_gtk_ext.c,, shared_objects_php_gtk2)
 PHP_ADD_MAKEFILE_FRAGMENT(main/Makefile.frag, main)
-

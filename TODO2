@@ -5,7 +5,7 @@ Generator
 + Implement '#line' pragma directives for debugging
 + Support for some custom arg types like GdkRectangle*
 + Allow for templatization of PHP_METHOD() declarations in overrides
-* Interfaces
++ Interfaces
 * Pointers
 
 Base Functionality
@@ -19,12 +19,23 @@ Base Functionality
 * Atoms
 * Implement __gtype, __doc, and other special properties, if possible
 * Deal with clone() handler in Zend
-
-General
-~~~~~~~
 * Find out why PY_TYPE_OBJECT is boxed
 * Maybe use zend_call_function() instead of call_user_function_ex() to take
   advantage of function call cache
+* Construction of arbitrary GObjects() via argument lists
+
+Classes and Functions
+~~~~~~~~~~~~~~~~~~~~~
+* GtkListStore
+* GtkTreeModel
+* GtkTreeStore
+* GtkTreeView
+* GtkCellRenderer
+
+Fix
+~~~
+* StyleHelper does not implement handlers that ZE2 _requires_ right now. Need
+  to change either ZE2 or StyleHelper.
 
 
 Thoughts on reference counting and wrappers

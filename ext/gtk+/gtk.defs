@@ -12765,7 +12765,7 @@
   (caller-owns-return "1")
   (return-type "GtkWidget*")
   (parameters
-    '("GtkRadioButton" "*group")
+    '("GtkRadioButton*" "group")
     '("const-gchar*" "label")
   )
 )
@@ -12787,7 +12787,7 @@
   (caller-owns-return "1")
   (return-type "GtkWidget*")
   (parameters
-    '("GtkRadioButton" "*group")
+    '("GtkRadioButton*" "group")
     '("const-gchar*" "label")
   )
 )
