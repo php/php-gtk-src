@@ -1,3 +1,29 @@
+2004-08-12  Andrei Zmievski  <andreiz@gmail.com>
+
+    * config.m4
+      php_gtk.m4
+      ext/gtk+/Makefile.frag
+      ext/gtk+/gdk-types.defs
+      ext/gtk+/gdk.defs
+      ext/gtk+/gtk-extrafuncs.defs
+      ext/gtk+/gtk-types.defs
+      ext/gtk+/gtk.defs
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      generator/arg_types.php
+      generator/definitions.php
+      generator/generator.php
+      generator/scheme.php
+      generator/templates.php
+      main/php_gtk.c
+      main/php_gtk.h
+      main/phpg_gobject.c
+      main/phpg_gtype.c:
+      A whole bunch of stuff that I'm too tired right now to talk about. New
+      GTK/GDK defs are in and parsing works. So does object registration, but
+      that's about it for now. If this compiles for you, you can do
+      var_dump(get_declared_classes()) and see all the Gtk classes there.
+
 2004-08-09  Andrei Zmievski  <andreiz@gmail.com>
 
     * (PHP_GTK_1)
