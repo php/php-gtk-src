@@ -1,3 +1,33 @@
+2001-07-19  Andrei Zmievski  <andrei@ispi.net>
+
+    * test/scribble.php:
+    Draw circle instead of square, it's less ugly that way.
+
+    * main/php_gtk_object.c:
+    Since the return of property getter ends up being destroyed, make sure
+    that we always return a copy.
+
+    * generator/arg_types.php:
+    The GdkRectangle members are shorts instead of ints.
+
+    * test/scribble.php: Actually add Scribble example.
+
+    * ext/gtk+/gdk.overrides
+      ext/gtk+/gtk-extrafuncs.defs
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      generator/arg_types.php
+      NEWS:
+    - Modified GdkWindow::get_pointer() to be simpler, without XInput support.
+    - Changed 'area' event property to be an allocation.
+    - Changed 'is_hint' event property to be boolean.
+    - Added ability to query the state and allocation of a widget.
+    - Added direct construction of pixmaps.
+    - Added initial GdkDrawable support to argument parser.
+    - Added Scribble example.
+
 2001-07-18  Andrei Zmievski  <andrei@ispi.net>
 
     * NEWS
