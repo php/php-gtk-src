@@ -1,3 +1,48 @@
+2005-02-26  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/atk.overrides:
+      Typo
+
+    * ext/gtk+/v1.gdk.overrides:
+      -** empty log message ***
+
+    * ext/gtk+/atk.overrides
+      ext/gtk+/gdk.overrides
+      ext/gtk+/pango.overrides
+      generator/arg_types.php
+      generator/definitions.php
+      generator/generator.php
+      generator/templates.php
+      main/php_gtk.h
+      main/phpg_gboxed.c
+      main/phpg_gobject.c
+      main/phpg_gtype.c:
+      Too much to describe.
+
+    * generator/arg_types.php:
+      Add fold markers.
+
+    * TODO2
+      generator/arg_types.php
+      main/php_gtk.h
+      main/phpg_closure.c
+      main/phpg_gvalue.c:
+      - Support GBoxed and GObject types in conversion from zval to the
+        GValue.
+      - Rework the underlying object access macros a bit.
+
+    * main/phpg_gvalue.c:
+      Support boxed type in converstion from GValue to zval.
+
+    * generator/arg_types.php
+      generator/templates.php
+      main/php_gtk.h
+      main/phpg_gobject.c:
+      Rename PHPG_GET() to PHPG_GOBJECT() to better reflect its function.
+
+    * main/phpg_gobject.c:
+      Implement the rest of connect_*() methods.
+
 2005-02-24  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/php_gtk_util.c
