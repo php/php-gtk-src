@@ -1,3 +1,17 @@
+2001-12-12  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gdkpixbuf/gdkpixbuf.overrides:
+    Added GdkPixbuf::render_pixmap_and_mask().
+
+2001-12-12  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides: - Use the force.
+
+    * ext/gtk+/gtk.overrides:
+    - Removed unused variables from php_gtk_free_gchar_ptr_array() and set_filter().
+    - Made second parameter to GtkTooltips::set_tip() optional per Stephs request.
+
 2001-12-10  Markus Fischer  <mfischer@guru.josefine.at>
 
     * generator/generator.php
