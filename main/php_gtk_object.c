@@ -548,18 +548,6 @@ void php_gtk_ret_from_value(GtkArg *ret, zval *value)
 	}
 }
 
-inline void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter)
-{
-	zend_hash_index_update(&php_gtk_prop_getters, (long)ce, (void*)&getter,
-						   sizeof(prop_getter_t), NULL);
-}
-
-inline void php_gtk_register_prop_setter(zend_class_entry *ce, prop_setter_t setter)
-{
-	zend_hash_index_update(&php_gtk_prop_setters, (long)ce, (void*)&setter,
-						   sizeof(prop_setter_t), NULL);
-}
-
 /* Generic get/set property handlers. */
 zval php_gtk_get_property(zend_property_reference *property_reference)
 {
