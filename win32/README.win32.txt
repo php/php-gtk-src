@@ -58,6 +58,7 @@ Inclide files:
 <path to development>\src\gtk+1.3.0\include
 <path to development>\src\gtk+1.3.0\lib\gtk+\include
 <path to development>\src\glib-2.2.3\include\glib-2.0
+<path to development>\src\glib-2.2.3\lib\glib-2.0\include
 
 Library files
 <path to development>\src\libiconv-1.9.1\lib
