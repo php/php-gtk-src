@@ -367,6 +367,7 @@ class Generator {
 			$prop_checks .= sprintf($prop_check_tpl,
 									$else_clause,
 									$field_name,
+									$field_name,
 									$prop_get_code);
 			$else_clause = ' else ';
 		}
@@ -401,7 +402,7 @@ class Generator {
 											   $struct->ce,
 											   $struct->in_module . $struct->name,
 											   $struct_module . '_' . $struct_lname,
-											   'NULL');
+											   'NULL', 0);
 
 			$init_prop_code = array();
 			$construct_prop_code = array();
@@ -497,7 +498,8 @@ class Generator {
 												   $object->ce,
 												   $object->in_module . $object->name,
 												   $object_module . '_' . $object_lname,
-												  'NULL');
+												  'NULL',
+												  count($object->fields) ? 1 : 0);
 			else {
 				if ($object->parent[1] === null)
 					$parent_ce = strtolower($object->parent[0]) . '_ce';
@@ -507,7 +509,8 @@ class Generator {
 												   $object->ce,
 												   $object->in_module . $object->name,
 												   $object_module . '_' . $object_lname,
-												   $parent_ce);
+												   $parent_ce,
+												   count($object->fields) ? '1' : '0');
 				$this->register_classes .= "\tg_hash_table_insert(php_gtk_class_hash, g_strdup(\"Gtk$object->name\"), $object->ce);\n";
 			}
 
@@ -687,7 +690,7 @@ class Generator {
 												   $this->lprefix . '_ce',
 												   $this->prefix,
 												   $this->lprefix,
-												   'NULL');
+												   'NULL', 0);
 				fwrite($fp, sprintf($class_entry_tpl, $this->lprefix . '_ce'));
 				fwrite($fp, $functions_decl);
 			}

@@ -80,15 +80,13 @@ static function_entry php_%s_functions[] = {
 $register_getter_tpl = "\tphp_gtk_register_prop_getter(%s, %s_get_property);\n";
 
 $prop_check_tpl =
-"%sif (!strcmp(prop_name, \"%s\")) {
+"%sif (!strncmp(prop_name, \"%s\", sizeof(\"%s\")-1)) {
 	%s
 	}";
 
 $prop_getter_tpl = "
-static void %s_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
+static void %s_get_property(zval *return_value, zval *object, char *prop_name, int *result)
 {
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
-
 	*result = SUCCESS;
 
 %s
@@ -122,7 +120,7 @@ void php_%s_register_classes(void)
 
 //$register_class_tpl = "\t%s = zend_register_internal_class_ex(&ce, %s, NULL TSRMLS_CC);\n";
 $register_class_tpl = "
-	%s = php_gtk_register_class(\"%s\", php_%s_functions, %s TSRMLS_CC);\n";
+	%s = php_gtk_register_class(\"%s\", php_%s_functions, %s, %d TSRMLS_CC);\n";
 
 $class_entry_tpl = "PHP_GTK_EXPORT_CE(%s);\n";
 

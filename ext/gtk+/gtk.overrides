@@ -510,6 +510,7 @@ PHP_FUNCTION(gtk_box_query_child_packing)
 getprop GtkBox children
 	GList *tmp;
 	GList *children = GTK_BOX(PHP_GTK_GET(object))->children;
+	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -532,6 +533,11 @@ getprop GtkBox children
 		for (tmp = children; tmp; tmp = tmp->next) {
 			add_next_index_zval(return_value, php_gtk_box_child_new((GtkBoxChild *)tmp->data));
 		}
+	}
+	*/
+	array_init(return_value);
+	for (tmp = children; tmp; tmp = tmp->next) {
+		add_next_index_zval(return_value, php_gtk_box_child_new((GtkBoxChild *)tmp->data));
 	}
 %% }}}
 
@@ -582,6 +588,7 @@ PHP_FUNCTION(gtk_button_new)
 %%
 getprop GtkCalendar marked_date
 	GtkCalendar *cal = GTK_CALENDAR(PHP_GTK_GET(object));
+	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -601,6 +608,12 @@ getprop GtkCalendar marked_date
 		for (i = 0; i < 31; i++)
 			add_next_index_long(return_value, cal->marked_date[i]);
 	}
+	*/
+	int i;
+
+	array_init(return_value);
+	for (i = 0; i < 31; i++)
+		add_next_index_long(return_value, cal->marked_date[i]);
 %%
 override gtk_calendar_get_date
 PHP_FUNCTION(gtk_calendar_get_date)
@@ -1057,6 +1070,7 @@ PHP_FUNCTION(gtk_clist_get_selection_info)
 getprop GtkCList selection
 	GList *tmp;
 	GList *selection = GTK_CLIST(PHP_GTK_GET(object))->selection;
+	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -1078,10 +1092,15 @@ getprop GtkCList selection
 		for (tmp = selection; tmp; tmp = tmp->next)
 			add_next_index_long(return_value, GPOINTER_TO_INT(tmp->data));
 	}
+	*/
+	array_init(return_value);
+	for (tmp = selection; tmp; tmp = tmp->next)
+		add_next_index_long(return_value, GPOINTER_TO_INT(tmp->data));
 %%
 getprop GtkCList row_list
 	GList *tmp;
 	GList *row_list = GTK_CLIST(PHP_GTK_GET(object))->row_list;
+	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -1104,6 +1123,11 @@ getprop GtkCList row_list
 		for (tmp = row_list; tmp; tmp = tmp->next) {
 			add_next_index_zval(return_value, php_gtk_clist_row_new((GtkCListRow *)tmp->data));
 		}
+	}
+	*/
+	array_init(return_value);
+	for (tmp = row_list; tmp; tmp = tmp->next) {
+		add_next_index_zval(return_value, php_gtk_clist_row_new((GtkCListRow *)tmp->data));
 	}
 %% }}}
 
@@ -1665,6 +1689,7 @@ PHP_FUNCTION(gtk_ctree_find_all_by_row_data)
 getprop GtkCTree selection
 	GList *tmp;
 	GList *selection = GTK_CLIST(PHP_GTK_GET(object))->selection;
+	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -1687,6 +1712,10 @@ getprop GtkCTree selection
 		for (tmp = selection; tmp; tmp = tmp->next)
 			add_next_index_zval(return_value, php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp->data)));
 	}
+	*/
+	array_init(return_value);
+	for (tmp = selection; tmp; tmp = tmp->next)
+		add_next_index_zval(return_value, php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp->data)));
 %%
 getprop GtkCTree clist
 	*return_value = *php_gtk_new((GtkObject *)GTK_CLIST(PHP_GTK_GET(object)));
@@ -1694,6 +1723,7 @@ getprop GtkCTree clist
 getprop GtkCTree row_list
 	GList *tmp;
 	GList *row_list = GTK_CLIST(PHP_GTK_GET(object))->row_list;
+	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -1716,6 +1746,11 @@ getprop GtkCTree row_list
 		for (tmp = row_list; tmp; tmp = tmp->next) {
 			add_next_index_zval(return_value, php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp)));
 		}
+	}
+	*/
+	array_init(return_value);
+	for (tmp = row_list; tmp; tmp = tmp->next) {
+		add_next_index_zval(return_value, php_gtk_ctree_node_new(GTK_CTREE_NODE(tmp)));
 	}
 %% }}}
 
@@ -1794,6 +1829,7 @@ PHP_FUNCTION(gtk_editable_insert_text)
 getprop GtkFixed children
 	GList *tmp;
 	GList *children = GTK_FIXED(PHP_GTK_GET(object))->children;
+	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -1816,6 +1852,11 @@ getprop GtkFixed children
 		for (tmp = children; tmp; tmp = tmp->next) {
 			add_next_index_zval(return_value, php_gtk_fixed_child_new((GtkFixedChild *)tmp->data));
 		}
+	}
+	*/
+	array_init(return_value);
+	for (tmp = children; tmp; tmp = tmp->next) {
+		add_next_index_zval(return_value, php_gtk_fixed_child_new((GtkFixedChild *)tmp->data));
 	}
 %% }}}
 
@@ -2078,6 +2119,7 @@ PHP_FUNCTION(gtk_list_item_new)
 getprop GtkList selection
 	GList *tmp;
 	GList *selection = GTK_LIST(PHP_GTK_GET(object))->selection;
+	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -2100,7 +2142,10 @@ getprop GtkList selection
 		for (tmp = selection; tmp; tmp = tmp->next)
 			add_next_index_zval(return_value, php_gtk_new((GtkObject *)tmp->data));
 	}
-
+	*/
+	array_init(return_value);
+	for (tmp = selection; tmp; tmp = tmp->next)
+		add_next_index_zval(return_value, php_gtk_new((GtkObject *)tmp->data));
 %% }}}
 
 %% {{{ GtkMenu
@@ -2669,6 +2714,7 @@ PHP_FUNCTION(gtk_radio_menu_item_set_group)
 getprop GtkTable children
 	GList *tmp;
 	GList *children = GTK_TABLE(PHP_GTK_GET(object))->children;
+	/*
 	zend_overloaded_element *property;
 	zend_llist_element *next = (*element)->next;
 	int prop_index;
@@ -2691,6 +2737,11 @@ getprop GtkTable children
 		for (tmp = children; tmp; tmp = tmp->next) {
 			add_next_index_zval(return_value, php_gtk_table_child_new((GtkTableChild *)tmp->data));
 		}
+	}
+	*/
+	array_init(return_value);
+	for (tmp = children; tmp; tmp = tmp->next) {
+		add_next_index_zval(return_value, php_gtk_table_child_new((GtkTableChild *)tmp->data));
 	}
 %% }}}
 

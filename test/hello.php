@@ -46,7 +46,6 @@ $window->set_border_width(10);
  */
 $button = new GtkButton('Hello World!');
 $button->connect('clicked', 'hello');
-$window->add($button);
 
 /*
  * Create a new tooltips object and use it to set a tooltip for the button.
@@ -56,7 +55,7 @@ $tt->set_delay(200);
 $tt->set_tip($button, 'Prints "Hello World!"', '');
 $tt->enable();
 
-var_dump($button->child);
+$window->add($button);
 
 /*
  * Show the window and all its child widgets.

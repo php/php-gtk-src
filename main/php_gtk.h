@@ -62,7 +62,7 @@
 #undef PG_ERROR
 #define PG_ERROR -2
 
-typedef void (*prop_getter_t)(zval *return_value, zval *object, zend_llist_element **element, int *result);
+typedef void (*prop_getter_t)(zval *return_value, zval *object, char *property, int *result);
 typedef int (*prop_setter_t)(zval *object, zend_llist_element **element, zval *value);
 
 #define EXT_INIT_ARGS			int module_number TSRMLS_DC
@@ -95,6 +95,7 @@ extern HashTable php_gtk_rsrc_hash;
 extern HashTable php_gtk_prop_getters;
 extern HashTable php_gtk_prop_setters;
 extern HashTable php_gtk_type_hash;
+extern HashTable php_gtk_prop_desc;
 
 /* Function declarations. */
 
@@ -120,7 +121,7 @@ PHP_GTK_API zval php_gtk_get_property(zend_property_reference *property_referenc
 PHP_GTK_API int php_gtk_set_property(zend_property_reference *property_reference, zval *value);
 void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference *property_reference);
 
-PHP_GTK_API zend_class_entry* php_gtk_register_class(const char *class_name, function_entry *class_functions, zend_class_entry *parent TSRMLS_DC);
+PHP_GTK_API zend_class_entry* php_gtk_register_class(const char *class_name, function_entry *class_functions, zend_class_entry *parent, zend_bool have_getter TSRMLS_DC);
 
 PHP_GTK_API void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter);
 PHP_GTK_API void php_gtk_register_prop_setter(zend_class_entry *ce, prop_setter_t setter);
