@@ -261,7 +261,7 @@ if test "$PHP_PHP_GTK" != "no"; then
 	case $arg in
 	-I*)
 	  n=`echo $ac_n $arg$ac_c|sed s/-I//`
-	  AC_ADD_INCLUDE($n)
+	  PHP_ADD_INCLUDE($n)
 	  ;;
 	esac
   done
@@ -269,11 +269,11 @@ if test "$PHP_PHP_GTK" != "no"; then
 	  case "$arg" in
 	  -l*)
 		  n=`echo $ac_n $arg$ac_c|sed s/-l//`
-		  AC_ADD_LIBRARY($n,, PHP_GTK_SHARED_LIBADD)
+		  PHP_ADD_LIBRARY($n,, PHP_GTK_SHARED_LIBADD)
 	  ;;
 	  -L*)
 		  n=`echo $ac_n $arg$ac_c|sed s/-L//`
-		  AC_ADD_LIBPATH($n, PHP_GTK_SHARED_LIBADD)
+		  PHP_ADD_LIBPATH($n, PHP_GTK_SHARED_LIBADD)
 	  ;;
 	  esac
   done
