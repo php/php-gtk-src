@@ -1,3 +1,7 @@
+2002-03-29  Andrei Zmievski  <andrei@php.net>
+
+    * makedist: *** empty log message ***
+
 2002-03-28  Andrei Zmievski  <andrei@php.net>
 
     * ext/gtk+/php_gtk+_types.c:
