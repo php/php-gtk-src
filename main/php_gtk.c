@@ -109,7 +109,8 @@ PHP_MINIT_FUNCTION(gtk)
 	zend_hash_init_ex(&php_gtk_prop_desc, 50, NULL, NULL, 1, 0);
 	*/
 	zend_hash_init_ex(&phpg_prop_info, 50, NULL, (dtor_func_t) php_gtk_prop_info_destroy, 1, 0);
-	
+	zend_llist_init(&php_gtk_ext_registry, sizeof(php_gtk_ext_entry), (llist_dtor_func_t)php_gtk_ext_destructor, 1);
+
 	return SUCCESS;
 }
 
@@ -123,6 +124,8 @@ PHP_MSHUTDOWN_FUNCTION(gtk)
 	zend_hash_destroy(&php_gtk_rsrc_hash);
 	zend_hash_destroy(&php_gtk_type_hash);
 	*/
+
+	zend_llist_destroy(&php_gtk_ext_registry);
 	zend_hash_destroy(&phpg_prop_info);
 
 	return SUCCESS;
@@ -131,8 +134,6 @@ PHP_MSHUTDOWN_FUNCTION(gtk)
 /* Remove if there's nothing to do at request start */
 PHP_RINIT_FUNCTION(gtk)
 {
-	zend_llist_init(&php_gtk_ext_registry, sizeof(php_gtk_ext_entry), (llist_dtor_func_t)php_gtk_ext_destructor, 1);
-
 	zend_unset_timeout(TSRMLS_C);
 	zend_set_timeout(0);
 
@@ -165,8 +166,6 @@ PHP_RINIT_FUNCTION(gtk)
 /* Remove if there's nothing to do at request end */
 PHP_RSHUTDOWN_FUNCTION(gtk)
 {
-	zend_llist_destroy(&php_gtk_ext_registry);
-
 	return SUCCESS;
 }
 
