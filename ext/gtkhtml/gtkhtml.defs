@@ -763,5 +763,43 @@
 
 
 
+  ;; search
+(method issearch
+         (of-object HTML (Gtk))
+         (c-name  gtk_html_isearch)
+         (return-type none)
+         (parameter (type-and-name gboolean forward))
+)
+
+(method search
+         (of-object HTML (Gtk))
+         (c-name  gtk_html_engine_search)
+         (return-type gboolean)
+         (parameter (type-and-name const-gchar* text))
+         (parameter (type-and-name gboolean case_sensitive))
+         (parameter (type-and-name gboolean forward))
+         (parameter (type-and-name gboolean regular))
+)
+
+(method search_set_forward
+         (of-object HTML (Gtk))
+         (c-name  gtk_html_engine_search_set_forward)
+         (return-type none)
+         (parameter (type-and-name gboolean forward))
+)
+
+(method search_next
+         (of-object HTML (Gtk))
+         (c-name  gtk_html_engine_search_next)
+         (return-type gboolean)
+)
+
+(method search_incremental
+         (of-object HTML (Gtk))
+         (c-name  gtk_html_engine_search_incremental)
+         (return-type gboolean)
+         (parameter (type-and-name const-gchar* text))
+         (parameter (type-and-name gboolean forward))
+)
 
 
