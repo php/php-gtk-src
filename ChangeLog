@@ -1,3 +1,98 @@
+2001-03-07  James Moore  <James@phpuk.org>
+
+    * docs/en/chapters/intro.xml
+      docs/en/language-defs.ent
+      docs/global.ent
+      docs/manual.xml.in:
+    Adding new introduction sections and shuffling bits and bobs about.
+    Need to finish the what is gtk section and add a what is PHP
+    section too.
+
+    * docs/en/bookinfo.xml:
+    Making XML well formed and adding link to correct Appendix
+
+2001-03-07  Andrei Zmievski  <andrei@ispi.net>
+
+    * test/list.php: Connect to proper method.
+
+    * test/list.php: Missing parentheses.
+
+    * generator/gtk.overrides: ELS_FETCH() is not needed inside PHP functions.
+
+2001-03-07  James Moore  <James@phpuk.org>
+
+    * docs/en/appendix/license.xml
+      docs/en/appendix/licience.xml
+      docs/manual.xml.in: I really aught to learn to spell ;)
+
+2001-03-07  Andrei Zmievski  <andrei@ispi.net>
+
+    * docs/en/bookinfo.xml: Update.
+
+2001-03-07  James Moore  <James@phpuk.org>
+
+    * docs/en/bookinfo.xml: Added notes about each authors contributions
+    (bit of a hack but everything else was suppressed in the style sheets).
+
+    * docs/en/chapters/install.xml
+      docs/en/chapters/intro.xml:
+    A few Typos that crept in. Thanks to Steph Fox, <Steph.Fox@btinternet.com>
+
+2001-03-07  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/generator.php
+      generator/gtk.overrides: Override GtkLabel::get() to return label text.
+
+2001-03-07  James Moore  <James@phpuk.org>
+
+    * docs/en/appendix/licience.xml
+      docs/manual.xml.in
+      docs/en/language-defs.ent:
+    Now classes and Licience are included in manual when its build.
+
+    * docs/en/bookinfo.xml:
+    Adding some information about the liciencing and book.
+
+    * docs/en/classes/gtkwindow.xml:
+    Adding an outline doc for how Classes "should" be documentated. Comments please.
+
+    * docs/en/appendix/licience.xml:
+    Adding Licience.. Will tie into book in a sec
+
+    * docs/Makefile.in: Slightly more upto date copyright header.
+
+2001-03-07  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/generator.php
+      generator/gtk.overrides
+      src/php_gtk.h
+      src/php_gtk_object.c
+      test/gtk.php
+      test/list.php: * Fixed function entry name generation.
+    * Added Gtk::true() and Gtk::false(). Yes, these are just what they look
+      like - functions that return true and false. Handy for certain callbacks.
+    * Fixed connect_object() semantics, it only requires two arguments now.
+    * Standardized all callback marshallers - callbacks are now smoother than
+      Jennifer Alba's bottom and they all take user supplied extra arguments.
+    * Moved callback validation right up to the call time, so that callbacks
+      included from other files could be used as well.
+    * This necessitated better error messages - so now if it the callback is
+      not valid, the filename and line number where it was specified are shown.
+    * Updated gtk.php and list.php to use connect_object() as an example.
+
+2001-03-07  James Moore  <James@phpuk.org>
+
+    * docs/en/chapters/intro.xml
+      docs/global.ent
+      docs/manual.xml.in:
+    Adding Introduction and a whatis.. Ripped from the README.
+
+    * docs/en/chapters/install.xml:
+    Window->windows in section title.
+
+    * docs/en/chapters/install.xml
+      docs/global.ent: Unix install instructions
+
 2001-03-06  James Moore  <James@phpuk.org>
 
     * docs/en/chapters/install.xml:
