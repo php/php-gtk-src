@@ -61,25 +61,25 @@ extern int le_gtk_style;
 #define PHP_GTK_ACCEL_GROUP_GET(w)  PHP_GTK_GET_GENERIC(w, GtkAccelGroup*, le_gtk_accel_group)
 #define PHP_GTK_STYLE_GET(w)        PHP_GTK_GET_GENERIC(w, GtkStyle*, le_gtk_style)
 
-extern PHP_GTK_EXPORT_CE(gdk_event_ce)
-extern PHP_GTK_EXPORT_CE(gdk_window_ce)
-extern PHP_GTK_EXPORT_CE(gdk_pixmap_ce)
-extern PHP_GTK_EXPORT_CE(gdk_bitmap_ce)
-extern PHP_GTK_EXPORT_CE(gdk_color_ce)
-extern PHP_GTK_EXPORT_CE(gdk_colormap_ce)
-extern PHP_GTK_EXPORT_CE(gdk_atom_ce)
-extern PHP_GTK_EXPORT_CE(gdk_cursor_ce)
-extern PHP_GTK_EXPORT_CE(gdk_visual_ce)
-extern PHP_GTK_EXPORT_CE(gdk_font_ce)
-extern PHP_GTK_EXPORT_CE(gdk_gc_ce)
-extern PHP_GTK_EXPORT_CE(gdk_drag_context_ce)
-extern PHP_GTK_EXPORT_CE(gtk_selection_data_ce)
-extern PHP_GTK_EXPORT_CE(gtk_ctree_node_ce)
-extern PHP_GTK_EXPORT_CE(gtk_accel_group_ce)
-extern PHP_GTK_EXPORT_CE(gtk_style_ce)
-extern PHP_GTK_EXPORT_CE(gtk_box_child_ce)
-extern PHP_GTK_EXPORT_CE(gtk_fixed_child_ce)
-extern PHP_GTK_EXPORT_CE(gtk_clist_row_ce)
+extern PHP_GTK_EXPORT_CE(gdk_event_ce);
+extern PHP_GTK_EXPORT_CE(gdk_window_ce);
+extern PHP_GTK_EXPORT_CE(gdk_pixmap_ce);
+extern PHP_GTK_EXPORT_CE(gdk_bitmap_ce);
+extern PHP_GTK_EXPORT_CE(gdk_color_ce);
+extern PHP_GTK_EXPORT_CE(gdk_colormap_ce);
+extern PHP_GTK_EXPORT_CE(gdk_atom_ce);
+extern PHP_GTK_EXPORT_CE(gdk_cursor_ce);
+extern PHP_GTK_EXPORT_CE(gdk_visual_ce);
+extern PHP_GTK_EXPORT_CE(gdk_font_ce);
+extern PHP_GTK_EXPORT_CE(gdk_gc_ce);
+extern PHP_GTK_EXPORT_CE(gdk_drag_context_ce);
+extern PHP_GTK_EXPORT_CE(gtk_selection_data_ce);
+extern PHP_GTK_EXPORT_CE(gtk_ctree_node_ce);
+extern PHP_GTK_EXPORT_CE(gtk_accel_group_ce);
+extern PHP_GTK_EXPORT_CE(gtk_style_ce);
+extern PHP_GTK_EXPORT_CE(gtk_box_child_ce);
+extern PHP_GTK_EXPORT_CE(gtk_fixed_child_ce);
+extern PHP_GTK_EXPORT_CE(gtk_clist_row_ce);
 
 #include "gen_ce_gtk.h"
 

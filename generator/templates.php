@@ -111,6 +111,6 @@ void php_%s_register_classes(void)
 
 $register_class_tpl = "\t%s = zend_register_internal_class_ex(&ce, %s, NULL);\n";
 
-$class_entry_tpl = "PHP_GTK_EXPORT_CE(%s)\n";
+$class_entry_tpl = "PHP_GTK_EXPORT_CE(%s);\n";
 
 ?>

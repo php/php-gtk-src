@@ -40,26 +40,26 @@ int le_gdk_drag_context;
 int le_gtk_accel_group;
 int le_gtk_style;
 
-PHP_GTK_EXPORT_CE(gdk_event_ce)
-PHP_GTK_EXPORT_CE(gdk_window_ce)
-PHP_GTK_EXPORT_CE(gdk_pixmap_ce)
-PHP_GTK_EXPORT_CE(gdk_bitmap_ce)
-PHP_GTK_EXPORT_CE(gdk_color_ce)
-PHP_GTK_EXPORT_CE(gdk_colormap_ce)
-PHP_GTK_EXPORT_CE(gdk_atom_ce)
-PHP_GTK_EXPORT_CE(gdk_cursor_ce)
-PHP_GTK_EXPORT_CE(gdk_visual_ce)
-PHP_GTK_EXPORT_CE(gdk_font_ce)
-PHP_GTK_EXPORT_CE(gdk_gc_ce)
-PHP_GTK_EXPORT_CE(gdk_drag_context_ce)
-PHP_GTK_EXPORT_CE(gtk_selection_data_ce)
-PHP_GTK_EXPORT_CE(gtk_ctree_node_ce)
-PHP_GTK_EXPORT_CE(gtk_accel_group_ce)
-PHP_GTK_EXPORT_CE(gtk_style_ce)
-PHP_GTK_EXPORT_CE(gtk_box_child_ce)
-PHP_GTK_EXPORT_CE(gtk_fixed_child_ce)
-PHP_GTK_EXPORT_CE(gtk_clist_row_ce)
-
+PHP_GTK_EXPORT_CE(gdk_event_ce);
+PHP_GTK_EXPORT_CE(gdk_window_ce);
+PHP_GTK_EXPORT_CE(gdk_pixmap_ce);
+PHP_GTK_EXPORT_CE(gdk_bitmap_ce);
+PHP_GTK_EXPORT_CE(gdk_color_ce);
+PHP_GTK_EXPORT_CE(gdk_colormap_ce);
+PHP_GTK_EXPORT_CE(gdk_atom_ce);
+PHP_GTK_EXPORT_CE(gdk_cursor_ce);
+PHP_GTK_EXPORT_CE(gdk_visual_ce);
+PHP_GTK_EXPORT_CE(gdk_font_ce);
+PHP_GTK_EXPORT_CE(gdk_gc_ce);
+PHP_GTK_EXPORT_CE(gdk_drag_context_ce);
+PHP_GTK_EXPORT_CE(gtk_selection_data_ce);
+PHP_GTK_EXPORT_CE(gtk_ctree_node_ce);
+PHP_GTK_EXPORT_CE(gtk_accel_group_ce);
+PHP_GTK_EXPORT_CE(gtk_style_ce);
+PHP_GTK_EXPORT_CE(gtk_box_child_ce);
+PHP_GTK_EXPORT_CE(gtk_fixed_child_ce);
+PHP_GTK_EXPORT_CE(gtk_clist_row_ce);
+;
 /* GdkEvent */
 static function_entry php_gdk_event_functions[] = {
 	{"gdkevent", PHP_FN(wrap_no_direct_constructor), NULL},
