@@ -51,7 +51,6 @@ $window->set_name("MainWindow");
 $window->set_uposition(100,200);
 $window->set_usize(600,150);
 $window->add($box);
-//$window->add($button);
 $window->show_all();
 Gtk::main();
 
