@@ -247,6 +247,37 @@ PHP_GTK_API void phpg_gobject_watch_closure(zval *zobj, GClosure *closure TSRMLS
 }
 /* }}} */
 
+zend_bool phpg_gobject_construct(zval *this_ptr TSRMLS_DC)
+{
+    GType my_type;
+    guint n_params = 0;
+    GParameter *params = NULL;
+    GObjectClass *class;
+    GObject *obj;
+
+    my_type = phpg_gtype_from_zval(this_ptr);
+    
+    if (G_TYPE_IS_ABSTRACT(my_type)) {
+        zend_error(E_ERROR, "Cannot instantiate abstract class %s", Z_OBJCE_P(this_ptr)->name);
+        return 0;
+    }
+
+    if ((class = g_type_class_ref(my_type)) == NULL) {
+        zend_error(E_ERROR, "Could not get a reference to type class");
+        return 0;
+    }
+
+    obj = g_object_newv(my_type, n_params, params);
+    if (!obj) {
+        zend_error(E_ERROR, "Could not get create %s object", Z_OBJCE_P(this_ptr)->name);
+        return 0;
+    }
+
+    phpg_gobject_set_wrapper(this_ptr, obj TSRMLS_CC);
+
+    return 1;
+}
+
 /*
  * GObject PHP class definition
  */
@@ -334,7 +365,15 @@ static PHP_METHOD(GObject, __tostring)
 }
 /* }}} */
 
+/* {{{ GObject::__construct */
+static PHP_METHOD(GObject, __construct)
+{
+    phpg_gobject_construct(this_ptr TSRMLS_CC);
+}
+/* }}} */
+
 static zend_function_entry gobject_methods[] = {
+    PHP_ME(GObject, __construct, NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(GObject, connect, NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(GObject, connect_after, NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(GObject, connect_object, NULL, ZEND_ACC_PUBLIC)
