@@ -1,3 +1,26 @@
+2004-11-13  Andrei Zmievski  <andreiz@gravitonic.com>
+
+    * ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      generator/arg_types.php:
+      Modify .defs to use old-style parameters. Property-based constructors
+      are not of much use to us since PHP does not support keyword function
+      arguments.
+
+    * php_gtk.m4
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides:
+      Get some things to compile.
+
+    * generator/arg_types.php
+      generator/definitions.php
+      generator/generator.php
+      generator/scheme.php
+      generator/templates.php:
+      This commit implements.. eh.. what does it implement. Hmm, I just had it
+      a second ago.. Screw it, I'm too tired to explain it. It's just closer
+      to the goal, that's all. I need a drink.
+
 2004-11-10  Andrei Zmievski  <andreiz@gravitonic.com>
 
     * generator/arg_types.php
