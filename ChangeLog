@@ -1,3 +1,28 @@
+2001-05-07  Andrei Zmievski  <andrei@ispi.net>
+
+    * docs/en/classes/gtklabel.xml: Whitespace fix.
+
+    * docs/en/classes/gtklabel.xml: Fix up GtkLabel description.
+
+
+2001-05-07  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/en/classes/gtklabel.xml: Some minor adjustments
+
+    * docs/en/classes/gtkobject.xml: checked for accuracy and whitespace
+
+    * docs/en/classes/gtkeditable.xml
+      docs/en/classes/gtkobject.xml:
+    hope that worked ... updating a single doc built here as a single (experiment)
+
+2001-05-07  Andrei Zmievski  <andrei@ispi.net>
+
+    * docs/configure.in
+      docs/udocs.in:
+    Don't use bash specific tests and chmod udocs to executable upon creation.
+
+    * docs/udocs.in: The file has DOS carriage returns, James.
+
 2001-05-06  James Moore  <James@phpuk.org>
 
     * docs/de/chapters/widget.xml
