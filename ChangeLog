@@ -1,3 +1,33 @@
+2005-03-19  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      generator/arg_types.php
+      main/php_gtk_util.c:
+      Make error messages display Class::method().
+
+    * TODO2
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtkstyle.overrides
+      ext/gtk+/pango.overrides
+      generator/generator.php
+      generator/override.php
+      test/fileselection.php:
+      Make it that "PHP_METHOD" in overrides only indicates the start of the
+      function and its class/method are provided by the generator.
+
+    * ext/gtk+/gtk.overrides:
+      Fix class naming.
+
+    * generator/generator.php
+      generator/lineoutput.php
+      generator/override.php
+      generator/templates.php:
+      - Make generator output '#line' references in the generated file, so
+        that we can much more easily pinpoint which line in overrides caused
+        the compilation error or warning.
+      - Get rid of large chunks of old/unused generator code.
+
 2005-03-18  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides:
