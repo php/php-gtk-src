@@ -1,3 +1,15 @@
+2003-10-08  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * (ZE2_PORT)
+      main/php_gtk.h
+      main/php_gtk_object.c:
+      Remove the add ref call for now..
+
+    * (ZE2_PORT)
+      ext/extra/config.m4
+      generator/generator.php:
+      -** empty log message ***
+
 2003-10-07  Alan Knowles  <alan@akbkhome.com>
 
     * generator/h2def.php
