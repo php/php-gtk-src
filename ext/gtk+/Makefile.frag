@@ -21,5 +21,5 @@ gen_%.c : %.defs
         -o $*.overrides \
         -p $(*F) \
         -f $@ $*.defs \
-     && grep -h "^PHP_GTK_EXPORT_CE" $@ | sed -e "s!^!extern !" > $(@D)/gen_$(@F).h \
+     && grep -h "^PHP_GTK_EXPORT_CE" $@ | sed -e "s!^!extern !" > $(@D)/gen_$(*F).h \
 	)
