@@ -199,7 +199,7 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value)
                 g_value_set_boxed(gval, NULL);
             } else if (Z_TYPE_P(value) == IS_OBJECT
                        && instanceof_function(Z_OBJCE_P(value), gboxed_ce TSRMLS_CC)
-                       && G_VALUE_HOLDS(((phpg_gboxed_t*)PHPG_GET(value))->gtype, G_VALUE_TYPE(value))) {
+                       && G_VALUE_HOLDS(value, ((phpg_gboxed_t*)PHPG_GET(value))->gtype)) {
                 g_value_set_boxed(gval, PHPG_GBOXED(value));
             } else
                 return FAILURE;
