@@ -1,3 +1,24 @@
+2002-01-12  Frank M. Kromann  <frank@frontbase.com>
+
+    * ext/libglade/libglade.dsp:
+    Fixing the debug compilation of libglade as shared object
+
+    * win32/php_gtk.dsp
+      win32/php_gtk.dsw
+      win32/scheme.dsp
+      ext/libglade/.cvsignore
+      ext/libglade/libglade.dsp:
+    Making libglade compile as a shared object under win32
+
+    * main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_module.h
+      main/php_gtk_object.c
+      main/php_gtk_util.c
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h:
+    Using PHP_GTK_API to export functions used by shared extensions
+
 2002-01-11  Frank M. Kromann  <frank@frontbase.com>
 
     * ext/gtk+/gtk.overrides: Changed return value from empty string to null
