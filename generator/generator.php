@@ -29,6 +29,10 @@
 
 set_time_limit(300);
 
+// override the default PHP 8Mb as this script tends to use alot more
+// and hopefully reduce the support questions a bit..
+ini_set('memory_limit','64M');
+
 require "Getopt.php";
 require "arg_types.php";
 require "override.php";
