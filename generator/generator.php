@@ -774,6 +774,10 @@ foreach ($opts as $opt) {
 	}
 }
 
+if (file_exists(dirname($argv[1]) . '/arg_types.php')) {
+    include(dirname($argv[1]) . '/arg_types.php');
+}
+
 $parser = new Defs_Parser($argv[1]);
 $generator = new Generator($parser, $overrides, $prefix, $function_class);
 foreach ($register_defs as $defs) {
