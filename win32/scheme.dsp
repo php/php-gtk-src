@@ -202,7 +202,8 @@ InputDir=..\ext\libglade
 InputPath=..\ext\libglade\libglade.defs
 
 "$(InputDir)\gen_libglade.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	php.exe -q ..\generator\generator.php -o ext\libglade\libglade.overrides -p libglade ext\libglade\libglade.defs -r ext\gtk%%2b\gtk.defs >..\ext\libglade\gen_libglade.c
+	php.exe -q ..\generator\generator.php -o ext\libglade\libglade.overrides -p libglade -r ext\gtk%%2b\gtk.defs ext\libglade\libglade.defs >..\ext\libglade\gen_libglade.c \
+	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\libglade\gen_libglade.c | sed -e "s/^/extern /" > ..\ext\libglade\gen_ce_libglade.h \
 
 # End Custom Build
 
@@ -214,7 +215,8 @@ InputDir=..\ext\libglade
 InputPath=..\ext\libglade\libglade.defs
 
 "$(InputDir)\gen_libglade.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	php.exe -q ..\generator\generator.php -o ext\libglade\libglade.overrides -p libglade ext\libglade\libglade.defs -r ext\gtk%%2b\gtk.defs >..\ext\libglade\gen_libglade.c
+	php.exe -q ..\generator\generator.php -o ext\libglade\libglade.overrides -p libglade -r ext\gtk%%2b\gtk.defs ext\libglade\libglade.defs >..\ext\libglade\gen_libglade.c \
+	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\libglade\gen_libglade.c | sed -e "s/^/extern /" > ..\ext\libglade\gen_ce_libglade.h \
 
 # End Custom Build
 
