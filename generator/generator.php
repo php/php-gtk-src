@@ -729,7 +729,7 @@ foreach ($opts as $opt) {
 $parser = new Defs_Parser($argv[1]);
 $generator = new Generator($parser, $overrides, $prefix, $function_class);
 foreach ($register_defs as $defs) {
-	$type_parser = new Defs_Parser($opt_arg);
+	$type_parser = new Defs_Parser($defs);
 	$type_parser->start_parsing();
 	$generator->register_types($type_parser);
 }
