@@ -128,38 +128,6 @@ SOURCE=..\main\php_gtk_module.h
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # End Group
-# Begin Group "Override Files"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\generator\gdk.defs
-# End Source File
-# Begin Source File
-
-SOURCE=..\generator\gdk.overrides
-# End Source File
-# Begin Source File
-
-SOURCE="..\generator\gtk-extrafuncs.defs"
-# End Source File
-# Begin Source File
-
-SOURCE=..\generator\gtk.defs
-# End Source File
-# Begin Source File
-
-SOURCE=..\generator\gtk.overrides
-# End Source File
-# Begin Source File
-
-SOURCE=..\generator\libglade.defs
-# End Source File
-# Begin Source File
-
-SOURCE=..\generator\libglade.overrides
-# End Source File
-# End Group
 # Begin Group "Gtk+"
 
 # PROP Default_Filter ""
@@ -199,6 +167,18 @@ SOURCE="..\ext\gtk+\gen_gtk.h"
 SOURCE="..\ext\gtk+\php_gtk+.h"
 # End Source File
 # End Group
+# Begin Group "Override Files No. 1"
+
+# PROP Default_Filter "*.override"
+# Begin Source File
+
+SOURCE="..\ext\gtk+\gdk.overrides"
+# End Source File
+# Begin Source File
+
+SOURCE="..\ext\gtk+\gtk.overrides"
+# End Source File
+# End Group
 # End Group
 # Begin Group "libGlade"
 
@@ -220,7 +200,19 @@ SOURCE=..\ext\libglade\php_libglade.c
 # PROP Default_Filter "*.h"
 # Begin Source File
 
+SOURCE=..\ext\libglade\gen_ce_libglade.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\ext\libglade\php_libglade.h
+# End Source File
+# End Group
+# Begin Group "Override Files No. 2"
+
+# PROP Default_Filter "*.override"
+# Begin Source File
+
+SOURCE=..\ext\libglade\libglade.overrides
 # End Source File
 # End Group
 # End Group
@@ -237,6 +229,13 @@ SOURCE=..\ext\sqpane\gen_sqpane.c
 # Begin Source File
 
 SOURCE=..\ext\sqpane\gtksqpane.c
+
+!IF  "$(CFG)" == "php_gtk - Win32 Release_TS"
+
+!ELSEIF  "$(CFG)" == "php_gtk - Win32 Debug_TS"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -253,6 +252,14 @@ SOURCE=..\ext\sqpane\gen_ce_sqpane.h
 # Begin Source File
 
 SOURCE=..\ext\sqpane\php_sqpane.h
+# End Source File
+# End Group
+# Begin Group "Override Files No. 3"
+
+# PROP Default_Filter "*.override"
+# Begin Source File
+
+SOURCE=..\ext\sqpane\sqpane.overrides
 # End Source File
 # End Group
 # End Group
