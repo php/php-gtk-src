@@ -2,7 +2,7 @@ Version 1.0.1 "you thought we were done?" 09-Aug-2004
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - buildconf script now takes an optional --with-phpize=<path> option to
       specify the location of phpize script. (Andrei)
-    - removed support for old build system. PHP 4.3.x is not required to build
+    - removed support for old build system. PHP 4.3.x is now required to build
       PHP-GTK. (Andrei)
     - implemented append_element(), prepend_element(), insert_element(),
       append_item(), prepend_item(), and insert_item() methods of GtkToolbar
@@ -14,7 +14,6 @@ Version 1.0.1 "you thought we were done?" 09-Aug-2004
         * orientation
     - reimplemented Gdk::cursor_new_from_pixmap() so it actually works. (Tom
       Rogers <trogers@kwikin.com>, Andrei)
-    
 
 Version 1.0.0 "mountain view special" 23-Oct-2003
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
