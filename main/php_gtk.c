@@ -149,13 +149,13 @@ PHP_MINFO_FUNCTION(gtk)
 	DISPLAY_INI_ENTRIES();
 }
 
-PHP_FUNCTION(no_constructor)
+PHP_GTK_API PHP_FUNCTION(no_constructor)
 {
  	php_error(E_WARNING, "%s: An abstract or unimplemented class", get_active_function_name(TSRMLS_C));
 	php_gtk_invalidate(this_ptr);
 }
 
-PHP_FUNCTION(no_direct_constructor)
+PHP_GTK_API PHP_FUNCTION(no_direct_constructor)
 {
 	php_error(E_WARNING, "Class %s cannot be constructed directly", get_active_function_name(TSRMLS_C));
 	php_gtk_invalidate(this_ptr);

@@ -147,8 +147,8 @@ char *php_gtk_zval_type_name(zval *arg);
 		return; \
 	}
 
-PHP_FUNCTION(no_constructor);
-PHP_FUNCTION(no_direct_constructor);
+PHP_GTK_API PHP_FUNCTION(no_constructor);
+PHP_GTK_API PHP_FUNCTION(no_direct_constructor);
 
 extern char *php_gtk_zval_type_name(zval *arg);
 
