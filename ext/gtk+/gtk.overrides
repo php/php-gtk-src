@@ -1065,7 +1065,6 @@ PHP_FUNCTION(gtk_combo_set_popdown_strings)
 #ifdef PHP_WIN32
 		utf8_text = g_convert(Z_STRVAL_PP(item), Z_STRLEN_PP(item), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
 		list = g_list_append(list, utf8_text);
-		if (utf8_text) g_free(utf8_text);
 #else
 		list = g_list_append(list, Z_STRVAL_PP(item));
 #endif
