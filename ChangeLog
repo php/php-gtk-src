@@ -1,3 +1,44 @@
+2003-07-17  Frank M. Kromann  <frank@kromann.info>
+
+    * (ZE2_PORT)
+      ext/gtk+/php_gtk+.h
+      main/php_gtk.h
+      main/php_gtk_object.c:
+      Export some symbols to allow compilation with gtkextra
+
+    * (ZE2_PORT)
+      ext/extra/.cvsignore
+      ext/extra/Makefile.frag
+      ext/extra/Makefile.in
+      ext/extra/config.m4
+      ext/extra/extra.defs
+      ext/extra/extra.dsp
+      ext/extra/extra.overrides
+      ext/extra/php_extra.c
+      ext/extra/php_extra.h
+      ext/extra/plot.php
+      ext/extra/sheet.php:
+      Adding gtkextra to the ZE2_PORT branch
+
+    * ext/extra/plot.php
+      ext/extra/sheet.php:
+      
+      Get rid of errors etc. (Steph)
+
+    * ext/extra/plot.php:
+      ws
+
+    * ext/extra/sheet.php:
+      Allow loading of gtk on Win32
+
+    * ext/extra/extra.defs:
+      
+      Allw the generator to generate compileable code
+
+    * generator/arg_types.php
+      generator/arg_types.php:
+      php_type is not defined for GtkDrawable
+
 2003-07-16  Frank M. Kromann  <frank@kromann.info>
 
     * ext/extra/.cvsignore:
