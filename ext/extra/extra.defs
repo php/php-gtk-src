@@ -25,6 +25,15 @@
   (c-name GtkPlotAxis )
 )
 
+(struct SheetRange
+  (in-module Gtk)
+  (c-name GtkSheetRange)
+  (field (type-and-name gint row0))
+  (field (type-and-name gint col0))
+  (field (type-and-name gint rowi))
+  (field (type-and-name gint coli))
+)
+
 
 ;; Enumerations and flags ...
 
