@@ -1,3 +1,12 @@
+2002-04-26  Frank M. Kromann  <frank@frontbase.com>
+
+    * ext/gtk+/gtk.overrides: Adding missing argument
+
+2002-04-26  Andrei Zmievski  <andrei@ispi.net>
+
+    * main/php_gtk.h
+      NEWS: Prepare for release.
+
 2002-04-25  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/php_gtk+_types.c:
