@@ -17,6 +17,8 @@ copy %SystemRoot%\system32\gmodule-1.3.dll winnt\system32
 copy %SystemRoot%\system32\glib-1.3.dll winnt\system32
 copy %SystemRoot%\system32\iconv-1.3.dll winnt\system32
 copy %SystemRoot%\system32\gnu-intl.dll winnt\system32
+copy %SystemRoot%\system32\libglade-0.14.dll winnt\system32
+copy %SystemRoot%\system32\libxml.dll winnt\system32
 copy \php\php-gtk\test\fileselection.php samples
 copy \php\php-gtk\test\gtk.php samples
 copy \php\php-gtk\test\hello.php samples
@@ -25,5 +27,5 @@ copy \php\php-gtk\test\scribble.php samples
 copy \php\php-gtk\test\testgtkrc samples
 copy \php\php-gtk\test\testgtkrc2 samples
 copy \php\php-gtk\win32\README.txt 
-"c:\Program Files\WinZip\WZZip" -ampr php-gtk-0.0.3-win32.zip
+"c:\Program Files\WinZip\WZZip" -ampr php-gtk-0.1.1a-win32.zip
 cd \php\php-gtk\win32
