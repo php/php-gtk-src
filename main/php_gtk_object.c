@@ -710,6 +710,7 @@ zval php_gtk_get_property_exp(zend_property_reference *property_reference)
 {
 	zval result;
 	zval **prop_result;
+	zval property;
 	zend_overloaded_element *overloaded_property;
 	zend_llist_element *element;
 	zval object = *property_reference->object;
@@ -719,29 +720,51 @@ zval php_gtk_get_property_exp(zend_property_reference *property_reference)
 
 	for (element=property_reference->elements_list->head; element; element=element->next) {
 		overloaded_property = (zend_overloaded_element *) element->data;
-		if ((Z_TYPE_P(overloaded_property) != OE_IS_OBJECT ||
-			Z_TYPE(overloaded_property->element) != IS_STRING) ||
-			Z_TYPE(object) != IS_OBJECT) {
-			convert_to_null(&result);
-			return result;
-		}
 
 		found = FAILURE;
-		for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
-			if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
-				(*getter)(&result, &object, &element, &found);
-			}
-		}
-		if (found == FAILURE) {
-			if (zend_hash_find(Z_OBJPROP(object),
-							   Z_STRVAL(overloaded_property->element),
-							   Z_STRLEN(overloaded_property->element),
-							   (void **)&prop_result) == SUCCESS) {
-				result = **prop_result;
-			} else {
-				convert_to_null(&result);
+		if (Z_TYPE_P(overloaded_property) == OE_IS_OBJECT) {
+			if (Z_TYPE(object) != IS_OBJECT) {
+				/* php_error(E_WARNING, "Trying to access property '%s' on a non-object", Z_STRVAL(overloaded_property->element)); */
+				ZVAL_NULL(&result);
 				return result;
 			}
+
+			for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
+				if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
+					(*getter)(&result, &object, &element, &found);
+				}
+			}
+			if (found == FAILURE &&
+				(found = zend_hash_find(Z_OBJPROP(object),
+							   Z_STRVAL(overloaded_property->element),
+							   Z_STRLEN(overloaded_property->element)+1,
+							   (void **)&prop_result)) == SUCCESS) {
+				result = **prop_result;
+			}
+		} else if (Z_TYPE_P(overloaded_property) == OE_IS_ARRAY) {
+			if (Z_TYPE(object) != IS_ARRAY) {
+				ZVAL_NULL(&result);
+				return result;
+			}
+
+			if (Z_TYPE(overloaded_property->element) == IS_STRING) {
+				found = zend_hash_find(Z_ARRVAL(object),
+									   Z_STRVAL(overloaded_property->element),
+									   Z_STRLEN(overloaded_property->element)+1,
+									   (void **)&prop_result);
+			} else if (Z_TYPE(overloaded_property->element) == IS_LONG) {
+				found = zend_hash_index_find(Z_ARRVAL(object),
+											 Z_LVAL(overloaded_property->element),
+											 (void **)&prop_result);
+			}
+			if (found == SUCCESS)
+				result = **prop_result;
+		}
+
+		if (found == FAILURE) {
+			ZVAL_NULL(&result);
+			if (element == property_reference->elements_list->tail)
+				return result;
 		}
 		object = result;
 
@@ -790,7 +813,7 @@ int php_gtk_set_property_exp(zend_property_reference *property_reference, zval *
 		if (found == FAILURE) {
 			if (zend_hash_find(Z_OBJPROP(object),
 							   Z_STRVAL(overloaded_property->element),
-							   Z_STRLEN(overloaded_property->element),
+							   Z_STRLEN(overloaded_property->element)+1,
 							   (void **)&prop_result) == SUCCESS)
 				result = **prop_result;
 			else
@@ -813,9 +836,13 @@ int php_gtk_set_property_exp(zend_property_reference *property_reference, zval *
 			}
 		}
 		if (found == FAILURE) {
+			if (value->refcount) {
+				SEPARATE_ZVAL(&value);
+			} else
+				zval_add_ref(&value);
 			retval = add_property_zval_ex(&object,
 										  Z_STRVAL(overloaded_property->element),
-										  Z_STRLEN(overloaded_property->element), value);
+										  Z_STRLEN(overloaded_property->element)+1, value);
 		} else {
 			php_error(E_WARNING, "Cannot assign to overloaded property");
 			retval = FAILURE;
