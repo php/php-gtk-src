@@ -8103,7 +8103,7 @@
   (c-name gtk_draw_arrow)
   (return-type none)
   (parameter (type-and-name GtkStyle* style))
-  (parameter (type-and-name GdkWindow* window))
+  (parameter (type-and-name GdkDrawable* window))
   (parameter (type-and-name GtkStateType state_type))
   (parameter (type-and-name GtkShadowType shadow_type))
   (parameter (type-and-name GtkArrowType arrow_type))
