@@ -1,3 +1,7 @@
+2001-11-11  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/makedist.cmd: Rename samples to test according to the docs.
+
 2001-10-26  Andrei Zmievski  <andrei@ispi.net>
 
     * TODO: *** empty log message ***
