@@ -6504,16 +6504,6 @@
   (parameter (type-and-name guint16 size))
 )
 
-(method compute_position
-  (of-object Paned (Gtk))
-  (c-name gtk_paned_compute_position)
-  (return-type none)
-  (parameter (type-and-name gint allocation))
-  (parameter (type-and-name gint child1_req))
-  (parameter (type-and-name gint child2_req))
-)
-
-
 
 ;; From /usr/include/gtk/gtkpixmap.h
 
