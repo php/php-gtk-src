@@ -1,3 +1,18 @@
+2001-08-21  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * test/gtk.php: WS fix
+
+2001-08-21  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS
+      ext/gtk+/gtk.overrides
+      test/gtk.php:
+    - Fixed GtkWidget::intersect().
+    - Fixed GtkWidget::size_request() and GtkWidget::get_child_requisition().
+    - Added GtkBox::query_child_packing() and
+      GtkNotebook::query_tab_label_packing(). (patch from Markus)
+    - Added notebook example to gtk.php. (patch from Markus)
+
 2001-08-19  Andrei Zmievski  <andrei@ispi.net>
 
     * test/gtk.php: Fix gtk.php.
