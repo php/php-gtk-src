@@ -141,6 +141,7 @@ PHP_RINIT_FUNCTION(gtk)
 	g_type_init();
 	phpg_gtype_register_self();
 	phpg_gobject_register_self(module_number);
+	phpg_gboxed_register_self();
 
 	if (php_gtk_startup_all_extensions(module_number) == FAILURE) {
 		php_error(E_WARNING, "Unable to start internal extensions");

@@ -26,8 +26,6 @@
  * GObject API and helper functions
  */
 
-static const gchar *phpg_class_id   = "phpg_class";
-static GQuark       phpg_class_key  = 0;
 static const gchar *gobject_wrapper_id   = "phpg_wrapper";
 static GQuark       gobject_wrapper_key  = 0;
 
