@@ -402,7 +402,7 @@ class Generator {
 											   $struct->ce,
 											   $struct->in_module . $struct->name,
 											   $struct_module . '_' . $struct_lname,
-											   'NULL', 0);
+											   'NULL', 0, 'NULL');
 
 			$init_prop_code = array();
 			$construct_prop_code = array();
@@ -499,7 +499,8 @@ class Generator {
 												   $object->in_module . $object->name,
 												   $object_module . '_' . $object_lname,
 												  'NULL',
-												  count($object->fields) ? 1 : 0);
+												  count($object->fields) ? 1 : 0,
+												  count($object->fields) ? 'php_' . $object_module . '_' . $object_lname . '_properties' : 'NULL');
 			else {
 				if ($object->parent[1] === null)
 					$parent_ce = strtolower($object->parent[0]) . '_ce';
@@ -510,7 +511,8 @@ class Generator {
 												   $object->in_module . $object->name,
 												   $object_module . '_' . $object_lname,
 												   $parent_ce,
-												   count($object->fields) ? '1' : '0');
+												   count($object->fields) ? '1' : '0',
+												   count($object->fields) ? 'php_' . $object_module . '_' . $object_lname . '_properties' : 'NULL');
 				$this->register_classes .= "\tg_hash_table_insert(php_gtk_class_hash, g_strdup(\"Gtk$object->name\"), $object->ce);\n";
 			}
 
@@ -690,10 +692,30 @@ class Generator {
 												   $this->lprefix . '_ce',
 												   $this->prefix,
 												   $this->lprefix,
-												   'NULL', 0);
+												   'NULL', 0, 'NULL');
 				fwrite($fp, sprintf($class_entry_tpl, $this->lprefix . '_ce'));
 				fwrite($fp, $functions_decl);
 			}
+		}
+	}
+
+	function write_prop_lists($fp)
+	{
+		global	$class_prop_list_header,
+				$class_prop_list_footer;
+		
+		fwrite($fp, "\n");
+		foreach ($this->parser->objects as $object) {
+			if (count($object->fields) == 0) continue;
+
+			fwrite($fp, sprintf($class_prop_list_header,
+								strtolower($object->in_module) . '_' .
+								strtolower($object->name)));
+			foreach ($object->fields as $field_def) {
+				list(, $field_name) = $field_def;
+				fwrite($fp, "\t\"$field_name\",\n");
+			}
+			fwrite($fp, $class_prop_list_footer);
 		}
 	}
 
@@ -719,6 +741,7 @@ class Generator {
 		fwrite($fp, $this->overrides->get_headers());
 		$this->write_constants($fp);
 		$this->write_class_entries($fp);
+		$this->write_prop_lists($fp);
 		if (!isset($this->parser->objects[$this->function_class]))
 			$this->write_functions($fp, true, $dummy);
 		$this->write_structs($fp);

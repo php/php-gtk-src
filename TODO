@@ -15,5 +15,11 @@
 
 * Clean up and optimize generator
 
-# vim: set tw=80 ai et sts=4:
+For ZE2
+-------
 
+* Add property lists for types
+
+* Fix infinite recursion on var_dump()
+
+# vim: set tw=80 ai et sts=4:

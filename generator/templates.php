@@ -120,9 +120,12 @@ void php_%s_register_classes(void)
 
 //$register_class_tpl = "\t%s = zend_register_internal_class_ex(&ce, %s, NULL TSRMLS_CC);\n";
 $register_class_tpl = "
-	%s = php_gtk_register_class(\"%s\", php_%s_functions, %s, %d, 0 TSRMLS_CC);\n";
+	%s = php_gtk_register_class(\"%s\", php_%s_functions, %s, %d, 0, %s TSRMLS_CC);\n";
 
 $class_entry_tpl = "PHP_GTK_EXPORT_CE(%s);\n";
+
+$class_prop_list_header = "static char *php_%s_properties[] = {\n";
+$class_prop_list_footer = "\tNULL\n};\n\n";
 
 $struct_init_tpl = "
 zval *PHP_GTK_EXPORT_FUNC(php_%s_new)(%s *obj)

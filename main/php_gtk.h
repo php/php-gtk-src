@@ -104,7 +104,16 @@ extern HashTable php_gtk_prop_desc;
 int php_gtk_startup_all_extensions(int module_number);
 int php_gtk_startup_extensions(php_gtk_ext_entry **ext, int ext_count, int module_number);
 
-void php_gtk_set_object(zval *wrapper, void *obj, php_gtk_dtor_t dtor);
+static inline void php_gtk_set_object(zval *zobj, void *obj, php_gtk_dtor_t dtor, zend_bool boxed)
+{
+	php_gtk_object *wrapper = (php_gtk_object *) zend_object_store_get_object(zobj TSRMLS_CC);
+	wrapper->obj = obj;
+	wrapper->dtor = dtor;
+	if (boxed) {
+		zend_hash_index_update(&php_gtk_type_hash, (long)obj, (void *)&zobj, sizeof(zval *), NULL);
+	}
+}
+
 PHP_GTK_API void *php_gtk_get_object(zval *wrapper, int rsrc_type);
 int php_gtk_get_simple_enum_value(zval *enum_val, int *result);
 PHP_GTK_API int php_gtk_get_enum_value(GtkType enum_type, zval *enum_val, int *result);
@@ -123,7 +132,7 @@ PHP_GTK_API zval php_gtk_get_property(zend_property_reference *property_referenc
 PHP_GTK_API int php_gtk_set_property(zend_property_reference *property_reference, zval *value);
 void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference *property_reference);
 
-PHP_GTK_API zend_class_entry* php_gtk_register_class(const char *class_name, function_entry *class_functions, zend_class_entry *parent, zend_bool have_getter, zend_bool have_setter TSRMLS_DC);
+PHP_GTK_API zend_class_entry* php_gtk_register_class(const char *class_name, function_entry *class_functions, zend_class_entry *parent, zend_bool have_getter, zend_bool have_setter, char **class_props TSRMLS_DC);
 
 PHP_GTK_API void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter);
 PHP_GTK_API void php_gtk_register_prop_setter(zend_class_entry *ce, prop_setter_t setter);
