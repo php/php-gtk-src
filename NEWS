@@ -1,4 +1,6 @@
-    - Implemented GtkFontSelection::set_filter(),
+    - added new widgets with samples: GtkComboButton, GtkSPaned, GtkScrollPane
+      and GtkPieMenu. (Markus)
+    - implemented GtkFontSelection::set_filter(),
       GtkFontSelectionDialog::set_filter(),
       Gtk::button_box_get_child_ipadding_default(),
       Gtk::button_box_get_child_size_default() and GtkWidget::get_pointer().
