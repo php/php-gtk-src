@@ -14,10 +14,7 @@ ignore-glob
   *_get_type
 %%
 ignore gtk_canvas_update_bbox
-%%
-ignore gtk_canvas_item_i2w_affine
-%%
-ignore   gtk_canvas_item_i2c_affine
+ 
 %%
 ignore   gtk_canvas_w2c_affine
 %%
@@ -695,5 +692,64 @@ PHP_FUNCTION(gtk_canvas_get_scroll_offsets)
  
 }
 
- 
+%%
+override gtk_canvas_item_i2w_affine
+
+PHP_FUNCTION(gtk_canvas_item_i2w_affine)
+{
+	double affine[6];
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "dddddd", &affine[0], &affine[1], &affine[2], &affine[3], &affine[4], &affine[5]))
+		return;
+
+	gtk_canvas_item_i2w_affine(GTK_CANVAS_ITEM(PHP_GTK_GET(this_ptr)), affine);
+	RETURN_NULL();
+}
+
+%%
+override gtk_canvas_item_i2c_affine
+
+PHP_FUNCTION(gtk_canvas_item_i2c_affine)
+{
+	double affine[6];
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "dddddd", &affine[0], &affine[1], &affine[2], &affine[3], &affine[4], &affine[5]))
+		return;
+	
+	gtk_canvas_item_i2c_affine(GTK_CANVAS_ITEM(PHP_GTK_GET(this_ptr)), affine);
+	RETURN_NULL();
+}
+
+%%
+override gtk_canvas_item_scale
+
+/* scale is not actually defined in the code - it's in the headers! - 
+to make this work, you need to modify the x/y insert postion, and divide it
+by the scale factor... other wise it scales from 0,0...
+the first 2 args are dummy's as it should be implemented as per the headers really..
+
+*/
+
+PHP_FUNCTION(gtk_canvas_item_scale)
+{
+	double  x,y,scale_x, scale_y;
+	double affine[6];
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "dddd",&x,&y, &scale_x, &scale_y))
+		return;
+	
+	
+	art_affine_scale(affine, scale_x,scale_y);
+	/*art_affine_point(affine_B */
+	gtk_canvas_item_affine_relative (GTK_CANVAS_ITEM(PHP_GTK_GET(this_ptr)), affine);
+
+	
+	RETURN_NULL();
+}
  

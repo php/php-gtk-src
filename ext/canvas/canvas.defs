@@ -577,14 +577,27 @@
   (of-object CanvasItem (Gtk))
   (c-name gtk_canvas_item_i2w_affine)
   (return-type none)
-  (parameter (type-and-name double affine[6]))
+  ;(parameter (type-and-name double affine[6]))
+  (parameter (type-and-name double        a))
+  (parameter (type-and-name double        b))
+  (parameter (type-and-name double        c))
+  (parameter (type-and-name double        d))
+  (parameter (type-and-name double        e))
+  (parameter (type-and-name double        f))
+  
 )
 
 (method i2c_affine 
   (of-object CanvasItem (Gtk))
   (c-name gtk_canvas_item_i2c_affine)
   (return-type none)
-  (parameter (type-and-name double affine[6]))
+  ;(parameter (type-and-name double affine[6]))
+  (parameter (type-and-name double        a))
+  (parameter (type-and-name double        b))
+  (parameter (type-and-name double        c))
+  (parameter (type-and-name double        d))
+  (parameter (type-and-name double        e))
+  (parameter (type-and-name double        f))
 )
 
 (method reparent 
