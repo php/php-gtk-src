@@ -706,6 +706,52 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 }
 
 
+zval php_gtk_get_property_exp(zend_property_reference *property_reference)
+{
+	zval result;
+	zval **prop_result;
+	zend_overloaded_element *overloaded_property;
+	zend_llist_element *element;
+	zval object = *property_reference->object;
+	prop_getter_t *getter;
+	zend_class_entry *ce;
+	int found;
+
+	for (element=property_reference->elements_list->head; element; element=element->next) {
+		overloaded_property = (zend_overloaded_element *) element->data;
+		if ((Z_TYPE_P(overloaded_property) != OE_IS_OBJECT ||
+			Z_TYPE(overloaded_property->element) != IS_STRING) ||
+			Z_TYPE(object) != IS_OBJECT) {
+			convert_to_null(&result);
+			return result;
+		}
+
+		found = FAILURE;
+		for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
+			if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
+				(*getter)(&result, &object, &element, &found);
+			}
+		}
+		if (found == FAILURE) {
+			if (zend_hash_find(Z_OBJPROP(object),
+							   Z_STRVAL(overloaded_property->element),
+							   Z_STRLEN(overloaded_property->element),
+							   (void **)&prop_result) == SUCCESS) {
+				result = **prop_result;
+			} else {
+				convert_to_null(&result);
+				return result;
+			}
+		}
+		object = result;
+
+		zval_dtor(&overloaded_property->element);
+	}
+
+    return result;
+}
+
+
 int php_gtk_set_property_exp(zend_property_reference *property_reference, zval *value)
 {
 	zval result;
@@ -735,19 +781,21 @@ int php_gtk_set_property_exp(zend_property_reference *property_reference, zval *
 			return FAILURE;
 		}
 
-		if ((found = zend_hash_find(Z_OBJPROP(object),
-									Z_STRVAL(overloaded_property->element),
-									Z_STRLEN(overloaded_property->element),
-									(void **)&prop_result)) != SUCCESS) {
-			for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
-				if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
-					(*getter)(&result, &object, &element, &found);
-				}
+		found = FAILURE;
+		for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
+			if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
+				(*getter)(&result, &object, &element, &found);
 			}
-		} else
-			result = **prop_result;
-		if (found == FAILURE)
-			return FAILURE;
+		}
+		if (found == FAILURE) {
+			if (zend_hash_find(Z_OBJPROP(object),
+							   Z_STRVAL(overloaded_property->element),
+							   Z_STRLEN(overloaded_property->element),
+							   (void **)&prop_result) == SUCCESS)
+				result = **prop_result;
+			else
+				return FAILURE;
+		}
 		object = result;
 
 		zval_dtor(&overloaded_property->element);
@@ -757,10 +805,22 @@ int php_gtk_set_property_exp(zend_property_reference *property_reference, zval *
 	overloaded_property = (zend_overloaded_element *) element->data;
 	if (zend_hash_index_find(&php_gtk_prop_setters, (long)object.value.obj.ce, (void **)&setter) == SUCCESS) {
 		retval = (*setter)(&object, &element, value);
-	} else
-		retval = add_property_zval_ex(&object,
-									  Z_STRVAL(overloaded_property->element),
-									  Z_STRLEN(overloaded_property->element), value);
+	} else {
+		found = FAILURE;
+		for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
+			if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
+				(*getter)(&result, &object, &element, &found);
+			}
+		}
+		if (found == FAILURE) {
+			retval = add_property_zval_ex(&object,
+										  Z_STRVAL(overloaded_property->element),
+										  Z_STRLEN(overloaded_property->element), value);
+		} else {
+			php_error(E_WARNING, "Cannot assign to overloaded property");
+			retval = FAILURE;
+		}
+	}
 
 	zval_dtor(&overloaded_property->element);
 	return retval;
