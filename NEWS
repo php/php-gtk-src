@@ -38,8 +38,8 @@ Version 0.1.1 "no-holds-barred memento" 24-Sep-2001
       underscores. (Frank)
     - changed PHP-visible extension name from 'gtk' to 'php-gtk'. (Andrei)
 
-Version 0.1 "the void which binds" 1-Aug-2001
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Version 0.1.0 "the void which binds" 1-Aug-2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - added GDK keysyms constants. (Andrei)
     - fixed bug with GtkStyle::copy() that was not returning the result
       properly. (Andrei)
