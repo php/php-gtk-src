@@ -129,14 +129,14 @@ class Defs_Parser {
         $cache_file = $defs_file.'.cache';
         if (@is_file($cache_file) &&
             filemtime($cache_file) > filemtime($defs_file)) {
-            error_log("Loading cache \"$cache_file\"");
+            error_log('Loading cache "'. basename($cache_file) .'"');
             $fp = fopen($cache_file, 'r');
             $this->parse_cache = fread($fp, filesize($cache_file));
             fclose($fp);
         } else {
-            error_log("Parsing file \"$defs_file\".");
             $this->file_name = basename($defs_file);
             $this->file_path = dirname($defs_file);
+            error_log("Parsing file \"$this->file_name\".");
             $this->parse_tree = parse($defs_file, 'r');
         }
     }

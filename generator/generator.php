@@ -731,11 +731,7 @@ if (isset($_SERVER['argc']) &&
     $argv = $_SERVER['argv'];
 }
 
-/* An ugly hack to counteract PHP's pernicious desire to treat + as an argument
-   separator in command-line version. */
-array_walk($argv, create_function('&$x', '$x = urldecode($x);'));
-
-    
+ 
 $result = Console_Getopt::getopt($argv, 'l:o:p:c:r:f:');
 if (!$result || count($result[1]) < 2)
     die("usage: php generator.php [-l logfile] [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] [-f savefile] defsfile\n");

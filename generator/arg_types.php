@@ -349,7 +349,6 @@ class Enum_Arg extends Arg_Type {
     static $enum_tpl  = "\n\tif (php_%(name) && phpg_gvalue_get_enum(%(typecode), php_%(name), (gint *)&%(name)) == FAILURE) {\n\t\treturn;\n\t}\n";
     var $enum_name = null;
     var $typecode = null;
-    //var $simple    = null;
 
     function __construct($enum_name, $typecode)
     {
@@ -368,21 +367,6 @@ class Enum_Arg extends Arg_Type {
         $info->add_parse_list('V', '&php_' . $name);
         $info->pre_code[] = aprintf(self::$enum_tpl, array('typecode' => $this->typecode,
                                                            'name' => $name));
-        /*
-        if ($this->simple) {
-            $enum_tpl = "   if (php_%s && !php_gtk_get_simple_enum_value(php_%s, (gint *)&%s)) {\n" .
-                        "       %sreturn;\n" .
-                        "   }\n\n";
-            $extra_pre_code[]   = sprintf($enum_tpl, $name, $name, $name,
-                                          $in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "");
-        } else {
-            $enum_tpl = "   if (php_%s && !php_gtk_get_enum_value(%s, php_%s, (gint *)&%s)) {\n" .
-                        "       %sreturn;\n" .
-                        "   }\n\n";
-            $extra_pre_code[]   = sprintf($enum_tpl, $name, $this->type_code, $name, $name,
-                                          $in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "");
-        }
-        */
     }
     
     function write_return($type, $owns_return, $info)
