@@ -1,3 +1,23 @@
+2001-12-05  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/gtk.defs: Allow $mask argument to set_pixmap() to be NULL.
+
+2001-12-05  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * ext/gtk+/gtk.overrides: - Remove macro where not needed.
+
+    * NEWS: - Fix last NEWS entry.
+
+    * ext/gtk+/gtk.overrides: - Typo.
+
+    * NEWS: - Update News.
+
+    * ext/gtk+/gtk.overrides:
+    - Implemented set_filter() for GtkFontSelection and GtkFontSelectionDialog.
+    - Implemented gtk_button_box_get_child_size(),
+      gtk_button_box_get_child_ipadding_default() and get_widget_get_pointer()
+      (for completeness).
+
 2001-12-01  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gdkpixbuf/gdkpixbuf.overrides
