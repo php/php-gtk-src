@@ -264,6 +264,10 @@
   (field (type-and-name GtkWidget* child2))
   (field (type-and-name guint16 handle_size))
   (field (type-and-name guint16 gutter_size))
+  (field (type-and-name gboolean child1_resize))
+  (field (type-and-name gboolean child1_shrink))
+  (field (type-and-name gboolean child2_resize))
+  (field (type-and-name gboolean child2_shrink))
 )
 
 (object VPaned
