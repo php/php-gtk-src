@@ -1,3 +1,61 @@
+2004-08-14  Andrei Zmievski  <andreiz@gmail.com>
+
+    * ext/gtk+/atk-types.defs
+      ext/gtk+/pango-types.defs:
+      Forgot to add types defs.
+
+    * ext/gtk+/atk.defs
+      ext/gtk+/atk.overrides
+      ext/gtk+/pango.defs
+      ext/gtk+/pango.overrides:
+      Add Pango and Atk defs and overrides.
+
+    * ext/gtk+/Makefile.frag
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      generator/generator.php
+      generator/scheme.php
+      generator/templates.php
+      main/php_gtk.h
+      main/phpg_gobject.c:
+      - Modified generator.php to take -f option that specifies the output
+        file. If -f is not specified, the output goes to stdout.
+      * Move object sorting code into defs parser.
+      * Implement enum/flags registration. They now live inside top-level
+        classes, e.g. Gtk::, Atk::, etc.
+
+    * main/php_gtk.c
+      main/php_gtk.h
+      main/phpg_gtype.c:
+      Rename to phpg_ prefix.
+
+    * main/phpg_gobject.c:
+      ZE2 doesn't "support" objects as static properties? Sure it does, you
+      just have to hack it in manually.
+
+    * php_gtk.m4
+      ext/gtk+/Makefile.frag
+      ext/gtk+/php_gtk+.c
+      main/php_gtk.h:
+      Add GDK and Pango to the build. Only class shells are registered.
+
+    * php_gtk.m4
+      ext/gtk+/Makefile.frag
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.c
+      generator/templates.php:
+      - Fix "underquoted definition" warnings in php_gtk.m4.
+      * Add atk*.defs to the mix.
+      * Simplify building even more via implicit rules: gen_*.h is now
+        generated right after gen_*.c. Thus, adding 'atk' definitions was a
+        snap.
+      
+
+    * php_gtk.m4
+      ext/gtk+/Makefile.frag
+      generator/generator.php:
+      Fix build and optimize .defs -> .c conversion.
+
 2004-08-13  Andrei Zmievski  <andreiz@gmail.com>
 
     * (PHP_GTK_1)
