@@ -712,7 +712,7 @@ class Generator {
             } catch (Exception $e) {
                 $this->divert("notgen", "  %-11s %s::%s: %s\n", "function", $this->prefix, $function->name, $e->getMessage());
                 $num_skipped++;
-                $this->cover["funcs"]->written();
+                $this->cover["funcs"]->skipped();
             }
         }
 
