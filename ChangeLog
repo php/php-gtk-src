@@ -1,0 +1,364 @@
+2001-03-01  Andrei Zmievski  <andrei@ispi.net>
+
+    * README: Make a note of PHP version required.
+
+    * README
+      makedist: * Fixing makedist.
+    * Updating README to assuage certain qualms people may have about
+      those "Could not write.." messages.
+
+    * makedist: Convert the package name as well.
+
+    * generator/arg_types.php
+      generator/definitions.php
+      generator/generator.php
+      generator/override.php
+      generator/scheme.php
+      generator/templates.php
+      src/php_gtk.c
+      src/php_gtk.h
+      src/php_gtk_module.h
+      src/php_gtk_object.c
+      src/php_gtk_types.c
+      src/php_gtk_util.c
+      test/hello.php
+      test/list.php: Changing my email address.
+
+    * NEWS
+      README: Adding README file.
+
+    * makedist: Adding distribution generation file.
+
+    * NEWS: Adding NEWS file.
+
+2001-03-01  Frank M. Kromann  <fmk@swwwing.com>
+
+    * win32/README.win32.txt: Adding info about gtk-dll's
+
+    * win32/README.win32.txt: Adding 'howto' information for Win32
+
+2001-02-28  Andrei Zmievski  <andrei@ispi.net>
+
+    * AUTHORS
+      TODO
+      generator/arg_types.php: *** empty log message ***
+
+    * test/gtk.php: Button box test.
+
+2001-02-28  Frank M. Kromann  <fmk@swwwing.com>
+
+    * test/gtk.php: Mised one function name.
+
+    * test/gtk.php: Fixing gtk.php to run on windows.
+    Second parameter in ->connect() should be a string !
+
+2001-02-28  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/arg_types.php: Fix Bool_Arg parsing.
+
+    * test/gtk.php: Add labels test.
+
+    * src/php_gtk.c
+      src/php_gtk_object.c: We do need to ref the wrapper before storing it.
+
+    * TODO
+      src/php_gtk.h
+      src/php_gtk_util.c: * Fix inline functions declarations
+    * Fix php_gtk_check_callable() to allow array('Class', 'method') call
+
+    * test/gtk.php:
+    Started porting testgtk.c to PHP. Window destruction is screwed up,
+    need to fix.
+
+2001-02-27  Frank M. Kromann  <fmk@swwwing.com>
+
+    * src/php_gtk_types.c
+      generator/gtk.overrides: Removing compiler warnings
+
+    * generator/gtk.overrides:
+    Ignore some gtk_draw_* functions to allow build on Win32
+
+    * win32/.cvsignore: Adding build directories to cvsignore
+
+    * win32/inst.cmd: Adding a simple install script
+
+    * src/php_gtk.h
+      src/php_gtk_object.c: Fixing unresolved symbols on Win32
+
+2001-02-27  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/gtk.overrides: Implement GtkContainer::children.
+
+    * TODO: Done.
+
+    * generator/generator.php
+      generator/templates.php
+      src/Makefile.in
+      src/php_gtk.h
+      src/php_gtk_object.c
+      src/php_gtk_types.c:
+    Generic property handlers now percolate up the inheritance chain
+    to see whether parent objects have the needed property.
+
+2001-02-27  Frank M. Kromann  <fmk@swwwing.com>
+
+    * win32/php_gtk.dsw
+      win32/php_gtk.dsp
+      win32/scheme.dsp: Readding dependence between projects
+
+    * win32/php_gtk.dsp
+      win32/php_gtk.dsw
+      win32/scheme.dsp: Fixing compilation on Win32.
+    TODO fix 14 unresolved symbols.
+
+2001-02-27  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/generator.php
+      generator/gtk.overrides
+      generator/templates.php
+      src/php_gtk.h
+      src/php_gtk_object.c:
+    * Fixed up marshallers for idle, timeout, and input handlers.
+    * Implemented access to object fields/properties.
+
+2001-02-26  Andrei Zmievski  <andrei@ispi.net>
+
+    * TODO: That was a stupid idea.
+
+    * src/php_gtk.c
+      src/php_gtk.h
+      src/php_gtk_object.c
+      src/php_gtk_types.c:
+    Implement better abstraction of property handlers, thus allowing
+    for object field access in the near future.
+
+    * generator/gtk.overrides
+      src/php_gtk_types.c: Allow GtkStyle constructor.
+
+    * generator/gtk.overrides: Label is optional.
+
+2001-02-25  Jan Lehnardt  <jan@lehnardt.de>
+
+    * generator/gtk.overrides:
+    allow GtkMenuItem to take one argument (string) which is labels the GtkMenuItem
+
+2001-02-24  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/arg_types.php
+      src/php_gtk.h
+      src/php_gtk_object.c
+      src/php_gtk_types.c: Added support for GdkDragContext and GtkStyle.
+
+2001-02-23  Andrei Zmievski  <andrei@ispi.net>
+
+    * TODO: test
+
+    * src/php_gtk.h
+      src/php_gtk_object.c
+      src/php_gtk_types.c
+      generator/arg_types.php
+      generator/gtk.overrides: * Support for GtkAccelGroup
+    * Disabled direct construction of certain classes
+    * Added GdkWindow property handling functions
+
+2001-02-20  Andrei Zmievski  <andrei@ispi.net>
+
+    * TODO: test
+
+    * generator/arg_types.php
+      generator/gtk.overrides
+      src/php_gtk.h
+      src/php_gtk_types.c
+      src/php_gtk_util.c
+      TODO: * Added support for GdkGC, GtkSelectionData, GtkCTreeNode.
+    * Added format specifier to argument parser to allow separation
+      of zval's.
+    * Added GtkCTree constructor and node insertion function.
+    * Added GdkWindow::new_gc method
+
+2001-02-19  Andrei Zmievski  <andrei@ispi.net>
+
+    * COPYING.LIB
+      generator/gtk.overrides:
+    Override gtk_tree_item_new to allow specifying a label.
+
+2001-02-10  Andrei Zmievski  <andrei@ispi.net>
+
+    * TODO
+      src/php_gtk_types.c
+      src/php_gtk_util.c: * Deal with non-pseudocolor colormaps properly.
+    * Implemented GdkFont functions.
+    * Added support for 's#' parse arg spec.
+
+2001-02-09  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk.h
+      src/php_gtk_gen.h
+      src/php_gtk_object.c
+      src/php_gtk_types.c
+      TODO
+      generator/arg_types.php: * Partial GdkFont support.
+    *
+
+2001-02-08  Andrei Zmievski  <andrei@ispi.net>
+
+    * TODO
+      generator/arg_types.php
+      generator/gtk.overrides
+      src/php_gtk.h
+      src/php_gtk_object.c
+      src/php_gtk_types.c: * Support for GdkCursor, GdkVisual
+    * Rewrote a lot of overridden functions
+
+2001-02-06  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/generator.php: Don't rely on globals.
+
+    * generator/arg_types.php
+      generator/definitions.php
+      generator/generator.php
+      generator/override.php
+      generator/scheme.php
+      generator/templates.php
+      src/php_gtk_types.c: * Added a couple of GdkWindow methods.
+    * Added GdkPixmap, GdkBitmap, and GdkDrawable handling.
+
+2001-02-05  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/arg_types.php
+      generator/gtk.overrides
+      src/php_gtk.h
+      src/php_gtk_types.c: Implement support for GdkAtom boxed type.
+
+2001-02-04  Andrei Zmievski  <andrei@ispi.net>
+
+    * TODO
+      src/.cvsignore: php_gtk_gen.h is generated too.
+
+    * generator/generator.php
+      generator/gtk.overrides
+      generator/scheme.php: * Fixed constructor generation
+    * Overrode GtkButton() and GtkListItem() constructors so that a text
+      label can be optionally passed in.
+
+    * COPYING.LIB
+      TODO
+      generator/arg_types.php
+      generator/generator.php
+      generator/gtk.overrides
+      src/php_gtk.c
+      src/php_gtk.h
+      src/php_gtk_module.h
+      src/php_gtk_object.c
+      src/php_gtk_types.c
+      src/php_gtk_util.c
+      test/gtk.php
+      test/hello.php
+      test/list.php: * Added LGPL license
+    * Fixed enum/flags code generation properly
+    * Fixed a bug that would not recognize default value of 0
+    * Added GtkList::append_items method
+    * Added a couple of example scripts
+
+2001-02-03  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk_object.c: Check for NULL object before trying to use it.
+
+    * generator/arg_types.php
+      generator/generator.php
+      generator/override.php:
+    * gdk_ and gtk_ are stripped from the PHP visible method names
+    * made it possible to override PHP visible function name from gtk.overrides
+    * if parsing enum/flags value fails in the constructor, the object is
+      invalidated
+
+    * TODO
+      generator/arg_types.php
+      src/php_gtk.h
+      src/php_gtk_types.c:
+    Initial work on GdkColormap and also trying to support array offset
+    overloading.
+
+2001-02-01  Andrei Zmievski  <andrei@ispi.net>
+
+    * TODO
+      src/php_gtk.c
+      src/php_gtk.h
+      src/php_gtk_module.h
+      src/php_gtk_object.c
+      src/php_gtk_util.c: *** empty log message ***
+
+    * TODO
+      generator/gtk.overrides
+      src/php_gtk.h
+      src/php_gtk_types.c
+      src/php_gtk_util.c:
+    - Added php_gtk_parse_args_quiet() to allow parsing arguments without
+      outputting errors.
+    - More work on GdkColor - pretty much implemented.
+    - Added generic set property handler.
+
+2001-01-29  Andrei Zmievski  <andrei@ispi.net>
+
+    * test/gtk.php: Test.
+
+    * generator/arg_types.php
+      generator/definitions.php
+      generator/generator.php
+      generator/gtk-extrafuncs.defs
+      generator/gtk.defs
+      generator/gtk.overrides
+      generator/override.php
+      generator/templates.php: Initial check-in
+
+    * generator/arg_types.php
+      generator/definitions.php
+      generator/generator.php
+      generator/gtk-extrafuncs.defs
+      generator/gtk.defs
+      generator/gtk.overrides
+      generator/override.php
+      generator/templates.php: New file.
+
+    * .cvsignore
+      Makefile.in
+      TODO
+      config.m4
+      generator/gdk.defs
+      generator/scheme.php
+      src/.cvsignore
+      src/Makefile.in
+      src/php_gtk.c
+      src/php_gtk.h
+      src/php_gtk_gen.h
+      src/php_gtk_module.h
+      src/php_gtk_object.c
+      src/php_gtk_types.c
+      src/php_gtk_util.c
+      test/gtk.php
+      win32/.cvsignore
+      win32/php_gtk.dsp
+      win32/php_gtk.dsw
+      win32/scheme.dsp: Initial check-in
+
+    * .cvsignore
+      Makefile.in
+      TODO
+      config.m4
+      generator/gdk.defs
+      generator/scheme.php
+      src/.cvsignore
+      src/Makefile.in
+      src/php_gtk.c
+      src/php_gtk.h
+      src/php_gtk_gen.h
+      src/php_gtk_module.h
+      src/php_gtk_object.c
+      src/php_gtk_types.c
+      src/php_gtk_util.c
+      test/gtk.php
+      win32/.cvsignore
+      win32/php_gtk.dsp
+      win32/php_gtk.dsw
+      win32/scheme.dsp: New file.
+
