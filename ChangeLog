@@ -1,3 +1,11 @@
+2001-10-18  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/gtk.overrides
+      generator/arg_types.php
+      ext/gtk+/Makefile.in:
+    - Register types defined in gdk.defs when generating files from gtk.defs.
+    - Remove outdated Rect_Arg type and use struct based GdkRectangle instead.
+
 2001-10-17  mfischer  <mfischer@pb1.pair.com>
 
     * ext/ext_skel
