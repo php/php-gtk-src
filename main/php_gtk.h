@@ -113,6 +113,11 @@ typedef struct {
 	prop_write_func_t write;
 } prop_info_t;
 
+#define PHPG_PROP_READ_FN(class, name) \
+	phpg_##class##_read_##name
+#define PHPG_PROP_READER(class, name) \
+	static int PHPG_PROP_READ_FN(class, name)(void *object, zval *return_value)
+
 typedef void (*prop_getter_t)(zval *return_value, zval *object, char *property, int *result);
 typedef int (*prop_setter_t)(zval *object, char *property, zval *value);
 typedef zend_object_value (*create_object_func_t)(zend_class_entry *ce TSRMLS_DC);

@@ -52,10 +52,12 @@ class Generator {
     var $constants          = '';
     var $template_map       = array('Object_Def' => array('constructor' => Templates::constructor_body,
                                                           'static_constructor' => Templates::static_constructor_body,
-                                                          'method' => Templates::method_body),
+                                                          'method' => Templates::method_body,
+                                                          'prop' => Templates::prop_access),
                                     'Boxed_Def'  => array('constructor' => Templates::boxed_constructor_body,
                                                           'static_constructor' => Templates::boxed_static_constructor_body,
-                                                          'method' => Templates::boxed_method_body),
+                                                          'method' => Templates::boxed_method_body,
+                                                          'prop' => Templates::boxed_prop_access),
                                    );
 
     function Generator(&$parser, &$overrides, $prefix, $function_class)
@@ -801,6 +803,84 @@ class Generator {
                                   $register_classes));
     }
     
+    function write_prop_handlers($object)
+    {
+        global $matcher;
+
+        if (!$object->fields) {
+            return 'NULL';
+        }
+        fprintf(STDERR, "Writing property accessors for $object->c_name...\n");
+
+        $class = strtolower($object->c_name);
+        $read_prefix  = 'phpg_' . $class .'_read_';
+        $write_prefix = 'phpg_' . $class .'_write_';
+
+        $prop_defs = array();
+        $dict = array();
+
+        switch ($def_type = get_class($object)) {
+            case 'Object_Def':
+                $dict['cast'] = preg_replace('!_TYPE_!', '_', $object->typecode, 1);
+                break;
+
+            case 'Boxed_Def':
+                $dict['cast'] = $object->c_name . ' *';
+                break;
+        }
+
+        foreach ($object->fields as $field) {
+            list($field_type, $field_name) = $field;
+
+            /* TODO support overrides */
+            $read_func = "PHPG_PROP_READ_FN($object->c_name, $field_name)";
+            $write_func = 'NULL';
+            $info = new Wrapper_Info();
+
+            try {
+                if ($this->overrides->is_prop_overriden($object->c_name, $field_name)) {
+                    $overrides = $this->overrides->get_prop_override($object->c_name, $field_name);
+                    if (isset($overrides['read'])) {
+                        fwrite($this->fp, $overrides['read'] . "\n");
+                    } else {
+                        $read_func = 'NULL';
+                    }
+                    if (isset($overrides['write'])) {
+                        fwrite($this->fp, $overrides['write'] . "\n");
+                        $write_func = $write_prefix . $field_name;
+                    }
+                } else {
+                    $handler = $matcher->get($field_type);
+                    $handler->write_return($field_type, false, $info);
+
+                    $dict['name'] = $field_name;
+
+                    fwrite($this->fp, aprintf(Templates::prop_reader,
+                                              array('class' => $object->c_name,
+                                                    'name' => $field_name,
+                                                    'var_list' => $info->get_var_list(),
+                                                    'pre_code' => $info->get_pre_code(),
+                                                    'post_code' => $info->get_post_code(),
+                                                    'prop_access' => aprintf($this->template_map[$def_type]['prop'], $dict)
+                                                   )));
+                }
+                $prop_defs[] = sprintf(Templates::prop_info_entry, 
+                                       $field_name, $read_func, $write_func);
+            } catch (Exception $e) {
+                fprintf(STDERR, "\tnot generating reader function for %s->%s: %s\n", $object->c_name, $field_name, $e->getMessage());
+            }
+        }
+
+        if ($prop_defs) {
+            fwrite($this->fp, sprintf(Templates::prop_info_header, $class));
+            fwrite($this->fp, join('', $prop_defs));
+            fwrite($this->fp, Templates::prop_info_footer);
+            return $class . '_prop_info';
+        } else {
+            return 'NULL';
+        }
+    }
+
     function write_class($object)
     {
         $object_module = strtolower($object->in_module);
@@ -819,13 +899,15 @@ class Generator {
             fwrite($this->fp, Templates::functions_decl_end);
         }
 
+        $prop_info = $this->write_prop_handlers($object);
+
         return array('ce' => $object->ce,
                      'class' => $object->in_module . $object->name,
                      'methods' => $method_defs ? strtolower($object->c_name) . '_methods' : 'NULL',
                      'parent' => (get_class($object) == 'Object_Def' && $object->parent) ? strtolower($object->parent) . '_ce' : 'NULL',
                      'ce_flags' => $object->ce_flags ? implode('|', $object->ce_flags) : 0,
                      'typecode' => $object->typecode,
-                     'propinfo' => 'NULL');
+                     'propinfo' => $prop_info);
     }
 
     function write_enums()

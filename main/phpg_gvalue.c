@@ -126,7 +126,7 @@ PHP_GTK_API zval* phpg_gvalue_to_zval(const GValue *gval, zend_bool copy_boxed)
 }
 /* }}} */
 
-/* {{{ PHP_GTK_API phpg_gvalue_from_val() */
+/* {{{ PHP_GTK_API phpg_gvalue_from_zval() */
 PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value)
 {
     switch (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(gval))) {

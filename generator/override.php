@@ -25,6 +25,7 @@ class Overrides {
     var $ignores            = array();
     var $glob_ignores       = array();
     var $overrides          = array();
+    var $prop_overrides     = array();
     var $extra_methods      = array();
     var $getprops           = array();
     var $register_classes   = array();
@@ -87,6 +88,16 @@ class Overrides {
                 $this->overrides[$func_cname] = array($func_name, $rest, $flags);
                 break;
 
+            case 'override-prop':
+                $class = $words[0];
+                $prop = $words[1];
+                if (isset($words[2]))
+                    $type = $words[2];
+                else
+                    $type = 'read';
+                $this->prop_overrides[$class][$prop][$type] = $rest;
+                break;
+
             case 'getprop':
                 if (count($words) >= 2) {
                     list($class_name, $prop_name) = $words;
@@ -129,6 +140,16 @@ class Overrides {
     function get_override($name)
     {
         return $this->overrides[$name];
+    }
+
+    function is_prop_overriden($class, $name)
+    {
+        return isset($this->prop_overrides[$class][$name]);
+    }
+
+    function get_prop_override($class, $name)
+    {
+        return $this->prop_overrides[$class][$name];
     }
 
     function have_get_prop($class_name, $prop_name)

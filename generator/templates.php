@@ -27,7 +27,8 @@ const function_call = "%s(%s)";
 const function_body = "
 static PHP_METHOD(%(scope), %(name))
 {
-%(var_list)\tif (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list)))
+%(var_list)
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list)))
 		return;
 %(pre_code)
     %(return)%(cname)(%(arg_list));
@@ -37,7 +38,8 @@ static PHP_METHOD(%(scope), %(name))
 const method_body = "
 static PHP_METHOD(%(class), %(name))
 {
-%(var_list)\tNOT_STATIC_METHOD();
+%(var_list)
+    NOT_STATIC_METHOD();
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list)))
 		return;
@@ -49,7 +51,8 @@ static PHP_METHOD(%(class), %(name))
 const constructor_body = "
 static PHP_METHOD(%(class), %(name))
 {
-%(var_list)\tGObject *wrapped_obj;
+%(var_list)
+    GObject *wrapped_obj;
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
@@ -66,7 +69,8 @@ static PHP_METHOD(%(class), %(name))
 const static_constructor_body = "
 static PHP_METHOD(%(class), %(name))
 {
-%(var_list)\tGObject *wrapped_obj;
+%(var_list)
+    GObject *wrapped_obj;
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
@@ -83,7 +87,8 @@ static PHP_METHOD(%(class), %(name))
 const boxed_constructor_body = "
 static PHP_METHOD(%(class), %(name))
 {
-%(var_list)\tphpg_gboxed_t *pobj = NULL;
+%(var_list)
+    phpg_gboxed_t *pobj = NULL;
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
@@ -102,7 +107,8 @@ static PHP_METHOD(%(class), %(name))
 const boxed_static_constructor_body = "
 static PHP_METHOD(%(class), %(name))
 {
-%(var_list)\t%(class) *wrapped_obj = NULL;
+%(var_list)
+    %(class) *wrapped_obj = NULL;
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
@@ -119,7 +125,8 @@ static PHP_METHOD(%(class), %(name))
 const boxed_method_body = "
 static PHP_METHOD(%(class), %(name))
 {
-%(var_list)\tNOT_STATIC_METHOD();
+%(var_list)
+    NOT_STATIC_METHOD();
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list)))
 		return;
@@ -142,24 +149,7 @@ const function_entry = "\tPHP_ME(%s, %s, %s, %s)\n";
 const functions_decl = "
 static function_entry %s_methods[] = {
 ";
-const functions_decl_end = "\t{NULL, NULL, NULL}\n};\n\n";
-
-const register_getter = "\tphp_gtk_register_prop_getter(%s, %s_get_property);\n";
-
-const prop_check =
-"%sif (!strcmp(prop_name, \"%s\")) {
-	%s
-	}";
-
-const prop_getter = "
-static void %s_get_property(zval *return_value, zval *object, char *prop_name, int *result)
-{
-	*result = SUCCESS;
-
-%s
-
-	*result = FAILURE;
-}\n\n";
+const functions_decl_end = "\t{ NULL, NULL, NULL }\n};\n\n";
 
 const init_class = "
 	INIT_OVERLOADED_CLASS_ENTRY(ce, \"%s\", php_%s_functions, NULL, %s, php_gtk_set_property);\n";
@@ -190,8 +180,22 @@ const register_boxed = "
 
 const class_entry = "PHP_GTK_EXPORT_CE(%s);\n";
 
-const class_prop_list_header = "static char *php_%s_properties[] = {\n";
-const class_prop_list_footer = "\tNULL\n};\n\n";
+const prop_info_header = "\n\nstatic prop_info_t %s_prop_info[] = {\n";
+const prop_info_entry  = "\t{ \"%s\", %s, %s },\n";
+const prop_info_footer = "\t{ NULL, NULL, NULL },
+};\n";
+
+const prop_reader = "
+PHPG_PROP_READER(%(class), %(name))
+{
+%(var_list)
+    php_retval = %(prop_access);
+%(post_code)
+    return SUCCESS;
+}\n\n";
+
+const prop_access = "%(cast)(((phpg_gobject_t *)object)->obj)->%(name)";
+const boxed_prop_access = "((%(cast))((phpg_gboxed_t *)object)->boxed)->%(name)";
 
 const struct_init = "
 zval *PHP_GTK_EXPORT_FUNC(php_%s_new)(%s *obj)

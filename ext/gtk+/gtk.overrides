@@ -301,3 +301,45 @@ static PHP_METHOD(GtkLabel, get_layout_offsets)
 	*return_value = *php_gtk_build_value("(ii)", x, y);
 }
 %% }}}
+
+%%
+override-prop GtkTextAttributes bg_stipple
+PHPG_PROP_READER(GtkTextAttributes, bg_stipple)
+{
+	return SUCCESS;
+}
+
+%%
+override-prop GtkTextAttributes fg_stipple
+PHPG_PROP_READER(GtkTextAttributes, fg_stipple)
+{
+	return SUCCESS;
+}
+
+%%
+override-prop GtkTextAttributes rise
+PHPG_PROP_READER(GtkTextAttributes, rise)
+{
+	return SUCCESS;
+}
+
+%%
+override-prop GtkTextAttributes underline
+PHPG_PROP_READER(GtkTextAttributes, underline)
+{
+	return SUCCESS;
+}
+
+%%
+override-prop GtkTextAttributes strikethrough
+PHPG_PROP_READER(GtkTextAttributes, strikethrough)
+{
+	return SUCCESS;
+}
+
+%%
+override-prop GtkTextAttributes draw_bg
+PHPG_PROP_READER(GtkTextAttributes, draw_bg)
+{
+	return SUCCESS;
+}

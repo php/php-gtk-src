@@ -61,3 +61,18 @@ PHP_METHOD(GdkRectangle, intersect)
 {
     /* TODO */
 }
+
+%%
+override-prop GdkDrawable xid
+PHPG_PROP_READER(GdkDrawable, xid)
+{
+    /* TODO */
+    return SUCCESS;
+}
+
+%%override-prop GdkPixbuf pixel_array
+PHPG_PROP_READER(GdkPixbuf, pixel_array)
+{
+    /* TODO */
+    return SUCCESS;
+}

@@ -128,6 +128,7 @@ zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 	}
 
 	if (ret == SUCCESS) {
+        ZVAL_NULL(&result);
 		ret = pi->read(poh, &result);
 		if (ret == SUCCESS) {
 			ALLOC_ZVAL(result_ptr);
