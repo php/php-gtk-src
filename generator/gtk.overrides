@@ -349,6 +349,70 @@ PHP_FUNCTION(wrap_gtk_signal_connect_object_after)
 	wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0, 1);
 }
 %%
+override gtk_signal_emit
+PHP_FUNCTION(wrap_gtk_signal_emit)
+{
+	char *name;
+	guint signal_id, nparams, i;
+	GtkSignalQuery *query;
+	GtkArg *params;
+	zval *php_params, *ret;
+	gchar buf[sizeof(GtkArg)]; /* holds the return value */
+
+	NOT_STATIC_METHOD();
+
+	if (ZEND_NUM_ARGS() < 1) {
+		php_error(E_WARNING, "%s() requires at least 1 argument, 0 given", get_active_function_name());
+		return;
+	}
+
+	if (!php_gtk_parse_args(1, "s", &name))
+		return;
+
+	signal_id = gtk_signal_lookup(name, GTK_OBJECT_TYPE(PHP_GTK_GET(this_ptr)));
+	if (signal_id <= 0) {
+		php_error(E_WARNING, "%s() can't find signal '%s' in class hierarchy",
+				  get_active_function_name(), name);
+		return;
+	}
+
+	query = gtk_signal_query(signal_id);
+	if (ZEND_NUM_ARGS() < query->nparams + 1) {
+		php_error(E_WARNING, "%s() requires %d arguments for signal '%s', %d given",
+				  get_active_function_name(), query->nparams, name, ZEND_NUM_ARGS()-1);
+		g_free(query);
+		return;
+	}
+
+	php_params = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 1, ZEND_NUM_ARGS());
+	params = g_new(GtkArg, query->nparams + 1);
+	nparams = query->nparams;
+
+	for (i = 0; i < nparams; i++) {
+		params[i].type = query->params[i];
+		params[i].name = NULL;
+	}
+	params[i].type = query->return_val;
+	params[i].name = NULL;
+	params[i].d.pointer_data = buf;
+	g_free(query);
+
+	if (!php_gtk_args_from_hash(params, nparams, php_params)) {
+		zval_ptr_dtor(&php_params);
+		g_free(params);
+		return;
+	}
+	zval_ptr_dtor(&php_params);
+
+	gtk_signal_emitv(PHP_GTK_GET(this_ptr), signal_id, params);
+	ret = php_gtk_ret_as_value(&params[nparams]);
+	g_free(params);
+	if (ret) {
+		*return_value = *ret;
+		FREE_ZVAL(ret);
+	}
+}
+%%
 override gtk_object_set
 PHP_FUNCTION(wrap_gtk_object_set)
 {

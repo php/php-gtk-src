@@ -219,7 +219,7 @@ void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *
 	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), signal_args, 1, NULL);
 
 	if (retval) {
-		if (nargs)
+		if (args)
 			php_gtk_ret_from_value(&args[nargs], retval);
 		zval_ptr_dtor(&retval);
 	}
@@ -394,7 +394,7 @@ GtkArg *php_gtk_hash_as_args(zval *hash, GtkType type, gint *nargs)
 		arg[i].name = info->name;
 
 		if (!php_gtk_arg_from_value(&arg[i], *item)) {
-			g_snprintf(buf, 255, "arg '%s': expected type %s, found %s",
+			g_snprintf(buf, 255, "argument '%s': expected type %s, found %s",
 					   arg[i].name, gtk_type_name(arg[i].type),
 					   php_gtk_zval_type_name(*item));
 			php_error(E_WARNING, buf);
@@ -406,53 +406,90 @@ GtkArg *php_gtk_hash_as_args(zval *hash, GtkType type, gint *nargs)
 	return arg;
 }
 
+int php_gtk_args_from_hash(GtkArg *args, int nparams, zval *hash)
+{
+	zval **item;
+	HashTable *ht = HASH_OF(hash);
+	int i;
+
+	for (zend_hash_internal_pointer_reset(ht), i = 0;
+		 i < nparams && zend_hash_get_current_data(ht, (void **)&item) == SUCCESS;
+		 zend_hash_move_forward(ht), i++) {
+		if (!php_gtk_arg_from_value(&args[i], *item)) {
+			gchar buf[512];
+
+			if (args[i].name == NULL)
+				g_snprintf(buf, 511, "argument %d: expected %s, %s found", i+1,
+						   gtk_type_name(args[i].type),
+						   php_gtk_zval_type_name(*item));
+			else
+				g_snprintf(buf, 511, "argument %s: expected %s, %s found", i+1,
+						   gtk_type_name(args[i].type),
+						   php_gtk_zval_type_name(*item));
+			php_error(E_WARNING, buf);
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
 zval *php_gtk_arg_as_value(GtkArg *arg)
 {
 	zval *value;
 
-	MAKE_STD_ZVAL(value);
 	switch (GTK_FUNDAMENTAL_TYPE(arg->type)) {
 		case GTK_TYPE_INVALID:
 		case GTK_TYPE_NONE:
+			MAKE_STD_ZVAL(value);
 			ZVAL_NULL(value);
 			break;
 
 		case GTK_TYPE_CHAR:
 		case GTK_TYPE_UCHAR:
+			MAKE_STD_ZVAL(value);
 			ZVAL_STRINGL(value, &GTK_VALUE_CHAR(*arg), 1, 1);
 			break;
 
 		case GTK_TYPE_BOOL:
+			MAKE_STD_ZVAL(value);
 			ZVAL_BOOL(value, GTK_VALUE_BOOL(*arg));
 			break;
 
 		case GTK_TYPE_ENUM:
 		case GTK_TYPE_FLAGS:
 		case GTK_TYPE_INT:
+			MAKE_STD_ZVAL(value);
 			ZVAL_LONG(value, GTK_VALUE_INT(*arg));
 			break;
 
 		case GTK_TYPE_LONG:
-			ZVAL_LONG(value, GTK_VALUE_INT(*arg));
+			MAKE_STD_ZVAL(value);
+			ZVAL_LONG(value, GTK_VALUE_LONG(*arg));
 			break;
 
 		case GTK_TYPE_UINT:
+			MAKE_STD_ZVAL(value);
 			ZVAL_LONG(value, GTK_VALUE_UINT(*arg));
 			break;
 
 		case GTK_TYPE_ULONG:
+			MAKE_STD_ZVAL(value);
 			ZVAL_LONG(value, GTK_VALUE_ULONG(*arg));
 			break;
 
 		case GTK_TYPE_FLOAT:
+			MAKE_STD_ZVAL(value);
 			ZVAL_DOUBLE(value, GTK_VALUE_FLOAT(*arg));
 			break;
 
 		case GTK_TYPE_DOUBLE:
+			MAKE_STD_ZVAL(value);
 			ZVAL_DOUBLE(value, GTK_VALUE_DOUBLE(*arg));
 			break;
 
 		case GTK_TYPE_STRING:
+			MAKE_STD_ZVAL(value);
 			if (GTK_VALUE_STRING(*arg) != NULL) {
 				ZVAL_STRING(value, GTK_VALUE_STRING(*arg), 1);
 			} else
@@ -465,17 +502,13 @@ zval *php_gtk_arg_as_value(GtkArg *arg)
 			break;
 
 		case GTK_TYPE_OBJECT:
-			if (GTK_VALUE_OBJECT(*arg) != NULL)
-				value = php_gtk_new(GTK_VALUE_OBJECT(*arg));
-			else
-				ZVAL_NULL(value);
+			value = php_gtk_new(GTK_VALUE_OBJECT(*arg));
 			break;
 
 		case GTK_TYPE_POINTER:
 			php_error(E_WARNING, "%s(): internal error: GTK_TYPE_POINTER unsupported",
 					  get_active_function_name());
-			ZVAL_NULL(value);
-			break;
+			return NULL;
 
 		case GTK_TYPE_BOXED:
 			if (arg->type == GTK_TYPE_GDK_EVENT)
@@ -498,13 +531,10 @@ zval *php_gtk_arg_as_value(GtkArg *arg)
 				value = php_gtk_style_new(GTK_VALUE_BOXED(*arg));
 			else if (arg->type == GTK_TYPE_SELECTION_DATA)
 				value = php_gtk_selection_data_new(GTK_VALUE_BOXED(*arg));
-			else if (arg->type == GTK_TYPE_CTREE_NODE) {
-				if (GTK_VALUE_BOXED(*arg))
-					value = php_gtk_ctree_node_new(GTK_VALUE_BOXED(*arg));
-				else
-					ZVAL_NULL(value);
-			} else
-				ZVAL_NULL(value);
+			else if (arg->type == GTK_TYPE_CTREE_NODE)
+				value = php_gtk_ctree_node_new(GTK_VALUE_BOXED(*arg));
+			else
+				return NULL;
 			break;
 
 		case GTK_TYPE_FOREIGN:
@@ -524,7 +554,6 @@ zval *php_gtk_arg_as_value(GtkArg *arg)
 
 		default:
 			g_assert_not_reached();
-			FREE_ZVAL(value);
 			return NULL;
 	}
 
@@ -695,6 +724,115 @@ int php_gtk_arg_from_value(GtkArg *arg, zval *value)
 	}
 
 	return 1;
+}
+
+zval *php_gtk_ret_as_value(GtkArg *ret)
+{
+	zval *value;
+
+	switch (GTK_FUNDAMENTAL_TYPE(ret->type)) {
+		case GTK_TYPE_INVALID:
+		case GTK_TYPE_NONE:
+			MAKE_STD_ZVAL(value);
+			ZVAL_NULL(value);
+			break;
+
+		case GTK_TYPE_CHAR:
+		case GTK_TYPE_UCHAR:
+			MAKE_STD_ZVAL(value);
+			ZVAL_STRINGL(value, GTK_RETLOC_CHAR(*ret), 1, 1);
+			break;
+
+		case GTK_TYPE_BOOL:
+			MAKE_STD_ZVAL(value);
+			ZVAL_BOOL(value, *GTK_RETLOC_BOOL(*ret));
+			break;
+
+		case GTK_TYPE_ENUM:
+		case GTK_TYPE_FLAGS:
+		case GTK_TYPE_INT:
+			MAKE_STD_ZVAL(value);
+			ZVAL_LONG(value, *GTK_RETLOC_INT(*ret));
+			break;
+
+		case GTK_TYPE_LONG:
+			MAKE_STD_ZVAL(value);
+			ZVAL_LONG(value, *GTK_RETLOC_LONG(*ret));
+			break;
+
+		case GTK_TYPE_UINT:
+			MAKE_STD_ZVAL(value);
+			ZVAL_LONG(value, *GTK_RETLOC_UINT(*ret));
+			break;
+
+		case GTK_TYPE_ULONG:
+			MAKE_STD_ZVAL(value);
+			ZVAL_LONG(value, *GTK_RETLOC_ULONG(*ret));
+			break;
+
+		case GTK_TYPE_FLOAT:
+			MAKE_STD_ZVAL(value);
+			ZVAL_DOUBLE(value, *GTK_RETLOC_FLOAT(*ret));
+			break;
+
+		case GTK_TYPE_DOUBLE:
+			MAKE_STD_ZVAL(value);
+			ZVAL_DOUBLE(value, *GTK_RETLOC_DOUBLE(*ret));
+			break;
+
+		case GTK_TYPE_STRING:
+			MAKE_STD_ZVAL(value);
+			if (*GTK_RETLOC_STRING(*ret) != NULL) {
+				ZVAL_STRING(value, *GTK_RETLOC_STRING(*ret), 1);
+			} else
+				ZVAL_NULL(value);
+			break;
+
+		case GTK_TYPE_ARGS:
+			return NULL;
+
+		case GTK_TYPE_OBJECT:
+			value = php_gtk_new(*GTK_RETLOC_OBJECT(*ret));
+			break;
+
+		case GTK_TYPE_POINTER:
+			php_error(E_WARNING, "%s(): internal error: GTK_TYPE_POINTER unsupported",
+					  get_active_function_name());
+			return NULL;
+
+		case GTK_TYPE_BOXED:
+			if (ret->type == GTK_TYPE_GDK_EVENT)
+				value = php_gdk_event_new(*GTK_RETLOC_BOXED(*ret));
+			else if (ret->type == GTK_TYPE_GDK_WINDOW)
+				value = php_gdk_window_new(*GTK_RETLOC_BOXED(*ret));
+			else if (ret->type == GTK_TYPE_GDK_COLOR)
+				value = php_gdk_color_new(*GTK_RETLOC_BOXED(*ret));
+			else if (ret->type == GTK_TYPE_GDK_COLORMAP)
+				value = php_gdk_colormap_new(*GTK_RETLOC_BOXED(*ret));
+			else if (ret->type == GTK_TYPE_GDK_VISUAL)
+				value = php_gdk_visual_new(*GTK_RETLOC_BOXED(*ret));
+			else if (ret->type == GTK_TYPE_GDK_FONT)
+				value = php_gdk_font_new(*GTK_RETLOC_BOXED(*ret));
+			else if (ret->type == GTK_TYPE_GDK_DRAG_CONTEXT)
+				value = php_gdk_drag_context_new(*GTK_RETLOC_BOXED(*ret));
+			else if (ret->type == GTK_TYPE_ACCEL_GROUP)
+				value = php_gtk_accel_group_new(*GTK_RETLOC_BOXED(*ret));
+			else if (ret->type == GTK_TYPE_STYLE)
+				value = php_gtk_style_new(*GTK_RETLOC_BOXED(*ret));
+			else if (ret->type == GTK_TYPE_SELECTION_DATA)
+				value = php_gtk_selection_data_new(*GTK_RETLOC_BOXED(*ret));
+			else if (ret->type == GTK_TYPE_CTREE_NODE)
+				value = php_gtk_ctree_node_new(*GTK_RETLOC_BOXED(*ret));
+			else
+				return NULL;
+			break;
+
+		default:
+			g_assert_not_reached();
+			return NULL;
+	}
+
+	return value;
 }
 
 void php_gtk_ret_from_value(GtkArg *ret, zval *value)
