@@ -1,3 +1,4 @@
+    - added GtkList::remove_items() method. (Andrei)
     - added ability to build extensions as shared libraries and load them
       selectively. (Andrei)
     - made libglade work on Win32 platforms. (Frank)
