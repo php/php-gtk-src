@@ -1,3 +1,9 @@
+2003-12-21  Alan Knowles  <alan@akbkhome.com>
+
+    * (GTK2)
+      ext/libglade/libglade.defs:
+      testing new libglade defs
+
 2003-12-15  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/php_gtk.c
