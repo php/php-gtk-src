@@ -65,6 +65,9 @@ extern zend_class_entry *gtk_style_ce;
 /* include generated class entries */
 #include "src/php_gtk_gen_ce.h"
 
+/* include generated register functions declarations */
+#include "src/php_gtk_gen_reg_items_decl.h"
+
 typedef void (*prop_getter_t)(zval *return_value, zval *object, zend_llist_element **element, int *found);
 typedef int (*prop_setter_t)(zval *object, zend_llist_element **element, zval *value);
 
@@ -92,9 +95,7 @@ extern HashTable php_gtk_prop_setters;
 
 /* Function declarations. */
 
-void php_gtk_register_classes(void);
 void php_gtk_register_types(int module_number);
-void php_gtk_register_constants(int module_number ELS_DC);
 void php_gtk_set_object(zval *wrapper, void *obj, int rsrc_type);
 void *php_gtk_get_object(zval *wrapper, int rsrc_type);
 int php_gtk_get_enum_value(GtkType enum_type, zval *enum_val, int *result);
@@ -109,9 +110,6 @@ int php_gtk_get_flag_value(GtkType flag_type, zval *flag_val, int *result);
 zval php_gtk_get_property(zend_property_reference *property_reference);
 int php_gtk_set_property(zend_property_reference *property_reference, zval *value);
 void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference *property_reference);
-
-void php_gdk_register_classes(void);
-void php_gdk_register_constants(int module_number ELS_DC);
 
 static inline void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter)
 {
