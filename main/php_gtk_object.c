@@ -33,7 +33,7 @@ HashTable php_gtk_type_hash;
 
 static const char *php_gtk_wrapper_key = "php_gtk::wrapper";
 
-void php_gtk_object_init(GtkObject *obj, zval *wrapper)
+PHP_GTK_API void php_gtk_object_init(GtkObject *obj, zval *wrapper)
 {
 	gtk_object_ref(obj);
 	gtk_object_sink(obj);
@@ -57,7 +57,7 @@ void php_gtk_set_object(zval *wrapper, void *obj, int rsrc_type)
 		zend_hash_index_update(&php_gtk_type_hash, (long)obj, (void *)&wrapper, sizeof(zval *), NULL);
 }
 
-void *php_gtk_get_object(zval *wrapper, int rsrc_type)
+PHP_GTK_API void *php_gtk_get_object(zval *wrapper, int rsrc_type)
 {
 	void *obj;
 	zval **handle;
@@ -159,7 +159,7 @@ int php_gtk_get_flag_value(GtkType flag_type, zval *flag_val, int *result)
 }
 
 /* Generic callback marshal. */
-void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *args)
+PHP_GTK_API void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *args)
 {
 	zval *gtk_args;
 	zval *callback_data = (zval *)data;
@@ -318,13 +318,13 @@ void php_gtk_input_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 	zval_ptr_dtor(&params);
 }
 
-void php_gtk_destroy_notify(gpointer user_data)
+PHP_GTK_API void php_gtk_destroy_notify(gpointer user_data)
 {
 	zval *value = (zval *)user_data;
 	zval_ptr_dtor(&value);
 }
 
-zval *php_gtk_new(GtkObject *obj)
+PHP_GTK_API zval *php_gtk_new(GtkObject *obj)
 {
 	zval *wrapper;
 	zend_class_entry *ce;
@@ -1095,7 +1095,7 @@ zval php_gtk_get_property(zend_property_reference *property_reference)
 	return *result_ptr;
 }
 
-int php_gtk_set_property(zend_property_reference *property_reference, zval *value)
+PHP_GTK_API int php_gtk_set_property(zend_property_reference *property_reference, zval *value)
 {
 	zval result, temp;
 	zval *temp_ptr = &temp;

@@ -23,9 +23,27 @@
 #ifndef _PHP_GTK_H
 #define _PHP_GTK_H
 
-#include "php_gtk_module.h"
-
 #if HAVE_PHP_GTK
+
+#ifdef PHP_WIN32
+# ifdef GTK_SHARED
+#  define PHP_GTK_API __declspec(dllimport)
+# else
+#  define PHP_GTK_API __declspec(dllexport)
+#endif
+#else
+#define PHP_GTK_API
+#endif
+
+#include "php.h"
+#include "php_ini.h"
+#ifdef PHP_WIN32
+#include "config.w32.h"
+#else
+#include "config.h"
+#endif
+
+#include "php_gtk_module.h"
 
 #define PHP_GTK_VERSION "0.1.1"
 
@@ -73,7 +91,7 @@ struct _php_gtk_ext_entry {
 
 /* True globals. */
 extern zend_llist php_gtk_ext_registry;
-extern GHashTable *php_gtk_class_hash;
+PHP_GTK_API extern GHashTable *php_gtk_class_hash;
 extern HashTable php_gtk_rsrc_hash;
 extern HashTable php_gtk_prop_getters;
 extern HashTable php_gtk_prop_setters;
@@ -85,11 +103,11 @@ int php_gtk_startup_all_extensions(int module_number);
 int php_gtk_startup_extensions(php_gtk_ext_entry **ext, int ext_count, int module_number);
 
 void php_gtk_set_object(zval *wrapper, void *obj, int rsrc_type);
-void *php_gtk_get_object(zval *wrapper, int rsrc_type);
+PHP_GTK_API void *php_gtk_get_object(zval *wrapper, int rsrc_type);
 int php_gtk_get_simple_enum_value(zval *enum_val, int *result);
 int php_gtk_get_enum_value(GtkType enum_type, zval *enum_val, int *result);
-void php_gtk_destroy_notify(gpointer user_data);
-void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *args);
+PHP_GTK_API void php_gtk_destroy_notify(gpointer user_data);
+PHP_GTK_API void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *args);
 void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args);
 void php_gtk_input_marshal(gpointer a, gpointer data, int nargs, GtkArg *args);
 zval *php_gtk_args_as_hash(int nargs, GtkArg *args);
@@ -101,7 +119,7 @@ zval *php_gtk_ret_as_value(GtkArg *ret);
 void php_gtk_ret_from_value(GtkArg *ret, zval *value);
 int php_gtk_get_flag_value(GtkType flag_type, zval *flag_val, int *result);
 zval php_gtk_get_property(zend_property_reference *property_reference);
-int php_gtk_set_property(zend_property_reference *property_reference, zval *value);
+PHP_GTK_API int php_gtk_set_property(zend_property_reference *property_reference, zval *value);
 void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference *property_reference);
 
 static inline void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter)
@@ -116,21 +134,21 @@ static inline void php_gtk_register_prop_setter(zend_class_entry *ce, prop_sette
 						   sizeof(prop_setter_t), NULL);
 }
 
-void php_gtk_object_init(GtkObject *obj, zval *wrapper);
+PHP_GTK_API void php_gtk_object_init(GtkObject *obj, zval *wrapper);
 
 /* Utility functions. */
-int php_gtk_parse_args(int argc, char *format, ...);
+PHP_GTK_API int php_gtk_parse_args(int argc, char *format, ...);
 int php_gtk_parse_args_quiet(int argc, char *format, ...);
 int php_gtk_parse_args_hash(zval *hash, char *format, ...);
 int php_gtk_parse_args_hash_quiet(zval *hash, char *format, ...);
 int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce);
-void php_gtk_invalidate(zval *wrapper);
+PHP_GTK_API void php_gtk_invalidate(zval *wrapper);
 zend_bool php_gtk_is_callable(zval *callable, zend_bool syntax_only, char **callable_name);
 zval *php_gtk_array_as_hash(zval ***values, int num_values, int start, int length);
 zval ***php_gtk_hash_as_array(zval *hash);
 zval ***php_gtk_func_args(int argc);
-zval *php_gtk_func_args_as_hash(int argc, int start, int length);
-zval *php_gtk_build_value(char *format, ...);
+PHP_GTK_API zval *php_gtk_func_args_as_hash(int argc, int start, int length);
+PHP_GTK_API zval *php_gtk_build_value(char *format, ...);
 char *php_gtk_zval_type_name(zval *arg);
 
 #define NOT_STATIC_METHOD() \
@@ -144,7 +162,8 @@ PHP_FUNCTION(no_direct_constructor);
 
 extern char *php_gtk_zval_type_name(zval *arg);
 
-ZEND_EXTERN_MODULE_GLOBALS(gtk);
+//ZEND_EXTERN_MODULE_GLOBALS(gtk);
+PHP_GTK_API extern ts_rsrc_id gtk_globals_id;
 
 #endif /* HAVE_PHP_GTK */
 

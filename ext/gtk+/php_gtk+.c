@@ -27,7 +27,7 @@
 
 #include "php_gtk+.h"
 
-int le_gtk_object;
+PHP_GTK_API int le_gtk_object;
 
 /* defined in php_gdk.c */
 void php_gdk_register_keysyms(int module_number TSRMLS_DC);

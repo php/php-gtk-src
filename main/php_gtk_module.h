@@ -23,14 +23,6 @@
 #ifndef _PHP_GTK_MODULE_H
 #define _PHP_GTK_MODULE_H
 
-#include "php.h"
-#include "php_ini.h"
-#ifdef PHP_WIN32
-#include "config.w32.h"
-#else
-#include "config.h"
-#endif
-
 #include "ext/standard/info.h"
 #include "ext/standard/php_array.h"
 
@@ -38,13 +30,6 @@
 
 extern zend_module_entry gtk_module_entry;
 #define phpext_php_gtk_ptr &gtk_module_entry
-
-
-#ifdef PHP_WIN32
-#define PHP_GTK_API __declspec(dllexport)
-#else
-#define PHP_GTK_API
-#endif
 
 PHP_MINIT_FUNCTION(gtk);
 PHP_MSHUTDOWN_FUNCTION(gtk);

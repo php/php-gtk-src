@@ -538,7 +538,7 @@ int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce)
 	return 0;
 }
 
-void php_gtk_invalidate(zval *wrapper)
+PHP_GTK_API void php_gtk_invalidate(zval *wrapper)
 {
 	if (!wrapper) return;
 	zval_dtor(wrapper);
@@ -643,7 +643,7 @@ zval ***php_gtk_func_args(int argc)
 	return args;
 }
 
-zval *php_gtk_func_args_as_hash(int argc, int start, int length)
+PHP_GTK_API zval *php_gtk_func_args_as_hash(int argc, int start, int length)
 {
 	zval ***args;
 	zval *hash;
@@ -884,7 +884,7 @@ static zval *php_gtk_build_hash(char **format, va_list *va, int endchar, int cou
 	return result;
 }
 
-zval *php_gtk_build_value(char *format, ...)
+PHP_GTK_API zval *php_gtk_build_value(char *format, ...)
 {
 	int count = php_gtk_count_specs(format, '\0');
 	zval *result;
