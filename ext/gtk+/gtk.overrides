@@ -2834,7 +2834,7 @@ static void set_filter(INTERNAL_FUNCTION_PARAMETERS, int which)
 		if (!php_gtk_array_to_gchar_array(php_args[i], &(parameters[i]))) {
 			php_error(E_WARNING, "%s() expected argument %d to be NULL, string or array of strings; %s given",
 					  get_active_function_name(TSRMLS_C), 3 + i, php_gtk_zval_type_name(php_args[i]));
-			php_gtk_gchar_ptr_ptr_free(parameters, i - 1);
+			php_gtk_free_gchar_array(parameters, i - 1);
 			return;
 		}
 	}
