@@ -1,3 +1,32 @@
+2004-08-13  Andrei Zmievski  <andreiz@gmail.com>
+
+    * (PHP_GTK_1)
+      ext/canvas/Makefile.frag
+      ext/combobutton/Makefile.frag
+      ext/extra/Makefile.frag
+      ext/gdkpixbuf/Makefile.frag
+      ext/gtk+/Makefile.frag
+      ext/gtkhtml/Makefile.frag
+      ext/imlib/Makefile.frag
+      ext/libglade/Makefile.frag
+      ext/piemenu/Makefile.frag
+      ext/scintilla/Makefile.frag
+      ext/scrollpane/Makefile.frag
+      ext/skeleton/Makefile.frag
+      ext/spaned/Makefile.frag
+      ext/sqpane/Makefile.frag:
+      Fix for 4.3.x semantics.
+
+    * generator/generator.php
+      generator/templates.php
+      main/phpg_gobject.c:
+      Commit #n out of 1..infinity to come.
+
+    * main/php_gtk.h
+      main/phpg_gobject.c:
+      Rename phpg_set_wrapper() to phpg_gobject_set_wrapper() so its usage is
+      clear.
+
 2004-08-12  Andrei Zmievski  <andreiz@gmail.com>
 
     * config.m4
