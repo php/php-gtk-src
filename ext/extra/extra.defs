@@ -1624,6 +1624,15 @@
   (parameter (type-and-name const-gchar*        text))
 )
 
+(method cell_get_text 
+  (of-object Sheet (Gtk))
+  (c-name gtk_sheet_cell_get_text)
+  (return-type gchar*)
+  (parameter (type-and-name gint row))
+  (parameter (type-and-name gint col))
+)
+
+
 (method cell_clear 
   (of-object Sheet (Gtk))
   (c-name gtk_sheet_cell_clear)
