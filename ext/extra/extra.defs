@@ -830,7 +830,7 @@
   (of-object PlotData (Gtk))
   (c-name gtk_plot_data_set_labels)
   (return-type none)
-  (parameter (type-and-name gchar*        *labels))
+  (parameter (type-and-name gchar**        labels))
 )
 
 (method get_a_scale 
