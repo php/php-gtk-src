@@ -154,6 +154,20 @@ ignore
 	gtk_container_dequeue_resize_handler
 	gtk_window_reposition
 %%
+ignore
+	gtk_draw_flat_box
+	gtk_draw_check
+	gtk_draw_option
+	gtk_draw_cross
+	gtk_draw_ramp
+	gtk_draw_tab
+	gtk_draw_shadow_gap
+	gtk_draw_box_gap
+	gtk_draw_extension
+	gtk_draw_focus
+	gtk_draw_slider
+	gtk_draw_handle
+%%
 ignore-glob gtk_radio_button_new_*
 %%
 override gtk_timeout_add
