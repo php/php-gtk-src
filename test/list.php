@@ -28,7 +28,7 @@ $window->connect('delete-event', delete_event);
  * Create a button and connect its 'clicked' signal to destroy() function.
  */
 $button = &new GtkButton('Close');
-$button->connect('clicked', destroy);
+$button->connect_object('clicked', array('gtk', 'main_quit'));
 
 /*
  * Create a vertical layout box.
