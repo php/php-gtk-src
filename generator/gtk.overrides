@@ -540,6 +540,24 @@ PHP_FUNCTION(wrap_gtk_clist_append)
 	efree(list);
 }
 %%
+override gtk_clist_get_text
+PHP_FUNCTION(wrap_gtk_clist_get_text)
+{
+	gint row, column;
+	gchar *text;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &row, &column))
+		return;
+
+	if (gtk_clist_get_text(GTK_CLIST(PHP_GTK_GET(this_ptr)), row, column, &text)) {
+		RETURN_STRING(text, 1);
+		efree(text);
+	}
+	else
+		RETURN_NULL();
+
+}
+%%
 ignore gtk_menu_item_new_with_label 
 %%
 override gtk_menu_item_new
