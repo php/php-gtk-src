@@ -16,4 +16,6 @@ build2/generated_lists:
 	if test -f Makefile.global; then echo php_gtk_m4 = php_gtk_new.m4 >> $@; else echo php_gtk_m4 = php_gtk_old.m4 >> $@; fi
 
 $(STAMP):
-	phpize && rm php_gtk.m4 && touch $(STAMP)
+	phpize
+	@test -f php_gtk.m4 && rm php_gtk.m4
+	touch $(STAMP)
