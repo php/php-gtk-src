@@ -322,8 +322,8 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 }
 /* }}} */
 
-/* {{{ PHP_GTK_API phpg_set_wrapper() */
-PHP_GTK_API void phpg_set_wrapper(zval *zobj, void *obj, phpg_dtor_t dtor TSRMLS_DC)
+/* {{{ PHP_GTK_API phpg_gobject_set_wrapper() */
+PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC)
 {
     phpg_gobject_t *pobj = NULL;
 
@@ -334,8 +334,7 @@ PHP_GTK_API void phpg_set_wrapper(zval *zobj, void *obj, phpg_dtor_t dtor TSRMLS
     zend_objects_store_add_ref(zobj TSRMLS_CC);
     pobj = zend_object_store_get_object(zobj TSRMLS_CC);
     pobj->obj = obj;
-    pobj->dtor = dtor;
-    /* XXX do better checking for whether obj is a sinkable object */
+    pobj->dtor = g_object_unref;
     phpg_sink_object(pobj->obj);
     g_object_set_qdata(pobj->obj, gobject_wrapper_key, (void*)Z_OBJ_HANDLE_P(zobj));
 }
@@ -409,7 +408,7 @@ static PHP_METHOD(GObject, __tostring)
 
     obj = PHPG_GET(this_ptr);
     numc = snprintf(buf, sizeof(buf),
-                    "[%s object (%s type)]", Z_OBJCE_P(this_ptr)->name,
+                    "[%s object (%s Gtk+ type)]", Z_OBJCE_P(this_ptr)->name,
                     obj ? G_OBJECT_TYPE_NAME(obj) : "uninitialized");
     RETURN_STRINGL(buf, numc, 1);
 }

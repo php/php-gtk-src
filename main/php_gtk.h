@@ -242,7 +242,6 @@ void php_gtype_register_self();
 PHP_GTK_API zval* php_gtype_new(GType type);
 PHP_GTK_API GType php_gtype_from_zval(zval *value);
 
-PHP_GTK_API void phpg_set_wrapper(zval *zobj, void *obj, phpg_dtor_t dtor TSRMLS_DC);
 
 /* GValue */
 PHP_GTK_API zval* phpg_gvalue_as_zval(const GValue *gval, zend_bool copy_boxed);
@@ -252,6 +251,7 @@ PHP_GTK_API int phpg_gvalue_flags_get(GType flags_type, zval *flags_val, gint *r
 
 /* GObject */
 PHP_GTK_API void phpg_gobject_new(GObject *obj, zval **zobj TSRMLS_DC);
+PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC);
 void phpg_gobject_register_self();
 
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtype_ce);
