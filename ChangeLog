@@ -1,3 +1,9 @@
+2003-10-15  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/gdkpixbuf/gdkpixbuf.overrides
+      ext/gdkpixbuf/php_gdkpixbuf.c:
+      update php_gtk_set_object with boxed argument
+
 2003-10-13  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/php_gtk+.c
