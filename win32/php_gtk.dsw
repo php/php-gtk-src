@@ -63,6 +63,18 @@ Package=<4>
 
 ###############################################################################
 
+Project: "spaned"="..\ext\spaned\spaned.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "sqpane"="..\ext\sqpane\sqpane.dsp" - Package Owner=<4>
 
 Package=<5>
