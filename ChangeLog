@@ -1,3 +1,9 @@
+2003-10-13  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/php_gtk+.c
+      main/php_gtk_object.c:
+      Updating to match PHP 5 handler changes.
+
 2003-10-12  Alan Knowles  <alan@akbkhome.com>
 
     * (GTK2)
