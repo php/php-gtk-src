@@ -46,8 +46,10 @@ void php_gtk_set_object(zval *wrapper, void *obj, int rsrc_type)
 	Z_TYPE_P(handle) = IS_LONG;
 	Z_LVAL_P(handle) = zend_list_insert(obj, rsrc_type);
 	zend_hash_index_update(Z_OBJPROP_P(wrapper), 0, &handle, sizeof(zval *), NULL);
-	if (rsrc_type == le_gtk)
+	if (rsrc_type == le_gtk) {
+		zval_add_ref(&wrapper);
 		gtk_object_set_data_full(obj, php_gtk_wrapper_key, wrapper, php_gtk_destroy_notify);
+	}
 }
 
 void *php_gtk_get_object(zval *wrapper, int rsrc_type)

@@ -208,7 +208,7 @@ PHP_MINFO_FUNCTION(gtk)
 	php_info_print_table_start();
 	php_info_print_table_row(2, "GTK+ support", "enabled");
 	sprintf(buf, "%d.%d.%d", gtk_major_version, gtk_minor_version, gtk_micro_version);
-	php_info_print_table_row(2, "GTK+ Version", buf);
+	php_info_print_table_row(2, "GTK+ v", buf);
 	php_info_print_table_end();
 
 	/* Remove comments if you have entries in php.ini
