@@ -3,10 +3,13 @@
 headers
 #include <gtkextra/gtkextra.h>
 #include "ext/gtk+/php_gtk+.h"
-
+#include <gtkextra/gtkitementry.h>
 
 %%
 constants
+
+REGISTER_LONG_CONSTANT("GTK_TYPE_ITEM_ENTRY", GTK_TYPE_ITEM_ENTRY, CONST_CS | CONST_PERSISTENT);
+
 %%
 ignore-glob
   *_get_type
