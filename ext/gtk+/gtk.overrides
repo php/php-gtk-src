@@ -1114,6 +1114,9 @@ PHP_FUNCTION(gtk_ctree_new_with_titles)
 	gchar **titles;
 	zval *php_titles = NULL, **temp_title;
 	HashTable *target_hash;
+#ifdef PHP_WIN32
+	gchar * utf8_text = NULL;
+#endif
 
 	NOT_STATIC_METHOD();
 
@@ -1141,7 +1144,12 @@ PHP_FUNCTION(gtk_ctree_new_with_titles)
 		zend_hash_internal_pointer_reset(target_hash);
 		while (zend_hash_get_current_data(target_hash, (void **)&temp_title) == SUCCESS) {
 			convert_to_string_ex(temp_title);
+#ifdef PHP_WIN32
+			utf8_text = g_convert(Z_STRVAL_PP(temp_title), Z_STRLEN_PP(temp_title), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+			titles[i++] = utf8_text;
+#else
 			titles[i++] = estrndup(Z_STRVAL_PP(temp_title), Z_STRLEN_PP(temp_title));
+#endif
 			zend_hash_move_forward(target_hash);
 		}
 		wrapped_obj = (GtkObject *)gtk_ctree_new_with_titles(columns, tree_column, titles);
@@ -1173,6 +1181,9 @@ PHP_FUNCTION(gtk_ctree_insert_node)
 	GtkCTree *tree;
 	gchar **text = NULL;
 	HashTable *target_hash;
+#ifdef PHP_WIN32
+	gchar * utf8_text = NULL;
+#endif
 
 	NOT_STATIC_METHOD();
 
@@ -1210,7 +1221,12 @@ PHP_FUNCTION(gtk_ctree_insert_node)
 	zend_hash_internal_pointer_reset(target_hash);
 	while (zend_hash_get_current_data(target_hash, (void **)&temp_text) == SUCCESS) {
 		convert_to_string_ex(temp_text);
+#ifdef PHP_WIN32
+		utf8_text = g_convert(Z_STRVAL_PP(temp_text), Z_STRLEN_PP(temp_text), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+		text[i++] = utf8_text;
+#else
 		text[i++] = estrndup(Z_STRVAL_PP(temp_text), Z_STRLEN_PP(temp_text));
+#endif
 		zend_hash_move_forward(target_hash);
 	}
 
