@@ -1,4 +1,4 @@
-Version 0.5.0 "monday starts on saturday" 22-Jan-02
+Version 0.5.0 "monday starts on saturday" 24-Jan-02
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - added new widgets with samples: GtkComboButton, GtkSPaned, GtkScrollPane
       and GtkPieMenu. (Markus)
