@@ -1,3 +1,15 @@
+2001-03-24  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: News update.
+
+    * TODO
+      generator/gtk-extrafuncs.defs
+      generator/gtk.overrides
+      test/gtk.php:
+    * Added GtkColorSelection::get_color, GtkColorSelection::set_color().
+    * Added radio buttons, check buttons, color selection, and cursors examples
+      to gtk.php.
+
 2001-03-22  James Moore  <James@phpuk.org>
 
     * docs/stylesheets/xsl/html/class.xsl:
