@@ -1,3 +1,75 @@
+2001-03-14  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/gtk.defs: Adding GtkHandleBox properties.
+
+2001-03-14  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/temp.xsl: This one shouldnt be in repository
+
+2001-03-14  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/gtk.defs
+      generator/gtk.overrides:
+    Added GtkFixed 'children' property and GtkFixedChild helper class.
+
+2001-03-14  James Moore  <James@phpuk.org>
+
+    * docs/en/classes/gtkobject.xml:
+    Begining for outline of object documentation.. This is not complete or
+    necessaryly accurate/correct its just there to work with for now.
+
+    * docs/en/language-defs.ent
+      docs/manual.xml.in: Prepair for new structure
+
+    * docs/dbxml/phpgtkdoc.dtd: Correct the DTD
+
+    * docs/dbxml/phpgtkdoc.dtd: Forgot these earlier
+
+    * docs/stylesheets/dsssl/common.dsl.in
+      docs/stylesheets/dsssl/html-common.dsl
+      docs/stylesheets/dsssl/html-locale.dsl.in
+      docs/stylesheets/dsssl/html.dsl.in
+      docs/stylesheets/dsssl/pdflevels.dsl
+      docs/stylesheets/dsssl/print.dsl.in
+      docs/stylesheets/xsl/bightml.xsl.in
+      docs/stylesheets/xsl/chunk-filename.xsl
+      docs/stylesheets/xsl/common.xsl.in
+      docs/stylesheets/xsl/html-common.xsl
+      docs/stylesheets/xsl/html.xsl.in
+      docs/stylesheets/xsl/htmlhelp.xsl.in
+      docs/stylesheets/xsl/print.xsl.in
+      docs/stylesheets/xsl/temp.xsl
+      docs/Makefile.in
+      docs/bightml.xsl.in
+      docs/chunk-filename.xsl
+      docs/common.dsl.in
+      docs/common.xsl.in
+      docs/configure.in
+      docs/html-common.dsl
+      docs/html-common.xsl
+      docs/html-locale.dsl.in
+      docs/html.dsl.in
+      docs/html.xsl.in
+      docs/htmlhelp.xsl.in
+      docs/pdflevels.dsl
+      docs/print.dsl.in
+      docs/print.xsl.in: Restructure of docs dir
+
+    * docs/dbxml/phpgtkdoc.dtd:
+    Adding new elements to dtd. This is currently untested other than quickly building the docs.
+
+2001-03-14  Andrei Zmievski  <andrei@ispi.net>
+
+    * TODO: ghm
+
+2001-03-14  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/php_gtk.dsp: Adding override files to project
+
+    * generator/gtk.overrides: Removing unneeded free statment
+
+    * generator/gtk.overrides: Adding cList->get_text() function
+
 2001-03-13  Steph Fox  <steph.fox@btinternet.com>
 
     * docs/en/appendix/license.xml:
