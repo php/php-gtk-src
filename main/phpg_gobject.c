@@ -504,6 +504,30 @@ PHP_GTK_API void phpg_gobject_watch_closure(zval *zobj, GClosure *closure TSRMLS
 }
 /* }}} */
 
+/* {{{ PHP_GTK_API phpg_get_properties_helper */
+PHP_GTK_API void phpg_get_properties_helper(zval *object, HashTable *ht TSRMLS_DC, ...)
+{
+    va_list va;
+    char *prop;
+    int prop_len;
+    zval *result;
+    zend_class_entry *ce = Z_OBJCE_P(object);
+
+#ifdef ZTS
+    va_start(va, tsrm_ls);
+#else
+    va_start(va, ht);
+#endif
+    while ((prop = va_arg(va, char *)) != NULL) {
+        prop_len = va_arg(va, int);
+        result = zend_read_property(ce, object, prop, prop_len, 1 TSRMLS_CC);
+        zend_hash_update(ht, prop, prop_len+1, &result, sizeof(zval *), NULL);
+    }
+
+    va_end(va);
+}
+/* }}} */
+
 /*
  * GObject PHP class definition
  */

@@ -199,6 +199,9 @@ static inline void php_gtk_set_object(zval *zobj, void *obj, php_gtk_dtor_t dtor
 zval *phpg_read_property(zval *object, zval *member, int type TSRMLS_DC);
 void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC);
 HashTable* phpg_get_properties(zval *object TSRMLS_DC);
+PHP_GTK_API void phpg_get_properties_helper(zval *object, HashTable *ht TSRMLS_DC, ...);
+
+#define STRS(s) #s, sizeof(#s)-1
 
 PHP_GTK_API void *php_gtk_get_object(zval *wrapper);
 PHP_GTK_API int php_gtk_get_simple_enum_value(zval *enum_val, int *result);

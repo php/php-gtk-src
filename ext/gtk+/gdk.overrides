@@ -92,8 +92,10 @@ PHPG_PROP_READER(GdkPixbuf, pixel_array)
 override-handler GdkEvent read_property
 static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int type TSRMLS_DC)
 {
-	zval tmp_member;
-	zval result, *result_ptr = NULL;
+    zval tmp_member;
+    zval *result = NULL;
+    GdkEvent *event = (GdkEvent *) PHPG_GBOXED(object);
+    char *name;
 
  	if (member->type != IS_STRING) {
 		tmp_member = *member;
@@ -101,10 +103,99 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
 		convert_to_string(&tmp_member);
 		member = &tmp_member;
 	}
-    printf("GdkEvent read property handler\n");
-    result_ptr = zend_get_std_object_handlers()->read_property(object, member, type TSRMLS_CC);
+
+    name = Z_STRVAL_P(member);
+
+    /* TODO
+     * the rest of event types
+     */
+    switch (event->type) {
+        case GDK_NOTHING:
+        case GDK_DELETE:
+        case GDK_DESTROY:
+            break;
+
+        case GDK_KEY_PRESS:
+        case GDK_KEY_RELEASE:
+            if (!strcmp(name, "time")) {
+                ALLOC_ZVAL(result);
+                ZVAL_LONG(result, event->key.time);
+            } else if (!strcmp(name, "state")) {
+                ALLOC_ZVAL(result);
+                ZVAL_LONG(result, event->key.state);
+            } else if (!strcmp(name, "keyval")) {
+                ALLOC_ZVAL(result);
+                ZVAL_LONG(result, event->key.keyval);
+            } else if (!strcmp(name, "string")) {
+                ALLOC_ZVAL(result);
+                ZVAL_STRINGL(result, event->key.string, event->key.length, 1);
+            } else if (!strcmp(name, "hardware_keycode")) {
+                ALLOC_ZVAL(result);
+                ZVAL_LONG(result, event->key.hardware_keycode);
+            } else if (!strcmp(name, "group")) {
+                ALLOC_ZVAL(result);
+                ZVAL_LONG(result, event->key.group);
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    if (!strcmp(name, "type")) {
+        ALLOC_ZVAL(result);
+        ZVAL_LONG(result, event->type);
+    } else if (!strcmp(name, "window")) {
+        ALLOC_ZVAL(result);
+        phpg_gobject_new(&result, (GObject *)event->any.window TSRMLS_CC);
+    } else if (!strcmp(name, "send_event")) {
+        ALLOC_ZVAL(result);
+        ZVAL_BOOL(result, event->any.send_event);
+    }
+
+    if (result) {
+        result->refcount = 0;
+        result->is_ref = 0;
+    } else {
+        result = zend_get_std_object_handlers()->read_property(object, member, type TSRMLS_CC);
+    }
+
 	if (member == &tmp_member) {
 		zval_dtor(member);
 	}
-    return result_ptr;
+
+    return result;
+}
+
+%%
+override-handler GdkEvent get_properties
+HashTable* phpg_gdkevent_get_properties_handler(zval *object TSRMLS_DC)
+{
+    phpg_head_t *poh = NULL;
+    GdkEvent *event = (GdkEvent *) PHPG_GBOXED(object);
+
+    poh = (phpg_head_t *) zend_object_store_get_object(object TSRMLS_CC);
+
+    /* TODO
+     * the rest of event types
+     */
+    switch (event->type) {
+        case GDK_KEY_PRESS:
+        case GDK_KEY_RELEASE:
+            phpg_get_properties_helper(object, poh->zobj.properties TSRMLS_CC,
+                                       STRS(time), STRS(state), STRS(keyval), STRS(string),
+                                       STRS(hardware_keycode), STRS(group), NULL);
+            break;
+
+        case GDK_NOTHING:
+        case GDK_DELETE:
+        case GDK_DESTROY:
+        default:
+            break;
+    }
+
+    phpg_get_properties_helper(object, poh->zobj.properties TSRMLS_CC,
+                               STRS(type), STRS(window), STRS(send_event), NULL);
+
+	return poh->zobj.properties;
 }

@@ -59,7 +59,7 @@ class Generator {
                                                           'method' => Templates::boxed_method_body,
                                                           'prop' => Templates::boxed_prop_access),
                                    );
-    var $handlers           = array('read_property', 'write_property');
+    var $handlers           = array('read_property', 'write_property', 'get_properties');
 
     function Generator(&$parser, &$overrides, $prefix, $function_class)
     {
