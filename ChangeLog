@@ -1,3 +1,41 @@
+2005-03-01  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * php_gtk.m4
+      ext/gtk+/config.m4:
+      Make the build system produce php_gtk2.so instead of php_gtk.so.
+
+    * generator/arg_types.php
+      generator/templates.php
+      main/php_gtk.h
+      main/phpg_exceptions.c
+      main/phpg_gobject.c:
+      Implement support for GError type. This allows us to do something like:
+      
+      try {
+      	$pixbuf = GdkPixbuf::new_from_file($image_file);
+      } catch (PhpGtkGErrorException $e) {
+      	echo $e->message, $e->code,"\n";
+      }
+
+    * ext/gtk+/gdk.defs:
+      Mark GdkPixbuf constructors.
+
+    * main/php_gtk_util.c:
+      Fix deprecation message.
+
+    * main/phpg_gvalue.c:
+      Fix type check.
+
+    * php_gtk.m4
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      generator/arg_types.php
+      main/php_gtk.h
+      main/phpg_gvalue.c:
+      Add a custom arg type for GdkRectangle* so that one can pass either a
+      full GdkRectangle object or 4-element array instead.
+
 2005-02-27  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gdk.overrides
