@@ -139,6 +139,43 @@ static void init_gtk(void)
 	}
 }
 
+  
+void php_gtk_callback_notebook_switch_page(GtkNotebook *widget,
+                                            GtkNotebookPage *page,
+                                            gint page_num,
+                                            gpointer data) 
+{
+	zval *zpage, *zpage_num;
+	zval *hash, *retval;
+	 
+	 
+	MAKE_STD_ZVAL(hash);
+	array_init(hash);
+	
+	 
+	
+	MAKE_STD_ZVAL(zpage); 
+	ZVAL_LONG(zpage, 	 0 ); 
+	/* BC (first param used to be null) 
+	  - it could be a NotebookPage struct.. - but thats data is available via
+	   other methods.. so it's a bit of a waste coding that up.. 
+	*/
+				      
+	zend_hash_next_index_insert(Z_ARRVAL_P(hash), &zpage, sizeof(zval *), NULL);
+	
+	MAKE_STD_ZVAL(zpage_num); 	 
+	ZVAL_LONG(zpage_num, 	 page_num); //c urrent  page
+	zend_hash_next_index_insert(Z_ARRVAL_P(hash), &zpage_num, sizeof(zval *), NULL);
+	
+	 
+	retval = php_gtk_simple_signal_callback((GtkObject *) widget, data, hash);
+	
+	
+	 
+}
+
+
+
 static void release_gtk_object_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
 	GtkObject *obj = (GtkObject *)rsrc->ptr;
@@ -156,7 +193,7 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 	php_gtk_register_classes();
 	php_gdk_register_classes();
 	php_gtk_plus_register_types(module_number);
-
+	php_gtk_register_callback("GtkNotebook::switch-page",(GtkSignalFunc) php_gtk_callback_notebook_switch_page);
 	return SUCCESS;
 }
 
