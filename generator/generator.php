@@ -73,7 +73,7 @@ class Generator {
 		if (trim(implode('', $parse_type))) {
 			$byref_name = str_replace(' ', 'A', implode('', $parse_type));
 			if (!isset($this->byref_def[$byref_name])) {
-				$this->byref_def[$byref_name] = sprintf("unsigned char byref_" . $byref_name . "[] = {%d, %s};\n", sizeof($parse_type), str_replace(' ', 'BYREF_ALLOW', str_replace('F', 'BYREF_FORCE', implode(',', $parse_type))));
+				$this->byref_def[$byref_name] = sprintf("unsigned char byref_" . $byref_name . "[] = {%d, %s};\n", sizeof($parse_type), str_replace(' ', 'BYREF_NONE', str_replace('F', 'BYREF_FORCE', implode(',', $parse_type))));
 			}
 			$byref_name = "byref_$byref_name";
 		}
