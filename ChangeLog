@@ -1,3 +1,20 @@
+2001-04-23  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/class.xsl
+      docs/templates/classentry.tpl: constructor is now documented properly
+
+    * docs/stylesheets/xsl/gen_name_to_id.xsl
+      docs/stylesheets/xsl/html/name_to_id.xsl:
+    Adding constructor information to utility files
+
+2001-04-23  Markus Fischer  <mfischer@josefine.ben.tuwien.ac.at>
+
+    * docs/de/bookinfo.xml
+      docs/de/chapters/install.xml
+      docs/de/chapters/intro.xml
+      docs/de/chapters/widget.xml:
+    First commit :-) Various grammar fixes and small typs.
+
 2001-04-22  James Moore  <James@phpuk.org>
 
     * docs/de/classes/gtkaccellabel.xml
