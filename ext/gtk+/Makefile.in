@@ -7,7 +7,6 @@ LTLIBRARY_SHARED_LIBADD = $(GTK_PLUS_SHARED_LIBADD)
 include $(top_srcdir)/build/dynlib.mk
 
 php_gtk+.o php_gtk+.lo php_gtk+.slo: gen_gtk.h
-php_gdk.c: gen_keysyms.c
 
 gen_gtk.c: gtk.defs gtk-extrafuncs.defs gtk.overrides
 	php -q $(top_srcdir)/generator/generator.php -o ext/gtk%2b/gtk.overrides -p gtk ext/gtk%2b/gtk.defs > gen_gtk.c
@@ -18,6 +17,3 @@ gen_gdk.c: gdk.defs gdk.overrides
 gen_gtk.h: gen_gtk.c gen_gdk.c
 	grep -h "^PHP_GTK_EXPORT_CE" gen_gtk.c gen_gdk.c | sed -e "s!^!extern !" > gen_gtk.h
 	grep -h "PHP_GTK_EXPORT_FUNC" gen_gtk.c gen_gdk.c | sed -e 's!$$!;!' >> gen_gtk.h
-
-gen_keysyms.c: $(GDK_KEYSYMS)
-	sed -n 's/#define \(GDK_[^ ]*\).*$$/	REGISTER_LONG_CONSTANT("\1", \1, CONST_CS | CONST_PERSISTENT);/p' < $(GDK_KEYSYMS) > gen_keysyms.c
