@@ -1,3 +1,12 @@
+2003-12-02  Alan Knowles  <alan@akbkhome.com>
+
+    * (GTK2)
+      ext/gtk+/php_gtk+_types.c
+      main/php_gtk.h
+      main/php_gtk_object.c
+      test/hello.php:
+      object setters mostly working
+
 2003-11-30  Alan Knowles  <alan@akbkhome.com>
 
     * (GTK2)
