@@ -1,3 +1,26 @@
+2004-07-27  Andrei Zmievski  <andreiz@gmail.com>
+
+    * main/php_gtk.h
+      main/phpg_gobject.c
+      main/phpg_gvalue.c:
+      Implemented GObject::__tostring() method (very simple).
+
+    * main/phpg_gtype.c
+      main/phpg_gvalue.c:
+      Update error messages.
+
+    * main/phpg_gtype.c:
+      Some comments.
+
+    * php_gtk.m4:
+      Update for new file names.
+
+    * main/php_gtk.h
+      main/phpg_gobject.c:
+      Implement:
+       * phpg_sink_object(): sinks GObject's (currently only GtkObject's)
+       * phpg_set_wrapper(): registers PHP object as wrapper for GObject
+
 2004-07-22  Andrei Zmievski  <andreiz@gmail.com>
 
     * main/phpg_object.c:
