@@ -358,10 +358,8 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
 static int parse_arg(int arg_num, zval **arg, va_list *va, char **spec, int quiet)
 {
 	char *expected_type;
-	char *actual_type;
 	char buf[1024];
 	char errorbuf[1024];
-	char objtype[1024];
 	TSRMLS_FETCH();
 
 	expected_type = parse_arg_impl(arg, va, spec, errorbuf);
