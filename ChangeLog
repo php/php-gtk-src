@@ -1,3 +1,7 @@
+2001-09-21  Andrei Zmievski  <andrei@ispi.net>
+
+    * main/php_gtk.c: Fix compilation error.
+
 2001-09-16  Frank M. Kromann  <frank@frontbase.com>
 
     * generator/generator.php:
