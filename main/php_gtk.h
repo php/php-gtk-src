@@ -106,17 +106,13 @@ int php_gtk_get_flag_value(GtkType flag_type, zval *flag_val, int *result);
 zval php_gtk_get_property(zend_property_reference *property_reference);
 int php_gtk_set_property(zend_property_reference *property_reference, zval *value);
 
-/*
-void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter);
-void php_gtk_register_prop_setter(zend_class_entry *ce, prop_setter_t setter);
-*/
-inline void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter)
+static inline void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter)
 {
 	zend_hash_index_update(&php_gtk_prop_getters, (long)ce, (void*)&getter,
 						   sizeof(prop_getter_t), NULL);
 }
 
-inline void php_gtk_register_prop_setter(zend_class_entry *ce, prop_setter_t setter)
+static inline void php_gtk_register_prop_setter(zend_class_entry *ce, prop_setter_t setter)
 {
 	zend_hash_index_update(&php_gtk_prop_setters, (long)ce, (void*)&setter,
 						   sizeof(prop_setter_t), NULL);

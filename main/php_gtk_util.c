@@ -389,14 +389,26 @@ zend_bool php_gtk_check_callable(zval *function)
 			{
 				zval **method;
 				zval **obj;
+				zend_class_entry *ce;
 				
 				if (zend_hash_index_find(Z_ARRVAL_P(function), 0, (void **) &obj) == SUCCESS &&
 					zend_hash_index_find(Z_ARRVAL_P(function), 1, (void **) &method) == SUCCESS &&
-					Z_TYPE_PP(obj) == IS_OBJECT &&
+					(Z_TYPE_PP(obj) == IS_OBJECT || Z_TYPE_PP(obj) == IS_STRING) &&
 					Z_TYPE_PP(method) == IS_STRING) {
+					if (Z_TYPE_PP(obj) == IS_STRING) {
+						int found;
+
+						lcname = estrndup(Z_STRVAL_PP(obj), Z_STRLEN_PP(obj));
+						zend_str_tolower(lcname, Z_STRLEN_PP(obj));
+						found = zend_hash_find(EG(class_table), lcname, Z_STRLEN_PP(obj) + 1, (void**)&ce);
+						efree(lcname);
+						if (found == FAILURE)
+							break;
+					} else
+						ce = Z_OBJCE_PP(obj);
 					lcname = estrndup(Z_STRVAL_PP(method), Z_STRLEN_PP(method));
 					zend_str_tolower(lcname, Z_STRLEN_PP(method));
-					if (zend_hash_exists(&Z_OBJCE_PP(obj)->function_table, lcname, Z_STRLEN_PP(method)+1))
+					if (zend_hash_exists(&ce->function_table, lcname, Z_STRLEN_PP(method)+1))
 						retval = 1;
 					efree(lcname);
 				}
