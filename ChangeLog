@@ -1,3 +1,38 @@
+2001-07-30  Andrei Zmievski  <andrei@ispi.net>
+
+    * test/gtk.php
+      ext/libglade/libglade.overrides
+      ext/libglade/php_libglade.c
+      generator/generator.php
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_object.c
+      main/php_gtk_util.c
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h: Updated to match TSRM changes.
+
+2001-07-30  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/.cvsignore: ignore .asp files
+
+    * win32/php_win.dsp
+      win32/gdbtool.ico
+      win32/gdk-1.30.ico
+      win32/php_win.rc
+      win32/resource.h: Adding icon files
+
+2001-07-30  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+_types.c
+      test/gtk.php
+      test/scribble.php: - Finished drag-n-drop support.
+    - Added drag-n-drop example to gtk.php.
+    - GdkAtom parsing was completely screwed up from theoretical point of view,
+      but it was still working somehow. Fixed.
+
 2001-07-24  Frank M. Kromann  <frank@frontbase.com>
 
     * win32/README.txt: Fixing typo
