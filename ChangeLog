@@ -1,3 +1,57 @@
+2001-07-31  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: Update.
+
+    * NEWS: *** empty log message ***
+
+    * generator/arg_types.php
+      main/php_gtk.h
+      ext/gtk+/php_gtk+_types.c:
+    Fixed bug with GtkStyle::copy() that could cause crash in certain cases
+    depending on where the result was used.
+
+    * generator/definitions.php
+      generator/generator.php
+      generator/scheme.php
+      generator/templates.php
+      main/php_gtk.h
+      test/scribble.php
+      NEWS
+      build2/build2.mk
+      ext/gtk+/Makefile.in
+      ext/gtk+/gdk.defs
+      ext/gtk+/gtk-extrafuncs.defs
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      generator/arg_types.php:
+    - Fix config.h.in generation.
+    - Changed GtkWidget::state() method to GtkWidget->state property.
+    - Removed GtkWidget::get_allocation(), it is redundant with GtkWidget->allocation
+      property present.
+    - Implemented support for struct based classes (GdkRectable, GtkAllocation,
+      GtkRequisition, etc).
+
+    0.1 is on the horizon.
+
+2001-07-31  Frank M. Kromann  <frank@frontbase.com>
+
+    * main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_object.c
+      main/php_gtk_util.c: Fixing ZTS compilation
+
+    * generator/arg_types.php
+      generator/generator.php: Fixing ZTS compilation
+    This also adds the stuff to handle UTF8 convertions
+
+    * generator/templates.php
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c: Fixing ZTS compilation
+
 2001-07-30  Andrei Zmievski  <andrei@ispi.net>
 
     * test/gtk.php
