@@ -1,3 +1,9 @@
+2001-08-22  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * test/gtk.php:
+    Accommodate to behave more like testgtk (distributed with GTK+ sources)
+    Fix create_file_selection
+
 2001-08-21  Markus Fischer  <mfischer@guru.josefine.at>
 
     * test/gtk.php: WS fix
