@@ -1068,8 +1068,9 @@ zval php_gtk_get_property(zend_property_reference *property_reference)
 		}
 	}
 
+	zval_add_ref(&result_ptr);
 	SEPARATE_ZVAL(&result_ptr);
-    return *result_ptr;
+	return *result_ptr;
 }
 
 int php_gtk_set_property(zend_property_reference *property_reference, zval *value)
