@@ -787,7 +787,7 @@ ignore gtk_menu_item_new_with_label
 override gtk_menu_item_new
 PHP_FUNCTION(wrap_gtk_menu_item_new)
 {
-	char *label;
+	char *label = NULL;
 	GtkObject *wrapped_obj;
 	
 	NOT_STATIC_METHOD();
