@@ -1,3 +1,15 @@
+2003-01-09  Frank M. Kromann  <frank@kromann.info>
+
+    * win32/makedist.cmd:
+      include the scintilla extension in the distribution
+
+    * ext/scintilla/.cvsignore
+      ext/scintilla/php_scintilla.h
+      ext/scintilla/scintilla.dsp
+      ext/scintilla/scintilla.overrides
+      win32/php_gtk.dsw:
+      Enabling the compilation of scintilla on WIn32
+
 2003-01-08  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (ZE2_PORT)
