@@ -1,0 +1,16 @@
+LTLIBRARY_NAME          = libcombobutton.la
+LTLIBRARY_SOURCES       = php_combobutton.c gen_combobutton.c gtkcombobutton.c
+LTLIBRARY_LIBADD        = $(COMBOBUTTON_SHARED_LIBADD)
+LTLIBRARY_SHARED_NAME   = php_gtk_combobutton.la
+LTLIBRARY_SHARED_LIBADD = $(COMBOBUTTON_SHARED_LIBADD)
+
+include $(top_srcdir)/build/dynlib.mk
+
+php_combobutton.o php_combobutton.lo php_combobutton.slo: gen_ce_combobutton.h
+
+gen_combobutton.c: combobutton.defs combobutton.overrides
+	$(PHP) -q $(top_srcdir)/generator/generator.php -o $(srcdir)/combobutton.overrides -p ComboButton -r $(top_srcdir)/ext/gtk%2b/gtk.defs $(srcdir)/combobutton.defs > gen_combobutton.c
+
+gen_ce_combobutton.h: gen_combobutton.c
+	grep -h "^PHP_GTK_EXPORT_CE" gen_combobutton.c | sed -e "s!^!extern !" > gen_ce_combobutton.h
+

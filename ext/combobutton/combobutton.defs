@@ -1,0 +1,67 @@
+;; -*- scheme -*-
+; object definitions ...
+(object ComboButton
+  (in-module Gtk)
+  (parent Button (Gtk))
+  (c-name GtkComboButton)
+  (field (type-and-name guint x_offset))
+  (field (type-and-name guint y_offset))
+  (field (type-and-name GtkArrowType arrowdir))
+)
+
+;; Enumerations and flags ...
+
+
+;; From gtkcombobutton.h
+
+(function gtk_combobutton_get_type
+  (c-name gtk_combobutton_get_type)
+  (return-type GtkType)
+)
+
+(function gtk_combobutton_new
+  (c-name gtk_combobutton_new)
+  (is-constructor-of GtkComboButton)
+  (return-type GtkWidget*)
+)
+
+(function gtk_combobutton_new_with_label
+  (c-name gtk_combobutton_new_with_label)
+  (return-type GtkWidget*)
+  (parameter (type-and-name const-gchar* label))
+)
+
+(function gtk_combobutton_new_with_menu
+  (c-name gtk_combobutton_new_with_menu)
+  (return-type GtkWidget*)
+  (parameter (type-and-name GtkWidget* menu))
+  (parameter (type-and-name gboolean changing))
+)
+
+(method get_menu
+  (of-object ComboButton (Gtk))
+  (c-name gtk_combobutton_get_menu)
+  (return-type GtkWidget*)
+)
+
+(method set_menu
+  (of-object ComboButton (Gtk))
+  (c-name gtk_combobutton_set_menu)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* combomenu))
+)
+
+(method get_arrow_direction
+  (of-object ComboButton (Gtk))
+  (c-name gtk_combobutton_get_arrow_direction)
+  (return-type GtkArrowType)
+)
+
+(method set_arrow_direction
+  (of-object ComboButton (Gtk))
+  (c-name gtk_combobutton_set_arrow_direction)
+  (return-type none)
+  (parameter (type-and-name GtkArrowType arrowtype))
+)
+
+
