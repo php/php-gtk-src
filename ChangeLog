@@ -1,3 +1,24 @@
+2005-02-06  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/php_gtk+.c:
+      Big oops. Can't call gtk_exit() here since it simply calls exit() on us
+      and does not return back to ZE.
+
+    * main/php_gtk.c:
+      Fix no_direct_constructor message.
+
+    * ext/gtk+/gtk.overrides:
+      Fix compilation warning.
+
+    * ext/gtk+/gdk.overrides:
+      Expose GdkDrawable->xid property.
+
+    * generator/generator.php
+      generator/templates.php:
+      We cannot simply mark classes without constructors as abstract, because
+      we may need to instantiate them internally. We just need to forbid the
+      users to use them directly.
+
 2005-02-03  Andrei Zmievski  <andrei@gravitonic.com>
 
     * build2/build2.mk:
