@@ -34,6 +34,7 @@
 #if HAVE_PHP_GTK
 
 #include "zend_objects_API.h"
+#include "zend_default_classes.h"
 
 #define PHP_GTK_VERSION "2.0.0"
 
@@ -123,7 +124,9 @@ struct _php_gtk_ext_entry {
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
-/* True globals. */
+/*
+ * True globals.
+ * */
 extern zend_llist php_gtk_ext_registry;
 PHP_GTK_API extern GHashTable *php_gtk_class_hash;
 extern HashTable php_gtk_rsrc_hash;
@@ -134,7 +137,11 @@ extern HashTable php_gtk_callback_hash;
 extern HashTable php_gtk_prop_desc;
 extern HashTable phpg_prop_info;
 
-PHP_GTK_API zend_object_handlers *php_gtk_handlers;
+/* Exceptions */
+extern PHP_GTK_API zend_class_entry *phpg_generic_exception;
+extern PHP_GTK_API zend_class_entry *phpg_type_exception;
+
+PHP_GTK_API zend_object_handlers php_gtk_handlers;
 
 /* Function declarations. */
 
@@ -212,13 +219,23 @@ PHP_GTK_API zval* php_gtk_simple_signal_callback(GtkObject *o, gpointer data, zv
 		return; \
 	}
 
+#define PHPG_THROW_EXCEPTION(exception, message) \
+    do { \
+		TSRMLS_FETCH(); \
+		zend_throw_exception(exception, message, 0 TSRMLS_CC); \
+	} while (0)
+
 PHP_GTK_API PHP_FUNCTION(no_constructor);
 PHP_GTK_API PHP_FUNCTION(no_direct_constructor);
 
 extern char *php_gtk_zval_type_name(zval *arg);
 
+void phpg_register_exceptions();
+
 void php_gtype_register_self();
-zval* php_gtype_new(GType type);
+PHP_GTK_API zval* php_gtype_new(GType type);
+PHP_GTK_API GType php_gtype_from_zval(zval *value);
+
 
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtype_ce);
 

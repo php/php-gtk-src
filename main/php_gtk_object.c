@@ -41,7 +41,7 @@ HashTable php_gtk_prop_desc;
 HashTable phpg_prop_info;
 HashTable php_gtk_callback_hash;
 
-PHP_GTK_API zend_object_handlers *php_gtk_handlers;
+PHP_GTK_API zend_object_handlers php_gtk_handlers;
 
 static inline void php_gtk_destroy_object(php_gtk_object *object, zend_object_handle handle TSRMLS_DC)
 {
@@ -153,7 +153,7 @@ void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
 
 	wrapper = (php_gtk_object *) zend_object_store_get_object(object TSRMLS_CC);
 	if (invoke_setter(object, Z_STRVAL_P(member), value) == FAILURE) {
-		php_gtk_handlers->write_property(object, member, value TSRMLS_CC);
+		php_gtk_handlers.write_property(object, member, value TSRMLS_CC);
 	}
 
 	if (member == &tmp_member) {
@@ -244,7 +244,7 @@ static zend_object_value phpg_create_object(zend_class_entry *ce TSRMLS_DC)
 	object->obj  = NULL;
 	object->dtor = NULL;
 
-	zov.handlers = php_gtk_handlers;
+	zov.handlers = &php_gtk_handlers;
 	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) php_gtk_destroy_object, NULL TSRMLS_CC);
 
 	return zov;

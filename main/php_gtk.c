@@ -122,10 +122,12 @@ PHP_RINIT_FUNCTION(gtk)
 	zend_unset_timeout(TSRMLS_C);
 	zend_set_timeout(0);
 
-	php_gtk_handlers = zend_get_std_object_handlers();
-	php_gtk_handlers->read_property  = phpg_read_property;
-	php_gtk_handlers->write_property = phpg_write_property;
-	php_gtk_handlers->get_properties = phpg_get_properties;
+	php_gtk_handlers = *zend_get_std_object_handlers();
+	php_gtk_handlers.read_property  = phpg_read_property;
+	php_gtk_handlers.write_property = phpg_write_property;
+	php_gtk_handlers.get_properties = phpg_get_properties;
+
+	phpg_register_exceptions();
 
 	/*
 	 * Initialize the type system and the GType wrapper class.

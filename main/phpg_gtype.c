@@ -63,7 +63,7 @@ static zend_object_value gtype_create_object(zend_class_entry *ce TSRMLS_DC)
 
 	object->type = 0;
 
-	zov.handlers = php_gtk_handlers;
+	zov.handlers = &php_gtk_handlers;
 	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) gtype_destroy_object, NULL TSRMLS_CC);
 
 	return zov;
@@ -92,6 +92,65 @@ PHP_GTK_API zval* php_gtype_new(GType type)
 	object->type = type;
 
 	return wrapper;
+}
+
+PHP_GTK_API GType php_gtype_from_zval(zval *value)
+{
+	GType type;
+
+	if (!value) {
+		PHPG_THROW_EXCEPTION(phpg_type_exception, "cannot get type from NULL value");
+		return 0;
+	}
+
+	switch (Z_TYPE_P(value)) {
+		case IS_NULL:
+			return G_TYPE_NONE;
+
+		case IS_LONG:
+			return G_TYPE_INT;
+
+		case IS_DOUBLE:
+			return G_TYPE_DOUBLE;
+
+		case IS_STRING:
+			type = g_type_from_name(Z_STRVAL_P(value));
+			if (type == 0)
+				return G_TYPE_STRING;
+			else
+				return type;
+
+		case IS_BOOL:
+			return G_TYPE_BOOLEAN;
+
+		case IS_OBJECT:
+			if (Z_OBJCE_P(value) == gtype_ce) {
+				php_gtype_t *object = zend_object_store_get_object(value TSRMLS_CC);
+				if (object) {
+					return object->type;
+				}
+			} else {
+				zval **gtype;
+				if (zend_hash_find(Z_OBJPROP_P(value), "__gtype", sizeof("__gtype"), (void**)&gtype) == SUCCESS
+					&& Z_TYPE_PP(gtype) == IS_OBJECT
+					&& Z_OBJCE_PP(gtype) == gtype_ce) {
+
+					php_gtype_t *object = zend_object_store_get_object(*gtype TSRMLS_CC);
+					if (object) {
+						return object->type;
+					}
+				}
+
+				return G_TYPE_OBJECT;
+			}
+			break;
+
+		default:
+			break;
+	}
+
+	PHPG_THROW_EXCEPTION(phpg_type_exception, "could not get typecode from value");
+	return 0;
 }
 
 void php_gtype_register_self()
