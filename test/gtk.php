@@ -302,10 +302,10 @@ function create_ctree()
 		{
 			global	$ctree_data;
 
-			$ctree_data['sel_label']->set_text((string)count($ctree->selection));
-			$ctree_data['vis_label']->set_text((string)$ctree->clist->rows);
-			$ctree_data['book_label']->set_text((string)$ctree_data['books']);
-			$ctree_data['page_label']->set_text((string)$ctree_data['pages']);
+			$ctree_data['sel_label']->set_text(count($ctree->selection));
+			$ctree_data['vis_label']->set_text($ctree->clist->rows);
+			$ctree_data['book_label']->set_text($ctree_data['books']);
+			$ctree_data['page_label']->set_text($ctree_data['pages']);
 		}
 
 		function ctree_click_column($ctree, $column)
@@ -323,17 +323,17 @@ function create_ctree()
 
 		function change_row_height($adj, $ctree)
 		{
-			$ctree->set_row_height((int)$adj->value);
+			$ctree->set_row_height($adj->value);
 		}
 
 		function change_indent($adj, $ctree)
 		{
-			$ctree->set_indent((int)$adj->value);
+			$ctree->set_indent($adj->value);
 		}
 
 		function change_spacing($adj, $ctree)
 		{
-			$ctree->set_spacing((int)$adj->value);
+			$ctree->set_spacing($adj->value);
 		}
 
 		function expand_all($button, $ctree)
@@ -497,8 +497,8 @@ function create_ctree()
 		$hbox->pack_start($label, false);
 		$label->show();
 
-		$adj = &new GtkAdjustment(4.0, 1.0, 10.0, 1.0, 5.0, 0.0);
-		$ctree_data['spin1'] = &new GtkSpinButton($adj, 0.0, 0);
+		$adj = &new GtkAdjustment(4, 1, 10, 1, 5, 0);
+		$ctree_data['spin1'] = &new GtkSpinButton($adj, 0, 0);
 		$hbox->pack_start($ctree_data['spin1'], false, true, 5);
 		$ctree_data['spin1']->show();
 
@@ -506,8 +506,8 @@ function create_ctree()
 		$hbox->pack_start($label, false);
 		$label->show();
 
-		$adj = &new GtkAdjustment(3.0, 1.0, 20.0, 1.0, 5.0, 0.0);
-		$ctree_data['spin2'] = &new GtkSpinButton($adj, 0.0, 0);
+		$adj = &new GtkAdjustment(3, 1, 20, 1, 5, 0);
+		$ctree_data['spin2'] = &new GtkSpinButton($adj, 0, 0);
 		$hbox->pack_start($ctree_data['spin2'], false, true, 5);
 		$ctree_data['spin2']->show();
 
@@ -515,8 +515,8 @@ function create_ctree()
 		$hbox->pack_start($label, false);
 		$label->show();
 
-		$adj = &new GtkAdjustment(5.0, 1.0, 20.0, 1.0, 5.0, 0.0);
-		$ctree_data['spin3'] = &new GtkSpinButton($adj, 0.0, 0);
+		$adj = &new GtkAdjustment(5, 1, 20, 1, 5, 0);
+		$ctree_data['spin3'] = &new GtkSpinButton($adj, 0, 0);
 		$hbox->pack_start($ctree_data['spin3'], false, true, 5);
 		$ctree_data['spin3']->show();
 		
@@ -582,23 +582,23 @@ function create_ctree()
 		$bbox->pack_start($mbox, false);
 		$mbox->show();
 
-		$adj = &new GtkAdjustment(20.0, 12.0, 100.0, 1.0, 10.0, 0.0);
-		$spinner = &new GtkSpinButton($adj, 0.0, 0);
+		$adj = &new GtkAdjustment(20, 12, 100, 1, 10, 0);
+		$spinner = &new GtkSpinButton($adj, 0, 0);
 		$tooltips->set_tip($spinner, 'Row height of list items.', '');
 		$adj->connect('value_changed', 'change_row_height', $ctree);
-		$ctree->set_row_height((int)$adj->value);
+		$ctree->set_row_height($adj->value);
 		$mbox->pack_start($spinner, false, false, 5);
 		$spinner->show();
 
-		$adj = &new GtkAdjustment(20.0, 0.0, 60.0, 1.0, 10.0, 0.0);
-		$spinner = &new GtkSpinButton($adj, 0.0, 0);
+		$adj = &new GtkAdjustment(20, 0, 60, 1, 10, 0);
+		$spinner = &new GtkSpinButton($adj, 0, 0);
 		$tooltips->set_tip($spinner, 'Tree indentation.', '');
 		$adj->connect('value_changed', 'change_indent', $ctree);
 		$mbox->pack_start($spinner, false, false, 5);
 		$spinner->show();
 
-		$adj = &new GtkAdjustment(5.0, 0.0, 60.0, 1.0, 10.0, 0.0);
-		$spinner = &new GtkSpinButton($adj, 0.0, 0);
+		$adj = &new GtkAdjustment(5, 0, 60, 1, 10, 0);
+		$spinner = &new GtkSpinButton($adj, 0, 0);
 		$tooltips->set_tip($spinner, 'Tree spacing.', '');
 		$adj->connect('value_changed', 'change_spacing', $ctree);
 		$mbox->pack_start($spinner, false, false, 5);
@@ -752,7 +752,7 @@ function create_ctree()
 		$hbox2->pack_start($label, false);
 		$label->show();
 
-		$ctree_data['book_label'] = &new GtkLabel((string)$ctree_data['books']);
+		$ctree_data['book_label'] = &new GtkLabel($ctree_data['books']);
 		$hbox2->pack_start($ctree_data['book_label'], false, true, 5);
 		$ctree_data['book_label']->show();
 
@@ -770,7 +770,7 @@ function create_ctree()
 		$hbox2->pack_start($label, false);
 		$label->show();
 
-		$ctree_data['page_label'] = &new GtkLabel((string)$ctree_data['pages']);
+		$ctree_data['page_label'] = &new GtkLabel($ctree_data['pages']);
 		$hbox2->pack_start($ctree_data['page_label'], false, true, 5);
 		$ctree_data['page_label']->show();
 
@@ -788,7 +788,7 @@ function create_ctree()
 		$hbox2->pack_start($label, false);
 		$label->show();
 
-		$ctree_data['sel_label'] = &new GtkLabel((string)count($ctree->selection));
+		$ctree_data['sel_label'] = &new GtkLabel(count($ctree->selection));
 		$hbox2->pack_start($ctree_data['sel_label'], false, true, 5);
 		$ctree_data['sel_label']->show();
 
@@ -806,7 +806,7 @@ function create_ctree()
 		$hbox2->pack_start($label, false);
 		$label->show();
 
-		$ctree_data['vis_label'] = &new GtkLabel((string)$ctree->clist->rows);
+		$ctree_data['vis_label'] = &new GtkLabel($ctree->clist->rows);
 		$hbox2->pack_start($ctree_data['vis_label'], false, true, 5);
 		$ctree_data['vis_label']->show();
 		
@@ -916,9 +916,9 @@ function create_cursor_test()
 		{
 			if ($event->type == GDK_BUTTON_PRESS) {
 				if ($event->button == 1)
-					$spinner->spin(GTK_SPIN_STEP_FORWARD, 0.0);
+					$spinner->spin(GTK_SPIN_STEP_FORWARD, 0);
 				else if ($event->button == 3)
-					$spinner->spin(GTK_SPIN_STEP_BACKWARD, 0.0);
+					$spinner->spin(GTK_SPIN_STEP_BACKWARD, 0);
 			}
 		}
 
@@ -943,17 +943,17 @@ function create_cursor_test()
 		$hbox->show();
 
 		$label = &new GtkLabel('Cursor value: ');
-		$label->set_alignment(0.0, 0.5);
+		$label->set_alignment(0, 0.5);
 		$hbox->pack_start($label, false);
 		$label->show();
 
-		$spinner = &new GtkSpinButton(new GtkAdjustment(0.0, 0.0, 152.0, 2.0, 10.0, 0.0), 0.0, 0);
+		$spinner = &new GtkSpinButton(new GtkAdjustment(0, 0, 152, 2, 10, 0), 0, 0);
 		$hbox->pack_start($spinner);
 		$spinner->show();
 
 		$frame = &new GtkFrame('Cursor Area');
 		$frame->set_border_width(10);
-		$frame->set_label_align(0.5, 0.0);
+		$frame->set_label_align(0.5, 0);
 		$vbox->pack_start($frame);
 		$frame->show();
 
@@ -1802,7 +1802,7 @@ function create_tooltips()
 		$tips_query->connect('widget_selected', 'tips_query_widget_selected');
 
 		$frame = &new GtkFrame('ToolTips Inspector');
-		$frame->set_label_align(0.5, 0.0);
+		$frame->set_label_align(0.5, 0);
 		$frame->set_border_width(0);
 		$box2->pack_start($frame, true, true, 10);
 		$frame->add($box3);
