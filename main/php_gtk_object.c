@@ -37,7 +37,7 @@ HashTable php_gtk_rsrc_hash;
 HashTable php_gtk_type_hash;
 HashTable php_gtk_prop_desc;
 
-static const char *php_gtk_wrapper_key  = "php_gtk::wrapper";
+//static const char *php_gtk_wrapper_key  = "php_gtk::wrapper";
 
 PHP_GTK_API zend_object_handlers php_gtk_handlers;
 
@@ -47,7 +47,8 @@ static inline void php_gtk_destroy_object(php_gtk_object *object, zend_object_ha
     /* Nuke the object */
     zend_hash_destroy(object->zobj.properties);
     FREE_HASHTABLE(object->zobj.properties);
-	gtk_object_unref(object->obj);
+	if (object->obj && object->dtor)
+		object->dtor(object->obj);
     efree(object);
 }
 
@@ -71,6 +72,10 @@ static inline zval* invoke_getter(zval *object, char *property)
 	}
 
 	return result_ptr;
+}
+
+static void php_gtk_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
+{
 }
 
 static zval *php_gtk_read_property(zval *object, zval *member, int type TSRMLS_DC)
@@ -111,6 +116,9 @@ static zend_object_value create_php_gtk_object(zend_class_entry *ce TSRMLS_DC)
 		if (prop_desc->have_getter) {
 			zov.handlers->read_property = php_gtk_read_property;
 		}
+		if (prop_desc->have_setter) {
+			zov.handlers->write_property = php_gtk_write_property;
+		}
 	}
 
 	object = emalloc(sizeof(php_gtk_object));
@@ -119,19 +127,20 @@ static zend_object_value create_php_gtk_object(zend_class_entry *ce TSRMLS_DC)
 	object->zobj.ce = ce;
 	object->zobj.in_get = 0;
 	object->zobj.in_set = 0;
-	object->obj = NULL;
+	object->obj  = NULL;
+	object->dtor = NULL;
 	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) php_gtk_destroy_object, NULL TSRMLS_CC);
 
 	return zov;
 }
 
-PHP_GTK_API zend_class_entry* php_gtk_register_class(const char *class_name, function_entry *class_functions, zend_class_entry *parent, zend_bool have_getter TSRMLS_DC)
+PHP_GTK_API zend_class_entry* php_gtk_register_class(const char *class_name, function_entry *class_functions, zend_class_entry *parent, zend_bool have_getter, zend_bool have_setter TSRMLS_DC)
 {
 	zend_class_entry ce, *real_ce;
     zend_function *function;
 	zend_internal_function zif;
 	zend_function_entry *ptr = class_functions;
-	prop_desc_t prop_desc = { have_getter, 0 }, *parent_prop_desc;
+	prop_desc_t prop_desc = { have_getter, have_setter }, *parent_prop_desc;
 
 	memset(&ce, 0, sizeof(ce));
 
@@ -172,13 +181,14 @@ PHP_GTK_API void php_gtk_object_init(GtkObject *obj, zval *zobj)
 	gtk_object_ref(obj);
 	gtk_object_sink(obj);
 
-	php_gtk_set_object(zobj, obj, le_gtk_object);
+	php_gtk_set_object(zobj, obj, (php_gtk_dtor_t)gtk_object_unref);
 }
 
-void php_gtk_set_object(zval *zobj, void *obj, int rsrc_type)
+void php_gtk_set_object(zval *zobj, void *obj, php_gtk_dtor_t dtor)
 {
 	php_gtk_object *wrapper = (php_gtk_object *) zend_object_store_get_object(zobj TSRMLS_CC);
 	wrapper->obj = obj;
+	wrapper->dtor = dtor;
 	/*
 	if (rsrc_type == le_gtk_object)
 		gtk_object_set_data_full(obj, php_gtk_wrapper_key, wrapper, php_gtk_destroy_notify);
@@ -328,7 +338,7 @@ PHP_GTK_API void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nar
 		zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&callback_lineno);
 	}
 
-	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
+	if (!zend_is_callable(*callback, 0, &callback_name)) {
 		if (callback_filename)
 			php_error(E_WARNING, "Unable to call signal callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
 		else
@@ -453,6 +463,7 @@ PHP_GTK_API zval *php_gtk_new(GtkObject *obj)
 	gtk_object_ref(obj);
 	wrapper = zend_object_store_get_object(zobj TSRMLS_CC);
 	wrapper->obj = obj;
+	wrapper->dtor = (php_gtk_dtor_t)gtk_object_unref;
 
 	return zobj;
 }

@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 
-if (!extension_loaded('gtk')) {
+if (!extension_loaded('php-gtk')) {
 	dl( 'php_gtk.' . PHP_SHLIB_SUFFIX);
 }
 
@@ -84,17 +84,17 @@ function draw_brush($widget, $x, $y)
 }
 
 
-$window = &new GtkWindow();
+$window = new GtkWindow();
 $window->set_name('Test Input');
 $window->set_position(GTK_WIN_POS_CENTER);
 
 $window->connect_object('destroy', array('gtk', 'main_quit'));
 
-$vbox = &new GtkVBox();
+$vbox = new GtkVBox();
 $window->add($vbox);
 $vbox->show();
 
-$drawing_area = &new GtkDrawingArea();
+$drawing_area = new GtkDrawingArea();
 $drawing_area->size(300, 300);
 $vbox->pack_start($drawing_area);
 $drawing_area->show();
@@ -111,7 +111,7 @@ $drawing_area->set_events(  GDK_EXPOSURE_MASK
 						  | GDK_POINTER_MOTION_MASK
 						  | GDK_POINTER_MOTION_HINT_MASK);
 
-$button = &new GtkButton('Quit');
+$button = new GtkButton('Quit');
 $vbox->pack_start($button, false, false);
 $button->connect_object('clicked', array($window, 'destroy'));
 $button->show();

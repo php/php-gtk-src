@@ -44,9 +44,12 @@ extern int le_gdk_drag_context;
 extern int le_gtk_accel_group;
 extern int le_gtk_style;
 
+typedef void (*php_gtk_dtor_t)(void *);
+
 typedef struct _php_gtk_object {
 	zend_object zobj;
 	void *obj;
+	php_gtk_dtor_t dtor;
 } php_gtk_object;
 
 static inline GdkAtom php_gdk_atom_get(zval *wrapper)

@@ -120,7 +120,7 @@ void php_%s_register_classes(void)
 
 //$register_class_tpl = "\t%s = zend_register_internal_class_ex(&ce, %s, NULL TSRMLS_CC);\n";
 $register_class_tpl = "
-	%s = php_gtk_register_class(\"%s\", php_%s_functions, %s, %d TSRMLS_CC);\n";
+	%s = php_gtk_register_class(\"%s\", php_%s_functions, %s, %d, 0 TSRMLS_CC);\n";
 
 $class_entry_tpl = "PHP_GTK_EXPORT_CE(%s);\n";
 
