@@ -1,3 +1,36 @@
+2001-03-12  James Moore  <James@phpuk.org>
+
+    * docs/en/chapters/intro.xml: Correcting another two typos.
+
+    * docs/en/chapters/intro.xml:
+    Correcting usage of GTK and GTK+ as well as a typo.
+
+    * docs/en/chapters/intro.xml: Correcting a *cough* y2k *cough* bug ;)
+
+    * docs/en/chapters/intro.xml
+      docs/en/chapters/widget.xml:
+    php-gtk -> PHP-GTK, restoring some white space
+
+    * docs/en/chapters/install.xml:
+    Correcting some of the XML. Making manual build again.
+
+2001-03-12  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/global.ent: added an entity
+
+    * docs/en/bookinfo.xml
+      docs/en/classes/gtkobject.xml
+      docs/en/classes/gtkwindow.xml
+      docs/en/chapters/widget.xml
+      docs/en/chapters/intro.xml: general clean-up
+
+    * docs/en/chapters/install.xml:
+    Altered Win32 install instructions to reflect version 2 readme
+
+2001-03-12  Andrei Zmievski  <andrei@ispi.net>
+
+    * test/gtk.php: CList example. Not finished yet.
+
 2001-03-10  James Moore  <James@phpuk.org>
 
     * docs/Makefile.in
