@@ -12,7 +12,8 @@ AC_ARG_WITH(gdk-pixbuf-prefix,[  --with-gdk-pixbuf-prefix=PFX   Prefix where GDK
             gdk_pixbuf_prefix="$withval", gdk_pixbuf_prefix="")
 AC_ARG_WITH(gdk-pixbuf-exec-prefix,[  --with-gdk-pixbuf-exec-prefix=PFX Exec prefix where GDK_PIXBUF is installed (optional)],
             gdk_pixbuf_exec_prefix="$withval", gdk_pixbuf_exec_prefix="")
-AC_ARG_ENABLE(gdk_pixbuftest, [  --disable-gdk_pixbuftest       Do not try to compile and run a test GDK_PIXBUF program],
+AC_ARG_ENABLE(gdk_pixbuftest, [  --disable-gdk_pixbuftest       Do not try to compile and run a test GDK_PIXBUF program
+],
 		    , enable_gdk_pixbuftest=yes)
 
   if test x$gdk_pixbuf_exec_prefix != x ; then
