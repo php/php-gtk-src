@@ -1,3 +1,343 @@
+2001-07-13  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/gtk.defs: Reset button is not even shown in the dialog.
+
+2001-07-12  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/gtk.overrides:
+    Fix a bug that didn't allow passing empty label to GtkMenuItem() constructor.
+
+2001-07-11  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/gdk.defs
+      generator/gdk.overrides
+      generator/gtk-extrafuncs.defs
+      generator/gtk.defs
+      generator/gtk.overrides
+      generator/libglade.defs
+      generator/libglade.overrides: These files now live in ext/.
+
+2001-07-10  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/php_gtk.dsp
+      win32/php_win.c
+      win32/scheme.dsp: Moving generated files to ext\.. directories
+
+2001-07-10  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/make_reg_items.php: Not needed anymore.
+
+    * main/php_gtk.c: Pass EG to startup function.
+
+    * ext/libglade/config.m4: Correct configure option doc.
+
+2001-07-10  Frank M. Kromann  <frank@frontbase.com>
+
+    * main/php_gtk_ext.w32.c: Adding windows specific file
+
+2001-07-10  Andrei Zmievski  <andrei@ispi.net>
+
+    * build2/.cvsignore: *** empty log message ***
+
+    * build2/build.mk
+      build2/build2.mk
+      buildconf
+      ext/gtk+/php_gtk+.c:
+    Adjust some file locations and remove redundant ELS_FETCH().
+
+2001-07-10  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/php_gtk.dsp
+      win32/php_win.dsp
+      win32/scheme.dsp: Fixing build on win32 with the new build system
+
+    * ext/gtk+/php_gtk+.c: Adding call to ELS_FETCH()
+
+    * ext/gtk+/php_gtk+.h: Adding prototypes for _register functions
+
+2001-07-10  Andrei Zmievski  <andrei@ispi.net>
+
+    * main/php_gtk.h
+      ext/gtk+/php_gtk+.c
+      ext/libglade/php_libglade.c:
+    Pass module number and EG to constant registering functions.
+
+    * NEWS: *** empty log message ***
+
+    * main/php_gtk_types.c
+      main/php_gtk_util.c
+      ext/libglade/.cvsignore
+      ext/libglade/Makefile.in
+      ext/libglade/config.m4
+      ext/libglade/libglade.defs
+      ext/libglade/libglade.overrides
+      ext/libglade/php_libglade.c
+      ext/libglade/php_libglade.h
+      generator/generator.php
+      generator/scheme.php
+      generator/templates.php
+      main/.cvsignore
+      main/Makefile.in
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_ext.c.in
+      main/php_gtk_module.h
+      main/php_gtk_object.c
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtk-extrafuncs.defs
+      ext/gtk+/gtk.defs
+      ext/gtk+/gdk.defs
+      ext/.cvsignore
+      ext/Makefile.in
+      ext/gtk+/.cvsignore
+      ext/gtk+/Makefile.in
+      ext/gtk+/config.m4
+      build2/build.mk
+      build2/build2.mk
+      build2/config-stubs
+      build2/genext.sh
+      build2/print_include.awk
+      buildconf
+      config.m4
+      php_gtk.m4
+      Makefile.in
+      TODO:
+    This implements a new build system for PHP-GTK. It is based on PHP build
+    system and is necessary in order to keep adding support for GtkObject
+    based extensions such as GtkHtml, Bonobo, GtkScintilla and others.
+
+    The only currently implemented extensions are Gtk+ and libglade. Each
+    extension (except for Gtk+, obviously) can be enabled or disabled
+    from the 'configure' command-line.
+
+    The new build process for CVS versions of PHP-GTK is such:
+
+    ./buildconf
+    ./configure
+    make
+
+    * main/.cvsignore: *** empty log message ***
+
+2001-06-29  Andrei Zmievski  <andrei@ispi.net>
+
+    * main/php_gtk_ext.c.in
+      main/php_gtk.h
+      main/php_gtk.c
+      main/Makefile.in
+      generator/generator.php
+      ext/libglade/php_libglade.c
+      ext/libglade/Makefile.in
+      ext/gtk+/php_gtk+_types.c: Yay, it all builds and works!
+
+    * ext/gtk+/php_gtk+_types.c: New file.
+
+    * ext/gtk+/php_gtk+.c
+      ext/gtk+/gtk_types.c
+      ext/gtk+/gtk.overrides
+      ext/gtk+/Makefile.in
+      config.m4: Yay, it all builds and works!
+
+    * main/print_include.awk
+      main/genext.sh
+      main/php_gtk.c
+      main/Makefile.in
+      ext/libglade/php_libglade.h
+      config.m4
+      ext/gtk+/php_gtk+.h: *** empty log message ***
+
+2001-06-13  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/php_gtk+.h: test
+
+    * main/genext.sh
+      main/php_gtk_ext.c.in
+      main/print_include.awk: *** empty log message ***
+
+    * main/genext.sh
+      main/php_gtk_ext.c.in
+      main/print_include.awk: New file.
+
+2001-06-08  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/gtk_types.c
+      ext/gtk+/php_gtk+.c
+      main/Makefile.in
+      main/build2.mk
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_module.h
+      config.m4
+      ext/libglade/Makefile.in
+      ext/gtk+/Makefile.in: *** empty log message ***
+
+2001-06-04  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/libglade/php_libglade.c
+      ext/libglade/php_libglade.h: *** empty log message ***
+
+    * ext/libglade/php_libglade.h: New file.
+
+    * ext/libglade/Makefile.in
+      ext/libglade/config.m4
+      ext/libglade/php_libglade.c
+      main/build2.mk
+      main/php_gtk.h
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/Makefile.in
+      ext/gtk+/php_gtk+.h
+      ext/libglade/libglade.overrides
+      generator/generator.php
+      generator/templates.php
+      main/Makefile.in: *** empty log message ***
+
+    * ext/gtk+/php_gtk+.h: New file.
+
+2001-06-01  Andrei Zmievski  <andrei@ispi.net>
+
+    * main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_object.c
+      ext/gtk+/php_gtk+.c
+      TODO
+      config.m4
+      ext/gtk+/Makefile.in
+      ext/gtk+/gtk_types.c
+      generator/scheme.php
+      main/php_gtk_types.c: *** empty log message ***
+
+    * ext/gtk+/gtk_types.c: New file.
+
+    * ext/libglade/.cvsignore
+      ext/gtk+/.cvsignore
+      ext/libglade/config.m4
+      ext/gtk+/config.m4
+      php_gtk.m4: *** empty log message ***
+
+2001-06-01  James Moore  <James@phpuk.org>
+
+    * generator/doc_templates.php
+      generator/docgen.php
+      generator/docmerger.php:
+    Adding the merger to the documentation generator.
+
+2001-06-01  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/Makefile.in
+      ext/libglade/Makefile.in
+      php_gtk.m4: Damn i think i found a bug in PHP.
+
+    * ext/gtk+/Makefile.in
+      ext/gtk+/config.m4
+      generator/generator.php
+      generator/scheme.php
+      php_gtk.m4: *** empty log message ***
+
+2001-05-31  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/Makefile.in
+      Makefile.in
+      php_gtk.m4: Shape up, baby.
+
+    * .cvsignore
+      main/build.mk
+      main/build2.mk
+      main/php_gtk.c
+      main/php_gtk.h: Break the system a bit more.
+
+2001-05-30  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/libglade/.cvsignore: *** empty log message ***
+
+    * ext/libglade/.cvsignore: New file.
+
+    * ext/.cvsignore
+      ext/gtk+/.cvsignore: *** empty log message ***
+
+    * ext/.cvsignore
+      ext/gtk+/.cvsignore: New file.
+
+    * buildconf
+      config.m4
+      ext/gtk+/config.m4
+      ext/libglade/config.m4
+      main/build.mk
+      main/build2.mk
+      main/config-stubs
+      php_gtk.m4: *** empty log message ***
+
+    * buildconf
+      main/build.mk
+      main/build2.mk
+      main/config-stubs: New file.
+
+    * ext/gtk+/Makefile.in
+      ext/gtk+/config.m4
+      ext/gtk+/gdk.defs
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtk-extrafuncs.defs
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.c
+      ext/libglade/Makefile.in
+      ext/libglade/config.m4
+      ext/libglade/libglade.defs
+      ext/libglade/libglade.overrides
+      ext/libglade/php_libglade.c: *** empty log message ***
+
+    * ext/gtk+/Makefile.in
+      ext/gtk+/config.m4
+      ext/gtk+/gdk.defs
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtk-extrafuncs.defs
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.c
+      ext/libglade/Makefile.in
+      ext/libglade/config.m4
+      ext/libglade/libglade.defs
+      ext/libglade/libglade.overrides
+      ext/libglade/php_libglade.c: New file.
+
+    * .cvsignore
+      ext/Makefile.in: *** empty log message ***
+
+    * ext/Makefile.in: New file.
+
+    * config.m4
+      php_gtk.m4: *** empty log message ***
+
+    * php_gtk.m4: New file.
+
+    * main/Makefile.in
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_module.h
+      main/php_gtk_object.c
+      main/php_gtk_types.c
+      main/php_gtk_util.c
+      main/.cvsignore
+      Makefile.in
+      config.m4: *** empty log message ***
+
+2001-05-23  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS
+      generator/gtk.overrides: Implemented GtkCTree::node_get_pixmap().
+
+2001-05-23  Frank M. Kromann  <frank@frontbase.com>
+
+    * generator/gtk.overrides: Nuke compiler warning
+
+2001-05-23  Andrei Zmievski  <andrei@ispi.net>
+
+    * test/gtk.php
+      NEWS
+      generator/gtk.overrides: Added GtkCTree::get_node_info().
+
 2001-05-23  Andrei Zmievski  <andrei@ispi.net>
 
     * NEWS
