@@ -100,10 +100,17 @@ $polygon->connect('event','canvas_event');
 $window->add($canvas);
 
 $window->show_all();
+$dragging = false;
+
+$canvas->set_pixels_per_unit(.5);
+print_r($canvas->w2c(100,200));
+print_r($canvas->c2w(100,200));
+print_r($canvas->window_to_world(100,200));
+print_r($canvas->world_to_window(100,200));
 
 gtk::main();
 
-$dragging = false;
+
 
  
 

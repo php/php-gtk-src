@@ -22,7 +22,9 @@ ignore   gtk_canvas_item_i2c_affine
 ignore   gtk_canvas_w2c_affine
 %%
 ignore   gtk_canvas_item_set
-
+%%
+ignore gtk_canvas_w2c_d
+/* it's not needed- you dont need floating point pixel coords! */ 
 
 %%
 override gtk_canvas_item_reparent
@@ -573,4 +575,84 @@ PHP_FUNCTION(gtk_canvas_aa_get_type)
 
 
 
+%%
+override gtk_canvas_w2c
 
+
+PHP_FUNCTION(gtk_canvas_w2c)
+{
+	double wx, wy;
+	int rx, ry;
+	
+	
+	
+	
+	NOT_STATIC_METHOD();
+ 
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "dd", &wx, &wy))
+		return;
+	
+	gtk_canvas_w2c(GTK_CANVAS(PHP_GTK_GET(this_ptr)), (float)wx, (float)wy, &rx, &ry);
+	
+	array_init(return_value);
+	add_next_index_long(return_value, (long)rx);
+	add_next_index_long(return_value, (long)ry);
+	 
+}
+
+
+%%
+override gtk_canvas_c2w
+
+PHP_FUNCTION(gtk_canvas_c2w)
+{
+	long cx, cy;
+	double rx, ry;
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &cx, &cy))
+		return;
+
+	gtk_canvas_c2w(GTK_CANVAS(PHP_GTK_GET(this_ptr)), (int)cx, (int)cy, &rx, &ry);
+	array_init(return_value);
+	add_next_index_double(return_value, rx);
+	add_next_index_double(return_value, ry);
+}
+
+%%
+override gtk_canvas_window_to_world
+
+PHP_FUNCTION(gtk_canvas_window_to_world)
+{
+	double winx, winy;
+	double rx, ry;
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "dd", &winx, &winy))
+		return;
+
+	gtk_canvas_window_to_world(GTK_CANVAS(PHP_GTK_GET(this_ptr)), (float)winx, (float)winy, &rx, &ry);
+	array_init(return_value);
+	add_next_index_double(return_value, rx);
+	add_next_index_double(return_value, ry);
+}
+%%
+override gtk_canvas_world_to_window
+
+PHP_FUNCTION(gtk_canvas_world_to_window)
+{
+	double worldx, worldy;
+	double rx, ry;
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "dd", &worldx, &worldy))
+		return;
+
+	gtk_canvas_world_to_window(GTK_CANVAS(PHP_GTK_GET(this_ptr)), (float)worldx, (float)worldy, &rx, &ry);
+	array_init(return_value);
+	add_next_index_double(return_value, rx);
+	add_next_index_double(return_value, ry);
+}
+
+ 
