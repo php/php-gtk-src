@@ -5,6 +5,9 @@ GUI applications. This is the first such extension of this kind and one of the
 goals behind it was to prove that PHP is a capable general-purpose scripting
 language that is suited for more than just Web applications.
 
+This extension will _not_ allow you to display GTK+ programs in a Web browser.
+It is intended for creating standalone GUI applications.
+
 
 Requirements
 ============
