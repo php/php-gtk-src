@@ -159,7 +159,7 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 	le_gtk_object = zend_register_list_destructors_ex(release_gtk_object_rsrc, NULL, "GtkObject", module_number);
 
 	php_gtk_handlers = zend_get_std_object_handlers();
-	php_gtk_handlers->get_property_zval_ptr = NULL;
+	/* php_gtk_handlers->get_property_zval_ptr = NULL; */
 
 	register_exception(TSRMLS_C);
 
