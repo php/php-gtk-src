@@ -139,7 +139,7 @@ static zval **php_gtk_get_property_ptr_ptr(zval *object, zval *member TSRMLS_DC)
 	return zend_object_create_proxy(object, member TSRMLS_CC);
 }
 
-static void php_gtk_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
+void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
 {
 	php_gtk_object *wrapper;
 	zval tmp_member;
@@ -239,16 +239,12 @@ static zend_object_value phpg_create_object(zend_class_entry *ce TSRMLS_DC)
 	php_gtk_object *object;
 	prop_desc_t *prop_desc;
 
-	zov.handlers = php_gtk_handlers;
-	zov.handlers->read_property         = phpg_read_property;
-	zov.handlers->get_properties        = phpg_get_properties;
-	zov.handlers->get_property_ptr_ptr  = php_gtk_get_property_ptr_ptr;
-	zov.handlers->write_property 		= php_gtk_write_property;
-
 	object = emalloc(sizeof(php_gtk_object));
 	phpg_init_object(object, ce);
 	object->obj  = NULL;
 	object->dtor = NULL;
+
+	zov.handlers = php_gtk_handlers;
 	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) php_gtk_destroy_object, NULL TSRMLS_CC);
 
 	return zov;
@@ -1248,6 +1244,7 @@ void php_gtk_ret_from_value(GtkArg *ret, zval *value)
 
 
 /* Callback registry ? */
+/*
 PHP_GTK_API zval php_gtk_get_property(zend_property_reference *property_reference)
 {
 	zval foo;
@@ -1259,6 +1256,7 @@ PHP_GTK_API int php_gtk_set_property(zend_property_reference *property_reference
 {
 	return FAILURE;
 }
+*/
 
 PHP_GTK_API void phpg_register_prop_getter(zend_class_entry *ce, prop_getter_t getter)
 {

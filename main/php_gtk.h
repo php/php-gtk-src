@@ -156,8 +156,9 @@ static inline void php_gtk_set_object(zval *zobj, void *obj, php_gtk_dtor_t dtor
 	}
 }
 
-HashTable* phpg_get_properties(zval *object TSRMLS_DC);
 zval *phpg_read_property(zval *object, zval *member, zend_bool silent TSRMLS_DC);
+void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC);
+HashTable* phpg_get_properties(zval *object TSRMLS_DC);
 
 PHP_GTK_API void *php_gtk_get_object(zval *wrapper);
 PHP_GTK_API int php_gtk_get_simple_enum_value(zval *enum_val, int *result);
@@ -173,9 +174,11 @@ int php_gtk_arg_from_value(GtkArg *arg, zval *value);
 zval *php_gtk_ret_as_value(GtkArg *ret);
 void php_gtk_ret_from_value(GtkArg *ret, zval *value);
 int php_gtk_get_flag_value(GType flag_type, zval *flag_val, int *result);
+/*
 PHP_GTK_API zval php_gtk_get_property(zend_property_reference *property_reference);
 PHP_GTK_API int php_gtk_set_property(zend_property_reference *property_reference, zval *value);
 void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference *property_reference);
+*/
 
 PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name, function_entry *class_functions, zend_class_entry *parent, prop_info_t *prop_info, create_object_func_t create_obj_func TSRMLS_DC);
 PHP_GTK_API void phpg_init_object(void *pobj, zend_class_entry *ce);

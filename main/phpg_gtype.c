@@ -58,15 +58,12 @@ static zend_object_value gtype_create_object(zend_class_entry *ce TSRMLS_DC)
 	zend_object_value zov;
 	php_gtype_t *object;
 
-	zov.handlers = zend_get_std_object_handlers();
-	zov.handlers->read_property  = phpg_read_property;
-	zov.handlers->get_properties = phpg_get_properties;
-
 	object = emalloc(sizeof(php_gtype_t));
 	phpg_init_object(object, ce);
 
 	object->type = 0;
 
+	zov.handlers = php_gtk_handlers;
 	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) gtype_destroy_object, NULL TSRMLS_CC);
 
 	return zov;
