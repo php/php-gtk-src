@@ -2069,4 +2069,15 @@
   (parameter (type-and-name const-char* language))
 )
 
+(method set_wrap_mode
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_set_wrap_mode)
+  (return-type none)
+  (parameter (type-and-name int wrap_mode))
+)
 
+(method get_wrap_mode
+  (of-object Scintilla (Gtk))
+  (c-name gtk_scintilla_get_wrap_mode)
+  (return-type int)
+)
