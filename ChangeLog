@@ -1,3 +1,105 @@
+2001-05-01  James Moore  <James@phpuk.org>
+
+    * docs/manual.xml.in: Whitespace
+
+    * docs/manual.xml.in: - Order the classes alphabetically.
+
+2001-05-01  Andrei Zmievski  <andrei@ispi.net>
+
+    * docs/.cvsignore
+      docs/stylesheets/xsl/.cvsignore: Ignore generated files.
+
+    * docs/configure.in:
+    Revert the previous change but fix up the Docbook paths.
+
+    * docs/configure.in: Fix detection of saxon.jar.
+
+    * docs/en/classes/gtkaccellabel.xml
+      docs/en/classes/gtkalignment.xml
+      docs/en/classes/gtkarrow.xml
+      docs/en/classes/gtkaspectframe.xml
+      docs/en/classes/gtkbin.xml
+      docs/en/classes/gtkbox.xml
+      docs/en/classes/gtkbutton.xml
+      docs/en/classes/gtkbuttonbox.xml
+      docs/en/classes/gtkcheckbutton.xml
+      docs/en/classes/gtkcheckmenuitem.xml
+      docs/en/classes/gtkcolorselection.xml
+      docs/en/classes/gtkcolorselectiondialog.xml
+      docs/en/classes/gtkcombo.xml
+      docs/en/classes/gtkcontainer.xml
+      docs/en/classes/gtkdata.xml
+      docs/en/classes/gtkdialog.xml
+      docs/en/classes/gtkeventbox.xml
+      docs/en/classes/gtkfileselection.xml
+      docs/en/classes/gtkfixed.xml
+      docs/en/classes/gtkfontselection.xml
+      docs/en/classes/gtkfontselectiondialog.xml
+      docs/en/classes/gtkframe.xml
+      docs/en/classes/gtkgammacurve.xml
+      docs/en/classes/gtkhandlebox.xml
+      docs/en/classes/gtkhbox.xml
+      docs/en/classes/gtkhbuttonbox.xml
+      docs/en/classes/gtkhpaned.xml
+      docs/en/classes/gtkimage.xml
+      docs/en/classes/gtkinputdialog.xml
+      docs/en/classes/gtkinvisible.xml
+      docs/en/classes/gtkitem.xml
+      docs/en/classes/gtkitemfactory.xml
+      docs/en/classes/gtklabel.xml
+      docs/en/classes/gtklayout.xml
+      docs/en/classes/gtklistitem.xml
+      docs/en/classes/gtkmenubar.xml
+      docs/en/classes/gtkmenuitem.xml
+      docs/en/classes/gtkmenushell.xml
+      docs/en/classes/gtkmisc.xml
+      docs/en/classes/gtkobject.xml
+      docs/en/classes/gtkoptionmenu.xml
+      docs/en/classes/gtkpacker.xml
+      docs/en/classes/gtkpaned.xml
+      docs/en/classes/gtkpixmap.xml
+      docs/en/classes/gtkplug.xml
+      docs/en/classes/gtkradiobutton.xml
+      docs/en/classes/gtkradiomenuitem.xml
+      docs/en/classes/gtkscrolledwindow.xml
+      docs/en/classes/gtksocket.xml
+      docs/en/classes/gtkstatusbar.xml
+      docs/en/classes/gtktearoffmenuitem.xml
+      docs/en/classes/gtktipsquery.xml
+      docs/en/classes/gtktogglebutton.xml
+      docs/en/classes/gtktreeitem.xml
+      docs/en/classes/gtkvbox.xml
+      docs/en/classes/gtkvbuttonbox.xml
+      docs/en/classes/gtkviewport.xml
+      docs/en/classes/gtkvpaned.xml
+      docs/en/classes/gtkwidget.xml
+      docs/en/classes/gtkwindow.xml
+      docs/en/appendix/license.xml
+      docs/en/bookinfo.xml
+      docs/en/chapters/install.xml
+      docs/en/chapters/intro.xml
+      docs/en/chapters/widget.xml
+      docs/de/appendix/license.xml
+      docs/de/bookinfo.xml
+      docs/de/chapters/install.xml
+      docs/de/chapters/intro.xml
+      docs/de/chapters/widget.xml
+      docs/de/classes/gtkaccellabel.xml
+      docs/de/classes/gtkarrow.xml
+      docs/de/classes/gtkbin.xml
+      docs/de/classes/gtkcontainer.xml
+      docs/de/classes/gtkdata.xml
+      docs/de/classes/gtkitemfactory.xml
+      docs/de/classes/gtklabel.xml
+      docs/de/classes/gtkmisc.xml
+      docs/de/classes/gtkobject.xml
+      docs/de/classes/gtktipsquery.xml
+      docs/de/classes/gtkwidget.xml
+      docs/de/classes/gtkwindow.xml: * Converted all tabs to spaces
+    * Reindented all the files to have 1 space indent from the parent line.
+
+    Let's keep it this way, people.
+
 2001-04-30  Steph Fox  <steph.fox@btinternet.com>
 
     * docs/en/classes/gtkaspectframe.xml
