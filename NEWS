@@ -1,3 +1,4 @@
+    - added support for GtkScintilla, a text-editing widget. (Andrei)
     - implemented GladeXML methods signal_connect_object() and
       signal_autoconnect_object(). (Andrei)
     - changed PHP-visible extension name from 'gtk' to 'php-gtk'. (Andrei)
