@@ -2,7 +2,7 @@ dnl $Id$
 dnl config.m4 for imlib module
 
 PHP_GTK_ARG_ENABLE(imlib,for Gdkimlib support,
-[  --enable-imlib         Enable Gdkimlib support])
+[  --enable-imlib          Enable Gdkimlib support])
 
 if test "$PHP_GTK_IMLIB" != "no"; then
   for x in /usr /usr/local; do
