@@ -9,6 +9,7 @@
 * Add missing field defs to gtk.defs.
 * Document limitation of not being able to assign color components directly in
   cascaded overloads, i.e. $style->base[GTK_STATE_NORMAL]->red = 55555.
+* Make <gdk/gdkkeysyms.h> available as constants and document them.
 
 In PHP
 ------
