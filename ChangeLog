@@ -1,3 +1,13 @@
+2005-03-17  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/Makefile.frag
+      generator/generator.php:
+      Finally make our generation display and logging better. Too many people
+      were apparently getting confused by "Could not write function..".
+
+    * main/phpg_gboxed.c:
+      Fix typo.
+
 2005-03-16  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/php_gtk.c:
