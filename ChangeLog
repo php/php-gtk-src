@@ -1,3 +1,12 @@
+2005-03-18  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      Register priority constants.
+
+    * main/php_gtk.h
+      main/phpg_support.c:
+      Add phpg_register_int_constant().
+
 2005-03-17  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/Makefile.frag
