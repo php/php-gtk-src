@@ -1,6 +1,6 @@
 ;; -*- scheme -*-
 ; object definitions ...
-(object Combonutton
+(object Combobutton
   (in-module Gtk)
   (parent Button (Gtk))
   (c-name GtkCombobutton)
