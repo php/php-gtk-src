@@ -326,6 +326,8 @@ zval *php_gtk_arg_as_value(GtkArg *arg)
 				value = php_gdk_colormap_new(GTK_VALUE_BOXED(*arg));
 			else if (arg->type == GTK_TYPE_GDK_VISUAL)
 				value = php_gdk_visual_new(GTK_VALUE_BOXED(*arg));
+			else if (arg->type == GTK_TYPE_GDK_FONT)
+				value = php_gdk_font_new(GTK_VALUE_BOXED(*arg));
 			else
 				ZVAL_NULL(value);
 			break;
@@ -434,6 +436,11 @@ void php_gtk_ret_from_value(GtkArg *ret, zval *value)
 			} else if (ret->type == GTK_TYPE_GDK_VISUAL) {
 				if (php_gtk_check_class(value, gdk_visual_ce))
 					*GTK_RETLOC_BOXED(*ret) = PHP_GDK_VISUAL_GET(value);
+				else
+					*GTK_RETLOC_BOXED(*ret) = NULL;
+			} else if (ret->type == GTK_TYPE_GDK_FONT) {
+				if (php_gtk_check_class(value, gdk_font_ce))
+					*GTK_RETLOC_BOXED(*ret) = PHP_GDK_FONT_GET(value);
 				else
 					*GTK_RETLOC_BOXED(*ret) = NULL;
 			} else

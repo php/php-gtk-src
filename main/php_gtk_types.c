@@ -30,6 +30,7 @@ int le_gdk_color;
 int le_gdk_colormap;
 int le_gdk_cursor;
 int le_gdk_visual;
+int le_gdk_font;
 
 zend_class_entry *gdk_event_ce;
 zend_class_entry *gdk_window_ce;
@@ -38,6 +39,7 @@ zend_class_entry *gdk_colormap_ce;
 zend_class_entry *gdk_atom_ce;
 zend_class_entry *gdk_cursor_ce;
 zend_class_entry *gdk_visual_ce;
+zend_class_entry *gdk_font_ce;
 
 /* GdkEvent */
 zval *php_gdk_event_new(GdkEvent *obj)
@@ -279,20 +281,16 @@ zval *php_gdk_window_new(GdkWindow *obj)
 	return result;
 }
 
-static void gdk_window_get_property(zval *result, zval *object, zval *property)
+static void gdk_window_get_property(zval *result, zval *object, zend_llist_element **element)
 {
 	zval *value;
 	GdkWindow *win = PHP_GDK_WINDOW_GET(object);
 	gint x, y;
 	GdkModifierType p_mask;
-	char *prop_name;
-
-	ZVAL_NULL(result);
-	if (Z_TYPE_P(property) == IS_LONG)
-		return;
-	else
-		prop_name = Z_STRVAL_P(property);
+	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 	
+	ZVAL_NULL(result);
+
 	if (!strcmp(prop_name, "width")) {
 		gdk_window_get_size(win, &x, NULL);
 		ZVAL_LONG(result, x);
@@ -401,17 +399,12 @@ zval *php_gdk_color_new(GdkColor *obj)
 	return result;
 }
 
-static void gdk_color_get_property(zval *result, zval *object, zval *property)
+static void gdk_color_get_property(zval *result, zval *object, zend_llist_element **element)
 {
 	GdkColor *color = PHP_GDK_COLOR_GET(object);
-	char *prop_name;
+	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	ZVAL_NULL(result);
-	if (Z_TYPE_P(property) == IS_LONG)
-		return;
-	else
-		prop_name = Z_STRVAL_P(property);
-
 
 	if (!strcmp(prop_name, "red")) {
 		ZVAL_LONG(result, color->red);
@@ -509,22 +502,32 @@ static void release_gdk_colormap_rsrc(zend_rsrc_list_entry *rsrc)
 	gdk_colormap_unref(obj);
 }
 
-static void gdk_colormap_get_property(zval *result, zval *object, zval *property)
+static void gdk_colormap_get_property(zval *result, zval *object, zend_llist_element **element)
 {
 	GdkColormap *cmap = PHP_GDK_COLORMAP_GET(object);
+	zend_overloaded_element *property = (zend_overloaded_element *)(*element)->data;
+	zend_llist_element *next;
+	char *prop_name = Z_STRVAL(property->element);
 	int prop_index;
 
 	ZVAL_NULL(result);
-	if (Z_TYPE_P(property) == IS_STRING)
-		return;
-	else
-		prop_index = Z_LVAL_P(property);
-	if (prop_index < 0 || prop_index >= cmap->size) {
-		php_error(E_WARNING, "colormap index out of range");
-		return;
-	}
 
-	result = php_gdk_color_new(&cmap->colors[prop_index]);
+	if (!strcmp(prop_name, "colors")) {
+		next = (*element)->next;
+		if (next) {
+			property = (zend_overloaded_element *)next->data;
+			if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
+				*element = next;
+				prop_index = Z_LVAL(property->element);
+				if (prop_index < 0 || prop_index >= cmap->size) {
+					php_error(E_WARNING, "colormap index out of range");
+					return;
+				}
+				*result = *php_gdk_color_new(&cmap->colors[prop_index]);
+			}
+		} else {
+		}
+	}
 }
 
 
@@ -578,16 +581,12 @@ static void release_gdk_cursor_rsrc(zend_rsrc_list_entry *rsrc)
 	gdk_cursor_destroy(obj);
 }
 
-static void gdk_cursor_get_property(zval *result, zval *object, zval *property)
+static void gdk_cursor_get_property(zval *result, zval *object, zend_llist_element **element)
 {
 	GdkCursor *cursor = PHP_GDK_CURSOR_GET(object);
-	char *prop_name;
+	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	ZVAL_NULL(result);
-	if (Z_TYPE_P(property) == IS_LONG)
-		return;
-	else
-		prop_name = Z_STRVAL_P(property);
 
 	if (!strcmp(prop_name, "type")) {
 		ZVAL_LONG(result, cursor->type);
@@ -629,16 +628,12 @@ static void release_gdk_visual_rsrc(zend_rsrc_list_entry *rsrc)
 	gdk_visual_unref(obj);
 }
 
-static void gdk_visual_get_property(zval *result, zval *object, zval *property)
+static void gdk_visual_get_property(zval *result, zval *object, zend_llist_element **element)
 {
 	GdkVisual *visual = PHP_GDK_VISUAL_GET(object);
-	char *prop_name;
+	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	ZVAL_NULL(result);
-	if (Z_TYPE_P(property) == IS_LONG)
-		return;
-	else
-		prop_name = Z_STRVAL_P(property);
 
 	if (!strcmp(prop_name, "type")) {
 		ZVAL_LONG(result, visual->type);
@@ -672,6 +667,74 @@ static void gdk_visual_get_property(zval *result, zval *object, zval *property)
 }
 
 
+/* GdkFont */
+PHP_FUNCTION(gdk_font_width)
+{
+	
+}
+
+PHP_FUNCTION(gdk_font_height)
+{
+}
+
+PHP_FUNCTION(gdk_font_measure)
+{
+}
+
+PHP_FUNCTION(gdk_font_extents)
+{
+}
+
+static function_entry php_gdk_font_functions[] = {
+	{"width", 	PHP_FN(gdk_font_width), NULL},
+	{"height", 	PHP_FN(gdk_font_height), NULL},
+	{"measure", PHP_FN(gdk_font_measure), NULL},
+	{"extents",	PHP_FN(gdk_font_extents), NULL},
+	{NULL, NULL, NULL}
+};
+
+zval *php_gdk_font_new(GdkFont *obj)
+{
+	zval *result;
+
+	MAKE_STD_ZVAL(result);
+
+	if (!obj) {
+		ZVAL_NULL(result);
+		return result;
+	}
+
+	object_init_ex(result, gdk_font_ce);
+	gdk_font_ref(obj);
+	php_gtk_set_object(result, obj, le_gdk_font);
+
+	return result;
+}
+
+static void release_gdk_font_rsrc(zend_rsrc_list_entry *rsrc)
+{
+	GdkFont *obj = (GdkFont *)rsrc->ptr;
+	gdk_font_unref(obj);
+}
+
+static void gdk_font_get_property(zval *result, zval *object, zend_llist_element **element)
+{
+	GdkFont *font = PHP_GDK_FONT_GET(object);
+	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
+
+	ZVAL_NULL(result);
+
+	if (!strcmp(prop_name, "type")) {
+		ZVAL_LONG(result, font->type);
+	} else if (!strcmp(prop_name, "ascent")) {
+		ZVAL_LONG(result, font->ascent);
+	} else if (!strcmp(prop_name, "descent")) {
+		ZVAL_LONG(result, font->descent);
+	}
+}
+
+
+
 /* Generic get/set property handlers. */
 static zval php_gtk_get_property(zend_property_reference *property_reference)
 {
@@ -682,23 +745,25 @@ static zval php_gtk_get_property(zend_property_reference *property_reference)
 
 	for (element=property_reference->elements_list->head; element; element=element->next) {
 		overloaded_property = (zend_overloaded_element *) element->data;
-		if ((Z_TYPE_P(overloaded_property) == OE_IS_OBJECT &&
-			Z_TYPE(overloaded_property->element) == IS_LONG) ||
+		if ((Z_TYPE_P(overloaded_property) != OE_IS_OBJECT ||
+			Z_TYPE(overloaded_property->element) != IS_STRING) ||
 			Z_TYPE_P(object) != IS_OBJECT) {
 			convert_to_null(&result);
 			return result;
 		}
 
 		if (php_gtk_check_class(object, gdk_window_ce)) {
-			gdk_window_get_property(&result, object, &overloaded_property->element);
+			gdk_window_get_property(&result, object, &element);
 		} else if (php_gtk_check_class(object, gdk_color_ce)) {
-			gdk_color_get_property(&result, object, &overloaded_property->element);
+			gdk_color_get_property(&result, object, &element);
 		} else if (php_gtk_check_class(object, gdk_colormap_ce)) {
-			gdk_colormap_get_property(&result, object, &overloaded_property->element);
+			gdk_colormap_get_property(&result, object, &element);
 		} else if (php_gtk_check_class(object, gdk_cursor_ce)) {
-			gdk_cursor_get_property(&result, object, &overloaded_property->element);
+			gdk_cursor_get_property(&result, object, &element);
 		} else if (php_gtk_check_class(object, gdk_visual_ce)) {
-			gdk_visual_get_property(&result, object, &overloaded_property->element);
+			gdk_visual_get_property(&result, object, &element);
+		} else if (php_gtk_check_class(object, gdk_font_ce)) {
+			gdk_font_get_property(&result, object, &element);
 		} else {
 			convert_to_null(&result);
 			return result;
@@ -728,15 +793,17 @@ static int php_gtk_set_property(zend_property_reference *property_reference, zva
 		}
 
 		if (php_gtk_check_class(object, gdk_window_ce)) {
-			gdk_window_get_property(&result, object, &overloaded_property->element);
+			gdk_window_get_property(&result, object, &element);
 		} else if (php_gtk_check_class(object, gdk_color_ce)) {
-			gdk_color_get_property(&result, object, &overloaded_property->element);
+			gdk_color_get_property(&result, object, &element);
 		} else if (php_gtk_check_class(object, gdk_colormap_ce)) {
-			gdk_colormap_get_property(&result, object, &overloaded_property->element);
+			gdk_colormap_get_property(&result, object, &element);
 		} else if (php_gtk_check_class(object, gdk_cursor_ce)) {
-			gdk_cursor_get_property(&result, object, &overloaded_property->element);
+			gdk_cursor_get_property(&result, object, &element);
 		} else if (php_gtk_check_class(object, gdk_visual_ce)) {
-			gdk_visual_get_property(&result, object, &overloaded_property->element);
+			gdk_visual_get_property(&result, object, &element);
+		} else if (php_gtk_check_class(object, gdk_font_ce)) {
+			gdk_font_get_property(&result, object, &element);
 		} else {
 			return FAILURE;
 		}
@@ -765,8 +832,9 @@ void php_gtk_register_types(int module_number)
 	le_gdk_window = zend_register_list_destructors_ex(release_gdk_window_rsrc, NULL, "GdkWindow", module_number);
 	le_gdk_color = zend_register_list_destructors_ex(release_gdk_color_rsrc, NULL, "GdkColor", module_number);
 	le_gdk_colormap = zend_register_list_destructors_ex(release_gdk_colormap_rsrc, NULL, "GdkColormap", module_number);
-	le_gdk_colormap = zend_register_list_destructors_ex(release_gdk_cursor_rsrc, NULL, "GdkCursor", module_number);
+	le_gdk_cursor = zend_register_list_destructors_ex(release_gdk_cursor_rsrc, NULL, "GdkCursor", module_number);
 	le_gdk_visual = zend_register_list_destructors_ex(release_gdk_visual_rsrc, NULL, "GdkVisual", module_number);
+	le_gdk_font = zend_register_list_destructors_ex(release_gdk_font_rsrc, NULL, "GdkFont", module_number);
 
 
 	INIT_CLASS_ENTRY(ce, "gdkevent", NULL);
@@ -789,6 +857,9 @@ void php_gtk_register_types(int module_number)
 	
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkvisual", NULL, NULL, php_gtk_get_property, NULL);
 	gdk_visual_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+
+	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkfont", php_gdk_font_functions, NULL, php_gtk_get_property, NULL);
+	gdk_font_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 }
 
 #endif

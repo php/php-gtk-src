@@ -558,5 +558,6 @@ $matcher->register_boxed('GdkColor', 'gdk_color');
 $matcher->register_boxed('GdkColormap', 'gdk_colormap');
 $matcher->register_boxed('GdkCursor', 'gdk_cursor');
 $matcher->register_boxed('GdkVisual', 'gdk_visual');
+$matcher->register_boxed('GdkFont', 'gdk_font');
 
 ?>
