@@ -34,9 +34,10 @@ function parse($fp)
         $l =0;
 	while ($line = fgets($fp, 4096)) {
                 $l++;
-        if (($l % 100) == 0) {
-            error_log("Loading Line $l");
-        }
+		//used to monitor speed.. (see MEMORY_CACHE email on internals@php.net 30/sept/2003)
+        	//if (($l % 100) == 0) {
+            	//	error_log("Loading Line $l");
+        	//}
 		while (($line = ltrim($line)) != '') {
 			if ($line{0} == '(') {
 				array_push($stack, array());
