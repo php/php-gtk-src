@@ -1117,7 +1117,7 @@ gtk_sqpane_button_press (GtkWidget *widget, GdkEventButton *event)
 			| GDK_BUTTON_RELEASE_MASK,
 			NULL, NULL, event->time);
           sqpane->child1_height += event->y - sqpane->handle_size / 2;
-          sqpane->child1_height = CLAMP (sqpane->child1_height, 0,
+          sqpane->child1_height = CLAMP ((guint16)sqpane->child1_height, 0,
                                   widget->allocation.height - sqpane->handle_size
                                   - 2 * GTK_CONTAINER (sqpane)->border_width);
           gtk_sqpane_vxor_line (sqpane);
@@ -1133,7 +1133,7 @@ gtk_sqpane_button_press (GtkWidget *widget, GdkEventButton *event)
 			| GDK_BUTTON_RELEASE_MASK,
 			NULL, NULL, event->time);
           sqpane->child1_width += event->x - sqpane->handle_size / 2;
-          sqpane->child1_width = CLAMP (sqpane->child1_width, 0,
+          sqpane->child1_width = CLAMP ((guint16)sqpane->child1_width, 0,
                                   widget->allocation.width - sqpane->handle_size
                                   - 2 * GTK_CONTAINER (sqpane)->border_width);
           gtk_sqpane_hxor_line (sqpane);
@@ -1149,11 +1149,11 @@ gtk_sqpane_button_press (GtkWidget *widget, GdkEventButton *event)
 			| GDK_BUTTON_RELEASE_MASK,
 			NULL, NULL, event->time);
           sqpane->child1_width += event->x - sqpane->handle_size / 2;
-          sqpane->child1_width = CLAMP (sqpane->child1_width, 0,
+          sqpane->child1_width = CLAMP ((guint16)sqpane->child1_width, 0,
                                   widget->allocation.width - sqpane->handle_size
                                   - 2 * GTK_CONTAINER (sqpane)->border_width);
           sqpane->child1_height += event->y - sqpane->handle_size / 2;
-          sqpane->child1_height = CLAMP (sqpane->child1_height, 0,
+          sqpane->child1_height = CLAMP ((guint16)sqpane->child1_height, 0,
                                   widget->allocation.height - sqpane->handle_size
                                   - 2 * GTK_CONTAINER (sqpane)->border_width);
           gtk_sqpane_vxor_line (sqpane);
