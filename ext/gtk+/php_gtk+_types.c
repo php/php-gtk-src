@@ -1119,10 +1119,9 @@ static void gdk_color_get_property(zval *return_value, zval *object, char *prop_
 	*result = FAILURE;
 }
 
-static int gdk_color_set_property(zval *object, zend_llist_element **element, zval *value)
+static int gdk_color_set_property(zval *object, char *prop_name, zval *value)
 {
 	GdkColor *color = PHP_GDK_COLOR_GET(object);
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	convert_to_long(value);
 	if (!strcmp(prop_name, "red")) {
@@ -1734,10 +1733,9 @@ static void gdk_gc_get_property(zval *return_value, zval *object, char *prop_nam
 	*result = FAILURE;
 }
 
-static int gdk_gc_set_property(zval *object, zend_llist_element **element, zval *value)
+static int gdk_gc_set_property(zval *object, char *prop_name, zval *value)
 {
 	GdkGC *gc = PHP_GDK_GC_GET(object);
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 	zend_bool type_mismatch = 0;
 	int i;
 	static char *props[] = {
@@ -2345,12 +2343,10 @@ static void gtk_style_get_property(zval *return_value, zval *object, char *prop_
 	*result = FAILURE;
 }
 
-static int style_helper_set(style_array_type type, gpointer array, zval *value, zend_llist_element **element)
+#if 0
+static int style_helper_set(style_array_type type, gpointer array, zval *value, char *prop_name)
 {
 	zend_overloaded_element *property;
-	zend_llist_element *next = (*element)->next;
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
-	int prop_index;
 
 	if (next) {
 		property = (zend_overloaded_element *)next->data;
@@ -2418,11 +2414,11 @@ static int style_helper_set(style_array_type type, gpointer array, zval *value, 
 
 	return SUCCESS;
 }
+#endif
 
-static int gtk_style_set_property(zval *object, zend_llist_element **element, zval *value)
+static int gtk_style_set_property(zval *object, char *prop_name, zval *value)
 {
 	GtkStyle *style = PHP_GTK_STYLE_GET(object);
-	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	if (!strcmp(prop_name, "font")) {
 		if (php_gtk_check_class(value, gdk_font_ce)) {
@@ -2474,37 +2470,41 @@ static int gtk_style_set_property(zval *object, zend_llist_element **element, zv
 			php_error(E_WARNING, "'%s' property should be a GdkColormap", prop_name);
 			return PG_ERROR;
 		}
-	} else if (!strcmp(prop_name, "fg")) {
-		return style_helper_set(STYLE_COLOR_ARRAY, style->fg, value, element);
+	}
+#if 0
+	else if (!strcmp(prop_name, "fg")) {
+		return style_helper_set(STYLE_COLOR_ARRAY, style->fg, value, prop_name);
 	} else if (!strcmp(prop_name, "bg")) {
-		return style_helper_set(STYLE_COLOR_ARRAY, style->bg, value, element);
+		return style_helper_set(STYLE_COLOR_ARRAY, style->bg, value, prop_name);
 	} else if (!strcmp(prop_name, "light")) {
-		return style_helper_set(STYLE_COLOR_ARRAY, style->light, value, element);
+		return style_helper_set(STYLE_COLOR_ARRAY, style->light, value, prop_name);
 	} else if (!strcmp(prop_name, "dark")) {
-		return style_helper_set(STYLE_COLOR_ARRAY, style->dark, value, element);
+		return style_helper_set(STYLE_COLOR_ARRAY, style->dark, value, prop_name);
 	} else if (!strcmp(prop_name, "mid")) {
-		return style_helper_set(STYLE_COLOR_ARRAY, style->mid, value, element);
+		return style_helper_set(STYLE_COLOR_ARRAY, style->mid, value, prop_name);
 	} else if (!strcmp(prop_name, "text")) {
-		return style_helper_set(STYLE_COLOR_ARRAY, style->text, value, element);
+		return style_helper_set(STYLE_COLOR_ARRAY, style->text, value, prop_name);
 	} else if (!strcmp(prop_name, "base")) {
-		return style_helper_set(STYLE_COLOR_ARRAY, style->base, value, element);
+		return style_helper_set(STYLE_COLOR_ARRAY, style->base, value, prop_name);
 	} else if (!strcmp(prop_name, "fg_gc")) {
-		return style_helper_set(STYLE_GC_ARRAY, style->fg_gc, value, element);
+		return style_helper_set(STYLE_GC_ARRAY, style->fg_gc, value, prop_name);
 	} else if (!strcmp(prop_name, "bg_gc")) {
-		return style_helper_set(STYLE_GC_ARRAY, style->bg_gc, value, element);
+		return style_helper_set(STYLE_GC_ARRAY, style->bg_gc, value, prop_name);
 	} else if (!strcmp(prop_name, "light_gc")) {
-		return style_helper_set(STYLE_GC_ARRAY, style->light_gc, value, element);
+		return style_helper_set(STYLE_GC_ARRAY, style->light_gc, value, prop_name);
 	} else if (!strcmp(prop_name, "dark_gc")) {
-		return style_helper_set(STYLE_GC_ARRAY, style->dark_gc, value, element);
+		return style_helper_set(STYLE_GC_ARRAY, style->dark_gc, value, prop_name);
 	} else if (!strcmp(prop_name, "mid_gc")) {
-		return style_helper_set(STYLE_GC_ARRAY, style->mid_gc, value, element);
+		return style_helper_set(STYLE_GC_ARRAY, style->mid_gc, value, prop_name);
 	} else if (!strcmp(prop_name, "text_gc")) {
-		return style_helper_set(STYLE_GC_ARRAY, style->text_gc, value, element);
+		return style_helper_set(STYLE_GC_ARRAY, style->text_gc, value, prop_name);
 	} else if (!strcmp(prop_name, "base_gc")) {
-		return style_helper_set(STYLE_GC_ARRAY, style->base_gc, value, element);
+		return style_helper_set(STYLE_GC_ARRAY, style->base_gc, value, prop_name);
 	} else if (!strcmp(prop_name, "bg_pixmap")) {
-		return style_helper_set(STYLE_PIXMAP_ARRAY, style->bg_pixmap, value, element);
-	} else {
+		return style_helper_set(STYLE_PIXMAP_ARRAY, style->bg_pixmap, value, prop_name);
+	}
+#endif
+	else {
 		return FAILURE;
 	}
 

@@ -78,6 +78,21 @@ static inline zval* invoke_getter(zval *object, char *property)
 	return result_ptr;
 }
 
+static inline int invoke_setter(zval *object, char *property, zval *value)
+{
+	zend_class_entry *ce;
+	prop_setter_t *setter;
+	int found = FAILURE;
+
+	for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
+		if (zend_hash_index_find(&php_gtk_prop_setters, (long)ce, (void **)&setter) == SUCCESS) {
+			found = (*setter)(object, property, value);
+		}
+	}
+
+	return found;
+}
+
 static HashTable* php_gtk_get_properties(zval *object TSRMLS_DC)
 {
 	prop_desc_t *prop_desc;
@@ -113,6 +128,24 @@ static zval **php_gtk_get_property_ptr(zval *object, zval *member TSRMLS_DC)
 
 static void php_gtk_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
 {
+	php_gtk_object *wrapper;
+	zval tmp_member;
+
+ 	if (member->type != IS_STRING) {
+		tmp_member = *member;
+		zval_copy_ctor(&tmp_member);
+		convert_to_string(&tmp_member);
+		member = &tmp_member;
+	}
+
+	wrapper = (php_gtk_object *) zend_object_store_get_object(object TSRMLS_CC);
+	if (invoke_setter(object, Z_STRVAL_P(member), value) == FAILURE) {
+		std_object_handlers.write_property(object, member, value TSRMLS_CC);
+	}
+
+	if (member == &tmp_member) {
+		zval_dtor(member);
+	}
 }
 
 static zval *php_gtk_read_property(zval *object, zval *member, int type TSRMLS_DC)
@@ -176,9 +209,6 @@ static zend_object_value create_php_gtk_object(zend_class_entry *ce TSRMLS_DC)
 PHP_GTK_API zend_class_entry* php_gtk_register_class(const char *class_name, function_entry *class_functions, zend_class_entry *parent, zend_bool have_getter, zend_bool have_setter, char **class_props TSRMLS_DC)
 {
 	zend_class_entry ce, *real_ce;
-    zend_function *function;
-	zend_internal_function zif;
-	zend_function_entry *ptr = class_functions;
 	prop_desc_t prop_desc = { have_getter, have_setter, class_props },
 				*parent_prop_desc;
 
@@ -1125,23 +1155,6 @@ void php_gtk_ret_from_value(GtkArg *ret, zval *value)
 			g_assert_not_reached();
 			break;
 	}
-}
-
-static inline int invoke_setter(zval *object, zval *value, zend_llist_element **element)
-{
-	zend_class_entry *ce;
-	prop_setter_t *setter;
-	int result = FAILURE;
-
-	if (Z_OBJCE_P(object)->handle_property_set) {
-		for (ce = Z_OBJCE_P(object); ce != NULL && result != SUCCESS && result != PG_ERROR; ce = ce->parent) {
-			if (zend_hash_index_find(&php_gtk_prop_setters, (long)ce, (void **)&setter) == SUCCESS) {
-				result = (*setter)(object, element, value);
-			}
-		}
-	}
-
-	return result;
 }
 
 #if 0

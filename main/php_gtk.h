@@ -65,7 +65,7 @@
 #define PG_ERROR -2
 
 typedef void (*prop_getter_t)(zval *return_value, zval *object, char *property, int *result);
-typedef int (*prop_setter_t)(zval *object, zend_llist_element **element, zval *value);
+typedef int (*prop_setter_t)(zval *object, char *property, zval *value);
 
 #define EXT_INIT_ARGS			int module_number TSRMLS_DC
 #define EXT_SHUTDOWN_ARGS		void
