@@ -1,3 +1,7 @@
+2001-10-15  Frank M. Kromann  <frank@frontbase.com>
+
+    * generator/Getopt.php: Fix warning from Getopt.
+
 2001-10-14  Markus Fischer  <mfischer@guru.josefine.at>
 
     * ext/sqpane/gtksqpane.c: Remove Win32 warnings
