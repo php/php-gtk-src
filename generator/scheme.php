@@ -114,7 +114,7 @@ class Defs_Parser {
 	function start_parsing($tree = NULL)
 	{
 		if (isset($this->parse_cache)) {
-			$this = unserialize($this->parse_cache);
+			$this->unserialize($this->parse_cache);
 		} else {
 			if (!isset($tree))
 				$tree = $this->parse_tree;
@@ -124,9 +124,21 @@ class Defs_Parser {
 			if (is_writeable($this->file_path)) {
 				$cache_file = $this->file_path . '/' . $this->file_name . '.cache';
 				$fp = fopen($cache_file, 'w');
-				fwrite($fp, serialize($this));
+				fwrite($fp, $this->serialize());
 				fclose($fp);
 			}
+		}
+	}
+
+	function serialize()
+	{
+		return serialize((array)$this);
+	}
+
+	function unserialize($buffer)
+	{
+		foreach (unserialize($buffer) as $var => $content) {
+			$this->$var = $content;
 		}
 	}
 
@@ -149,7 +161,7 @@ class Defs_Parser {
 
 	function handle_enum($arg)
 	{
-		$enum_def 		= &new Enum_Def($arg);
+		$enum_def 		= new Enum_Def($arg);
 		if (basename($this->file_path) == 'gtk+')
 			$enum_def->simple = false;
 		$this->enums[] 	= &$enum_def;
@@ -158,14 +170,14 @@ class Defs_Parser {
 
 	function handle_flags($arg)
 	{
-		$flag_def 		= &new Flag_Def($arg);
+		$flag_def 		= new Flag_Def($arg);
 		$this->enums[] 	= &$flag_def;
 		$this->c_name[] = &$flag_def->c_name;
 	}
 
 	function handle_function($arg)
 	{
-		$function_def 		= &new Function_Def($arg);
+		$function_def 		= new Function_Def($arg);
 		if (isset($function_def->is_constructor_of))
 			$this->constructors[] = &$function_def;
 		else
@@ -175,21 +187,21 @@ class Defs_Parser {
 
 	function handle_method($arg)
 	{
-		$method_def 		= &new Method_Def($arg);
+		$method_def 		= new Method_Def($arg);
 		$this->methods[] 	= &$method_def;
 		$this->c_name[] 	= &$method_def->c_name;
 	}
 
 	function handle_object($arg)
 	{
-		$object_def			= &new Object_Def($arg);
+		$object_def			= new Object_Def($arg);
 		$this->objects[$object_def->in_module . $object_def->name] = &$object_def;
 		$this->c_name[] 	= &$object_def->c_name;
 	}
 
 	function handle_struct($arg)
 	{
-		$struct_def			= &new Struct_Def($arg);
+		$struct_def			= new Struct_Def($arg);
 		$this->structs[]	= &$struct_def;
 		$this->c_name[] 	= &$struct_def->c_name;
 	}
