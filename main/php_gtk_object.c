@@ -766,8 +766,6 @@ zval php_gtk_get_property_exp(zend_property_reference *property_reference)
 
 		if (found == FAILURE) {
 			ZVAL_NULL(&result);
-			if (element == property_reference->elements_list->tail)
-				return result;
 		}
 		object = result;
 
@@ -801,28 +799,52 @@ int php_gtk_set_property_exp(zend_property_reference *property_reference, zval *
 
 	for (element=property_reference->elements_list->head; element && element!=stop_element; element=element->next) {
 		overloaded_property = (zend_overloaded_element *) element->data;
-		if (Z_TYPE_P(overloaded_property) != OE_IS_OBJECT ||
-			Z_TYPE(overloaded_property->element) != IS_STRING ||
-			(Z_TYPE(object) != IS_OBJECT)) {
-			return FAILURE;
-		}
 
 		found = FAILURE;
-		if (Z_OBJCE(object)->handle_property_get) {
-			for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
-				if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
-					(*getter)(&result, &object, &element, &found);
+		if (Z_TYPE_P(overloaded_property) == OE_IS_OBJECT) {
+			/* Trying to access a property on a non-object. */
+			if (Z_TYPE(object) != IS_OBJECT) {
+				return FAILURE;
+			}
+
+			if (Z_OBJCE(object)->handle_property_get) {
+				for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
+					if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
+						(*getter)(&result, &object, &element, &found);
+					}
 				}
 			}
-		}
-		if (found == FAILURE) {
-			if (zend_hash_find(Z_OBJPROP(object),
+			if (found == FAILURE &&
+				(found = zend_hash_find(Z_OBJPROP(object),
 							   Z_STRVAL(overloaded_property->element),
 							   Z_STRLEN(overloaded_property->element)+1,
-							   (void **)&prop_result) == SUCCESS)
+							   (void **)&prop_result)) == SUCCESS) {
 				result = **prop_result;
-			else
+			}
+		} else if (Z_TYPE_P(overloaded_property) == OE_IS_ARRAY) {
+			/* Trying to access index on a non-array. */
+			if (Z_TYPE(object) != IS_ARRAY) {
 				return FAILURE;
+			}
+
+			if (Z_TYPE(overloaded_property->element) == IS_STRING) {
+				found = zend_hash_find(Z_ARRVAL(object),
+									   Z_STRVAL(overloaded_property->element),
+									   Z_STRLEN(overloaded_property->element)+1,
+									   (void **)&prop_result);
+			} else if (Z_TYPE(overloaded_property->element) == IS_LONG) {
+				found = zend_hash_index_find(Z_ARRVAL(object),
+											 Z_LVAL(overloaded_property->element),
+											 (void **)&prop_result);
+			}
+			if (found == SUCCESS)
+				result = **prop_result;
+		}
+
+		if (found == FAILURE) {
+			/* TODO if not found store a null as the property/index, then in the
+			 * above checks replace init null to array or object */
+			return FAILURE;
 		}
 		object = result;
 
@@ -853,6 +875,7 @@ int php_gtk_set_property_exp(zend_property_reference *property_reference, zval *
 			MAKE_STD_ZVAL(local_value);
 			*local_value = *value;
 			zval_copy_ctor(local_value);
+			INIT_PZVAL(local_value);
 			retval = add_property_zval_ex(&object,
 										  Z_STRVAL(overloaded_property->element),
 										  Z_STRLEN(overloaded_property->element)+1, local_value);
