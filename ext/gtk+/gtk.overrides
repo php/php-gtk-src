@@ -734,12 +734,14 @@ PHP_FUNCTION(gtk_clist_new)
 
 	if (columns <= 0) {
 		php_error(E_WARNING, "%s() needs number of columns to be > 0", get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
 		return;
 	}
 
 	if (php_titles) {
 		if (zend_hash_num_elements(Z_ARRVAL_P(php_titles)) < columns) {
 			php_error(E_WARNING, "%s(): the array of titles is not long enough", get_active_function_name(TSRMLS_C));
+			php_gtk_invalidate(this_ptr);
 			return;
 		}
 
@@ -1086,7 +1088,7 @@ PHP_FUNCTION(gtk_list_item_new)
 
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkListItem object",
-				get_active_function_name(TSRMLS_C));
+				  get_active_function_name(TSRMLS_C));
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
@@ -1237,12 +1239,14 @@ PHP_FUNCTION(gtk_ctree_new_with_titles)
 
 	if (columns <= 0) {
 		php_error(E_WARNING, "%s() needs number of columns to be > 0", get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
 		return;
 	}
 
 	if (php_titles) {
 		if (zend_hash_num_elements(Z_ARRVAL_P(php_titles)) < columns) {
 			php_error(E_WARNING, "%s(): the array of titles is not long enough", get_active_function_name(TSRMLS_C));
+			php_gtk_invalidate(this_ptr);
 			return;
 		}
 
