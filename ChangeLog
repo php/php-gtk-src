@@ -1,3 +1,44 @@
+2001-03-18  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/class.xsl
+      docs/stylesheets/xsl/html/classset.titlepage.xml
+      docs/stylesheets/xsl/html/classset.titlepage.xsl:
+    Update title page for classset
+
+    * docs/stylesheets/xsl/html/chunk.xsl
+      docs/stylesheets/xsl/html/class.xsl
+      docs/stylesheets/xsl/html/classset.titlepage.xml
+      docs/stylesheets/xsl/html/classset.titlepage.xsl:
+    Fixing Toc and adding beginings of CLASSSET titlepages
+
+    * docs/stylesheets/xsl/html/class.xsl: Make objects appear in the toc
+
+    * docs/stylesheets/xsl/html.xsl.in
+      docs/stylesheets/xsl/html/chunk-common.xsl
+      docs/stylesheets/xsl/html/chunk.xsl
+      docs/stylesheets/xsl/html/class.xsl:
+    adding toc generation outline (doesnt work yet) also stopping
+    saxon from segfaulting.
+
+    * docs/stylesheets/xsl/html-common.xsl
+      docs/stylesheets/xsl/html/chunk-common.xsl
+      docs/stylesheets/xsl/html/chunk.xsl: The Return of the Toc..
+
+    * docs/stylesheets/xsl/html/chunk.xsl
+      docs/stylesheets/xsl/html/class.xsl: Adding Class stylesheets..
+
+    * docs/stylesheets/xsl/html/chunk.xsl
+      docs/stylesheets/xsl/html/label.xsl
+      docs/stylesheets/xsl/html/title.xsl:
+    Override a few methods to give nice titles and labels
+
+    * docs/stylesheets/xsl/html/chunk-common.xsl: Make it all build again
+
+    * docs/stylesheets/xsl/chunk-filename.xsl
+      docs/stylesheets/xsl/html.xsl.in
+      docs/stylesheets/xsl/html/chunk-common.xsl
+      docs/stylesheets/xsl/html/chunk.xsl: Begin to chunk the classentries
+
 2001-03-16  Andrei Zmievski  <andrei@ispi.net>
 
     * generator/gtk.defs
