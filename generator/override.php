@@ -26,6 +26,7 @@ class Overrides {
     var $glob_ignores       = array();
     var $overrides          = array();
     var $prop_overrides     = array();
+    var $handler_overrides  = array();
     var $extra_methods      = array();
     var $getprops           = array();
     var $register_classes   = array();
@@ -98,6 +99,12 @@ class Overrides {
                 $this->prop_overrides[$class][$prop][$type] = $rest;
                 break;
 
+            case 'override-handler':
+                $class = $words[0];
+                $handler = $words[1];
+                $this->handler_overrides[$class][$handler] = $rest;
+                break;
+
             case 'getprop':
                 if (count($words) >= 2) {
                     list($class_name, $prop_name) = $words;
@@ -150,6 +157,16 @@ class Overrides {
     function get_prop_override($class, $name)
     {
         return $this->prop_overrides[$class][$name];
+    }
+
+    function is_handler_overriden($class, $handler)
+    {
+        return isset($this->handler_overrides[$class][$handler]);
+    }
+
+    function get_handler_override($class, $handler)
+    {
+        return $this->handler_overrides[$class][$handler];
     }
 
     function have_get_prop($class_name, $prop_name)

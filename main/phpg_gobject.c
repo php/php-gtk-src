@@ -26,8 +26,10 @@
  * GObject API and helper functions
  */
 
-static const gchar *gobject_wrapper_id   = "phpg_wrapper";
-static GQuark       gobject_wrapper_key  = 0;
+static const gchar *gobject_wrapper_handle_id  = "phpg_wrapper_handle";
+static GQuark       gobject_wrapper_handle_key = 0;
+static const gchar *gobject_wrapper_handlers_id   = "phpg_wrapper_handlers";
+static GQuark       gobject_wrapper_handlers_key  = 0;
 
 HashTable phpg_prop_info;
 
@@ -50,26 +52,6 @@ static inline void phpg_free_gobject_storage(phpg_gobject_t *object, zend_object
     object->closures = NULL;
 
     efree(object);
-}
-/* }}} */
-
-/* {{{ static      phpg_create_gobject() */
-static zend_object_value phpg_create_gobject(zend_class_entry *ce TSRMLS_DC)
-{
-	zend_object_value zov;
-	phpg_gobject_t *object;
-
-	object = emalloc(sizeof(phpg_gobject_t));
-	phpg_init_object(object, ce);
-
-	object->obj  = NULL;
-	object->dtor = NULL;
-	object->closures = NULL;
-
-	zov.handlers = &php_gtk_handlers;
-	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_free_gobject_storage, NULL TSRMLS_CC);
-
-	return zov;
 }
 /* }}} */
 
@@ -232,6 +214,26 @@ HashTable* phpg_get_properties(zval *object TSRMLS_DC)
 /* }}} */
 
 
+/* {{{ PHP_GTK_API phpg_create_gobject() */
+PHP_GTK_API zend_object_value phpg_create_gobject(zend_class_entry *ce TSRMLS_DC)
+{
+	zend_object_value zov;
+	phpg_gobject_t *object;
+
+	object = emalloc(sizeof(phpg_gobject_t));
+	phpg_init_object(object, ce);
+
+	object->obj  = NULL;
+	object->dtor = NULL;
+	object->closures = NULL;
+
+	zov.handlers = &php_gtk_handlers;
+	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_free_gobject_storage, NULL TSRMLS_CC);
+
+	return zov;
+}
+/* }}} */
+
 /* {{{ PHP_GTK_API phpg_init_object() */
 PHP_GTK_API void phpg_init_object(void *object, zend_class_entry *ce)
 {
@@ -285,14 +287,15 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 	ce.name = strdup(class_name);
 	ce.name_length = strlen(class_name);
 	ce.builtin_functions = class_methods;
-	if (create_obj_func) {
-		ce.create_object = create_obj_func;
-	} else {
-		ce.create_object = phpg_create_gobject;
-	}
 
 	real_ce = zend_register_internal_class_ex(&ce, parent, NULL TSRMLS_CC);
+
     real_ce->ce_flags = ce_flags;
+	if (create_obj_func) {
+		real_ce->create_object = create_obj_func;
+	} else {
+		real_ce->create_object = phpg_create_gobject;
+	}
 
     zend_hash_init(&pi_hash, 1, NULL, NULL, 1);
     if (prop_info) {
@@ -412,15 +415,17 @@ PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC)
 {
     phpg_gobject_t *pobj = NULL;
 
-	if (!gobject_wrapper_key) {
-		gobject_wrapper_key = g_quark_from_static_string(gobject_wrapper_id);
+	if (!gobject_wrapper_handle_key) {
+		gobject_wrapper_handle_key   = g_quark_from_static_string(gobject_wrapper_handle_id);
+		gobject_wrapper_handlers_key = g_quark_from_static_string(gobject_wrapper_handlers_id);
 	}
 
     phpg_sink_object(obj);
     pobj = zend_object_store_get_object(zobj TSRMLS_CC);
     pobj->obj = obj;
     pobj->dtor = (phpg_dtor_t) g_object_unref;
-    g_object_set_qdata(pobj->obj, gobject_wrapper_key, (void*)Z_OBJ_HANDLE_P(zobj));
+    g_object_set_qdata(pobj->obj, gobject_wrapper_handle_key, (void*)Z_OBJ_HANDLE_P(zobj));
+    g_object_set_qdata(pobj->obj, gobject_wrapper_handlers_key, (void*)Z_OBJ_HT_P(zobj));
 }
 /* }}} */
 
@@ -430,9 +435,11 @@ PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC)
 	zend_class_entry *ce = NULL;
 	phpg_gobject_t *pobj = NULL;
     zend_object_handle handle;
+    zend_object_handlers *handlers;
 
-	if (!gobject_wrapper_key) {
-		gobject_wrapper_key = g_quark_from_static_string(gobject_wrapper_id);
+	if (!gobject_wrapper_handle_key) {
+		gobject_wrapper_handle_key   = g_quark_from_static_string(gobject_wrapper_handle_id);
+		gobject_wrapper_handlers_key = g_quark_from_static_string(gobject_wrapper_handlers_id);
 	}
 
     assert(zobj != NULL);
@@ -452,11 +459,12 @@ PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC)
 	 * 4. Install wrapper key.
 	 */
 
-	handle = (zend_object_handle)g_object_get_qdata(obj, gobject_wrapper_key);
+	handle = (zend_object_handle) g_object_get_qdata(obj, gobject_wrapper_handle_key);
 	if ((void*)handle != NULL) {
+        handlers = (zend_object_handlers*) g_object_get_qdata(obj, gobject_wrapper_handlers_key);
 		Z_TYPE_PP(zobj) = IS_OBJECT;
 		Z_OBJ_HANDLE_PP(zobj) = handle;
-		Z_OBJ_HT_PP(zobj) = &php_gtk_handlers;
+		Z_OBJ_HT_PP(zobj) = handlers;
 		zend_objects_store_add_ref(*zobj TSRMLS_CC);
 	} else {
 		ce = phpg_class_from_gtype(G_OBJECT_TYPE(obj));
@@ -467,7 +475,8 @@ PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC)
 		pobj = zend_object_store_get_object(*zobj TSRMLS_CC);
 		pobj->obj = obj;
 		pobj->dtor = (phpg_dtor_t) g_object_unref;
-		g_object_set_qdata(obj, gobject_wrapper_key, (void*)Z_OBJ_HANDLE_PP(zobj));
+		g_object_set_qdata(obj, gobject_wrapper_handle_key, (void*)Z_OBJ_HANDLE_PP(zobj));
+		g_object_set_qdata(obj, gobject_wrapper_handlers_key, (void*)Z_OBJ_HT_PP(zobj));
 	}
 }
 /* }}} */

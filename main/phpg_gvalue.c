@@ -200,7 +200,7 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value)
             } else if (Z_TYPE_P(value) == IS_OBJECT
                        && instanceof_function(Z_OBJCE_P(value), gboxed_ce)
                        && G_VALUE_HOLDS(((phpg_gboxed_t*)PHPG_GET(value))->gtype, G_VALUE_TYPE(value))) {
-                g_value_set_boxed(gval, PHPG_GBOXED_GET(value)->boxed);
+                g_value_set_boxed(gval, PHPG_GBOXED(value));
             } else
                 return FAILURE;
             break;

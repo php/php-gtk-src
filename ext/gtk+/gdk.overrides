@@ -1,4 +1,4 @@
-/* vim: set ft=cpp et: */
+/* vim: set ft=cpp fdm=marker et: */
 /* TODO
  * fix gdk_gc_new2
  */
@@ -21,6 +21,7 @@ extern PHP_GTK_EXPORT_CE(gtkwidget_ce);
 
 #include "gen_pango.h"
 
+/* {{{ ignores */
 %%
 ignore-glob
     *_get_type
@@ -33,6 +34,8 @@ ignore
 ignore
     gdk_pixmap_new
     gdk_gc_new2
+
+/* }}} */
 
 %%
 override gdk_color_new
@@ -83,4 +86,25 @@ PHPG_PROP_READER(GdkPixbuf, pixel_array)
 {
     /* TODO */
     return SUCCESS;
+}
+
+%%
+override-handler GdkEvent read_property
+static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int type TSRMLS_DC)
+{
+	zval tmp_member;
+	zval result, *result_ptr = NULL;
+
+ 	if (member->type != IS_STRING) {
+		tmp_member = *member;
+		zval_copy_ctor(&tmp_member);
+		convert_to_string(&tmp_member);
+		member = &tmp_member;
+	}
+    printf("GdkEvent read property handler\n");
+    result_ptr = zend_get_std_object_handlers()->read_property(object, member, type TSRMLS_CC);
+	if (member == &tmp_member) {
+		zval_dtor(member);
+	}
+    return result_ptr;
 }

@@ -49,7 +49,7 @@ static zend_function_entry gboxed_methods[] = {
 	{NULL, NULL, NULL}
 };
 
-/* {{{ phpg_free_gboxed_storage() */
+/* {{{ static phpg_free_gboxed_storage() */
 static void phpg_free_gboxed_storage(phpg_gboxed_t *object TSRMLS_DC)
 {
 	zend_hash_destroy(object->zobj.properties);
@@ -62,8 +62,8 @@ static void phpg_free_gboxed_storage(phpg_gboxed_t *object TSRMLS_DC)
 }
 /* }}} */
 
-/* {{{ gboxed_create_object() */
-static zend_object_value gboxed_create_object(zend_class_entry *ce TSRMLS_DC)
+/* {{{ PHP_GTK_API phpg_create_gboxed() */
+PHP_GTK_API zend_object_value phpg_create_gboxed(zend_class_entry *ce TSRMLS_DC)
 {
 	zend_object_value zov;
 	phpg_gboxed_t *object;
@@ -82,13 +82,14 @@ static zend_object_value gboxed_create_object(zend_class_entry *ce TSRMLS_DC)
 }
 /* }}} */
 
-/* {{{ phpg_register_boxed() */
+/* {{{ PHP_GTK_API phpg_register_boxed() */
 PHP_GTK_API zend_class_entry* phpg_register_boxed(const char *class_name,
                                                   function_entry *class_methods,
                                                   prop_info_t *prop_info,
+                                                  create_object_func_t create_obj_func,
                                                   GType gtype TSRMLS_DC)
 {
-    return phpg_register_class(class_name, class_methods, gboxed_ce, 0, prop_info, gboxed_create_object, gtype TSRMLS_CC);
+    return phpg_register_class(class_name, class_methods, gboxed_ce, 0, prop_info, create_obj_func ? create_obj_func : phpg_create_gboxed, gtype TSRMLS_CC);
 }
 /* }}} */
 
@@ -141,7 +142,7 @@ void phpg_gboxed_register_self()
 {
 	if (gboxed_ce) return;
 
-	gboxed_ce = phpg_register_class("GBoxed", gboxed_methods, NULL, ZEND_ACC_EXPLICIT_ABSTRACT_CLASS, NULL, gboxed_create_object, G_TYPE_BOXED TSRMLS_CC);
+	gboxed_ce = phpg_register_class("GBoxed", gboxed_methods, NULL, ZEND_ACC_EXPLICIT_ABSTRACT_CLASS, NULL, phpg_create_gboxed, G_TYPE_BOXED TSRMLS_CC);
 }
 /* }}} */
 

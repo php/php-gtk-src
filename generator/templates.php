@@ -152,6 +152,23 @@ static function_entry %s_methods[] = {
 ";
 const functions_decl_end = "\t{ NULL, NULL, NULL }\n};\n\n";
 
+const custom_handlers_init = "\t%(class)_object_handlers = php_gtk_handlers;\n";
+const custom_handler_set = "\t%(class)_object_handlers.%(handler) = phpg_%(class)_%(handler)_handler;\n";
+
+const custom_create_func = "
+static zend_object_handlers %(class)_object_handlers;
+
+static zend_object_value phpg_create_%(class)(zend_class_entry *ce TSRMLS_DC)
+{
+    zend_object_value zov;
+
+    zov = %(create_func)(ce TSRMLS_CC);
+    zov.handlers = &%(class)_object_handlers;
+
+    return zov;
+}
+";
+
 const init_class = "
 	INIT_OVERLOADED_CLASS_ENTRY(ce, \"%s\", php_%s_functions, NULL, %s, php_gtk_set_property);\n";
 
@@ -174,10 +191,10 @@ void phpg_%s_register_classes(void)
 %s}\n";
 
 const register_class = "
-	%(ce) = phpg_register_class(\"%(class)\", %(methods), %(parent), %(ce_flags), %(propinfo), NULL, %(typecode) TSRMLS_CC);\n";
+	%(ce) = phpg_register_class(\"%(class)\", %(methods), %(parent), %(ce_flags), %(propinfo), %(create_func), %(typecode) TSRMLS_CC);\n%(extra_reg_info)";
 
 const register_boxed = "
-    %(ce) = phpg_register_boxed(\"%(class)\", %(methods), %(propinfo), %(typecode) TSRMLS_CC);\n";
+    %(ce) = phpg_register_boxed(\"%(class)\", %(methods), %(propinfo), %(create_func), %(typecode) TSRMLS_CC);\n%(extra_reg_info)";
 
 const class_entry = "PHP_GTK_EXPORT_CE(%s);\n";
 

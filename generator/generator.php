@@ -59,6 +59,7 @@ class Generator {
                                                           'method' => Templates::boxed_method_body,
                                                           'prop' => Templates::boxed_prop_access),
                                    );
+    var $handlers           = array('read_property', 'write_property');
 
     function Generator(&$parser, &$overrides, $prefix, $function_class)
     {
@@ -566,6 +567,10 @@ class Generator {
             case 'Boxed_Def':
                 $dict['cast'] = $object->c_name . ' *';
                 break;
+
+            default:
+                throw new Exception("unhandled definition type");
+                break;
         }
 
         foreach ($methods as $method) {
@@ -790,6 +795,7 @@ class Generator {
                                                'parent' => 'NULL',
                                                'ce_flags' => 0,
                                                'propinfo' => 'NULL',
+                                               'create_func' => 'NULL',
                                                'typecode' => 0));
         }
 
@@ -836,12 +842,15 @@ class Generator {
             case 'Boxed_Def':
                 $dict['cast'] = $object->c_name . ' *';
                 break;
+
+            default:
+                throw new Exception("unhandled definition type");
+                break;
         }
 
         foreach ($object->fields as $field) {
             list($field_type, $field_name) = $field;
 
-            /* TODO support overrides */
             $read_func = "PHPG_PROP_READ_FN($object->c_name, $field_name)";
             $write_func = 'NULL';
             $info = new Wrapper_Info();
@@ -890,10 +899,54 @@ class Generator {
         }
     }
 
+    function write_object_handlers($object)
+    {
+        $handlers = array();
+
+        foreach ($this->handlers as $handler) {
+            if ($this->overrides->is_handler_overriden($object->c_name, $handler)) {
+                $override = $this->overrides->get_handler_override($object->c_name, $handler);
+                fwrite($this->fp, $override);
+                $handlers[] = $handler;
+            }
+        }
+
+        if (!$handlers)
+            return array('NULL', '');
+
+        $dict['class'] = strtolower($object->in_module . $object->name);
+        switch ($def_type = get_class($object)) {
+            case 'Object_Def':
+                $dict['create_func'] = 'phpg_create_gobject';
+                break;
+
+            case 'Boxed_Def':
+                $dict['create_func'] = 'phpg_create_gboxed';
+                break;
+
+            default:
+                throw new Exception("unhandled definition type");
+                break;
+        }
+
+        fwrite($this->fp, aprintf(Templates::custom_create_func, $dict));
+        $create_func = 'phpg_create_' . $dict['class'];
+
+        $extra_reg_info = aprintf(Templates::custom_handlers_init, $dict);
+        foreach ($handlers as $handler) {
+            $dict['handler'] = $handler;
+            $extra_reg_info .= aprintf(Templates::custom_handler_set, $dict);
+        }
+
+        return array($create_func, $extra_reg_info);
+    }
+
     function write_class($object)
     {
         $object_module = strtolower($object->in_module);
         $object_lname = strtolower($object->name);
+
+        $extra_ref_info = '';
 
         $ctor_defs = $this->write_constructor($object);
         $method_defs = $this->write_methods($object);
@@ -910,12 +963,16 @@ class Generator {
 
         $prop_info = $this->write_prop_handlers($object);
 
+        list($create_func, $extra_reg_info) = $this->write_object_handlers($object);
+
         return array('ce' => $object->ce,
                      'class' => $object->in_module . $object->name,
                      'methods' => $method_defs ? strtolower($object->c_name) . '_methods' : 'NULL',
                      'parent' => (get_class($object) == 'Object_Def' && $object->parent) ? strtolower($object->parent) . '_ce' : 'NULL',
                      'ce_flags' => $object->ce_flags ? implode('|', $object->ce_flags) : 0,
                      'typecode' => $object->typecode,
+                     'create_func' => $create_func,
+                     'extra_reg_info' => $extra_reg_info,
                      'propinfo' => $prop_info);
     }
 
