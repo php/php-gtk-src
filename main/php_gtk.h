@@ -232,7 +232,7 @@ PHP_GTK_API zval* php_gtk_simple_signal_callback(GtkObject *o, gpointer data, zv
     do { \
 		TSRMLS_FETCH(); \
 		zend_throw_exception(exception, message, 0 TSRMLS_CC); \
-		return;
+		return; \
 	} while (0)
 
 #define PHPG_THROW_CONSTRUCT_EXCEPTION(type) \
