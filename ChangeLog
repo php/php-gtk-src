@@ -1,6 +1,21 @@
+2002-12-28  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * (ZE2_PORT)
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      generator/templates.php
+      main/php_gtk.h
+      main/php_gtk_object.c
+      main/php_gtk_util.c
+      test/scribble.php:
+      Make boxed types work. This required some changes in php_gtk_object.
+      Property setting still doesn't work.
+
 2002-12-26  Andrei Zmievski  <andrei@gravitonic.com>
 
-    * ext/gtk+/gtk.overrides
+    * (ZE2_PORT)
+      ext/gtk+/gtk.overrides
       ext/gtk+/php_gtk+.c
       ext/gtk+/php_gtk+.h
       generator/generator.php
@@ -12,7 +27,8 @@
       Made property reading work, but not for boxed types yet. As expected,
       $button->child->get() works as a charm under ZE2.
 
-    * ext/gtk+/php_gtk+.c
+    * (ZE2_PORT)
+      ext/gtk+/php_gtk+.c
       ext/gtk+/php_gtk+.h
       generator/generator.php
       generator/templates.php
