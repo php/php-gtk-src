@@ -13,6 +13,8 @@ headers
 #include <gtkhtml/htmlobject.h>
 #include <gtkhtml/htmlcursor.h>
 #include <gtkhtml/htmlengine-edit-movement.h>
+#include <gtkhtml/gtkhtml-search.h>
+
 
 #include "ext/gtk+/php_gtk+.h"
 #include "ext/gtkhtml/php_gtkhtml.h"
