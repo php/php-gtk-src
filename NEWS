@@ -1,6 +1,13 @@
-    - added helper GtkBoxChild class. (Andrei)
-    - added properties for GtkMisc, GtkArrow, GtkBox, GtkCalendar, and GtkCTree
-      classes. (Andrei)
+    - added GtkCList example to gtk.php. (Andrei)
+    - added initial libglade support. (Andrei)
+    - made Gdk::input_add() work with file resources. (Andrei)
+    - fixed GDK locale support. (Alex Bokovoy)
+    - reworked the generator to make it more generalized. (Andrei)
+    - re-engineered the build system a bit to accomodate the need to build
+      additional modules. (Andrei)
+    - added helper GtkBoxChild, GtkFixedChild classes. (Andrei)
+    - added properties for GtkBin, GtkMisc, GtkArrow, GtkBox, GtkCalendar, and
+      GtkCTree classes. (Andrei)
 
 Version 0.0.2 "primordial nucleosynthesis": 7-Mar-2001
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
