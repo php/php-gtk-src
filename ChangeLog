@@ -1,3 +1,24 @@
+2004-08-08  Andrei Zmievski  <andreiz@gmail.com>
+
+    * (PHP_GTK_1)
+      NEWS:
+      Update.
+
+    * (PHP_GTK_1)
+      README
+      config.m4:
+      Implement check for required PHP version.
+
+    * (PHP_GTK_1)
+      config.m4
+      php_gtk.m4
+      php_gtk_new.m4
+      php_gtk_old.m4
+      build2/build.mk
+      build2/build2.mk:
+      Remove support for both build systems. It was transitionary anyway. I
+      think we can require 4.3.x PHP to build without any problems.
+
 2004-08-07  Andrei Zmievski  <andreiz@gmail.com>
 
     * (PHP_GTK_1)
