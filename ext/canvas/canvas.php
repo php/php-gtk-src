@@ -13,11 +13,11 @@ $window->connect_object('destroy', array('gtk', 'main_quit'));
 
 
 $canvas= &new GtkCanvasAA();
-$canvas->set_usize(600,800);
+$canvas->set_usize(800,600);
 
 $root = $canvas->root();
 
-print_r($root);
+//print_r($root);
 
 $rect = &new GtkCanvasRect($root, array(   "x1"=> 90.0,
                                      "y1"=> 40.0,
@@ -47,7 +47,7 @@ $text = & new GtkCanvasText($root,array(
                                      "y"=> 10.0,
                                      "text" => "hello world",
                                      "fill_color" => 'steelblue',
-                                    "font_gdk" => gdk::font_load    ('-*-helvetica-*'),
+                                    "font_gdk" => gdk::font_load('-*-utopia-*-i-*-*-*-240-*'),
                                     "anchor" => 'center',
                                     ));
 $text->connect('event','canvas_event');
@@ -94,7 +94,7 @@ $polygon->set_points( array(
                         )  
                 );
 $polygon->connect('event','canvas_event');                
-               
+$polygon->move(-200, -100);
 
 
 $window->add($canvas);
@@ -103,10 +103,12 @@ $window->show_all();
 $dragging = false;
 
 $canvas->set_pixels_per_unit(1);
+/*
 print_r($canvas->w2c(100,200));
 print_r($canvas->c2w(100,200));
 print_r($canvas->window_to_world(100,200));
 print_r($canvas->world_to_window(100,200));
+*/
 
 gtk::main();
 
