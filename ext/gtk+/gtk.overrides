@@ -302,9 +302,38 @@ static PHP_METHOD(GtkLabel, get_layout_offsets)
 %% }}}
 
 %%
+override-prop GtkTextAttributes bg_color
+PHPG_PROP_READER(GtkTextAttributes, bg_color)
+{
+	GdkColor php_retval;
+
+	php_retval = ((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.bg_color;
+	phpg_gboxed_new(&return_value, GDK_TYPE_COLOR, &php_retval, TRUE, TRUE);
+
+	return SUCCESS;
+}
+
+%%
+override-prop GtkTextAttributes fg_color
+PHPG_PROP_READER(GtkTextAttributes, fg_color)
+{
+	GdkColor php_retval;
+
+	php_retval = ((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.fg_color;
+	phpg_gboxed_new(&return_value, GDK_TYPE_COLOR, &php_retval, TRUE, TRUE);
+
+	return SUCCESS;
+}
+
+%%
 override-prop GtkTextAttributes bg_stipple
 PHPG_PROP_READER(GtkTextAttributes, bg_stipple)
 {
+	GdkBitmap *php_retval;
+
+	php_retval = ((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.bg_stipple;
+	phpg_gobject_new(&return_value, php_retval TSRMLS_CC);
+
 	return SUCCESS;
 }
 
@@ -312,6 +341,11 @@ PHPG_PROP_READER(GtkTextAttributes, bg_stipple)
 override-prop GtkTextAttributes fg_stipple
 PHPG_PROP_READER(GtkTextAttributes, fg_stipple)
 {
+	GdkBitmap *php_retval;
+
+	php_retval = ((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.fg_stipple;
+	phpg_gobject_new(&return_value, php_retval TSRMLS_CC);
+
 	return SUCCESS;
 }
 
@@ -319,6 +353,8 @@ PHPG_PROP_READER(GtkTextAttributes, fg_stipple)
 override-prop GtkTextAttributes rise
 PHPG_PROP_READER(GtkTextAttributes, rise)
 {
+	RETVAL_LONG(((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.rise);
+
 	return SUCCESS;
 }
 
@@ -326,6 +362,8 @@ PHPG_PROP_READER(GtkTextAttributes, rise)
 override-prop GtkTextAttributes underline
 PHPG_PROP_READER(GtkTextAttributes, underline)
 {
+	RETVAL_LONG(((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.underline);
+
 	return SUCCESS;
 }
 
@@ -333,6 +371,8 @@ PHPG_PROP_READER(GtkTextAttributes, underline)
 override-prop GtkTextAttributes strikethrough
 PHPG_PROP_READER(GtkTextAttributes, strikethrough)
 {
+	RETVAL_LONG(((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.strikethrough);
+
 	return SUCCESS;
 }
 
@@ -340,5 +380,7 @@ PHPG_PROP_READER(GtkTextAttributes, strikethrough)
 override-prop GtkTextAttributes draw_bg
 PHPG_PROP_READER(GtkTextAttributes, draw_bg)
 {
+	RETVAL_BOOL(((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.draw_bg);
+
 	return SUCCESS;
 }
