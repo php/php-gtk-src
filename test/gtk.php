@@ -2087,46 +2087,37 @@ function create_panes()
 	$windows['panes']->show_all();
 }
 
+function file_selection_ok($button, $fs)
+{
+	print "selected '" . $fs->get_filename() . "'\n";
+	$fs->destroy();
+}
+
 function create_file_selection()
 {
-	static $window;
+	$window = new GtkFileSelection('File selection dialog');
+	$window->hide_fileop_buttons();
+	$window->set_position(GTK_WIN_POS_MOUSE);
 
-	if (!$window)
-	{
-		function file_selection_ok($button, $fs)
-		{
-			print "selected '" . $fs->get_filename() . "'\n";
-			$fs->destroy();
-		}
+	$button_ok = $window->ok_button;
+	$button_ok->connect('clicked', 'file_selection_ok', $window);
 
-		$window = new GtkFileSelection('File selection dialog');
-		$window->hide_fileop_buttons();
-		$window->set_position(GTK_WIN_POS_MOUSE);
-		$window->connect_object('destroy',create_function('&$w','$w=null;'), $window);
+	$button_cancel = $window->cancel_button;
+	$button_cancel->connect_object('clicked', array($window, 'destroy'));
 
-		$button_ok = $window->ok_button;
-		$button_ok->connect('clicked','file_selection_ok', $window);
+	$action_area = $window->action_area;
 
-		$button_cancel = $window->cancel_button;
-		$button_cancel->connect_object('clicked', array(&$window, 'destroy'));
+	$button = &new GtkButton('Hide Fileops');
+	$button->connect_object('clicked', create_function('$w', '$w->hide_fileop_buttons();'), $window);
+	$action_area->pack_start($button, false, false, 0);
+	$button->show();
 
-		$action_area = $window->action_area;
+	$button = &new GtkButton('Show Fileops');
+	$button->connect_object('clicked', create_function('$w', '$w->show_fileop_buttons();'), $window);
+	$action_area->pack_start($button, false, false, 0);
+	$button->show();
 
-		$button = &new GtkButton('Hide Fileops');
-		$button->connect_object('clicked', create_function('$w', '$w->hide_fileop_buttons();'), $window);
-		$action_area->pack_start($button, false, false, 0);
-		$button->show();
-
-		$button = &new GtkButton('Show Fileops');
-		$button->connect_object('clicked', create_function('$w', '$w->show_fileop_buttons();'), $window);
-		$action_area->pack_start($button, false, false, 0);
-		$button->show();
-	}
-
-	if (!($window->flags() & GTK_VISIBLE))
-		$window->show_all();
-	else 
-		$window->destroy();
+	$window->show_all();
 }
 
 function label_toggle( $dialog, $label, $dialog)
@@ -2158,7 +2149,7 @@ function create_dialog()
 
 		$button = &new GtkButton('Ok');
 		$button->set_flags(GTK_CAN_DEFAULT);
-		$button->connect( 'clicked', 'close_window');
+		$button->connect_object('clicked', array($dialog, 'destroy'));
 
 		$action_area = $dialog->action_area;
 		$action_area->pack_start($button, true, true, 0);
@@ -2219,8 +2210,8 @@ function create_event_watcher()
 	if (!$dialog)
 	{
 		$dialog = new GtkDialog;
-		$dialog->connect_object('delete_event','event_watcher_down', &$event_watcher_enter_id, &$event_watcher_leave_id);
-		$dialog->connect_object('delete_event', 'delete_event');
+		$dialog->connect_object('destroy','event_watcher_down', &$event_watcher_enter_id, &$event_watcher_leave_id);
+		$dialog->connect_object('destroy', create_function('$w', '$w = null;'), &$dialog);
 		$dialog->set_title('Event Watcher');
 		$dialog->set_border_width(0);
 		$dialog->set_usize(200, 110);
@@ -2236,7 +2227,7 @@ function create_event_watcher()
 
 		$button = &new GtkButton('Close');
 		$button->connect_object('clicked', 'event_watcher_down', &$event_watcher_enter_id, &$event_watcher_leave_id);
-		$button->connect('clicked', 'close_window');
+		$button->connect_object('clicked', array($dialog, 'destroy'));
 		$button->set_flags(GTK_CAN_DEFAULT);
 		$action_area->pack_start($button);
 		$button->grab_default();
