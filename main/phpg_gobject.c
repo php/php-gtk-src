@@ -315,6 +315,8 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 
     if (gtype) {
         /* TODO store __gtype object */
+        zval *g = phpg_gtype_new(gtype);
+        zend_hash_update(real_ce->static_members, "__gtype", sizeof("__gtype"), &g, sizeof(zval *), NULL);
         g_type_set_qdata(gtype, gobject_class_key, real_ce);
     }
 
