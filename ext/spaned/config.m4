@@ -8,5 +8,5 @@ PHP_GTK_ARG_ENABLE(spaned,for GtkSPaned support,
 if test "$PHP_GTK_SPANED" != "no"; then
 
   AC_DEFINE(HAVE_SPANED,1,[spaned support])
-  PHP_GTK_EXTENSION(spaned, $php_gtk_ext_shared)
+  PHP_GTK_EXTENSION(spaned, $php_gtk_ext_shared, php_spaned.c gtkspaned.c, gen_spaned.c)
 fi

@@ -8,5 +8,5 @@ PHP_GTK_ARG_ENABLE(piemenu,for GtkPieMenu support,
 if test "$PHP_GTK_PIEMENU" != "no"; then
 
   AC_DEFINE(HAVE_PIEMENU,1,[piemenu support])
-  PHP_GTK_EXTENSION(piemenu, $php_gtk_ext_shared)
+  PHP_GTK_EXTENSION(piemenu, $php_gtk_ext_shared, php_piemenu.c gtkpiemenu.c, gen_piemenu.c)
 fi

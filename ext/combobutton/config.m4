@@ -9,5 +9,5 @@ PHP_GTK_ARG_ENABLE(combobutton,for GtkComboButton support,
 if test "$PHP_GTK_COMBOBUTTON" != "no"; then
 
   AC_DEFINE(HAVE_COMBOBUTTON,1,[combobutton support])
-  PHP_GTK_EXTENSION(combobutton, $php_gtk_ext_shared)
+  PHP_GTK_EXTENSION(combobutton, $php_gtk_ext_shared, php_combobutton.c gtkcombobutton.c, gen_combobutton.c)
 fi

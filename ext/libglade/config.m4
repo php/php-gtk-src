@@ -56,8 +56,12 @@ if test "$PHP_GTK_LIBGLADE" != "no"; then
   else
 	AC_DEFINE(HAVE_LIBGLADE,1,[libglade support])
 	PHP_EVAL_INCLINE($LIBGLADE_CFLAGS)
-	PHP_EVAL_LIBLINE($LIBGLADE_LIBS, LIBGLADE_SHARED_LIBADD)
-	PHP_SUBST(LIBGLADE_SHARED_LIBADD)
-	PHP_GTK_EXTENSION(libglade, $php_gtk_ext_shared)
+	if test $php_gtk_ext_shared = "yes"; then
+		PHP_EVAL_LIBLINE($LIBGLADE_LIBS, LIBGLADE_SHARED_LIBADD)
+		PHP_SUBST(LIBGLADE_SHARED_LIBADD)
+	else
+		PHP_EVAL_LIBLINE($LIBGLADE_LIBS, PHP_GTK_SHARED_LIBADD)
+	fi
+	PHP_GTK_EXTENSION(libglade, $php_gtk_ext_shared, php_libglade.c, gen_libglade.c)
   fi
 fi

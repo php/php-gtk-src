@@ -1,3 +1,5 @@
+dnl php_gtk.m4 file for the old build system
+
 dnl
 dnl PHP_GTK_EXTENSION(extname [, shared])
 dnl
@@ -88,3 +90,13 @@ AC_MSG_CHECKING([$2])
 AC_ARG_WITH($1,[$3],$5=[$]withval,$5=ifelse($4,,no,$4))
 PHP_GTK_ARG_ANALYZE($5)
 ])
+
+PHP_EXTENSION(php-gtk, $ext_shared)
+PHP_GTK_EXTENSION(gtk+)
+
+# reading config stubs
+esyscmd(./build2/config-stubs ext)
+
+INCLUDES="$INCLUDES -I\$(top_srcdir)/main"
+
+PHP_FAST_OUTPUT(main/Makefile ext/Makefile)

@@ -336,7 +336,7 @@
   (in-module Gtk)
   (parent Container (Gtk))
   (c-name GtkLayout)
-  (field (type-and-name GdkWindow *bin_window))
+  (field (type-and-name GdkWindow* bin_window))
 )
 
 (object Fixed

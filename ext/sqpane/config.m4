@@ -11,5 +11,5 @@ PHP_GTK_ARG_ENABLE(sqpane,for GtkSQPane support,
 if test "$PHP_GTK_SQPANE" != "no"; then
 
   AC_DEFINE(HAVE_SQPANE,1,[sqpane support])
-  PHP_GTK_EXTENSION(sqpane, $php_gtk_ext_shared)
+  PHP_GTK_EXTENSION(sqpane, $php_gtk_ext_shared, php_sqpane.c gtksqpane.c, gen_sqpane.c)
 fi

@@ -2658,7 +2658,7 @@ function create_main_window()
 	$window->show_all();
 }
 
-Gtk::rc_parse('testgtkrc');
+Gtk::rc_parse(dirname($argv[0]).'/testgtkrc');
 create_main_window();
 Gtk::main();
 

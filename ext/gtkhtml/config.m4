@@ -47,8 +47,12 @@ if test "$PHP_GTK_GTKHTML" != "no"; then
   if test "$HTML_HAVE_GCONFTEST no" != " no"; then
     AC_DEFINE(GTKHTML_HAVE_GCONF,1,[  ]) 
   fi   
-  PHP_EVAL_LIBLINE($HTML_LIBS, HTML_SHARED_LIBADD)
-  PHP_SUBST(HTML_SHARED_LIBADD)
+  if test $php_gtk_ext_shared = "yes"; then
+	PHP_EVAL_LIBLINE($HTML_LIBS, HTML_SHARED_LIBADD)
+	PHP_SUBST(HTML_SHARED_LIBADD)
+  else
+	PHP_EVAL_LIBLINE($HTML_LIBS, PHP_GTK_SHARED_LIBADD)
+  fi
 
-  PHP_GTK_EXTENSION(gtkhtml, $php_gtk_ext_shared)
+  PHP_GTK_EXTENSION(gtkhtml, $php_gtk_ext_shared, php_gtkhtml.c, gen_gtkhtml.c)
 fi

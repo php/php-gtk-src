@@ -2,7 +2,7 @@
 
 # $Id$
 
-file_list=".cvsignore Makefile.in config.m4 php_skeleton.c php_skeleton.h skeleton.overrides"
+file_list=".cvsignore Makefile.in Makefile.frag config.m4 php_skeleton.c php_skeleton.h skeleton.overrides"
 
 giveup() {
 	echo $*
@@ -48,11 +48,11 @@ if test -d "$widget"; then
 	giveup "Directory $widget already exists."
 fi
 
-test -f ext_skel || givup "ext_skel must be in the current directory"
-test -d skeleton || givup "subdirectory skeleton does not exist or is not directory"
+test -f ext_skel || giveup "ext_skel must be in the current directory"
+test -d skeleton || giveup "subdirectory skeleton does not exist or is not directory"
 
 echo "Creating directory $widget"
-mkdir $widget || givup "Cannot create directory $widget"
+mkdir $widget || giveup "Cannot create directory $widget"
 
 echo "Creating skeleton files"
 cd skeleton
