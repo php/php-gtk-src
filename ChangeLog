@@ -1,3 +1,18 @@
+2003-11-30  Alan Knowles  <alan@akbkhome.com>
+
+    * (GTK2)
+      main/php_gtk_object.c
+      test/hello.php:
+      fetching object properties which are objects works
+
+    * (GTK2)
+      ext/gtk+/php_gtk+_types.c
+      main/php_gtk.h
+      main/php_gtk_object.c
+      test/gtk.php
+      test/hello.php:
+      provisional object getter support for gobject
+
 2003-11-12  Alan Knowles  <alan@akbkhome.com>
 
     * ext/gtkhtml/gtkhtml.defs_for_gtkhtml.1.1
