@@ -42,7 +42,7 @@ HashTable php_gtk_prop_desc;
 HashTable php_gtk_callback_hash;
 */
 
-/* {{{ static phpg_free_object_storage() */
+/* {{{ static      phpg_free_object_storage() */
 static inline void phpg_free_object_storage(phpg_gobject_t *object, zend_object_handle handle TSRMLS_DC)
 {
     zend_hash_destroy(object->zobj.properties);
@@ -54,7 +54,7 @@ static inline void phpg_free_object_storage(phpg_gobject_t *object, zend_object_
 }
 /* }}} */
 
-/* {{{ static phpg_create_object() */
+/* {{{ static      phpg_create_object() */
 static zend_object_value phpg_create_object(zend_class_entry *ce TSRMLS_DC)
 {
 	zend_object_value zov;
@@ -72,7 +72,7 @@ static zend_object_value phpg_create_object(zend_class_entry *ce TSRMLS_DC)
 }
 /* }}} */
 
-/* {{{ static phpg_class_from_gtype() */
+/* {{{ static      phpg_class_from_gtype() */
 static zend_class_entry* phpg_class_from_gtype(GType gtype)
 {
 	zend_class_entry *ce = NULL;
@@ -87,9 +87,25 @@ static zend_class_entry* phpg_class_from_gtype(GType gtype)
 }
 /* }}} */
 
+/* {{{ static      phpg_sink_object() */
+static inline void phpg_sink_object(GObject *obj)
+{
+    /*
+     * For now, do a check for GTK_TYPE_OBJECT's and sink them. More generic
+     * system can be implemented later.
+     */
+    if (g_type_is_a(G_OBJECT_TYPE(obj), GTK_TYPE_OBJECT)
+        && GTK_OBJECT_FLOATING(obj)) {
+        g_object_ref(obj);
+        gtk_object_sink(GTK_OBJECT(obj));
+    }
 
-/* {{{ phpg_read_property() */
-zval *phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
+}
+/* }}} */
+
+
+/* {{{ zval*       phpg_read_property() */
+zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 {
 	phpg_head_t *poh;
 	zval tmp_member;
@@ -136,7 +152,7 @@ zval *phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 }
 /* }}} */
 
-/* {{{ phpg_write_property() */
+/* {{{ void        phpg_write_property() */
 void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
 {
 	phpg_head_t *poh;
@@ -169,7 +185,7 @@ void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
 }
 /* }}} */
 
-/* {{{ phpg_get_properties() */
+/* {{{ HashTable*  phpg_get_properties() */
 HashTable* phpg_get_properties(zval *object TSRMLS_DC)
 {
 	zend_class_entry *ce;
@@ -304,6 +320,22 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 }
 /* }}} */
 
+/* {{{ PHP_GTK_API phpg_set_wrapper() */
+PHP_GTK_API void phpg_set_wrapper(zval *zobj TSRMLS_DC)
+{
+    phpg_gobject_t *pobj = NULL;
+
+	if (!gobject_wrapper_key) {
+		gobject_wrapper_key = g_quark_from_static_string(gobject_wrapper_id);
+	}
+
+    zend_objects_store_add_ref(zobj TSRMLS_CC);
+    pobj = zend_object_store_get_object(zobj TSRMLS_CC);
+    phpg_sink_object(pobj->obj);
+    g_object_set_qdata(pobj->obj, gobject_wrapper_key, (void*)Z_OBJ_HANDLE_P(zobj));
+}
+/* }}} */
+
 /* {{{ PHP_GTK_API phpg_gobject_new() */
 PHP_GTK_API zval* phpg_gobject_new(GObject *obj)
 {
@@ -324,9 +356,9 @@ PHP_GTK_API zval* phpg_gobject_new(GObject *obj)
 		return zobj;
 	}
 
-	/* TODO Need to
-	 * 1. Lookup stored object based on wrapper key.
-	 * 2. Make zval refer to stored object.
+	/* 
+	 * 1. Lookup stored object handle based on wrapper key.
+	 * 2. Make zval refer to this handle.
 	 * 3. If not found, create new object and store it.
 	 * 4. Install wrapper key.
 	 */
@@ -342,16 +374,7 @@ PHP_GTK_API zval* phpg_gobject_new(GObject *obj)
 		object_init_ex(zobj, ce);
 		g_object_ref(obj);
 
-        /*
-         * For now, do a check for GTK_TYPE_OBJECT's and sink them. More generic
-         * system can be implemented later.
-         */
-        if (g_type_is_a(G_OBJECT_TYPE(obj), GTK_TYPE_OBJECT)
-            && GTK_OBJECT_FLOATING(obj)) {
-			g_object_ref(obj);
-			gtk_object_sink(GTK_OBJECT(obj));
-		}
-
+        phpg_sink_object(obj);
 		pobj = zend_object_store_get_object(zobj TSRMLS_CC);
 		pobj->obj = obj;
 		pobj->dtor = (phpg_dtor_t) g_object_unref;
@@ -369,7 +392,7 @@ PHP_GTK_API zval* phpg_gobject_new(GObject *obj)
 static PHP_METHOD(GObject, __construct) {}
 
 static zend_function_entry gobject_methods[] = {
-	ZEND_ME(GObject, __construct, NULL, ZEND_ACC_PRIVATE)
+	ZEND_ME(GObject, __construct, NULL, ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}
 };
 
@@ -379,7 +402,7 @@ void phpg_gobject_register_self()
 {
 	if (gobject_ce) return;
 
-	gobject_ce = phpg_register_class("GObject", gobject_methods, NULL, NULL, NULL, 0 TSRMLS_CC);
+	gobject_ce = phpg_register_class("GObject", gobject_methods, NULL, NULL, NULL, G_TYPE_OBJECT TSRMLS_CC);
 }
 
 #endif /* HAVE_PHP_GTK */
