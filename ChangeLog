@@ -1,3 +1,23 @@
+2002-12-31  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * (ZE2_PORT)
+      TODO
+      ext/gtk+/php_gtk+_types.c
+      generator/generator.php
+      generator/templates.php
+      main/php_gtk.h
+      main/php_gtk_object.c:
+      
+      - Once again cache the zval wrappers for GTK+ objects. No leaks so far.
+      - Do some experimental work to support var_dump($gtkobj). It's nice to see
+        all the properties, even the dynamic ones, but right now it results in
+      an
+        infinite recursion for a lot of objects since the children reference
+      their
+        parents, etc. Need to fix somehow. This work depends on some custom
+      fixes
+        to ZE2 that are not merged in yet.
+
 2002-12-28  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (ZE2_PORT)
