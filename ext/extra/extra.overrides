@@ -85,10 +85,12 @@ PHP_FUNCTION(gtk_plot_data_set_points)
 	}		
 
 	gtk_plot_data_set_points( GTK_PLOT_DATA(PHP_GTK_GET(this_ptr)),x, y, dx, dy, n_elems);
+	/*
 	efree( x );
 	efree( y );
 	efree( dx );
 	efree( dy );
+	*/
 	RETURN_NULL();
 }
 %% 
@@ -116,9 +118,9 @@ PHP_FUNCTION(gtk_plot_axis_set_title)
 
 
 
- 
+/*---------------------- Gtk Sheet Overrides --------------------------*/
 
-%%
+%% 
 override gtk_sheet_get_active_cell
 
 PHP_FUNCTION(gtk_sheet_get_active_cell)

@@ -28,45 +28,11 @@
 PHP_GTK_GET_EXTENSION(extra)
 #endif
 
-  
-gint php_gtk_sheet_callback_traverse(GtkWidget *widget,
-                    gint row, gint col, gint *new_row, gint *new_col,
-                    gpointer data)
-{
-	zval *zrow, *zcol, *znew_row, *znew_col;
-	zval *hash, *retval;
-	
-	 
-	MAKE_STD_ZVAL(hash);
-	array_init(hash);
-	
-	
-	MAKE_STD_ZVAL(zrow); 
-	ZVAL_LONG(zrow, 	 row );
-	zend_hash_next_index_insert(Z_ARRVAL_P(hash), &zrow, sizeof(zval *), NULL);
-	
-	MAKE_STD_ZVAL(zcol); 	 
-	ZVAL_LONG(zcol, 	 col );
-	zend_hash_next_index_insert(Z_ARRVAL_P(hash), &zcol, sizeof(zval *), NULL);
-	
-	MAKE_STD_ZVAL(znew_row); 
-	ZVAL_LONG(znew_row, 	 *new_row );
-	zend_hash_next_index_insert(Z_ARRVAL_P(hash), &znew_row, sizeof(zval *), NULL);
-	
-	MAKE_STD_ZVAL(znew_col);
-	ZVAL_LONG(znew_col, 	 *new_col );
-	zend_hash_next_index_insert(Z_ARRVAL_P(hash), &znew_col, sizeof(zval *), NULL);
-	retval = php_gtk_simple_signal_callback((GtkObject *) widget, data, hash);
-	
-	
-	return 1;
-}
 PHP_GTK_XINIT_FUNCTION(extra)
 {
 	php_extra_register_constants(module_number TSRMLS_CC);
 	php_extra_register_classes();
-	 
-	php_gtk_register_callback("GtkSheet::traverse",(GtkSignalFunc) php_gtk_sheet_callback_traverse);
+
 	return SUCCESS;
 }
 

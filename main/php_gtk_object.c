@@ -31,15 +31,12 @@ HashTable php_gtk_prop_setters;
 HashTable php_gtk_rsrc_hash;
 HashTable php_gtk_type_hash;
 
-HashTable php_gtk_callback_hash;
-
 static const char *php_gtk_wrapper_key = "php_gtk::wrapper";
 
 PHP_GTK_API void php_gtk_object_init(GtkObject *obj, zval *wrapper)
 {
 	gtk_object_ref(obj);
 	gtk_object_sink(obj);
-	
 
 	php_gtk_set_object(wrapper, obj, le_gtk_object);
 }
@@ -492,7 +489,7 @@ zval *php_gtk_arg_as_value(GtkArg *arg)
 
 		case GTK_TYPE_POINTER:
 			php_error(E_NOTICE, "%s(): internal error: %s GTK_TYPE_POINTER unsupported",
-					  get_active_function_name(TSRMLS_C), arg->name );
+					  get_active_function_name(TSRMLS_C), arg->name);
 			MAKE_STD_ZVAL(value);
 			ZVAL_NULL(value);
 			break;
@@ -1238,169 +1235,5 @@ PHP_GTK_API void php_gtk_register_prop_setter(zend_class_entry *ce, prop_setter_
 						   sizeof(prop_setter_t), NULL);
 }
 
-PHP_GTK_API void php_gtk_register_callback(char *class_and_method, GtkSignalFunc  call_function)
-{
-	char *lcname;
-	
-	lcname = emalloc(strlen(class_and_method)+1);
-	
-	strncpy(lcname, class_and_method, strlen(class_and_method));
-	zend_str_tolower(lcname, strlen(class_and_method));
-	zend_hash_update(&php_gtk_callback_hash,  lcname, strlen(class_and_method),(void**)  &call_function,
-						   sizeof(void*), NULL);
-}
-
-
-PHP_GTK_API void php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object, int after)
-{
-	char *name = NULL;
-	zval *callback = NULL;
-	zval *extra;
-	zval *data;
-	char *callback_filename;
-	uint callback_lineno;
-	char *lookup;
-	zend_class_entry *ce;
-	GtkSignalFunc *callback_cfunction;
-	int lookup_len;
-	
-	NOT_STATIC_METHOD();
-
-	if (ZEND_NUM_ARGS() < 2) {
-		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
-				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
-		return;
-	}
-
-	if (!php_gtk_parse_args(2, "sV", &name, &callback))
-		return;
-
-	callback_filename = zend_get_executed_filename(TSRMLS_C);
-	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
-	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
-	data = php_gtk_build_value("(VNisi)", callback, extra, pass_object, callback_filename, callback_lineno);
-	ce = Z_OBJCE_P(this_ptr);
-	lookup_len = ce->name_length + strlen(name) + 2;
-	lookup = emalloc(lookup_len + 1);
-	sprintf(lookup, "%s::%s", ce->name, name);
-	 
-	lookup[lookup_len] = '\0';
-	zend_str_tolower(lookup,lookup_len);
-	
-	/* now see if it's a manually handled object::callback.. */
-	if (zend_hash_find(&php_gtk_callback_hash, lookup, lookup_len , (void **) &callback_cfunction) == SUCCESS) {
-			 
-			switch (after) {
-				case 0:
-					RETURN_LONG( gtk_signal_connect(PHP_GTK_GET(this_ptr),
-					    name,
-					    (GtkSignalFunc)  *callback_cfunction,
-					    data));
-				case 1:
-					RETURN_LONG( gtk_signal_connect_after(PHP_GTK_GET(this_ptr),
-					    name,
-					    (GtkSignalFunc)  *callback_cfunction,
-					    data));
-			}
-			 
-	}
-	
-	
-	RETURN_LONG(gtk_signal_connect_full(PHP_GTK_GET(this_ptr), name, NULL,
-										(GtkCallbackMarshal)php_gtk_callback_marshal,
-										data, php_gtk_destroy_notify, FALSE, after));
-}
-
-PHP_GTK_API zval* php_gtk_simple_signal_callback(GtkObject *o, gpointer data, zval *gtk_args )
-{
-	guint nargs;
-	GtkArg *args;
-	zval *callback_data = (zval *)data;
-	zval **callback, **extra = NULL, **pass_object = NULL;
-	zval **callback_filename = NULL, **callback_lineno = NULL;
-	zval *wrapper = NULL;
-	zval *params;
-	zval *retval = NULL;
-	zval ***signal_args;
-	char *callback_name;
-	TSRMLS_FETCH();
-
-	/* Callback is always passed as the first element. */
-	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
-
-	/*
-	 * If there is more than one element, it will be an array of:
-	 *  [1] an array of extra arguments
-	 *  [2] a flag indidicating whether the object should be passed to the
-	 *      callback
-	 *  [3] the filename where the callback was specified
-	 *  [4] the line number where the callback was specified
-	 */
-	if (zend_hash_num_elements(Z_ARRVAL_P(callback_data)) > 1) {
-		zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
-		zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&pass_object);
-		zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_filename);
-		zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&callback_lineno);
-	}
-
-	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
-		if (callback_filename)
-			php_error(E_WARNING, "Unable to call signal callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
-		else
-			php_error(E_WARNING, "Unable to call callback '%s'", callback_name);
-		efree(callback_name);
-		return NULL;
-	}
-
-	/* not needed: - you have to provide this! 
-	gtk_args = php_gtk_args_as_hash(nargs, args);
-	*/
-	
-	/*
-	 * If pass_object flag is not specified, or it's specified and true, and we
-	 * have the actual object, construct the wrapper around it.
-	 */
-	if ((!pass_object || Z_LVAL_PP(pass_object)) && o)
-		wrapper = php_gtk_new(o);
-
-	/*
-	 * If there is a wrapper, construct array of parameters, set wrapper as
-	 * the first parameter, and append the array of GTK signal arguments to it.
-	 */
-	if (wrapper) {
-		MAKE_STD_ZVAL(params);
-		array_init(params);
-		zend_hash_next_index_insert(Z_ARRVAL_P(params), &wrapper, sizeof(zval *), NULL);
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0 TSRMLS_CC);
-		zval_ptr_dtor(&gtk_args);
-	} else
-		/* Otherwise, the only parameters will be GTK signal arguments. */
-		params = gtk_args;
-
-	/*
-	 * If there are extra arguments specified by user, add them to the parameter
-	 * array.
-	 */
-	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
-	
-	signal_args = php_gtk_hash_as_array(params);
-
-	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), signal_args, 0, NULL TSRMLS_CC);
-	
-	efree(signal_args);
-	zval_ptr_dtor(&params);
-	
-	return retval;
-	/*
-	if (retval) {
-		if (args)
-			php_gtk_ret_from_value(&args[nargs], retval);
-		zval_ptr_dtor(&retval);
-	}
-	*/
-
-	
-}
 
 #endif  /* HAVE_PHP_GTK */

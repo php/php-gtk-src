@@ -96,7 +96,7 @@ extern HashTable php_gtk_rsrc_hash;
 extern HashTable php_gtk_prop_getters;
 extern HashTable php_gtk_prop_setters;
 extern HashTable php_gtk_type_hash;
-extern HashTable php_gtk_callback_hash;
+
 /* Function declarations. */
 
 int php_gtk_startup_all_extensions(int module_number);
@@ -123,7 +123,7 @@ void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference
 
 PHP_GTK_API void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter);
 PHP_GTK_API void php_gtk_register_prop_setter(zend_class_entry *ce, prop_setter_t setter);
-PHP_GTK_API void php_gtk_register_callback(char *class_and_method, GtkSignalFunc call_function);
+
 PHP_GTK_API void php_gtk_object_init(GtkObject *obj, zval *wrapper);
 
 /* Utility functions. */
@@ -140,9 +140,6 @@ zval ***php_gtk_func_args(int argc);
 PHP_GTK_API zval *php_gtk_func_args_as_hash(int argc, int start, int length);
 PHP_GTK_API zval *php_gtk_build_value(char *format, ...);
 char *php_gtk_zval_type_name(zval *arg);
-
-PHP_GTK_API  void php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object, int after);
-PHP_GTK_API zval* php_gtk_simple_signal_callback(GtkObject *o, gpointer data, zval *gtk_args );
 
 #define NOT_STATIC_METHOD() \
 	if (!this_ptr) { \
