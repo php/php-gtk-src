@@ -126,6 +126,13 @@ class Overrides {
                 }
                 break;
 
+            case 'add':
+                if (count($words) < 2) break;
+                $class = $words[0];
+                $method = $words[1];
+                $this->extra_methods[strtolower($class)][$method] = "\n" . $rest . "\n";
+                break;
+
             case 'getprop':
                 if (count($words) >= 2) {
                     list($class_name, $prop_name) = $words;
@@ -188,6 +195,11 @@ class Overrides {
     function get_handler_override($class, $handler)
     {
         return $this->handler_overrides[$class][$handler];
+    }
+    
+    function get_extra_methods($class)
+    {
+        return $this->extra_methods[strtolower($class)];
     }
 
     function have_get_prop($class_name, $prop_name)

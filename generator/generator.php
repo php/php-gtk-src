@@ -1037,6 +1037,14 @@ class Generator {
             }
         }
 
+        foreach ($this->overrides->get_extra_methods($this->lprefix) as $func_name => $func_body) {
+            fwrite($this->fp, $func_body);
+            $func_defs[] = sprintf(Templates::method_entry,
+                                   $this->lprefix,
+                                   $func_name, 'NULL', 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
+        }
+
+        sort($func_defs);
         if ($func_defs) {
             fwrite($this->fp, sprintf(Templates::functions_decl, strtolower($this->lprefix)));
             fwrite($this->fp, join('', $func_defs));
@@ -1150,10 +1158,6 @@ class Generator {
         fwrite($this->fp, $this->overrides->get_headers());
         //$this->write_constants();
         $this->write_class_entries();
-        //$this->write_prop_lists();
-        //if (!isset($this->parser->objects[$this->function_class]))
-        //$this->write_functions(true, $dummy);
-        //$this->write_structs();
         $this->write_enums();
         $this->write_classes();
         fwrite($this->fp, "\n#endif /* HAVE_PHP_GTK */\n");
