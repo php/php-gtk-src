@@ -8696,7 +8696,7 @@
   (of-object Table (Gtk))
   (c-name gtk_table_attach)
   (return-type none)
-  (parameter (type-and-name GtkWidget* child))
+  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name guint left_attach))
   (parameter (type-and-name guint right_attach))
   (parameter (type-and-name guint top_attach))
