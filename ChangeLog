@@ -1,3 +1,20 @@
+2001-10-17  mfischer  <mfischer@pb1.pair.com>
+
+    * ext/ext_skel
+      ext/skeleton/config.m4:
+    Remove '^dnl  ' from config.m4 when generating new skeleton.
+
+2001-10-17  Andrei Zmievski  <andrei@pb1.pair.com>
+
+    * ext/sqpane/config.m4
+      test/sqpane.php
+      ext/skeleton/config.m4:
+    - Don't show skeleton in configure.
+    - Adjust sqpane a bit.
+
+    * main/php_gtk.c
+      main/php_gtk.h: Adjust to new module structure in PHP 4.1.0.
+
 2001-10-16  Frank M. Kromann  <frank@frontbase.com>
 
     * win32/scheme.dsp: Adding generation of gen_ce_libglade.h
