@@ -1,3 +1,12 @@
+2005-01-25  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.overrides:
+      Implement GdkRectangle() constructor.
+
+    * main/php_gtk.c
+      main/phpg_gobject.c:
+      Fix definitino of phpg_class_id and phpg_class_key.
+
 2005-01-24  Andrei Zmievski  <andrei@gravitonic.com>
 
     * TODO2:
