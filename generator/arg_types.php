@@ -72,17 +72,22 @@ class Var_List {
 }
 
 class Wrapper_Info {
-    private $var_list   = array();
-    private $arg_list   = array();
-    private $parse_list = array();
-    private $specifiers = '';
-    private $pre_code   = array();
-    private $post_code  = array();
+    var $var_list   = array();
+    var $arg_list   = array();
+    var $parse_list = array('');
+    var $specifiers = '';
+    var $pre_code   = array();
+    var $post_code  = array();
 
-    function add_parse_list($specifiers, $parse_args)
+    function Wrapper_Info()
+    {
+        $this->var_list = new Var_List;
+    }
+
+    function add_parse_list($specifiers, $parse_args = array())
     {
         $this->specifiers .= $specifiers;
-        $this->parse_args = array_merge($this->parse_list, $parse_args);
+        $this->parse_list = array_merge($this->parse_list, (array)$parse_args);
     }
 
     function get_var_list()
@@ -142,79 +147,72 @@ class Arg_Type {
 class None_Arg extends Arg_Type {
     function write_return($type, $owns_return, $info)
     {
-        return "    %s;\n" .
-               "    RETURN_NULL();";
+        return "\tRETURN_NULL();";
     }
 }
 
 class String_Arg extends Arg_Type {
-    function write_param($type, $name, $default, $null_ok, &$var_list,
-                         &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
+    function write_param($type, $name, $default, $null_ok, $info)
     {
         if (isset($default)) {
             if ($default != 'NULL')
                 $default = '"' . $default . '"';
-            $var_list->add('char', '*' . $name . ' = ' . $default);
+            $info->var_list->add('char', '*' . $name . ' = ' . $default);
         } else
-            $var_list->add('char', '*' . $name);
-        $parse_list[]   = '&' . $name;
+            $info->var_list->add('char', '*' . $name);
+        $info->add_parse_list('s', '&' . $name);
 
         if (strtoupper(substr(PHP_OS, 0,3) == "WIN")) {
-            $var_list->add('gchar', '*utf8_' . $name . ' = NULL');
-            $arg_list[]   = 'utf8_' . $name;
-            $extra_post_code[]   = "\tif (utf8_$name) g_free(utf8_$name);\n";
-            $extra_pre_code[] = "\tif ($name) utf8_$name = g_convert($name, strlen($name), \"UTF-8\", GTK_G(codepage), NULL, NULL, NULL);\n";
+            $info->var_list->add('gchar', '*utf8_' . $name . ' = NULL');
+            $info->arg_list[]  = 'utf8_' . $name;
+            $info->post_code[] = "\tif (utf8_$name) g_free(utf8_$name);\n";
+            $info->pre_code[]  = "\tif ($name) utf8_$name = g_convert($name, strlen($name), \"UTF-8\", GTK_G(codepage), NULL, NULL, NULL);\n";
         } else
-            $arg_list[] = $name;
-
-        return 's';
+            $info->arg_list[] = $name;
     }
     
-    function write_return($type, &$var_list, $separate)
+    function write_return($type, $owns_return, $info)
     {
-        if (in_array($type, array('const-gchar*', 'const-char*', 'static_string'))) {
-            $var_list->add('const gchar', '*ret');
+        if (!$owns_return) {
+            $info->var_list->add('const gchar', '*php_retval');
             if (strtoupper(substr(PHP_OS, 0,3) == "WIN")) {
-                $var_list->add('gchar', '*cp_ret');
-                return "    ret = %s;\n"                            .
-                       "%s  if (ret) {\n"                           .
-                       "        cp_ret = g_convert(ret, strlen(ret), GTK_G(codepage), \"UTF-8\", NULL, NULL, NULL);\n" .
-                       "        RETURN_STRING((char *)cp_ret, 1);\n"    .
-                       "        g_free(cp_ret);\n"                  .
-                       "    }\n"                                    .
-                       "    else {\n"                               .
-                       "        RETURN_NULL();\n"                   .
+                $info->var_list->add('gchar', '*cp_ret');
+                $info->post_code[] = 
+                       "    if (php_retval) {\n"                           .
+                       "        cp_ret = g_convert(php_retval, strlen(php_retval), GTK_G(codepage), \"UTF-8\", NULL, NULL, NULL);\n" .
+                       "        RETURN_STRING((char *)cp_ret, 1);\n"       .
+                       "        g_free(cp_ret);\n"                         .
+                       "    } else {\n"                                    .
+                       "        RETURN_NULL();\n"                          .
                        "    }";
-            }
-            else {
-                return "    ret = %s;\n"                            .
-                       "%s  if (ret) {\n"                           .
-                       "        RETURN_STRING((char *)ret, 1);\n"   .
-                       "    }\n"                                    .
-                       "    else {\n"                               .
-                       "        RETURN_NULL();\n"                   .
+            } else {
+                $info->post_code[] = 
+                       "    if (php_retval) {\n"                           .
+                       "        RETURN_STRING((char *)php_retval, 1);\n"   .
+                       "    } else {\n"                                    .
+                       "        RETURN_NULL();\n"                          .
                        "    }";
             }
 
         } else {
-            $var_list->add('gchar', '*ret');
+            $info->var_list->add('gchar', '*php_retval');
             if (strtoupper(substr(PHP_OS, 0,3) == "WIN")) {
-                $var_list->add('gchar', '*cp_ret');
-                return "    ret = %s;\n"                    .
-                       "%s  if (ret) {\n"                   .
-                       "        cp_ret = g_convert(ret, strlen(ret), GTK_G(codepage), \"UTF-8\", NULL, NULL, NULL);\n" .
+                $info->var_list->add('gchar', '*cp_ret');
+                $info->post_code[] = 
+                       "    if (php_retval) {\n"                        .
+                       "        cp_ret = g_convert(php_retval, strlen(php_retval), GTK_G(codepage), \"UTF-8\", NULL, NULL, NULL);\n" .
                        "        RETURN_STRING((char *)cp_ret, 1);\n"    .
-                       "        g_free(cp_ret);\n"                  .
-                       "        g_free(ret);\n"             .
-                       "    } else\n"                       .
+                       "        g_free(cp_ret);\n"                      .
+                       "        g_free(php_retval);\n"                  .
+                       "    } else\n"                                   .
                        "        RETURN_NULL();";
             }
             else {
-                return "    ret = %s;\n"                    .
-                       "%s  if (ret) {\n"                   .
-                       "        RETURN_STRING(ret, 1);\n"   .
-                       "        g_free(ret);\n"             .
-                       "    } else\n"                       .
+                $info->post_code[] = 
+                       "    if (php_retval) {\n"                   .
+                       "        RETURN_STRING(php_retval, 1);\n"   .
+                       "        g_free(php_retval);\n"             .
+                       "    } else\n"                              .
                        "        RETURN_NULL();";
             }
         }
@@ -244,23 +242,20 @@ class Char_Arg extends Arg_Type {
 }
 
 class Int_Arg extends Arg_Type {
-    function write_param($type, $name, $default, $null_ok, &$var_list,
-                         &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
+    function write_param($type, $name, $default, $null_ok, $info)
     {
         if (isset($default))
-            $var_list->add('long', $name . ' = ' . $default);
+            $info->var_list->add('long', $name . ' = ' . $default);
         else
-            $var_list->add('long', $name);
-        $parse_list[]   = '&' . $name;
-        $arg_list[]     = "($type)$name";
-        return 'i';
+            $info->var_list->add('long', $name);
+        $info->arg_list[] = "($type)$name";
+        $info->add_parse_list('i', '&' . $name);
     }
     
-    function write_return($type, &$var_list, $separate)
+    function write_return($type, $owns_return, $info)
     {
-        $var_list->add('long', 'php_retval');
-        return "    php_retval = %s;\n" .
-               "%s  RETURN_LONG(php_retval);";
+        $info->var_list->add('long', 'php_retval');
+        $info->post_code[] = "\tRETURN_LONG(php_retval);";
     }
 
     function write_to_prop($obj, $name, $source)
@@ -771,9 +766,14 @@ class Arg_Matcher {
         $this->register('const-' . $type . '*', $handler);
     }
 
-    function &get($type)
+    function get($type)
     {
-        return $this->arg_types[$type];
+        /* TODO check for GdEvent */
+        if (isset($this->arg_types[$type])) {
+            return $this->arg_types[$type];
+        } else {
+            throw new Exception("unknown type '$type'");
+        }
     }
 }
 
@@ -794,10 +794,10 @@ $matcher->register('unsigned-char*', $arg);
 $matcher->register('guchar*', $arg);
 $matcher->register('const-guchar*', $arg);
 
-$arg = new Char_Arg();
-$matcher->register('char', $arg);
-$matcher->register('gchar', $arg);
-$matcher->register('guchar', $arg);
+#$arg = new Char_Arg();
+#$matcher->register('char', $arg);
+#$matcher->register('gchar', $arg);
+#$matcher->register('guchar', $arg);
 
 $arg = new Int_Arg();
 $matcher->register('int', $arg);
@@ -818,36 +818,36 @@ $matcher->register('guint32', $arg);
 $matcher->register('gint32', $arg);
 $matcher->register('GtkType', $arg);
 
-$arg = new Bool_Arg();
-$matcher->register('gboolean', $arg);
-
-$arg = new Double_Arg();
-$matcher->register('double', $arg);
-$matcher->register('gdouble', $arg);
-$matcher->register('float', $arg);
-$matcher->register('gfloat', $arg);
-
-$arg = new Atom_Arg();
-$matcher->register('GdkAtom', $arg);
-
-$arg = new Drawable_Arg();
-$matcher->register('GdkDrawable*', $arg);
-
-$matcher->register_boxed('GdkEvent', 'gdk_event');
-$matcher->register_boxed('GdkWindow', 'gdk_window');
-$matcher->register_boxed('GdkPixmap', 'gdk_pixmap');
-$matcher->register_boxed('GdkBitmap', 'gdk_bitmap');
-$matcher->register_boxed('GdkColor', 'gdk_color');
-$matcher->register_boxed('GdkColormap', 'gdk_colormap');
-$matcher->register_boxed('GdkCursor', 'gdk_cursor');
-$matcher->register_boxed('GdkVisual', 'gdk_visual');
-$matcher->register_boxed('GdkFont', 'gdk_font');
-$matcher->register_boxed('GdkGC', 'gdk_gc');
-$matcher->register_boxed('GdkDragContext', 'gdk_drag_context');
-$matcher->register_boxed('GtkSelectionData', 'gtk_selection_data');
-$matcher->register_boxed('GtkCTreeNode', 'gtk_ctree_node');
-$matcher->register_boxed('GtkAccelGroup', 'gtk_accel_group');
-$matcher->register_boxed('GtkStyle', 'gtk_style');
+#$arg = new Bool_Arg();
+#$matcher->register('gboolean', $arg);
+#
+#$arg = new Double_Arg();
+#$matcher->register('double', $arg);
+#$matcher->register('gdouble', $arg);
+#$matcher->register('float', $arg);
+#$matcher->register('gfloat', $arg);
+#
+#$arg = new Atom_Arg();
+#$matcher->register('GdkAtom', $arg);
+#
+#$arg = new Drawable_Arg();
+#$matcher->register('GdkDrawable*', $arg);
+#
+#$matcher->register_boxed('GdkEvent', 'gdk_event');
+#$matcher->register_boxed('GdkWindow', 'gdk_window');
+#$matcher->register_boxed('GdkPixmap', 'gdk_pixmap');
+#$matcher->register_boxed('GdkBitmap', 'gdk_bitmap');
+#$matcher->register_boxed('GdkColor', 'gdk_color');
+#$matcher->register_boxed('GdkColormap', 'gdk_colormap');
+#$matcher->register_boxed('GdkCursor', 'gdk_cursor');
+#$matcher->register_boxed('GdkVisual', 'gdk_visual');
+#$matcher->register_boxed('GdkFont', 'gdk_font');
+#$matcher->register_boxed('GdkGC', 'gdk_gc');
+#$matcher->register_boxed('GdkDragContext', 'gdk_drag_context');
+#$matcher->register_boxed('GtkSelectionData', 'gtk_selection_data');
+#$matcher->register_boxed('GtkCTreeNode', 'gtk_ctree_node');
+#$matcher->register_boxed('GtkAccelGroup', 'gtk_accel_group');
+#$matcher->register_boxed('GtkStyle', 'gtk_style');
 
 /* vim: set et sts=4: */
 ?>

@@ -36,13 +36,13 @@ const function_call = "%s(%s)";
 const method_body = "
 PHP_METHOD(%(class), %(name))
 {
-%(varlist)\tNOT_STATIC_METHOD();
+%(var_list)\tNOT_STATIC_METHOD();
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list)))
 		return;
-%(codebefore)
-    %(return)%(cname)(%(cast)PHPG_GET(this_ptr)%(arglist));
-%(codeafter)
+%(pre_code)
+    %(return)%(cname)(%(cast)(PHPG_GET(this_ptr))%(arg_list));
+%(post_code)
 }\n\n";
 
 const method1_call = "%s(%s(PHP_GTK_GET(this_ptr))%s)";
@@ -74,7 +74,7 @@ const gtk_object_init = "
 const non_gtk_object_init = "
 	php_gtk_set_object(this_ptr, wrapped_obj, le_%s);\n";
 
-const function_entry = "\tPHP_ME(%s, %s, %s, %s),\n";
+const function_entry = "\tPHP_ME(%s, %s, %s, %s)\n";
 const functions_decl = "
 static function_entry %s_methods[] = {
 ";

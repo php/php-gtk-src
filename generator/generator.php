@@ -82,15 +82,17 @@ class Generator {
             }
             */
 
-            $matcher->register_object($object->c_name, $object->typecode);
+            //TODO $matcher->register_object($object->c_name, $object->typecode);
         }
 
+        /*
         foreach ($parser->enums as $enum) {
             if ($enum->def_type == 'flags')
                 $matcher->register_flag($enum->c_name, $enum->typecode);
             else
                 $matcher->register_enum($enum->c_name, $enum->typecode);
         }
+        */
     }
 
     function write_constants()
@@ -255,6 +257,58 @@ class Generator {
         fwrite($this->fp, $constructor_code);
         
         return true;
+    }
+
+    function write_callable($callable, $template, $handle_return = false, $is_method = false, $dict = array())
+    {
+        global $matcher;
+
+        if ($callable->varargs) {
+            throw new Exception('varargs methods not supported');
+        }
+
+        $info = new Wrapper_Info();
+
+        /* need the extra comma for methods */
+        if ($is_method) {
+            $info->arg_list[] = '';
+        }
+
+        foreach ($callable->params as $params_array) {
+            list($param_type, $param_name, $param_default, $param_null) = $params_array;
+
+            if (isset($param_default) && strpos($info->specifiers, '|') === false) {
+                $info->add_parse_list('|');
+            }
+
+            $handler = $matcher->get($param_type);
+            $handler->write_param($param_type, $param_name, $param_default, $param_null, $info);
+        }
+
+        $dict['return'] = '';
+        if ($handle_return) {
+            if ($callable->return_type !== null &&
+                $callable->return_type != 'none') {
+                $dict['return'] = 'php_retval = ';
+            }
+            $handler = $matcher->get($callable->return_type);
+            $handler->write_return($callable->return_type, $callable->caller_owns_return, $info);
+        }
+
+        /* TODO handle deprecation */
+
+        if (!isset($dict['name'])) {
+            $dict['name'] = $callable->name;
+        }
+        $dict['cname'] = $callable->c_name;
+        $dict['var_list'] = $info->get_var_list();
+        $dict['specs'] = $info->specifiers;
+        $dict['parse_list'] = $info->get_parse_list();
+        $dict['arg_list'] = $info->get_arg_list();
+        $dict['pre_code'] = $info->get_pre_code();
+        $dict['post_code'] = $info->get_post_code();
+
+        return aprintf($template, $dict);
     }
 
     function write_function($function)
@@ -482,7 +536,15 @@ class Generator {
     {
         $method_defs = array();
 
-        foreach ($this->parser->find_methods($object) as $method) {
+        $methods = $this->parser->find_methods($object);
+        if ($methods) {
+            fprintf(STDERR, "Writing methods for $object->c_name...\n");
+        }
+
+        $dict['class'] = $object->c_name;
+        $dict['cast'] = preg_replace('!_TYPE_!', '_', $object->typecode, 1);
+
+        foreach ($methods as $method) {
             $method_name = $method->c_name;
             
             /* skip ignored methods */
@@ -501,13 +563,14 @@ class Generator {
                                                'NULL');
                                                */
                 } else {
-                    //$code = $this->write_callable($method, Templates::method_body, true, true);
+                    $code = $this->write_callable($method, Templates::method_body, true, true, $dict);
+                    fwrite($this->fp, $code);
                     $method_defs[] = sprintf(Templates::function_entry,
                                              $object->in_module . $object->name,
                                              $method->name, 'NULL', 0);
                 }
             } catch (Exception $e) {
-                fprintf(STDERR, 'not generating method %s::%s: %s', $object->c_name, $method->name, $e->getMessage());
+                fprintf(STDERR, "\tnot generating method %s::%s: %s\n", $object->c_name, $method->name, $e->getMessage());
             }
         }
 
@@ -635,7 +698,7 @@ class Generator {
         $register_classes = '';
 
         if ($this->parser->enums || $this->parser->functions) {
-            $func_defs = $this->write_functions();
+            //TODO $func_defs = $this->write_functions();
 
             $register_classes .= sprintf(Templates::register_class,
                                          $this->lprefix . '_ce',
@@ -649,7 +712,6 @@ class Generator {
             $object_module = strtolower($object->in_module);
             $object_lname = strtolower($object->name);
 
-            fprintf(STDERR, "Writing methods for $object->c_name...\n");
             $method_defs = $this->write_methods($object);
 
             $register_classes .= sprintf(Templates::register_class,
@@ -806,6 +868,7 @@ class Generator {
         foreach ($this->parser->structs as $struct)
             fwrite($this->fp, sprintf($class_entry_tpl, $struct->ce));
          */
+        fwrite($this->fp, "\n");
         foreach ($this->parser->objects as $object) {
             fwrite($this->fp, sprintf(Templates::class_entry, $object->ce));
         }

@@ -223,7 +223,7 @@ PHP_GTK_API zval* php_gtk_simple_signal_callback(GtkObject *o, gpointer data, zv
 
 #define NOT_STATIC_METHOD() \
 	if (!this_ptr) { \
-		php_error(E_WARNING, "%s::%s() is not a static method", get_active_class_name(TSRMLS_C), get_active_function_name(TSRMLS_C)); \
+		php_error(E_WARNING, "%s::%s() is not a static method", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C)); \
 		return; \
 	}
 
