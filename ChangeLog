@@ -1,3 +1,21 @@
+2001-08-24  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS
+      TODO
+      ext/gtk+/gtk.overrides:
+    - Fixed a crash bug in type translation.
+    - Added TODO item.
+
+    * TODO:
+    One less to do. Time for a beer.
+
+    * NEWS
+      main/php_gtk_util.c
+      test/gtk.php:
+    Made type checking of function parameters more forgiving. It won't complain
+    now that you passed an integer instead of a double, and so on. Only some
+    rules have been relaxed, the rest still stand.
+
 2001-08-22  Markus Fischer  <mfischer@guru.josefine.at>
 
     * test/gtk.php:
