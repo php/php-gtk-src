@@ -1,7 +1,9 @@
 <?
     /* $Id$ */
 
-	dl( 'php_gtk.' . (strstr( PHP_OS, 'WIN') ? 'dll' : 'so'));
+	if (!class_exists('gtk')) {
+		dl( 'php_gtk.' . (strstr( PHP_OS, 'WIN') ? 'dll' : 'so'));
+	}
 
 
 	$w = &new GtkWindow;

@@ -1,10 +1,12 @@
 <?php
 /* $Id$ */
 
-if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN')
-	dl('php_gtk.dll');
-else
-	dl('php_gtk.so');
+if (!class_exists('gtk')) {
+	if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN')
+		dl('php_gtk.dll');
+	else
+		dl('php_gtk.so');
+}
 
 $windows = array();
 
