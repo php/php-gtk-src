@@ -1,3 +1,25 @@
+/*
+ * PHP-GTK - The PHP language bindings for GTK+
+ *
+ * Copyright (C) 2001 Andrei Zmievski <andrei@ispi.net>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/* $Id$ */
+
 #include "php_gtk.h"
 
 #if HAVE_PHP_GTK
@@ -33,8 +55,7 @@ zval *php_gdk_event_new(GdkEvent *obj)
 	
 	if (obj->any.window) {
 		value = php_gdk_window_new(obj->any.window);
-		zend_hash_update(Z_OBJPROP_P(result), "window", sizeof("window"),
-						 &value, sizeof(zval *), NULL);
+		add_property_zval_ex(result, "window", sizeof("window"), value);
 	} else
 		add_property_unset(result, "window");
 	add_property_bool(result, "send_event", obj->any.send_event);
@@ -99,9 +120,10 @@ zval *php_gdk_event_new(GdkEvent *obj)
 		case GDK_ENTER_NOTIFY:
 		case GDK_LEAVE_NOTIFY:
 			if (obj->crossing.subwindow) {
-				/* TODO set subwindow attribute */
+				value = php_gdk_window_new(obj->crossing.subwindow);
+				add_property_zval_ex(result, "subwindow", sizeof("subwindow"), value);
 			} else
-				add_property_unset(result, "window");
+				add_property_unset(result, "subwindow");
 			add_property_long(result, "time", obj->crossing.time);
 			add_property_double(result, "x", obj->crossing.x);
 			add_property_double(result, "y", obj->crossing.y);
@@ -231,7 +253,7 @@ static void gdk_window_get_property(zval *result, zval *object, zval *property)
 		gdk_window_get_position(win, NULL, &y);
 		ZVAL_LONG(result, y);
 	} else if (!strcmp(prop_name, "colormap")) {
-		/* TODO return colormap */
+		*result = *php_gdk_colormap_new(gdk_window_get_colormap(win));
 	} else if (!strcmp(prop_name, "pointer")) {
 		gdk_window_get_pointer(win, &x, &y, NULL);
 		*result = *php_gtk_build_value("(ii)", x, y);

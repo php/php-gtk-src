@@ -56,7 +56,9 @@ class Var_List {
 \*======================================================================*/
 class Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type)
+						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 $in_constructor,
+$in_constructor)
 	{
 		trigger_error("This is an abstract class", E_USER_ERROR);
 	}
@@ -77,9 +79,10 @@ class None_Arg extends Arg_Type {
 
 class String_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type)
+						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 $in_constructor)
 	{
-		if ($default) {
+		if (isset($default)) {
 			if ($default != 'NULL')
 				$default = '"' . $default . '"';
 			$var_list->add('char', '*' . $name . ' = ' . $default);
@@ -116,7 +119,8 @@ class String_Arg extends Arg_Type {
 
 class StringRef_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type)
+						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 $in_constructor)
 	{
 		$var_list->add('zval', '*php_' . $name . ' = NULL');
 		$parse_list[] 	= '&php_' . $name;
@@ -133,9 +137,10 @@ class StringRef_Arg extends Arg_Type {
 
 class Char_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type)
+						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 $in_constructor)
 	{
-		if ($default)
+		if (isset($default))
 			$var_list->add('char', $name . ' = \'' . $default . '\'');
 		else
 			$var_list->add('char', $name);
@@ -156,9 +161,10 @@ class Char_Arg extends Arg_Type {
 
 class Int_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type)
+						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 $in_constructor)
 	{
-		if ($default)
+		if (isset($default))
 			$var_list->add('long', $name . ' = ' . $default);
 		else
 			$var_list->add('long', $name);
@@ -176,7 +182,8 @@ class Int_Arg extends Arg_Type {
 
 class IntRef_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type)
+						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 $in_constructor)
 	{
 		$var_list->add('zval', '*php_' . $name . ' = NULL');
 		$parse_list[] 	= '&php_' . $name;
@@ -193,9 +200,10 @@ class IntRef_Arg extends Arg_Type {
 
 class Bool_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type)
+						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 $in_constructor)
 	{
-		if ($default)
+		if (isset($default))
 			$var_list->add('int', $name . ' = ' . $default);
 		else
 			$var_list->add('int', $name);
@@ -213,9 +221,10 @@ class Bool_Arg extends Arg_Type {
 
 class Double_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type)
+						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 $in_constructor)
 	{
-		if ($default)
+		if (isset($default))
 			$var_list->add('double', $name . ' = ' . $default);
 		else
 			$var_list->add('double', $name);
@@ -240,22 +249,25 @@ class Enum_Arg extends Arg_Type {
 	{
 		$this->enum_name = $enum_name;
 		$this->type_code = enum_name($enum_name);
-		$this->enum_tpl	 = "	php_%s_retval = php_gtk_get_enum_value(%s, php_%s, (gint *)&%s);\n\n";
+		$this->enum_tpl	 = "	if (php_%s && !php_gtk_get_enum_value(%s, php_%s, (gint *)&%s)) {\n" .
+						   "		%sreturn;\n" .
+						   "	}\n\n";
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type)
+						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 $in_constructor)
 	{
-		if ($default)
+		if (isset($default))
 			$var_list->add($this->enum_name, $name . ' = ' . $default);
 		else
 			$var_list->add($this->enum_name, $name);
 		$var_list->add('zval', '*php_' . $name . ' = NULL');
-		$var_list->add('int', 'php_' . $name . '_retval');
 		$parse_list[] 	= '&php_' . $name;
 		$parse_type[]	= " ";
 		$arg_list[] 	= $name;
-		$extra_code[] 	= sprintf($this->enum_tpl, $name, $this->type_code, $name, $name);
+		$extra_code[] 	= sprintf($this->enum_tpl, $name, $this->type_code, $name, $name,
+								  $in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "");
 		return 'V';
 	}
 	
@@ -274,22 +286,25 @@ class Flags_Arg extends Arg_Type {
 	{
 		$this->flag_name = $flag_name;
 		$this->type_code = enum_name($flag_name);
-		$this->flag_tpl	 = "	php_%s_retval = php_gtk_get_flag_value(%s, php_%s, (gint *)&%s);\n\n";
+		$this->flag_tpl	 = "	if (php_%s && !php_gtk_get_flag_value(%s, php_%s, (gint *)&%s)) {\n" .
+						   "		%sreturn;\n" .
+						   "	}\n\n";
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type)
+						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 $in_constructor)
 	{
-		if ($default)
+		if (isset($default))
 			$var_list->add($this->flag_name, $name . ' = ' . $default);
 		else
 			$var_list->add($this->flag_name, $name);
 		$var_list->add('zval', '*php_' . $name . ' = NULL');
-		$var_list->add('int', 'php_' . $name . '_retval');
 		$parse_list[] 	= '&php_' . $name;
 		$parse_type[]	= " ";
 		$arg_list[] 	= $name;
-		$extra_code[] 	= sprintf($this->flag_tpl, $name, $this->type_code, $name, $name);
+		$extra_code[] 	= sprintf($this->flag_tpl, $name, $this->type_code, $name, $name,
+								  $in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "");
 		return 'V';
 	}
 	
@@ -310,10 +325,11 @@ class Object_Arg extends Arg_Type {
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type)
+						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 $in_constructor)
 	{
 		if ($null_ok) {
-			if ($default) {
+			if (isset($default)) {
 				$var_list->add($this->obj_name, '*' . $name . ' = ' . $default);
 				$var_list->add('zval', '*php_' . $name . ' = NULL');
 				$extra_code[]	=	"	if (php_$name) {\n" .
@@ -335,7 +351,7 @@ class Object_Arg extends Arg_Type {
 
 			return 'N';
 		} else {
-			if ($default) {
+			if (isset($default)) {
 				$var_list->add($this->obj_name, '*' . $name . ' = ' . $default);
 				$var_list->add('zval', '*php_' . $name . ' = NULL');
 				$parse_list[] 	= '&php_' . $name . ', ' . strtolower($this->cast) . '_ce';
@@ -364,7 +380,8 @@ class Object_Arg extends Arg_Type {
 
 class Rect_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type)
+						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 $in_constructor)
 	{
 		$var_list->add(substr($type, 0, -1), $name);
 		$parse_list[] 	= "&($name.x)";

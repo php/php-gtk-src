@@ -91,7 +91,7 @@ class Generator {
 		foreach ($method->params as $params_array) {
 			list($param_type, $param_name, $param_default, $param_null) = $params_array;
 
-			if ($param_default && strpos($specs, '|') === false)
+			if (isset($param_default) && strpos($specs, '|') === false)
 				$specs .= '|';
 
 			$handler = &$matcher->get($param_type);
@@ -107,7 +107,8 @@ class Generator {
 											$parse_list,
 											$arg_list,
 											$extra_code,
-											$parse_type);
+											$parse_type,
+											false);
 		}
 
 		$arg_list 	= implode(', ', $arg_list);
@@ -155,7 +156,7 @@ class Generator {
 		foreach ($constructor->params as $params_array) {
 			list($param_type, $param_name, $param_default, $param_null) = $params_array;
 
-			if ($param_default && strpos($specs, '|') === false)
+			if (isset($param_default) && strpos($specs, '|') === false)
 				$specs .= '|';
 
 			$handler = &$matcher->get($param_type);
@@ -171,15 +172,8 @@ class Generator {
 											$parse_list,
 											$arg_list,
 											$extra_code,
-											$parse_type);
-
-			if (($handler_class = get_class($handler)) ==  'enum_arg' ||
-				$handler_class == 'flags_arg') {
-				$extra_code[] = "	if (!php_" . $param_name . "_retval) {\n" .
-								"		php_gtk_invalidate(this_ptr);\n" .
-								"		return;\n" .
-								"	}\n\n";
-			}
+											$parse_type,
+											true);
 		}
 
 		$arg_list 	= implode(', ', $arg_list);
@@ -222,7 +216,7 @@ class Generator {
 		foreach ($function->params as $params_array) {
 			list($param_type, $param_name, $param_default, $param_null) = $params_array;
 
-			if ($param_default && strpos($specs, '|') === false)
+			if (isset($param_default) && strpos($specs, '|') === false)
 				$specs .= '|';
 
 			$handler = &$matcher->get($param_type);
@@ -238,7 +232,8 @@ class Generator {
 											$parse_list,
 											$arg_list,
 											$extra_code,
-											$parse_type);
+											$parse_type,
+											false);
 		}
 
 		$arg_list 	= implode(', ', $arg_list);

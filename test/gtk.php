@@ -6,14 +6,12 @@ if ($OS == 'Windows_NT')
 else
 	dl('php_gtk.so');
 
-function delete_event()
+function delete_event($window, $event)
 {
-	var_dump(func_get_args());
 	return false;
 }
 
 function shutdown() {
-	var_dump(func_get_args());
 	print("Shutting down.\n");
 	Gtk::main_quit();
 }
