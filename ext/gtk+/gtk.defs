@@ -3231,7 +3231,10 @@
   (caller-owns-return "1")
   (return-type "GtkWidget*")
   (parameters
-    '("const-GdkColor*" "color")
+    '("const-GdkColor*" "color" (default "NULL"))
+  )
+  (properties
+    '("color" (optional))
   )
 )
 

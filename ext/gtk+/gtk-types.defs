@@ -2434,6 +2434,8 @@
   (c-name "GtkToggleButton")
   (gtype-id "GTK_TYPE_TOGGLE_BUTTON")
   (fields
+    '("gboolean" "active")
+    '("gboolean" "inconsistent")
     '("gboolean" "draw_indicator")
   )
 )

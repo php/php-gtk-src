@@ -18,6 +18,7 @@ ignore-glob
 	*_get_type
 	gtk_arg_*
 	gtk_args_*
+	gtk_check_button_new_*
 	gtk_init_add_*
 	gtk_marshal_*
 	gtk_quit_add_*
@@ -25,11 +26,12 @@ ignore-glob
 	gtk_radio_tool_button_new_*
 	gtk_signal_*
 	gtk_timeout_add_*
-
+	gtk_toggle_button_new_*
 %%
 ignore
 	gtk_button_new_with_label
 	gtk_button_new_with_mnemonic
+	gtk_color_button_new
 	gtk_dialog_new
 	gtk_exit
 	gtk_false
@@ -308,8 +310,8 @@ PHP_METHOD
 	}
 
 	if (text) {
-		wrapped_obj = (GObject *)g_object_new(GTK_TYPE_BUTTON, "label", text,
-											  "use-underline", use_underline, NULL);
+		wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), "label",
+											  text, "use-underline", use_underline, NULL);
 	} else {
 		wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
 	}
@@ -332,7 +334,7 @@ PHP_METHOD
 		PHPG_THROW_EXCEPTION(phpg_construct_exception, "could not construct GtkButton object");
 	}
 
-	wrapped_obj = (GObject *)g_object_new(GTK_TYPE_BUTTON, "label", stock,
+	wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), "label", stock,
 										  "use-stock", TRUE, "use-underline", TRUE, NULL);
 
 	if (!wrapped_obj) {
@@ -340,6 +342,34 @@ PHP_METHOD
 	}
 
     phpg_gobject_new(&return_value, wrapped_obj TSRMLS_CC);
+}
+%% }}}
+
+%% {{{ GtkCheckButton
+%%
+override gtk_check_button_new
+PHP_METHOD
+{
+	GObject *wrapped_obj;
+	gchar *text = NULL;
+	zend_bool use_underline = 0;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sb", &text, &use_underline)) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCheckButton);
+	}
+
+	if (text) {
+		wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), "label",
+											  text, "use-underline", use_underline, NULL);
+	} else {
+		wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
+	}
+
+	if (!wrapped_obj) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCheckButton);
+	}
+
+    phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
 %% }}}
 
@@ -804,6 +834,34 @@ PHPG_PROP_READER
 	RETVAL_BOOL(((GtkTextAttributes *)((phpg_gboxed_t *)object)->boxed)->appearance.draw_bg);
 
 	return SUCCESS;
+}
+%% }}}
+
+%% {{{ GtkToggleButton
+%%
+override gtk_toggle_button_new
+PHP_METHOD
+{
+	GObject *wrapped_obj;
+	gchar *text = NULL;
+	zend_bool use_underline = 0;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sb", &text, &use_underline)) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkToggleButton);
+	}
+
+	if (text) {
+		wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), "label",
+											  text, "use-underline", use_underline, NULL);
+	} else {
+		wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
+	}
+
+	if (!wrapped_obj) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkToggleButton);
+	}
+
+    phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
 %% }}}
 
