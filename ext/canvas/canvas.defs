@@ -659,10 +659,7 @@
   (of-object Canvas (Gtk))
   (c-name gtk_canvas_get_scroll_region)
   (return-type none)
-  (parameter (type-and-name double*        x1))
-  (parameter (type-and-name double*        y1))
-  (parameter (type-and-name double*        x2))
-  (parameter (type-and-name double*        y2))
+  
 )
 
 (method set_pixels_per_unit 
@@ -684,8 +681,7 @@
   (of-object Canvas (Gtk))
   (c-name gtk_canvas_get_scroll_offsets)
   (return-type none)
-  (parameter (type-and-name int*        cx))
-  (parameter (type-and-name int*        cy))
+  
 )
 
 (method update_now 
