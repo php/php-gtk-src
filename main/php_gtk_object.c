@@ -42,7 +42,6 @@ HashTable php_gtk_type_hash;
 HashTable php_gtk_prop_desc;
 HashTable php_gtk_callback_hash;
 
-//static const char *php_gtk_wrapper_key  = "php_gtk::wrapper";
 
 PHP_GTK_API zend_object_handlers php_gtk_handlers;
 
@@ -1082,7 +1081,7 @@ PHP_GTK_API zval php_gtk_get_property(zend_property_reference *property_referenc
 			if ((getter_retval = invoke_getter(&object, &result, &element) == FAILURE)) {
 				if ((getter_retval = zend_hash_find(Z_OBJPROP(object),
 											   Z_STRVAL(overloaded_property->element),
-											   Z_STRLEN(overloaded_property->element)+1,
+											Z_STRLEN(overloaded_property->element)+1,
 											   (void **)&prop_result)) == SUCCESS) {
 					result = **prop_result;
 				}
@@ -1095,13 +1094,13 @@ PHP_GTK_API zval php_gtk_get_property(zend_property_reference *property_referenc
 
 			if (Z_TYPE(overloaded_property->element) == IS_STRING) {
 				getter_retval = zend_hash_find(Z_ARRVAL(object),
-											   Z_STRVAL(overloaded_property->element),
-											   Z_STRLEN(overloaded_property->element)+1,
-											   (void **)&prop_result);
+											Z_STRVAL(overloaded_property->element),
+											Z_STRLEN(overloaded_property->element)+1,
+											(void **)&prop_result);
 			} else if (Z_TYPE(overloaded_property->element) == IS_LONG) {
 				getter_retval = zend_hash_index_find(Z_ARRVAL(object),
-													 Z_LVAL(overloaded_property->element),
-													 (void **)&prop_result);
+											Z_LVAL(overloaded_property->element),
+											(void **)&prop_result);
 			}
 			if (getter_retval == SUCCESS)
 				result = **prop_result;
@@ -1120,7 +1119,8 @@ PHP_GTK_API zval php_gtk_get_property(zend_property_reference *property_referenc
 	SEPARATE_ZVAL(&result_ptr);
 	return *result_ptr;
 }
-
+#endif
+#ifdef DISABLED
 PHP_GTK_API int php_gtk_set_property(zend_property_reference *property_reference, zval *value)
 {
 	zval result, temp;

@@ -222,12 +222,12 @@ function create_ctree()
 										  $ctree_data['pixmap2'],
 										  $ctree_data['mask2'], false, true);
 
-			$style = &new GtkStyle();
-			$style->base[GTK_STATE_NORMAL] = new GdkColor(0, 45000, 55000);
-			$ctree->node_set_row_data($parent, $style);
+			//$style = &new GtkStyle();
+			//$style->base[GTK_STATE_NORMAL] = new GdkColor(0, 45000, 55000);
+			//$ctree->node_set_row_data($parent, $style);
 
-			if ($ctree->line_style == GTK_CTREE_LINES_TABBED)
-				$ctree->node_set_row_style($parent, $style);
+			//if ($ctree->line_style == GTK_CTREE_LINES_TABBED)
+			//	$ctree->node_set_row_style($parent, $style);
 
 			build_recursive($ctree, 1, $d, $b, $p, $parent);
 			$ctree->thaw();
@@ -267,6 +267,7 @@ function create_ctree()
 											   $ctree_data['mask2'],
 											   false, false);
 
+				/*
 				$style = &new GtkStyle();
 				switch ($cur_depth % 3) {
 					case 0:
@@ -290,11 +291,11 @@ function create_ctree()
 						$style->base[GTK_STATE_NORMAL] = $color;
 						break;
 				}
-
+				
 				$ctree->node_set_row_data($sibling, $style);
 				if ($ctree->line_style == GTK_CTREE_LINES_TABBED)
 					$ctree->node_set_row_style($sibling, $style);
-				
+				*/
 				build_recursive($ctree, $cur_depth + 1, $depth, $num_books,
 								$num_pages, $sibling);
 			}
@@ -1159,6 +1160,7 @@ function create_clist()
 
 		function clist_click_column($clist, $column)
 		{
+			var_dump(func_get_args());
 			if ($column == 4)
 				$clist->set_column_visibility($column, false);
 			else if ($column == $clist->sort_column) {
@@ -1407,9 +1409,11 @@ function create_clist()
 		$col1 = &new GdkColor(56000, 0, 0);
 		$col2 = &new GdkColor(0, 56000, 32000);
 		$style = &new GtkStyle;
-		$style->fg[GTK_STATE_NORMAL] = $col1;
-		$style->base[GTK_STATE_NORMAL] = $col2;
-		$style->font = gdk::font_load ("-adobe-helvetica-bold-r-*-*-*-140-*-*-*-*-*-*");
+		var_dump($style);
+		//$style->fg[GTK_STATE_NORMAL] = $col1;
+		//$style->base[GTK_STATE_NORMAL] = $col2;
+		// this needs to be replaced with pango!
+		//$style->font = gdk::font_load ("-adobe-helvetica-bold-r-*-*-*-140-*-*-*-*-*-*");
 
 		for ($i = 0; $i < 10; $i++) {
 			$texts[0] = sprintf('CListRow %d', $clist_rows++);
@@ -1417,11 +1421,11 @@ function create_clist()
 
 			switch ($i % 4) {
 				case 2:
-					$clist->set_row_style($i, $style);
+					//$clist->set_row_style($i, $style);
 					break;
 
 				default:
-					$clist->set_cell_style($i, $i % 4, $style);
+					//$clist->set_cell_style($i, $i % 4, $style);
 					break;
 			}
 		}

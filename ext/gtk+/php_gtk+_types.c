@@ -2725,6 +2725,7 @@ static int style_helper_set(style_array_type type, gpointer array, zval *value, 
 static int gtk_style_set_property(zval *object, char *prop_name, zval *value)
 {
 	GtkStyle *style = PHP_GTK_STYLE_GET(object);
+	printf("style set property\n");
 	/*
 	if (!strcmp(prop_name, "font")) {
 		if (php_gtk_check_class(value, gdk_font_ce)) {
@@ -2779,10 +2780,12 @@ static int gtk_style_set_property(zval *object, char *prop_name, zval *value)
 			return PG_ERROR;
 		}
 	}
-#if 0
+
 	else if (!strcmp(prop_name, "fg")) {
 		return style_helper_set(STYLE_COLOR_ARRAY, style->fg, value, prop_name);
-	} else if (!strcmp(prop_name, "bg")) {
+	}
+#if 0
+	 else if (!strcmp(prop_name, "bg")) {
 		return style_helper_set(STYLE_COLOR_ARRAY, style->bg, value, prop_name);
 	} else if (!strcmp(prop_name, "light")) {
 		return style_helper_set(STYLE_COLOR_ARRAY, style->light, value, prop_name);
@@ -3052,22 +3055,7 @@ void php_gtk_plus_register_types(int module_number)
 {
 	zend_class_entry ce;
 	TSRMLS_FETCH();
-
-    /*
-	le_php_gtk_wrapper = zend_register_list_destructors_ex(NULL, NULL, "Generic PHP-GTK wrapper", module_number);
-	le_gdk_window = zend_register_list_destructors_ex(release_gdk_window_rsrc, NULL, "GdkWindow", module_number);
-	le_gdk_bitmap = zend_register_list_destructors_ex(release_gdk_bitmap_rsrc, NULL, "GdkBitmap", module_number);
-	le_gdk_color = zend_register_list_destructors_ex(release_gdk_color_rsrc, NULL, "GdkColor", module_number);
-	le_gdk_colormap = zend_register_list_destructors_ex(release_gdk_colormap_rsrc, NULL, "GdkColormap", module_number);
-	le_gdk_cursor = zend_register_list_destructors_ex(release_gdk_cursor_rsrc, NULL, "GdkCursor", module_number);
-	le_gdk_visual = zend_register_list_destructors_ex(release_gdk_visual_rsrc, NULL, "GdkVisual", module_number);
-	le_gdk_font = zend_register_list_destructors_ex(release_gdk_font_rsrc, NULL, "GdkFont", module_number);
-	le_gdk_gc = zend_register_list_destructors_ex(release_gdk_gc_rsrc, NULL, "GdkGC", module_number);
-	le_gdk_drag_context = zend_register_list_destructors_ex(release_gdk_drag_context_rsrc, NULL, "GdkDragContext", module_number);
-	le_gtk_accel_group = zend_register_list_destructors_ex(release_gtk_accel_group_rsrc, NULL, "GtkAccelGroup", module_number);
-	le_gtk_label_group = zend_register_list_destructors_ex(release_gtk_accel_label_rsrc, NULL, "GtkAccelLabel", module_number);
-	le_gtk_style = zend_register_list_destructors_ex(release_gtk_style_rsrc, NULL, "GtkStyle", module_number);
-    */
+ 
 	gobject_ce   = php_gtk_register_class("GObject", php_gobject_functions, NULL, 0, 0, NULL TSRMLS_CC);
 	g_hash_table_insert(php_gtk_class_hash, g_strdup("GObject"), gobject_ce);
 
