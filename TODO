@@ -7,7 +7,6 @@
 * Add missing field defs to gtk.defs.
 * Document limitation of not being able to assign color components directly in
   cascaded overloads, i.e. $style->base[GTK_STATE_NORMAL]->red = 55555.
-* Adjust argument parsing routines to be more acceptable of types.
 
 * Have a separate _init() function for each module(). Also have .ini setting
   that automatically inits modules. Or make loadable modules.
