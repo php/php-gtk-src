@@ -1116,10 +1116,10 @@ PHP_FUNCTION(gtk_list_item_new)
 	if (text) {
 #ifdef PHP_WIN32
 		utf8_text = g_convert(text, strlen(text), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
-		wrapped_obj = (GtkObject *)gtk_list_item_new(utf8_text);
+		wrapped_obj = (GtkObject *)gtk_list_item_new_with_label(utf8_text);
 		if (utf8_text) g_free(utf8_text);
 #else
-		wrapped_obj = (GtkObject *)gtk_list_item_new(text);
+		wrapped_obj = (GtkObject *)gtk_list_item_new_with_label(text);
 #endif
 	}
 	else
