@@ -88,11 +88,105 @@ function create_buttons()
 }
 
 
+function create_labels()
+{
+	global	$windows;
+
+	if (!isset($windows['labels'])) {
+		$window = &new GtkWindow;
+		$windows['labels'] = $window;
+		$window->connect('delete-event', delete_event);
+		$window->set_title('GtkLabel');
+
+		$vbox = &new GtkVBox(false, 5);
+		$hbox = &new GtkHBox(false, 5);
+		$window->add($hbox);
+		$hbox->show();
+		$hbox->pack_start($vbox, false, false);
+		$vbox->show();
+		$window->set_border_width(5);
+
+		$frame = &new GtkFrame('Normal Label');
+		$label = &new GtkLabel('This is a Normal label');
+		$frame->add($label);
+		$label->show();
+		$vbox->pack_start($frame, false, false);
+		$frame->show();
+
+		$frame = &new GtkFrame('Multi-line Label');
+		$label = &new GtkLabel("This is a Multi-line label.\nSecond line\nThird line");
+		$frame->add($label);
+		$label->show();
+		$vbox->pack_start($frame, false, false);
+		$frame->show();
+
+		$frame = &new GtkFrame('Left Justified Label');
+		$label = &new GtkLabel("This is a Left-Justified\nMulti-line label.\nThird line");
+		$label->set_justify(GTK_JUSTIFY_LEFT);
+		$frame->add($label);
+		$label->show();
+		$vbox->pack_start($frame, false, false);
+		$frame->show();
+
+		$frame = &new GtkFrame('Right Justified Label');
+		$label = &new GtkLabel("This is a Right-Justified\nMulti-line label.\nThird line");
+		$label->set_justify(GTK_JUSTIFY_RIGHT);
+		$frame->add($label);
+		$label->show();
+		$vbox->pack_start($frame, false, false);
+		$frame->show();
+
+		$vbox = &new GtkVBox(false, 5);
+		$hbox->pack_start($vbox);
+		$vbox->show();
+
+		$frame = &new GtkFrame('Line wrapped label');
+		$label = &new GtkLabel("This is an example of a line-wrapped label.  It should not be taking ".
+							   "up the entire             ".
+							   "width allocated to it, but automatically wraps the words to fit.  ".
+							   "The time has come, for all good men, to come to the aid of their party.  ".
+							   "The sixth sheik's six sheep's sick.\n".
+							   "     It supports multiple paragraphs correctly, and  correctly   adds ".
+							   "many          extra  spaces. ");
+		$label->set_line_wrap(true);
+		$frame->add($label);
+		$label->show();
+		$vbox->pack_start($frame, false, false);
+		$frame->show();
+
+		$frame = &new GtkFrame('Filled, wrapped label');
+		$label = &new GtkLabel("This is an example of a line-wrapped, filled label.  It should be taking ".
+			     "up the entire              width allocated to it.  Here is a seneance to prove ".
+			     "my point.  Here is another sentence. ".
+			     "Here comes the sun, do de do de do.\n".
+			     "    This is a new paragraph.\n".
+			     "    This is another newer, longer, better paragraph.  It is coming to an end, ".
+			     "unfortunately.");
+		$label->set_line_wrap(true);
+		$label->set_justify(GTK_JUSTIFY_FILL);
+		$frame->add($label);
+		$label->show();
+		$vbox->pack_start($frame, false, false);
+		$frame->show();
+
+		$frame = &new GtkFrame('Underlined label');
+		$label = &new GtkLabel("This label is underlined!\n".
+							   "This one is underlined in 日本語の入用quite a funky fashion");
+		$label->set_justify(GTK_JUSTIFY_LEFT);
+		$label->set_pattern('_________________________ _ _________ _ _____ _ __ __  ___ ____ _____');
+		$frame->add($label);
+		$label->show();
+		$vbox->pack_start($frame, false, false);
+		$frame->show();
+	}
+	$windows['labels']->show();
+}
+
 function create_main_window()
 {
 	$buttons = array(
 					 'buttons'	=>	create_buttons,
-					 'labels'	=>	null,
+					 'labels'	=>	create_labels,
 					);
 
 	$window = &new GtkWindow();
@@ -117,7 +211,6 @@ function create_main_window()
 	$box2->set_border_width(10);
 	$scrolled_window->add_with_viewport($box2);
 	$box2->set_focus_vadjustment($scrolled_window->get_vadjustment());
-	$box2->show();
 
 	ksort($buttons);
 	foreach ($buttons as $label	=> $function) {
