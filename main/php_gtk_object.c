@@ -91,7 +91,7 @@ int php_gtk_get_simple_enum_value(zval *enum_val, int *result)
 	return 0;
 }
 
-int php_gtk_get_enum_value(GtkType enum_type, zval *enum_val, int *result)
+PHP_GTK_API int php_gtk_get_enum_value(GtkType enum_type, zval *enum_val, int *result)
 {
 	if (!enum_val)
 		return 0;
@@ -996,7 +996,7 @@ static inline int invoke_setter(zval *object, zval *value, zend_llist_element **
 	return result;
 }
 
-zval php_gtk_get_property(zend_property_reference *property_reference)
+PHP_GTK_API zval php_gtk_get_property(zend_property_reference *property_reference)
 {
 	zval result;
 	zval *result_ptr = &result;
@@ -1220,6 +1220,18 @@ void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference
 	}
 
 	zval_dtor(&method_name);
+}
+
+PHP_GTK_API void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter)
+{
+	zend_hash_index_update(&php_gtk_prop_getters, (long)ce, (void*)&getter,
+						   sizeof(prop_getter_t), NULL);
+}
+
+PHP_GTK_API void php_gtk_register_prop_setter(zend_class_entry *ce, prop_setter_t setter)
+{
+	zend_hash_index_update(&php_gtk_prop_setters, (long)ce, (void*)&setter,
+						   sizeof(prop_setter_t), NULL);
 }
 
 

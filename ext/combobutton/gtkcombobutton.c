@@ -20,6 +20,7 @@
  */
 
 #include <gtk/gtksignal.h>
+#include <gtk/gtkmain.h>
 #include <gtk/gtkmenu.h>
 #include <gtk/gtklabel.h>
 #include <gtk/gtkpixmap.h>
@@ -502,8 +503,8 @@ gtk_combobutton_get_arrow_direction (GtkComboButton *combobutton)
 {
   GtkArg args[1];
 
-  g_return_if_fail (combobutton != NULL);
-  g_return_if_fail (GTK_IS_COMBOBUTTON (combobutton));
+  g_return_val_if_fail (combobutton != NULL, 0);
+  g_return_val_if_fail (GTK_IS_COMBOBUTTON (combobutton), 0);
 
   args[0].name = "GtkComboButton::arrowdirection";
   gtk_object_getv (GTK_OBJECT (combobutton),
@@ -809,7 +810,7 @@ gtk_combobutton_button_press (GtkWidget *widget,
 	  if (event->window != widget->window)
 	    gdk_window_get_pointer (widget->window, &x, &y, &mods);
 
-	  if (x < (widget->allocation.width -
+	  if (x < (gint)(widget->allocation.width -
 		   GTK_CONTAINER (widget)->border_width * 3 -
 		   (CHILD_SPACING * 6) - COMBOARROW_SIZE))
 	    {
@@ -818,7 +819,7 @@ gtk_combobutton_button_press (GtkWidget *widget,
 	    }
 	  else
 	    {
-	      g_return_if_fail (combobutton->menu != NULL);
+	      g_return_val_if_fail (combobutton->menu != NULL, FALSE);
 
 	      gtk_combobutton_menu_pressed (combobutton);
 	      gtk_menu_popup (GTK_MENU (combobutton->menu), NULL, NULL,

@@ -523,7 +523,7 @@ int php_gtk_parse_args_hash_quiet(zval *hash, char *format, ...)
 	return retval;
 }
 
-int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce)
+PHP_GTK_API int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce)
 {
 	zend_class_entry *ce;
 
