@@ -1,4 +1,19 @@
-    - fixed i18n support in menu items and radio button constructors. (Steph)
+Version 0.5.2 "Bass does a body good" 01-Nov-2002
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - simplified GdkPixbuf constructor parameters. (Andrei)
+    - fixed setting of tile/stipple/clip_mask/bg_pixmap properties of GdkGC.
+      (Andrei)
+    - implemented GdkPixbuf::fill(). (Andrei)
+    - changed failure to allocate color to output only a notice instead of a
+      warning. (Andrei)
+    - made depth parameter of GdkPixmap constructor optional. (Andrei)
+    - added copy_area() method for drawables. (Andrei)
+    - added group() and set_group() methods for GtkRadioButton/GtkRadioMenuItem.
+      (Andrei)
+    - added GDK functions pointer_grab(), pointer_ungrab(), keyboard_grab(),
+      keyboard_ungrab(). (Andrei)
+    - added utf8 support to GtkRadioButton, GtkToggleButton, GtkCheckMenuItem,
+      and GtkCheckButton. (Frank)
     - fixed a crash bug when using non-string variables to access
       overloaded object's properties. (Andrei)
     - fixed a crash bug in GtkCheckButton constructor. (Andrei)
