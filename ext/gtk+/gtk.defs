@@ -625,7 +625,6 @@
   (field (type-and-name GtkWidget* colorsel))
   (field (type-and-name GtkWidget* main_vbox))
   (field (type-and-name GtkWidget* ok_button))
-  (field (type-and-name GtkWidget* reset_button))
   (field (type-and-name GtkWidget* cancel_button))
   (field (type-and-name GtkWidget* help_button))
 )
