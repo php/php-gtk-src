@@ -723,15 +723,17 @@ zval php_gtk_get_property_exp(zend_property_reference *property_reference)
 
 		found = FAILURE;
 		if (Z_TYPE_P(overloaded_property) == OE_IS_OBJECT) {
+			/* Trying to access a property on a non-object. */
 			if (Z_TYPE(object) != IS_OBJECT) {
-				/* php_error(E_WARNING, "Trying to access property '%s' on a non-object", Z_STRVAL(overloaded_property->element)); */
 				ZVAL_NULL(&result);
 				return result;
 			}
 
-			for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
-				if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
-					(*getter)(&result, &object, &element, &found);
+			if (Z_OBJCE(object)->handle_property_get) {
+				for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
+					if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
+						(*getter)(&result, &object, &element, &found);
+					}
 				}
 			}
 			if (found == FAILURE &&
@@ -742,6 +744,7 @@ zval php_gtk_get_property_exp(zend_property_reference *property_reference)
 				result = **prop_result;
 			}
 		} else if (Z_TYPE_P(overloaded_property) == OE_IS_ARRAY) {
+			/* Trying to access index on a non-array. */
 			if (Z_TYPE(object) != IS_ARRAY) {
 				ZVAL_NULL(&result);
 				return result;
@@ -805,9 +808,11 @@ int php_gtk_set_property_exp(zend_property_reference *property_reference, zval *
 		}
 
 		found = FAILURE;
-		for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
-			if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
-				(*getter)(&result, &object, &element, &found);
+		if (Z_OBJCE(object)->handle_property_get) {
+			for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
+				if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
+					(*getter)(&result, &object, &element, &found);
+				}
 			}
 		}
 		if (found == FAILURE) {
@@ -826,26 +831,34 @@ int php_gtk_set_property_exp(zend_property_reference *property_reference, zval *
 
 	retval = FAILURE;
 	overloaded_property = (zend_overloaded_element *) element->data;
-	if (zend_hash_index_find(&php_gtk_prop_setters, (long)object.value.obj.ce, (void **)&setter) == SUCCESS) {
-		retval = (*setter)(&object, &element, value);
-	} else {
-		found = FAILURE;
-		for (ce = Z_OBJCE(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
-			if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
-				(*getter)(&result, &object, &element, &found);
+	if (Z_OBJCE(object)->handle_property_set) {
+		for (ce = Z_OBJCE(object); ce != NULL && retval != SUCCESS; ce = ce->parent) {
+			if (zend_hash_index_find(&php_gtk_prop_setters, (long)ce, (void **)&setter) == SUCCESS) {
+				retval = (*setter)(&object, &element, value);
 			}
 		}
-		if (found == FAILURE) {
-			if (value->refcount) {
-				SEPARATE_ZVAL(&value);
-			} else
-				zval_add_ref(&value);
+	}
+	if (retval == FAILURE) {
+		if (Z_OBJCE(object)->handle_property_get) {
+			for (ce = Z_OBJCE(object); ce != NULL && retval != SUCCESS; ce = ce->parent) {
+				if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
+					(*getter)(&result, &object, &element, &retval);
+				}
+			}
+		}
+
+		if (retval == FAILURE) {
+			zval *local_value;
+
+			MAKE_STD_ZVAL(local_value);
+			*local_value = *value;
+			zval_copy_ctor(local_value);
 			retval = add_property_zval_ex(&object,
 										  Z_STRVAL(overloaded_property->element),
-										  Z_STRLEN(overloaded_property->element)+1, value);
+										  Z_STRLEN(overloaded_property->element)+1, local_value);
 		} else {
-			php_error(E_WARNING, "Cannot assign to overloaded property");
-			retval = FAILURE;
+			php_error(E_WARNING, "Cannot assign to overloaded property '%s'",
+					  Z_STRVAL(overloaded_property->element));
 		}
 	}
 
