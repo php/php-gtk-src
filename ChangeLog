@@ -1,3 +1,11 @@
+2003-03-19  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * (ZE2_PORT)
+      ext/gtk+/php_gtk+.c
+      generator/templates.php
+      main/php_gtk_object.c:
+      -** empty log message ***
+
 2003-02-07  Frank M. Kromann  <frank@kromann.info>
 
     * win32/php_win.c:
