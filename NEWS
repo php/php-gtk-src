@@ -1,3 +1,16 @@
+    - optimized internal resource handling, this should save on memory. (Andrei)
+    - fixed a bug that would corrupt object type when setting cascaded property.
+      (Andrei)
+    - added a few more properties to GtkCTree and GtkCList. (Andrei)
+    - implemented GtkMenu::popup(). (Andrei)
+    - fixed GtkCTree::insert_row() for good, added GtkCTree methods
+      node_set_row_data() and node_get_row_data(). (Andrei)
+    - added helper GtkCListRow class. (Andrei)
+    - separated GdkWindow, GdkBitmap, GdkPixmap implementations to allow for
+      more flexibility and clarity. (Andrei)
+    - implemented GtkObject methods get_data(), set_data, connect_after(),
+      connect_object_after(). (Andrei)
+    - added several more widget examples to gtk.php. (Andrei)
     - added ability to get and set color for GtkColorSelection. (Andrei)
 
 Version 0.0.3 "slow glass": 20-Mar-2001
