@@ -3272,6 +3272,7 @@
 
 (define-function combo_box_new_text
   (c-name "gtk_combo_box_new_text")
+  (is-constructor-of "GtkComboBox")
   (return-type "GtkWidget*")
 )
 
@@ -3341,6 +3342,7 @@
 
 (define-function combo_box_entry_new_with_model
   (c-name "gtk_combo_box_entry_new_with_model")
+  (is-constructor-of "GtkComboBoxEntry")
   (return-type "GtkWidget*")
   (parameters
     '("GtkTreeModel*" "model")
@@ -3365,6 +3367,7 @@
 
 (define-function combo_box_entry_new_text
   (c-name "gtk_combo_box_entry_new_text")
+  (is-constructor-of "GtkComboBoxEntry")
   (return-type "GtkWidget*")
 )
 

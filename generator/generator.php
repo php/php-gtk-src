@@ -589,11 +589,13 @@ class Generator {
                 if ($first) {
                     $ctor_fe_name = '__construct';
                     $flags = 'ZEND_ACC_PUBLIC';
+                    $template = Templates::constructor_body;
                 } else {
                     // remove class name from the constructor name, i.e. turn
                     // gtk_button_new_with_mnemonic into new_with_mnemonic
                     $ctor_fe_name = substr($ctor_name, strlen(convert_typename($ctor->is_constructor_of)));
                     $flags = 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC';
+                    $template = Templates::static_constructor_body;
                 }
 
                 try {
@@ -604,11 +606,7 @@ class Generator {
                         fwrite($this->fp, $ctor_override . "\n");
                     } else {
                         $dict['name'] = $ctor_fe_name;
-                        $template = Templates::constructor_body;
-                        if ($ctor_fe_name != '__construct') {
-                            $template = Templates::static_constructor_body;
-                        }
-                        $code = $this->write_callable($ctor, Templates::constructor_body, false, false, $dict);
+                        $code = $this->write_callable($ctor, $template, false, false, $dict);
                         fwrite($this->fp, $code);
                     }
                     $ctor_defs[] = sprintf(Templates::function_entry,
