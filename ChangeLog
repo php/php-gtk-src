@@ -1,3 +1,11 @@
+2004-08-06  Andrei Zmievski  <andreiz@gmail.com>
+
+    * (PHP_GTK_1)
+      ext/gtk+/gdk.defs
+      ext/gtk+/gdk.overrides:
+      Reimplement gdk::cursor_new_from_pixmap() so it actually works. (Tom
+      Rogers <trogers@kwikin.com>).
+
 2004-08-05  Andrei Zmievski  <andreiz@gmail.com>
 
     * generator/generator.php
