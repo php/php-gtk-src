@@ -23,6 +23,30 @@
 #include "php_gtk.h"
 
 #if HAVE_PHP_GTK
+
+PHP_GTK_API int phpg_rectangle_from_zval(zval *value, GdkRectangle *rectangle TSRMLS_DC)
+{
+	g_return_val_if_fail(rectangle != NULL, FAILURE);
+
+	if (Z_TYPE_P(value) == IS_OBJECT
+		&& instanceof_function(Z_OBJCE_P(value), gboxed_ce TSRMLS_CC)
+		&& phpg_gboxed_check(value, GDK_TYPE_RECTANGLE TSRMLS_CC)) {
+		*rectangle = *(GdkRectangle *)PHPG_GBOXED(value);
+		return SUCCESS;
+	}
+
+	if (Z_TYPE_P(value) == IS_ARRAY
+		&& php_gtk_parse_args_hash(value, "iiii", &rectangle->x, &rectangle->y,
+								   &rectangle->width, &rectangle->height)) {
+		return SUCCESS;
+	}
+
+	php_error(E_WARNING, "could not convert to type GdkRectangle");
+
+	return FAILURE;
+}
+
+#if 0
 #ifndef PHP_WIN32
 #include <gdk/gdkx.h>
 #endif
@@ -2822,5 +2846,7 @@ void php_gtk_plus_register_types(int module_number)
 	gtk_clist_row_ce = php_gtk_register_class("GtkCListRow", php_gtk_clist_row_functions, NULL, 1, 0, php_gtk_clist_row_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_clist_row_ce, gtk_clist_row_get_property);
 }
+
+#endif
 
 #endif

@@ -656,7 +656,7 @@ class Boxed_Arg extends Arg_Type {
             $owns_return = false;
         }
 
-        $info->post_code[] = sprintf("\tphpg_gboxed_new(&return_value, %s, %s, %s, TRUE);\n",
+        $info->post_code[] = sprintf("\tphpg_gboxed_new(&return_value, %s, %s, %s, TRUE TSRMLS_CC);\n",
                                      $this->typecode, $ret, $owns_return ?  'FALSE' : 'TRUE');
     }
 }
@@ -762,6 +762,51 @@ class Drawable_Arg extends Arg_Type {
 }
 /* }}} */
 
+/* {{{ GdkRectangle_Arg */
+class GdkRectangle_Arg extends Arg_Type {
+    function write_return($type, $owns_return, $info)
+    {
+        $info->var_list->add('GdkRectangle', 'php_retval');
+        $info->post_code[] = "\tphpg_gboxed_new(&return_value, GDK_TYPE_RECTANGLE, &php_retval, TRUE, TRUE TSRMLS_CC);\n";
+    }
+}
+/* }}} */
+
+/* {{{ GdkRectanglePtr_Arg */
+class GdkRectanglePtr_Arg extends Arg_Type {
+    const check_tpl = "
+    if (phpg_rectangle_from_zval(php_%(name), &%(name)) == FAILURE) {
+        php_error(E_WARNING, \"%s() expects %(name) argument to be either a 4-element array or a GdkRectangle object\", get_active_function_name(TSRMLS_C));
+        return;
+    }";
+    const check_null_tpl = "
+    if (Z_TYPE_P(php_%(name)) == IS_NULL) {
+        %(name) = NULL;
+    } else if (phpg_rectangle_from_zval(php_%(name), &%(name)_arg) == SUCCESS) {
+        %(name) = &%(name)_arg;
+    } else {
+        php_error(E_WARNING, \"%s() expects %(name) argument to be a 4-element array, a GdkRectangle object, or null\", get_active_function_name(TSRMLS_C));
+        return;
+    }";
+    function write_param($type, $name, $default, $null_ok, $info)
+    {
+        if ($null_ok) {
+            $info->var_list->add('GdkRectangle', $name . '_arg = { 0, 0, 0, 0 }');
+            $info->var_list->add('GdkRectangle', '*' . $name);
+            $info->var_list->add('zval', '*php_' . $name . ' = NULL');
+            $info->add_parse_list('V', '&php_' . $name);
+            $info->arg_list[] = $name;
+            $info->pre_code[] = aprintf(self::check_null_tpl, array('name' => $name));
+        } else {
+            $info->var_list->add('GdkRectangle', $name . ' = { 0, 0, 0, 0 }');
+            $info->var_list->add('zval', '*php_' . $name);
+            $info->add_parse_list('V', '&php_' . $name);
+            $info->arg_list[] = '&' . $name;
+            $info->pre_code[] = aprintf(self::check_tpl, array('name' => $name));
+        }
+    }
+}
+/* }}} */
 
 /* {{{ GType_Arg */
 class GType_Arg extends Arg_Type {
@@ -824,6 +869,7 @@ class Arg_Matcher {
         $this->register($type . '*', $obj_arg);
         if ($type == 'GdkPixmap') {
             $this->register('GdkBitmap', $obj_arg);
+            $this->register('GdkBitmap*', $obj_arg);
         }
     }
 
@@ -898,6 +944,13 @@ $matcher->register('double', $arg);
 $matcher->register('gdouble', $arg);
 $matcher->register('float', $arg);
 $matcher->register('gfloat', $arg);
+
+$arg = new GdkRectanglePtr_Arg();
+$matcher->register('GdkRectangle*', $arg);
+$matcher->register('GdkAllocation*', $arg);
+
+$matcher->register('GdkRectangle', new GdkRectangle_Arg);
+
 
 /* TODO
  * GdkRectangle(Ptr) args and others

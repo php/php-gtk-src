@@ -301,6 +301,32 @@ static PHP_METHOD(GtkLabel, get_layout_offsets)
 }
 %% }}}
 
+%% {{{ GtkWidget
+%%
+override gtk_widget_intersect
+PHP_METHOD(GtkWidget, intersect)
+{
+	zval *php_area;
+	GdkRectangle area, intersection;
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_area))
+		return;
+
+    if (phpg_rectangle_from_zval(php_area, &area) == FAILURE) {
+        php_error(E_WARNING, "%s() expects area argument to be either a 4-element array or a GdkRectangle object", get_active_function_name(TSRMLS_C));
+		return;
+    }
+	if (gtk_widget_intersect(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), &area, &intersection)) {
+		phpg_gboxed_new(&return_value, GDK_TYPE_RECTANGLE, &intersection, TRUE, TRUE TSRMLS_CC);
+	} else {
+		RETURN_FALSE;
+	}
+}
+
+%% }}}
+
 %%
 override-prop GtkTextAttributes bg_color
 PHPG_PROP_READER(GtkTextAttributes, bg_color)

@@ -29,6 +29,9 @@
 extern php_gtk_ext_entry gtk_plus_ext_entry;
 #define php_gtk_ext_gtk__ptr &gtk_plus_ext_entry
 
+PHP_GTK_API int phpg_rectangle_from_zval(zval *value, GdkRectangle *rectangle TSRMLS_DC);
+
+#if 0
 PHP_GTK_API extern int le_gtk_object;
 PHP_GTK_API extern int le_php_gtk_wrapper;
 PHP_GTK_API extern int le_gdk_window;
@@ -128,5 +131,7 @@ void php_gtk_plus_register_types(int module_number);
 int php_gtk_array_to_gchar_array(zval *zvalue, gchar ***gchar_array);
 void php_gtk_free_gchar_array(gchar **gchar_array);
 void php_gtk_free_gchar_ptr_array(gchar ***gchar_ptr_array, int num_elements);
+
+#endif
 
 #endif	/* _PHP_GTK_PLUS_H */

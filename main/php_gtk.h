@@ -149,7 +149,8 @@ struct _php_gtk_ext_entry {
 #define PHP_GTK_GET_EXTENSION(name) \
     ZEND_DLEXPORT php_gtk_ext_entry *get_extension(void) { return &name##_ext_entry; }
 
-/* REM #include "ext/gtk+/php_gtk+.h" */
+#include "ext/gtk+/php_gtk+.h"
+
 /*
  * True globals.
  * */
