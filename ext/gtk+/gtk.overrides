@@ -782,6 +782,43 @@ PHP_FUNCTION(gtk_clist_get_text)
 	RETURN_STRING(text, 1);
 }
 %%
+override gtk_clist_set_row_data
+PHP_FUNCTION(gtk_clist_set_row_data)
+{
+	zval *data;
+	int row;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iV", &row, &data))
+		return;
+
+	zval_add_ref(&data);
+	gtk_clist_set_row_data_full(GTK_CLIST(PHP_GTK_GET(this_ptr)), row, data,
+								php_gtk_destroy_notify);
+}
+%%
+override gtk_clist_get_row_data
+PHP_FUNCTION(gtk_clist_get_row_data)
+{
+	zval *data;
+	int row;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &row))
+		return;
+
+	data = gtk_clist_get_row_data(GTK_CLIST(PHP_GTK_GET(this_ptr)), row);
+
+	if (data) {
+		*return_value = *data;
+		zval_copy_ctor(return_value);
+	} else {
+		RETURN_NULL();
+	}
+}
+%%
 ignore gtk_menu_item_new_with_label 
 %%
 override gtk_menu_item_new
