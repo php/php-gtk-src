@@ -354,7 +354,7 @@ function create_tooltips()
 				print 'Help "';
 					print $tip_private ? $tip_private : 'None';
 				print '" requested for <';
-				print get_class($widget);
+				print Gtk::type_name($widget->get_type());
 				print ">\n";
 			}
 
