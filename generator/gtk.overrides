@@ -377,7 +377,7 @@ PHP_FUNCTION(wrap_gtk_signal_emit)
 	}
 
 	query = gtk_signal_query(signal_id);
-	if (ZEND_NUM_ARGS() < query->nparams + 1) {
+	if (ZEND_NUM_ARGS() < (int)query->nparams + 1) {
 		php_error(E_WARNING, "%s() requires %d arguments for signal '%s', %d given",
 				  get_active_function_name(), query->nparams, name, ZEND_NUM_ARGS()-1);
 		g_free(query);
