@@ -1,5 +1,5 @@
 LTLIBRARY_NAME = libphp_gtk_src.la
-LTLIBRARY_SOURCES = php_gtk.c php_gtk_object.c php_gtk_types.c php_gtk_util.c php_gtk_gen.c
+LTLIBRARY_SOURCES = php_gtk.c php_gtk_object.c php_gtk_types.c php_gtk_util.c $(srcdir)/php_gtk_gen.c
 
 $(srcdir)/php_gtk_gen.c: $(top_srcdir)/generator/gtk.defs  $(top_srcdir)/generator/gdk.defs \
 		 $(top_srcdir)/generator/gtk-extrafuncs.defs  $(top_srcdir)/generator/gtk.overrides

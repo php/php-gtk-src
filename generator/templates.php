@@ -69,17 +69,20 @@ $register_getter_tpl = "\tphp_gtk_register_prop_getter(%s, %s_get_property);\n";
 
 $prop_check_tpl =
 "%sif (!strcmp(prop_name, \"%s\")) {
-%s	%s
+	%s	*found = SUCCESS;
+	%s
 	}";
 
 $prop_getter_tpl = "
-static void %s_get_property(zval *return_value, zval *object, zend_llist_element **element)
+static void %s_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
 {
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
 	ZVAL_NULL(return_value);
 
 %s
+
+	*found = FAILURE;
 }\n\n";
 
 $init_class_tpl = "\n\tINIT_OVERLOADED_CLASS_ENTRY(ce, \"%s\", %s_functions, NULL, %s, NULL);\n";

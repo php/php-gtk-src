@@ -62,7 +62,7 @@ extern zend_class_entry *gtk_ctree_node_ce;
 extern zend_class_entry *gtk_accel_group_ce;
 extern zend_class_entry *gtk_style_ce;
 
-typedef void (*prop_getter_t)(zval *result, zval *object, zend_llist_element **element);
+typedef void (*prop_getter_t)(zval *return_value, zval *object, zend_llist_element **element, int *found);
 typedef int (*prop_setter_t)(zval *object, zend_llist_element **element, zval *value);
 
 /* Useful macros. */

@@ -573,7 +573,7 @@ zval *php_gdk_window_new(GdkWindow *window)
 	return result;
 }
 
-static void gdk_window_get_property(zval *result, zval *object, zend_llist_element **element)
+static void gdk_window_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
 {
 	zval *value;
 	GdkWindow *win = PHP_GDK_WINDOW_GET(object);
@@ -581,55 +581,60 @@ static void gdk_window_get_property(zval *result, zval *object, zend_llist_eleme
 	GdkModifierType p_mask;
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 	
-	ZVAL_NULL(result);
+	ZVAL_NULL(return_value);
 
 	if (!strcmp(prop_name, "width")) {
 		gdk_window_get_size(win, &x, NULL);
-		ZVAL_LONG(result, x);
+		ZVAL_LONG(return_value, x);
 	} else if (!strcmp(prop_name, "height")) {
 		gdk_window_get_size(win, NULL, &y);
-		ZVAL_LONG(result, y);
+		ZVAL_LONG(return_value, y);
 	} else if (!strcmp(prop_name, "x")) {
 		gdk_window_get_position(win, &x, NULL);
-		ZVAL_LONG(result, x);
+		ZVAL_LONG(return_value, x);
 	} else if (!strcmp(prop_name, "y")) {
 		gdk_window_get_position(win, NULL, &y);
-		ZVAL_LONG(result, y);
+		ZVAL_LONG(return_value, y);
 	} else if (!strcmp(prop_name, "colormap")) {
-		*result = *php_gdk_colormap_new(gdk_window_get_colormap(win));
+		*return_value = *php_gdk_colormap_new(gdk_window_get_colormap(win));
 	} else if (!strcmp(prop_name, "pointer")) {
 		gdk_window_get_pointer(win, &x, &y, NULL);
-		*result = *php_gtk_build_value("(ii)", x, y);
+		*return_value = *php_gtk_build_value("(ii)", x, y);
 	} else if (!strcmp(prop_name, "pointer_state")) {
 		gdk_window_get_pointer(win, NULL, NULL, &p_mask);
-		ZVAL_LONG(result, p_mask);
+		ZVAL_LONG(return_value, p_mask);
 	} else if (!strcmp(prop_name, "parent")) {
 		GdkWindow *parent = gdk_window_get_parent(win);
 		if (parent)
-			*result = *php_gdk_window_new(parent);
+			*return_value = *php_gdk_window_new(parent);
 	} else if (!strcmp(prop_name, "toplevel")) {
-		*result = *php_gdk_window_new(gdk_window_get_toplevel(win));
+		*return_value = *php_gdk_window_new(gdk_window_get_toplevel(win));
 	} else if (!strcmp(prop_name, "children")) {
 		GList *children, *tmp;
 		zval *child;
 		children = gdk_window_get_children(win);
-		array_init(result);
+		array_init(return_value);
 		for (tmp = children; tmp; tmp = tmp->next) {
 			child = php_gdk_window_new(tmp->data);
-			zend_hash_next_index_insert(Z_ARRVAL_P(result), &child, sizeof(zval *), NULL);
+			zend_hash_next_index_insert(Z_ARRVAL_P(return_value), &child, sizeof(zval *), NULL);
 		}
 		g_list_free(children);
 	} else if (!strcmp(prop_name, "type")) {
-		ZVAL_LONG(result, gdk_window_get_type(win));
+		ZVAL_LONG(return_value, gdk_window_get_type(win));
 	} else if (!strcmp(prop_name, "depth")) {
 		gdk_window_get_geometry(win, NULL, NULL, NULL, NULL, &x);
-		ZVAL_LONG(result, x);
+		ZVAL_LONG(return_value, x);
 	}
-#ifdef WITH_XSTUFF
+#ifndef G_OS_WIN32
 	else if (!strcmp(prop_name, "xid")) {
-		ZVAL_LONG(result, GDK_WINDOW_XWINDOW(win));
+		ZVAL_LONG(return_value, GDK_WINDOW_XWINDOW(win));
 	}
 #endif
+	else {
+		*found = FAILURE;
+	}
+
+	*found = SUCCESS;
 }
 
 
@@ -691,22 +696,26 @@ zval *php_gdk_color_new(GdkColor *color)
 	return result;
 }
 
-static void gdk_color_get_property(zval *result, zval *object, zend_llist_element **element)
+static void gdk_color_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
 {
 	GdkColor *color = PHP_GDK_COLOR_GET(object);
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
-	ZVAL_NULL(result);
+	ZVAL_NULL(return_value);
 
 	if (!strcmp(prop_name, "red")) {
-		ZVAL_LONG(result, color->red);
+		ZVAL_LONG(return_value, color->red);
 	} else if (!strcmp(prop_name, "green")) {
-		ZVAL_LONG(result, color->green);
+		ZVAL_LONG(return_value, color->green);
 	} else if (!strcmp(prop_name, "blue")) {
-		ZVAL_LONG(result, color->blue);
+		ZVAL_LONG(return_value, color->blue);
 	} else if (!strcmp(prop_name, "pixel")) {
-		ZVAL_LONG(result, color->pixel);
+		ZVAL_LONG(return_value, color->pixel);
+	} else {
+		*found = FAILURE;
 	}
+
+	*found = SUCCESS;
 }
 
 static int gdk_color_set_property(zval *object, zend_llist_element **element, zval *value)
@@ -804,7 +813,7 @@ static void release_gdk_colormap_rsrc(zend_rsrc_list_entry *rsrc)
 	gdk_colormap_unref(obj);
 }
 
-static void gdk_colormap_get_property(zval *result, zval *object, zend_llist_element **element)
+static void gdk_colormap_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
 {
 	GdkColormap *cmap = PHP_GDK_COLORMAP_GET(object);
 	zend_overloaded_element *property = (zend_overloaded_element *)(*element)->data;
@@ -812,7 +821,7 @@ static void gdk_colormap_get_property(zval *result, zval *object, zend_llist_ele
 	char *prop_name = Z_STRVAL(property->element);
 	int prop_index, i;
 
-	ZVAL_NULL(result);
+	ZVAL_NULL(return_value);
 
 	if (!strcmp(prop_name, "colors") && cmap->colors) {
 		next = (*element)->next;
@@ -825,15 +834,19 @@ static void gdk_colormap_get_property(zval *result, zval *object, zend_llist_ele
 					php_error(E_WARNING, "colormap index out of range");
 					return;
 				}
-				*result = *php_gdk_color_new(&cmap->colors[prop_index]);
+				*return_value = *php_gdk_color_new(&cmap->colors[prop_index]);
 			}
 		} else {
-			array_init(result);
+			array_init(return_value);
 			
 			for (i = 0; i < cmap->size; i++)
-				add_next_index_zval(result, php_gdk_color_new(&cmap->colors[i]));
+				add_next_index_zval(return_value, php_gdk_color_new(&cmap->colors[i]));
 		}
+	} else {
+		*found = FAILURE;
 	}
+
+	*found = SUCCESS;
 }
 
 
@@ -898,25 +911,29 @@ static void release_gdk_cursor_rsrc(zend_rsrc_list_entry *rsrc)
 	gdk_cursor_destroy(obj);
 }
 
-static void gdk_cursor_get_property(zval *result, zval *object, zend_llist_element **element)
+static void gdk_cursor_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
 {
 	GdkCursor *cursor = PHP_GDK_CURSOR_GET(object);
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
-	ZVAL_NULL(result);
+	ZVAL_NULL(return_value);
 
 	if (!strcmp(prop_name, "type")) {
-		ZVAL_LONG(result, cursor->type);
+		ZVAL_LONG(return_value, cursor->type);
 	} else if (!strcmp(prop_name, "name")) {
 		GtkEnumValue *vals = gtk_type_enum_get_values(GTK_TYPE_GDK_CURSOR_TYPE);
 		while (vals->value_name != NULL && vals->value != cursor->type)
 			vals++;
 		if (vals->value_nick) {
-			ZVAL_STRING(result, vals->value_nick, 1);
+			ZVAL_STRING(return_value, vals->value_nick, 1);
 		} else {
-			ZVAL_STRINGL(result, "*unknown*", sizeof("*unknown*"), 1);
+			ZVAL_STRINGL(return_value, "*unknown*", sizeof("*unknown*"), 1);
 		}
+	} else {
+		*found = FAILURE;
 	}
+
+	*found = SUCCESS;
 }
 
 
@@ -950,42 +967,46 @@ static void release_gdk_visual_rsrc(zend_rsrc_list_entry *rsrc)
 	gdk_visual_unref(obj);
 }
 
-static void gdk_visual_get_property(zval *result, zval *object, zend_llist_element **element)
+static void gdk_visual_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
 {
 	GdkVisual *visual = PHP_GDK_VISUAL_GET(object);
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
-	ZVAL_NULL(result);
+	ZVAL_NULL(return_value);
 
 	if (!strcmp(prop_name, "type")) {
-		ZVAL_LONG(result, visual->type);
+		ZVAL_LONG(return_value, visual->type);
 	} else if (!strcmp(prop_name, "depth")) {
-		ZVAL_LONG(result, visual->depth);
+		ZVAL_LONG(return_value, visual->depth);
 	} else if (!strcmp(prop_name, "byte_order")) {
-		ZVAL_LONG(result, visual->byte_order);
+		ZVAL_LONG(return_value, visual->byte_order);
 	} else if (!strcmp(prop_name, "colormap_size")) {
-		ZVAL_LONG(result, visual->colormap_size);
+		ZVAL_LONG(return_value, visual->colormap_size);
 	} else if (!strcmp(prop_name, "bits_per_rgb")) {
-		ZVAL_LONG(result, visual->bits_per_rgb);
+		ZVAL_LONG(return_value, visual->bits_per_rgb);
 	} else if (!strcmp(prop_name, "red_mask")) {
-		ZVAL_LONG(result, visual->red_shift);
+		ZVAL_LONG(return_value, visual->red_shift);
 	} else if (!strcmp(prop_name, "red_shift")) {
-		ZVAL_LONG(result, visual->red_prec);
+		ZVAL_LONG(return_value, visual->red_prec);
 	} else if (!strcmp(prop_name, "red_prec")) {
-		ZVAL_LONG(result, visual->red_mask);
+		ZVAL_LONG(return_value, visual->red_mask);
 	} else if (!strcmp(prop_name, "green_mask")) {
-		ZVAL_LONG(result, visual->green_mask);
+		ZVAL_LONG(return_value, visual->green_mask);
 	} else if (!strcmp(prop_name, "green_shift")) {
-		ZVAL_LONG(result, visual->green_shift);
+		ZVAL_LONG(return_value, visual->green_shift);
 	} else if (!strcmp(prop_name, "green_prec")) {
-		ZVAL_LONG(result, visual->green_prec);
+		ZVAL_LONG(return_value, visual->green_prec);
 	} else if (!strcmp(prop_name, "blue_mask")) {
-		ZVAL_LONG(result, visual->blue_mask);
+		ZVAL_LONG(return_value, visual->blue_mask);
 	} else if (!strcmp(prop_name, "blue_shift")) {
-		ZVAL_LONG(result, visual->blue_shift);
+		ZVAL_LONG(return_value, visual->blue_shift);
 	} else if (!strcmp(prop_name, "blue_prec")) {
-		ZVAL_LONG(result, visual->blue_prec);
+		ZVAL_LONG(return_value, visual->blue_prec);
+	} else {
+		*found = FAILURE;
 	}
+
+	*found = SUCCESS;
 }
 
 
@@ -1076,20 +1097,24 @@ static void release_gdk_font_rsrc(zend_rsrc_list_entry *rsrc)
 	gdk_font_unref(obj);
 }
 
-static void gdk_font_get_property(zval *result, zval *object, zend_llist_element **element)
+static void gdk_font_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
 {
 	GdkFont *font = PHP_GDK_FONT_GET(object);
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
-	ZVAL_NULL(result);
+	ZVAL_NULL(return_value);
 
 	if (!strcmp(prop_name, "type")) {
-		ZVAL_LONG(result, font->type);
+		ZVAL_LONG(return_value, font->type);
 	} else if (!strcmp(prop_name, "ascent")) {
-		ZVAL_LONG(result, font->ascent);
+		ZVAL_LONG(return_value, font->ascent);
 	} else if (!strcmp(prop_name, "descent")) {
-		ZVAL_LONG(result, font->descent);
+		ZVAL_LONG(return_value, font->descent);
+	} else {
+		*found = FAILURE;
 	}
+
+	*found = SUCCESS;
 }
 
 
@@ -1162,56 +1187,60 @@ static void release_gdk_gc_rsrc(zend_rsrc_list_entry *rsrc)
 	gdk_gc_unref(obj);
 }
 
-static void gdk_gc_get_property(zval *result, zval *object, zend_llist_element **element)
+static void gdk_gc_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
 {
 	GdkGC *gc = PHP_GDK_GC_GET(object);
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 	GdkGCValues gcv;
 
-	ZVAL_NULL(result);
+	ZVAL_NULL(return_value);
 
 	gdk_gc_get_values(gc, &gcv);
 
 	if (!strcmp(prop_name, "foreground")) {
-		*result = *php_gdk_color_new(&gcv.foreground);
+		*return_value = *php_gdk_color_new(&gcv.foreground);
 	} else if (!strcmp(prop_name, "background")) {
-		*result = *php_gdk_color_new(&gcv.background);
+		*return_value = *php_gdk_color_new(&gcv.background);
 	} else if (!strcmp(prop_name, "font")) {
-		*result = *php_gdk_font_new(gcv.font);
+		*return_value = *php_gdk_font_new(gcv.font);
 	} else if (!strcmp(prop_name, "function")) {
-		ZVAL_LONG(result, gcv.function);
+		ZVAL_LONG(return_value, gcv.function);
 	} else if (!strcmp(prop_name, "fill")) {
-		ZVAL_LONG(result, gcv.fill);
+		ZVAL_LONG(return_value, gcv.fill);
 	} else if (!strcmp(prop_name, "tile")) {
 		if (gcv.tile)
-			*result = *php_gdk_window_new(gcv.tile);
+			*return_value = *php_gdk_window_new(gcv.tile);
 	} else if (!strcmp(prop_name, "stipple")) {
 		if (gcv.stipple)
-			*result = *php_gdk_window_new(gcv.stipple);
+			*return_value = *php_gdk_window_new(gcv.stipple);
 	} else if (!strcmp(prop_name, "clip_mask")) {
 		if (gcv.clip_mask)
-			*result = *php_gdk_window_new(gcv.clip_mask);
+			*return_value = *php_gdk_window_new(gcv.clip_mask);
 	} else if (!strcmp(prop_name, "subwindow_mode")) {
-		ZVAL_LONG(result, gcv.subwindow_mode);
+		ZVAL_LONG(return_value, gcv.subwindow_mode);
 	} else if (!strcmp(prop_name, "ts_x_origin")) {
-		ZVAL_LONG(result, gcv.ts_x_origin);
+		ZVAL_LONG(return_value, gcv.ts_x_origin);
 	} else if (!strcmp(prop_name, "ts_y_origin")) {
-		ZVAL_LONG(result, gcv.ts_y_origin);
+		ZVAL_LONG(return_value, gcv.ts_y_origin);
 	} else if (!strcmp(prop_name, "clip_x_origin")) {
-		ZVAL_LONG(result, gcv.clip_x_origin);
+		ZVAL_LONG(return_value, gcv.clip_x_origin);
 	} else if (!strcmp(prop_name, "clip_y_origin")) {
-		ZVAL_LONG(result, gcv.clip_y_origin);
+		ZVAL_LONG(return_value, gcv.clip_y_origin);
 	} else if (!strcmp(prop_name, "graphics_exposures")) {
-		ZVAL_LONG(result, gcv.graphics_exposures);
+		ZVAL_LONG(return_value, gcv.graphics_exposures);
 	} else if (!strcmp(prop_name, "line_width")) {
-		ZVAL_LONG(result, gcv.line_width);
+		ZVAL_LONG(return_value, gcv.line_width);
 	} else if (!strcmp(prop_name, "line_style")) {
-		ZVAL_LONG(result, gcv.line_style);
+		ZVAL_LONG(return_value, gcv.line_style);
 	} else if (!strcmp(prop_name, "cap_style")) {
-		ZVAL_LONG(result, gcv.cap_style);
+		ZVAL_LONG(return_value, gcv.cap_style);
 	} else if (!strcmp(prop_name, "join_style")) {
-		ZVAL_LONG(result, gcv.join_style);
+		ZVAL_LONG(return_value, gcv.join_style);
+	} else {
+		*found = FAILURE;
 	}
+
+	*found = SUCCESS;
 }
 
 static int gdk_gc_set_property(zval *object, zend_llist_element **element, zval *value)
@@ -1324,38 +1353,42 @@ static void release_gdk_drag_context_rsrc(zend_rsrc_list_entry *rsrc)
 	gdk_drag_context_unref(obj);
 }
 
-static void gdk_drag_context_get_property(zval *result, zval *object, zend_llist_element **element)
+static void gdk_drag_context_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
 {
 	GdkDragContext *context = PHP_GDK_DRAG_CONTEXT_GET(object);
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
-	ZVAL_NULL(result);
+	ZVAL_NULL(return_value);
 
 	if (!strcmp(prop_name, "protocol")) {
-		ZVAL_LONG(result, context->protocol);
+		ZVAL_LONG(return_value, context->protocol);
 	} else if (!strcmp(prop_name, "is_source")) {
-		ZVAL_BOOL(result, context->is_source);
+		ZVAL_BOOL(return_value, context->is_source);
 	} else if (!strcmp(prop_name, "source_window")) {
 		if (context->source_window)
-			*result = *php_gdk_window_new(context->source_window);
+			*return_value = *php_gdk_window_new(context->source_window);
 	} else if (!strcmp(prop_name, "dest_window")) {
 		if (context->dest_window)
-			*result = *php_gdk_window_new(context->dest_window);
+			*return_value = *php_gdk_window_new(context->dest_window);
 	} else if (!strcmp(prop_name, "targets")) {
 		GList *tmp;
 
-		array_init(result);
+		array_init(return_value);
 		for (tmp = context->targets; tmp; tmp = tmp->next)
-			add_next_index_zval(result, php_gdk_atom_new(GPOINTER_TO_INT(tmp->data)));
+			add_next_index_zval(return_value, php_gdk_atom_new(GPOINTER_TO_INT(tmp->data)));
 	} else if (!strcmp(prop_name, "actions")) {
-		ZVAL_LONG(result, context->actions);
+		ZVAL_LONG(return_value, context->actions);
 	} else if (!strcmp(prop_name, "suggested_action")) {
-		ZVAL_LONG(result, context->suggested_action);
+		ZVAL_LONG(return_value, context->suggested_action);
 	} else if (!strcmp(prop_name, "action")) {
-		ZVAL_LONG(result, context->action);
+		ZVAL_LONG(return_value, context->action);
 	} else if (!strcmp(prop_name, "start_time")) {
-		ZVAL_LONG(result, context->start_time);
+		ZVAL_LONG(return_value, context->start_time);
+	} else {
+		*found = FAILURE;
 	}
+
+	*found = SUCCESS;
 }
 
 
@@ -1398,26 +1431,30 @@ zval *php_gtk_selection_data_new(GtkSelectionData *data)
 	return result;
 }
 
-static void gtk_selection_data_get_property(zval *result, zval *object, zend_llist_element **element)
+static void gtk_selection_data_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
 {
 	GtkSelectionData *data = PHP_GTK_SELECTION_DATA_GET(object);
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
-	ZVAL_NULL(result);
+	ZVAL_NULL(return_value);
 
 	if (!strcmp(prop_name, "selection")) {
-		*result = *php_gdk_atom_new(data->selection);
+		*return_value = *php_gdk_atom_new(data->selection);
 	} else if (!strcmp(prop_name, "target")) {
-		*result = *php_gdk_atom_new(data->target);
+		*return_value = *php_gdk_atom_new(data->target);
 	} else if (!strcmp(prop_name, "type")) {
-		*result = *php_gdk_atom_new(data->type);
+		*return_value = *php_gdk_atom_new(data->type);
 	} else if (!strcmp(prop_name, "format")) {
-		ZVAL_LONG(result, data->format);
+		ZVAL_LONG(return_value, data->format);
 	} else if (!strcmp(prop_name, "length")) {
-		ZVAL_LONG(result, data->length);
+		ZVAL_LONG(return_value, data->length);
 	} else if (!strcmp(prop_name, "data") && data->length > -1) {
-		ZVAL_STRINGL(result, data->data, data->length, 1);
+		ZVAL_STRINGL(return_value, data->data, data->length, 1);
+	} else {
+		*found = FAILURE;
 	}
+
+	*found = SUCCESS;
 }
 
 /* GtkCtreeNode */
@@ -1443,40 +1480,44 @@ zval *php_gtk_ctree_node_new(GtkCTreeNode *node)
 	return result;
 }
 
-static void gtk_ctree_node_get_property(zval *result, zval *object, zend_llist_element **element)
+static void gtk_ctree_node_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
 {
 	GtkCTreeNode *node = PHP_GTK_CTREE_NODE_GET(object);
 	GtkCTreeNode *temp;
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
-	ZVAL_NULL(result);
+	ZVAL_NULL(return_value);
 
 	if (!strcmp(prop_name, "parent")) {
 		temp = GTK_CTREE_ROW(node)->parent;
 		if (temp)
-			*result = *php_gtk_ctree_node_new(temp);
+			*return_value = *php_gtk_ctree_node_new(temp);
 	} else if (!strcmp(prop_name, "sibling")) {
 		temp = GTK_CTREE_ROW(node)->sibling;
 		if (temp)
-			*result = *php_gtk_ctree_node_new(temp);
+			*return_value = *php_gtk_ctree_node_new(temp);
 	} else if (!strcmp(prop_name, "children")) {
 		zval *php_node;
 		temp = GTK_CTREE_ROW(node)->children;
 
-		array_init(result);
+		array_init(return_value);
 		while (temp) {
 			php_node = php_gtk_ctree_node_new(temp);
-			add_next_index_zval(result, php_node);
+			add_next_index_zval(return_value, php_node);
 			zval_ptr_dtor(&php_node);
 			temp = GTK_CTREE_ROW(temp)->sibling;
 		}
 	} else if (!strcmp(prop_name, "level")) {
-		ZVAL_LONG(result, GTK_CTREE_ROW(node)->level);
+		ZVAL_LONG(return_value, GTK_CTREE_ROW(node)->level);
 	} else if (!strcmp(prop_name, "is_leaf")) {
-		ZVAL_BOOL(result, GTK_CTREE_ROW(node)->is_leaf);
+		ZVAL_BOOL(return_value, GTK_CTREE_ROW(node)->is_leaf);
 	} else if (!strcmp(prop_name, "expanded")) {
-		ZVAL_BOOL(result, GTK_CTREE_ROW(node)->expanded);
+		ZVAL_BOOL(return_value, GTK_CTREE_ROW(node)->expanded);
+	} else {
+		*found = FAILURE;
 	}
+
+	*found = SUCCESS;
 }
 
 
@@ -1688,58 +1729,62 @@ static void style_helper_get(zval *result, style_array_type type, gpointer array
 	}
 }
 
-static void gtk_style_get_property(zval *result, zval *object, zend_llist_element **element)
+static void gtk_style_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
 {
 	GtkStyle *style = PHP_GTK_STYLE_GET(object);
 	zend_overloaded_element *property = (zend_overloaded_element *)(*element)->data;
 	char *prop_name = Z_STRVAL(property->element);
 
-	ZVAL_NULL(result);
+	ZVAL_NULL(return_value);
 
 	if (!strcmp(prop_name, "black")) {
-		*result = *php_gdk_color_new(&style->black);
+		*return_value = *php_gdk_color_new(&style->black);
 	} else if (!strcmp(prop_name, "white")) {
-		*result = *php_gdk_color_new(&style->white);
+		*return_value = *php_gdk_color_new(&style->white);
 	} else if (!strcmp(prop_name, "font")) {
-		*result = *php_gdk_font_new(style->font);
+		*return_value = *php_gdk_font_new(style->font);
 	} else if (!strcmp(prop_name, "black_gc")) {
-		*result = *php_gdk_gc_new(style->black_gc);
+		*return_value = *php_gdk_gc_new(style->black_gc);
 	} else if (!strcmp(prop_name, "white_gc")) {
-		*result = *php_gdk_gc_new(style->white_gc);
+		*return_value = *php_gdk_gc_new(style->white_gc);
 	} else if (!strcmp(prop_name, "colormap")) {
 		if (style->colormap)
-			*result = *php_gdk_colormap_new(style->colormap);
+			*return_value = *php_gdk_colormap_new(style->colormap);
 	} else if (!strcmp(prop_name, "fg")) {
-		style_helper_get(result, STYLE_COLOR_ARRAY, style->fg, element);
+		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->fg, element);
 	} else if (!strcmp(prop_name, "bg")) {
-		style_helper_get(result, STYLE_COLOR_ARRAY, style->bg, element);
+		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->bg, element);
 	} else if (!strcmp(prop_name, "light")) {
-		style_helper_get(result, STYLE_COLOR_ARRAY, style->light, element);
+		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->light, element);
 	} else if (!strcmp(prop_name, "dark")) {
-		style_helper_get(result, STYLE_COLOR_ARRAY, style->dark, element);
+		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->dark, element);
 	} else if (!strcmp(prop_name, "mid")) {
-		style_helper_get(result, STYLE_COLOR_ARRAY, style->mid, element);
+		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->mid, element);
 	} else if (!strcmp(prop_name, "text")) {
-		style_helper_get(result, STYLE_COLOR_ARRAY, style->text, element);
+		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->text, element);
 	} else if (!strcmp(prop_name, "base")) {
-		style_helper_get(result, STYLE_COLOR_ARRAY, style->base, element);
+		style_helper_get(return_value, STYLE_COLOR_ARRAY, style->base, element);
 	} else if (!strcmp(prop_name, "fg_gc")) {
-		style_helper_get(result, STYLE_GC_ARRAY, style->fg_gc, element);
+		style_helper_get(return_value, STYLE_GC_ARRAY, style->fg_gc, element);
 	} else if (!strcmp(prop_name, "bg_gc")) {
-		style_helper_get(result, STYLE_GC_ARRAY, style->bg_gc, element);
+		style_helper_get(return_value, STYLE_GC_ARRAY, style->bg_gc, element);
 	} else if (!strcmp(prop_name, "light_gc")) {
-		style_helper_get(result, STYLE_GC_ARRAY, style->light_gc, element);
+		style_helper_get(return_value, STYLE_GC_ARRAY, style->light_gc, element);
 	} else if (!strcmp(prop_name, "dark_gc")) {
-		style_helper_get(result, STYLE_GC_ARRAY, style->dark_gc, element);
+		style_helper_get(return_value, STYLE_GC_ARRAY, style->dark_gc, element);
 	} else if (!strcmp(prop_name, "mid_gc")) {
-		style_helper_get(result, STYLE_GC_ARRAY, style->mid_gc, element);
+		style_helper_get(return_value, STYLE_GC_ARRAY, style->mid_gc, element);
 	} else if (!strcmp(prop_name, "text_gc")) {
-		style_helper_get(result, STYLE_GC_ARRAY, style->text_gc, element);
+		style_helper_get(return_value, STYLE_GC_ARRAY, style->text_gc, element);
 	} else if (!strcmp(prop_name, "base_gc")) {
-		style_helper_get(result, STYLE_GC_ARRAY, style->base_gc, element);
+		style_helper_get(return_value, STYLE_GC_ARRAY, style->base_gc, element);
 	} else if (!strcmp(prop_name, "bg_pixmap")) {
-		style_helper_get(result, STYLE_PIXMAP_ARRAY, style->bg_pixmap, element);
+		style_helper_get(return_value, STYLE_PIXMAP_ARRAY, style->bg_pixmap, element);
+	} else {
+		*found = FAILURE;
 	}
+
+	*found = SUCCESS;
 }
 
 static int style_helper_set(style_array_type type, gpointer array, zval *value, zend_llist_element **element)

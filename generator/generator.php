@@ -309,10 +309,11 @@ class Generator {
 								 $obj_cast . '(PHP_GTK_GET(object))->' . $field_name);
 			$prop_code = str_replace("\n", "\n\t", $prop_code);
 
+			$var_list_code = $var_list->to_string();
 			$prop_checks .= sprintf($prop_check_tpl,
 									$else_clause,
 									$field_name,
-									"\t" . $var_list->to_string(),
+									$var_list_code ? $var_list_code . "\t" : '',
 									$prop_code);
 			$else_clause = ' else ';
 		}
