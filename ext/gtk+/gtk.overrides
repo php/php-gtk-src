@@ -838,7 +838,7 @@ PHP_FUNCTION(gtk_clist_get_text)
 		g_free(cp_text);
 	}
 	else {
-		RETURN_STRING("", 1);
+		RETURN_NULL();
 	}
 #else
 	RETURN_STRING(text, 1);
@@ -1468,7 +1468,7 @@ PHP_FUNCTION(gtk_ctree_node_get_text)
 		g_free(cp_text);
 	}
 	else {
-		RETURN_STRING("", 1);
+		RETURN_NULL();
 	}
 #else
 	RETURN_STRING(text, 1);
