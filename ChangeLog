@@ -1,3 +1,12 @@
+2003-12-04  Alan Knowles  <alan@akbkhome.com>
+
+    * (GTK2)
+      ext/gtk+/php_gtk+_types.c
+      main/php_gtk_object.c
+      test/hello.php:
+      most objects now supported - fetching $object->style->fg etc. works,
+      setting fails badly...
+
 2003-12-02  Alan Knowles  <alan@akbkhome.com>
 
     * (GTK2)
