@@ -61,7 +61,7 @@ function delete_event($window, $event)
 
 function close_window($widget)
 {
-	print_R($widget);
+	 
 	$window = $widget->get_toplevel();
 	$window->hide();
 }

@@ -34,7 +34,6 @@ ignore
 	 
 	 
 	
-	
 	 
 	gtk_accessible_connect_widget_destroyed
 	
@@ -45,7 +44,10 @@ ignore
 	gtk_aspect_frame_set
 	
 	gtk_bindings_activate	
+	gtk_binding_set_new
+	gtk_binding_set_find
 	
+	gtk_button_get_label
 	
 	gtk_clist_append
 	gtk_clist_construct
@@ -199,6 +201,7 @@ ignore
 	gtk_range_trough_click
 	
 	gtk_rc_style_new
+	gtk_rc_style_copy
 	gtk_rc_set_default_files
 	gtk_rc_reparse_all_for_settings
 	
@@ -206,7 +209,10 @@ ignore
 	
 	gtk_settings_get_default
 	
+	gtk_size_group_new
+	
 	gtk_style_new
+	gtk_style_copy
 	
 	gtk_text_buffer_create_child_anchor
 	gtk_text_buffer_create_mark
@@ -228,6 +234,7 @@ ignore
 	gtk_text_mark_get_buffer
 	gtk_text_mark_get_name
 	
+	gtk_text_tag_new
 	gtk_text_tag_table_add
 	gtk_text_tag_table_get_size
 	gtk_text_tag_table_lookup
@@ -260,15 +267,28 @@ ignore
 	gtk_widget_reset_shapes
 	gtk_widget_set
 	gtk_widget_setv
+	gtk_widget_get_screen
+	gtk_widget_get_display
 	
 	gtk_window_add_embedded_xid
 	gtk_window_get_role 
 	gtk_window_get_screen
 	gtk_window_get_title
+	gtk_window_group_new	
 	gtk_window_group_add_window
 	gtk_window_group_remove_window
 	gtk_window_remove_embedded_xid
 	gtk_window_set_screen
+	
+	
+	gtk_requisition_copy
+	gtk_text_attributes_new
+	gtk_text_iter_copy
+	gtk_border_copy
+	gtk_stock_item_copy 
+	gtk_settings_get_for_screen
+	
+	
 
 %% {{{ overridden in gtk1 - not fixed in gtk2
 
@@ -2175,24 +2195,25 @@ override gtk_object_get
 PHP_FUNCTION(gtk_object_get)
 {
 	char *name;
-	GtkArg garg;
+	GValue garg = { 0, };
 	zval *ret;
-
+	GParamSpec *pspec;
+	
 	NOT_STATIC_METHOD();
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &name))
 		return;
 
-	garg.type = GTK_TYPE_INVALID;
-	garg.name = name;
-	g_object_getv(G_OBJECT(PHP_GTK_GET(this_ptr)), 1, &garg);
-
-	if (garg.type == GTK_TYPE_INVALID) {
+	pspec = g_object_class_find_property(
+		G_OBJECT_GET_CLASS(G_OBJECT(PHP_GTK_GET(this_ptr))),
+	        name);
+        if (!pspec) {
 		php_error(E_WARNING, "%s(): invalid arg '%s'",
 				  get_active_function_name(TSRMLS_C), name);
 		return;
 	}
-	
+	g_value_init(&garg, G_PARAM_SPEC_VALUE_TYPE(pspec));
+	g_object_get_property(G_OBJECT(PHP_GTK_GET(this_ptr)), name, &garg);	
 	ret = php_gtk_arg_as_value(&garg);
 	if (ret == NULL) {
 		php_error(E_WARNING, "%s() couldn't translate type",

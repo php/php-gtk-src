@@ -98,6 +98,7 @@ struct _php_gtk_closure {
     char	*callback_filename;
     uint 	callback_lineno;
     zval 	*extra;
+    int		pass_object;
     GObject	*object;
 };
 

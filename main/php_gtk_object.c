@@ -1409,21 +1409,11 @@ PHP_GTK_API void php_gtk_closure_marshal(
 	 
 	gtk_args = php_gtk_args_as_hash((int) n_param_values,  param_values);
 	
-	/*
-	 * If pass_object flag is not specified, or it's specified and true, and we
-	 * have the actual object, construct the wrapper around it.
-	 */
 	if (closure->object) {
 		wrapper = php_gtk_new_base_gobject(closure->object);
 	}
 	
-	// we need to sort out here if the first arg ... param_values[0] is the object and !pass_object
-	// then remove it from the args...
-
-	/*
-	 * If there is a wrapper (eg. gobject as the first param), construct array of parameters, set wrapper as
-	 * the first parameter, and append the array of GTK signal arguments to it.
-	 */
+ 
 	if (wrapper) {
 		MAKE_STD_ZVAL(params);
 		array_init(params);
@@ -1432,9 +1422,13 @@ PHP_GTK_API void php_gtk_closure_marshal(
 			zval_ptr_dtor(&gtk_args);
 	} else {
 	//	/* Otherwise, the only parameters will be GTK signal arguments. */
+		if (!closure->pass_object && zend_hash_index_exists(HASH_OF(gtk_args), 0)) {
+			 zend_hash_index_del(HASH_OF(gtk_args), 0);
+		}
 		params = gtk_args;
+	
 	}
-
+	 
 	/*
 	 * If there are extra arguments specified by user, add them to the parameter
 	 * array.
@@ -1442,9 +1436,15 @@ PHP_GTK_API void php_gtk_closure_marshal(
 	if (closure->extra) {
 		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(closure->extra), 0 TSRMLS_CC);
 	}
-	
+	 
 	// convert hash into args... - util function.
 	signal_args = php_gtk_hash_as_array(params);
+	
+	
+	
+	
+	
+	
 
 	call_user_function_ex(EG(function_table), NULL, closure->callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), signal_args, 0, NULL TSRMLS_CC);
 
@@ -1528,6 +1528,7 @@ PHP_GTK_API void php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int p
 	((php_gtk_closure *)closure)->callback_filename 	= zend_get_executed_filename(TSRMLS_C);
         ((php_gtk_closure *)closure)->callback_lineno 		= zend_get_executed_lineno(TSRMLS_C);
         ((php_gtk_closure *)closure)->extra 			= php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
+	((php_gtk_closure *)closure)->pass_object		= pass_object;
 	((php_gtk_closure *)closure)->object			= pass_object ? G_OBJECT(PHP_GTK_GET(this_ptr)) : NULL;
 	
 	// this check to see if we have registered a manual handler...

@@ -7366,16 +7366,16 @@
   (c-name GtkCList )
 )
 
-(object ColorSelection 
-  (in-module Gtk)
-  (parent VBox (Gtk))
-  (c-name GtkColorSelection )
-)
-
 (object ColorSelectionDialog 
   (in-module Gtk)
   (parent Dialog (Gtk))
   (c-name GtkColorSelectionDialog )
+)
+
+(object ColorSelection 
+  (in-module Gtk)
+  (parent VBox (Gtk))
+  (c-name GtkColorSelection )
 )
 
 (object Combo 
@@ -7558,16 +7558,16 @@
   (c-name GtkInvisible )
 )
 
-(object Item 
-  (in-module Gtk)
-  (parent Bin (Gtk))
-  (c-name GtkItem )
-)
-
 (object ItemFactory 
   (in-module Gtk)
   (parent Object (Gtk))
   (c-name GtkItemFactory )
+)
+
+(object Item 
+  (in-module Gtk)
+  (parent Bin (Gtk))
+  (c-name GtkItem )
 )
 
 (object Label 
@@ -7600,16 +7600,16 @@
   (c-name GtkListStore )
 )
 
-(object Menu 
-  (in-module Gtk)
-  (parent MenuShell (Gtk))
-  (c-name GtkMenu )
-)
-
 (object MenuBar 
   (in-module Gtk)
   (parent MenuShell (Gtk))
   (c-name GtkMenuBar )
+)
+
+(object Menu 
+  (in-module Gtk)
+  (parent MenuShell (Gtk))
+  (c-name GtkMenu )
 )
 
 (object MenuItem 
@@ -7684,16 +7684,16 @@
   (c-name GtkPreview )
 )
 
-(object Progress 
-  (in-module Gtk)
-  (parent Widget (Gtk))
-  (c-name GtkProgress )
-)
-
 (object ProgressBar 
   (in-module Gtk)
   (parent Progress (Gtk))
   (c-name GtkProgressBar )
+)
+
+(object Progress 
+  (in-module Gtk)
+  (parent Widget (Gtk))
+  (c-name GtkProgress )
 )
 
 (object RadioButton 
@@ -7882,16 +7882,16 @@
   (c-name GtkTreeStore )
 )
 
-(object TreeView 
-  (in-module Gtk)
-  (parent Container (Gtk))
-  (c-name GtkTreeView )
-)
-
 (object TreeViewColumn 
   (in-module Gtk)
   (parent Object (Gtk))
   (c-name GtkTreeViewColumn )
+)
+
+(object TreeView 
+  (in-module Gtk)
+  (parent Container (Gtk))
+  (c-name GtkTreeView )
 )
 
 (object VButtonBox 
@@ -8733,6 +8733,14 @@
   (value (name list_only) (c-name GTK_TREE_MODEL_LIST_ONLY))
 )
 
+(enum TreeViewColumnSizing
+  (in-module gtk)
+  (c-name GtkTreeViewColumnSizing)
+  (value (name grow_only) (c-name GTK_TREE_VIEW_COLUMN_GROW_ONLY))
+  (value (name autosize) (c-name GTK_TREE_VIEW_COLUMN_AUTOSIZE))
+  (value (name fixed) (c-name GTK_TREE_VIEW_COLUMN_FIXED))
+)
+
 (enum TreeViewDropPosition
   (in-module gtk)
   (c-name GtkTreeViewDropPosition)
@@ -8740,14 +8748,6 @@
   (value (name after) (c-name GTK_TREE_VIEW_DROP_AFTER))
   (value (name into_or_before) (c-name GTK_TREE_VIEW_DROP_INTO_OR_BEFORE))
   (value (name into_or_after) (c-name GTK_TREE_VIEW_DROP_INTO_OR_AFTER))
-)
-
-(enum TreeViewColumnSizing
-  (in-module gtk)
-  (c-name GtkTreeViewColumnSizing)
-  (value (name grow_only) (c-name GTK_TREE_VIEW_COLUMN_GROW_ONLY))
-  (value (name autosize) (c-name GTK_TREE_VIEW_COLUMN_AUTOSIZE))
-  (value (name fixed) (c-name GTK_TREE_VIEW_COLUMN_FIXED))
 )
 
 (enum WidgetFlags
@@ -8886,11 +8886,10 @@
   (parameter (type-and-name GtkWindow* parent))
 )
 
-(function gtk_window_get_transient_for 
+(method get_transient_for 
+  (of-object Window (Gtk))
   (c-name gtk_window_get_transient_for)
-  (is-constructor-of GtkWindow)
   (return-type GtkWindow*)
-  (parameter (type-and-name GtkWindow* window))
 )
 
 (method set_type_hint 
@@ -9304,7 +9303,8 @@
 
 (function gtk_window_group_new 
   (c-name gtk_window_group_new)
-  (return-type *)
+  (is-constructor-of GtkWindowGroup)
+  (return-type GtkWindowGroup*)
 )
 
 (method add_window 
@@ -9349,11 +9349,10 @@
 ;  (varargs t)
 )
 
-(function gtk_widget_ref 
+(method ref 
+  (of-object Widget (Gtk))
   (c-name gtk_widget_ref)
-  (is-constructor-of GtkWidget)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkWidget* widget))
 )
 
 (method unref 
@@ -9712,11 +9711,10 @@
   (return-type gboolean)
 )
 
-(function gtk_widget_get_parent 
+(method get_parent 
+  (of-object Widget (Gtk))
   (c-name gtk_widget_get_parent)
-  (is-constructor-of GtkWidget)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkWidget* widget))
 )
 
 (method get_parent_window 
@@ -9791,18 +9789,16 @@
   (return-type GdkExtensionMode)
 )
 
-(function gtk_widget_get_toplevel 
+(method get_toplevel 
+  (of-object Widget (Gtk))
   (c-name gtk_widget_get_toplevel)
-  (is-constructor-of GtkWidget)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkWidget* widget))
 )
 
-(function gtk_widget_get_ancestor 
+(method get_ancestor 
+  (of-object Widget (Gtk))
   (c-name gtk_widget_get_ancestor)
-  (is-constructor-of GtkWidget)
   (return-type GtkWidget*)
-  (parameter (type-and-name GtkWidget* widget))
   (parameter (type-and-name GType widget_type))
 )
 
@@ -9818,10 +9814,10 @@
   (return-type GdkVisual*)
 )
 
-(function gtk_widget_get_screen 
+(method get_screen 
+  (of-object Widget (Gtk))
   (c-name gtk_widget_get_screen)
-  (return-type *)
-  (parameter (type-and-name GtkWidget* widget))
+  (return-type GdkScreen*)
 )
 
 (method has_screen 
@@ -9830,16 +9826,16 @@
   (return-type gboolean)
 )
 
-(function gtk_widget_get_display 
+(method get_display 
+  (of-object Widget (Gtk))
   (c-name gtk_widget_get_display)
-  (return-type *)
-  (parameter (type-and-name GtkWidget* widget))
+  (return-type GdkDisplay*)
 )
 
-(function gtk_widget_get_root_window 
+(method get_root_window 
+  (of-object Widget (Gtk))
   (c-name gtk_widget_get_root_window)
-  (return-type *)
-  (parameter (type-and-name GtkWidget* widget))
+  (return-type GdkWindow*)
 )
 
 (method get_settings 
@@ -10154,7 +10150,6 @@
 
 (function gtk_requisition_copy 
   (c-name gtk_requisition_copy)
-  (is-constructor-of GtkRequisition)
   (return-type GtkRequisition*)
   (parameter (type-and-name const-GtkRequisition* requisition))
 )
@@ -10326,13 +10321,6 @@
 (function gtk_identifier_get_type 
   (c-name gtk_identifier_get_type)
   (return-type GType)
-)
-
-(function gtk_type_unique 
-  (c-name gtk_type_unique)
-  (return-type GtkType)
-  (parameter (type-and-name GtkType parent_type))
-  (parameter (type-and-name const-GtkTypeInfo* gtkinfo))
 )
 
 (function gtk_type_init 
@@ -10749,338 +10737,6 @@
 (function gtk_widget_help_type_get_type 
   (c-name gtk_widget_help_type_get_type)
   (return-type GType)
-)
-
-(function gtk_tree_view_column_get_type 
-  (c-name gtk_tree_view_column_get_type)
-  (return-type GType)
-)
-
-(function gtk_tree_view_column_new 
-  (c-name gtk_tree_view_column_new)
-  (is-constructor-of GtkTreeViewColumn)
-  (return-type GtkTreeViewColumn*)
-)
-
-(function gtk_tree_view_column_new_with_attributes 
-  (c-name gtk_tree_view_column_new_with_attributes)
-  (is-constructor-of GtkTreeViewColumn)
-  (return-type GtkTreeViewColumn*)
-  (parameter (type-and-name const-gchar* title))
-  (parameter (type-and-name GtkCellRenderer* cell))
-;  (varargs t)
-)
-
-(method n_pack_start 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_pack_start)
-  (return-type none)
-  (parameter (type-and-name GtkCellRenderer* cell))
-  (parameter (type-and-name gboolean expand))
-)
-
-(method n_pack_end 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_pack_end)
-  (return-type none)
-  (parameter (type-and-name GtkCellRenderer* cell))
-  (parameter (type-and-name gboolean expand))
-)
-
-(method n_clear 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_clear)
-  (return-type none)
-)
-
-(method n_get_cell_renderers 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_cell_renderers)
-  (return-type GList*)
-)
-
-(method n_add_attribute 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_add_attribute)
-  (return-type none)
-  (parameter (type-and-name GtkCellRenderer* cell_renderer))
-  (parameter (type-and-name const-gchar* attribute))
-  (parameter (type-and-name gint column))
-)
-
-(method n_set_attributes 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_attributes)
-  (return-type none)
-  (parameter (type-and-name GtkCellRenderer* cell_renderer))
- ; (varargs t)
-)
-
-(method n_set_cell_data_func 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_cell_data_func)
-  (return-type none)
-  (parameter (type-and-name GtkCellRenderer* cell_renderer))
-  (parameter (type-and-name GtkTreeCellDataFunc func))
-  (parameter (type-and-name gpointer func_data))
-  (parameter (type-and-name GtkDestroyNotify destroy))
-)
-
-(method n_clear_attributes 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_clear_attributes)
-  (return-type none)
-  (parameter (type-and-name GtkCellRenderer* cell_renderer))
-)
-
-(method n_set_spacing 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_spacing)
-  (return-type none)
-  (parameter (type-and-name gint spacing))
-)
-
-(method n_get_spacing 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_spacing)
-  (return-type gint)
-)
-
-(method n_set_visible 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_visible)
-  (return-type none)
-  (parameter (type-and-name gboolean visible))
-)
-
-(method n_get_visible 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_visible)
-  (return-type gboolean)
-)
-
-(method n_set_resizable 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_resizable)
-  (return-type none)
-  (parameter (type-and-name gboolean resizable))
-)
-
-(method n_get_resizable 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_resizable)
-  (return-type gboolean)
-)
-
-(method n_set_sizing 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_sizing)
-  (return-type none)
-  (parameter (type-and-name GtkTreeViewColumnSizing type))
-)
-
-(method n_get_sizing 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_sizing)
-  (return-type GtkTreeViewColumnSizing)
-)
-
-(method n_get_width 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_width)
-  (return-type gint)
-)
-
-(method n_get_fixed_width 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_fixed_width)
-  (return-type gint)
-)
-
-(method n_set_fixed_width 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_fixed_width)
-  (return-type none)
-  (parameter (type-and-name gint fixed_width))
-)
-
-(method n_set_min_width 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_min_width)
-  (return-type none)
-  (parameter (type-and-name gint min_width))
-)
-
-(method n_get_min_width 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_min_width)
-  (return-type gint)
-)
-
-(method n_set_max_width 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_max_width)
-  (return-type none)
-  (parameter (type-and-name gint max_width))
-)
-
-(method n_get_max_width 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_max_width)
-  (return-type gint)
-)
-
-(method n_clicked 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_clicked)
-  (return-type none)
-)
-
-(method n_set_title 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_title)
-  (return-type none)
-  (parameter (type-and-name const-gchar* title))
-)
-
-(method n_get_title 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_title)
-  (return-type gchar*)
-)
-
-(method n_set_clickable 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_clickable)
-  (return-type none)
-  (parameter (type-and-name gboolean clickable))
-)
-
-(method n_get_clickable 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_clickable)
-  (return-type gboolean)
-)
-
-(method n_set_widget 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_widget)
-  (return-type none)
-  (parameter (type-and-name GtkWidget* widget))
-)
-
-(method n_get_widget 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_widget)
-  (return-type GtkWidget*)
-)
-
-(method n_set_alignment 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_alignment)
-  (return-type none)
-  (parameter (type-and-name gfloat xalign))
-)
-
-(method n_get_alignment 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_alignment)
-  (return-type gfloat)
-)
-
-(method n_set_reorderable 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_reorderable)
-  (return-type none)
-  (parameter (type-and-name gboolean reorderable))
-)
-
-(method n_get_reorderable 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_reorderable)
-  (return-type gboolean)
-)
-
-(method n_set_sort_column_id 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_sort_column_id)
-  (return-type none)
-  (parameter (type-and-name gint sort_column_id))
-)
-
-(method n_get_sort_column_id 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_sort_column_id)
-  (return-type gint)
-)
-
-(method n_set_sort_indicator 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_sort_indicator)
-  (return-type none)
-  (parameter (type-and-name gboolean setting))
-)
-
-(method n_get_sort_indicator 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_sort_indicator)
-  (return-type gboolean)
-)
-
-(method n_set_sort_order 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_set_sort_order)
-  (return-type none)
-  (parameter (type-and-name GtkSortType order))
-)
-
-(method n_get_sort_order 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_get_sort_order)
-  (return-type GtkSortType)
-)
-
-(method n_cell_set_cell_data 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_cell_set_cell_data)
-  (return-type none)
-  (parameter (type-and-name GtkTreeModel* tree_model))
-  (parameter (type-and-name GtkTreeIter* iter))
-  (parameter (type-and-name gboolean is_expander))
-  (parameter (type-and-name gboolean is_expanded))
-)
-
-(method n_cell_get_size 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_cell_get_size)
-  (return-type none)
-  (parameter (type-and-name GdkRectangle* cell_area))
-  (parameter (type-and-name gint* x_offset))
-  (parameter (type-and-name gint* y_offset))
-  (parameter (type-and-name gint* width))
-  (parameter (type-and-name gint* height))
-)
-
-(method n_cell_is_visible 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_cell_is_visible)
-  (return-type gboolean)
-)
-
-(method n_focus_cell 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_focus_cell)
-  (return-type none)
-  (parameter (type-and-name GtkCellRenderer* cell))
-)
-
-(method n_cell_get_position 
-  (of-object TreeViewColumn (Gtk))
-  (c-name gtk_tree_view_column_cell_get_position)
-  (return-type gboolean)
-  (parameter (type-and-name GtkCellRenderer* cell_renderer))
-  (parameter (type-and-name gint* start_pos))
-  (parameter (type-and-name gint* width))
 )
 
 (function gtk_tree_view_get_type 
@@ -11565,6 +11221,338 @@
   (parameter (type-and-name GtkDestroyNotify destroy))
 )
 
+(function gtk_tree_view_column_get_type 
+  (c-name gtk_tree_view_column_get_type)
+  (return-type GType)
+)
+
+(function gtk_tree_view_column_new 
+  (c-name gtk_tree_view_column_new)
+  (is-constructor-of GtkTreeViewColumn)
+  (return-type GtkTreeViewColumn*)
+)
+
+(function gtk_tree_view_column_new_with_attributes 
+  (c-name gtk_tree_view_column_new_with_attributes)
+  (is-constructor-of GtkTreeViewColumn)
+  (return-type GtkTreeViewColumn*)
+  (parameter (type-and-name const-gchar* title))
+  (parameter (type-and-name GtkCellRenderer* cell))
+;  (varargs t)
+)
+
+(method n_pack_start 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_pack_start)
+  (return-type none)
+  (parameter (type-and-name GtkCellRenderer* cell))
+  (parameter (type-and-name gboolean expand))
+)
+
+(method n_pack_end 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_pack_end)
+  (return-type none)
+  (parameter (type-and-name GtkCellRenderer* cell))
+  (parameter (type-and-name gboolean expand))
+)
+
+(method n_clear 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_clear)
+  (return-type none)
+)
+
+(method n_get_cell_renderers 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_cell_renderers)
+  (return-type GList*)
+)
+
+(method n_add_attribute 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_add_attribute)
+  (return-type none)
+  (parameter (type-and-name GtkCellRenderer* cell_renderer))
+  (parameter (type-and-name const-gchar* attribute))
+  (parameter (type-and-name gint column))
+)
+
+(method n_set_attributes 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_attributes)
+  (return-type none)
+  (parameter (type-and-name GtkCellRenderer* cell_renderer))
+ ; (varargs t)
+)
+
+(method n_set_cell_data_func 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_cell_data_func)
+  (return-type none)
+  (parameter (type-and-name GtkCellRenderer* cell_renderer))
+  (parameter (type-and-name GtkTreeCellDataFunc func))
+  (parameter (type-and-name gpointer func_data))
+  (parameter (type-and-name GtkDestroyNotify destroy))
+)
+
+(method n_clear_attributes 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_clear_attributes)
+  (return-type none)
+  (parameter (type-and-name GtkCellRenderer* cell_renderer))
+)
+
+(method n_set_spacing 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_spacing)
+  (return-type none)
+  (parameter (type-and-name gint spacing))
+)
+
+(method n_get_spacing 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_spacing)
+  (return-type gint)
+)
+
+(method n_set_visible 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_visible)
+  (return-type none)
+  (parameter (type-and-name gboolean visible))
+)
+
+(method n_get_visible 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_visible)
+  (return-type gboolean)
+)
+
+(method n_set_resizable 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_resizable)
+  (return-type none)
+  (parameter (type-and-name gboolean resizable))
+)
+
+(method n_get_resizable 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_resizable)
+  (return-type gboolean)
+)
+
+(method n_set_sizing 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_sizing)
+  (return-type none)
+  (parameter (type-and-name GtkTreeViewColumnSizing type))
+)
+
+(method n_get_sizing 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_sizing)
+  (return-type GtkTreeViewColumnSizing)
+)
+
+(method n_get_width 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_width)
+  (return-type gint)
+)
+
+(method n_get_fixed_width 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_fixed_width)
+  (return-type gint)
+)
+
+(method n_set_fixed_width 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_fixed_width)
+  (return-type none)
+  (parameter (type-and-name gint fixed_width))
+)
+
+(method n_set_min_width 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_min_width)
+  (return-type none)
+  (parameter (type-and-name gint min_width))
+)
+
+(method n_get_min_width 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_min_width)
+  (return-type gint)
+)
+
+(method n_set_max_width 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_max_width)
+  (return-type none)
+  (parameter (type-and-name gint max_width))
+)
+
+(method n_get_max_width 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_max_width)
+  (return-type gint)
+)
+
+(method n_clicked 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_clicked)
+  (return-type none)
+)
+
+(method n_set_title 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_title)
+  (return-type none)
+  (parameter (type-and-name const-gchar* title))
+)
+
+(method n_get_title 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_title)
+  (return-type gchar*)
+)
+
+(method n_set_clickable 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_clickable)
+  (return-type none)
+  (parameter (type-and-name gboolean clickable))
+)
+
+(method n_get_clickable 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_clickable)
+  (return-type gboolean)
+)
+
+(method n_set_widget 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_widget)
+  (return-type none)
+  (parameter (type-and-name GtkWidget* widget))
+)
+
+(method n_get_widget 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_widget)
+  (return-type GtkWidget*)
+)
+
+(method n_set_alignment 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_alignment)
+  (return-type none)
+  (parameter (type-and-name gfloat xalign))
+)
+
+(method n_get_alignment 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_alignment)
+  (return-type gfloat)
+)
+
+(method n_set_reorderable 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_reorderable)
+  (return-type none)
+  (parameter (type-and-name gboolean reorderable))
+)
+
+(method n_get_reorderable 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_reorderable)
+  (return-type gboolean)
+)
+
+(method n_set_sort_column_id 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_sort_column_id)
+  (return-type none)
+  (parameter (type-and-name gint sort_column_id))
+)
+
+(method n_get_sort_column_id 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_sort_column_id)
+  (return-type gint)
+)
+
+(method n_set_sort_indicator 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_sort_indicator)
+  (return-type none)
+  (parameter (type-and-name gboolean setting))
+)
+
+(method n_get_sort_indicator 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_sort_indicator)
+  (return-type gboolean)
+)
+
+(method n_set_sort_order 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_set_sort_order)
+  (return-type none)
+  (parameter (type-and-name GtkSortType order))
+)
+
+(method n_get_sort_order 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_get_sort_order)
+  (return-type GtkSortType)
+)
+
+(method n_cell_set_cell_data 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_cell_set_cell_data)
+  (return-type none)
+  (parameter (type-and-name GtkTreeModel* tree_model))
+  (parameter (type-and-name GtkTreeIter* iter))
+  (parameter (type-and-name gboolean is_expander))
+  (parameter (type-and-name gboolean is_expanded))
+)
+
+(method n_cell_get_size 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_cell_get_size)
+  (return-type none)
+  (parameter (type-and-name GdkRectangle* cell_area))
+  (parameter (type-and-name gint* x_offset))
+  (parameter (type-and-name gint* y_offset))
+  (parameter (type-and-name gint* width))
+  (parameter (type-and-name gint* height))
+)
+
+(method n_cell_is_visible 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_cell_is_visible)
+  (return-type gboolean)
+)
+
+(method n_focus_cell 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_focus_cell)
+  (return-type none)
+  (parameter (type-and-name GtkCellRenderer* cell))
+)
+
+(method n_cell_get_position 
+  (of-object TreeViewColumn (Gtk))
+  (c-name gtk_tree_view_column_cell_get_position)
+  (return-type gboolean)
+  (parameter (type-and-name GtkCellRenderer* cell_renderer))
+  (parameter (type-and-name gint* start_pos))
+  (parameter (type-and-name gint* width))
+)
+
 (function gtk_tree_store_get_type 
   (c-name gtk_tree_store_get_type)
   (return-type GType)
@@ -11580,7 +11568,6 @@
 
 (function gtk_tree_store_newv 
   (c-name gtk_tree_store_newv)
-  (is-constructor-of GtkTreeStore)
   (return-type GtkTreeStore*)
   (parameter (type-and-name gint n_columns))
   (parameter (type-and-name GType* types))
@@ -11781,10 +11768,10 @@
   (parameter (type-and-name GtkTreeIter* iter))
 )
 
-(function gtk_tree_selection_get_selected_rows 
+(method get_selected_rows 
+  (of-object TreeSelection (Gtk))
   (c-name gtk_tree_selection_get_selected_rows)
-  (return-type *)
-  (parameter (type-and-name GtkTreeSelection* selection))
+  (return-type GList*)
   (parameter (type-and-name GtkTreeModel** model))
 )
 
@@ -11877,16 +11864,10 @@
   (return-type GType)
 )
 
-(function gtk_tree_model_sort_new_with_model 
-  (c-name gtk_tree_model_sort_new_with_model)
-  (return-type GtkTreeModel*)
-  (parameter (type-and-name GtkTreeModel* child_model))
-)
-
-(function gtk_tree_model_sort_get_model 
+(method t_get_model 
+  (of-object TreeModelSort (Gtk))
   (c-name gtk_tree_model_sort_get_model)
   (return-type GtkTreeModel*)
-  (parameter (type-and-name GtkTreeModelSort* tree_model))
 )
 
 (method t_convert_child_path_to_path 
@@ -11999,12 +11980,6 @@
   (parameter (type-and-name GtkTreePath* path))
 )
 
-(function gtk_tree_row_reference_copy 
-  (c-name gtk_tree_row_reference_copy)
-  (return-type GtkTreeRowReference*)
-  (parameter (type-and-name GtkTreeRowReference* reference))
-)
-
 (function gtk_tree_row_reference_inserted 
   (c-name gtk_tree_row_reference_inserted)
   (return-type none)
@@ -12028,12 +12003,6 @@
   (parameter (type-and-name gint* new_order))
 )
 
-(function gtk_tree_iter_copy 
-  (c-name gtk_tree_iter_copy)
-  (return-type *)
-  (parameter (type-and-name GtkTreeIter* iter))
-)
-
 (function gtk_tree_iter_get_type 
   (c-name gtk_tree_iter_get_type)
   (return-type GType)
@@ -12042,20 +12011,6 @@
 (function gtk_tree_model_get_type 
   (c-name gtk_tree_model_get_type)
   (return-type GType)
-)
-
-(function gtk_tree_model_get_string_from_iter 
-  (c-name gtk_tree_model_get_string_from_iter)
-  (return-type *)
-  (parameter (type-and-name GtkTreeModel* tree_model))
-  (parameter (type-and-name GtkTreeIter* iter))
-)
-
-(function gtk_tree_model_get_path 
-  (c-name gtk_tree_model_get_path)
-  (return-type *)
-  (parameter (type-and-name GtkTreeModel* tree_model))
-  (parameter (type-and-name GtkTreeIter* iter))
 )
 
 (function gtk_tree_drag_source_get_type 
@@ -12125,7 +12080,6 @@
 
 (function gtk_tooltips_data_get 
   (c-name gtk_tooltips_data_get)
-  (is-constructor-of GtkTooltipsData)
   (return-type GtkTooltipsData*)
   (parameter (type-and-name GtkWidget* widget))
 )
@@ -12493,12 +12447,14 @@
 
 (function gtk_text_view_new 
   (c-name gtk_text_view_new)
-  (return-type *)
+  (is-constructor-of GtkTextView)
+  (return-type GtkWidget*)
 )
 
 (function gtk_text_view_new_with_buffer 
   (c-name gtk_text_view_new_with_buffer)
-  (return-type *)
+  (is-constructor-of GtkTextView)
+  (return-type GtkWidget*)
   (parameter (type-and-name GtkTextBuffer* buffer))
 )
 
@@ -12894,11 +12850,10 @@
   (parameter (type-and-name GtkTextTag* tag))
 )
 
-(function gtk_text_tag_table_lookup 
+(method e_lookup 
+  (of-object TextTagTable (Gtk))
   (c-name gtk_text_tag_table_lookup)
-  (is-constructor-of GtkTextTag)
   (return-type GtkTextTag*)
-  (parameter (type-and-name GtkTextTagTable* table))
   (parameter (type-and-name const-gchar* name))
 )
 
@@ -12954,13 +12909,6 @@
   (c-name gtk_text_attributes_new)
   (is-constructor-of GtkTextAttributes)
   (return-type GtkTextAttributes*)
-)
-
-(function gtk_text_attributes_copy 
-  (c-name gtk_text_attributes_copy)
-  (is-constructor-of GtkTextAttributes)
-  (return-type GtkTextAttributes*)
-  (parameter (type-and-name GtkTextAttributes* src))
 )
 
 (function gtk_text_attributes_get_type 
@@ -13340,7 +13288,6 @@
 
 (function gtk_text_iter_copy 
   (c-name gtk_text_iter_copy)
-  (is-constructor-of GtkTextIter)
   (return-type GtkTextIter*)
   (parameter (type-and-name const-GtkTextIter* iter))
 )
@@ -13428,7 +13375,7 @@
 
 (function gtk_text_iter_get_marks 
   (c-name gtk_text_iter_get_marks)
-  (return-type *)
+  (return-type GSList*)
   (parameter (type-and-name const-GtkTextIter* iter))
 )
 
@@ -14248,18 +14195,16 @@
   (return-type GtkStyle*)
 )
 
-(function gtk_style_copy 
+(method copy 
+  (of-object Style (Gtk))
   (c-name gtk_style_copy)
-  (is-constructor-of GtkStyle)
   (return-type GtkStyle*)
-  (parameter (type-and-name GtkStyle* style))
 )
 
-(function gtk_style_attach 
+(method attach 
+  (of-object Style (Gtk))
   (c-name gtk_style_attach)
-  (is-constructor-of GtkStyle)
   (return-type GtkStyle*)
-  (parameter (type-and-name GtkStyle* style))
   (parameter (type-and-name GdkWindow* window))
 )
 
@@ -14269,11 +14214,10 @@
   (return-type none)
 )
 
-(function gtk_style_ref 
+(method ref 
+  (of-object Style (Gtk))
   (c-name gtk_style_ref)
-  (is-constructor-of GtkStyle)
   (return-type GtkStyle*)
-  (parameter (type-and-name GtkStyle* style))
 )
 
 (method unref 
@@ -14282,10 +14226,10 @@
   (return-type none)
 )
 
-(function gtk_style_get_font 
+(method get_font 
+  (of-object Style (Gtk))
   (c-name gtk_style_get_font)
-  (return-type *)
-  (parameter (type-and-name GtkStyle* style))
+  (return-type GdkFont*)
 )
 
 (method set_font 
@@ -14926,7 +14870,6 @@
 
 (function gtk_border_copy 
   (c-name gtk_border_copy)
-  (is-constructor-of GtkBorder)
   (return-type GtkBorder*)
   (parameter (type-and-name const-GtkBorder* border_))
 )
@@ -14984,7 +14927,6 @@
 
 (function gtk_stock_item_copy 
   (c-name gtk_stock_item_copy)
-  (is-constructor-of GtkStockItem)
   (return-type GtkStockItem*)
   (parameter (type-and-name const-GtkStockItem* item))
 )
@@ -15256,7 +15198,8 @@
 
 (function gtk_size_group_new 
   (c-name gtk_size_group_new)
-  (return-type *)
+  (is-constructor-of GtkSizeGroup)
+  (return-type GtkSizeGroup*)
   (parameter (type-and-name GtkSizeGroupMode mode))
 )
 
@@ -15394,13 +15337,11 @@
 
 (function gtk_settings_get_default 
   (c-name gtk_settings_get_default)
-  (is-constructor-of GtkSettings)
   (return-type GtkSettings*)
 )
 
 (function gtk_settings_get_for_screen 
   (c-name gtk_settings_get_for_screen)
-  (is-constructor-of GtkSettings)
   (return-type GtkSettings*)
   (parameter (type-and-name GdkScreen* screen))
 )
@@ -15568,12 +15509,6 @@
   (parameter (type-and-name guint32 time_))
 )
 
-(function gtk_selection_data_get_text 
-  (c-name gtk_selection_data_get_text)
-  (return-type *)
-  (parameter (type-and-name GtkSelectionData* selection_data))
-)
-
 (function gtk_selection_remove_all 
   (c-name gtk_selection_remove_all)
   (return-type none)
@@ -15590,13 +15525,6 @@
 (function gtk_selection_data_get_type 
   (c-name gtk_selection_data_get_type)
   (return-type GType)
-)
-
-(function gtk_selection_data_copy 
-  (c-name gtk_selection_data_copy)
-  (is-constructor-of GtkSelectionData)
-  (return-type GtkSelectionData*)
-  (parameter (type-and-name GtkSelectionData* data))
 )
 
 (function gtk_scrolled_window_get_type 
@@ -15882,11 +15810,10 @@
   (return-type GtkRcStyle*)
 )
 
-(function gtk_rc_style_copy 
+(method copy 
+  (of-object RcStyle (Gtk))
   (c-name gtk_rc_style_copy)
-  (is-constructor-of GtkRcStyle)
   (return-type GtkRcStyle*)
-  (parameter (type-and-name GtkRcStyle* orig))
 )
 
 (method ref 
@@ -16131,6 +16058,102 @@
   (parameter (type-and-name GSList* group))
 )
 
+(function gtk_progress_get_type 
+  (c-name gtk_progress_get_type)
+  (return-type GType)
+)
+
+(method set_show_text 
+  (of-object Progress (Gtk))
+  (c-name gtk_progress_set_show_text)
+  (return-type none)
+  (parameter (type-and-name gboolean show_text))
+)
+
+(method set_text_alignment 
+  (of-object Progress (Gtk))
+  (c-name gtk_progress_set_text_alignment)
+  (return-type none)
+  (parameter (type-and-name gfloat x_align))
+  (parameter (type-and-name gfloat y_align))
+)
+
+(method set_format_string 
+  (of-object Progress (Gtk))
+  (c-name gtk_progress_set_format_string)
+  (return-type none)
+  (parameter (type-and-name const-gchar* format))
+)
+
+(method set_adjustment 
+  (of-object Progress (Gtk))
+  (c-name gtk_progress_set_adjustment)
+  (return-type none)
+  (parameter (type-and-name GtkAdjustment* adjustment))
+)
+
+(method configure 
+  (of-object Progress (Gtk))
+  (c-name gtk_progress_configure)
+  (return-type none)
+  (parameter (type-and-name gdouble value))
+  (parameter (type-and-name gdouble min))
+  (parameter (type-and-name gdouble max))
+)
+
+(method set_percentage 
+  (of-object Progress (Gtk))
+  (c-name gtk_progress_set_percentage)
+  (return-type none)
+  (parameter (type-and-name gdouble percentage))
+)
+
+(method set_value 
+  (of-object Progress (Gtk))
+  (c-name gtk_progress_set_value)
+  (return-type none)
+  (parameter (type-and-name gdouble value))
+)
+
+(method get_value 
+  (of-object Progress (Gtk))
+  (c-name gtk_progress_get_value)
+  (return-type gdouble)
+)
+
+(method set_activity_mode 
+  (of-object Progress (Gtk))
+  (c-name gtk_progress_set_activity_mode)
+  (return-type none)
+  (parameter (type-and-name gboolean activity_mode))
+)
+
+(method get_current_text 
+  (of-object Progress (Gtk))
+  (c-name gtk_progress_get_current_text)
+  (return-type gchar*)
+)
+
+(method get_text_from_value 
+  (of-object Progress (Gtk))
+  (c-name gtk_progress_get_text_from_value)
+  (return-type gchar*)
+  (parameter (type-and-name gdouble value))
+)
+
+(method get_current_percentage 
+  (of-object Progress (Gtk))
+  (c-name gtk_progress_get_current_percentage)
+  (return-type gdouble)
+)
+
+(method get_percentage_from_value 
+  (of-object Progress (Gtk))
+  (c-name gtk_progress_get_percentage_from_value)
+  (return-type gdouble)
+  (parameter (type-and-name gdouble value))
+)
+
 (function gtk_progress_bar_get_type 
   (c-name gtk_progress_bar_get_type)
   (return-type GType)
@@ -16240,102 +16263,6 @@
   (c-name gtk_progress_bar_update)
   (return-type none)
   (parameter (type-and-name gdouble percentage))
-)
-
-(function gtk_progress_get_type 
-  (c-name gtk_progress_get_type)
-  (return-type GType)
-)
-
-(method set_show_text 
-  (of-object Progress (Gtk))
-  (c-name gtk_progress_set_show_text)
-  (return-type none)
-  (parameter (type-and-name gboolean show_text))
-)
-
-(method set_text_alignment 
-  (of-object Progress (Gtk))
-  (c-name gtk_progress_set_text_alignment)
-  (return-type none)
-  (parameter (type-and-name gfloat x_align))
-  (parameter (type-and-name gfloat y_align))
-)
-
-(method set_format_string 
-  (of-object Progress (Gtk))
-  (c-name gtk_progress_set_format_string)
-  (return-type none)
-  (parameter (type-and-name const-gchar* format))
-)
-
-(method set_adjustment 
-  (of-object Progress (Gtk))
-  (c-name gtk_progress_set_adjustment)
-  (return-type none)
-  (parameter (type-and-name GtkAdjustment* adjustment))
-)
-
-(method configure 
-  (of-object Progress (Gtk))
-  (c-name gtk_progress_configure)
-  (return-type none)
-  (parameter (type-and-name gdouble value))
-  (parameter (type-and-name gdouble min))
-  (parameter (type-and-name gdouble max))
-)
-
-(method set_percentage 
-  (of-object Progress (Gtk))
-  (c-name gtk_progress_set_percentage)
-  (return-type none)
-  (parameter (type-and-name gdouble percentage))
-)
-
-(method set_value 
-  (of-object Progress (Gtk))
-  (c-name gtk_progress_set_value)
-  (return-type none)
-  (parameter (type-and-name gdouble value))
-)
-
-(method get_value 
-  (of-object Progress (Gtk))
-  (c-name gtk_progress_get_value)
-  (return-type gdouble)
-)
-
-(method set_activity_mode 
-  (of-object Progress (Gtk))
-  (c-name gtk_progress_set_activity_mode)
-  (return-type none)
-  (parameter (type-and-name gboolean activity_mode))
-)
-
-(method get_current_text 
-  (of-object Progress (Gtk))
-  (c-name gtk_progress_get_current_text)
-  (return-type gchar*)
-)
-
-(method get_text_from_value 
-  (of-object Progress (Gtk))
-  (c-name gtk_progress_get_text_from_value)
-  (return-type gchar*)
-  (parameter (type-and-name gdouble value))
-)
-
-(method get_current_percentage 
-  (of-object Progress (Gtk))
-  (c-name gtk_progress_get_current_percentage)
-  (return-type gdouble)
-)
-
-(method get_percentage_from_value 
-  (of-object Progress (Gtk))
-  (c-name gtk_progress_get_percentage_from_value)
-  (return-type gdouble)
-  (parameter (type-and-name gdouble value))
 )
 
 (function gtk_preview_get_type 
@@ -16672,11 +16599,10 @@
   (return-type none)
 )
 
-(function gtk_object_ref 
+(method ref 
+  (of-object Object (Gtk))
   (c-name gtk_object_ref)
-  (is-constructor-of GtkObject)
   (return-type GtkObject*)
-  (parameter (type-and-name GtkObject* object))
 )
 
 (method unref 
@@ -16822,7 +16748,8 @@
 
 (function gtk_notebook_new 
   (c-name gtk_notebook_new)
-  (return-type *)
+  (is-constructor-of GtkNotebook)
+  (return-type GtkWidget*)
 )
 
 (method append_page 
@@ -17022,10 +16949,10 @@
   (return-type none)
 )
 
-(function gtk_notebook_get_tab_label 
+(method get_tab_label 
+  (of-object Notebook (Gtk))
   (c-name gtk_notebook_get_tab_label)
-  (return-type *)
-  (parameter (type-and-name GtkNotebook* notebook))
+  (return-type GtkWidget*)
   (parameter (type-and-name GtkWidget* child))
 )
 
@@ -17052,10 +16979,10 @@
   (parameter (type-and-name GtkWidget* child))
 )
 
-(function gtk_notebook_get_menu_label 
+(method get_menu_label 
+  (of-object Notebook (Gtk))
   (c-name gtk_notebook_get_menu_label)
-  (return-type *)
-  (parameter (type-and-name GtkNotebook* notebook))
+  (return-type GtkWidget*)
   (parameter (type-and-name GtkWidget* child))
 )
 
@@ -17321,17 +17248,6 @@
   (parameter (type-and-name const-gchar* accel_path))
 )
 
-(function gtk_menu_bar_get_type 
-  (c-name gtk_menu_bar_get_type)
-  (return-type GType)
-)
-
-(function gtk_menu_bar_new 
-  (c-name gtk_menu_bar_new)
-  (is-constructor-of GtkMenuBar)
-  (return-type GtkWidget*)
-)
-
 (function gtk_menu_get_type 
   (c-name gtk_menu_get_type)
   (return-type GType)
@@ -17459,6 +17375,17 @@
   (c-name gtk_menu_set_screen)
   (return-type none)
   (parameter (type-and-name GdkScreen* screen))
+)
+
+(function gtk_menu_bar_get_type 
+  (c-name gtk_menu_bar_get_type)
+  (return-type GType)
+)
+
+(function gtk_menu_bar_new 
+  (c-name gtk_menu_bar_new)
+  (is-constructor-of GtkMenuBar)
+  (return-type GtkWidget*)
 )
 
 (function gtk_marshal_BOOLEAN__VOID 
@@ -17802,7 +17729,7 @@
 
 (function gtk_set_locale 
   (c-name gtk_set_locale)
-  (return-type *)
+  (return-type gchar*)
 )
 
 (function gtk_get_default_language 
@@ -18053,7 +17980,6 @@
 
 (function gtk_list_store_newv 
   (c-name gtk_list_store_newv)
-  (is-constructor-of GtkListStore)
   (return-type GtkListStore*)
   (parameter (type-and-name gint n_columns))
   (parameter (type-and-name GType* types))
@@ -18687,6 +18613,29 @@
   (parameter (type-and-name const-gchar* string))
 )
 
+(function gtk_item_get_type 
+  (c-name gtk_item_get_type)
+  (return-type GType)
+)
+
+(method select 
+  (of-object Item (Gtk))
+  (c-name gtk_item_select)
+  (return-type none)
+)
+
+(method deselect 
+  (of-object Item (Gtk))
+  (c-name gtk_item_deselect)
+  (return-type none)
+)
+
+(method toggle 
+  (of-object Item (Gtk))
+  (c-name gtk_item_toggle)
+  (return-type none)
+)
+
 (function gtk_item_factory_get_type 
   (c-name gtk_item_factory_get_type)
   (return-type GType)
@@ -18722,7 +18671,6 @@
 
 (function gtk_item_factory_from_widget 
   (c-name gtk_item_factory_from_widget)
-  (is-constructor-of GtkItemFactory)
   (return-type GtkItemFactory*)
   (parameter (type-and-name GtkWidget* widget))
 )
@@ -18856,7 +18804,6 @@
 
 (function gtk_item_factory_from_path 
   (c-name gtk_item_factory_from_path)
-  (is-constructor-of GtkItemFactory)
   (return-type GtkItemFactory*)
   (parameter (type-and-name const-gchar* path))
 )
@@ -18873,29 +18820,6 @@
   (return-type none)
   (parameter (type-and-name const-gchar* ifactory_path))
   (parameter (type-and-name const-gchar* path))
-)
-
-(function gtk_item_get_type 
-  (c-name gtk_item_get_type)
-  (return-type GType)
-)
-
-(method select 
-  (of-object Item (Gtk))
-  (c-name gtk_item_select)
-  (return-type none)
-)
-
-(method deselect 
-  (of-object Item (Gtk))
-  (c-name gtk_item_deselect)
-  (return-type none)
-)
-
-(method toggle 
-  (of-object Item (Gtk))
-  (c-name gtk_item_toggle)
-  (return-type none)
 )
 
 (function gtk_invisible_get_type 
@@ -18964,7 +18888,6 @@
 
 (function gtk_im_context_simple_new 
   (c-name gtk_im_context_simple_new)
-  (is-constructor-of GtkIMContext)
   (return-type GtkIMContext*)
 )
 
@@ -19379,18 +19302,6 @@
   (c-name gtk_icon_set_new_from_pixbuf)
   (return-type GtkIconSet*)
   (parameter (type-and-name GdkPixbuf* pixbuf))
-)
-
-(function gtk_icon_set_ref 
-  (c-name gtk_icon_set_ref)
-  (return-type GtkIconSet*)
-  (parameter (type-and-name GtkIconSet* icon_set))
-)
-
-(function gtk_icon_set_copy 
-  (c-name gtk_icon_set_copy)
-  (return-type GtkIconSet*)
-  (parameter (type-and-name GtkIconSet* icon_set))
 )
 
 (function gtk_icon_source_get_type 
@@ -20444,7 +20355,8 @@
 
 (function gtk_ctree_new_with_titles 
   (c-name gtk_ctree_new_with_titles)
-  (return-type *)
+  (is-constructor-of GtkCTree)
+  (return-type GtkWidget*)
   (parameter (type-and-name gint columns))
   (parameter (type-and-name gint tree_column))
   (parameter (type-and-name gchar* titles[]))
@@ -20452,15 +20364,16 @@
 
 (function gtk_ctree_new 
   (c-name gtk_ctree_new)
-  (return-type *)
+  (is-constructor-of GtkCTree)
+  (return-type GtkWidget*)
   (parameter (type-and-name gint columns))
   (parameter (type-and-name gint tree_column))
 )
 
-(function gtk_ctree_insert_node 
+(method insert_node 
+  (of-object CTree (Gtk))
   (c-name gtk_ctree_insert_node)
-  (return-type *)
-  (parameter (type-and-name GtkCTree* ctree))
+  (return-type GtkCTreeNode*)
   (parameter (type-and-name GtkCTreeNode* parent))
   (parameter (type-and-name GtkCTreeNode* sibling))
   (parameter (type-and-name gchar* text[]))
@@ -20480,10 +20393,10 @@
   (parameter (type-and-name GtkCTreeNode* node))
 )
 
-(function gtk_ctree_insert_gnode 
+(method insert_gnode 
+  (of-object CTree (Gtk))
   (c-name gtk_ctree_insert_gnode)
-  (return-type *)
-  (parameter (type-and-name GtkCTree* ctree))
+  (return-type GtkCTreeNode*)
   (parameter (type-and-name GtkCTreeNode* parent))
   (parameter (type-and-name GtkCTreeNode* sibling))
   (parameter (type-and-name GNode* gnode))
@@ -20491,10 +20404,10 @@
   (parameter (type-and-name gpointer data))
 )
 
-(function gtk_ctree_export_to_gnode 
+(method export_to_gnode 
+  (of-object CTree (Gtk))
   (c-name gtk_ctree_export_to_gnode)
-  (return-type *)
-  (parameter (type-and-name GtkCTree* ctree))
+  (return-type GNode*)
   (parameter (type-and-name GNode* parent))
   (parameter (type-and-name GNode* sibling))
   (parameter (type-and-name GtkCTreeNode* node))
@@ -20547,24 +20460,24 @@
   (parameter (type-and-name GtkCTreeNode* node))
 )
 
-(function gtk_ctree_last 
+(method last 
+  (of-object CTree (Gtk))
   (c-name gtk_ctree_last)
-  (return-type *)
-  (parameter (type-and-name GtkCTree* ctree))
+  (return-type GtkCTreeNode*)
   (parameter (type-and-name GtkCTreeNode* node))
 )
 
-(function gtk_ctree_find_node_ptr 
+(method find_node_ptr 
+  (of-object CTree (Gtk))
   (c-name gtk_ctree_find_node_ptr)
-  (return-type *)
-  (parameter (type-and-name GtkCTree* ctree))
+  (return-type GtkCTreeNode*)
   (parameter (type-and-name GtkCTreeRow* ctree_row))
 )
 
-(function gtk_ctree_node_nth 
+(method node_nth 
+  (of-object CTree (Gtk))
   (c-name gtk_ctree_node_nth)
-  (return-type *)
-  (parameter (type-and-name GtkCTree* ctree))
+  (return-type GtkCTreeNode*)
   (parameter (type-and-name guint row))
 )
 
@@ -20584,35 +20497,35 @@
   (parameter (type-and-name GtkCTreeNode* child))
 )
 
-(function gtk_ctree_find_by_row_data 
+(method find_by_row_data 
+  (of-object CTree (Gtk))
   (c-name gtk_ctree_find_by_row_data)
-  (return-type *)
-  (parameter (type-and-name GtkCTree* ctree))
+  (return-type GtkCTreeNode*)
   (parameter (type-and-name GtkCTreeNode* node))
   (parameter (type-and-name gpointer data))
 )
 
-(function gtk_ctree_find_all_by_row_data 
+(method find_all_by_row_data 
+  (of-object CTree (Gtk))
   (c-name gtk_ctree_find_all_by_row_data)
-  (return-type *)
-  (parameter (type-and-name GtkCTree* ctree))
+  (return-type GList*)
   (parameter (type-and-name GtkCTreeNode* node))
   (parameter (type-and-name gpointer data))
 )
 
-(function gtk_ctree_find_by_row_data_custom 
+(method find_by_row_data_custom 
+  (of-object CTree (Gtk))
   (c-name gtk_ctree_find_by_row_data_custom)
-  (return-type *)
-  (parameter (type-and-name GtkCTree* ctree))
+  (return-type GtkCTreeNode*)
   (parameter (type-and-name GtkCTreeNode* node))
   (parameter (type-and-name gpointer data))
   (parameter (type-and-name GCompareFunc func))
 )
 
-(function gtk_ctree_find_all_by_row_data_custom 
+(method find_all_by_row_data_custom 
+  (of-object CTree (Gtk))
   (c-name gtk_ctree_find_all_by_row_data_custom)
-  (return-type *)
-  (parameter (type-and-name GtkCTree* ctree))
+  (return-type GList*)
   (parameter (type-and-name GtkCTreeNode* node))
   (parameter (type-and-name gpointer data))
   (parameter (type-and-name GCompareFunc func))
@@ -20862,10 +20775,10 @@
   (parameter (type-and-name GtkStyle* style))
 )
 
-(function gtk_ctree_node_get_row_style 
+(method node_get_row_style 
+  (of-object CTree (Gtk))
   (c-name gtk_ctree_node_get_row_style)
-  (return-type *)
-  (parameter (type-and-name GtkCTree* ctree))
+  (return-type GtkStyle*)
   (parameter (type-and-name GtkCTreeNode* node))
 )
 
@@ -20878,10 +20791,10 @@
   (parameter (type-and-name GtkStyle* style))
 )
 
-(function gtk_ctree_node_get_cell_style 
+(method node_get_cell_style 
+  (of-object CTree (Gtk))
   (c-name gtk_ctree_node_get_cell_style)
-  (return-type *)
-  (parameter (type-and-name GtkCTree* ctree))
+  (return-type GtkStyle*)
   (parameter (type-and-name GtkCTreeNode* node))
   (parameter (type-and-name gint column))
 )
@@ -21305,18 +21218,6 @@
   (return-type none)
 )
 
-(function gtk_color_selection_dialog_get_type 
-  (c-name gtk_color_selection_dialog_get_type)
-  (return-type GType)
-)
-
-(function gtk_color_selection_dialog_new 
-  (c-name gtk_color_selection_dialog_new)
-  (is-constructor-of GtkColorSelectionDialog)
-  (return-type GtkWidget*)
-  (parameter (type-and-name const-gchar* title))
-)
-
 (function gtk_color_selection_get_type 
   (c-name gtk_color_selection_get_type)
   (return-type GType)
@@ -21462,6 +21363,18 @@
   (parameter (type-and-name GtkUpdateType policy))
 )
 
+(function gtk_color_selection_dialog_get_type 
+  (c-name gtk_color_selection_dialog_get_type)
+  (return-type GType)
+)
+
+(function gtk_color_selection_dialog_new 
+  (c-name gtk_color_selection_dialog_new)
+  (is-constructor-of GtkColorSelectionDialog)
+  (return-type GtkWidget*)
+  (parameter (type-and-name const-gchar* title))
+)
+
 (function gtk_clist_get_type 
   (c-name gtk_clist_get_type)
   (return-type GtkType)
@@ -21602,10 +21515,10 @@
   (parameter (type-and-name const-gchar* title))
 )
 
-(function gtk_clist_get_column_title 
+(method get_column_title 
+  (of-object CList (Gtk))
   (c-name gtk_clist_get_column_title)
-  (return-type *)
-  (parameter (type-and-name GtkCList* clist))
+  (return-type gchar*)
   (parameter (type-and-name gint column))
 )
 
@@ -21617,10 +21530,10 @@
   (parameter (type-and-name GtkWidget* widget))
 )
 
-(function gtk_clist_get_column_widget 
+(method get_column_widget 
+  (of-object CList (Gtk))
   (c-name gtk_clist_get_column_widget)
-  (return-type *)
-  (parameter (type-and-name GtkCList* clist))
+  (return-type GtkWidget*)
   (parameter (type-and-name gint column))
 )
 
@@ -22038,12 +21951,6 @@
   (parameter (type-and-name GdkAtom selection))
 )
 
-(function gtk_clipboard_wait_for_text 
-  (c-name gtk_clipboard_wait_for_text)
-  (return-type *)
-  (parameter (type-and-name GtkClipboard* clipboard))
-)
-
 (function gtk_check_menu_item_get_type 
   (c-name gtk_check_menu_item_get_type)
   (return-type GType)
@@ -22140,7 +22047,6 @@
 
 (function gtk_cell_renderer_toggle_new 
   (c-name gtk_cell_renderer_toggle_new)
-  (is-constructor-of GtkCellRenderer)
   (return-type GtkCellRenderer*)
 )
 
@@ -22177,7 +22083,6 @@
 
 (function gtk_cell_renderer_text_new 
   (c-name gtk_cell_renderer_text_new)
-  (is-constructor-of GtkCellRenderer)
   (return-type GtkCellRenderer*)
 )
 
@@ -22195,7 +22100,6 @@
 
 (function gtk_cell_renderer_pixbuf_new 
   (c-name gtk_cell_renderer_pixbuf_new)
-  (is-constructor-of GtkCellRenderer)
   (return-type GtkCellRenderer*)
 )
 
@@ -22556,6 +22460,17 @@
   (parameter (type-and-name GtkPackType pack_type))
 )
 
+(function gtk_bin_get_type 
+  (c-name gtk_bin_get_type)
+  (return-type GType)
+)
+
+(method get_child 
+  (of-object Bin (Gtk))
+  (c-name gtk_bin_get_child)
+  (return-type GtkWidget*)
+)
+
 (function gtk_binding_set_new 
   (c-name gtk_binding_set_new)
   (is-constructor-of GtkBindingSet)
@@ -22565,14 +22480,12 @@
 
 (function gtk_binding_set_by_class 
   (c-name gtk_binding_set_by_class)
-  (is-constructor-of GtkBindingSet)
   (return-type GtkBindingSet*)
   (parameter (type-and-name gpointer object_class))
 )
 
 (function gtk_binding_set_find 
   (c-name gtk_binding_set_find)
-  (is-constructor-of GtkBindingSet)
   (return-type GtkBindingSet*)
   (parameter (type-and-name const-gchar* set_name))
 )
@@ -22626,17 +22539,6 @@
   (c-name gtk_binding_parse_binding)
   (return-type guint)
   (parameter (type-and-name GScanner* scanner))
-)
-
-(function gtk_bin_get_type 
-  (c-name gtk_bin_get_type)
-  (return-type GType)
-)
-
-(method get_child 
-  (of-object Bin (Gtk))
-  (c-name gtk_bin_get_child)
-  (return-type GtkWidget*)
 )
 
 (function gtk_button_box_get_type 
@@ -23028,7 +22930,6 @@
 
 (function gtk_accel_group_from_accel_closure 
   (c-name gtk_accel_group_from_accel_closure)
-  (is-constructor-of GtkAccelGroup)
   (return-type GtkAccelGroup*)
   (parameter (type-and-name GClosure* closure))
 )
@@ -23075,63 +22976,3 @@
   (parameter (type-and-name guint* n_entries))
 )
 
-_h2def->php_cgenerator_h2def() /mnt/webdav/akpear/PHP_CGenerator/h2def.php:807
-    2.6077    1933024   3. php_cgenerator_h2def->write_func() /mnt/webdav/akpear/PHP_CGenerator/h2def.php:802
-
-Notice: Undefined index:   in /mnt/webdav/akpear/PHP_CGenerator/h2def.php on line 553
-
-Call Stack:
-    0.0000     301544   1. {main}() /mnt/webdav/akpear/PHP_CGenerator/h2def.php:0
-    0.0188     471288   2. php_cgenerator_h2def->php_cgenerator_h2def() /mnt/webdav/akpear/PHP_CGenerator/h2def.php:807
-    2.6093    1933024   3. php_cgenerator_h2def->write_func() /mnt/webdav/akpear/PHP_CGenerator/h2def.php:802
-
-Notice: Undefined index:  gtkclipboard in /mnt/webdav/akpear/PHP_CGenerator/h2def.php on line 553
-
-Call Stack:
-    0.0000     301544   1. {main}() /mnt/webdav/akpear/PHP_CGenerator/h2def.php:0
-    0.0188     471288   2. php_cgenerator_h2def->php_cgenerator_h2def() /mnt/webdav/akpear/PHP_CGenerator/h2def.php:807
-    2.6367    1933016   3. php_cgenerator_h2def->write_func() /mnt/webdav/akpear/PHP_CGenerator/h2def.php:802
-
-Notice: Undefined index:  gtkclipboard in /mnt/webdav/akpear/PHP_CGenerator/h2def.php on line 553
-
-Call Stack:
-    0.0000     301544   1. {main}() /mnt/webdav/akpear/PHP_CGenerator/h2def.php:0
-    0.0188     471288   2. php_cgenerator_h2def->php_cgenerator_h2def() /mnt/webdav/akpear/PHP_CGenerator/h2def.php:807
-    2.6372    1933000   3. php_cgenerator_h2def->write_func() /mnt/webdav/akpear/PHP_CGenerator/h2def.php:802
-
-;Could not find Clipboard
-
-;Could not find Clipboard
-
-;Could not find Clipboard
-
-;Could not find Clipboard
-
-;Could not find Clipboard
-
-;Could not find Clipboard
-
-;Could not find Clipboard
-
-;Could not find Clipboard
-
-;Could not find Clipboard
-
-Notice: Undefined index:   in /mnt/webdav/akpear/PHP_CGenerator/h2def.php on line 553
-
-Call Stack:
-    0.0000     301544   1. {main}() /mnt/webdav/akpear/PHP_CGenerator/h2def.php:0
-    0.0188     471288   2. php_cgenerator_h2def->php_cgenerator_h2def() /mnt/webdav/akpear/PHP_CGenerator/h2def.php:807
-    2.6412    1932984   3. php_cgenerator_h2def->write_func() /mnt/webdav/akpear/PHP_CGenerator/h2def.php:802
-
-;Could not find Clipboard
-
-;Could not find CellEditable
-
-;Could not find CellEditable
-
-;Could not find CellEditable
-
-;Could not find BindingSet
-
-;Could not find BindingSet
