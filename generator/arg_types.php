@@ -392,7 +392,7 @@ class Struct_Arg extends Arg_Type {
 	function write_return($type, &$var_list, $separate)
 	{
 		$typename = strtolower(substr(convert_typename($this->struct_name), 1));
-		return 	"	*return_value = *php_{$typename}_new(%s);\n" .
+		return 	"	*return_value = *php_{$typename}_new(&%s);\n" .
 				"	return;";
 	}
 }
