@@ -389,10 +389,28 @@ PHP_GTK_API zval* phpg_gobject_new(GObject *obj)
  * GObject PHP class definition
  */
 
-static PHP_METHOD(GObject, __construct) {}
+static PHP_METHOD(GObject, __construct)
+{
+}
+
+static PHP_METHOD(GObject, __tostring)
+{
+    char buf[256];
+    GObject *obj = NULL;
+    int numc = 0;
+
+    NOT_STATIC_METHOD();
+
+    obj = PHPG_GET(this_ptr);
+    numc = snprintf(buf, sizeof(buf),
+                    "[%s object (%s type)]", Z_OBJCE_P(this_ptr)->name,
+                    obj ? G_OBJECT_TYPE_NAME(obj) : "uninitialized");
+    RETURN_STRINGL(buf, numc, 1);
+}
 
 static zend_function_entry gobject_methods[] = {
 	ZEND_ME(GObject, __construct, NULL, ZEND_ACC_PUBLIC)
+	ZEND_ME(GObject, __tostring, NULL, ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}
 };
 

@@ -82,6 +82,10 @@ typedef struct {
 	phpg_dtor_t dtor;
 } phpg_gobject_t;
 
+#define PHPG_GET_GOBJECT(zobj, type) \
+	(type)(((phpg_gobject_t*)zend_object_store_get_object((zobj) TSRMLS_CC))->obj)
+#define PHPG_GET(zobj) PHPG_GET_GOBJECT(zobj, GObject*)
+
 /*
  * Property read/write function types
  */
