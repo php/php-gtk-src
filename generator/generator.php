@@ -337,8 +337,27 @@ class Generator {
                 $first = 0;
             }
         } else {
-            // mark class as non-instantiable directly
-            $ctor_defs[] = sprintf(Templates::function_entry, '__construct', 'no_direct_constructor');
+            if ($this->overrides->have_extra_methods($object->c_name)) {
+                $ctor_name = '__construct';
+                $extras = $this->overrides->get_extra_methods($object->c_name);
+                if (isset($extras[$ctor_name])) {
+                    $ctor_body = $extras[$ctor_name];
+                    $ctor_body = preg_replace('!^.*(PHP_METHOD).*$!m', "static $1($object->c_name, $ctor_name)", $ctor_body);
+                    $this->write_override($ctor_body, $object->c_name, $ctor_name);
+                    $ctor_defs[] = sprintf(Templates::method_entry,
+                                           $object->c_name, $ctor_name,
+                                           'NULL', 'ZEND_ACC_PUBLIC');
+                    $this->divert("gen", "%%%%  %-11s %s::%s\n", "constructor", $object->c_name, $ctor_name);
+                    $num_written++;
+                }
+            } else {
+                // mark class as non-instantiable directly, only if it's not
+                // GObject. For GObject's we let it chain up to GObject
+                // constructor
+                if ($object->def_type != 'object') {
+                    $ctor_defs[] = sprintf(Templates::function_entry, '__construct', 'no_direct_constructor');
+                }
+            }
         }
 
         $this->log_print("(%d written, %d skipped)\n", $num_written, $num_skipped);
