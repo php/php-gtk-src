@@ -34,7 +34,7 @@ function build_option_menu($items, $history = null)
 	}
 
 	$omenu->set_menu($menu);
-	if ($history)
+	if ($history !== null)
 		$omenu->set_history($history);
 
 	return $omenu;
@@ -47,17 +47,97 @@ function toggle_reorderable($button, $clist)
 }
 
 
-$books = 1;
-$pages = 0;
+$ctree_data['books'] = 1;
+$ctree_data['pages'] = 0;
+
 function create_ctree()
 {
 	global	$windows,
-			$books,
-			$pages;
+			$ctree_data;
 
 	if (!isset($windows['ctree'])) {
 		function rebuild_tree($button, $ctree)
 		{
+			global	$ctree_data;
+
+			$d = $ctree_data['spin1']->get_value_as_int();
+			$b = $ctree_data['spin2']->get_value_as_int();
+			$p = $ctree_data['spin3']->get_value_as_int();
+
+			$n = intval((pow($b, $d) - 1) / ($b - 1)) * ($p + 1);
+
+			if ($n > 100000) {
+				print "$n total items? Try less\n";
+				return;
+			}
+
+			$ctree_data['books'] = 1;
+			$ctree_data['pages'] = 0;
+
+			$clist = $ctree->clist;
+			$clist->freeze();
+			$clist->clear();
+
+			$text = array('Root', '');
+
+			$parent = $ctree->insert_node(null, null, $text, 5,
+										  $ctree_data['pixmap1'],
+										  $ctree_data['mask1'],
+										  $ctree_data['pixmap2'],
+										  $ctree_data['mask2'], false, true);
+
+			$style = &new GtkStyle();
+			$style->base[GTK_STATE_NORMAL]->red = 0;
+			$style->base[GTK_STATE_NORMAL]->green = 45000;
+			$style->base[GTK_STATE_NORMAL]->blue = 55000;
+			$ctree->node_set_row_data($parent, $style);
+
+			if ($ctree->line_style == GTK_CTREE_LINES_TABBED)
+				$ctree->node_set_row_style($parent, $style);
+
+			build_recursive($ctree, 1, $d, $b, $p, $parent);
+			$clist->thaw();
+			//after_press($ctree, null);
+		}
+
+		function build_recursive($ctree, $cur_depth, $depth, $num_books,
+								 $num_pages, $parent)
+		{
+			global	$ctree_data;
+
+			for ($i = $num_pages + $num_books; $i > $num_books; $i--) {
+				$ctree_data['pages']++;
+				$text[0] = sprintf('Page %02d', rand() % 100);
+				$text[1] = sprintf('Item %d-%d', $cur_depth, $i);
+				$sibling = $ctree->insert_node($parent, $sibling, $text, 5,
+											   $ctree_data['pixmap3'],
+											   $ctree_data['mask3'], null, null,
+											   true, false);
+				/*
+				   if (parent && ctree->line_style == GTK_CTREE_LINES_TABBED)
+				   gtk_ctree_node_set_row_style (ctree, sibling,
+				   GTK_CTREE_ROW (parent)->row.style);
+			    */
+			}
+
+			if ($cur_depth == $depth)
+				return;
+
+			for ($i = $num_books; $i > 0; $i--) {
+				$ctree_data['books']++;
+
+				$text[0] = sprintf('Book %02d', rand() % 100);
+				$text[1] = sprintf('Item %d-%d', $cur_depth, $i);
+				$sibling = $ctree->insert_node($parent, $sibling, $text, 5,
+											   $ctree_data['pixmap1'],
+											   $ctree_data['mask1'],
+											   $ctree_data['pixmap2'],
+											   $ctree_data['mask2'],
+											   false, false);
+
+				build_recursive($ctree, $cur_depth + 1, $depth, $num_books,
+								$num_pages, $sibling);
+			}
 		}
 
 		$window = &new GtkWindow;
@@ -82,27 +162,27 @@ function create_ctree()
 		$label->show();
 
 		$adj = &new GtkAdjustment(4.0, 1.0, 10.0, 1.0, 5.0, 0.0);
-		$spin1 = &new GtkSpinButton($adj, 0.0, 0);
-		$hbox->pack_start($spin1, false, true, 5);
-		$spin1->show();
+		$ctree_data['spin1'] = &new GtkSpinButton($adj, 0.0, 0);
+		$hbox->pack_start($ctree_data['spin1'], false, true, 5);
+		$ctree_data['spin1']->show();
 
 		$label = &new GtkLabel('Books :');
 		$hbox->pack_start($label, false);
 		$label->show();
 
 		$adj = &new GtkAdjustment(3.0, 1.0, 20.0, 1.0, 5.0, 0.0);
-		$spin2 = &new GtkSpinButton($adj, 0.0, 0);
-		$hbox->pack_start($spin2, false, true, 5);
-		$spin2->show();
+		$ctree_data['spin2'] = &new GtkSpinButton($adj, 0.0, 0);
+		$hbox->pack_start($ctree_data['spin2'], false, true, 5);
+		$ctree_data['spin2']->show();
 
 		$label = &new GtkLabel('Pages :');
 		$hbox->pack_start($label, false);
 		$label->show();
 
 		$adj = &new GtkAdjustment(5.0, 1.0, 20.0, 1.0, 5.0, 0.0);
-		$spin3 = &new GtkSpinButton($adj, 0.0, 0);
-		$hbox->pack_start($spin3, false, true, 5);
-		$spin3->show();
+		$ctree_data['spin3'] = &new GtkSpinButton($adj, 0.0, 0);
+		$hbox->pack_start($ctree_data['spin3'], false, true, 5);
+		$ctree_data['spin3']->show();
 		
 		$button = &new GtkButton('Close');
 		$button->connect('clicked', 'close_window');
@@ -256,11 +336,11 @@ function create_ctree()
 		$hbox->pack_start($omenu1, false);
 		$omenu1->show();
 
-		$items2 = array('None'		=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_LINES_NONE),
-						'Square'	=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_LINES_SQUARE),
-						'Triangle'	=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_LINES_TRIANGLE),
-						'Circular'	=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_LINES_CIRCULAR));
-		$omenu2 = build_option_menu($items2, 1);
+		$items2 = array('None'		=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_EXPANDER_NONE),
+						'Square'	=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_EXPANDER_SQUARE),
+						'Triangle'	=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_EXPANDER_TRIANGLE),
+						'Circular'	=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_EXPANDER_CIRCULAR));
+		$omenu2 = build_option_menu($items2, 2);
 		$tooltips->set_tip($omenu1, "The tree's expander style.", '');
 		$hbox->pack_start($omenu2, false);
 		$omenu2->show();
@@ -350,9 +430,9 @@ function create_ctree()
 							   "                ");
 		$transparent = &new GdkColor(0, 0, 0);
 
-		list($pixmap1, $mask1) = Gdk::pixmap_create_from_xpm_d($window->window, $transparent, $book_closed_xpm);
-		list($pixmap2, $mask2) = Gdk::pixmap_create_from_xpm_d($window->window, $transparent, $book_open_xpm);
-		list($pixmap3, $mask3) = Gdk::pixmap_create_from_xpm_d($window->window, $transparent, $mini_page_xpm);
+		list($ctree_data['pixmap1'], $ctree_data['mask1']) = Gdk::pixmap_create_from_xpm_d($window->window, $transparent, $book_closed_xpm);
+		list($ctree_data['pixmap2'], $ctree_data['mask2']) = Gdk::pixmap_create_from_xpm_d($window->window, $transparent, $book_open_xpm);
+		list($ctree_data['pixmap3'], $ctree_data['mask3']) = Gdk::pixmap_create_from_xpm_d($window->window, $transparent, $mini_page_xpm);
 
 		$ctree->set_usize(0, 300);
 
@@ -381,7 +461,7 @@ function create_ctree()
 		$hbox2->pack_start($label, false);
 		$label->show();
 
-		$book_label = &new GtkLabel((string)$books);
+		$book_label = &new GtkLabel((string)$ctree_data['books']);
 		$hbox2->pack_start($book_label, false, true, 5);
 		$book_label->show();
 
@@ -399,7 +479,7 @@ function create_ctree()
 		$hbox2->pack_start($label, false);
 		$label->show();
 
-		$page_label = &new GtkLabel((string)$pages);
+		$page_label = &new GtkLabel((string)$ctree_data['pages']);
 		$hbox2->pack_start($page_label, false, true, 5);
 		$page_label->show();
 
@@ -435,7 +515,6 @@ function create_ctree()
 		$hbox2->pack_start($label, false);
 		$label->show();
 
-		/* TODO implement GtkCListRow and its properties */
 		$vis_label = &new GtkLabel((string)count($clist->row_list));
 		$hbox2->pack_start($vis_label, false, true, 5);
 		$vis_label->show();

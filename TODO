@@ -8,6 +8,10 @@
 * See if it's possible or needed to set GtkAdjustment properties (and similar
   ones).
 * Add missing field defs to gtk.defs.
+* Move GtkBoxChild, GtkFixedChild, and GtkCListRow to php_gtk_types.c. Introduce
+  generic le_wrapper instead of le_gtk_ctree_node and all - they are just
+  structures and do not not need to be released. Write constructor and prop
+  getter functions for them, use constructors in overrides.
 
 In PHP
 ------

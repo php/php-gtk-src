@@ -42,7 +42,7 @@ PHP_FUNCTION(wrap_gdk_pixmap_create_from_xpm)
 		return;
 	}
 	
-	*return_value = *php_gtk_build_value("(NN)", php_gdk_window_new(pixmap), php_gdk_window_new(mask));
+	*return_value = *php_gtk_build_value("(NN)", php_gdk_pixmap_new(pixmap), php_gdk_bitmap_new(mask));
 	gdk_pixmap_unref(pixmap);
 	gdk_bitmap_unref(mask);
 }
@@ -78,7 +78,7 @@ PHP_FUNCTION(wrap_gdk_pixmap_create_from_xpm_d)
 		return;
 	}
 
-	*return_value = *php_gtk_build_value("(NN)", php_gdk_window_new(pixmap), php_gdk_window_new(mask));
+	*return_value = *php_gtk_build_value("(NN)", php_gdk_pixmap_new(pixmap), php_gdk_bitmap_new(mask));
 	gdk_pixmap_unref(pixmap);
 	gdk_bitmap_unref(mask);
 }

@@ -1001,6 +1001,19 @@ PHP_FUNCTION(wrap_gtk_ctree_insert_node)
 		return;
 	}
 
+	if (Z_TYPE_P(php_parent) != IS_NULL)
+		parent			= PHP_GTK_CTREE_NODE_GET(php_parent);
+	if (Z_TYPE_P(php_sibling) != IS_NULL)
+		sibling			= PHP_GTK_CTREE_NODE_GET(php_sibling);
+	if (Z_TYPE_P(php_pixmap_closed) != IS_NULL)
+		pixmap_closed	= PHP_GDK_PIXMAP_GET(php_pixmap_closed);
+	if (Z_TYPE_P(php_mask_closed) != IS_NULL)
+		mask_closed		= PHP_GDK_BITMAP_GET(php_mask_closed);
+	if (Z_TYPE_P(php_pixmap_opened) != IS_NULL)
+		pixmap_opened	= PHP_GDK_PIXMAP_GET(php_pixmap_opened);
+	if (Z_TYPE_P(php_mask_opened) != IS_NULL)
+		mask_opened		= PHP_GDK_BITMAP_GET(php_mask_opened);
+
 	text = emalloc(sizeof(gchar *) * columns);
 	i = 0;
 	zend_hash_internal_pointer_reset(target_hash);
@@ -1450,3 +1463,97 @@ getprop GtkCTree clist
 
 	SEPARATE_ZVAL(&ret);
 	*return_value = *ret;
+%%
+register_class gtk_clistrow_ce
+	INIT_CLASS_ENTRY(ce, "gtkclistrow", NULL);
+	gtk_clistrow_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+%%
+getprop GtkCList row_list
+	GtkCListRow *clist_row;
+	zval *php_clist_row;
+	GList *tmp;
+	GList *row_list = GTK_CLIST(PHP_GTK_GET(object))->row_list;
+	zend_overloaded_element *property;
+	zend_llist_element *next = (*element)->next;
+	int prop_index;
+
+	if (next) {
+		int i = 0;
+		property = (zend_overloaded_element *)next->data;
+		if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
+			*element = next;
+			prop_index = Z_LVAL(property->element);
+			for (tmp = row_list, i = 0; tmp; tmp = tmp->next, i++) {
+				if (i == prop_index) {
+					clist_row = (GtkCListRow *)tmp->data;
+					object_init_ex(return_value, gtk_clistrow_ce);
+
+					/* TODO add 'data' and 'cell' here */
+					add_property_long(return_value, "state", clist_row->state);
+					add_property_zval(return_value, "foreground", php_gdk_color_new(&clist_row->foreground));
+					add_property_zval(return_value, "background", php_gdk_color_new(&clist_row->background));
+					add_property_zval(return_value, "style", php_gtk_style_new(clist_row->style));
+					add_property_bool(return_value, "fg_set", clist_row->fg_set);
+					add_property_bool(return_value, "bg_set", clist_row->bg_set);
+					add_property_bool(return_value, "selectable", clist_row->selectable);
+					return;
+				}
+			}
+		}
+	} else {
+		array_init(return_value);
+		for (tmp = row_list; tmp; tmp = tmp->next) {
+			clist_row = (GtkCListRow *)tmp->data;
+			MAKE_STD_ZVAL(php_clist_row);
+			object_init_ex(php_clist_row, gtk_clistrow_ce);
+
+			/* TODO add 'data' and 'cell' here */
+			add_property_long(php_clist_row, "state", clist_row->state);
+			add_property_zval(php_clist_row, "foreground", php_gdk_color_new(&clist_row->foreground));
+			add_property_zval(php_clist_row, "background", php_gdk_color_new(&clist_row->background));
+			add_property_zval(php_clist_row, "style", php_gtk_style_new(clist_row->style));
+			add_property_bool(php_clist_row, "fg_set", clist_row->fg_set);
+			add_property_bool(php_clist_row, "bg_set", clist_row->bg_set);
+			add_property_bool(php_clist_row, "selectable", clist_row->selectable);
+			
+			add_next_index_zval(return_value, php_clist_row);
+		}
+	}
+%%
+ignore gtk_ctree_node_set_row_data_full
+%%
+override gtk_ctree_node_set_row_data kwargs
+PHP_FUNCTION(wrap_gtk_ctree_node_set_row_data)
+{
+	zval *node, *data;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OV", &node, gtk_ctree_node_ce, &data))
+		return;
+
+	zval_add_ref(&data);
+	gtk_ctree_node_set_row_data_full(GTK_CTREE(PHP_GTK_GET(this_ptr)),
+									 PHP_GTK_CTREE_NODE_GET(node), data,
+									 php_gtk_destroy_notify);
+}
+%%
+override gtk_ctree_node_get_row_data
+PHP_FUNCTION(wrap_gtk_ctree_node_get_row_data)
+{
+	zval *node, *data;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &node, gtk_ctree_node_ce))
+		return;
+
+	data = gtk_ctree_node_get_row_data(GTK_CTREE(PHP_GTK_GET(this_ptr)),
+									   PHP_GTK_CTREE_NODE_GET(node));
+	if (data) {
+		*return_value = *data;
+		zval_copy_ctor(return_value);
+	} else {
+		RETURN_NULL();
+	}
+}

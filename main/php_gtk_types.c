@@ -29,6 +29,7 @@
 
 int le_gdk_event;
 int le_gdk_window;
+int le_gdk_bitmap;
 int le_gdk_color;
 int le_gdk_colormap;
 int le_gdk_cursor;
@@ -585,6 +586,44 @@ zval *php_gdk_window_new(GdkWindow *window)
 	return result;
 }
 
+zval *php_gdk_pixmap_new(GdkPixmap *pixmap)
+{
+	zval *result;
+
+	MAKE_STD_ZVAL(result);
+
+	if (!pixmap) {
+		ZVAL_NULL(result);
+		return result;
+	}
+
+	object_init_ex(result, gdk_pixmap_ce);
+
+	gdk_pixmap_ref(pixmap);
+	php_gtk_set_object(result, pixmap, le_gdk_window);
+
+	return result;
+}
+
+zval *php_gdk_bitmap_new(GdkWindow *bitmap)
+{
+	zval *result;
+
+	MAKE_STD_ZVAL(result);
+
+	if (!bitmap) {
+		ZVAL_NULL(result);
+		return result;
+	}
+
+	object_init_ex(result, gdk_bitmap_ce);
+
+	gdk_bitmap_ref(bitmap);
+	php_gtk_set_object(result, bitmap, le_gdk_bitmap);
+
+	return result;
+}
+
 static void gdk_window_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
 {
 	zval *value;
@@ -659,6 +698,11 @@ static void release_gdk_window_rsrc(zend_rsrc_list_entry *rsrc)
 		gdk_window_unref(obj);
 }
 
+static void release_gdk_bitmap_rsrc(zend_rsrc_list_entry *rsrc)
+{
+	GdkBitmap *obj = (GdkBitmap *)rsrc->ptr;
+	gdk_bitmap_unref(obj);
+}
 
 /* GdkColor */
 PHP_FUNCTION(gdkcolor)
@@ -1268,13 +1312,13 @@ static void gdk_gc_get_property(zval *return_value, zval *object, zend_llist_ele
 		ZVAL_LONG(return_value, gcv.fill);
 	} else if (!strcmp(prop_name, "tile")) {
 		if (gcv.tile)
-			*return_value = *php_gdk_window_new(gcv.tile);
+			*return_value = *php_gdk_pixmap_new(gcv.tile);
 	} else if (!strcmp(prop_name, "stipple")) {
 		if (gcv.stipple)
-			*return_value = *php_gdk_window_new(gcv.stipple);
+			*return_value = *php_gdk_pixmap_new(gcv.stipple);
 	} else if (!strcmp(prop_name, "clip_mask")) {
 		if (gcv.clip_mask)
-			*return_value = *php_gdk_window_new(gcv.clip_mask);
+			*return_value = *php_gdk_pixmap_new(gcv.clip_mask);
 	} else if (!strcmp(prop_name, "subwindow_mode")) {
 		ZVAL_LONG(return_value, gcv.subwindow_mode);
 	} else if (!strcmp(prop_name, "ts_x_origin")) {
@@ -1743,7 +1787,7 @@ static void style_helper_get(zval *result, style_array_type type, gpointer array
 					{
 						GdkWindow **pixmap_array = (GdkPixmap **)array;
 						if (pixmap_array[prop_index])
-							*result = *php_gdk_window_new(pixmap_array[prop_index]);
+							*result = *php_gdk_pixmap_new(pixmap_array[prop_index]);
 					}
 					return;
 
@@ -1777,7 +1821,7 @@ static void style_helper_get(zval *result, style_array_type type, gpointer array
 				{
 					GdkWindow **pixmap_array = (GdkWindow **)array;
 					for (i = 0; i < 5; i++)
-						add_next_index_zval(result, php_gdk_window_new(pixmap_array[i]));
+						add_next_index_zval(result, php_gdk_pixmap_new(pixmap_array[i]));
 				}
 				break;
 
@@ -2014,6 +2058,7 @@ void php_gtk_register_types(int module_number)
 
 	le_gdk_event = zend_register_list_destructors_ex(NULL, NULL, "GdkEvent", module_number);
 	le_gdk_window = zend_register_list_destructors_ex(release_gdk_window_rsrc, NULL, "GdkWindow", module_number);
+	le_gdk_bitmap = zend_register_list_destructors_ex(release_gdk_bitmap_rsrc, NULL, "GdkBitmap", module_number);
 	le_gdk_color = zend_register_list_destructors_ex(release_gdk_color_rsrc, NULL, "GdkColor", module_number);
 	le_gdk_colormap = zend_register_list_destructors_ex(release_gdk_colormap_rsrc, NULL, "GdkColormap", module_number);
 	le_gdk_cursor = zend_register_list_destructors_ex(release_gdk_cursor_rsrc, NULL, "GdkCursor", module_number);

@@ -536,6 +536,7 @@
   (field (type-and-name GtkSortType sort_type))
   (field (type-and-name GList* selection))
   (field (type-and-name GtkSelectionMode selection_mode))
+  (field (type-and-name GList* row_list))
 )
 
 (object CTree

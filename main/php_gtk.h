@@ -33,6 +33,7 @@
 extern int le_gtk;
 extern int le_gdk_event;
 extern int le_gdk_window;
+extern int le_gdk_bitmap;
 extern int le_gdk_color;
 extern int le_gdk_colormap;
 extern int le_gdk_cursor;
@@ -75,6 +76,8 @@ typedef int (*prop_setter_t)(zval *object, zend_llist_element **element, zval *v
 #define PHP_GTK_GET(w) 			((GtkObject *)php_gtk_get_object(w, le_gtk))
 #define PHP_GDK_EVENT_GET(w)	((GdkEvent *)php_gtk_get_object(w, le_gdk_event))
 #define PHP_GDK_WINDOW_GET(w)	((GdkWindow *)php_gtk_get_object(w, le_gdk_window))
+#define PHP_GDK_PIXMAP_GET(w)	((GdkPixmap *)php_gtk_get_object(w, le_gdk_window))
+#define PHP_GDK_BITMAP_GET(w)	((GdkBitmap *)php_gtk_get_object(w, le_gdk_bitmap))
 #define PHP_GDK_COLOR_GET(w)	((GdkColor *)php_gtk_get_object(w, le_gdk_color))
 #define PHP_GDK_COLORMAP_GET(w)	((GdkColormap *)php_gtk_get_object(w, le_gdk_colormap))
 #define PHP_GDK_ATOM_GET(w)		(php_gdk_atom_get(w))
@@ -128,6 +131,8 @@ void php_gtk_object_init(GtkObject *obj, zval *wrapper);
 zval *php_gtk_new(GtkObject *obj);
 zval *php_gdk_event_new(GdkEvent *event);
 zval *php_gdk_window_new(GdkWindow *window);
+zval *php_gdk_pixmap_new(GdkPixmap *pixmap);
+zval *php_gdk_bitmap_new(GdkBitmap *bitmap);
 zval *php_gdk_color_new(GdkColor *color);
 zval *php_gdk_colormap_new(GdkColormap *cmap);
 zval *php_gdk_atom_new(GdkAtom atom);
