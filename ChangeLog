@@ -1,3 +1,22 @@
+2001-08-02  Andrei Zmievski  <andrei@ispi.net>
+
+    * README:
+    Undo the warning -- CVS version is required only for compilation..
+
+    * README: Update notice.
+
+    * NEWS: nitpick
+
+    * README: Update README.
+
+    * NEWS: Prepare to release.
+
+    * makedist: docs are gone
+
+    * ext/gtk+/config.m4
+      ext/gtk+/php_gdk.c
+      ext/gtk+/Makefile.in: Build the keysyms statically.
+
 2001-08-01  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/Makefile.in
