@@ -1,3 +1,10 @@
+2003-07-18  Frank M. Kromann  <frank@kromann.info>
+
+    * ext/extra/config.m4
+      ext/extra/config.m4
+      ext/extra/extra.overrides:
+      Make include paths consistent
+
 2003-07-17  Frank M. Kromann  <frank@kromann.info>
 
     * (ZE2_PORT)
