@@ -365,7 +365,7 @@ class Rect_Arg extends Arg_Type {
 		$parse_list[] 	= "&($name.width)";
 		$parse_list[] 	= "&($name.height)";
 		$arg_list[] 	= "&$name";
-		return 'iiii';
+		return 'hhhh';
 	}
 }
 
