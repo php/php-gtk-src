@@ -28,39 +28,69 @@ foreach (range(0, 255) as $i)
 	$char_table[$i] = chr($i);
 $translation_table = preg_replace('![^a-zA-Z_]!', '_', $char_table);
 
-function parse($fp)
+function parse($filename)
 {
+	$fp = fopen($filename, 'r');
 	$stack = array(array());
+	$whitespace = " \t\n\r";
+	$nonsymbol = $whitespace . '();\'"';
+	$lineno = 0;
+	$openlines = array();
 	while ($line = fgets($fp, 4096)) {
-		while (($line = ltrim($line)) != '') {
-			if ($line{0} == '(') {
+		$pos = 0;
+		$len = strlen($line);
+		$lineno++;
+		var_dump($line);
+		while ($pos < $len) {
+			if (strpos($whitespace, $line{$pos}) !== false) {
+				$pos++; continue;
+			} else if ($line{$pos} == ';') {
+				break;
+			} else if (substr($line, $pos, 2) == "'(") {
+				$pos++; continue;
+			} else if ($line{$pos} == '(') {
 				array_push($stack, array());
-				$line = substr($line, 1);
-			} else if ($line{0} == ')') {
+				$openlines[] = $lineno;
+			} else if ($line{$pos} == ')') {
+				if (!$openlines) {
+					trigger_error("[$filename:$lineno] Closing parenthesis found without a match");
+					return;
+				}
 				$closed = array_pop($stack);
 				array_push($stack[count($stack)-1], $closed);
-				$line = substr($line, 1);
-			} else if ($line{0} == '"') {
-				$pos = strpos($line, '"', 1);
-				array_push($stack[count($stack)-1], substr($line, 1, $pos-1));
-				$line = substr($line, $pos+1);
-			} else if (strpos($line{0}, '0123456789') !== false) {
-				$span = strspn($line, '0123456789+-.');
-				$numstr = substr($line, 0, $span);
-				$line = substr($line, $span);
-				array_push($stack[count($stack)-1], (double)$numstr);
-			} else if ($line{0} == ';')
-				break;
-			else {
-				$span = strcspn($line, " \t();\n\r");
-				$str = substr($line, 0, $span);
-				$line = substr($line, $span);
-				array_push($stack[count($stack)-1], $str);
+				array_pop($openlines);
+			} else if ($line{$pos} == '"') {
+				if (!$openlines) {
+					trigger_error("[$filename:$lineno] String found outside of s-expression");
+					return;
+				}
+				$endpos = strpos($line, '"', $pos+1);
+				if ($endpos === false) {
+					trigger_error("[$filename:$lineno] Unclosed quoted string");
+					return;
+				}
+				array_push($stack[count($stack)-1], substr($line, $pos+1, $endpos-$pos-1));
+				$pos = $endpos;
+			} else {
+				if (!$openlines) {
+					trigger_error("[$filename:$lineno] Identifier found outside of s-expression");
+					return;
+				}
+				$span = strcspn($line, $nonsymbol, $pos);
+				$symbol = substr($line, $pos, $span);
+				$pos += $span-1;
+				if (is_numeric($symbol)) {
+					$symbol = (double)$symbol;
+				}
+				array_push($stack[count($stack)-1], $symbol);
 			}
+			$pos++;
 		}
 	}
-	if (count($stack) != 1)
-		trigger_error("Parentheses don't match");
+	if ($openlines) {
+		trigger_error(sprintf("[$filename] Unclosed parentheses found on lines: %s", join(', ', $openlines)));
+		return;
+	}
 	return $stack[0];
 }
 
@@ -75,6 +105,8 @@ class Defs_Parser {
 	var $methods		= array();  // object methods
 	var $enums			= array();	// enums and flags
 	var $structs		= array();  // structures
+	var $interfaces     = array();  // interfaces
+	var $boxes          = array();  // boxed types
 	var $c_name			= array();  // C names of entities
 
 	function Defs_Parser($arg)
