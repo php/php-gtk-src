@@ -185,6 +185,7 @@ function create_ctree()
 		{
 			global	$ctree_data;
 
+			$sibling = null;
 			for ($i = $num_pages + $num_books; $i > $num_books; $i--) {
 				$ctree_data['pages']++;
 				$text[0] = sprintf('Page %02d', rand() % 100);
