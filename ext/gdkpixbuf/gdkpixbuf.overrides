@@ -6,3 +6,27 @@ headers
 ignore
   gdk_pixbuf_preinit
   gdk_pixbuf_postinit
+
+%%
+override gdk_pixbuf_new_from_data
+PHP_FUNCTION(gdk_pixbuf_new_from_data)
+{
+	zval *data;
+	GdkColorspace colorspace;
+	zval *php_colorspace = NULL;
+	zend_bool has_alpha;
+	long bits_per_sample, width, height, rowstride;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "VVbiiii", &data, &php_colorspace, &has_alpha, &bits_per_sample, &width, &height, &rowstride))
+		return;
+
+	convert_to_string(data);
+	zval_add_ref(&data);
+
+	if (php_colorspace && !php_gtk_get_simple_enum_value(php_colorspace, (gint *)&colorspace)) {
+		return;
+	}
+
+	PHP_GTK_SEPARATE_RETURN(return_value, php_gdk_pixbuf_new(gdk_pixbuf_new_from_data(Z_STRVAL_P(data), colorspace, (gboolean)has_alpha, (int)bits_per_sample, (int)width, (int)height, (int)rowstride, (GdkPixbufDestroyNotify)php_gtk_destroy_notify, data)));
+}
+
