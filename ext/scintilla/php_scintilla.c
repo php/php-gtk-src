@@ -26,7 +26,6 @@
 
 PHP_GTK_XINIT_FUNCTION(scintilla)
 {
-	glade_init();
 	php_scintilla_register_constants(module_number TSRMLS_CC);
 	php_scintilla_register_classes();
 

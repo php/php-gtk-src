@@ -6,7 +6,9 @@ dnl
 dnl "extname" is the name of the ext/ subdir where the extension resides
 dnl
 AC_DEFUN(PHP_GTK_EXTENSION,[
-  PHP_GTK_EXT_SUBDIRS="$PHP_GTK_EXT_SUBDIRS $1"
+  if test "$1" != "gtk+"; then
+    PHP_GTK_EXT_SUBDIRS="$PHP_GTK_EXT_SUBDIRS $1"
+  fi
   
   php_gtk_ext_builddir=ext/$1
   php_gtk_ext_srcdir=$abs_srcdir/ext/$1
