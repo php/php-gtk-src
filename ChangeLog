@@ -1,3 +1,11 @@
+2001-07-15  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/makedist.cmd:
+    Make sure php_win.exe is included in the distribution
+
+    * win32/php_win.c: Adding test for environment variable PHP_BIN.
+    Adding error message when no script is passed as first parameter
+
 2001-07-13  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/gtk.defs: Reset button is not even shown in the dialog.
