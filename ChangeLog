@@ -1,3 +1,32 @@
+2004-08-09  Andrei Zmievski  <andreiz@gmail.com>
+
+    * (PHP_GTK_1)
+      NEWS:
+      Typo.
+
+    * (PHP_GTK_1)
+      ext/extra/config.m4
+      ext/imlib/config.m4:
+      Argh.
+
+    * (PHP_GTK_1)
+      ext/canvas/config.m4
+      ext/extra/config.m4
+      ext/imlib/config.m4:
+      Fix alignment.
+
+    * (PHP_GTK_1)
+      NEWS:
+      Tell people about --with-phpize option.
+
+    * (PHP_GTK_1)
+      buildconf
+      build2/build.mk:
+      buildconf now takes an optional parameter to specify the location of
+      'phpize' script. This is needed if you have both PHP 5 and PHP 4
+      installed and the default location is incorrect. The switch is
+      --with-phpize=<path to phpize>.
+
 2004-08-08  Andrei Zmievski  <andreiz@gmail.com>
 
     * (PHP_GTK_1)
