@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 
     if (!extension_loaded('gtk'))
         dl( 'php_gtk.' . (strstr( PHP_OS, 'WIN') ? 'dll' : 'so'));

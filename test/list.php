@@ -1,4 +1,5 @@
-<?
+<?php
+/* $Id$ */
 
 if (!class_exists('gtk')) {
 	if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN')
