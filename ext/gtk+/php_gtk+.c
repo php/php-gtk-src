@@ -37,8 +37,7 @@ static void init_gtk(void)
 	char **argv;
 	int argc, i;
 	zend_bool no_argc = 0;
-	PLS_FETCH();
-	SLS_FETCH();
+	TSRMLS_FETCH();
 
 	/* We check request_method to see if we've been called from command line or
 	   Web server. Running GUI apps through a Web module can be dangerous to
@@ -146,8 +145,8 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 	le_gtk_object = zend_register_list_destructors_ex(release_gtk_object_rsrc, NULL, "GtkObject", module_number);
 
 	init_gtk();
-	php_gtk_register_constants(module_number ELS_CC);
-	php_gdk_register_constants(module_number ELS_CC);
+	php_gtk_register_constants(module_number TSRMLS_CC);
+	php_gdk_register_constants(module_number TSRMLS_CC);
 	php_gtk_register_classes();
 	php_gdk_register_classes();
 	php_gtk_plus_register_types(module_number);

@@ -196,8 +196,8 @@ PHP_FUNCTION(wrap_gtk_timeout_add)
 	if (!php_gtk_parse_args(2, "iV", &interval, &callback))
 		return;
 
-	callback_filename = zend_get_executed_filename(ELS_C);
-	callback_lineno = zend_get_executed_lineno(ELS_C);
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
 	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
 	RETURN_LONG(gtk_timeout_add_full(interval, NULL,
@@ -223,8 +223,8 @@ PHP_FUNCTION(wrap_gtk_idle_add)
 	if (!php_gtk_parse_args(1, "V", &callback))
 		return;
 
-	callback_filename = zend_get_executed_filename(ELS_C);
-	callback_lineno = zend_get_executed_lineno(ELS_C);
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 1, ZEND_NUM_ARGS());
 	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
 	RETURN_LONG(gtk_idle_add_full(GTK_PRIORITY_DEFAULT, NULL,
@@ -251,8 +251,8 @@ PHP_FUNCTION(wrap_gtk_quit_add)
 	if (!php_gtk_parse_args(2, "iV", &main_level, &callback))
 		return;
 
-	callback_filename = zend_get_executed_filename(ELS_C);
-	callback_lineno = zend_get_executed_lineno(ELS_C);
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
 	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
 	RETURN_LONG(gtk_quit_add_full(main_level, NULL,
@@ -287,8 +287,8 @@ PHP_FUNCTION(wrap_gtk_input_add_full)
 		return;
 	}
 	
-	callback_filename = zend_get_executed_filename(ELS_C);
-	callback_lineno = zend_get_executed_lineno(ELS_C);
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 3, ZEND_NUM_ARGS());
 	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
 	RETURN_LONG(gtk_input_add_full(*source, condition, NULL,
@@ -317,8 +317,8 @@ static void wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_
 	if (!php_gtk_parse_args(2, "sV", &name, &callback))
 		return;
 
-	callback_filename = zend_get_executed_filename(ELS_C);
-	callback_lineno = zend_get_executed_lineno(ELS_C);
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
 	data = php_gtk_build_value("(VNisi)", callback, extra, pass_object, callback_filename, callback_lineno);
 	RETURN_LONG(gtk_signal_connect_full(PHP_GTK_GET(this_ptr), name, NULL,
@@ -1202,7 +1202,7 @@ static void ctree_callback(GtkCTree *ctree, GtkCTreeNode *node, zval *callback_d
 	zval **callback_filename = NULL, **callback_lineno = NULL;
 	zval ***args, *params;
 	char *callback_name;
-	ELS_FETCH();
+	TSRMLS_FETCH();
 
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
@@ -1261,8 +1261,8 @@ static void traverse_ctree(INTERNAL_FUNCTION_PARAMETERS, zend_bool use_depth, ze
 	if (Z_TYPE_P(php_node) != IS_NULL)
 		node = PHP_GTK_CTREE_NODE_GET(php_node);
 
-	callback_filename = zend_get_executed_filename(ELS_C);
-	callback_lineno = zend_get_executed_lineno(ELS_C);
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
 	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
 	if (pre_order) {
@@ -1369,7 +1369,7 @@ static void item_factory_callback(zval *callback_data, guint action, GtkWidget *
 	zval *params;
 	zval ***args;
 	char *callback_name;
-	ELS_FETCH();
+	TSRMLS_FETCH();
 
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&callback_filename);
@@ -1425,8 +1425,8 @@ PHP_FUNCTION(wrap_gtk_item_factory_create_items)
 		if (Z_TYPE_P(callback) == IS_NULL)
 			entry.callback = NULL;
 		else {
-			callback_filename = zend_get_executed_filename(ELS_C);
-			callback_lineno = zend_get_executed_lineno(ELS_C);
+			callback_filename = zend_get_executed_filename(TSRMLS_C);
+			callback_lineno = zend_get_executed_lineno(TSRMLS_C);
 			if (extra)
 				callback_data = php_gtk_build_value("(VsiV)", callback, callback_filename, callback_lineno, extra);
 			else
@@ -1949,7 +1949,7 @@ static void php_gtk_menu_position(GtkMenu *menu, int *x, int *y, zval *callback_
 	zval *retval, *params;
 	zval ***args;
 	char *callback_name;
-	ELS_FETCH();
+	TSRMLS_FETCH();
 
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&callback_filename);
@@ -1998,8 +1998,8 @@ PHP_FUNCTION(wrap_gtk_menu_popup)
 		pmi = GTK_WIDGET(PHP_GTK_GET(php_pmi));
 
 	if (Z_TYPE_P(callback) != IS_NULL) {
-		callback_filename = zend_get_executed_filename(ELS_C);
-		callback_lineno = zend_get_executed_lineno(ELS_C);
+		callback_filename = zend_get_executed_filename(TSRMLS_C);
+		callback_lineno = zend_get_executed_lineno(TSRMLS_C);
 		data = php_gtk_build_value("(Vsi)", callback, callback_filename, callback_lineno);
 		gtk_menu_popup(GTK_MENU(PHP_GTK_GET(this_ptr)), pms, pmi,
 					   (GtkMenuPositionFunc)php_gtk_menu_position, data,

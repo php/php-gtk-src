@@ -413,7 +413,7 @@ zend_bool php_gtk_is_callable(zval *callable, zend_bool syntax_only, char **call
 {
 	char *lcname;
 	int retval = 0;
-	ELS_FETCH();
+	TSRMLS_FETCH();
 
 	switch (Z_TYPE_P(callable)) {
 		case IS_STRING:

@@ -1967,7 +1967,7 @@ function create_main_window()
 	$window->set_policy(false, false, false);
 	$window->set_name('main window');
 	$window->set_usize(200, 400);
-	$window->set_uposition(20, 20);
+	$window->set_position(GTK_WIN_POS_CENTER);
 
 	$window->connect_object('destroy', array('gtk', 'main_quit'));
 	$window->connect_object('delete-event', array('gtk', 'false'));

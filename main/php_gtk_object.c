@@ -156,7 +156,7 @@ void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *
 	zval *tmp;
 	zval ***signal_args;
 	char *callback_name;
-	ELS_FETCH();
+	TSRMLS_FETCH();
 
 	/* Callback is always passed as the first element. */
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
@@ -238,7 +238,7 @@ void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 	int num_handler_args = 0;
 	zval *retval = NULL;
 	char *callback_name;
-	ELS_FETCH();
+	TSRMLS_FETCH();
 
 	/* Callback is always passed as the first element. */
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
@@ -278,7 +278,7 @@ void php_gtk_input_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 	zval **callback_filename = NULL, **callback_lineno = NULL;
 	zval ***input_args;
 	char *callback_name;
-	ELS_FETCH();
+	TSRMLS_FETCH();
 
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);

@@ -66,8 +66,8 @@ PHP_FUNCTION(wrap_glade_xml_signal_connect)
 	if (!php_gtk_parse_args(2, "sV", &handler_name, &callback))
 		return;
 
-	callback_filename = zend_get_executed_filename(ELS_C);
-	callback_lineno = zend_get_executed_lineno(ELS_C);
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
 	data = php_gtk_build_value("(VNisi)", callback, extra, 1, callback_filename, callback_lineno);
 	glade_xml_signal_connect_full(GLADE_XML(PHP_GTK_GET(this_ptr)), handler_name,
@@ -87,7 +87,7 @@ static void glade_connect_auto(const gchar *handler_name, GtkObject *obj,
 	int pass_object = 1;
 	char *callback_filename;
 	uint callback_lineno;
-	ELS_FETCH();
+	TSRMLS_FETCH();
 
 	if (map && zend_hash_find(Z_ARRVAL_P(map), (char *)handler_name, strlen(handler_name) + 1, (void **)&callback_data) == SUCCESS) {
 		if (Z_TYPE_PP(callback_data) != IS_ARRAY ||
@@ -124,8 +124,8 @@ static void glade_connect_auto(const gchar *handler_name, GtkObject *obj,
 	if (extra)
 		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(extra), 0);
 
-	callback_filename = zend_get_executed_filename(ELS_C);
-	callback_lineno = zend_get_executed_lineno(ELS_C);
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
 	data = php_gtk_build_value("(NNisi)", callback, params, pass_object,
 							   callback_filename, callback_lineno);
 	gtk_signal_connect_full(obj, signal_name, NULL,

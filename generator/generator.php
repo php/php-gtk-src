@@ -72,7 +72,7 @@ class Generator {
 
 	function write_constants($fp)
 	{
-		fwrite($fp, "\nvoid php_". $this->prefix . "_register_constants(int module_number ELS_DC)\n");
+		fwrite($fp, "\nvoid php_". $this->prefix . "_register_constants(int module_number TSRMLS_DC)\n");
 		fwrite($fp, "{\n");
 		foreach ($this->parser->enums as $enum) {
 			if ($this->overrides->is_ignored($enum->c_name)) continue;

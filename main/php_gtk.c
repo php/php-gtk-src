@@ -138,11 +138,11 @@ PHP_FUNCTION(wrap_no_direct_constructor)
 
 static int php_gtk_startup_extension(php_gtk_ext_entry *ext, int module_number)
 {
-	ELS_FETCH();
+	TSRMLS_FETCH();
 
 	if (ext) {
 		if (ext->ext_startup_func) {
-			if (ext->ext_startup_func(module_number ELS_CC) == FAILURE) {
+			if (ext->ext_startup_func(module_number TSRMLS_CC) == FAILURE) {
 				php_error(E_WARNING, "Unable to start '%s' PHP-GTK extension", ext->name);
 				return FAILURE;
 			}

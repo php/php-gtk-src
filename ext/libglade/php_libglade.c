@@ -27,7 +27,7 @@
 PHP_GTK_XINIT_FUNCTION(libglade)
 {
 	glade_init();
-	php_libglade_register_constants(module_number ELS_CC);
+	php_libglade_register_constants(module_number TSRMLS_CC);
 	php_libglade_register_classes();
 
 	return SUCCESS;
