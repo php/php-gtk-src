@@ -306,6 +306,13 @@ class Generator {
 
 		foreach ($object->fields as $field_def) {
 			list($field_type, $field_name) = $field_def;
+			//
+			// HACK: Dont generate properties not defined on Win32
+			//
+			if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN' && $field_name == "gutter_size") {
+				error_log("gutter_size is not defined on Win32");
+				continue;
+			}
 			if ($this->overrides->have_get_prop($object->c_name, $field_name)) {
 				$prop_get_code = $this->overrides->get_prop($object->c_name, $field_name);
 				$prop_get_code .= "\n\n\treturn;";
