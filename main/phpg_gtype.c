@@ -94,6 +94,7 @@ PHP_GTK_API zval* php_gtype_new(GType type)
 	return wrapper;
 }
 
+/* TODO add support for boxed types */
 PHP_GTK_API GType php_gtype_from_zval(zval *value)
 {
 	GType type;
@@ -113,6 +114,11 @@ PHP_GTK_API GType php_gtype_from_zval(zval *value)
 		case IS_DOUBLE:
 			return G_TYPE_DOUBLE;
 
+		/* XXX
+		 * Seeing as we lack a proper type system, need to fix this to divorce
+		 * pure strings from types specified via strings. Maybe via
+		 * implementing GType::from_name().
+		 */
 		case IS_STRING:
 			type = g_type_from_name(Z_STRVAL_P(value));
 			if (type == 0)
