@@ -39,22 +39,22 @@ zend_module_entry gtk_module_entry = {
 	STANDARD_MODULE_PROPERTIES
 };
 
+ZEND_DECLARE_MODULE_GLOBALS(gtk)
+
 #ifdef COMPILE_DL_PHP_GTK
 ZEND_GET_MODULE(gtk)
 #endif
 
-/* Remove comments and fill if you need to have entries in php.ini
 PHP_INI_BEGIN()
+	STD_PHP_INI_ENTRY    ("gtk.codepage",	"CP1252",	PHP_INI_SYSTEM,	OnUpdateString, codepage,	zend_gtk_globals,	gtk_globals)
 PHP_INI_END()
-*/
+
 
 PHP_MINIT_FUNCTION(gtk)
 {
-//	ZEND_INIT_MODULE_GLOBALS(gtk, NULL, NULL);
+	ZEND_INIT_MODULE_GLOBALS(gtk, NULL, NULL);
 
-/* Remove comments if you have entries in php.ini
 	REGISTER_INI_ENTRIES();
-*/
 
 	return SUCCESS;
 }

@@ -52,16 +52,14 @@ PHP_RINIT_FUNCTION(gtk);
 PHP_RSHUTDOWN_FUNCTION(gtk);
 PHP_MINFO_FUNCTION(gtk);
 
-typedef struct {
-	int dummy;
-} php_gtk_globals;
+ZEND_BEGIN_MODULE_GLOBALS(gtk)
+   char *codepage;
+ZEND_END_MODULE_GLOBALS(gtk)
 
 #ifdef ZTS
-#define GTKG(v) (gtk_globals->v)
-#define GTKLS_FETCH() php_gtk_globals *gtk_globals = ts_resource(gd_gtk_id)
+# define GTK_G(v) TSRMG(gtk_globals_id, zend_gtk_globals *, v)
 #else
-#define GTKG(v) (gtk_globals.v)
-#define GTKLS_FETCH()
+# define GTK_G(v)	(gtk_globals.v)
 #endif
 
 #else
