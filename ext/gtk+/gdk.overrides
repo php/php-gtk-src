@@ -41,7 +41,18 @@ PHP_METHOD(GdkColor, __construct)
 override gdk_rectangle_new
 PHP_METHOD(GdkRectangle, __construct)
 {
-    /* TODO */
+    phpg_gboxed_t *pobj = NULL;
+    GdkRectangle rect = { 0, 0, 0, 0 };
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iiii", &(rect.x), &(rect.y),
+                            &(rect.width), &(rect.height))) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION();
+    }
+
+    pobj = zend_object_store_get_object(this_ptr TSRMLS_CC);
+    pobj->gtype = GDK_TYPE_RECTANGLE;
+    pobj->boxed = g_boxed_copy(GDK_TYPE_RECTANGLE, &rect);
+    pobj->free_on_destroy = TRUE;
 }
 
 %%
