@@ -1,3 +1,152 @@
+2001-03-13  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/en/appendix/license.xml:
+    Just a punctuation error, nothing exciting ....
+
+2001-03-13  Andrei Zmievski  <andrei@ispi.net>
+
+    * TODO: So that we don't forget.
+
+2001-03-13  James Moore  <James@phpuk.org>
+
+    * docs/html.xsl.in: Adding a few parameters for use by the stylesheets
+
+    * docs/dbxml/phpgtkdoc.dtd: It will now build with both Saxon and Jade....
+
+    * docs/dbxml/phpgtkdoc.dtd: make it build with jade again.
+
+    * docs/common.xsl.in: Make titles actually match
+
+    * docs/en/bookinfo.xml:
+    Update author information. Adding authoremail element.
+
+    * docs/manual.xml.in: Get the manual to use the new DTD
+
+    * docs/common.xsl.in
+      docs/html-common.xsl:
+    Updating style sheets to cope with new authoremail element in phpgtkdoc.dtd
+
+    * docs/dbxml/phpgtkdoc.dtd:
+    Beginings of modification to docbook for phpgtkdoc
+    (is an extension so all normal docbook stuff works..)
+
+2001-03-13  Andrei Zmievski  <andrei@ispi.net>
+
+    * .cvsignore
+      src/.cvsignore
+      src/php_gtk_module.h: Use config.h instead of php_config.h.
+
+    * generator/gtk.overrides: Ws
+
+    * generator/gtk.overrides
+      src/php_gtk.h: Include it in appropriate file.
+
+2001-03-13  Frank M. Kromann  <frank@frontbase.com>
+
+    * src/php_gtk.h:
+    Removed prototype and added include of ext/standard/file.h
+
+    * win32/php_gtk.dsp
+      win32/scheme.dsp
+      win32/php_gtk.dsw: Fixing debug build and adding dependency
+
+    * src/php_gtk.h: Adding missing prototype
+
+2001-03-13  James Moore  <James@phpuk.org>
+
+    * docs/Makefile.in
+      docs/common.xsl.in
+      docs/configure.in
+      docs/html-common.xsl
+      docs/html.xsl.in:
+    Adding a few new xsl files. Begining of templates for manual output.
+
+    * docs/configure.in: Autosearch XSL style-sheet location.
+
+    * docs/chunk-filename.xsl
+      docs/html.xsl.in:
+    Nice naming of chunked output files now. (borrowed and slightly modified from phpdoc)
+
+    * docs/manual.xml.in:
+    Removing gtkwindow from manual until I have sorted the DTD and Stylesheets.
+
+2001-03-13  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/make_reg_items.php
+      src/Makefile.in
+      src/php_gtk.h:
+    We don't want to have static declarations for items we may not have,
+    so let's have make_reg_items.php output appropriate info.
+
+2001-03-13  James Moore  <James@phpuk.org>
+
+    * docs/html.xsl.in:
+    Manual now builds using Saxon and norman walsh's xsl stylesheets.
+
+2001-03-13  Frank M. Kromann  <frank@frontbase.com>
+
+    * src/php_gtk.h: Adding missing prototypes
+
+    * win32/php_gtk.dsp
+      win32/php_gtk.dsw
+      win32/scheme.dsp: Fixing Win32 build to match new generator functions.
+
+    This has not been tested yet.
+
+2001-03-13  Andrei Zmievski  <andrei@ispi.net>
+
+    * config.m4
+      generator/libglade.defs
+      generator/libglade.overrides
+      src/.cvsignore
+      src/Makefile.in
+      src/php_gtk.c
+      src/php_gtk.h
+      src/php_gtk_object.c:
+    * Re-engineered the build system a bit to accomodate the need to build
+      additional modules.
+    * Fixed GDK locale support (thanks to Alex Bokovoy).
+
+    Oh, and added libglade support.
+
+    * generator/Getopt.php
+      generator/gdk.overrides
+      generator/generator.php
+      generator/gtk.defs
+      generator/gtk.overrides
+      generator/make_reg_items.php
+      generator/templates.php:
+    Generalized the generator system:
+    	* removed all static content into templates
+    	* everything is now generated just from defs, overrides, and prefix
+    	* removed byref parsing, since it will be transformed into something new
+    	* added ability to specify defs files to register types from
+    	* split out gdk part of overrides into gdk.overrides
+
+    Basically, all the generation is based on a concept of a module. For each
+    module there is .defs file and .overrides file. The generated file is
+    php_gtk_<module>.c. There are a couple more generated files that get
+    included by the main source in order to declare class entries, and
+    register classes and constants.
+
+    Also, made Gdk::input_add() work with PHP file resources.
+
+    * src/php_gtk_types.c: Properly return new GtkStyle from constructor.
+
+    * src/php_gtk_util.c: * resource type argument parsing
+    * improvements to php_gtk_is_callable
+
+    * generator/definitions.php
+      generator/scheme.php: * properly parse object's parent's module as well.
+    * added ability to merge parse trees.
+
+    * generator/override.php:
+    Added ability to specify header and register additional classes in
+    the override file.
+
+    * generator/arg_types.php:
+    Change regexp so that GladeXML is properly converted.
+
 2001-03-12  James Moore  <James@phpuk.org>
 
     * docs/en/chapters/intro.xml: Correcting another two typos.
