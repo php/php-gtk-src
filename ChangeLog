@@ -1,3 +1,55 @@
+2003-05-29  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/canvas/canvas.defs
+      ext/canvas/canvas.overrides:
+      provisional support for item scaling - gtk_canvas_item_scale and i2c_affine
+      etc.
+
+    * ext/imlib/imlib.defs
+      ext/imlib/php_imlib.c
+      ext/imlib/php_imlib.h:
+      imlib now builds and loads
+
+    * ext/canvas/canvas.overrides:
+      get scroll region and offsets added
+
+    * ext/canvas/Makefile.frag
+      ext/canvas/canvas.defs
+      ext/canvas/canvas.overrides:
+      adding Makefile.frag - was missing.
+
+    * generator/generator.php:
+      adding hook into generator to enable extra boxed types to be added by
+      extensions
+
+    * ext/imlib/imlib.defs.cache:
+      last of wrongly uploaded files removed
+
+    * ext/imlib/gen_ce_imlib.h
+      ext/imlib/gen_imlib.c
+      ext/imlib/gen_imlib.lo
+      ext/imlib/gen_imlib.o
+      ext/imlib/php_imlib.lo
+      ext/imlib/php_imlib.o:
+      removing files that shouldnt have been uploaded - cvsignore didnt work..
+
+    * ext/imlib/Makefile.frag
+      ext/imlib/Makefile.in
+      ext/imlib/arg_types.php
+      ext/imlib/config.m4
+      ext/imlib/gen_ce_imlib.h
+      ext/imlib/gen_imlib.c
+      ext/imlib/gen_imlib.lo
+      ext/imlib/gen_imlib.o
+      ext/imlib/imlib.defs
+      ext/imlib/imlib.defs.cache
+      ext/imlib/imlib.overrides
+      ext/imlib/php_imlib.c
+      ext/imlib/php_imlib.h
+      ext/imlib/php_imlib.lo
+      ext/imlib/php_imlib.o:
+      first upload of gdk_imlib binding - it builds at present
+
 2003-05-28  Alan Knowles  <alan@akbkhome.com>
 
     * ext/canvas/canvas.defs
