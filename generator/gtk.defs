@@ -398,6 +398,10 @@
   (in-module Gtk)
   (parent Bin (Gtk))
   (c-name GtkHandleBox)
+  (field (type-and-name GtkShadowType shadow_type))
+  (field (type-and-name GtkPositionType handle_position))
+  (field (type-and-name gint snap_edge))
+  (field (type-and-name gboolean child_detached))
 )
 
 (object Frame
