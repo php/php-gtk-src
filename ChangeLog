@@ -1,3 +1,18 @@
+2002-01-04  Frank M. Kromann  <frank@frontbase.com>
+
+    * ext/gtk+/gtk.overrides: Fixing crash when returned texts is null
+
+    * generator/arg_types.php
+      ext/gtk+/gtk.overrides: Fixing codepage convertion for returned strings
+
+    * ext/gtk+/gtk.overrides: More UTF-8 stuff. This time in
+
+    ctree_insert_node and ctree_new_with_titles
+
+    * ext/gtk+/gtk.overrides: Fixing GtkCombo to use UTF-8 convertion on Win32
+    The first fix was too much a copy and paste. Items should not be freed.
+    Next time I'll actually test before commiting :-)
+
 2002-01-03  Frank M. Kromann  <frank@frontbase.com>
 
     * ext/gtk+/gtk.overrides: Fixing GtkCombo to use UTF-8 convertion on Win32
