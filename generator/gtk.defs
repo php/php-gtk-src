@@ -323,6 +323,7 @@
   (in-module Gtk)
   (parent Container (Gtk))
   (c-name GtkBin)
+  (field (type-and-name GtkWidget* child))
 )
 
 (object Viewport

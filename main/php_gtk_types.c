@@ -23,6 +23,7 @@
 #include "php_gtk.h"
 
 #if HAVE_PHP_GTK
+#include <gdk/gdkx.h>
 
 int le_gdk_event;
 int le_gdk_window;
@@ -661,7 +662,7 @@ static void gdk_window_get_property(zval *return_value, zval *object, zend_llist
 		gdk_window_get_geometry(win, NULL, NULL, NULL, NULL, &x);
 		ZVAL_LONG(return_value, x);
 	}
-#ifndef G_OS_WIN32
+#ifndef PHP_WIN32
 	else if (!strcmp(prop_name, "xid")) {
 		ZVAL_LONG(return_value, GDK_WINDOW_XWINDOW(win));
 	}
@@ -1221,6 +1222,55 @@ static void release_gdk_gc_rsrc(zend_rsrc_list_entry *rsrc)
 {
 	GdkGC *obj = (GdkGC *)rsrc->ptr;
 	gdk_gc_unref(obj);
+}
+
+
+static void gdk_colormap_query_color (GdkColormap *colormap, gulong pixel, GdkColor *result)
+{
+#ifndef PHP_WIN32
+	XColor xcolor;
+#endif
+	GdkVisual *visual;
+
+	g_return_if_fail (GDK_IS_COLORMAP (colormap));
+
+	visual = gdk_colormap_get_visual (colormap);
+
+	switch (visual->type) {
+		case GDK_VISUAL_DIRECT_COLOR:
+		case GDK_VISUAL_TRUE_COLOR:
+			result->red = 65535. * (double)((pixel & visual->red_mask) >>
+											visual->red_shift) / ((1 << visual->red_prec) - 1);
+			result->green = 65535. * (double)((pixel & visual->green_mask) >>
+											  visual->green_shift) / ((1 << visual->green_prec) - 1);
+			result->blue = 65535. * (double)((pixel & visual->blue_mask) >>
+											 visual->blue_shift) / ((1 << visual->blue_prec) - 1);
+			break;
+		case GDK_VISUAL_STATIC_GRAY:
+		case GDK_VISUAL_GRAYSCALE:
+			result->red = result->green = result->blue = 65535. *
+				(double)pixel/((1<<visual->depth) - 1);
+			break;
+		case GDK_VISUAL_STATIC_COLOR:
+#ifdef PHP_WIN32
+			g_assert_not_reached ();
+#else
+			xcolor.pixel = pixel;
+			XQueryColor(GDK_DISPLAY(), GDK_COLORMAP_XCOLORMAP(colormap), &xcolor);
+			result->red = xcolor.red;
+			result->green = xcolor.green;
+			result->blue = xcolor.blue;
+#endif
+			break;
+		case GDK_VISUAL_PSEUDO_COLOR:
+			result->red = colormap->colors[pixel].red;
+			result->green = colormap->colors[pixel].green;
+			result->blue = colormap->colors[pixel].blue;
+			break;
+		default:
+			g_assert_not_reached ();
+			break;
+	}
 }
 
 static void gdk_gc_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)

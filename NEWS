@@ -1,14 +1,19 @@
+php-gtk-0.0.2: x-Mar-2001
+    - added 'child' property to GtkBin and its descendants. (Andrei)
+    - all callbacks now take user supplied extra arguments and better error
+      messages are shown if the callbacks are not valid. (Andrei)
     - added GtkCombo::set_popdown_strings(), GdkPixmap::create_from_xpm().
-    - implemented support for creating menus via GtkItemFactory.
-    - fixed loading of the extension via php.ini.
+      (Andrei)
+    - implemented support for creating menus via GtkItemFactory. (Andrei)
+    - fixed loading of the extension via php.ini. (Andrei)
     - fixed timeout and idle handler marshaller so that they are called more
-      than once.
+      than once. (Andrei)
     - added connect_object() method that allows calling an object method as a
-      signal callback.
-    - fixed a silent crash that was happening due to object corruption.
-    - implemented GtkTipsQuery class.
+      signal callback. (Andrei)
+    - fixed a silent crash that was happening due to object corruption. (Andrei)
+    - implemented GtkTipsQuery class. (Andrei)
 
 php-gtk-0.0.1: 1-Mar-2001
-    - first release
+    - first release. (Andrei)
 
 # vim: set et tw=80 ai sts=4:

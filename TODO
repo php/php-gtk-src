@@ -1,11 +1,9 @@
-* Finish boxed type support.
 * Investigate how to improve h2def.py or modify gdk.defs to define boxed type
   objects (GdkColormap, etc.)
 * Figure out what's up with getting/setting gc background/foreground colors and
   how to get RGB values from pixels.
 * Provide access to GTK version number.
 * Fix $dialog->vbox->show() crash.
-* Think about better 'connect_object' semantics.
 * See what other object definitions might have been missed by h2def.py.
 
 In PHP
