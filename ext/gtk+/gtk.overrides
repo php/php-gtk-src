@@ -73,6 +73,7 @@ ignore
 	gtk_container_get_toplevels
 	gtk_container_query_child_args
 	gtk_container_queue_resize
+	gtk_dialog_new
 	gtk_draw_box_gap
 	gtk_draw_check
 	gtk_draw_cross
@@ -245,7 +246,8 @@ static void phpg_gtk_timeout_add_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool wi
 	int req_args = with_priority ? 3 : 2;
 
 	if (ZEND_NUM_ARGS() < req_args) {
-		php_error(E_WARNING, "%s() requires at least %d arguments, %d given",
+		php_error(E_WARNING, "%s::%s() requires at least %d arguments, %d given",
+				  get_active_class_name(NULL TSRMLS_CC),
 				  get_active_function_name(TSRMLS_C), req_args, ZEND_NUM_ARGS());
 		return;
 	}
@@ -332,6 +334,84 @@ PHP_METHOD
 	}
 
     phpg_gobject_new(&return_value, wrapped_obj TSRMLS_CC);
+}
+%% }}}
+
+%% {{{ GtkDialog
+%%
+override gtk_dialog_new_with_buttons
+PHP_METHOD
+{
+	char *title = NULL;
+	GtkWindow *parent = NULL;
+	zval *php_parent = NULL, *php_flags = NULL;
+	zval *buttons = NULL;
+	GtkDialogFlags flags = 0;
+	GObject *wrapped_obj;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sNVa", &title, &php_parent, gtkwindow_ce, &php_flags, &buttons)) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkDialog);
+	}
+	if (php_parent) {
+		if (Z_TYPE_P(php_parent) == IS_NULL)
+			parent = NULL;
+		else
+			parent = GTK_WINDOW(PHPG_GOBJECT(php_parent));
+	}
+
+	if (php_flags && phpg_gvalue_get_flags(GTK_TYPE_DIALOG_FLAGS, php_flags, (gint *)&flags) == FAILURE) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkDialog);
+	}
+
+	wrapped_obj = (GObject *)gtk_dialog_new();
+	if (!wrapped_obj) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkDialog);
+	}
+
+	if (title) {
+		gtk_window_set_title(GTK_WINDOW(wrapped_obj), title);
+	}
+	if (parent) {
+		gtk_window_set_transient_for(GTK_WINDOW(wrapped_obj), parent);
+	}
+	if (flags & GTK_DIALOG_MODAL) {
+		gtk_window_set_modal(GTK_WINDOW(wrapped_obj), TRUE);
+	}
+	if (flags & GTK_DIALOG_DESTROY_WITH_PARENT) {
+		gtk_window_set_destroy_with_parent (GTK_WINDOW(wrapped_obj), TRUE);
+	}
+	if (flags & GTK_DIALOG_NO_SEPARATOR) {
+		gtk_dialog_set_has_separator (GTK_DIALOG(wrapped_obj), FALSE);
+	}
+
+	if (buttons) {
+		zval **text, **response;
+
+		if (zend_hash_num_elements(Z_ARRVAL_P(buttons)) % 2) {
+			php_error(E_WARNING, "%s::%s(): button list has to contain pairs of items",
+					  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+			gtk_object_destroy(GTK_OBJECT(wrapped_obj));
+			PHPG_THROW_CONSTRUCT_EXCEPTION(GtkDialog);
+		}
+
+		zend_hash_internal_pointer_reset(Z_ARRVAL_P(buttons));
+		while (zend_hash_get_current_data(Z_ARRVAL_P(buttons), (void **)&text) == SUCCESS) {
+			zend_hash_move_forward(Z_ARRVAL_P(buttons));
+			zend_hash_get_current_data(Z_ARRVAL_P(buttons), (void **)&response); /* safe */
+			zend_hash_move_forward(Z_ARRVAL_P(buttons));
+
+			if (Z_TYPE_PP(text) != IS_STRING || Z_TYPE_PP(response) != IS_LONG) {
+				php_error(E_WARNING, "%s::%s(): each pair in button list has to string/number",
+						  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+				gtk_object_destroy(GTK_OBJECT(wrapped_obj));
+				PHPG_THROW_CONSTRUCT_EXCEPTION(GtkDialog);
+			}
+
+			gtk_dialog_add_button(GTK_DIALOG(wrapped_obj), Z_STRVAL_PP(text), Z_LVAL_PP(response));
+		}
+	}
+
+	phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
 %% }}}
 
