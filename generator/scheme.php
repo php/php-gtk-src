@@ -151,6 +151,28 @@ class Defs_Parser {
             foreach ($tree as $node)
                 $this->handle($node);
 
+            /*
+             * Sort the objects list so that the child objects always come after
+             * parent ones.
+             */
+            $objects = $this->objects;
+            $pos = 0;
+            $num_obj = count($objects);
+            while ($pos < $num_obj) {
+                $object = $objects[$pos];
+                $parent = $object->parent;
+                for ($i = $pos+1; $i < $num_obj; $i++) {
+                    if ($objects[$i]->c_name == $parent) {
+                        unset($objects[$pos]);
+                        array_splice($objects, $i+1, 0, array($object));
+                        break;
+                    }
+                }
+                if ($i == $num_obj)
+                    $pos++;
+            }
+            $this->objects = $objects;
+
             if (is_writeable($this->file_path)) {
                 $cache_file = $this->file_path . '/' . $this->file_name . '.cache';
                 $fp = fopen($cache_file, 'w');

@@ -324,6 +324,77 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 }
 /* }}} */
 
+/* {{{ PHP_GTK_API phpg_register_enum() */
+void phpg_register_enum(GType gtype, const char *strip_prefix, zend_class_entry *ce)
+{
+    GEnumClass *eclass;
+    char *enum_name;
+    int i, j;
+    int prefix_len;
+
+    g_return_if_fail(ce != NULL);
+    g_return_if_fail(g_type_is_a(gtype, G_TYPE_ENUM));
+
+    if (strip_prefix) {
+        prefix_len = strlen(strip_prefix);
+    }
+
+    eclass = G_ENUM_CLASS(g_type_class_ref(gtype));
+    for (i = 0; i < eclass->n_values; i++) {
+        zval *val;
+        
+        MAKE_STD_ZVAL(val);
+        ZVAL_LONG(val, eclass->values[i].value);
+        enum_name = eclass->values[i].value_name;
+        if (strip_prefix) {
+            for (j = prefix_len; j >= 0; j--) {
+                if (g_ascii_isalpha(enum_name[j]) || enum_name[j] == '_') {
+                    enum_name = &enum_name[j];
+                    break;
+                }
+            }
+        }
+        zend_hash_update(&ce->constants_table, enum_name, strlen(enum_name)+1, &val, sizeof(zval *), NULL);
+    }
+    g_type_class_unref(eclass);
+}
+/* }}} */
+/* {{{ PHP_GTK_API phpg_register_flags() */
+void phpg_register_flags(GType gtype, const char *strip_prefix, zend_class_entry *ce)
+{
+    GFlagsClass *eclass;
+    char *enum_name;
+    int i, j;
+    int prefix_len;
+
+    g_return_if_fail(ce != NULL);
+    g_return_if_fail(g_type_is_a(gtype, G_TYPE_FLAGS));
+
+    if (strip_prefix) {
+        prefix_len = strlen(strip_prefix);
+    }
+
+    eclass = G_FLAGS_CLASS(g_type_class_ref(gtype));
+    for (i = 0; i < eclass->n_values; i++) {
+        zval *val;
+        
+        MAKE_STD_ZVAL(val);
+        ZVAL_LONG(val, eclass->values[i].value);
+        enum_name = eclass->values[i].value_name;
+        if (strip_prefix) {
+            for (j = prefix_len; j >= 0; j--) {
+                if (g_ascii_isalpha(enum_name[j]) || enum_name[j] == '_') {
+                    enum_name = &enum_name[j];
+                    break;
+                }
+            }
+        }
+        zend_hash_update(&ce->constants_table, enum_name, strlen(enum_name)+1, &val, sizeof(zval *), NULL);
+    }
+    g_type_class_unref(eclass);
+}
+/* }}} */
+
 /* {{{ PHP_GTK_API phpg_gobject_set_wrapper() */
 PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC)
 {
@@ -433,4 +504,4 @@ void phpg_gobject_register_self()
 
 #endif /* HAVE_PHP_GTK */
 
-/* vim: set fdm=marker et : */
+/* vim: set fdm=marker et sts=4: */

@@ -116,7 +116,6 @@ void phpg_%s_register_classes(void)
 %s
 }\n";
 
-
 $register_class_tpl = "
 	%s = phpg_register_class(\"%s\", %s_methods, %s, 0, NULL, NULL, %s TSRMLS_CC);\n";
 
@@ -168,6 +167,16 @@ zend_bool PHP_GTK_EXPORT_FUNC(php_%s_get)(zval *wrapper, %s *obj)
 %s
     return 1;
 }\n\n";
+
+$register_constants_tpl = "
+void phpg_%s_register_constants(const char *strip_prefix)
+{
+    TSRMLS_FETCH();
+
+%s
+}\n";
+
+$register_enum_tpl = "\tphpg_register_%s(%s, strip_prefix, %s);\n";
 
 /* vim: set et sts=4: */
 ?>

@@ -171,6 +171,12 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 	phpg_gdk_register_classes();
 	phpg_atk_register_classes();
 	phpg_pango_register_classes();
+
+	phpg_atk_register_constants("ATK_");
+	phpg_pango_register_constants("PANGO_");
+	phpg_gdk_register_constants("GDK_");
+	phpg_gtk_register_constants("GTK_");
+
 	//php_gtk_plus_register_types(module_number);
 
 	return SUCCESS;

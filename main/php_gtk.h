@@ -240,6 +240,9 @@ extern char *php_gtk_zval_type_name(zval *arg);
 
 void phpg_register_exceptions();
 
+PHP_GTK_API void phpg_register_enum(GType gtype, const char *strip_prefix, zend_class_entry *ce);
+PHP_GTK_API void phpg_register_flags(GType gtype, const char *strip_prefix, zend_class_entry *ce);
+
 void phpg_gtype_register_self();
 PHP_GTK_API zval* phpg_gtype_new(GType type);
 PHP_GTK_API GType phpg_gtype_from_zval(zval *value);

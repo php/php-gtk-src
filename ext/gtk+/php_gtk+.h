@@ -114,10 +114,15 @@ zval *php_gtk_table_child_new(GtkTableChild *table_child);
 zval *php_gtk_fixed_child_new(GtkFixedChild *fixed_child);
 zval *php_gtk_clist_row_new(GtkCListRow *clist_row);
 
-void php_gtk_register_constants(int module_number TSRMLS_DC);
-void php_gdk_register_constants(int module_number TSRMLS_DC);
-void php_gtk_register_classes(void);
-void php_gdk_register_classes(void);
+void phpg_atk_register_constants(const char *strip_prefix);
+void phpg_pango_register_constants(const char *strip_prefix);
+void phpg_gdk_register_constants(const char *strip_prefix);
+void phpg_gtk_register_constants(const char *strip_prefix);
+void phpg_atk_register_classes(void);
+void phpg_pango_register_classes(void);
+void phpg_gdk_register_classes(void);
+void phpg_gtk_register_classes(void);
+
 void php_gtk_plus_register_types(int module_number);
 
 int php_gtk_array_to_gchar_array(zval *zvalue, gchar ***gchar_array);

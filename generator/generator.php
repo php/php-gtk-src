@@ -487,38 +487,8 @@ class Generator {
                 $register_class_tpl,
                 $get_type_tpl;
         
-        /* TODO move sorting to definitions.php */
-        
-        $objects = $this->parser->objects;
-        $pos = 0;
-        $num_obj = count($objects);
-        //print_r($objects);
-        while ($pos < $num_obj) {
-            $object = $objects[$pos];
-            $parent = $object->parent;
-            //print "object: $object->c_name\n";
-            //print "parent: $parent\n";
-            for ($i = $pos+1; $i < $num_obj; $i++) {
-                if ($objects[$i]->c_name == $parent) {
-                    //print "found parent at $i\n";
-                    //print "removing $object->c_name from $pos\n";
-                    unset($objects[$pos]);
-                    //print "inserting $object->c_name after " . $i . "\n";
-                    array_splice($objects, $i+1, 0, array($object));
-                    break;
-                }
-            }
-            if ($i == $num_obj)
-                $pos++;
-        }
-        /*
-        foreach ($objects as $object) {
-            print $object->c_name . " <- " . $object->parent . "\n";
-        }
-        */
-        
-        foreach ($objects as $object) {
-            fprintf(STDERR, $object->name. "\n");
+        foreach ($this->parser->objects as $object) {
+            fprintf(STDERR, $object->c_name. "\n");
             $object_module = strtolower($object->in_module);
             $object_lname = strtolower($object->name);
 
@@ -646,6 +616,31 @@ class Generator {
         $this->register_classes .= "\n" . implode("\n", $this->overrides->get_register_classes());
     }
 
+    function write_enums($fp)
+    {
+        global $register_constants_tpl,
+               $register_enum_tpl;
+
+        if (!$this->parser->enums) return;
+
+        fwrite($fp, "\n/* Enums and Flags */\n");
+
+        $enums_code = '';
+
+        foreach ($this->parser->enums as $enum) {
+            if ($enum->typecode === null) {
+                throw new Exception("unhandled enum type");
+                foreach ($enum->values as $nick => $value) {
+                }
+            } else {
+                $enums_code .= sprintf($register_enum_tpl, $enum->def_type,
+                                       $enum->typecode, $this->lprefix . '_ce');
+            }
+        }
+
+        fwrite($fp, sprintf($register_constants_tpl, $this->lprefix, $enums_code));
+    }
+
     function write_functions($fp, $separate_class, &$functions_decl)
     {
         global  $function_entry_tpl,
@@ -658,6 +653,7 @@ class Generator {
         if ($separate_class)
             $functions_decl = sprintf($functions_decl_tpl, $this->lprefix);
 
+        /* XXX fix
         foreach ($this->parser->functions as $function) {
             if ($this->overrides->is_overriden($function->c_name)) {
                 list($function_name, $function_override) = $this->overrides->get_override($function->c_name);
@@ -692,10 +688,11 @@ class Generator {
                 }
             }
         }
+        */
         if ($separate_class)
             $functions_decl .= $this->functions_decl_end;
 
-        if ($num_functions > 0) {
+        // XXX if ($num_functions > 0) {
             if ($separate_class) {
                 /*
                 $this->register_classes .= sprintf($init_class_tpl,
@@ -705,13 +702,11 @@ class Generator {
                 */
                 $this->register_classes .= sprintf($register_class_tpl,
                                                    $this->lprefix . '_ce',
-                                                   $this->prefix,
-                                                   $this->lprefix,
-                                                   'NULL', 0, 'NULL');
-                fwrite($fp, sprintf($class_entry_tpl, $this->lprefix . '_ce'));
+                                                   $this->lprefix, $this->lprefix,
+                                                   'NULL', 0);
                 fwrite($fp, $functions_decl);
             }
-        }
+        //}
     }
 
     function write_prop_lists($fp)
@@ -738,19 +733,24 @@ class Generator {
     {
         global  $class_entry_tpl;
 
+        /* XXX
         foreach ($this->parser->structs as $struct)
             fwrite($fp, sprintf($class_entry_tpl, $struct->ce));
+         */
         foreach ($this->parser->objects as $object)
             fwrite($fp, sprintf($class_entry_tpl, $object->ce));
         foreach ($this->overrides->get_register_classes() as $ce => $rest)
             fwrite($fp, sprintf($class_entry_tpl, $ce));
+
+        fwrite($fp, sprintf($class_entry_tpl, $this->lprefix . '_ce'));
     }
 
-    function create_source()
+    function create_source($savefile)
     {
-        global  $register_classes_tpl;
+        global  $register_classes_tpl,
+                $register_class_tpl;
 
-        $fp = fopen('php://stdout', 'w');
+        $fp = fopen($savefile, 'w');
         fwrite($fp, "#include \"php_gtk.h\"");
         fwrite($fp, "\n#if HAVE_PHP_GTK\n");
         fwrite($fp, $this->overrides->get_headers());
@@ -760,6 +760,8 @@ class Generator {
         //if (!isset($this->parser->objects[$this->function_class]))
         //    $this->write_functions($fp, true, $dummy);
         //$this->write_structs($fp);
+        $this->write_enums($fp);
+        $this->write_functions($fp, true, $dummy);
         $this->write_objects($fp);
         fwrite($fp, sprintf($register_classes_tpl,
                             $this->lprefix,
@@ -815,9 +817,9 @@ if (isset($_SERVER['argc']) &&
 array_walk($argv, create_function('&$x', '$x = urldecode($x);'));
 
     
-$result = Console_Getopt::getopt($argv, 'o:p:c:r:');
+$result = Console_Getopt::getopt($argv, 'o:p:c:r:f:');
 if (!$result || count($result[1]) < 2)
-    fatal_error("usage: php -q generator.php [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] defsfile\n");
+    fatal_error("usage: php -q generator.php [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] [-f savefile] defsfile\n");
 
 list($opts, $argv) = $result;
 
@@ -825,6 +827,7 @@ $prefix = 'Gtk';
 $function_class = null;
 $overrides = new Overrides();
 $register_defs = array();
+$savefile = 'php://stdout';
 
 foreach ($opts as $opt) {
     list($opt_spec, $opt_arg) = $opt;
@@ -836,6 +839,8 @@ foreach ($opts as $opt) {
         $function_class = $opt_arg;
     } else if ($opt_spec == 'r') {
         $register_defs[] = $opt_arg;
+    } else if ($opt_spec == 'f') {
+        $savefile = $opt_arg;
     }
 }
 
@@ -852,7 +857,7 @@ foreach ($register_defs as $defs) {
 }
 $parser->start_parsing();
 $generator->register_types();
-$generator->create_source();
+$generator->create_source($savefile);
 
 error_reporting($old_error_reporting);
 
