@@ -1234,8 +1234,6 @@ static void gdk_colormap_query_color (GdkColormap *colormap, gulong pixel, GdkCo
 #endif
 	GdkVisual *visual;
 
-	g_return_if_fail (GDK_IS_COLORMAP (colormap));
-
 	visual = gdk_colormap_get_visual (colormap);
 
 	switch (visual->type) {
