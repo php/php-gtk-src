@@ -1,3 +1,9 @@
+2001-09-06  Frank M. Kromann  <frank@frontbase.com>
+
+    * ext/gtk+/gtk.overrides
+      main/php_gtk.h:
+    ZEND_EXTERN_MODULE_GLOBALS(gtk); moved to header as it is used in more than one generated file.
+
 2001-09-05  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/gdk.defs: Revert accidental commit.
