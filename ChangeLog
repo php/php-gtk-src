@@ -1,3 +1,9 @@
+2001-12-18  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/gtk.overrides: Ignore non-public methods.
+
+    * ext/gtk+/gtk.defs: Satisfy our ruthless editor.
+
 2001-12-15  Markus Fischer  <mfischer@guru.josefine.at>
 
     * ext/gdkpixbuf/gdkpixbuf.overrides: - Typo.
