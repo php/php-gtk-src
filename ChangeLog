@@ -1,3 +1,15 @@
+2001-08-13  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/gtk.overrides
+      NEWS:
+    Patch from Markus that addds GtkCList methods set/get_row_data.
+
+    * main/php_gtk_util.c
+      ext/scintilla/scintilla.overrides:
+    Make several Scintilla functions easier to use by precalculating stuff
+    internally or not asking the user for length of the input string. Patches from
+    Markus and myself.
+
 2001-08-12  Andrei Zmievski  <andrei@ispi.net>
 
     * TODO: *** empty log message ***
