@@ -2,8 +2,6 @@
 %%
 headers
 #include "ext/standard/file.h"
-
-ZEND_EXTERN_MODULE_GLOBALS(gtk);
 %%
 ignore-glob
 	*_get_type

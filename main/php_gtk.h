@@ -136,6 +136,8 @@ PHP_FUNCTION(no_direct_constructor);
 
 extern char *php_gtk_zval_type_name(zval *arg);
 
+ZEND_EXTERN_MODULE_GLOBALS(gtk);
+
 #endif /* HAVE_PHP_GTK */
 
 #endif	/* _PHP_GTK_H */
