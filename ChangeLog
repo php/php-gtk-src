@@ -1,3 +1,10 @@
+2001-08-29  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/gtk.overrides:
+    Invalidate object in places where construction fails.
+
+    * generator/templates.php: Invalidate object if construction failed.
+
 2001-08-28  Andrei Zmievski  <andrei@ispi.net>
 
     * TODO: *** empty log message ***
