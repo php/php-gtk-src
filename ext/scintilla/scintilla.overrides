@@ -6,3 +6,153 @@ headers
 %%
 ignore-glob
   *_get_type
+%%
+override gtk_scintilla_add_text
+PHP_FUNCTION(gtk_scintilla_add_text)
+{
+	char *text;
+	int len;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s#", &text, &len))
+		return;
+	
+	gtk_scintilla_add_text(GTK_SCINTILLA(PHP_GTK_GET(this_ptr)), len, text);
+
+	RETURN_NULL();
+}
+%%
+override gtk_scintilla_get_cur_line
+PHP_FUNCTION(gtk_scintilla_get_cur_line)
+{
+	int length, line_pos;
+	char *text;
+	GtkScintilla *scintilla = GTK_SCINTILLA(PHP_GTK_GET(this_ptr));
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	length = gtk_scintilla_line_length(scintilla, gtk_scintilla_line_from_position(scintilla, gtk_scintilla_get_current_pos(scintilla))) + 1;
+	text = (char *)emalloc(length);
+
+	/* This function null-terminates the resulting string. */
+	line_pos = gtk_scintilla_get_cur_line(scintilla, length, text);
+
+	*return_value = *php_gtk_build_value("(s#i)", text, length-1, line_pos);
+}
+%%
+override gtk_scintilla_get_text
+PHP_FUNCTION(gtk_scintilla_get_text)
+{
+	int length;
+	char *text;
+	GtkScintilla *scintilla = GTK_SCINTILLA(PHP_GTK_GET(this_ptr));
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+	
+	length = gtk_scintilla_get_text_length(scintilla) + 1;
+	text = emalloc(length);
+
+	/* This function null-terminates the string. */
+	gtk_scintilla_get_text(scintilla, length, text);
+
+	RETURN_STRINGL(text, length-1, 0);
+}
+%%
+override gtk_scintilla_get_line
+PHP_FUNCTION(gtk_scintilla_get_line)
+{
+	int line, length;
+	char *text;
+	GtkScintilla *scintilla = GTK_SCINTILLA(PHP_GTK_GET(this_ptr));
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &line))
+		return;
+	
+	length = gtk_scintilla_line_length(scintilla, line) + 1;
+	text = emalloc(length);
+	memset(text, 0, length);
+
+	/* Scintilla has a bug: when you try to get non-existant line, it
+	   overwrites the buffer. So, we avoid it by checking length. */
+	if (length > 1)
+		gtk_scintilla_get_line(scintilla, line, text);
+
+	RETURN_STRINGL(text, length-1, 0);
+}
+%%
+override gtk_scintilla_get_sel_text
+/* TODO: fix to properly handle rectangular selections */
+PHP_FUNCTION(gtk_scintilla_get_sel_text)
+{
+	long length;
+	char *text;
+	GtkScintilla *scintilla = GTK_SCINTILLA(PHP_GTK_GET(this_ptr));
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+	
+	length = gtk_scintilla_get_selection_end(scintilla) - gtk_scintilla_get_selection_start(scintilla) + 1;
+	text = emalloc(length);
+	text[length-1] = 0;
+
+	gtk_scintilla_get_sel_text(scintilla, text);
+
+	RETURN_STRINGL(text, length-1, 0);
+}
+%%
+override gtk_scintilla_replace_target
+PHP_FUNCTION(gtk_scintilla_replace_target)
+{
+	int length;
+	char *text;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s#", &text, &length))
+		return;
+
+	length = gtk_scintilla_replace_target(GTK_SCINTILLA(PHP_GTK_GET(this_ptr)), length, text);
+
+	RETURN_LONG(length);
+}
+%%
+override gtk_scintilla_replace_target_re
+PHP_FUNCTION(gtk_scintilla_replace_target_re)
+{
+	int length;
+	char *text;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s#", &text, &length))
+		return;
+
+	length = gtk_scintilla_replace_target_re(GTK_SCINTILLA(PHP_GTK_GET(this_ptr)), length, text);
+
+	RETURN_LONG(length);
+}
+%%
+override gtk_scintilla_search_in_target
+PHP_FUNCTION(gtk_scintilla_search_in_target)
+{
+	int length, pos;
+	char *text;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s#", &text, &length))
+		return;
+
+	RETURN_LONG(gtk_search_in_target(GTK_SCINTILLA(PHP_GTK_GET(this_ptr)), length, text));
+}

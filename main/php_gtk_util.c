@@ -645,7 +645,7 @@ static zval *php_gtk_build_single(char **format, va_list *va)
 			case 'l':
 				MAKE_STD_ZVAL(result);
 				ZVAL_LONG(result, (long)va_arg(*va, long));
-				break;
+				return result;
 
 			case 'f':
 			case 'd':
