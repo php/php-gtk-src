@@ -1,3 +1,11 @@
+2003-01-20  Frank M. Kromann  <frank@kromann.info>
+
+    * win32/README.txt:
+      Fixing the readme file a bit
+
+    * win32/makedist.cmd:
+      System32 directory is not used in the dist.
+
 2003-01-10  Alan Knowles  <alan@akbkhome.com>
 
     * ext/gtk+/gtk.overrides:
