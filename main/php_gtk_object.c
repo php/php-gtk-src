@@ -756,7 +756,9 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 							  Z_STRVAL(overloaded_property->element));
 					return FAILURE;
 				}
-			} else if (last_oe_object) {
+			}
+			
+			if (last_oe_object) {
 				php_error(E_WARNING, "Cannot create property '%s' on overloaded property",
 						  Z_STRVAL(overloaded_property->element));
 				return FAILURE;
