@@ -12,6 +12,7 @@
   that automatically inits modules. Or make loadable modules.
 
 * Test GdkRGB functionality.
+* Implement GdkPoint support.
 
 * gdk-pixbuf support
 * Gnome support
