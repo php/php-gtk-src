@@ -40,6 +40,7 @@ extern zend_class_entry *gdk_event_ce;
 extern zend_class_entry *gdk_window_ce;
 extern zend_class_entry *gdk_color_ce;
 extern zend_class_entry *gdk_colormap_ce;
+extern zend_class_entry *gdk_atom_ce;
 
 /* Useful macros. */
 #define PHP_GTK_GET(w) 			((GtkObject *)php_gtk_get_object(w, le_gtk))
@@ -47,6 +48,7 @@ extern zend_class_entry *gdk_colormap_ce;
 #define PHP_GDK_WINDOW_GET(w)	((GdkWindow *)php_gtk_get_object(w, le_gdk_window))
 #define PHP_GDK_COLOR_GET(w)	((GdkColor *)php_gtk_get_object(w, le_gdk_color))
 #define PHP_GDK_COLORMAP_GET(w)	((GdkColormap *)php_gtk_get_object(w, le_gdk_colormap))
+#define PHP_GDK_ATOM_GET(w)		(php_gdk_atom_get(w))
 
 /* True globals. */
 extern GHashTable *php_gtk_class_hash;
@@ -73,6 +75,7 @@ zval *php_gdk_event_new(GdkEvent *obj);
 zval *php_gdk_window_new(GdkWindow *obj);
 zval *php_gdk_color_new(GdkColor *obj);
 zval *php_gdk_colormap_new(GdkColormap *obj);
+zval *php_gdk_atom_new(GdkAtom obj);
 
 /* Utility functions. */
 int php_gtk_parse_args(int argc, char *format, ...);

@@ -597,19 +597,20 @@ PHP_FUNCTION(wrap_gtk_file_selection_new)
 override gdk_color_parse
 PHP_FUNCTION(wrap_gdk_color_parse)
 {
-	char *spec;
+	gchar *color_spec;
 	GdkColor color;
 
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &spec)) {
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &color_spec)) {
 		return;
 	}
 
-	if (gdk_color_parse(spec, &color))
+	if (gdk_color_parse(color_spec, &color))
 		*return_value = *php_gdk_color_new(&color);
 	else
-		php_error(E_WARNING, "%s() could not parse color spec '%s'", get_active_function_name(), spec);
+		php_error(E_WARNING, "%s() could not parse color spec '%s'", get_active_function_name(), color_spec);
 }
-%%override gtk_list_append_items
+%%
+override gtk_list_append_items
 PHP_FUNCTION(wrap_gtk_list_append_items)
 {
 	zval *php_items, **item;

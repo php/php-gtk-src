@@ -33,6 +33,7 @@ zend_class_entry *gdk_event_ce;
 zend_class_entry *gdk_window_ce;
 zend_class_entry *gdk_color_ce;
 zend_class_entry *gdk_colormap_ce;
+zend_class_entry *gdk_atom_ce;
 
 /* GdkEvent */
 zval *php_gdk_event_new(GdkEvent *obj)
@@ -55,9 +56,9 @@ zval *php_gdk_event_new(GdkEvent *obj)
 	
 	if (obj->any.window) {
 		value = php_gdk_window_new(obj->any.window);
-		add_property_zval_ex(result, "window", sizeof("window"), value);
+		add_property_zval(result, "window", value);
 	} else
-		add_property_unset(result, "window");
+		add_property_null(result, "window");
 	add_property_bool(result, "send_event", obj->any.send_event);
 
 	switch (obj->type) {
@@ -121,9 +122,9 @@ zval *php_gdk_event_new(GdkEvent *obj)
 		case GDK_LEAVE_NOTIFY:
 			if (obj->crossing.subwindow) {
 				value = php_gdk_window_new(obj->crossing.subwindow);
-				add_property_zval_ex(result, "subwindow", sizeof("subwindow"), value);
+				add_property_zval(result, "subwindow", value);
 			} else
-				add_property_unset(result, "subwindow");
+				add_property_null(result, "subwindow");
 			add_property_long(result, "time", obj->crossing.time);
 			add_property_double(result, "x", obj->crossing.x);
 			add_property_double(result, "y", obj->crossing.y);
@@ -151,7 +152,7 @@ zval *php_gdk_event_new(GdkEvent *obj)
 			break;
 
 		case GDK_PROPERTY_NOTIFY:
-			/* TODO set atom property */
+			add_property_zval(result, "atom", php_gdk_atom_new(obj->property.atom));
 			add_property_long(result, "time", obj->property.time);
 			add_property_long(result, "state", obj->property.state);
 			break;
@@ -159,9 +160,9 @@ zval *php_gdk_event_new(GdkEvent *obj)
 		case GDK_SELECTION_CLEAR:
 		case GDK_SELECTION_REQUEST:
 		case GDK_SELECTION_NOTIFY:
-			/* TODO set selection property */
-			/* TODO set target property */
-			/* TODO set property property */
+			add_property_zval(result, "selection", php_gdk_atom_new(obj->selection.selection));
+			add_property_zval(result, "target", php_gdk_atom_new(obj->selection.target));
+			add_property_zval(result, "property", php_gdk_atom_new(obj->selection.property));
 			add_property_long(result, "requestor", obj->selection.requestor);
 			add_property_long(result, "time", obj->selection.time);
 			break;
@@ -186,7 +187,7 @@ zval *php_gdk_event_new(GdkEvent *obj)
 			break;
 
 		case GDK_CLIENT_EVENT:
-			/* TODO add message_type property */
+			add_property_zval(result, "message_type", php_gdk_atom_new(obj->client.message_type));
 			add_property_long(result, "data_format", obj->client.data_format);
 			add_property_stringl(result, "data", obj->client.data.b, 20, 1);
 			break;
@@ -304,7 +305,6 @@ static void release_gdk_window_rsrc(zend_rsrc_list_entry *rsrc)
 PHP_FUNCTION(gdkcolor)
 {
 	char *color_spec;
-	int red, green, blue;
 	GdkColor color;
 
 	NOT_STATIC_METHOD();
@@ -402,8 +402,33 @@ PHP_FUNCTION(gdk_colormap_size)
 	ZVAL_LONG(return_value, PHP_GDK_COLORMAP_GET(this_ptr)->size);
 }
 
+PHP_FUNCTION(gdk_colormap_alloc)
+{
+	gchar *color_spec;
+    GdkColor color = {0, 0, 0, 0};
+	zend_bool writeable = 0, best_match = 1;
+
+	if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "hhh|bb", &color.red, &color.green, &color.blue, &writeable, &best_match)) {
+		if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "s|bb", &color_spec, &writeable, &best_match)) {
+			php_error(E_WARNING, "%s() requires a color spec or RGB triplet", get_active_function_name());
+			return;
+		} else if (!gdk_color_parse(color_spec, &color)) {
+			php_error(E_WARNING, "%s() could not parse color spec '%s'", get_active_function_name(), color_spec);
+			return;
+		}
+	}
+
+	if (!gdk_colormap_alloc_color(PHP_GDK_COLORMAP_GET(this_ptr), &color, writeable, best_match)) {
+		php_error(E_WARNING, "%s() could not allocate color");
+		return;
+	}
+
+	*return_value = *php_gdk_color_new(&color);
+}
+
 static function_entry php_gdk_colormap_functions[] = {
-	{"size", PHP_FN(gdk_colormap_size), NULL},
+	{"size", 	PHP_FN(gdk_colormap_size), NULL},
+	{"alloc",	PHP_FN(gdk_colormap_alloc), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -448,6 +473,33 @@ static void gdk_colormap_get_property(zval *result, zval *object, zval *property
 	}
 
 	result = php_gdk_color_new(&cmap->colors[prop_index]);
+}
+
+
+/* GdkAtom */
+inline GdkAtom php_gdk_atom_get(zval *wrapper)
+{
+	zval **atom;
+	
+	zend_hash_find(Z_OBJPROP_P(wrapper), "atom", sizeof("atom"), (void**)&atom);
+	return (GdkAtom)Z_LVAL_PP(atom);
+}
+
+zval *php_gdk_atom_new(GdkAtom obj)
+{
+	zval *result;
+	gchar *atom_name;
+
+	MAKE_STD_ZVAL(result);
+	object_init_ex(result, gdk_atom_ce);
+	add_property_long_ex(result, "atom", sizeof("atom"), obj);
+	atom_name = gdk_atom_name(obj);
+	if (atom_name)
+		add_property_string_ex(result, "string", sizeof("string"), gdk_atom_name(obj), 0);
+	else
+		add_property_null_ex(result, "string", sizeof("string"));
+
+	return result;
 }
 
 
@@ -527,6 +579,7 @@ static int php_gtk_set_property(zend_property_reference *property_reference, zva
 	return retval;
 }
 
+
 void php_gtk_register_types(int module_number)
 {
 	zend_class_entry ce;
@@ -548,6 +601,9 @@ void php_gtk_register_types(int module_number)
 
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkcolormap", php_gdk_colormap_functions, NULL, php_gtk_get_property, php_gtk_set_property);
 	gdk_colormap_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+
+	INIT_CLASS_ENTRY(ce, "gdkatom", NULL);
+	gdk_atom_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 }
 
 #endif

@@ -57,8 +57,7 @@ class Var_List {
 class Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
 						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
-						 $in_constructor,
-$in_constructor)
+						 $in_constructor)
 	{
 		trigger_error("This is an abstract class", E_USER_ERROR);
 	}
@@ -423,7 +422,11 @@ class Boxed_Arg extends Arg_Type {
 	}
 }
 
-class Atom_Arg extends Arg_Type {
+class Atom_Arg extends Int_Arg {
+	function write_return($type, &$var_list)
+	{
+		return "	*return_value = *php_gdk_atom_new(%s);";
+	}
 }
 
 class Arg_Matcher {
@@ -523,6 +526,9 @@ $matcher->register('gfloat', $arg);
 
 $arg = new Rect_Arg();
 $matcher->register('GdkRectangle*', $arg);
+
+$arg = new Atom_Arg();
+$matcher->register('GdkAtom', $arg);
 
 $matcher->register_boxed('GdkEvent', 'gdk_event');
 $matcher->register_boxed('GdkWindow', 'gdk_window');
