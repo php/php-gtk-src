@@ -1,3 +1,33 @@
+2005-02-27  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.overrides
+      generator/generator.php
+      main/php_gtk.h
+      main/phpg_gobject.c:
+      - Add support for accessing properties for a couple of event types.
+      - Also implement a way to easier get properties of classes that overrode
+        read_property handler.
+
+    * main/phpg_closure.c
+      main/phpg_gobject.c:
+      Fix a couple of egregious bugs.
+      - phpg_closure_marshal(): need to NULL-out the emalloc'ed parameter.
+      - phpg_free_object_storage(): have to remove the cached handle
+        information since the current object wrapper is going away.
+
+    * ext/gtk+/gdk.overrides
+      generator/generator.php
+      generator/override.php
+      generator/templates.php
+      main/php_gtk.h
+      main/phpg_gboxed.c
+      main/phpg_gobject.c
+      main/phpg_gvalue.c:
+      Implement infrastructure for overriding object handlers per-class. This
+      allows us to do things like custom read/write handler for all of
+      GdkEvent properties, and making objects behave like arrays when
+      necessary.
+
 2005-02-26  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/atk.overrides:
