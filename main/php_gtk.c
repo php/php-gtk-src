@@ -46,13 +46,12 @@ ZEND_GET_MODULE(gtk)
 static void init_gtk(void)
 {
 	HashTable *symbol_table;
-	zval **z_argv, **z_argc, **entry;
+	zval **z_argv = NULL, **z_argc = NULL, **entry;
 	zval *tmp;
 	char **argv;
 	int argc, i;
 	zend_bool no_argc = 0;
 	PLS_FETCH();
-	ELS_FETCH();
 	SLS_FETCH();
 
 	/* We check request_method to see if we've been called from command line or
@@ -69,9 +68,9 @@ static void init_gtk(void)
 	 */
 	symbol_table = PG(http_globals)[TRACK_VARS_SERVER]->value.ht;
 
-	zend_hash_find(&EG(symbol_table), "argc", sizeof("argc"), (void **)&z_argc);
+	zend_hash_find(symbol_table, "argc", sizeof("argc"), (void **)&z_argc);
 	zend_hash_find(symbol_table, "argv", sizeof("argv"), (void **)&z_argv);
-	if (Z_TYPE_PP(z_argc) != IS_LONG || Z_TYPE_PP(z_argv) != IS_ARRAY) {
+	if (!z_argc || !z_argv || Z_TYPE_PP(z_argc) != IS_LONG || Z_TYPE_PP(z_argv) != IS_ARRAY) {
 		php_error(E_ERROR, "php-gtk: argc/argv are corrupted");
 	}
 

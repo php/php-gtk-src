@@ -466,6 +466,11 @@ zval *php_gtk_arg_as_value(GtkArg *arg)
 			php_error(E_WARNING, "%s(): internal error: GTK_TYPE_FOREIGN, GTK_TYPE_CALLBACK, or GTK_TYPE_SIGNAL under development",
 					  get_active_function_name());
 			break;
+
+		default:
+			g_assert_not_reached();
+			FREE_ZVAL(value);
+			return NULL;
 	}
 
 	return value;

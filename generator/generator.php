@@ -132,7 +132,7 @@ class Generator {
 							   $arg_list);
 		$ret_handler = &$matcher->get($method->return_type);
 		if ($ret_handler === null) {
-			error_log("Could not write function $method->name (return type $method->return_type)");
+			error_log("Could not write method $method->name (return type $method->return_type)");
 			return false;
 		}
 		$return_tpl = $ret_handler->write_return($method->return_type, $var_list, true);

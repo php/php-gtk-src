@@ -349,6 +349,44 @@ PHP_FUNCTION(wrap_gtk_signal_connect_object_after)
 	wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0, 1);
 }
 %%
+override gtk_object_set
+PHP_FUNCTION(wrap_gtk_object_set)
+{
+}
+%%
+override gtk_object_get
+PHP_FUNCTION(wrap_gtk_object_get)
+{
+	char *name;
+	GtkArg garg;
+	zval *ret;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &name))
+		return;
+
+	garg.type = GTK_TYPE_INVALID;
+	garg.name = name;
+	gtk_object_getv(PHP_GTK_GET(this_ptr), 1, &garg);
+
+	if (garg.type == GTK_TYPE_INVALID) {
+		php_error(E_WARNING, "%s(): invalid arg '%s'",
+				  get_active_function_name(), name);
+		return;
+	}
+	
+	ret = php_gtk_arg_as_value(&garg);
+	if (ret == NULL) {
+		php_error(E_WARNING, "%s() couldn't translate type");
+		return;
+	}
+
+	zval_add_ref(&ret);
+	*return_value = *ret;
+	FREE_ZVAL(ret);
+}
+%%
 override gtk_object_set_data
 PHP_FUNCTION(wrap_gtk_object_set_data)
 {
