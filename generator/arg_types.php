@@ -443,6 +443,89 @@ class Atom_Arg extends Int_Arg {
 	}
 }
 
+class Drawable_Arg extends Arg_Type {
+	var $type = 'GdkDrawable';
+
+	function write_param($type, $name, $default, $null_ok, &$var_list,
+						 &$parse_list, &$arg_list, &$extra_code, $in_constructor)
+	{
+		if ($null_ok) {
+			if (isset($default)) {
+				$var_list->add($this->type, '*' . $name . ' = ' . $default);
+				$var_list->add('zval', '*php_' . $name . ' = NULL');
+				$extra_code[]	=	"	if (php_$name) {\n" .
+									"		if (Z_TYPE_P(php_$name) == IS_NULL)\n" .
+									"			$name = NULL;\n" .
+									"		else\n" .
+									"			$name = PHP_" . strtoupper($this->php_type). "_GET(php_" . $name . ");\n" .
+									"	}\n";
+			} else {
+				$var_list->add($this->type, '*' . $name);
+				$var_list->add('zval', '*php_' . $name);
+				$extra_code[]	=
+					"	if (Z_TYPE_P(php_$name) == IS_NULL)
+							$name = NULL;
+						if (php_gtk_check_class(php_$name, gdk_window_ce))
+							$name = (GdkDrawable *)PHP_GDK_WINDOW_GET(php_$name);
+						else if(php_gtk_check_class(php_$name, gdk_pixmap_ce))
+							$name = (GdkDrawable *)PHP_GDK_PIXMAP_GET(php_$name);
+						else if(php_gtk_check_class(php_$name, gdk_bitmap_ce))
+							$name = (GdkDrawable *)PHP_GDK_BITMAP_GET(php_$name);
+						else {
+								php_error(E_WARNING, \"%s() expects the drawable to be GdkWindow, GdkPixmap, GdkBitmap, or null\", get_active_function_name());
+								return;
+						}
+				";
+			}
+
+			$parse_list[]	= '&php_' . $name;
+			$arg_list[]		= $name;
+
+			return 'V';
+		} else {
+			if (isset($default)) {
+				$var_list->add($this->type, '*' . $name . ' = ' . $default);
+				$var_list->add('zval', '*php_' . $name . ' = NULL');
+
+				$parse_list[]	= '&php_' . $name;
+				$parse_list[]	= $this->php_type . '_ce';
+				$arg_list[]		= $name;
+				$extra_code[]	=	"	if (php_$name)\n" .
+									"		$name = PHP_" .  strtoupper($this->php_type) . "_GET(" . $name . ");\n";
+			} else {
+				$var_list->add($this->type, '*' . $name);
+				$var_list->add('zval', '*php_' . $name);
+				$parse_list[]	= '&php_' . $name;
+				$arg_list[]		= $name;
+				$extra_code[]	=
+					"	if (php_gtk_check_class(php_$name, gdk_window_ce))
+							$name = (GdkDrawable *)PHP_GDK_WINDOW_GET(php_$name);
+						else if(php_gtk_check_class(php_$name, gdk_pixmap_ce))
+							$name = (GdkDrawable *)PHP_GDK_PIXMAP_GET(php_$name);
+						else if(php_gtk_check_class(php_$name, gdk_bitmap_ce))
+							$name = (GdkDrawable *)PHP_GDK_BITMAP_GET(php_$name);
+						else {
+								php_error(E_WARNING, \"%s() expects the drawable to be GdkWindow, GdkPixmap, or GdkBitmap\", get_active_function_name());
+								return;
+						}
+				";
+			}
+
+			return 'V';
+		}
+	}
+
+	function write_return($type, &$var_list, $separate)
+	{
+		$var_list->add('zval', '*ret');
+		return "	ret = php_" . $this->php_type . "_new(%s);\n" .
+			   ($separate ? "	SEPARATE_ZVAL(&ret);\n" : "") .
+			   "	*return_value = *ret;\n" .
+			   "	return;";
+	}
+}
+
+
 class Arg_Matcher {
 	var $arg_types = array();
 
@@ -535,11 +618,13 @@ $matcher->register('GdkRectangle*', $arg);
 $arg = new Atom_Arg();
 $matcher->register('GdkAtom', $arg);
 
+$arg = new Drawable_Arg();
+$matcher->register('GdkDrawable*', $arg);
+
 $matcher->register_boxed('GdkEvent', 'gdk_event');
 $matcher->register_boxed('GdkWindow', 'gdk_window');
 $matcher->register_boxed('GdkPixmap', 'gdk_pixmap');
 $matcher->register_boxed('GdkBitmap', 'gdk_bitmap');
-$matcher->register('GdkDrawable*', $matcher->get('GdkWindow*'));
 $matcher->register_boxed('GdkColor', 'gdk_color');
 $matcher->register_boxed('GdkColormap', 'gdk_colormap');
 $matcher->register_boxed('GdkCursor', 'gdk_cursor');

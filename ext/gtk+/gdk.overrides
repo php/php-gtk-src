@@ -4,6 +4,9 @@ ignore
 	GdkDebugFlag
 	GdkColorInfoFlags
 %%
+ignore
+	gdk_pixmap_new
+%%
 override gdk_color_parse
 PHP_FUNCTION(wrap_gdk_color_parse)
 {

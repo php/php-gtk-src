@@ -59,7 +59,8 @@ PHP_GTK_EXPORT_CE(gtk_style_ce);
 PHP_GTK_EXPORT_CE(gtk_box_child_ce);
 PHP_GTK_EXPORT_CE(gtk_fixed_child_ce);
 PHP_GTK_EXPORT_CE(gtk_clist_row_ce);
-;
+PHP_GTK_EXPORT_CE(gtk_allocation_ce);
+
 /* GdkEvent */
 static function_entry php_gdk_event_functions[] = {
 	{"gdkevent", PHP_FN(wrap_no_direct_constructor), NULL},
@@ -96,11 +97,12 @@ zval *php_gdk_event_new(GdkEvent *event)
 			break;
 
 		case GDK_EXPOSE:
-			value = php_gtk_build_value("(iiii)",
-										event->expose.area.x,
-										event->expose.area.y,
-										event->expose.area.width,
-										event->expose.area.height);
+			MAKE_STD_ZVAL(value);
+			object_init_ex(value, gtk_allocation_ce);
+			add_property_long(value, "x", event->expose.area.x);
+			add_property_long(value, "y", event->expose.area.y);
+			add_property_long(value, "width", event->expose.area.width);
+			add_property_long(value, "height", event->expose.area.height);
 			zend_hash_update(Z_OBJPROP_P(result), "area", sizeof("area"), &value, sizeof(zval *), NULL);
 			add_property_long(result, "count", event->expose.count);
 			break;
@@ -113,7 +115,7 @@ zval *php_gdk_event_new(GdkEvent *event)
 			add_property_double(result, "xtilt", event->motion.xtilt);
 			add_property_double(result, "ytilt", event->motion.ytilt);
 			add_property_long(result, "state", event->motion.state);
-			add_property_long(result, "is_hint", event->motion.is_hint);
+			add_property_bool(result, "is_hint", event->motion.is_hint);
 			add_property_long(result, "source", event->motion.source);
 			add_property_long(result, "deviceid", event->motion.deviceid);
 			add_property_double(result, "x_root", event->motion.x_root);
@@ -260,17 +262,16 @@ PHP_FUNCTION(gdk_window_lower)
 
 PHP_FUNCTION(gdk_window_get_pointer)
 {
-	guint32 deviceid;
-    gdouble x = 0.0, y = 0.0, pressure = 0.0, xtilt = 0.0, ytilt = 0.0;
+	gint x, y;
     GdkModifierType mask = 0;
 
 	NOT_STATIC_METHOD();
 
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &deviceid))
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
 		return;
 
-    gdk_input_window_get_pointer(PHP_GDK_WINDOW_GET(this_ptr), deviceid, &x, &y, &pressure, &xtilt, &ytilt, &mask);
-    *return_value = *php_gtk_build_value("(dddddi)", x, y, pressure, xtilt, ytilt, mask);
+    gdk_window_get_pointer(PHP_GDK_WINDOW_GET(this_ptr), &x, &y, &mask);
+    *return_value = *php_gtk_build_value("(iii)", x, y, mask);
 }
 
 PHP_FUNCTION(gdk_window_set_cursor)
@@ -575,8 +576,33 @@ static function_entry php_gdk_window_functions[] = {
 	{NULL, NULL, NULL}
 };
 
+PHP_FUNCTION(gdkpixmap)
+{
+	GdkWindow *window = NULL;
+	zval *php_window, *ret;
+	long width, height, depth;
+	GdkPixmap *wrapped_obj = NULL;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Niii", &php_window, gdk_window_ce, &width, &height, &depth)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	if (Z_TYPE_P(php_window) != IS_NULL)
+		window = PHP_GDK_WINDOW_GET(php_window);
+
+	wrapped_obj = gdk_pixmap_new(window, (gint)width, (gint)height, (gint)depth);
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkWindow object",
+				  get_active_function_name());
+		return;
+	}
+
+	php_gtk_set_object(this_ptr, wrapped_obj, le_gdk_window);
+}
+
 static function_entry php_gdk_pixmap_functions[] = {
-	{"gdkpixmap",		PHP_FN(wrap_no_direct_constructor), NULL},
+	{"gdkpixmap",		PHP_FN(gdkpixmap), NULL},
 	{"new_gc", 			PHP_FN(gdk_window_new_gc), NULL},
 	{"property_get", 	PHP_FN(gdk_window_property_get), NULL},
 	{"property_change", PHP_FN(gdk_window_property_change), NULL},
@@ -2547,6 +2573,9 @@ void php_gtk_plus_register_types(int module_number)
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gtkclistrow", NULL, NULL, php_gtk_get_property, php_gtk_set_property);
 	gtk_clist_row_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 	php_gtk_register_prop_getter(gtk_clist_row_ce, gtk_clist_row_get_property);
+
+	INIT_CLASS_ENTRY(ce, "gtkallocation", NULL);
+	gtk_allocation_ce = zend_register_internal_class_ex(&ce, &zend_standard_class_def, NULL);
 }
 
 #endif

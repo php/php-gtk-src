@@ -42,6 +42,7 @@
   (c-name GtkWidget)
   (field (type-and-name GtkStyle* style))
   (field (type-and-name GdkWindow* window))
+  (field (type-and-name GtkAllocation allocation))
 )
 
 (object Separator

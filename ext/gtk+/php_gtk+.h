@@ -80,6 +80,7 @@ extern PHP_GTK_EXPORT_CE(gtk_style_ce);
 extern PHP_GTK_EXPORT_CE(gtk_box_child_ce);
 extern PHP_GTK_EXPORT_CE(gtk_fixed_child_ce);
 extern PHP_GTK_EXPORT_CE(gtk_clist_row_ce);
+extern PHP_GTK_EXPORT_CE(gtk_allocation_ce);
 
 #include "gen_ce_gtk.h"
 

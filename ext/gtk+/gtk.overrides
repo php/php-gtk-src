@@ -2023,3 +2023,12 @@ PHP_FUNCTION(wrap_gtk_editable_insert_text)
 	gtk_editable_insert_text(GTK_EDITABLE(PHP_GTK_GET(this_ptr)), text, len, &pos);
 	RETURN_LONG(pos);
 }
+%%
+getprop GtkWidget allocation
+	GtkWidget *widget = GTK_WIDGET(PHP_GTK_GET(object));
+
+	object_init_ex(return_value, gtk_allocation_ce);
+	add_property_long(return_value, "x", widget->allocation.x);
+	add_property_long(return_value, "y", widget->allocation.y);
+	add_property_long(return_value, "width", widget->allocation.width);
+	add_property_long(return_value, "height", widget->allocation.height);

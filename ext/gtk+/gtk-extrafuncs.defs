@@ -20,6 +20,12 @@
   (parameter (type-and-name guint flags))
 )
 
+(method state
+  (of-object Widget (Gtk))
+  (c-name GTK_WIDGET_STATE)
+  (return-type guint)
+)
+
 (method get_allocation
   (of-object Widget (Gtk))
   (c-name gtk_widget_get_allocation)
