@@ -337,7 +337,7 @@ PHP_FUNCTION(gtk_input_add_full)
 			php_stream_cast(stream, PHP_STREAM_AS_FD, (void*)&source, 0);
 		} else {
 			php_error(E_WARNING, "%s() could not use stream of type '%s'",
-					  get_active_function_name(), stream->ops->label);
+					  get_active_function_name(TSRMLS_C), stream->ops->label);
 			return;
 		}
 	}
