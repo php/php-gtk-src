@@ -1,3 +1,7 @@
+2001-12-19  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/gtk.overrides: Ignore internal function.
+
 2001-12-18  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/gtk.overrides: Ignore non-public methods.
