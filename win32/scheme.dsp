@@ -101,7 +101,7 @@ BuildCmds=grep -h "^zend_class_entry" ..\src\php_gtk_gen_gtk.c ..\src\php_gtk_ge
 
 # Begin Custom Build
 
-BuildCmds=php.exe -q ..\generator\generator.php ../generator/gtk.defs ../generator/gtk.overrides
+BuildCmds=grep -h "^zend_class_entry" ..\src\php_gtk_gen_gtk.c ..\src\php_gtk_gen_gdk.c | sed -e "s!^!extern !" > ..\src\php_gtk_gen_ce.h
 
 "$(InputDir)\php_gtk_gen.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
    $(BuildCmds)
@@ -131,7 +131,7 @@ BuildCmds=php.exe -q ..\generator\make_reg_items.php gtk gdk
 
 # Begin Custom Build
 
-BuildCmds=php.exe -q ..\generator\generator.php ../generator/gtk.defs ../generator/gtk.overrides
+BuildCmds=php.exe -q ..\generator\make_reg_items.php gtk gdk
 
 "$(InputDir)\php_gtk_gen.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
    $(BuildCmds)
@@ -161,7 +161,7 @@ BuildCmds=php.exe -q ..\generator\generator.php -o gtk.overrides -p gtk gtk.defs
 
 # Begin Custom Build
 
-BuildCmds=php.exe -q ..\generator\generator.php ../generator/gtk.defs ../generator/gtk.overrides
+SOURCE=..\generator\gtk.overrides  ..\generator\gtk.defs ..\generator\gtk-extrafuncs.defs
 
 "$(InputDir)\php_gtk_gen.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
    $(BuildCmds)
@@ -191,7 +191,7 @@ BuildCmds=php.exe -q ..\generator\generator.php -o gdk.overrides -p gdk gdk.defs
 
 # Begin Custom Build
 
-BuildCmds=php.exe -q ..\generator\generator.php ../generator/gtk.defs ../generator/gtk.overrides
+BuildCmds=php.exe -q ..\generator\generator.php -o gdk.overrides -p gdk gdk.defs
 
 "$(InputDir)\php_gtk_gen.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
    $(BuildCmds)
