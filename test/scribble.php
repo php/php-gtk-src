@@ -6,6 +6,7 @@ if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN')
 else
 	dl('php_gtk.so');
 
+$pixmap = null;
 
 function configure_event($widget, $event)
 {
@@ -78,8 +79,8 @@ function draw_brush($widget, $x, $y)
 {
 	global	$pixmap;
 
-	gdk::draw_rectangle($pixmap, $widget->style->black_gc,
-						true, $x - 5, $y - 5, 10, 10); 
+	gdk::draw_arc($pixmap, $widget->style->black_gc,
+				  true, $x - 5, $y - 5, 10, 10, 0, 64 * 360); 
 	$widget->draw($x - 5, $y - 5, 10, 10);
 }
 
