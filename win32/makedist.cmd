@@ -16,6 +16,7 @@ copy \php4\php_gtk_sqpane.dll php4
 copy \php4\php_gtk_combobutton.dll php4
 copy \php\php4\php.ini-dist winnt\php.ini
 type \php\php-gtk\win32\php.ini >>winnt\php.ini
+copy \php\php-gtk\win32\php.ini php4\php.ini-gtk
 
 copy \php4\iconv.dll php4
 copy \php4\libgdk-0.dll php4
