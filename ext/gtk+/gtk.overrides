@@ -46,12 +46,6 @@ ignore
 	
 	gtk_bindings_activate	
 	
-	gtk_button_box_get_layout
-	gtk_button_box_set_child_ipadding
-	gtk_button_box_set_child_secondary
-	gtk_button_box_set_child_size
-	gtk_button_box_set_layout
-	gtk_button_get_label
 	
 	gtk_clist_append
 	gtk_clist_construct
