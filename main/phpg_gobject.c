@@ -118,8 +118,6 @@ zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 		member = &tmp_member;
 	}
 
-	/* XXX test for propagation to parent classes */
-
 	ret = FAILURE;
 
 	poh = (phpg_head_t *) zend_objects_get_address(object TSRMLS_CC);
@@ -133,9 +131,7 @@ zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 		if (ret == SUCCESS) {
 			ALLOC_ZVAL(result_ptr);
 			*result_ptr = result;
-            /* ensure we're creating a temporary variable */
-            result_ptr->refcount = 0;
-            result_ptr->is_ref = 0;
+            INIT_PZVAL(result_ptr);
         } else {
             result_ptr = EG(uninitialized_zval_ptr);
         }
@@ -172,8 +168,12 @@ void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
 		ret = zend_hash_find(poh->pi_hash, Z_STRVAL_P(member), Z_STRLEN_P(member)+1, (void **) &pi);
 	}
 
-    if (ret == SUCCESS && pi->write != NULL) {
-        pi->write(poh, value);
+    if (ret == SUCCESS) {
+        if (pi->write) {
+            pi->write(poh, value);
+        } else {
+            php_error(E_NOTICE, "PHP-GTK: ignoring write attempt to the read only property");
+        }
     } else {
 		zend_get_std_object_handlers()->write_property(object, member, value TSRMLS_CC);
     }
@@ -187,38 +187,26 @@ void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
 /* {{{ HashTable*  phpg_get_properties() */
 HashTable* phpg_get_properties(zval *object TSRMLS_DC)
 {
-	zend_class_entry *ce;
 	HashTable *pi_hash;
 	phpg_head_t *poh;
 	prop_info_t *pi;
 	zval result, *result_ptr;
 	int ret;
 
-	/*
-	 * Find the nearest internal parent class
-	 */
-	ce = Z_OBJCE_P(object);
-	while (ce->type != ZEND_INTERNAL_CLASS && ce->parent != NULL) {
-		ce = ce->parent;
-	}
-
 	poh = (phpg_head_t *)zend_objects_get_address(object TSRMLS_CC);
-	for (; ce != NULL; ce = ce->parent) {
-		if (zend_hash_find(&phpg_prop_info, ce->name, ce->name_length+1, (void **) &pi_hash) == SUCCESS) {
-			for (zend_hash_internal_pointer_reset(pi_hash);
-				 zend_hash_get_current_data(pi_hash, (void **)&pi) == SUCCESS;
-				 zend_hash_move_forward(pi_hash)) {
+    pi_hash = poh->pi_hash;
+    for (zend_hash_internal_pointer_reset(pi_hash);
+         zend_hash_get_current_data(pi_hash, (void **)&pi) == SUCCESS;
+         zend_hash_move_forward(pi_hash)) {
 
-				ret = pi->read(poh, &result);
-				if (ret == SUCCESS) {
-					ALLOC_ZVAL(result_ptr);
-					*result_ptr = result;
-					INIT_PZVAL(result_ptr);
-					zend_hash_update(poh->zobj.properties, (char *)pi->name, strlen(pi->name)+1, &result_ptr, sizeof(zval *), NULL);
-				}
-			}
-		}
-	}
+        ret = pi->read(poh, &result);
+        if (ret == SUCCESS) {
+            ALLOC_ZVAL(result_ptr);
+            *result_ptr = result;
+            INIT_PZVAL(result_ptr);
+            zend_hash_update(poh->zobj.properties, (char *)pi->name, strlen(pi->name)+1, &result_ptr, sizeof(zval *), NULL);
+        }
+    }
 
 	return poh->zobj.properties;
 }
@@ -265,6 +253,7 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 {
 	zend_class_entry ce, *real_ce;
 	HashTable pi_hash;
+    HashTable *parent_pi_hash = NULL;
 	prop_info_t *pi;
 
 	if (!phpg_class_key) {
@@ -285,32 +274,25 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 	real_ce = zend_register_internal_class_ex(&ce, parent, NULL TSRMLS_CC);
     real_ce->ce_flags = ce_flags;
 
+    zend_hash_init(&pi_hash, 1, NULL, NULL, 0);
     if (prop_info) {
         pi = prop_info;
-        if (pi->name) {
-            zend_hash_init(&pi_hash, 1, NULL, NULL, 0);
-
-            /*
-             * Only register properties with reader functions.
-             */
-            while (pi->name && pi->read) {
-                zend_hash_update(&pi_hash, (char *)pi->name, strlen(pi->name)+1, pi, sizeof(prop_info_t), NULL);
-                pi++;
-            }
-
-            zend_hash_add(&phpg_prop_info, ce.name, ce.name_length+1, &pi_hash, sizeof(HashTable), NULL);
-        }
-
         /*
-           if (zend_hash_index_find(&php_gtk_prop_desc, (long)real_ce->parent, (void **)&parent_prop_desc) == SUCCESS) {
-           if (parent_prop_desc->have_getter)
-           prop_desc.have_getter = 1;
-           if (parent_prop_desc->have_setter)
-           prop_desc.have_setter = 1;
-           }
-           zend_hash_index_update(&php_gtk_prop_desc, (long)real_ce, (void *)&prop_desc, sizeof(prop_desc_t), NULL);
+         * Only register properties with reader functions.
          */
+        while (pi->name && pi->read) {
+            zend_hash_update(&pi_hash, (char *)pi->name, strlen(pi->name)+1, pi, sizeof(prop_info_t), NULL);
+            pi++;
+        }
     }
+
+    /*
+     * Merge in parent's properties.
+     */
+    if (parent && zend_hash_find(&phpg_prop_info, parent->name, parent->name_length+1, (void **)&parent_pi_hash) == SUCCESS) {
+        zend_hash_merge(&pi_hash, parent_pi_hash, NULL, NULL, sizeof(prop_info_t), 0);
+    }
+    zend_hash_add(&phpg_prop_info, ce.name, ce.name_length+1, &pi_hash, sizeof(HashTable), NULL);
 
     if (gtype) {
         /* TODO store __gtype object. This is problematic since the shutdown
