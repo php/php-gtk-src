@@ -1,3 +1,13 @@
+2003-01-02  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * (ZE2_PORT)
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      main/php_gtk_util.c:
+      Implement PHPGTKException object and use it when object construction fails.
+      No idea what kind of interface to make for that exception - the class is
+      empty for now.
+
 2002-12-31  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (ZE2_PORT)
