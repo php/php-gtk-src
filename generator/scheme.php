@@ -30,6 +30,9 @@ $translation_table = preg_replace('![^a-zA-Z_]!', '_', $char_table);
 
 function parse($filename)
 {
+    if (!is_file($filename)) {
+        die("Unable to open file $filename\n");
+    }
     $fp = fopen($filename, 'r');
     $stack = array(array());
     $whitespace = " \t\n\r";
@@ -105,6 +108,7 @@ class Defs_Parser {
     var $enums          = array();  // enums and flags
     var $interfaces     = array();  // interfaces
     var $boxed          = array();  // boxed types
+    var $pointers       = array();  // pointers
     var $c_name         = array();  // C names of entities
 
     function Defs_Parser($arg)
@@ -194,9 +198,139 @@ class Defs_Parser {
         }
     }
 
-    function merge($parser)
+    function merge_parse_tree($parser)
     {
         $this->parse_tree = array_merge($this->parse_tree, $parser->parse_tree);
+    }
+
+    function merge($old, $merge_params)
+    {
+        $all_defs = array_merge($this->objects, $this->boxed, $this->interfaces, $this->pointers);
+
+        foreach ($all_defs as $def) {
+            if (isset($old->c_name[$def->c_name])) {
+                $def->merge($old->c_name[$def->c_name]);
+            }
+        }
+    
+        $all_defs = array_merge($this->functions, $this->constructors, $this->methods);
+        foreach ($all_defs as $def) {
+            if (isset($old->c_name[$def->c_name])) {
+                $def->merge($old->c_name[$def->c_name], $merge_params);
+            }
+        }
+    }
+
+    function sort_defs($defs)
+    {
+        usort($defs, create_function('$a, $b', 'return strcasecmp($a->c_name, $b->c_name);'));
+        return $defs;
+    }
+
+    function cmp_defs($a, $b)
+    {
+        if (($ca = get_class($a)) == ($cb = get_class($b))) {
+            return strcasecmp($a->c_name, $b->c_name);
+        } else {
+            return strcmp($ca, $cb);
+        }
+    }
+
+    function write_defs($fp = null)
+    {
+        if (!$fp) {
+            $fp = STDOUT;
+        }
+
+        if ($this->boxed) {
+            $my_defs = $this->boxed;
+            usort($my_defs, array($this, 'cmp_defs'));
+            fwrite($fp, ";; Boxed types ...\n\n");
+            foreach ($my_defs as $object) {
+                $object->write_defs($fp);
+            }
+        }
+
+        if ($this->enums) {
+            $my_defs = $this->enums;
+            usort($my_defs, array($this, 'cmp_defs'));
+            fwrite($fp, ";; Enumerations ...\n\n");
+            foreach ($my_defs as $object) {
+                $object->write_defs($fp);
+            }
+        }
+
+        if ($this->interfaces) {
+            $my_defs = $this->interfaces;
+            usort($my_defs, array($this, 'cmp_defs'));
+            fwrite($fp, ";; Interfaces ...\n\n");
+            foreach ($my_defs as $object) {
+                $object->write_defs($fp);
+            }
+        }
+
+        if ($this->objects) {
+            $my_defs = $this->objects;
+            usort($my_defs, array($this, 'cmp_defs'));
+            fwrite($fp, ";; Objects ...\n\n");
+            foreach ($my_defs as $object) {
+                $object->write_defs($fp);
+            }
+        }
+
+        if ($this->pointers) {
+            $my_defs = $this->pointers;
+            usort($my_defs, array($this, 'cmp_defs'));
+            fwrite($fp, ";; Pointers ...\n\n");
+            foreach ($my_defs as $pointer) {
+                $pointer->write_defs($fp);
+            }
+        }
+
+        if ($this->functions || $this->constructors || $this->methods) {
+            $my_defs = $this->sort_defs(array_merge($this->functions, $this->constructors, $this->methods));
+            fwrite($fp, ";; Functions, constructors, and methods ...\n\n");
+            foreach ($my_defs as $object) {
+                $object->write_defs($fp);
+            }
+        }
+    }
+
+    function write_missing_defs($old, $fp = null)
+    {
+        if (!$fp) {
+            $fp = STDOUT;
+        }
+
+        foreach ($this->sort_defs($this->boxed) as $object) {
+            if (!isset($old->c_name[$object->c_name])) {
+                $object->write_defs($fp);
+            }
+        }
+
+        foreach ($this->sort_defs($this->interfaces) as $object) {
+            if (!isset($old->c_name[$object->c_name])) {
+                $object->write_defs($fp);
+            }
+        }
+
+        foreach ($this->sort_defs($this->objects) as $object) {
+            if (!isset($old->c_name[$object->c_name])) {
+                $object->write_defs($fp);
+            }
+        }
+
+        foreach ($this->sort_defs($this->enums) as $object) {
+            if (!isset($old->c_name[$object->c_name])) {
+                $object->write_defs($fp);
+            }
+        }
+
+        foreach ($this->sort_defs(array_merge($this->constructors, $this->functions, $this->methods)) as $object) {
+            if (!isset($old->c_name[$object->c_name])) {
+                $object->write_defs($fp);
+            }
+        }
     }
 
     function handle($node)
@@ -216,58 +350,67 @@ class Defs_Parser {
         $enum_def       = new Enum_Def($arg);
         if (basename($this->file_path) == 'gtk+')
             $enum_def->simple = false;
-        $this->enums[]  = &$enum_def;
-        $this->c_name[] = &$enum_def->c_name;
+        $this->enums[]  = $enum_def;
+        $this->c_name[$enum_def->c_name] = $enum_def;
     }
 
     function handle_define_flags($arg)
     {
         $flag_def       = new Flag_Def($arg);
-        $this->enums[]  = &$flag_def;
-        $this->c_name[] = &$flag_def->c_name;
+        $this->enums[]  = $flag_def;
+        $this->c_name[$flag_def->c_name] = $flag_def;
     }
 
     function handle_define_function($arg)
     {
         $function_def       = new Function_Def($arg);
-        if (isset($function_def->is_constructor_of))
-            $this->constructors[] = &$function_def;
-        else
-            $this->functions[] = &$function_def;
-        $this->c_name[]     = &$function_def->c_name;
+        if (isset($function_def->is_constructor_of)) {
+            $old_def = @$this->functions[$function_def->c_name];
+            if (!isset($old_def) || $old_def->c_name == $old_def->name) {
+                $this->constructors[$function_def->c_name] = $function_def;
+            }
+        } else {
+            $old_def = @$this->functions[$function_def->c_name];
+            if (!isset($old_def) || $old_def->c_name == $old_def->name) {
+                $this->functions[$function_def->c_name] = $function_def;
+            }
+        }
+        $this->c_name[$function_def->c_name] = $function_def;
     }
 
     function handle_define_method($arg)
     {
         $method_def         = new Method_Def($arg);
-        $this->methods[]    = &$method_def;
-        $this->c_name[]     = &$method_def->c_name;
+        $this->methods[]    = $method_def;
+        $this->c_name[$method_def->c_name] = $method_def;
     }
 
     function handle_define_object($arg)
     {
         $object_def         = new Object_Def($arg);
-        $this->objects[]    = &$object_def;
-        $this->c_name[]     = &$object_def->c_name;
+        $this->objects[]    = $object_def;
+        $this->c_name[$object_def->c_name] = $object_def;
     }
 
     function handle_define_interface($arg)
     {
         $interface_def      = new Interface_Def($arg);
-        $this->interfaces[$interface_def->c_name] = &$interface_def;
-        $this->c_name[]     = &$interface_def->c_name;
+        $this->interfaces[$interface_def->c_name] = $interface_def;
+        $this->c_name[$interface_def->c_name] = $interface_def;
     }
 
     function handle_define_boxed($arg)
     {
         $boxed_def          = new Boxed_Def($arg);
-        $this->boxed[]      = &$boxed_def;
-        $this->c_name[]     = &$boxed_def->c_name;
+        $this->boxed[]      = $boxed_def;
+        $this->c_name[$boxed_def->c_name] = $boxed_def;
     }
 
     function handle_define_pointer($arg)
     {
-        fprintf(STDERR, "TODO: implement Pointer_Def\n");
+        $pointer_def        = new Pointer_Def($arg);
+        $this->pointers[]   = $pointer_def;
+        $this->c_name[$pointer_def->c_name] = $pointer_def;
     }
 
     function handle_include($arg)
@@ -276,6 +419,11 @@ class Defs_Parser {
         error_log("Parsing file \"$include_file\".");
         $include_tree = parse($include_file, 'r');
         $this->start_parsing($include_tree);
+    }
+
+    function handle_define_virtual($arg)
+    {
+        /* do nothing for now */
     }
 
     function handle_unknown($node)

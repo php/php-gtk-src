@@ -35,6 +35,10 @@ abstract class Definition {
         else
             $this->caller_owns_return = false;
     }
+
+    function merge()
+    {
+    }
 }
 
 class Enum_Def extends Definition {
@@ -63,6 +67,25 @@ class Enum_Def extends Definition {
                 $this->values = array_slice($arg, 1);
         }
     }
+
+    function write_defs($fp)
+    {
+        fwrite($fp, "(define-$this->def_type $this->name\n");
+        if ($this->in_module)
+            fwrite($fp, "  (in-module \"$this->in_module\")\n");
+        if ($this->c_name)
+            fwrite($fp, "  (c-name \"$this->c_name\")\n");
+        if ($this->typecode)
+            fwrite($fp, "  (gtype-id \"$this->typecode\")\n");
+        if ($this->values) {
+            fwrite($fp, "  (values\n");
+            foreach ($this->values as $value) {
+                fwrite($fp, "    '(\"$value[0]\" \"$value[1]\")\n");
+            }
+            fwrite($fp, "  )\n");
+        }
+        fwrite($fp, ")\n\n");
+    }
 }
 
 class Flag_Def extends Enum_Def {
@@ -84,7 +107,6 @@ class Object_Def extends Definition {
     var $typecode   = null;
     var $implements = array();
     var $ce_flags   = array();
-    var $has_methods = false;
 
     function Object_Def($args)
     {
@@ -110,9 +132,40 @@ class Object_Def extends Definition {
         }
         $this->ce = strtolower($this->c_name) . '_ce';
     }
+
+    function merge($old)
+    {
+        $this->fields = $old->fields;
+        $this->implements = $old->implements;
+    }
+
+    function write_defs($fp)
+    {
+        fwrite($fp, "(define-object $this->name\n");
+        if ($this->in_module)
+            fwrite($fp, "  (in-module \"$this->in_module\")\n");
+        if ($this->parent)
+            fwrite($fp, "  (parent \"$this->parent\")\n");
+        if ($this->c_name)
+            fwrite($fp, "  (c-name \"$this->c_name\")\n");
+        if ($this->typecode)
+            fwrite($fp, "  (gtype-id \"$this->typecode\")\n");
+        foreach ($this->implements as $interface) {
+            fwrite($fp, "  (implements \"$interface\")\n");
+        }
+        if ($this->fields) {
+            fwrite($fp, "  (fields\n");
+            foreach ($this->fields as $field) {
+                fwrite($fp, "    '(\"$field[0]\" \"$field[1]\")\n");
+            }
+            fwrite($fp, "  )\n");
+        }
+        fwrite($fp, ")\n\n");
+    }
 }
 
 class Method_Def extends Definition {
+    var $def_type           = 'method';
     var $name               = null;
     var $of_object          = null;
     var $c_name             = null;
@@ -169,9 +222,73 @@ class Method_Def extends Definition {
             $this->guess_return_value_ownership();
         }
     }
+
+    function merge($old, $merge_params)
+    {
+        $this->caller_owns_return = $old->caller_owns_return;
+        $this->is_constructor_of = $old->is_constructor_of;
+        $this->varargs = $old->varargs;
+        $this->deprecated = $old->deprecated;
+        $this->static = $old->static;
+
+        if ($merge_params) {
+            try {
+                foreach ($this->params as &$param) {
+                    foreach ($old->params as $old_param) {
+                        if ($old_param[1] == $param[1]) {
+                            if ($old_param[2] !== null)
+                                $param[2] = $old_param[2];
+                            if ($old_param[3] !== null)
+                                $param[3] = $old_param[3];
+                        } else {
+                            throw new Exception;
+                        }
+                    }
+                }
+            } catch (Exception $e) {
+                $this->params = $old->params;
+            }
+        } else {
+            $this->params = $old->params;
+
+        }
+    }
+
+    function write_defs($fp)
+    {
+        fwrite($fp, "(define-method $this->name\n");
+        if ($this->of_object)
+            fwrite($fp, "  (of-object \"$this->of_object\")\n");
+        if ($this->c_name)
+            fwrite($fp, "  (c-name \"$this->c_name\")\n");
+        if ($this->caller_owns_return)
+            fwrite($fp, "  (caller-owns-return \"$this->caller_owns_return\")\n");
+        if ($this->return_type)
+            fwrite($fp, "  (return-type \"$this->return_type\")\n");
+        if ($this->deprecated)
+            fwrite($fp, "  (deprecated \"$this->deprecated\")\n");
+        if ($this->params) {
+            fwrite($fp, "  (parameters\n");
+            foreach ($this->params as $param) {
+                fwrite($fp, "    '(\"$param[0]\" \"$param[1]\"");
+                if ($param[2])
+                    fwrite($fp, " (default \"$param[2]\")");
+                if ($param[3])
+                    fwrite($fp, " (null-ok)");
+                fwrite($fp, ")\n");
+            }
+            fwrite($fp, "  )\n");
+        }
+        if ($this->static)
+            fwrite($fp, "  (static #t)\n");
+        if ($this->varargs)
+            fwrite($fp, "  (varargs #t)\n");
+        fwrite($fp, ")\n\n");
+    }
 }
 
 class Function_Def extends Definition {
+    var $def_type           = 'function';
     var $name               = null;
     var $in_module          = null;
     var $is_constructor_of  = null;
@@ -240,6 +357,96 @@ class Function_Def extends Definition {
             $this->guess_return_value_ownership();
         }
     }
+
+    function merge($old, $merge_params)
+    {
+        $this->caller_owns_return = $old->caller_owns_return;
+        $this->varargs = $old->varargs;
+        $this->deprecated = $old->deprecated;
+
+        if ($merge_params && $this->params) {
+            try {
+                foreach ($this->params as &$param) {
+                    foreach ($old->params as $old_param) {
+                        if ($old_param[1] == $param[1]) {
+                            if ($old_param[2] !== null)
+                                $param[2] = $old_param[2];
+                            if ($old_param[3] !== null)
+                                $param[3] = $old_param[3];
+                        } else {
+                            throw new Exception;
+                        }
+                    }
+                }
+            } catch (Exception $e) {
+                $this->params = $old->params;
+            }
+        } else {
+            $this->params = $old->params;
+
+        }
+
+        $this->properties = $old->properties;
+
+        if ($old->def_type == 'method') {
+            $this->name = $old->name;
+            $this->of_object = $old->of_object;
+            $this->static = $old->static;
+            $this->def_type = 'method';
+        } else {
+            if ($this->is_constructor_of === null &&
+                $old->is_constructor_of !== null) {
+                $this->is_constructor_of = $old->is_constructor_of;
+            }
+        }
+    }
+
+    function write_defs($fp)
+    {
+        if ($this->def_type == 'method') {
+            Method_Def::write_defs($fp);
+            return;
+        }
+
+        fwrite($fp, "(define-function $this->name\n");
+        if ($this->in_module)
+            fwrite($fp, "  (in-module \"$this->in_module\")\n");
+        if ($this->is_constructor_of)
+            fwrite($fp, "  (is-constructor-of \"$this->is_constructor_of\")\n");
+        if ($this->c_name)
+            fwrite($fp, "  (c-name \"$this->c_name\")\n");
+        if ($this->caller_owns_return)
+            fwrite($fp, "  (caller-owns-return \"$this->caller_owns_return\")\n");
+        if ($this->return_type)
+            fwrite($fp, "  (return-type \"$this->return_type\")\n");
+        if ($this->deprecated)
+            fwrite($fp, "  (deprecated \"$this->deprecated\")\n");
+        if ($this->params) {
+            fwrite($fp, "  (parameters\n");
+            foreach ($this->params as $param) {
+                fwrite($fp, "    '(\"$param[0]\" \"$param[1]\"");
+                if ($param[2])
+                    fwrite($fp, " (default \"$param[2]\")");
+                if ($param[3])
+                    fwrite($fp, " (null-ok)");
+                fwrite($fp, ")\n");
+            }
+            fwrite($fp, "  )\n");
+        }
+        if ($this->properties) {
+            fwrite($fp, "  (properties\n");
+            foreach ($this->properties as $prop) {
+                fwrite($fp, "    '(\"$prop[0]\"");
+                if ($prop[1])
+                    fwrite($fp, " (optional)");
+                fwrite($fp, ")\n");
+            }
+            fwrite($fp, "  )\n");
+        }
+        if ($this->varargs)
+            fwrite($fp, "  (varargs #t)\n");
+        fwrite($fp, ")\n\n");
+    }
 }
 
 class Boxed_Def extends Definition {
@@ -252,7 +459,6 @@ class Boxed_Def extends Definition {
     var $release    = null;
     var $fields     = array();
     var $typecode   = null;
-    var $has_methods = false;
     var $ce_flags   = array();
 
     function Boxed_Def($args)
@@ -278,6 +484,34 @@ class Boxed_Def extends Definition {
         }
 
         $this->ce = strtolower($this->c_name) . '_ce';
+    }
+
+    function merge($old)
+    {
+        $this->fields = $old->fields;
+    }
+
+    function write_defs($fp)
+    {
+        fwrite($fp, "(define-boxed $this->name\n");
+        if ($this->in_module)
+            fwrite($fp, "  (in-module \"$this->in_module\")\n");
+        if ($this->c_name)
+            fwrite($fp, "  (c-name \"$this->c_name\")\n");
+        if ($this->typecode)
+            fwrite($fp, "  (gtype-id \"$this->typecode\")\n");
+        if ($this->copy)
+            fwrite($fp, "  (copy-func \"$this->copy\")\n");
+        if ($this->release)
+            fwrite($fp, "  (release-func \"$this->release\")\n");
+        if ($this->fields) {
+            fwrite($fp, "  (fields\n");
+            foreach ($this->fields as $field) {
+                fwrite($fp, "    '(\"$field[0]\" \"$field[1]\")\n");
+            }
+            fwrite($fp, "  )\n");
+        }
+        fwrite($fp, ")\n\n");
     }
 }
 
@@ -308,9 +542,69 @@ class Interface_Def extends Definition {
 
         $this->ce = strtolower($this->c_name) . '_ce';
     }
+
+    function write_defs($fp)
+    {
+        fwrite($fp, "(define-interface $this->name\n");
+        if ($this->in_module)
+            fwrite($fp, "  (in-module \"$this->in_module\")\n");
+        if ($this->c_name)
+            fwrite($fp, "  (c-name \"$this->c_name\")\n");
+        if ($this->typecode)
+            fwrite($fp, "  (gtype-id \"$this->typecode\")\n");
+        fwrite($fp, ")\n\n");
+    }
 }
 
 class Pointer_Def extends Definition {
+    var $def_type   = 'pointer';
+    var $name       = null;
+    var $in_module  = null;
+    var $c_name     = null;
+    var $ce         = null;
+    var $typecode   = null;
+    var $ce_flags   = array();
+    var $fields     = array();
+
+    function Pointer_Def($args)
+    {
+        $this->name = array_shift($args);
+
+        foreach ($args as $arg) {
+            if (!is_array($arg) || count($arg) < 2)
+                continue;
+
+            if ($arg[0] == 'in-module')
+                $this->in_module = $arg[1];
+            else if ($arg[0] == 'c-name')
+                $this->c_name = $arg[1];
+            else if ($arg[0] == 'gtype-id')
+                $this->typecode = $arg[1];
+            else if ($arg[0] == 'fields')
+                $this->fields = array_slice($arg, 1);
+        }
+
+        $this->ce = strtolower($this->c_name) . '_ce';
+    }
+
+    function write_defs($fp)
+    {
+        fwrite($fp, "(define-pointer $this->name\n");
+        if ($this->in_module)
+            fwrite($fp, "  (in-module \"$this->in_module\")\n");
+        if ($this->c_name)
+            fwrite($fp, "  (c-name \"$this->c_name\")\n");
+        if ($this->typecode)
+            fwrite($fp, "  (gtype-id \"$this->typecode\")\n");
+        if ($this->fields) {
+            fwrite($fp, "  (fields\n");
+            foreach ($this->fields as $field) {
+                fwrite($fp, "    '(\"$field[0]\" \"$field[1]\")\n");
+            }
+            fwrite($fp, "  )\n");
+        }
+        fwrite($fp, ")\n\n");
+    }
 }
 
 /* vim: set et sts=4: */
