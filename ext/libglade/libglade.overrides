@@ -46,7 +46,7 @@ static void glade_connect_one(const gchar *handler_name, GtkObject *obj, const
 							callback_data, php_gtk_destroy_notify, FALSE, after);
 }
 
-static glade_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object)
+static void glade_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object)
 {
 	char *handler_name = NULL;
 	zval *callback = NULL;
@@ -150,7 +150,7 @@ static void glade_connect_auto(const gchar *handler_name, GtkObject *obj,
 							data, php_gtk_destroy_notify, FALSE, after);
 }
 
-static glade_signal_autoconnect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object)
+static void glade_signal_autoconnect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object)
 {
 	zval *map = NULL;
 	php_gtk_autoconnect_data *ac_data;
