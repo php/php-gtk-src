@@ -2884,8 +2884,8 @@ PHP_FUNCTION(gtk_button_box_get_child_size_default)
 	add_next_index_long(return_value, min_height);
 }
 %%
-override button_box_get_child_ipadding_default
-PHP_FUNCTION(button_box_get_child_ipadding_default)
+override gtk_button_box_get_child_ipadding_default
+PHP_FUNCTION(gtk_button_box_get_child_ipadding_default)
 {
 	gint ipad_x, ipad_y;
 	NOT_STATIC_METHOD();
