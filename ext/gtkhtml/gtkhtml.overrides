@@ -69,44 +69,42 @@ override gtk_html_begin
 
 PHP_FUNCTION(gtk_html_begin)
 {
-	
-        char *content_type;
+	char *content_type;
 	php_gtkhtmlstream_s *pgs = NULL;
+
 	NOT_STATIC_METHOD();
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
 		return;
-        pgs   = (php_gtkhtmlstream_s *) emalloc(sizeof(php_gtkhtmlstream_s));
-        pgs->gs = gtk_html_begin(GTK_HTML(PHP_GTK_GET(this_ptr)));
 	
-        ZEND_REGISTER_RESOURCE(return_value, pgs, le_gtkhtmlstream);
-        pgs->id = Z_LVAL_P(return_value);        
+	pgs   = (php_gtkhtmlstream_s *) emalloc(sizeof(php_gtkhtmlstream_s));
+	pgs->gs = gtk_html_begin(GTK_HTML(PHP_GTK_GET(this_ptr)));
+
+	ZEND_REGISTER_RESOURCE(return_value, pgs, le_gtkhtmlstream);
+	pgs->id = Z_LVAL_P(return_value);        
 }
 
 %%
 override gtk_html_begin_content
 PHP_FUNCTION(gtk_html_begin_content)
 {
-	
-        char *content_type;
-        
+	char *content_type;
 	php_gtkhtmlstream_s *pgs = NULL;
 
 	NOT_STATIC_METHOD();
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &content_type))
 		return;
-		
-        pgs   = (php_gtkhtmlstream_s *) emalloc(sizeof(php_gtkhtmlstream_s));
-        pgs->gs = gtk_html_begin_content(GTK_HTML(PHP_GTK_GET(this_ptr)), content_type);
-	
-        ZEND_REGISTER_RESOURCE(return_value, pgs, le_gtkhtmlstream);
-        pgs->id = Z_LVAL_P(return_value);
+
+	pgs   = (php_gtkhtmlstream_s *) emalloc(sizeof(php_gtkhtmlstream_s));
+	pgs->gs = gtk_html_begin_content(GTK_HTML(PHP_GTK_GET(this_ptr)), content_type);
+
+	ZEND_REGISTER_RESOURCE(return_value, pgs, le_gtkhtmlstream);
+	pgs->id = Z_LVAL_P(return_value);
 }
 %%
 override gtk_html_write
  
-
 PHP_FUNCTION(gtk_html_write)
 {
 	zval **arg1, **arg2, **arg3=NULL;
@@ -119,32 +117,33 @@ PHP_FUNCTION(gtk_html_write)
 	php_gtkhtmlstream_s *pgs;
 
 	switch (ZEND_NUM_ARGS()) {
-	case 2:
-		if (zend_get_parameters_ex(2, &arg1, &arg2)==FAILURE) {
-			RETURN_FALSE;
-		}
-		convert_to_string_ex(arg2);
-		num_bytes = Z_STRLEN_PP(arg2);
-		break;
-	case 3:
-		if (zend_get_parameters_ex(3, &arg1, &arg2, &arg3)==FAILURE) {
-			RETURN_FALSE;
-		}
-		convert_to_string_ex(arg2);
-		convert_to_long_ex(arg3);
-		num_bytes = MIN(Z_LVAL_PP(arg3), Z_STRLEN_PP(arg2)); 
-/*		num_bytes = Z_LVAL_PP(arg3); */
-		break;
-	default:
-		WRONG_PARAM_COUNT;
-		/* NOTREACHED */
-		break;
+		case 2:
+			if (zend_get_parameters_ex(2, &arg1, &arg2)==FAILURE) {
+				RETURN_FALSE;
+			}
+			convert_to_string_ex(arg2);
+			num_bytes = Z_STRLEN_PP(arg2);
+			break;
+
+		case 3:
+			if (zend_get_parameters_ex(3, &arg1, &arg2, &arg3)==FAILURE) {
+				RETURN_FALSE;
+			}
+			convert_to_string_ex(arg2);
+			convert_to_long_ex(arg3);
+			num_bytes = MIN(Z_LVAL_PP(arg3), Z_STRLEN_PP(arg2)); 
+			/*		num_bytes = Z_LVAL_PP(arg3); */
+			break;
+			
+		default:
+			WRONG_PARAM_COUNT;
+			/* NOTREACHED */
+			break;
 	}
 
 	what = zend_fetch_resource(arg1 TSRMLS_CC, -1, "GtkHTMLStream", &type, 1, le_gtkhtmlstream);
 	ZEND_VERIFY_RESOURCE(what);
 	pgs = (php_gtkhtmlstream_s *) what;
-
  
 	if (!arg3 && PG(magic_quotes_runtime)) {
 		zval_copy_ctor(*arg2);
@@ -159,17 +158,11 @@ PHP_FUNCTION(gtk_html_write)
 	  php_error(E_WARNING, "OUT: %p  %2x ", pgs->gs, string[i]); 
 	}
         */
-        gtk_html_write(GTK_HTML(PHP_GTK_GET(this_ptr)),
-                pgs->gs,  Z_STRVAL_PP(arg2), num_bytes);
+	gtk_html_write(GTK_HTML(PHP_GTK_GET(this_ptr)),
+				   pgs->gs,  Z_STRVAL_PP(arg2), num_bytes);
  		
-  
  	RETURN_NULL();
-
-
- 
- }
-
-
+}
  
 %%
 override gtk_html_end
@@ -177,28 +170,28 @@ PHP_FUNCTION(gtk_html_end)
 {
 	GtkHTMLStreamStatus status;
 	zval *php_status = NULL;
-        zval *gs_zval;
+	zval *gs_zval;
 	php_gtkhtmlstream_s *pgs;
-        int resource_type;
-        char *buffer;
-        long  size;
+	int resource_type;
+	char *buffer;
+	long  size;
         
 	NOT_STATIC_METHOD();
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "rV", &gs_zval, &php_status))
 		return;
         
-        if (php_status) {
+	if (php_status) {
 		status = (GtkHTMLStreamStatus) php_status;
 	}
 	
 	pgs = (php_gtkhtmlstream_s *) zend_list_find(Z_RESVAL_P(gs_zval), &resource_type);
 	if (!pgs || resource_type != le_gtkhtmlstream) {
-	        php_error(E_WARNING,"html_end needs a valid htmlstream resource");
-        	return;
+		php_error(E_WARNING,"html_end needs a valid htmlstream resource");
+		return;
 	}
          
-        gtk_html_end(GTK_HTML(PHP_GTK_GET(this_ptr)), pgs->gs, status);
+	gtk_html_end(GTK_HTML(PHP_GTK_GET(this_ptr)), pgs->gs, status);
 
   	zend_list_delete(Z_RESVAL_P(gs_zval));
   
