@@ -18,8 +18,8 @@ AC_DEFUN([PHP_GTK_EXTENSION],[
   if test "$2" != "shared" && test "$2" != "yes"; then
 dnl ---------------------------------------------- Static module
     # static module
-	ifelse($3,,,PHP_ADD_SOURCES_X($php_gtk_ext_builddir,$3,$ac_extra,shared_objects_php_gtk))
-	ifelse($4,,,PHP_ADD_SOURCES_X(/ext/$1,$4,,shared_objects_php_gtk))
+	ifelse($3,,,PHP_ADD_SOURCES_X($php_gtk_ext_builddir,$3,$ac_extra,shared_objects_php_gtk2))
+	ifelse($4,,,PHP_ADD_SOURCES_X(/ext/$1,$4,,shared_objects_php_gtk2))
 	PHP_GTK_EXTENSIONS="$PHP_GTK_EXTENSIONS $1"
   else
 dnl ---------------------------------------------- Shared module
@@ -100,12 +100,12 @@ PHP_GTK_ARG_ANALYZE($5)
 
 dnl PHP_GTK_EXTENSION(gtk+, no, php_gtk+.c php_gdk.c php_gtk+_types.c, gen_gtk.c gen_gdk.c)
 PHP_GTK_EXTENSION(gtk+, no, php_gtk+.c, gen_atk.c gen_pango.c gen_gdk.c gen_gtk.c php_gtk+_types.c)
-PHP_NEW_EXTENSION(php_gtk, main/php_gtk.c main/phpg_gtype.c main/phpg_exceptions.c main/php_gtk_util.c main/phpg_gvalue.c main/phpg_closure.c main/phpg_gboxed.c main/phpg_gobject.c, $ext_shared,, -I@ext_srcdir@/main)
+PHP_NEW_EXTENSION(php_gtk2, main/php_gtk.c main/phpg_gtype.c main/phpg_exceptions.c main/php_gtk_util.c main/phpg_gvalue.c main/phpg_closure.c main/phpg_gboxed.c main/phpg_gobject.c, $ext_shared,, -I@ext_srcdir@/main)
 
 dnl reading config stubs
 dnl esyscmd(./build2/config-stubs ext)
 sinclude(ext/gtk+/config.m4)
 
-PHP_ADD_SOURCES_X(/main, php_gtk_ext.c,, shared_objects_php_gtk)
+PHP_ADD_SOURCES_X(/main, php_gtk_ext.c,, shared_objects_php_gtk2)
 PHP_ADD_MAKEFILE_FRAGMENT(main/Makefile.frag, main)
 
