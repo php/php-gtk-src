@@ -5,6 +5,7 @@
 * Provide access to GTK version number.
 * Fix $dialog->vbox->show() crash.
 * See what other object definitions might have been missed by h2def.py.
+* Add missing field defs to gtk.defs.
 
 In PHP
 ------

@@ -372,15 +372,18 @@ class Generator {
 
 			$function_entry = sprintf($this->function_entry, $this->prefix . "_" . $object_lname);
 			$constructor = $this->parser->find_constructor($object);
-			if ($this->overrides->is_overriden($constructor->c_name)) {
+			if (!$constructor || $this->overrides->is_ignored($constructor->c_name)) {
+				$function_entry .= sprintf($function_entry_tpl,
+										   strtolower($object->c_name),
+										   'no_constructor', 'NULL');
+			} else if ($this->overrides->is_overriden($constructor->c_name)) {
 				list(, $constructor_override) = $this->overrides->get_override($constructor->c_name);
 				fwrite($fp, $constructor_override . "\n");
 				$function_entry .= sprintf($function_entry_tpl,
 										   strtolower($constructor->is_constructor_of),
 										   strtolower($constructor->c_name),
 										   'NULL');
-			}
-			else if ($constructor != null && !$this->overrides->is_ignored($constructor->c_name)) {
+			} else if (!$this->overrides->is_ignored($constructor->c_name)) {
 				if ($byref = $this->write_constructor($fp, $object->c_name, $constructor)) {
 					$function_entry .= sprintf($function_entry_tpl,
 											   strtolower($constructor->is_constructor_of),
