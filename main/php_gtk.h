@@ -56,9 +56,26 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
+#define phpg_return_val_if_fail_quiet(expr, val) G_STMT_START{ \
+    if G_LIKELY(expr) { } else                     \
+    {                                \
+    	return (val);                          \
+    }; }G_STMT_END
+
+#define phpg_return_val_if_fail(expr, val) g_return_val_if_fail(expr, val)
+
+#define phpg_return_if_fail_quiet(expr) G_STMT_START{ \
+    if G_LIKELY(expr) { } else                     \
+    {                                \
+    	return;                          \
+    }; }G_STMT_END
+
+#define phpg_return_if_fail(expr) g_return_if_fail(expr)
 
 #define PHP_GTK_EXPORT_CE(ce) zend_class_entry *ce
 #define PHP_GTK_EXPORT_FUNC(func) func
+
+#if 0
 #define PHP_GTK_GET_GENERIC(w, type, le) ((type)php_gtk_get_object(w))
 #define PHP_GTK_GET(w)				PHP_GTK_GET_GENERIC(w, GtkObject*, le_gtk_object)
 #define PHP_GTK_SEPARATE_RETURN(return_value, result)			\
@@ -72,6 +89,7 @@
 
 #undef PG_ERROR
 #define PG_ERROR -2
+#endif
 
 typedef void (*phpg_dtor_t)(void *);
 
@@ -252,6 +270,15 @@ PHP_GTK_API void phpg_warn_deprecated(char *msg TSRMLS_DC);
 PHP_GTK_API  void php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object, int after);
 PHP_GTK_API zval* php_gtk_simple_signal_callback(GtkObject *o, gpointer data, zval *gtk_args );
 
+static inline zend_bool phpg_object_check(zval *zobj, zend_class_entry *ce TSRMLS_DC)
+{
+    phpg_return_val_if_fail(zobj != NULL, FALSE);
+    phpg_return_val_if_fail(ce != NULL, FALSE);
+	phpg_return_val_if_fail_quiet(Z_TYPE_P(zobj) == IS_OBJECT
+								  && instanceof_function(Z_OBJCE_P(zobj), ce TSRMLS_CC), FALSE);
+	return TRUE;
+}
+
 #define NOT_STATIC_METHOD() \
 	if (!this_ptr) { \
 		php_error(E_WARNING, "%s::%s() is not a static method", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C)); \
@@ -321,7 +348,7 @@ void phpg_gboxed_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gboxed_new(zval **zobj, GType gtype, gpointer boxed, gboolean copy, gboolean own_ref TSRMLS_DC);
 PHP_GTK_API zend_class_entry* phpg_register_boxed(const char *class_name, function_entry *class_methods, prop_info_t *prop_info, create_object_func_t create_obj_func, GType gtype TSRMLS_DC);
 PHP_GTK_API zend_object_value phpg_create_gboxed(zend_class_entry *ce TSRMLS_DC);
-PHP_GTK_API zend_bool phpg_gboxed_check(zval *zobj, GType gtype TSRMLS_DC);
+PHP_GTK_API zend_bool phpg_gboxed_check(zval *zobj, GType gtype, zend_bool full_check TSRMLS_DC);
 
 static inline phpg_gboxed_t* phpg_gboxed_get(zval *zobj TSRMLS_DC)
 {
