@@ -1,3 +1,13 @@
+2005-03-25  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * generator/generator.php:
+      - Allow addition of __construct method.
+      - Do not generate constructors for abstract types.
+
+    * main/php_gtk.h
+      main/phpg_gobject.c:
+      Implement default GObject constructor.
+
 2005-03-24  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gdk.defs
