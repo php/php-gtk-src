@@ -1,3 +1,44 @@
+2005-03-05  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/pango.overrides:
+      Implement PangoFontDescription() constructor and
+      PangoLayout::get_pixel_extents().
+
+    * ext/gtk+/php_gtk+_types.c:
+      - Use phpg_gboxed_check() with TRUE parameter for a complete check.
+      - Implement write_dimension and has_dimension handlers for style helper.
+
+    * generator/arg_types.php
+      generator/generator.php:
+      - Fix check for return value of phpg_gvalue_get_enum/flags().
+      - Call phpg_gboxed_check() with FALSE parameter for a quick check only.
+
+    * main/phpg_closure.c
+      main/phpg_gboxed.c
+      main/phpg_gobject.c:
+      Use our own phpg_return_* macros.
+
+    * main/php_gtk.h:
+      Implement phpg_return_* macros, some of which mirror g_return_* ones,
+      but we sometimes need to be able to return a value quietly.
+
+    * ext/gtk+/gdk.defs:
+      Add deprecation notices.
+
+    * ext/gtk+/gtk.overrides:
+      PHP_GTK_GET() is no more. Use PHPG_GOBJECT().
+
+    * main/php_gtk_util.c:
+      Use instanceof_function() instead of our own one.
+
+    * ext/gtk+/gtk.overrides:
+      Make GtkStyle properties use the new style helper object.
+
+    * ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c:
+      Implement internal style helper object for access to style property
+      arrays.
+
 2005-03-04  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/php_gtk.c
