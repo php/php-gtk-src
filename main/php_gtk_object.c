@@ -316,6 +316,7 @@ zval *php_gtk_new(GtkObject *obj)
 	zend_class_entry *ce;
 	GtkType type;
 	gchar *type_name;
+	TSRMLS_FETCH();
 	
 	if (!obj) {
 		MAKE_STD_ZVAL(wrapper);
@@ -1086,6 +1087,7 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 	zend_llist_element *stop_element;
 	zval **object = &property_reference->object;
 	int setter_retval, getter_retval;
+	TSRMLS_FETCH();
 
 	/*
 	 * We want to stop at the last overloaded object reference - the rest can

@@ -70,6 +70,7 @@ zval *php_gdk_event_new(GdkEvent *event)
 {
 	zval *result;
 	zval *value;
+	TSRMLS_FETCH();
 
 	MAKE_STD_ZVAL(result);
 
@@ -614,6 +615,7 @@ zval *php_gdk_window_new(GdkWindow *window)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!window) {
 		MAKE_STD_ZVAL(result);
@@ -639,6 +641,7 @@ zval *php_gdk_pixmap_new(GdkPixmap *pixmap)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!pixmap) {
 		MAKE_STD_ZVAL(result);
@@ -664,6 +667,7 @@ zval *php_gdk_bitmap_new(GdkWindow *bitmap)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!bitmap) {
 		MAKE_STD_ZVAL(result);
@@ -810,6 +814,7 @@ zval *php_gdk_color_new(GdkColor *color)
 {
 	zval *result;
 	GdkColor *result_obj;
+	TSRMLS_FETCH();
 
 	MAKE_STD_ZVAL(result);
 
@@ -926,6 +931,7 @@ zval *php_gdk_colormap_new(GdkColormap *cmap)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!cmap) {
 		MAKE_STD_ZVAL(result);
@@ -1007,6 +1013,7 @@ zval *php_gdk_atom_new(GdkAtom atom)
 {
 	zval *result;
 	gchar *atom_name;
+	TSRMLS_FETCH();
 
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gdk_atom_ce);
@@ -1030,6 +1037,7 @@ zval *php_gdk_cursor_new(GdkCursor *cursor)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!cursor) {
 		MAKE_STD_ZVAL(result);
@@ -1095,6 +1103,7 @@ zval *php_gdk_visual_new(GdkVisual *visual)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!visual) {
 		MAKE_STD_ZVAL(result);
@@ -1235,6 +1244,7 @@ zval *php_gdk_font_new(GdkFont *font)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!font) {
 		MAKE_STD_ZVAL(result);
@@ -1335,6 +1345,7 @@ zval *php_gdk_gc_new(GdkGC *gc)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!gc) {
 		MAKE_STD_ZVAL(result);
@@ -1570,6 +1581,7 @@ zval *php_gdk_drag_context_new(GdkDragContext *context)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!context) {
 		MAKE_STD_ZVAL(result);
@@ -1668,6 +1680,7 @@ zval *php_gtk_selection_data_new(GtkSelectionData *data)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!data) {
 		MAKE_STD_ZVAL(result);
@@ -1725,6 +1738,7 @@ zval *php_gtk_ctree_node_new(GtkCTreeNode *node)
 	zval *result;
 	zval **wrapper_ptr;
 	static zval *static_ptr = NULL;
+	TSRMLS_FETCH();
 
 	if (!node) {
 		MAKE_STD_ZVAL(result);
@@ -1878,6 +1892,7 @@ zval *php_gtk_accel_group_new(GtkAccelGroup *group)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!group) {
 		MAKE_STD_ZVAL(result);
@@ -1948,6 +1963,7 @@ zval *php_gtk_style_new(GtkStyle *style)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!style) {
 		MAKE_STD_ZVAL(result);
@@ -2320,6 +2336,7 @@ zval *php_gtk_box_child_new(GtkBoxChild *box_child)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!box_child) {
 		MAKE_STD_ZVAL(result);
@@ -2374,6 +2391,7 @@ zval *php_gtk_fixed_child_new(GtkFixedChild *fixed_child)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!fixed_child) {
 		MAKE_STD_ZVAL(result);
@@ -2424,6 +2442,7 @@ zval *php_gtk_clist_row_new(GtkCListRow *clist_row)
 {
 	zval *result;
 	zval **wrapper_ptr;
+	TSRMLS_FETCH();
 
 	if (!clist_row) {
 		MAKE_STD_ZVAL(result);
