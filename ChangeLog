@@ -1,3 +1,20 @@
+2001-03-27  James Moore  <James@phpuk.org>
+
+    * docs/stylesheets/xsl/html/class.xsl: Typo
+
+    * docs/stylesheets/xsl/html/class.xsl:
+    Make it write out to the correct file
+
+    * docs/stylesheets/xsl/html/class.xsl: Fix Parse error
+
+    * docs/scripts/CommonFuncs.inc: Adding class hierachy generator
+
+    * docs/stylesheets/xsl/html/class.xsl:
+    Write output from template parse to correct HTML file
+
+    * docs/stylesheets/xsl/html/class.xsl:
+    Updating a few pieces of PHP I missed last night
+
 2001-03-26  James Moore  <James@phpuk.org>
 
     * docs/stylesheets/xsl/html/class.xsl: Find correct prev and next links
