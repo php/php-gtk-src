@@ -1,3 +1,17 @@
+2003-09-22  Frank M. Kromann  <frank@kromann.info>
+
+    * ext/libglade/libglade.dsp
+      ext/libglade/libglade.dsp:
+      Latest libglade library is named libglade.lib
+
+    * win32/README.win32.txt
+      win32/README.win32.txt:
+      Adding missing include path
+
+    * win32/README.win32.txt
+      win32/README.win32.txt:
+      Updating the build instructions to match current files
+
 2003-09-07  Alan Knowles  <alan@akbkhome.com>
 
     * ext/extra/extra.defs:
