@@ -23,6 +23,27 @@ General
 ~~~~~~~
 * Find out why PY_TYPE_OBJECT is boxed
 
+
+Thoughts on reference counting and wrappers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. We should probably not ref the GtkWindow/GtkInvisible after construction.
+   It leaves a hanging reference around and the window will not get destroyed by
+   Gtk+. The proper way to destroy the toplevel window is via
+   gtk_window/widget_destroy(). Calling gtk::main_quit() is not enough.
+
+2. Since we lack a garbage collector, we need to fake it. We need to override
+   del_ref handler on the object, which will make sure that our wrapper is
+   destroyed only if the referent gobject also has refcount of 1, which we means
+   that only we own it. Otherwise, we need to keep our wrapper from being
+   destroyed and save a pointer to the wrapper in the gobject with notification
+   turned on, so that when gobject is destroyed by Gtk+ our wrapper is destroyed
+   as well.
+
+3. Just to make sure that our closure data is destroyed properly, we should
+   put closure object in the object store where it will get cleaned up on exit.
+
+
 [
   * todo
   - in progress
