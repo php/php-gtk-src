@@ -1,3 +1,21 @@
+2001-09-05  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/gdk.defs: Revert accidental commit.
+
+    * main/php_gtk.c: Use php-gtk as the INI prefix.
+
+    * ext/gtk+/gdk.defs
+      main/php_gtk.c: Unregister ini entries.
+
+2001-09-05  Frank M. Kromann  <frank@frontbase.com>
+
+    * ext/gtk+/gtk.overrides
+      generator/arg_types.php
+      main/php_gtk.c
+      main/php_gtk_module.h:
+    Adding PHP.INI setting for selecting the codepage used on Win32
+    Fixing missing CP1252 to UTF-8 convertion in GtkButton("") function
+
 2001-08-31  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/php_gtk+_types.c: Fix warning.
