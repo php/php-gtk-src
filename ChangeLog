@@ -1,3 +1,19 @@
+2001-03-31  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk.h
+      src/php_gtk_types.c
+      test/gtk.php
+      TODO
+      generator/arg_types.php
+      generator/gdk.overrides
+      generator/gtk.defs
+      generator/gtk.overrides:
+    * Implemented better separation of GdkWindow, GdkPixmap, and GdkBitmap.
+    * Added GtkCList 'row_list' property and GtkCListRow helper class.
+    * Finally fixed GtkCTree::insert_row() for good. No wonder it wasn't working.
+    * Added GtkCTree::node_set_row_data(), GtkCTree::node_get_row_data().
+    * More work on GtkCTree example in gtk.php.
+
 2001-03-29  James Moore  <James@phpuk.org>
 
     * docs/stylesheets/xsl/html/chunk.xsl
