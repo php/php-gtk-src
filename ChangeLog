@@ -1,3 +1,13 @@
+2001-12-06  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/generator.php: Turn off notices temporarily.
+
+2001-12-06  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * ext/gtkhtml/config.m4: - Name it properly.
+
+    * ext/gtkhtml/config.m4: - Typo causing this test to fail.
+
 2001-12-05  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/gtk.defs: Allow $mask argument to set_pixmap() to be NULL.
