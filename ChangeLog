@@ -1,3 +1,13 @@
+2003-10-21  Alan Knowles  <alan@akbkhome.com>
+
+    * (PHP_GTK_1)
+      NEWS:
+      update NEWS pre-1.0
+
+    * (PHP_GTK_1)
+      ext/gtk+/php_gtk+.c:
+      fix gtknotebook switch-page signal pointer not handled
+
 2003-10-18  Alan Knowles  <alan@akbkhome.com>
 
     * (PHP_GTK_1)
