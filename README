@@ -32,9 +32,12 @@ It will set up necessary files and create 'configure' script for you. Next, run
 './configure'. It will check that you have proper version of GTK+ and other
 files required for compilation and create the Makefile's.
 
-Finally, run 'make' to compile the extension. If the compilation is successful,
-run 'make install' to install the extension into your default PHP extension
-directory (usually /usr/local/lib/php/extensions).
+Finally, run 'make' to compile the extension. Some source files are generated
+from .defs files by the code generator. If you see messages like "Could not
+write...", that just means that certain GTK+ objects or features are not yet
+supported. If the compilation is successful, run 'make install' to install the
+extension into your default PHP extension directory (usually
+/usr/local/lib/php/extensions).
 
 To test the extension, try running the example scripts in the test/ directory,
 especially gtk.php. These are also good for showing how the extension can be
