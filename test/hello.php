@@ -1,4 +1,6 @@
 <?php
+
+error_reporting(E_ALL);
 /* $Id$ */
 
 if (!extension_loaded('php-gtk')) {
@@ -46,7 +48,8 @@ $window->set_border_width(10);
  */
 $button = new GtkButton('Hello World!');
 $button->connect('clicked', 'hello');
-
+$x= $button->child;
+echo "VARDUMP: ";var_dump($x);
 /*
  * Create a new tooltips object and use it to set a tooltip for the button.
  */

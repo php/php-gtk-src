@@ -5,7 +5,7 @@ if (!extension_loaded('gtk')) {
 	dl( 'php_gtk.' . PHP_SHLIB_SUFFIX);
 }
 error_reporting(E_ALL);
-
+   
 $windows = array();
 
 $book_closed_xpm = array("16 16 6 1",
@@ -1930,7 +1930,8 @@ function create_entry()
 
 		$cb = &new GtkCombo();
 		$cb->set_popdown_strings($strings);
-		$cb_entry = $cb->entry;
+		//TODO
+                $cb_entry = $cb->entry;
 		$cb_entry->set_text('Hello World');
 		$cb_entry->select_region(0, -1);
 		$box2->pack_start($cb);

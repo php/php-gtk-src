@@ -3051,12 +3051,51 @@ static void gtk_clist_row_get_property(zval *return_value, zval *object, char *p
 }
 
 
+
+
+static void php_g_object_get_property(zval *return_value, zval *object, char *prop_name, int *result) {
+
+	GParamSpec 	*paramspec ;
+	GObject		*gobject = PHP_GTK_GET(object);
+	const gchar *property_name = prop_name;
+	*result = SUCCESS;
+	GValue value = { 0, };
+	TSRMLS_FETCH();
+
+	
+	
+ 	paramspec = g_object_class_find_property    (G_OBJECT_GET_CLASS(gobject), property_name);
+ 	
+ 	if (!paramspec) {
+		/* printf("no property %s found\n",property_name); */
+	 	*result = FAILURE;
+		 return;
+ 	}
+ 	/* readable ? */
+ 	if (!(paramspec->flags & G_PARAM_READABLE)) {
+		php_error(E_WARNING, "property '%s' is a property (and may be writeable), but is not readable",prop_name);
+		ZVAL_NULL(return_value);
+	 	*result = FAILURE;
+		 return;
+ 	}
+ 	
+ 	g_value_init(&value, G_PARAM_SPEC_VALUE_TYPE(paramspec));
+	g_object_get_property(gobject, property_name, &value);
+	
+ 	*return_value = *php_gtk_arg_as_value((const GValue *)&value);
+ 	g_value_unset(&value);
+
+}
+
 void php_gtk_plus_register_types(int module_number)
 {
 	zend_class_entry ce;
 	TSRMLS_FETCH();
  
-	gobject_ce   = php_gtk_register_class("GObject", php_gobject_functions, NULL, 0, 0, NULL TSRMLS_CC);
+	gobject_ce   = php_gtk_register_class("GObject", php_gobject_functions, NULL, 1, 0, NULL TSRMLS_CC);
+	
+	php_gtk_register_prop_getter(gobject_ce,  php_g_object_get_property);
+	
 	g_hash_table_insert(php_gtk_class_hash, g_strdup("GObject"), gobject_ce);
 
 
