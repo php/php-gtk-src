@@ -1,3 +1,41 @@
+2002-01-23  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/makedist.cmd:
+    Make sure the dist. file is copied to the web directory
+
+    * ext/gtk+/php_gtk.dsp:
+    Fixing build. adding -r gdk.defs to the gen of gen_gtk.c
+
+2002-01-23  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: Fix date.
+
+2002-01-23  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/makedist.cmd
+      win32/php.ini: php.ini section for php-gtk.
+    This file is added to php.ini from PHP when the binary distribution is created
+
+2002-01-23  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: fix version
+
+2002-01-23  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/gtkhtml/gtkhtml.defs:
+    commenting out lines from defs file to keep BC with older versions of gtkhtml
+
+2002-01-23  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/docgen.php
+      generator/generator.php:
+    Fix to retain backwards compatibility even when running under sapi/cli.
+
+2002-01-23  Frank M. Kromann  <frank@frontbase.com>
+
+    * win32/makedist.cmd:
+    Setting the name of the zip file to match latest dist.
+
 2002-01-22  Andrei Zmievski  <andrei@ispi.net>
 
     * NEWS
