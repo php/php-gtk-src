@@ -1,3 +1,19 @@
+2003-01-04  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * (ZE2_PORT)
+      TODO
+      ext/gtk+/php_gtk+_types.c
+      generator/generator.php
+      generator/templates.php
+      main/php_gtk_object.c:
+      - Update property lists for boxed types. Now all properties are shown.
+        Whether that's a good thing or not is debatable - a simple var_dump()
+        on GtkWindow with a GtkButton inside produced over 16,000 lines of
+        output due to highly nested nature of Gtk objects and the abundant
+        properties.
+      - Fix the infinite recursion problem when obtaining properties. Required
+        a hack which seems to work for now.
+
 2003-01-02  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (ZE2_PORT)
