@@ -1,3 +1,20 @@
+2001-11-28  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtkhtml/config.m4
+      ext/gtkhtml/php_gtkhtml.c
+      ext/libglade/config.m4:
+    Some gtkhtml fixes.
+
+2001-11-28  Alan Knowles  <alan_k@hklc.com>
+
+    * ext/gtkhtml/Makefile.in
+      ext/gtkhtml/config.m4
+      ext/gtkhtml/gtkhtml.defs
+      ext/gtkhtml/gtkhtml.overrides
+      ext/gtkhtml/gtkhtml.php
+      ext/gtkhtml/php_gtkhtml.c
+      ext/gtkhtml/php_gtkhtml.h: first import of gtkhtml widget
+
 2001-11-27  Andrei Zmievski  <andrei@ispi.net>
 
     * config.m4
