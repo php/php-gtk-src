@@ -642,7 +642,7 @@ PHP_FUNCTION(gtk_check_button_new)
 #ifdef PHP_WIN32
 		utf8_label = g_convert(label, strlen(label), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
 		wrapped_obj = (GtkObject *)gtk_check_menu_item_new_with_label(utf8_label);
-		g_free(utf8_label);
+		if (utf8_label) g_free(utf8_label);
 #else
 		wrapped_obj = (GtkObject *)gtk_check_menu_item_new_with_label(label);		
 #endif
@@ -685,7 +685,7 @@ PHP_FUNCTION(gtk_check_menu_item_new)
 #ifdef PHP_WIN32
 		utf8_label = g_convert(label, strlen(label), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
 		wrapped_obj = (GtkObject *)gtk_check_menu_item_new_with_label(utf8_label);
-		g_free(utf8_label);
+		if (utf8_label) g_free(utf8_label);
 #else
 		wrapped_obj = (GtkObject *)gtk_check_menu_item_new_with_label(label);		
 #endif
@@ -2489,6 +2489,9 @@ PHP_FUNCTION(gtk_radio_button_new)
 	gchar *text = NULL;
 	GtkRadioButton *group = NULL;
 	GtkObject *wrapped_obj = NULL;
+#ifdef PHP_WIN32
+	gchar *utf8_text = NULL;
+#endif
 
 	NOT_STATIC_METHOD();
 
@@ -2504,10 +2507,19 @@ PHP_FUNCTION(gtk_radio_button_new)
 		else
 			wrapped_obj = (GtkObject *)gtk_radio_button_new(group->group);
 	} else {
+#ifdef PHP_WIN32
+		utf8_text = g_convert(text, strlen(text), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
 		if (!group)
 			wrapped_obj = (GtkObject *)gtk_radio_button_new_with_label(NULL, text);
 		else
 			wrapped_obj = (GtkObject *)gtk_radio_button_new_with_label(group->group, text);
+		if (utf8_text) g_free(utf8_text);
+#else
+		if (!group)
+			wrapped_obj = (GtkObject *)gtk_radio_button_new_with_label(NULL, text);
+		else
+			wrapped_obj = (GtkObject *)gtk_radio_button_new_with_label(group->group, text);
+#endif
 	}
 
 	if (!wrapped_obj) {
@@ -2532,6 +2544,9 @@ PHP_FUNCTION(gtk_radio_menu_item_new)
 	gchar *text = NULL;
 	GtkRadioMenuItem *group = NULL;
 	GtkObject *wrapped_obj = NULL;
+#ifdef PHP_WIN32
+	gchar *utf8_text = NULL;
+#endif
 
 	NOT_STATIC_METHOD();
 
@@ -2547,10 +2562,19 @@ PHP_FUNCTION(gtk_radio_menu_item_new)
 		else
 			wrapped_obj = (GtkObject *)gtk_radio_menu_item_new(group->group);
 	} else {
+#ifdef PHP_WIN32
+		utf8_text = g_convert(text, strlen(text), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+		if (!group)
+			wrapped_obj = (GtkObject *)gtk_radio_menu_item_new_with_label(NULL, utf8_text);
+		else
+			wrapped_obj = (GtkObject *)gtk_radio_menu_item_new_with_label(group->group, utf8_text);
+		if (utf8_text) g_free(utf8_text);
+#else
 		if (!group)
 			wrapped_obj = (GtkObject *)gtk_radio_menu_item_new_with_label(NULL, text);
 		else
 			wrapped_obj = (GtkObject *)gtk_radio_menu_item_new_with_label(group->group, text);
+#endif
 	}
 
 	if (!wrapped_obj) {
@@ -2603,6 +2627,9 @@ PHP_FUNCTION(gtk_toggle_button_new)
 {
 	GtkObject *wrapped_obj;
 	gchar *text = NULL;
+#ifdef PHP_WIN32
+	gchar *utf8_text = NULL;
+#endif
 
 	NOT_STATIC_METHOD();
 
@@ -2611,8 +2638,15 @@ PHP_FUNCTION(gtk_toggle_button_new)
 		return;
 	}
 
-	if (text)
+	if (text) {
+#ifdef PHP_WIN32
+		utf8_text = g_convert(text, strlen(text), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+		wrapped_obj = (GtkObject *)gtk_toggle_button_new_with_label(utf8_text);
+		if (utf8_text) g_free(utf8_text);
+#else
 		wrapped_obj = (GtkObject *)gtk_toggle_button_new_with_label(text);
+#endif
+	}
 	else
 		wrapped_obj = (GtkObject *)gtk_toggle_button_new();
 
