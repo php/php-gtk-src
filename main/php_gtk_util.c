@@ -97,6 +97,16 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
 			}
 			break;
 
+		case 'r':
+			{
+				zval **r = va_arg(*va, zval **);
+				if (Z_TYPE_PP(arg) != IS_RESOURCE)
+					return "resource";
+				else
+					*r = *arg;
+			}
+			break;
+
 		case 'a':
 			{
 				zval **p = va_arg(*va, zval **);
@@ -262,7 +272,7 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 
 			case 'i': case 'h': case 'c':
 			case 's': case 'd': case 'b':
-			case 'a': case 'N':
+			case 'a': case 'N': case 'r':
 			case 'O': case 'o': case 'V':
 				max_argc++;
 				break;
@@ -385,7 +395,7 @@ void php_gtk_invalidate(zval *wrapper)
 	ZVAL_NULL(wrapper);
 }
 
-zend_bool php_gtk_is_callable(zval *callable, char **callable_name)
+zend_bool php_gtk_is_callable(zval *callable, zend_bool syntax_only, char **callable_name)
 {
 	char *lcname;
 	int retval = 0;
@@ -393,13 +403,16 @@ zend_bool php_gtk_is_callable(zval *callable, char **callable_name)
 
 	switch (Z_TYPE_P(callable)) {
 		case IS_STRING:
+			if (syntax_only)
+				return 1;
+
 			lcname = estrndup(Z_STRVAL_P(callable), Z_STRLEN_P(callable));
 			zend_str_tolower(lcname, Z_STRLEN_P(callable));
 			if (zend_hash_exists(EG(function_table), lcname, Z_STRLEN_P(callable)+1)) 
 				retval = 1;
 			efree(lcname);
 			if (!retval && callable_name)
-				*callable_name = g_strndup(Z_STRVAL_P(callable), Z_STRLEN_P(callable));
+				*callable_name = estrndup(Z_STRVAL_P(callable), Z_STRLEN_P(callable));
 			break;
 
 		case IS_ARRAY:
@@ -407,11 +420,17 @@ zend_bool php_gtk_is_callable(zval *callable, char **callable_name)
 				zval **method;
 				zval **obj;
 				zend_class_entry *ce;
+				char name_buf[1024];
+				char callable_name_len;
 				
 				if (zend_hash_index_find(Z_ARRVAL_P(callable), 0, (void **) &obj) == SUCCESS &&
 					zend_hash_index_find(Z_ARRVAL_P(callable), 1, (void **) &method) == SUCCESS &&
 					(Z_TYPE_PP(obj) == IS_OBJECT || Z_TYPE_PP(obj) == IS_STRING) &&
 					Z_TYPE_PP(method) == IS_STRING) {
+
+					if (syntax_only)
+						return 1;
+
 					if (Z_TYPE_PP(obj) == IS_STRING) {
 						int found;
 
@@ -420,8 +439,10 @@ zend_bool php_gtk_is_callable(zval *callable, char **callable_name)
 						found = zend_hash_find(EG(class_table), lcname, Z_STRLEN_PP(obj) + 1, (void**)&ce);
 						efree(lcname);
 						if (found == FAILURE) {
-							if (callable_name)
-								*callable_name = g_strdup_printf("%s::%s", Z_STRVAL_PP(obj), Z_STRVAL_PP(method));
+							if (callable_name) {
+								callable_name_len = snprintf(name_buf, 1024, "%s::%s", Z_STRVAL_PP(obj), Z_STRVAL_PP(method));
+								*callable_name = estrndup(name_buf, callable_name_len);
+							}
 							break;
 						}
 					} else
@@ -430,15 +451,25 @@ zend_bool php_gtk_is_callable(zval *callable, char **callable_name)
 					zend_str_tolower(lcname, Z_STRLEN_PP(method));
 					if (zend_hash_exists(&ce->function_table, lcname, Z_STRLEN_PP(method)+1))
 						retval = 1;
-					if (!retval && callable_name)
-						*callable_name = g_strdup_printf("%s::%s", ce->name, Z_STRVAL_PP(method));
+					if (!retval && callable_name) {
+						callable_name_len = snprintf(name_buf, 1024, "%s::%s", ce->name, Z_STRVAL_PP(method));
+						*callable_name = estrndup(name_buf, callable_name_len);
+					}
 					efree(lcname);
 				} else if (callable_name)
-					*callable_name = g_strdup("unknown");
+					*callable_name = estrndup("Array", sizeof("Array")-1);
 			}
 			break;
 
 		default:
+			if (callable_name) {
+				zval expr_copy;
+				int use_copy;
+
+				zend_make_printable_zval(callable, &expr_copy, &use_copy);
+				*callable_name = estrndup(Z_STRVAL(expr_copy), Z_STRLEN(expr_copy));
+				zval_dtor(&expr_copy);
+			}
 			break;
 	}
 
