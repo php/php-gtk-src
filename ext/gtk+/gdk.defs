@@ -10,6 +10,13 @@
   (field (type-and-name guint16 height))
 )
 
+(struct Point
+  (in-module Gdk)
+  (c-name GdkPoint)
+  (field (type-and-name gint16 x))
+  (field (type-and-name gint16 y))
+)
+
 ;; Enumerations and flags ...
 
 (flags ColorInfoFlags

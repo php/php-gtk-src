@@ -61,9 +61,8 @@ PHP_MINIT_FUNCTION(gtk)
 
 PHP_MSHUTDOWN_FUNCTION(gtk)
 {
-/* Remove comments if you have entries in php.ini
 	UNREGISTER_INI_ENTRIES();
-*/
+
 	return SUCCESS;
 }
 
