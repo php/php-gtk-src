@@ -1,4 +1,26 @@
 /* vim: set ft=cpp: */
+/* TODO
+ * fix gdk_gc_new2
+ */
+%%
+headers
+#include <gdk-pixbuf/gdk-pixbuf.h>
+
+#if defined(GDK_WINDOWING_X11)
+#include <gdk/gdkx.h>
+#elif defined(GDK_WINDOWING_WIN32)
+#include <gdk/gdkwin32.h>
+#endif
+
+/* make GDK_DISPLAY() the case macro */
+#undef GDK_DISPLAY
+#define GDK_DISPLAY(object) (GDK_DISPLAY_OBJECT(object))
+
+/* Forward declaration, since gen_gtk.h is generated later. */
+extern PHP_GTK_EXPORT_CE(gtkwidget_ce);
+
+#include "gen_pango.h"
+
 %%
 ignore
 	GdkDebugFlag
@@ -6,6 +28,7 @@ ignore
 %%
 ignore
 	gdk_pixmap_new
+	gdk_gc_new2
 %%
 override gdk_color_parse
 PHP_FUNCTION(gdk_color_parse)

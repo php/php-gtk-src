@@ -2,6 +2,8 @@
 %%
 headers
 #include "gen_atk.h"
+#include "gen_gdk.h"
+#include "gen_pango.h"
 #include "ext/standard/file.h"
 
 %% {{{ ignores
