@@ -718,6 +718,9 @@ function fatal_error($message) {
 
 $old_error_reporting = error_reporting(E_ALL & ~E_NOTICE);
 
+/* For backwards compatibility. */
+chdir(dirname(__FILE__));
+
 if (!isset($HTTP_SERVER_VARS['argv'])) 
 	fatal_error("
         Could not read command line arguments for generator.php 

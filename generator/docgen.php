@@ -382,6 +382,9 @@ class DocGenerator {
 	}
 }
 
+/* For backwards compatibility. */
+chdir(dirname(__FILE__));
+
 $argc = $HTTP_SERVER_VARS['argc'];
 $argv = $HTTP_SERVER_VARS['argv'];
 
