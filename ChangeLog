@@ -1,3 +1,29 @@
+2001-11-29  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/gtk.overrides
+      NEWS:
+    - Added GtkCTree::find_by_row_data(), find_all_by_row_data().
+
+    * test/scribble.php: Fix scribble example.
+
+    * ext/gtk+/gtk.overrides:
+    gtk.overrides was getting too unwieldy, so I grouped all overrides by classes
+    and also introduced the folding markers so that it is easier to navigate in
+    editors that support them. Like Vim.
+
+    * NEWS: One more extension.
+
+    * ext/gtkhtml/gtkhtml.overrides: Formatting.
+
+    * ext/gtkhtml/.cvsignore: Ignore generated files.
+
+    * ext/gtkhtml/gtkhtml.overrides
+      ext/gtkhtml/php_gtkhtml.c
+      ext/gtkhtml/php_gtkhtml.h:
+    - The proper place to register list destructors is in XINIT function.
+    - Combine two constructors into one, now it's possible to pass a string
+      containing HTML to GtkHTML constructor.
+
 2001-11-28  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtkhtml/config.m4
