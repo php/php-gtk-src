@@ -744,11 +744,7 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 			/* Trying to access a property on a non-object. */
 			if (Z_TYPE_PP(object) != IS_OBJECT) {
 				return FAILURE;
-			} else if (last_oe_object) {
-				php_error(E_WARNING, "Cannot create property '%s' on overloaded property",
-						  Z_STRVAL(overloaded_property->element));
-				return FAILURE;
-			}
+			} 
 
 			if (element == stop_element) {
 				if (invoke_setter(*object, value, &element) == SUCCESS)
@@ -758,6 +754,10 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 							  Z_STRVAL(overloaded_property->element));
 					return FAILURE;
 				}
+			} else if (last_oe_object) {
+				php_error(E_WARNING, "Cannot create property '%s' on overloaded property",
+						  Z_STRVAL(overloaded_property->element));
+				return FAILURE;
 			} else
 				getter_retval = invoke_getter(*object, &result, &element);
 

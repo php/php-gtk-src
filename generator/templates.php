@@ -78,15 +78,15 @@ $prop_check_tpl =
 	}";
 
 $prop_getter_tpl = "
-static void %s_get_property(zval *return_value, zval *object, zend_llist_element **element, int *found)
+static void %s_get_property(zval *return_value, zval *object, zend_llist_element **element, int *result)
 {
 	char *prop_name = Z_STRVAL(((zend_overloaded_element *)(*element)->data)->element);
 
-	*found = SUCCESS;
+	*result = SUCCESS;
 
 %s
 
-	*found = FAILURE;
+	*result = FAILURE;
 }\n\n";
 
 $init_class_tpl = "

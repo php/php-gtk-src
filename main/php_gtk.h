@@ -70,8 +70,11 @@ extern zend_class_entry *gtk_clist_row_ce;
 /* include generated register functions declarations */
 #include "src/php_gtk_gen_reg_items_decl.h"
 
-typedef void (*prop_getter_t)(zval *return_value, zval *object, zend_llist_element **element, int *found);
+typedef void (*prop_getter_t)(zval *return_value, zval *object, zend_llist_element **element, int *result);
 typedef int (*prop_setter_t)(zval *object, zend_llist_element **element, zval *value);
+
+#undef PG_ERROR
+#define PG_ERROR -2
 
 /* Useful macros. */
 #define PHP_GTK_GET_GENERIC(w, type, le) ((type)php_gtk_get_object(w, le))
