@@ -1,3 +1,60 @@
+2001-03-08  Andrei Zmievski  <andrei@ispi.net>
+
+    * TODO
+      generator/generator.php:
+    Disable construction of abstract or unimplemented classes.
+
+2001-03-08  James Moore  <James@phpuk.org>
+
+    * docs/en/chapters/widget.xml:
+    Changed examples of containers and corrected GtkWindow->GtkWidget. Thanks Andrei.
+
+    * docs/en/chapters/widget.xml
+      docs/manual.xml.in:
+    Some brief background information about Widgets and Containers.
+
+    * docs/en/bookinfo.xml
+      docs/en/chapters/install.xml: PHP GTK -> PHP-GTK as it should be.
+
+    * docs/en/chapters/intro.xml
+      docs/global.ent:
+    Adding a What is PHP section. For those people who just happen to stumble
+    across PHP-GTK, Oh and chaged PHP GTK to PHP-GTK in one or two places.
+
+2001-03-08  Frank M. Kromann  <frank@frontbase.com>
+
+    * test/list.php: Fixing warning on call to connect function
+
+    * win32/README.win32.txt
+      win32/makedist.cmd: Minor fixes.
+
+    * win32/README.txt: Adding readme file for binary distribution
+
+    * win32/makedist.cmd: Adding script to create windows binary distribution
+
+2001-03-08  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk_types.c: Unimplemented macro.
+
+    * src/php_gtk_types.c: Conditionally include gdkx.h
+
+    * NEWS: Make versions have interesting names.
+
+    * README: More clarification about not using it for Web stuff.
+
+    * test/fileselection.php: Fixing after API changes.
+
+    * NEWS: Fix date.
+
+    * test/gtk.php: Add example of using gtk::type_name() and get_type()
+
+    * generator/gtk.defs
+      src/php_gtk_types.c
+      NEWS
+      TODO
+      makedist: * Added 'child' property to GtkBin and its descendants.
+    * Added an internal function for querying color values (not used yet).
+
 2001-03-07  James Moore  <James@phpuk.org>
 
     * docs/en/chapters/intro.xml
