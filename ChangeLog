@@ -1,3 +1,13 @@
+2002-01-03  Frank M. Kromann  <frank@frontbase.com>
+
+    * ext/gtk+/gtk.overrides: Fixing GtkCombo to use UTF-8 convertion on Win32
+
+2002-01-03  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/gtkhtml/gtkhtml.defs
+      ext/gtkhtml/gtkhtml.overrides:
+    Fixed GtkHTML parentage, added gtkhtml->set_cursor_xy
+
 2001-12-19  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/gtk.overrides: Ignore internal function.
