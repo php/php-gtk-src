@@ -124,6 +124,8 @@ struct _php_gtk_ext_entry {
     ZEND_DLEXPORT php_gtk_ext_entry *get_extension(void) { return &name##_ext_entry; }
 
 /* REM #include "ext/gtk+/php_gtk+.h" */
+#define PANGO_ENABLE_BACKEND
+#define PANGO_ENABLE_ENGINE
 #include <glib.h>
 #include <glib-object.h>
 #include <gtk/gtk.h>

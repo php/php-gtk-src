@@ -14,16 +14,20 @@
 #	grep -h "PHP_GTK_EXPORT_FUNC" $(srcdir)/gen_gtk.c $(srcdir)/gen_gdk.c | sed -e 's!$$!;!' >> $(srcdir)/gen_gtk.h
 
 COMMONDEFS=$(srcdir)/gtk-types.defs $(srcdir)/gdk-types.defs \
-		   $(srcdir)/atk-types.defs #$(srcdir)/pango-types.defs
+		   $(srcdir)/atk-types.defs $(srcdir)/pango-types.defs
 
 $(srcdir)/gen_gtk.c: $(srcdir)/gtk.defs $(COMMONDEFS) $(srcdir)/gtk-extrafuncs.defs $(srcdir)/gtk.overrides
+$(srcdir)/gen_gdk.c: $(srcdir)/gdk.defs $(COMMONDEFS) $(srcdir)/gdk.overrides
 $(srcdir)/gen_atk.c: $(COMMONDEFS) $(srcdir)/atk.overrides
+$(srcdir)/gen_pango.c: $(COMMONDEFS) $(srcdir)/pango.overrides
 
 gen_%.c : %.defs
 	( \
 	 cd ext/gtk+ \
      && $(PHP) $(top_srcdir)/generator/generator.php \
         -r atk-types.defs \
+        -r pango-types.defs \
+        -r gdk-types.defs \
         -r gtk-types.defs \
         -o $(*F).overrides \
         -p $(*F) $(*F).defs > $(@F)  \

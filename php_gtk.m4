@@ -99,7 +99,7 @@ PHP_GTK_ARG_ANALYZE($5)
 ])
 
 dnl PHP_GTK_EXTENSION(gtk+, no, php_gtk+.c php_gdk.c php_gtk+_types.c, gen_gtk.c gen_gdk.c)
-PHP_GTK_EXTENSION(gtk+, no, php_gtk+.c, gen_atk.c gen_gtk.c)
+PHP_GTK_EXTENSION(gtk+, no, php_gtk+.c, gen_atk.c gen_gtk.c gen_gdk.c gen_pango.c)
 PHP_NEW_EXTENSION(php_gtk, main/php_gtk.c main/phpg_gtype.c main/phpg_exceptions.c main/php_gtk_util.c main/phpg_gvalue.c main/phpg_gobject.c, $ext_shared,, -I@ext_srcdir@/main)
 
 dnl reading config stubs

@@ -33,6 +33,7 @@ PHP_GTK_API zend_class_entry *php_gtk_exception_ce;
 /* defined in php_gdk.c */
 void php_gdk_register_keysyms(int module_number TSRMLS_DC);
 
+/* TODO check pygtk version */
 static void init_gtk(void)
 {
 	HashTable *symbol_table;
@@ -167,8 +168,9 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 	//php_gdk_register_constants(module_number TSRMLS_CC);
 	//php_gdk_register_keysyms(module_number TSRMLS_CC);
 	phpg_gtk_register_classes();
+	phpg_gdk_register_classes();
 	phpg_atk_register_classes();
-	//php_gdk_register_classes();
+	phpg_pango_register_classes();
 	//php_gtk_plus_register_types(module_number);
 
 	return SUCCESS;
