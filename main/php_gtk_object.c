@@ -25,6 +25,8 @@
 #if HAVE_PHP_GTK
 
 int le_gtk;
+HashTable php_gtk_prop_getters;
+HashTable php_gtk_prop_setters;
 
 static const char *php_gtk_wrapper_key = "php_gtk::wrapper";
 
@@ -168,7 +170,7 @@ void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *
 		array_init(params);
 		zend_hash_next_index_insert(Z_ARRVAL_P(params), &wrapper, sizeof(zval *), NULL);
 		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0);
-		zval_del_ref(&gtk_args);
+		zval_ptr_dtor(&gtk_args);
 	} else
 		params = gtk_args;
 
@@ -184,13 +186,13 @@ void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *
 	if (retval)
 		zval_ptr_dtor(&retval);
 	efree(signal_args);
-	zval_del_ref(&params);
+	zval_ptr_dtor(&params);
 }
 
 void php_gtk_destroy_notify(gpointer user_data)
 {
 	zval *value = (zval *)user_data;
-	zval_del_ref(&value);
+	zval_ptr_dtor(&value);
 }
 
 zval *php_gtk_new(GtkObject *obj)
@@ -493,6 +495,97 @@ void php_gtk_ret_from_value(GtkArg *ret, zval *value)
 			g_assert_not_reached();
 			break;
 	}
+}
+
+inline void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter)
+{
+	zend_hash_index_update(&php_gtk_prop_getters, (long)ce, (void*)&getter,
+						   sizeof(prop_getter_t), NULL);
+}
+
+inline void php_gtk_register_prop_setter(zend_class_entry *ce, prop_setter_t setter)
+{
+	zend_hash_index_update(&php_gtk_prop_setters, (long)ce, (void*)&setter,
+						   sizeof(prop_setter_t), NULL);
+}
+
+/* Generic get/set property handlers. */
+zval php_gtk_get_property(zend_property_reference *property_reference)
+{
+	zval result;
+	zend_overloaded_element *overloaded_property;
+	zend_llist_element *element;
+	zval *object = property_reference->object;
+	prop_getter_t *getter;
+
+	for (element=property_reference->elements_list->head; element; element=element->next) {
+		overloaded_property = (zend_overloaded_element *) element->data;
+		if ((Z_TYPE_P(overloaded_property) != OE_IS_OBJECT ||
+			Z_TYPE(overloaded_property->element) != IS_STRING) ||
+			Z_TYPE_P(object) != IS_OBJECT) {
+			convert_to_null(&result);
+			return result;
+		}
+
+		if (zend_hash_index_find(&php_gtk_prop_getters, (long)object->value.obj.ce, (void **)&getter) == SUCCESS) {
+			(*getter)(&result, object, &element);
+		} else {
+			convert_to_null(&result);
+			return result;
+		}
+		object = &result;
+
+		zval_dtor(&overloaded_property->element);
+	}
+
+    return result;
+}
+
+int php_gtk_set_property(zend_property_reference *property_reference, zval *value)
+{
+	zval result;
+	zend_overloaded_element *overloaded_property;
+	zend_llist_element *element;
+	zend_llist_element *stop_element;
+	zval *object = property_reference->object;
+	prop_getter_t *getter;
+	prop_setter_t *setter;
+	int retval;
+
+	/*
+	 * We want to stop at the last overloaded object reference - the rest can
+	 * contain array references, that's fine.
+	 */
+	for (stop_element=property_reference->elements_list->tail;
+		 stop_element && Z_TYPE_P((zend_overloaded_element *)stop_element->data) == OE_IS_ARRAY;
+		 stop_element=stop_element->prev);
+
+	for (element=property_reference->elements_list->head; element && element!=stop_element; element=element->next) {
+		overloaded_property = (zend_overloaded_element *) element->data;
+		if (Z_TYPE_P(overloaded_property) != OE_IS_OBJECT ||
+			Z_TYPE(overloaded_property->element) != IS_STRING ||
+			Z_TYPE_P(object) != IS_OBJECT) {
+			return FAILURE;
+		}
+
+		if (zend_hash_index_find(&php_gtk_prop_getters, (long)object->value.obj.ce, (void **)&getter) == SUCCESS) {
+			(*getter)(&result, object, &element);
+		} else {
+			return FAILURE;
+		}
+		object = &result;
+
+		zval_dtor(&overloaded_property->element);
+	}
+
+	retval = FAILURE;
+	overloaded_property = (zend_overloaded_element *) element->data;
+	if (zend_hash_index_find(&php_gtk_prop_setters, (long)object->value.obj.ce, (void **)&setter) == SUCCESS) {
+		retval = (*setter)(object, &element, value);
+	}
+
+	zval_dtor(&overloaded_property->element);
+	return retval;
 }
 
 #endif  /* HAVE_PHP_GTK */

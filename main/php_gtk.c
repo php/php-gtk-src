@@ -160,6 +160,8 @@ PHP_MINIT_FUNCTION(gtk)
 	le_gtk = zend_register_list_destructors_ex(release_gtk_object_rsrc, NULL, "GtkObject", module_number);
 
 	php_gtk_class_hash = g_hash_table_new(g_str_hash, g_str_equal);
+	zend_hash_init_ex(&php_gtk_prop_getters, 20, NULL, NULL, 1, 0);
+	zend_hash_init_ex(&php_gtk_prop_setters, 20, NULL, NULL, 1, 0);
 	php_gtk_register_classes();
 	php_gtk_register_types(module_number);
 	php_gtk_register_constants(module_number ELS_CC);
@@ -181,6 +183,8 @@ PHP_MSHUTDOWN_FUNCTION(gtk)
 /* Remove comments if you have entries in php.ini
 	UNREGISTER_INI_ENTRIES();
 */
+	zend_hash_destroy(&php_gtk_prop_getters);
+	zend_hash_destroy(&php_gtk_prop_setters);
 	gtk_exit(0);
 	return SUCCESS;
 }

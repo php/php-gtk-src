@@ -62,6 +62,9 @@ extern zend_class_entry *gtk_ctree_node_ce;
 extern zend_class_entry *gtk_accel_group_ce;
 extern zend_class_entry *gtk_style_ce;
 
+typedef void (*prop_getter_t)(zval *result, zval *object, zend_llist_element **element);
+typedef int (*prop_setter_t)(zval *object, zend_llist_element **element, zval *value);
+
 /* Useful macros. */
 #define PHP_GTK_GET(w) 			((GtkObject *)php_gtk_get_object(w, le_gtk))
 #define PHP_GDK_EVENT_GET(w)	((GdkEvent *)php_gtk_get_object(w, le_gdk_event))
@@ -81,6 +84,8 @@ extern zend_class_entry *gtk_style_ce;
 
 /* True globals. */
 extern GHashTable *php_gtk_class_hash;
+extern HashTable php_gtk_prop_getters;
+extern HashTable php_gtk_prop_setters;
 
 /* Function declarations. */
 
@@ -96,6 +101,10 @@ void php_gtk_ret_from_value(GtkArg *ret, zval *value);
 zval *php_gtk_args_as_hash(int nargs, GtkArg *args);
 zval *php_gtk_arg_as_value(GtkArg *arg);
 int php_gtk_get_flag_value(GtkType flag_type, zval *flag_val, int *result);
+zval php_gtk_get_property(zend_property_reference *property_reference);
+int php_gtk_set_property(zend_property_reference *property_reference, zval *value);
+void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter);
+void php_gtk_register_prop_setter(zend_class_entry *ce, prop_setter_t setter);
 
 /* Constructors and initializers. */
 void php_gtk_object_init(GtkObject *obj, zval *wrapper);

@@ -1467,7 +1467,7 @@ static void gtk_ctree_node_get_property(zval *result, zval *object, zend_llist_e
 		while (temp) {
 			php_node = php_gtk_ctree_node_new(temp);
 			add_next_index_zval(result, php_node);
-			zval_del_ref(&php_node);
+			zval_ptr_dtor(&php_node);
 			temp = GTK_CTREE_ROW(temp)->sibling;
 		}
 	} else if (!strcmp(prop_name, "level")) {
@@ -1904,127 +1904,6 @@ static int gtk_style_set_property(zval *object, zend_llist_element **element, zv
 }
 
 
-
-/* Generic get/set property handlers. */
-static zval php_gtk_get_property(zend_property_reference *property_reference)
-{
-	zval result;
-	zend_overloaded_element *overloaded_property;
-	zend_llist_element *element;
-	zval *object = property_reference->object;
-
-	for (element=property_reference->elements_list->head; element; element=element->next) {
-		overloaded_property = (zend_overloaded_element *) element->data;
-		if ((Z_TYPE_P(overloaded_property) != OE_IS_OBJECT ||
-			Z_TYPE(overloaded_property->element) != IS_STRING) ||
-			Z_TYPE_P(object) != IS_OBJECT) {
-			convert_to_null(&result);
-			return result;
-		}
-
-		if (php_gtk_check_class(object, gdk_window_ce) ||
-			php_gtk_check_class(object, gdk_pixmap_ce) ||
-			php_gtk_check_class(object, gdk_bitmap_ce)) {
-			gdk_window_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gdk_color_ce)) {
-			gdk_color_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gdk_colormap_ce)) {
-			gdk_colormap_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gdk_cursor_ce)) {
-			gdk_cursor_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gdk_visual_ce)) {
-			gdk_visual_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gdk_font_ce)) {
-			gdk_font_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gdk_gc_ce)) {
-			gdk_gc_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gdk_drag_context_ce)) {
-			gdk_drag_context_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gtk_selection_data_ce)) {
-			gtk_selection_data_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gtk_ctree_node_ce)) {
-			gtk_ctree_node_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gtk_style_ce)) {
-			gtk_style_get_property(&result, object, &element);
-		} else {
-			convert_to_null(&result);
-			return result;
-		}
-		object = &result;
-
-		zval_dtor(&overloaded_property->element);
-	}
-
-    return result;
-}
-
-static int php_gtk_set_property(zend_property_reference *property_reference, zval *value)
-{
-	zval result;
-	zend_overloaded_element *overloaded_property;
-	zend_llist_element *element;
-	zend_llist_element *stop_element;
-	zval *object = property_reference->object;
-	int retval;
-
-	for (stop_element=property_reference->elements_list->tail;
-		 stop_element && Z_TYPE_P((zend_overloaded_element *)stop_element->data) == OE_IS_ARRAY;
-		 stop_element=stop_element->prev);
-
-	for (element=property_reference->elements_list->head; element && element!=stop_element; element=element->next) {
-		overloaded_property = (zend_overloaded_element *) element->data;
-		if (Z_TYPE_P(overloaded_property) != OE_IS_OBJECT ||
-			Z_TYPE(overloaded_property->element) != IS_STRING ||
-			Z_TYPE_P(object) != IS_OBJECT) {
-			return FAILURE;
-		}
-
-		if (php_gtk_check_class(object, gdk_window_ce) ||
-			php_gtk_check_class(object, gdk_pixmap_ce) ||
-			php_gtk_check_class(object, gdk_bitmap_ce)) {
-			gdk_window_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gdk_color_ce)) {
-			gdk_color_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gdk_colormap_ce)) {
-			gdk_colormap_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gdk_cursor_ce)) {
-			gdk_cursor_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gdk_visual_ce)) {
-			gdk_visual_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gdk_font_ce)) {
-			gdk_font_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gdk_gc_ce)) {
-			gdk_gc_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gdk_drag_context_ce)) {
-			gdk_drag_context_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gtk_selection_data_ce)) {
-			gtk_selection_data_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gtk_ctree_node_ce)) {
-			gtk_ctree_node_get_property(&result, object, &element);
-		} else if (php_gtk_check_class(object, gtk_style_ce)) {
-			gtk_style_get_property(&result, object, &element);
-		} else {
-			return FAILURE;
-		}
-		object = &result;
-
-		zval_dtor(&overloaded_property->element);
-	}
-
-	retval = FAILURE;
-	overloaded_property = (zend_overloaded_element *) element->data;
-	if (php_gtk_check_class(object, gdk_color_ce))
-		retval = gdk_color_set_property(object, &element, value);
-	else if (php_gtk_check_class(object, gdk_gc_ce))
-		retval = gdk_gc_set_property(object, &element, value);
-	else if (php_gtk_check_class(object, gtk_style_ce))
-		retval = gtk_style_set_property(object, &element, value);
-
-	zval_dtor(&overloaded_property->element);
-	return retval;
-}
-
-
 void php_gtk_register_types(int module_number)
 {
 	zend_class_entry ce;
@@ -2053,42 +1932,58 @@ void php_gtk_register_types(int module_number)
 	gdk_pixmap_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkbitmap", php_gdk_window_functions, NULL, php_gtk_get_property, NULL);
 	gdk_bitmap_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+	php_gtk_register_prop_getter(gdk_window_ce, gdk_window_get_property);
+	php_gtk_register_prop_getter(gdk_pixmap_ce, gdk_window_get_property);
+	php_gtk_register_prop_getter(gdk_bitmap_ce, gdk_window_get_property);
 
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkcolor", php_gdk_color_functions, NULL, php_gtk_get_property, php_gtk_set_property);
 	gdk_color_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+	php_gtk_register_prop_getter(gdk_color_ce, gdk_color_get_property);
+	php_gtk_register_prop_setter(gdk_color_ce, gdk_color_set_property);
 
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkcolormap", php_gdk_colormap_functions, NULL, php_gtk_get_property, php_gtk_set_property);
 	gdk_colormap_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+	php_gtk_register_prop_getter(gdk_colormap_ce, gdk_colormap_get_property);
 
 	INIT_CLASS_ENTRY(ce, "gdkatom", php_gdk_atom_functions);
 	gdk_atom_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 	
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkcursor", php_gdk_cursor_functions, NULL, php_gtk_get_property, NULL);
 	gdk_cursor_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+	php_gtk_register_prop_getter(gdk_cursor_ce, gdk_cursor_get_property);
 	
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkvisual", php_gdk_visual_functions, NULL, php_gtk_get_property, NULL);
 	gdk_visual_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+	php_gtk_register_prop_getter(gdk_visual_ce, gdk_visual_get_property);
 
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkfont", php_gdk_font_functions, NULL, php_gtk_get_property, NULL);
 	gdk_font_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+	php_gtk_register_prop_getter(gdk_font_ce, gdk_font_get_property);
 
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkgc", php_gdk_gc_functions, NULL, php_gtk_get_property, php_gtk_set_property);
 	gdk_gc_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+	php_gtk_register_prop_getter(gdk_gc_ce, gdk_gc_get_property);
+	php_gtk_register_prop_setter(gdk_gc_ce, gdk_gc_set_property);
 
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gdkdragcontext", php_gdk_drag_context_functions, NULL, php_gtk_get_property, NULL);
 	gdk_drag_context_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+	php_gtk_register_prop_getter(gdk_drag_context_ce, gdk_drag_context_get_property);
 
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gtkselectiondata", php_gtk_selection_data_functions, NULL, php_gtk_get_property, NULL);
 	gtk_selection_data_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+	php_gtk_register_prop_getter(gtk_selection_data_ce, gtk_selection_data_get_property);
 
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gtkctreenode", php_gtk_ctree_node_functions, NULL, php_gtk_get_property, NULL);
 	gtk_ctree_node_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+	php_gtk_register_prop_getter(gtk_ctree_node_ce, gtk_ctree_node_get_property);
 
 	INIT_CLASS_ENTRY(ce, "gtkaccelgroup", php_gtk_accel_group_functions);
 	gtk_accel_group_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
 
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gtkstyle", php_gtk_style_functions, NULL, php_gtk_get_property, php_gtk_set_property);
 	gtk_style_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
+	php_gtk_register_prop_getter(gtk_style_ce, gtk_style_get_property);
+	php_gtk_register_prop_setter(gtk_style_ce, gtk_style_set_property);
 }
 
 #endif
