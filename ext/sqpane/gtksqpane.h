@@ -116,7 +116,7 @@ void    gtk_sqpane_set_position    (GtkSQPane  *sqpane,
 				   gint       x,
 				   gint       y);
 void    gtk_sqpane_set_handle_size (GtkSQPane *sqpane,
-				   guint16   size);
+				   guint   size);
 
 /* Internal function */
 void    gtk_sqpane_compute_position (GtkSQPane *sqpane,

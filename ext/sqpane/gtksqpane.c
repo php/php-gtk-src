@@ -699,7 +699,7 @@ gtk_sqpane_set_position    (GtkSQPane  *sqpane,
 
 void
 gtk_sqpane_set_handle_size (GtkSQPane *sqpane,
-			   guint16   size)
+			   guint   size)
 {
   gint x,y,width,height;
   
@@ -1004,7 +1004,7 @@ gtk_sqpane_draw (GtkWidget    *widget,
 		GdkRectangle *area)
 {
   GtkSQPane *sqpane;
-  GdkRectangle handle_area, child_area;
+  GdkRectangle child_area;
   guint16 border_width;
 
   g_return_if_fail (widget != NULL);
@@ -1012,8 +1012,6 @@ gtk_sqpane_draw (GtkWidget    *widget,
 
   if (GTK_WIDGET_VISIBLE (widget) && GTK_WIDGET_MAPPED (widget))
     {
-      gint width, height;
-      
       sqpane = GTK_SQPANE (widget);
       border_width = GTK_CONTAINER (sqpane)->border_width;
 
@@ -1116,7 +1114,7 @@ gtk_sqpane_button_press (GtkWidget *widget, GdkEventButton *event)
 			| GDK_BUTTON1_MOTION_MASK 
 			| GDK_BUTTON_RELEASE_MASK,
 			NULL, NULL, event->time);
-          sqpane->child1_height += event->y - sqpane->handle_size / 2;
+          sqpane->child1_height += (gint)event->y - sqpane->handle_size / 2;
           sqpane->child1_height = CLAMP ((guint16)sqpane->child1_height, 0,
                                   widget->allocation.height - sqpane->handle_size
                                   - 2 * GTK_CONTAINER (sqpane)->border_width);
@@ -1132,7 +1130,7 @@ gtk_sqpane_button_press (GtkWidget *widget, GdkEventButton *event)
 			| GDK_BUTTON1_MOTION_MASK 
 			| GDK_BUTTON_RELEASE_MASK,
 			NULL, NULL, event->time);
-          sqpane->child1_width += event->x - sqpane->handle_size / 2;
+          sqpane->child1_width += (gint)event->x - sqpane->handle_size / 2;
           sqpane->child1_width = CLAMP ((guint16)sqpane->child1_width, 0,
                                   widget->allocation.width - sqpane->handle_size
                                   - 2 * GTK_CONTAINER (sqpane)->border_width);
@@ -1148,11 +1146,11 @@ gtk_sqpane_button_press (GtkWidget *widget, GdkEventButton *event)
 			| GDK_BUTTON1_MOTION_MASK 
 			| GDK_BUTTON_RELEASE_MASK,
 			NULL, NULL, event->time);
-          sqpane->child1_width += event->x - sqpane->handle_size / 2;
+          sqpane->child1_width += (gint)event->x - sqpane->handle_size / 2;
           sqpane->child1_width = CLAMP ((guint16)sqpane->child1_width, 0,
                                   widget->allocation.width - sqpane->handle_size
                                   - 2 * GTK_CONTAINER (sqpane)->border_width);
-          sqpane->child1_height += event->y - sqpane->handle_size / 2;
+          sqpane->child1_height += (gint)event->y - sqpane->handle_size / 2;
           sqpane->child1_height = CLAMP ((guint16)sqpane->child1_height, 0,
                                   widget->allocation.height - sqpane->handle_size
                                   - 2 * GTK_CONTAINER (sqpane)->border_width);
@@ -1205,8 +1203,8 @@ gtk_sqpane_motion (GtkWidget *widget, GdkEventMotion *event)
     gtk_widget_get_pointer(widget, &x, &y);
   else
     {
-    x = event->x;
-    y = event->y;
+    x = (gint)event->x;
+    y = (gint)event->y;
     }
 
   if (sqpane->in_drag==1)
