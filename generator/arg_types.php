@@ -553,8 +553,8 @@ class Boxed_Arg extends Arg_Type {
     if (phpg_gboxed_check(php_%(name), %(typecode), FALSE TSRMLS_CC)) {
         %(name) = (%(typename) *) PHPG_GBOXED(php_%(name));
     } else {
-        php_error(E_WARNING, \"%s() expects %(name) argument to be a valid %(typename) object\",
-                  get_active_function_name(TSRMLS_C));
+        php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a valid %(typename) object\",
+                  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
         return;
     }\n";
     const check_default_tpl = "
@@ -562,8 +562,8 @@ class Boxed_Arg extends Arg_Type {
         if (phpg_gboxed_check(php_%(name), %(typecode), FALSE TSRMLS_CC)) {
             %(name) = (%(typename) *) PHPG_GBOXED(php_%(name));
         } else {
-            php_error(E_WARNING, \"%s() expects %(name) argument to be a valid %(typename) object\",
-                      get_active_function_name(TSRMLS_C));
+            php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a valid %(typename) object\",
+                      get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
             return;
         }
     }\n";
@@ -572,8 +572,7 @@ class Boxed_Arg extends Arg_Type {
         if (phpg_gboxed_check(php_%(name), %(typecode), FALSE TSRMLS_CC)) {
             %(name) = (%(typename) *) PHPG_GBOXED(php_%(name));
         } else {
-            php_error(E_WARNING, \"%s() expects %(name) argument to be a valid %(typename) object or null\",
-                      get_active_function_name(TSRMLS_C));
+            php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a valid %(typename) object or null\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
             return;
         }
     }\n";
@@ -585,8 +584,7 @@ class Boxed_Arg extends Arg_Type {
             if (phpg_gboxed_check(php_%(name), %(typecode), FALSE TSRMLS_CC)) {
                 %(name) = (%(typename) *) PHPG_GBOXED(php_%(name));
             } else {
-                php_error(E_WARNING, \"%s() expects %(name) argument to be a valid %(typename) object or null\",
-                          get_active_function_name(TSRMLS_C));
+                php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a valid %(typename) object or null\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
                 return;
             }
         }
@@ -776,7 +774,7 @@ class GdkRectangle_Arg extends Arg_Type {
 class GdkRectanglePtr_Arg extends Arg_Type {
     const check_tpl = "
     if (phpg_rectangle_from_zval(php_%(name), &%(name)) == FAILURE) {
-        php_error(E_WARNING, \"%s() expects %(name) argument to be either a 4-element array or a GdkRectangle object\", get_active_function_name(TSRMLS_C));
+        php_error(E_WARNING, \"%s::%s() expects %(name) argument to be either a 4-element array or a GdkRectangle object\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
         return;
     }";
     const check_null_tpl = "
@@ -785,7 +783,7 @@ class GdkRectanglePtr_Arg extends Arg_Type {
     } else if (phpg_rectangle_from_zval(php_%(name), &%(name)_arg) == SUCCESS) {
         %(name) = &%(name)_arg;
     } else {
-        php_error(E_WARNING, \"%s() expects %(name) argument to be a 4-element array, a GdkRectangle object, or null\", get_active_function_name(TSRMLS_C));
+        php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a 4-element array, a GdkRectangle object, or null\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
         return;
     }";
     function write_param($type, $name, $default, $null_ok, $info)

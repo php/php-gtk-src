@@ -366,7 +366,8 @@ static int parse_arg(int arg_num, zval **arg, va_list *va, char **spec, int quie
 	expected_type = parse_arg_impl(arg, va, spec, errorbuf TSRMLS_CC);
 	if (expected_type) {
 		if (!quiet) {
-			sprintf(buf, "%s() expects argument %d to be %s, %s given",
+			sprintf(buf, "%s::%s() expects argument %d to be %s, %s given",
+					get_active_class_name(NULL TSRMLS_CC),
 					get_active_function_name(TSRMLS_C), arg_num, expected_type,
 					php_gtk_zval_type_name(*arg));
 			php_error(E_WARNING, buf);
@@ -419,7 +420,8 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 
 	if (argc < min_argc || argc > max_argc) {
 		if (!quiet) {
-			sprintf(buf, "%s() requires %s %d argument%s, %d given",
+			sprintf(buf, "%s::%s() requires %s %d argument%s, %d given",
+					get_active_class_name(NULL TSRMLS_CC),
 					get_active_function_name(TSRMLS_C),
 					min_argc == max_argc ? "exactly" : argc < min_argc ? "at least" : "at most",
 					argc < min_argc ? min_argc : max_argc,
@@ -449,7 +451,8 @@ static int php_gtk_parse_args_impl(int argc, char *format, va_list *va, int quie
 	args = (zval ***)emalloc(argc * sizeof(zval **));
 
 	if (zend_get_parameters_array_ex(argc, args) == FAILURE) {
-		php_error(E_WARNING, "Could not obtain arguments for parsing in %s",
+		php_error(E_WARNING, "Could not obtain arguments for parsing in %s::%s()",
+				  get_active_class_name(NULL TSRMLS_CC),
 				  get_active_function_name(TSRMLS_C));
 		efree(args);
 		return 0;
@@ -638,7 +641,8 @@ zval ***php_gtk_func_args(int argc)
 	args = (zval ***)emalloc(argc * sizeof(zval **));
 
 	if (zend_get_parameters_array_ex(argc, args) == FAILURE) {
-		php_error(E_WARNING, "Could not obtain arguments in %s",
+		php_error(E_WARNING, "Could not obtain arguments in %s::%s()",
+				  get_active_class_name(NULL TSRMLS_CC),
 				  get_active_function_name(TSRMLS_C));
 		efree(args);
 		return NULL;
@@ -656,7 +660,8 @@ PHP_GTK_API zval *php_gtk_func_args_as_hash(int argc, int start, int length)
 	args = (zval ***)emalloc(argc * sizeof(zval **));
 
 	if (zend_get_parameters_array_ex(argc, args) == FAILURE) {
-		php_error(E_WARNING, "Could not obtain arguments in %s",
+		php_error(E_WARNING, "Could not obtain arguments in %s::%s()",
+				  get_active_class_name(NULL TSRMLS_CC),
 				  get_active_function_name(TSRMLS_C));
 		efree(args);
 		return NULL;
@@ -723,7 +728,9 @@ static int php_gtk_count_specs(char *format, int endchar TSRMLS_DC)
 	while (level > 0 || *format != endchar) {
 		switch (*format) {
 			case '\0':
-				php_error(E_WARNING, "%s(): internal error: unmatched parenthesis in format", get_active_function_name(TSRMLS_C));
+				php_error(E_WARNING, "%s::%s(): internal error: unmatched parenthesis in format",
+						  get_active_class_name(NULL TSRMLS_CC),
+						  get_active_function_name(TSRMLS_C));
 				return -1;
 
 			case '(':
@@ -831,7 +838,9 @@ static zend_bool php_gtk_build_single(zval **result, char **format, va_list *va 
 				break;
 
 			default:
-				php_error(E_WARNING, "%s(): internal error: bad format spec while building value", get_active_function_name(TSRMLS_C));
+				php_error(E_WARNING, "%s::%s(): internal error: bad format spec while building value",
+						  get_active_class_name(NULL TSRMLS_CC),
+						  get_active_function_name(TSRMLS_C));
 				return 0;
 		}
 	}
@@ -889,7 +898,9 @@ static zend_bool php_gtk_build_hash(zval **result_p, char **format, va_list *va,
 	}
 	if (**format != endchar) {
 		zval_ptr_dtor(&result);
-		php_error(E_WARNING, "%s(): internal error: unmatched parenthesis in format", get_active_function_name(TSRMLS_C));
+		php_error(E_WARNING, "%s::%s(): internal error: unmatched parenthesis in format",
+				  get_active_class_name(NULL TSRMLS_CC),
+				  get_active_function_name(TSRMLS_C));
 		return 0;
 	} else if (endchar)
 		++*format;
@@ -934,7 +945,8 @@ PHP_GTK_API void phpg_warn_deprecated(char *msg TSRMLS_DC)
 {
 	char *space;
 	char *class_name = get_active_class_name(&space TSRMLS_CC);
-	php_error(E_WARNING, "%s%s%s() is deprecated%s%s", class_name, space, get_active_function_name(TSRMLS_C), msg?": ":"", msg?msg:"");
+	php_error(E_WARNING, "%s%s%s() is deprecated%s%s", class_name, space,
+			  get_active_function_name(TSRMLS_C), msg?": ":"", msg?msg:"");
 }
 
 #endif  /* HAVE_PHP_GTK */
