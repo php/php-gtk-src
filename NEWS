@@ -1,3 +1,4 @@
+    - made libglade work on Win32 platforms. (Frank)
     - added support for GtkSQPane widget. (Markus)
     - added GtkCList::get_pixtext(). (Andrei, Rich Payne)
 
