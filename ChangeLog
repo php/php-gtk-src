@@ -1,3 +1,27 @@
+2003-10-07  Alan Knowles  <alan@akbkhome.com>
+
+    * generator/h2def.php
+      generator/h2def.php:
+      
+      file h2def.php was initially added on branch GTK2.
+
+    * (GTK2)
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      main/php_gtk.h
+      main/php_gtk_object.c
+      test/gtk.php:
+      connect_object and connect() now work, albeit very kludgy..
+      added h2defs.php (the php port - heavily improved of the .h parser)
+      updated defs file using latest h2defs parser
+
+    * (GTK2)
+      main/php_gtk.h
+      main/php_gtk_object.c
+      test/gtk.php:
+      callbacks mostly working, - reverting gtk.php to original to try and find
+      last remaining issues :)
+
 2003-10-06  Alan Knowles  <alan@akbkhome.com>
 
     * (GTK2)
