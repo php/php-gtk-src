@@ -98,8 +98,7 @@ AC_ARG_WITH($1,[$3],$5=[$]withval,$5=ifelse($4,,no,$4))
 PHP_GTK_ARG_ANALYZE($5)
 ])
 
-dnl PHP_GTK_EXTENSION(gtk+, no, php_gtk+.c php_gdk.c php_gtk+_types.c, gen_gtk.c gen_gdk.c)
-PHP_NEW_EXTENSION(php_gtk, main/php_gtk.c main/php_gtk_object.c main/php_gtype.c main/phpg_exceptions.c main/php_gtk_util.c, $ext_shared,, -I@ext_srcdir@/main)
+PHP_NEW_EXTENSION(php_gtk, main/php_gtk.c main/php_gtk_object.c main/php_gtype.c main/phpg_exceptions.c main/php_gtk_util.c main/php_gvalue.c, $ext_shared,, -I@ext_srcdir@/main)
 
 dnl reading config stubs
 dnl esyscmd(./build2/config-stubs ext)

@@ -236,6 +236,10 @@ void php_gtype_register_self();
 PHP_GTK_API zval* php_gtype_new(GType type);
 PHP_GTK_API GType php_gtype_from_zval(zval *value);
 
+/* GValue */
+PHP_GTK_API zval* php_gvalue_as_zval(const GValue *gval, zend_bool copy_boxed);
+PHP_GTK_API int php_gvalue_from_zval(GValue *gval, zval *value);
+
 
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtype_ce);
 
