@@ -1,3 +1,11 @@
+2001-10-24  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * generator/generator.php: - Expose object when throwing an error.
+
+2001-10-24  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/arg_types.php: Support pointer to struct in return handler.
+
 2001-10-23  Markus Fischer  <mfischer@guru.josefine.at>
 
     * ext/skeleton/config.m4:
