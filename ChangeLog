@@ -1,3 +1,8 @@
+2001-10-13  Markus Fischer  <mfischer@guru.josefine.at>
+
+    * ext/gtk+/gtk.overrides:
+    - get_widget_draw() doesn't necessarily needs the allocation properties
+
 2001-10-12  Frank M. Kromann  <frank@frontbase.com>
 
     * win32/scheme.dsp: Fixing debug build
