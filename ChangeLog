@@ -1,3 +1,28 @@
+2005-03-15  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/phpg_support.c:
+      Add phpg_support.c file. Please run ./buildconf again.
+
+    * ext/gtk+/gtkstyle.overrides:
+      -** empty log message ***
+
+    * ext/gtk+/gtk.overrides:
+      Implement gtk::timeout_add_priority().
+
+    * generator/generator.php
+      generator/override.php:
+      Implement ability to add extra methods in overrides.
+
+    * TODO2
+      php_gtk.m4
+      main/php_gtk_util.c
+      main/phpg_gobject.c:
+      Move some support functions to phpg_support.c.
+
+    * ext/gtk+/gtk.overrides
+      main/php_gtk.h:
+      Implement gtk::timeout_add();
+
 2005-03-14  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/Makefile.frag
