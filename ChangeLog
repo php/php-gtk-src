@@ -1,3 +1,8 @@
+2001-05-21  Frank M. Kromann  <frank@frontbase.com>
+
+    * src/php_gtk.h
+      src/php_gtk_util.c: Fixing compilation on Win32
+
 2001-05-20  Andrei Zmievski  <andrei@ispi.net>
 
     * generator/docgen.php: More work on doc generator.
