@@ -5280,6 +5280,7 @@
 
 (define-function expander_new_with_mnemonic
   (c-name "gtk_expander_new_with_mnemonic")
+  (is-constructor-of "GtkExpander")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -5782,6 +5783,7 @@
 
 (define-function file_chooser_widget_new_with_backend
   (c-name "gtk_file_chooser_widget_new_with_backend")
+  (is-constructor-of "GtkFileChooserWidget")
   (return-type "GtkWidget*")
   (parameters
     '("GtkFileChooserAction" "action")
@@ -6394,6 +6396,7 @@
 
 (define-function gtk_font_button_new_with_font
   (c-name "gtk_font_button_new_with_font")
+  (is-constructor-of "GtkFontButton")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "fontname")
@@ -7573,6 +7576,7 @@
 
 (define-function image_new_from_stock
   (c-name "gtk_image_new_from_stock")
+  (is-constructor-of "GtkImage")
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "stock_id")
@@ -7582,6 +7586,7 @@
 
 (define-function image_new_from_icon_set
   (c-name "gtk_image_new_from_icon_set")
+  (is-constructor-of "GtkImage")
   (return-type "GtkWidget*")
   (parameters
     '("GtkIconSet*" "icon_set")
@@ -7591,6 +7596,7 @@
 
 (define-function image_new_from_animation
   (c-name "gtk_image_new_from_animation")
+  (is-constructor-of "GtkImage")
   (return-type "GtkWidget*")
   (parameters
     '("GdkPixbufAnimation*" "animation")
@@ -15863,6 +15869,7 @@
 
 (define-function toggle_tool_button_new_from_stock
   (c-name "gtk_toggle_tool_button_new_from_stock")
+  (is-constructor-of "GtkToggleToolButton")
   (return-type "GtkToolItem*")
   (parameters
     '("const-gchar*" "stock_id")
@@ -16253,6 +16260,7 @@
 
 (define-function tool_button_new_from_stock
   (c-name "gtk_tool_button_new_from_stock")
+  (is-constructor-of "GtkToolButton")
   (return-type "GtkToolItem*")
   (parameters
     '("const-gchar*" "stock_id")
