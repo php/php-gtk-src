@@ -13,7 +13,7 @@ $window->connect_object('destroy', array('gtk', 'main_quit'));
 
 
 $canvas= &new GtkCanvas();
-$canvas->set_usize(600,400);
+$canvas->set_usize(600,800);
 
 $root = $canvas->root();
 
@@ -59,18 +59,26 @@ $text = & new GtkCanvasWidget($root,array(
                                      "y"=> 100.0  ));
                                      
 
- /* PLYGONS ARE BUSTED - need to sort out the points stuff..
+ /* PLYGONS ARE BUSTED - need to sort out the points stuff.. */
 $polygon = & new GtkCanvasPolygon($root,
 
 
                         array(
                          "fill_color" =>"tan",
                          "outline_color" => "black",
-                         "width_units" => 3.0  ,
-                         "points" => array(
+                         "width_units" => 3.0  ));
+ 
+ 
+ //print_r(get_class_methods(get_class($polygon)));    
+/*                    
+$polygon->set_arg( "fill_color" , "tan");
+$polygon->set_arg( "outline_color" , "black");
+$polygon->set_arg( "width_units", 3.0   );
+  */                  
+$polygon->set_points( array(
                       
-                              270.0,  330.0,
-                              270.0,  430.0,
+                              170.0,  330.0,
+                              170.0,  430.0,
                               390.0,  430.0,
                               390.0,  330.0,
                               310.0,  330.0,
@@ -84,9 +92,9 @@ $polygon = & new GtkCanvasPolygon($root,
                               290.0,  410.0,
                               290.0,  330.0
                         )  
-                ));
+                );
                 
-                */
+               
 
 
 $window->add($canvas);
