@@ -156,3 +156,26 @@ PHP_FUNCTION(gtk_scintilla_search_in_target)
 
 	RETURN_LONG(gtk_search_in_target(GTK_SCINTILLA(PHP_GTK_GET(this_ptr)), length, text));
 }
+%%
+override gtk_scintilla_find_text
+PHP_FUNCTION(gtk_scintilla_find_text)
+{
+	int flags;
+	char *text;
+	long pos, chrg_min = 0, chrg_max,
+		 text_min, text_max;
+	GtkScintilla *scintilla = GTK_SCINTILLA(PHP_GTK_GET(this_ptr));
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "is|ll", &flags, &text, &chrg_min,
+							&chrg_max))
+		return;
+
+	if (ZEND_NUM_ARGS() < 4) {
+		chrg_max = gtk_scintilla_get_line_end_position(scintilla, gtk_scintilla_get_line_count(scintilla));
+	}
+
+	RETURN_LONG(gtk_scintilla_find_text(scintilla, flags, text, chrg_min,
+										chrg_max, &text_min, &text_max));
+}

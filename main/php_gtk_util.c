@@ -82,6 +82,16 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
 			}
 			break;
 
+		case 'l':
+			{
+				long *p = va_arg(*va, long *);
+				if (Z_TYPE_PP(arg) != IS_LONG && Z_TYPE_PP(arg) != IS_BOOL)
+					return "integer";
+				else
+					*p = Z_LVAL_PP(arg);
+			}
+			break;
+
 		case 'c':
 			{
 				char *p = va_arg(*va, char *);
@@ -265,7 +275,7 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 				min_argc = max_argc;
 				break;
 
-			case 'i': case 'h': case 'c':
+			case 'i': case 'h': case 'l': case 'c':
 			case 's': case 'd': case 'b':
 			case 'a': case 'N': case 'r':
 			case 'O': case 'o': case 'V':
