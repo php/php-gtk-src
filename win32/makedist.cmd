@@ -13,6 +13,7 @@ copy \php4\php_gtk.dll php4
 copy \php4\php_gtk_libglade.dll php4
 copy \php4\php_gtk_sqpane.dll php4
 copy \php\php4\php.ini-dist winnt\php.ini
+type \php\php-gtk\win32\php.ini >>winnt\php.ini
 copy %SystemRoot%\system32\gtk-1.3.dll winnt\system32
 copy %SystemRoot%\system32\gdk-1.3.dll winnt\system32
 copy %SystemRoot%\system32\gmodule-1.3.dll winnt\system32
