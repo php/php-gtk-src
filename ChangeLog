@@ -1,3 +1,11 @@
+2003-05-30  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * (ZE2_PORT)
+      ext/gtk+/gdk.overrides
+      ext/gtk+/php_gtk+_types.c
+      main/php_gtk_object.c:
+      Fix a few bugs.
+
 2003-05-29  Alan Knowles  <alan@akbkhome.com>
 
     * ext/canvas/canvas.defs
