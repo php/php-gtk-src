@@ -33,10 +33,10 @@ PHP_GTK_XINIT_FUNCTION(imlib)
 	
 	
 	 
+	gdk_imlib_init();
+	php_gdkimlib_register_constants(module_number TSRMLS_CC);
 	
-	php_imlib_register_constants(module_number TSRMLS_CC);
-	
-	php_imlib_register_classes();
+	php_gdkimlib_register_classes();
 	php_imlib_register_types(module_number); 
 	return SUCCESS;
 }
@@ -65,12 +65,12 @@ static void release_gdk_imlib_image_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
  
  
  
-int le_gdk_imlib_image;
+int le_php_gdk_imlib_image;
 PHP_GTK_EXPORT_CE(gdk_imlib_image_ce);
 
 static function_entry php_gdk_imlib_image_functions[] = {
 	{"GdkImlibImage", PHP_FN(no_direct_constructor), NULL},
-	{"GdkImlibImage", PHP_FN(no_direct_constructor), NULL},
+	{"gdkimlibimage", PHP_FN(no_direct_constructor), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -82,7 +82,7 @@ void php_imlib_register_types(int module_number)
 	zend_class_entry ce;
 	TSRMLS_FETCH();
 	
-	le_gdk_imlib_image = zend_register_list_destructors_ex(release_gdk_imlib_image_rsrc, NULL, "GdkImlibImage", module_number);
+	le_php_gdk_imlib_image = zend_register_list_destructors_ex(release_gdk_imlib_image_rsrc, NULL, "GdkImlibImage", module_number);
 	INIT_CLASS_ENTRY(ce, "gdkimlibimage", php_gdk_imlib_image_functions);
 	gdk_imlib_image_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 	 

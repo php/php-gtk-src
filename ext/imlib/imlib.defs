@@ -1,22 +1,22 @@
 ; from /usr/include/gdk_imlib.h
 ;; Enumerations and flags ...
 
-(function gdk_imlib_init 
-  (c-name gdk_imlib_init)
-  (return-type none)
-)
+;(function gdk_imlib_init 
+;  (c-name gdk_imlib_init)
+;  (return-type none)
+;)
 
-(function gdk_imlib_init_params
-  (c-name dk_imlib_init_params)
-  (return-type none)
-  (parameter (type-and-name gint rend_type))
-)
+;(function gdk_imlib_init_params
+;  (c-name dk_imlib_init_params)
+;  (return-type none)
+;  (parameter (type-and-name gint rend_type))
+;)
 
-(method s 
-  (of-object InitParams (GdkImlib))
-  (c-name gdk_imlib_init_params)
-  (return-type none)
-)
+;(method s 
+;  (of-object InitParams (GdkImlib))
+;  (c-name gdk_imlib_init_params)
+;  (return-type none)
+;)
 
 (function gdk_imlib_get_render_type 
   (c-name gdk_imlib_get_render_type)

@@ -33,8 +33,8 @@
 extern php_gtk_ext_entry imlib_ext_entry;
 #define imlib_ext_ptr &imlib_ext_entry
 
-void php_imlib_register_constants(int module_number TSRMLS_DC);
-void php_imlib_register_classes();
+void php_imlibregister_constants(int module_number TSRMLS_DC);
+void php_imlibregister_classes();
 void php_imlib_register_types(int module_number);
 
 
@@ -42,11 +42,7 @@ extern int le_php_gdk_imlib_image;
 #define PHP_GDK_IMLIB_IMAGE_GET(w)        PHP_GTK_GET_GENERIC(w, GdkImlibImage*, le_php_gdk_imlib_image)
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gdk_imlib_image_ce);
 
-
-extern int le_php_gdk_imlib_render;
-#define PHP_GDK_IMLIB_RENDER_GET(w)        PHP_GTK_GET_GENERIC(w, GdkImlibRender*, le_php_gdk_imlib_render)
-PHP_GTK_API extern PHP_GTK_EXPORT_CE(gdk_imlib_render_ce);
-
+ 
 
 
 #else
