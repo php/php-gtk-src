@@ -145,6 +145,7 @@ ignore
 	gtk_propagate_event
 %%
 ignore
+	GtkArgFlags
 	GtkPrivateFlags
 %%
 ignore
@@ -2189,3 +2190,22 @@ ignore
   gtk_drag_source_handle_event gtk_drag_dest_handle_event
   gtk_selection_request gtk_selection_notify gtk_selection_property_notify
   gtk_selection_incr_event
+%%
+override gtk_clist_get_selection_info
+PHP_FUNCTION(gtk_clist_get_selection_info)
+{
+	gint x, y;
+	gint row, column;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &x, &y))
+		return;
+
+	if (gtk_clist_get_selection_info(GTK_CLIST(PHP_GTK_GET(this_ptr)), x, y,
+									 &row, &column)) {
+		*return_value = *php_gtk_build_value("(ii)", row, column);
+	} else {
+		RETURN_FALSE;
+	}
+}

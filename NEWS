@@ -1,3 +1,4 @@
+    - added GtkCList::get_selection_info(). (Andrei)
     - added GtkCList methods set_row_data(), get_row_data(). (Markus)
     - added support for GtkScintilla, a text-editing widget. (Andrei)
     - implemented GladeXML methods signal_connect_object() and
