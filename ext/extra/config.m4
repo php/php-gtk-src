@@ -5,7 +5,7 @@ PHP_GTK_ARG_ENABLE(extra,for Gtkextra support, [  --enable-extra       Enable Gt
   for x in /usr /usr/local; do
 	  if test -f $x/include/gtkextra/gtkextra.h; then
 		  EXTRA_DIR=$x
-		  EXTRA_INCDIR=$x/include/gtkextra
+		  EXTRA_INCDIR=$x/include
    	fi
   done
   
