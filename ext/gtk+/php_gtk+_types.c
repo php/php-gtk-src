@@ -1615,15 +1615,22 @@ static int gdk_gc_set_property(zval *object, zend_llist_element **element, zval 
 			gdk_gc_set_font(gc, PHP_GDK_FONT_GET(value));
 		else
 			type_mismatch = 1;
-	} else if (php_gtk_check_class(value, gdk_window_ce) || Z_TYPE_P(value) == IS_NULL) {
-		GdkWindow *w = (Z_TYPE_P(value) == IS_NULL) ? NULL : PHP_GDK_WINDOW_GET(value);
-		
+	} else if (php_gtk_check_class(value, gdk_pixmap_ce) || php_gtk_check_class(value, gdk_bitmap_ce) || Z_TYPE_P(value) == IS_NULL) {
+		GdkDrawable *d = NULL;
+
+		if (Z_TYPE_P(value) != IS_NULL) {
+			if (php_gtk_check_class(value, gdk_pixmap_ce))
+				d = PHP_GDK_PIXMAP_GET(value);
+			else
+				d = PHP_GDK_BITMAP_GET(value);
+		}
+
 		if (!strcmp(prop_name, "tile"))
-			gdk_gc_set_tile(gc, w);
+			gdk_gc_set_tile(gc, d);
 		else if (!strcmp(prop_name, "stipple"))
-			gdk_gc_set_stipple(gc, w);
+			gdk_gc_set_stipple(gc, d);
 		else if (!strcmp(prop_name, "clip_mask"))
-			gdk_gc_set_clip_mask(gc, w);
+			gdk_gc_set_clip_mask(gc, d);
 		else
 			type_mismatch = 1;
 	} else

@@ -49,3 +49,46 @@ PHP_FUNCTION(gdk_pixbuf_render_pixmap_and_mask)
 	*return_value = *php_gtk_build_value("(NN)", php_gdk_pixmap_new(pixmap),
 										 php_gdk_bitmap_new(mask));
 }
+%%
+override gdk_pixbuf_fill fill GdkPixbuf
+PHP_FUNCTION(gdk_pixbuf_fill)
+{
+	unsigned int color;
+	int x, y, width, height, rowstride, n_chan;
+	guchar *pixels;
+	gboolean alpha;
+	GdkPixbuf *pixbuf;
+	guchar *p, *row;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &color))
+		return;
+
+	pixbuf    = PHP_GDK_PIXBUF_GET(this_ptr);
+	width     = gdk_pixbuf_get_width(pixbuf);
+	height    = gdk_pixbuf_get_height(pixbuf);
+	pixels    = gdk_pixbuf_get_pixels(pixbuf);
+	rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+	n_chan    = gdk_pixbuf_get_n_channels(pixbuf);
+	alpha     = gdk_pixbuf_get_has_alpha(pixbuf);
+
+	row = pixels;
+	for (y = 0; y < height; y++, row += rowstride) {
+		p = row;
+		if (alpha) {
+			for (x = 0; x < width; x++, p += n_chan) {
+				p[0] = color >> 24;
+				p[1] = color >> 16;
+				p[2] = color >> 8;
+				p[3] = color;
+			}
+		} else {
+			for (x = 0; x < width; x++, p += n_chan) {
+				p[0] = color >> 16;
+				p[1] = color >> 8;
+				p[2] = color;
+			}
+		}
+	}
+}

@@ -36,8 +36,8 @@ extern int le_gdk_pixbuf;
 extern php_gtk_ext_entry gdkpixbuf_ext_entry;
 #define gdkpixbuf_ext_ptr &gdkpixbuf_ext_entry
 
-void php_gdkpixbuf_register_constants(int module_number TSRMLS_DC);
-void php_gdkpixbuf_register_classes();
+void php_gdk_pixbuf_register_constants(int module_number TSRMLS_DC);
+void php_gdk_pixbuf_register_classes();
 zval *php_gdk_pixbuf_new(GdkPixbuf *pixbuf);
 
 #define PHP_GDK_PIXBUF_GET(w)	PHP_GTK_GET_GENERIC(w, GdkPixbuf*, le_gdk_pixbuf)

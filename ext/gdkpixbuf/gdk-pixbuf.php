@@ -22,7 +22,7 @@ $font = gdk::font_load("-*-helvetica-bold-r-*-*-*-120-*-*-*-*-*-*");
 $extents = $font->extents($image_file);
 
 $area = &new GtkDrawingArea();
-$area->size($pixbuf->get_width() - 2, $pixbuf->get_height() - 2);
+$area->size($pixbuf->get_width(), $pixbuf->get_height());
 $area->connect('expose_event', 'expose_event', $pixbuf, $font, $extents, basename($image_file));
 $frame = &new GtkFrame();
 $frame->add($area);
@@ -40,8 +40,7 @@ function expose_event($area, $event, $pixbuf, $font, $extents, $image_file)
 								$event->area->x, $event->area->y,
 								$event->area->x, $event->area->y,
 								$event->area->width, $event->area->height,
-								GDK_RGB_DITHER_NORMAL,
-								$event->area->x, $event->area->y);
+								GDK_RGB_DITHER_NORMAL, 0, 0);
 
 	if ($event->area->x < $extents[2] + 3 &&
 		$event->area->y < $extents[3] + $extents[4] + 3) {

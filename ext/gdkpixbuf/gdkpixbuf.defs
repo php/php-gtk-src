@@ -308,7 +308,7 @@
   (return-type GdkPixbuf*)
   (parameter (type-and-name int dest_width))
   (parameter (type-and-name int dest_height))
-  (parameter (type-and-name GdkInterpType interp_type))
+  (parameter (type-and-name GdkInterpType interp_type) (default GDK_INTERP_BILINEAR))
 )
 
 (method composite_color_simple
