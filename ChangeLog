@@ -1,3 +1,8 @@
+2003-06-16  Alan Knowles  <alan@akbkhome.com>
+
+    * generator/generator.php:
+      set the default memory_limit, to try and reduce support questions a bit
+
 2003-05-30  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (ZE2_PORT)
