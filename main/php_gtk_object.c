@@ -271,7 +271,7 @@ PHP_GTK_API void *php_gtk_get_object(zval *zobj, int rsrc_type)
 	return wrapper->obj;
 }
 
-int php_gtk_get_simple_enum_value(zval *enum_val, int *result)
+PHP_GTK_API int php_gtk_get_simple_enum_value(zval *enum_val, int *result)
 {
 	if (!enum_val)
 		return 0;

@@ -119,7 +119,7 @@ static inline void php_gtk_set_object(zval *zobj, void *obj, php_gtk_dtor_t dtor
 }
 
 PHP_GTK_API void *php_gtk_get_object(zval *wrapper, int rsrc_type);
-int php_gtk_get_simple_enum_value(zval *enum_val, int *result);
+PHP_GTK_API int php_gtk_get_simple_enum_value(zval *enum_val, int *result);
 PHP_GTK_API int php_gtk_get_enum_value(GtkType enum_type, zval *enum_val, int *result);
 PHP_GTK_API void php_gtk_destroy_notify(gpointer user_data);
 PHP_GTK_API void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *args);
