@@ -1,3 +1,20 @@
+2004-08-05  Andrei Zmievski  <andreiz@gmail.com>
+
+    * generator/generator.php
+      generator/override.php:
+      Tabs -> spaces.
+
+    * generator/arg_types.php
+      generator/definitions.php
+      generator/doc_templates.php
+      generator/docgen.php
+      generator/docmerger.php
+      generator/generator.php
+      generator/override.php
+      generator/scheme.php
+      generator/templates.php:
+      Finished definitions, except for Pointer_Def.
+
 2004-08-01  Andrei Zmievski  <andreiz@gmail.com>
 
     * (PHP_GTK_1)
