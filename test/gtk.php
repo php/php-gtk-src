@@ -20,8 +20,9 @@ function close_window($widget)
 	$window->hide();
 }
 
-function build_radio_menu($items)
+function build_option_menu($items, $history = null)
 {
+	$omenu = &new GtkOptionMenu();
 	$menu = &new GtkMenu();
 
 	foreach ($items as $item_name => $callback_data) {
@@ -32,9 +33,474 @@ function build_radio_menu($items)
 		$menu_item->show();
 	}
 
-	return $menu;
+	$omenu->set_menu($menu);
+	if ($history)
+		$omenu->set_history($history);
+
+	return $omenu;
 }
 
+
+function toggle_reorderable($button, $clist)
+{
+	$clist->set_reorderable($button->get_active());
+}
+
+
+$books = 1;
+$pages = 0;
+function create_ctree()
+{
+	global	$windows,
+			$books,
+			$pages;
+
+	if (!isset($windows['ctree'])) {
+		function rebuild_tree($button, $ctree)
+		{
+		}
+
+		$window = &new GtkWindow;
+		$windows['ctree'] = $window;
+		$window->connect('delete-event', 'delete_event');
+		$window->set_title('GtkCTree');
+		$window->set_border_width(0);
+
+		$tooltips = &new GtkTooltips();
+
+		$vbox = &new GtkVBox();
+		$window->add($vbox);
+		$vbox->show();
+
+		$hbox = &new GtkHBox(false, 5);
+		$hbox->set_border_width(5);
+		$vbox->pack_start($hbox, false);
+		$hbox->show();
+
+		$label = &new GtkLabel('Depth :');
+		$hbox->pack_start($label, false);
+		$label->show();
+
+		$adj = &new GtkAdjustment(4.0, 1.0, 10.0, 1.0, 5.0, 0.0);
+		$spin1 = &new GtkSpinButton($adj, 0.0, 0);
+		$hbox->pack_start($spin1, false, true, 5);
+		$spin1->show();
+
+		$label = &new GtkLabel('Books :');
+		$hbox->pack_start($label, false);
+		$label->show();
+
+		$adj = &new GtkAdjustment(3.0, 1.0, 20.0, 1.0, 5.0, 0.0);
+		$spin2 = &new GtkSpinButton($adj, 0.0, 0);
+		$hbox->pack_start($spin2, false, true, 5);
+		$spin2->show();
+
+		$label = &new GtkLabel('Pages :');
+		$hbox->pack_start($label, false);
+		$label->show();
+
+		$adj = &new GtkAdjustment(5.0, 1.0, 20.0, 1.0, 5.0, 0.0);
+		$spin3 = &new GtkSpinButton($adj, 0.0, 0);
+		$hbox->pack_start($spin3, false, true, 5);
+		$spin3->show();
+		
+		$button = &new GtkButton('Close');
+		$button->connect('clicked', 'close_window');
+		$hbox->pack_end($button);
+		$button->show();
+
+		$button = &new GtkButton('Rebuild Tree');
+		$hbox->pack_start($button);
+		$button->show();
+
+		$scrolled_win = &new GtkScrolledWindow();
+		$scrolled_win->set_border_width(5);
+		$scrolled_win->set_policy(GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+		$vbox->pack_start($scrolled_win);
+		$scrolled_win->show();
+
+		$ctree = &new GtkCTree(2, 0, array('Tree', 'Info'));
+		$scrolled_win->add($ctree);
+		$ctree->show();
+
+		$clist = $ctree->clist;
+		$clist->set_column_auto_resize(0, true);
+		$clist->set_column_width(1, 200);
+		$clist->set_selection_mode(GTK_SELECTION_EXTENDED);
+		$ctree->set_line_style(GTK_CTREE_LINES_DOTTED);
+		$line_style = GTK_CTREE_LINES_DOTTED;
+
+		$button->connect('clicked', 'rebuild_tree', $ctree);
+		$ctree->connect('click_column', 'ctree_click_column');
+
+		$ctree->connect_after('button_press_event', 'after_press');
+		$ctree->connect_after('button_release_event', 'after_press');
+		$ctree->connect_after('tree_move', 'after_press');
+		$ctree->connect_after('end_selection', 'after_press');
+		$ctree->connect_after('toggle_focus_row', 'after_press');
+		$ctree->connect_after('select_all', 'after_press');
+		$ctree->connect_after('unselect_all', 'after_press');
+		$ctree->connect_after('scroll_vertical', 'after_press');
+
+		$bbox = &new GtkHBox(false, 5);
+		$bbox->set_border_width(5);
+		$vbox->pack_start($bbox, false);
+		$bbox->show();
+
+		$mbox = &new GtkVBox(true, 5);
+		$bbox->pack_start($mbox, false);
+		$mbox->show();
+
+		$label = &new GtkLabel('Row Height :');
+		$mbox->pack_start($label, false, false);
+		$label->show();
+
+		$label = &new GtkLabel('Indent :');
+		$mbox->pack_start($label, false, false);
+		$label->show();
+
+		$label = &new GtkLabel('Spacing :');
+		$mbox->pack_start($label, false, false);
+		$label->show();
+
+		$mbox = &new GtkVBox(true, 5);
+		$bbox->pack_start($mbox, false);
+		$mbox->show();
+
+		$adj = &new GtkAdjustment(20.0, 12.0, 100.0, 1.0, 10.0, 0.0);
+		$spinner = &new GtkSpinButton($adj, 0.0, 0);
+		$tooltips->set_tip($spinner, 'Row height of list items.', '');
+		$adj->connect('value_changed', 'change_row_height', $ctree);
+		$clist->set_row_height((int)$adj->value);
+		$mbox->pack_start($spinner, false, false, 5);
+		$spinner->show();
+
+		$adj = &new GtkAdjustment(20.0, 0.0, 60.0, 1.0, 10.0, 0.0);
+		$spinner = &new GtkSpinButton($adj, 0.0, 0);
+		$tooltips->set_tip($spinner, 'Tree indentation.', '');
+		$adj->connect('value_changed', 'change_indent', $ctree);
+		$mbox->pack_start($spinner, false, false, 5);
+		$spinner->show();
+
+		$adj = &new GtkAdjustment(5.0, 0.0, 60.0, 1.0, 10.0, 0.0);
+		$spinner = &new GtkSpinButton($adj, 0.0, 0);
+		$tooltips->set_tip($spinner, 'Tree spacing.', '');
+		$adj->connect('value_changed', 'change_spacing', $ctree);
+		$mbox->pack_start($spinner, false, false, 5);
+		$spinner->show();
+
+		$mbox = &new GtkVBox(true, 5);
+		$bbox->pack_start($mbox, false);
+		$mbox->show();
+
+		$hbox = &new GtkHBox(false, 5);
+		$mbox->pack_start($hbox, false, false);
+		$hbox->show();
+
+		$button = &new GtkButton('Expand All');
+		$button->connect('clicked', 'expand_all', $ctree);
+		$hbox->pack_start($button);
+		$button->show();
+
+		$button = &new GtkButton('Collapse All');
+		$button->connect('clicked', 'collapse_all', $ctree);
+		$hbox->pack_start($button);
+		$button->show();
+
+		$button = &new GtkButton('Change Style');
+		$button->connect('clicked', 'change_style', $ctree);
+		$hbox->pack_start($button);
+		$button->show();
+
+		$button = &new GtkButton('Export Tree');
+		$button->connect('clicked', 'export_ctree', $ctree);
+		$hbox->pack_start($button);
+		$button->show();
+
+		$hbox = &new GtkHBox(false, 5);
+		$mbox->pack_start($hbox, false, false);
+		$hbox->show();
+
+		$button = &new GtkButton('Select All');
+		$button->connect('clicked', 'select_all', $ctree);
+		$hbox->pack_start($button);
+		$button->show();
+
+		$button = &new GtkButton('Unselect All');
+		$button->connect('clicked', 'unselect_all', $ctree);
+		$hbox->pack_start($button);
+		$button->show();
+
+		$button = &new GtkButton('Remove Selection');
+		$button->connect('clicked', 'remove_selection', $ctree);
+		$hbox->pack_start($button);
+		$button->show();
+
+		$check = &new GtkCheckButton('Reorderable');
+		$tooltips->set_tip($check, 'Tree items can be reordered by dragging.', '');
+		$check->connect('clicked', 'toggle_reorderable', $clist);
+		$check->set_active(true);
+		$hbox->pack_start($check, false);
+		$check->show();
+
+		$hbox = &new GtkHBox(false, 5);
+		$mbox->pack_start($hbox, false, false);
+		$hbox->show();
+
+		$items1 = array('No lines'	=> array('clist_toggle_line_style', $ctree, GTK_CTREE_LINES_NONE),
+						'Solid'		=> array('clist_toggle_line_style', $ctree, GTK_CTREE_LINES_SOLID),
+						'Dotted'	=> array('clist_toggle_line_style', $ctree, GTK_CTREE_LINES_DOTTED),
+						'Tabbed'	=> array('clist_toggle_line_style', $ctree, GTK_CTREE_LINES_TABBED));
+		$omenu1 = build_option_menu($items1, 2);
+		$tooltips->set_tip($omenu1, "The tree's line style.", '');
+		$hbox->pack_start($omenu1, false);
+		$omenu1->show();
+
+		$items2 = array('None'		=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_LINES_NONE),
+						'Square'	=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_LINES_SQUARE),
+						'Triangle'	=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_LINES_TRIANGLE),
+						'Circular'	=> array('clist_toggle_expander_style', $ctree, GTK_CTREE_LINES_CIRCULAR));
+		$omenu2 = build_option_menu($items2, 1);
+		$tooltips->set_tip($omenu1, "The tree's expander style.", '');
+		$hbox->pack_start($omenu2, false);
+		$omenu2->show();
+
+		$items3 = array('Left'	=> array('clist_toggle_justify', $clist, GTK_JUSTIFY_LEFT),
+						'Right'	=> array('clist_toggle_justify', $clist, GTK_JUSTIFY_RIGHT));
+		$omenu3 = build_option_menu($items3, 0);
+		$tooltips->set_tip($omenu1, "The tree's justification.", '');
+		$hbox->pack_start($omenu3, false);
+		$omenu3->show();
+
+		$items4 = array('Single'	=> array('clist_toggle_sel_mode', $clist, GTK_SELECTION_SINGLE),
+						'Browse'	=> array('clist_toggle_sel_mode', $clist, GTK_SELECTION_BROWSE),
+						'Multiple'	=> array('clist_toggle_sel_mode', $clist, GTK_SELECTION_MULTIPLE),
+						'Extended'	=> array('clist_toggle_sel_mode', $clist, GTK_SELECTION_EXTENDED));
+		$omenu4 = build_option_menu($items4, 1);
+		$tooltips->set_tip($omenu1, "The list's selection mode.", '');
+		$hbox->pack_start($omenu4, false);
+		$omenu4->show();
+
+		$window->realize();
+
+		$book_closed_xpm = array("16 16 6 1",
+								 "       c None s None",
+								 ".      c black",
+								 "X      c red",
+								 "o      c yellow",
+								 "O      c #808080",
+								 "#      c white",
+								 "                ",
+								 "       ..       ",
+								 "     ..XX.      ",
+								 "   ..XXXXX.     ",
+								 " ..XXXXXXXX.    ",
+								 ".ooXXXXXXXXX.   ",
+								 "..ooXXXXXXXXX.  ",
+								 ".X.ooXXXXXXXXX. ",
+								 ".XX.ooXXXXXX..  ",
+								 " .XX.ooXXX..#O  ",
+								 "  .XX.oo..##OO. ",
+								 "   .XX..##OO..  ",
+								 "    .X.#OO..    ",
+								 "     ..O..      ",
+								 "      ..        ",
+								 "                ");
+		$book_open_xpm = array("16 16 4 1",
+							   "       c None s None",
+							   ".      c black",
+							   "X      c #808080",
+							   "o      c white",
+							   "                ",
+							   "  ..            ",
+							   " .Xo.    ...    ",
+							   " .Xoo. ..oo.    ",
+							   " .Xooo.Xooo...  ",
+							   " .Xooo.oooo.X.  ",
+							   " .Xooo.Xooo.X.  ",
+							   " .Xooo.oooo.X.  ",
+							   " .Xooo.Xooo.X.  ",
+							   " .Xooo.oooo.X.  ",
+							   "  .Xoo.Xoo..X.  ",
+							   "   .Xo.o..ooX.  ",
+							   "    .X..XXXXX.  ",
+							   "    ..X.......  ",
+							   "     ..         ",
+							   "                ");
+		$mini_page_xpm = array("16 16 4 1",
+							   "       c None s None",
+							   ".      c black",
+							   "X      c white",
+							   "o      c #808080",
+							   "                ",
+							   "   .......      ",
+							   "   .XXXXX..     ",
+							   "   .XoooX.X.    ",
+							   "   .XXXXX....   ",
+							   "   .XooooXoo.o  ",
+							   "   .XXXXXXXX.o  ",
+							   "   .XooooooX.o  ",
+							   "   .XXXXXXXX.o  ",
+							   "   .XooooooX.o  ",
+							   "   .XXXXXXXX.o  ",
+							   "   .XooooooX.o  ",
+							   "   .XXXXXXXX.o  ",
+							   "   ..........o  ",
+							   "    oooooooooo  ",
+							   "                ");
+		$transparent = &new GdkColor(0, 0, 0);
+
+		list($pixmap1, $mask1) = Gdk::pixmap_create_from_xpm_d($window->window, $transparent, $book_closed_xpm);
+		list($pixmap2, $mask2) = Gdk::pixmap_create_from_xpm_d($window->window, $transparent, $book_open_xpm);
+		list($pixmap3, $mask3) = Gdk::pixmap_create_from_xpm_d($window->window, $transparent, $mini_page_xpm);
+
+		$ctree->set_usize(0, 300);
+
+		$frame = &new GtkFrame();
+		$frame->set_border_width(0);
+		$frame->set_shadow_type(GTK_SHADOW_OUT);
+		$vbox->pack_start($frame, false);
+		$frame->show();
+
+		$hbox = &new GtkHBox(true, 2);
+		$hbox->set_border_width(2);
+		$frame->add($hbox);
+		$hbox->show();
+
+		$frame = &new GtkFrame();
+		$frame->set_shadow_type(GTK_SHADOW_IN);
+		$hbox->pack_start($frame, false);
+		$frame->show();
+
+		$hbox2 = &new GtkHBox();
+		$hbox2->set_border_width(2);
+		$frame->add($hbox2);
+		$hbox2->show();
+
+		$label = &new GtkLabel('Books :');
+		$hbox2->pack_start($label, false);
+		$label->show();
+
+		$book_label = &new GtkLabel((string)$books);
+		$hbox2->pack_start($book_label, false, true, 5);
+		$book_label->show();
+
+		$frame = &new GtkFrame();
+		$frame->set_shadow_type(GTK_SHADOW_IN);
+		$hbox->pack_start($frame, false);
+		$frame->show();
+
+		$hbox2 = &new GtkHBox();
+		$hbox2->set_border_width(2);
+		$frame->add($hbox2);
+		$hbox2->show();
+
+		$label = &new GtkLabel('Pages :');
+		$hbox2->pack_start($label, false);
+		$label->show();
+
+		$page_label = &new GtkLabel((string)$pages);
+		$hbox2->pack_start($page_label, false, true, 5);
+		$page_label->show();
+
+		$frame = &new GtkFrame();
+		$frame->set_shadow_type(GTK_SHADOW_IN);
+		$hbox->pack_start($frame, false);
+		$frame->show();
+
+		$hbox2 = &new GtkHBox();
+		$hbox2->set_border_width(2);
+		$frame->add($hbox2);
+		$hbox2->show();
+
+		$label = &new GtkLabel('Selected :');
+		$hbox2->pack_start($label, false);
+		$label->show();
+
+		$sel_label = &new GtkLabel((string)count($clist->selection));
+		$hbox2->pack_start($sel_label, false, true, 5);
+		$sel_label->show();
+
+		$frame = &new GtkFrame();
+		$frame->set_shadow_type(GTK_SHADOW_IN);
+		$hbox->pack_start($frame, false);
+		$frame->show();
+
+		$hbox2 = &new GtkHBox();
+		$hbox2->set_border_width(2);
+		$frame->add($hbox2);
+		$hbox2->show();
+
+		$label = &new GtkLabel('Visible :');
+		$hbox2->pack_start($label, false);
+		$label->show();
+
+		/* TODO implement GtkCListRow and its properties */
+		$vis_label = &new GtkLabel((string)count($clist->row_list));
+		$hbox2->pack_start($vis_label, false, true, 5);
+		$vis_label->show();
+		
+		rebuild_tree(null, $ctree);
+	}
+	$windows['ctree']->show();
+}
+
+
+function create_pixmap()
+{
+	global	$windows;
+
+	if (!isset($windows['pixmap'])) {
+		$window = &new GtkWindow;
+		$windows['pixmap'] = $window;
+		$window->connect('delete-event', 'delete_event');
+		$window->set_title('GtkPixmap');
+		$window->set_border_width(0);
+		$window->realize();
+
+		$box1 = &new GtkVBox();
+		$window->add($box1);
+		$box1->show();
+
+		$box2 = &new GtkVBox(false, 10);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2);
+		$box2->show();
+
+		$button = &new GtkButton();
+		$box2->pack_start($button, false, false);
+		$button->show();
+
+		list($pixmap, $mask) = Gdk::pixmap_create_from_xpm($window->window, null, "test.xpm");
+		$pixmapwid = &new GtkPixmap($pixmap, $mask);
+		$label = &new GtkLabel("Pixmap\ntest");
+		$box3 = &new GtkHBox();
+		$box3->set_border_width(2);
+		$box3->pack_start($pixmapwid);
+		$box3->pack_start($label);
+		$pixmapwid->show();
+		$label->show();
+		$button->add($box3);
+		$box3->show();
+
+		$separator = &new GtkHSeparator();
+		$box1->pack_start($separator, false);
+		$separator->show();
+
+		$box2 = &new GtkVBox(false, 10);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2, false);
+		$box2->show();
+
+		$button = &new GtkButton('close');
+		$button->connect('clicked', 'close_window');
+		$box2->pack_start($button);
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$button->grab_default();
+		$button->show();
+	}
+	$windows['pixmap']->show();
+}
 
 function create_cursor_test()
 {
@@ -461,11 +927,6 @@ function create_clist()
 				$clist->column_titles_hide();
 		}
 
-		function toggle_reorderable($button, $clist)
-		{
-			$clist->set_reorderable($button->get_active());
-		}
-
 		$button = &new GtkButton('Add 1,000 Rows With Pixmaps');
 		$button->connect('clicked', 'add1000_clist', $clist);
 		$hbox->pack_start($button);
@@ -526,9 +987,7 @@ function create_clist()
 					   'Browse'		=> array('clist_toggle_sel_mode', $clist, GTK_SELECTION_BROWSE),
 					   'Multiple'	=> array('clist_toggle_sel_mode', $clist, GTK_SELECTION_MULTIPLE),
 					   'Extended'	=> array('clist_toggle_sel_mode', $clist, GTK_SELECTION_EXTENDED));
-		$clist_omenu = &new GtkOptionMenu();
-		$clist_omenu->set_menu(build_radio_menu($items));
-		$clist_omenu->set_history(3);
+		$clist_omenu = build_option_menu($items, 3);
 		$hbox->pack_start($clist_omenu);
 		$clist_omenu->show();
 
@@ -1132,13 +1591,14 @@ function create_main_window()
 					 'clist'			=> 'create_clist',
 					 'color selection'	=> 'create_color_selection',
 					 'cursors'			=> 'create_cursor_test',
-					 'ctree'			=> null,
+					 'ctree'			=> 'create_ctree',
 					 'event watcher'	=> null,
 					 'notebook'			=> null,
 					 'drawing area'		=> null,
 					 'file selection'	=> null,
 					 'dialog'			=> null,
 					 'panes'			=> null,
+					 'pixmap'			=> 'create_pixmap',
 					);
 
 	$window = &new GtkWindow();

@@ -303,6 +303,7 @@ class Generator {
 			list($field_type, $field_name) = $field_def;
 			if ($this->overrides->have_get_prop($object->c_name, $field_name)) {
 				$prop_get_code = $this->overrides->get_prop($object->c_name, $field_name);
+				$prop_get_code .= "\n\n\treturn;";
 				$prop_get_code = str_replace("\n", "\n\t", $prop_get_code);
 			} else {
 				$var_list = new Var_List();

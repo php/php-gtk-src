@@ -547,6 +547,7 @@
   (field (type-and-name gint tree_column))
   (field (type-and-name GtkCTreeLineStyle line_style))
   (field (type-and-name GtkCTreeExpanderStyle expander_style))
+  (field (type-and-name GtkCList clist))
 )
 
 (object Calendar

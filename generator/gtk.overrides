@@ -69,9 +69,7 @@ ignore
 	gtk_object_getv
 	gtk_object_set
 	gtk_object_setv
-	gtk_object_set_data
 	gtk_object_set_data_full
-	gtk_object_get_data
 	gtk_object_set_user_data
 	gtk_object_get_user_data
 	gtk_object_set_data_by_id
@@ -307,7 +305,7 @@ PHP_FUNCTION(wrap_gtk_input_add_full)
 }
 %%
 override gtk_signal_connect
-static void wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object)
+static void wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object, int after)
 {
 	char *name = NULL;
 	zval *callback = NULL;
@@ -333,18 +331,63 @@ static void wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_
 	data = php_gtk_build_value("(VNisi)", callback, extra, pass_object, callback_filename, callback_lineno);
 	RETURN_LONG(gtk_signal_connect_full(PHP_GTK_GET(this_ptr), name, NULL,
 										(GtkCallbackMarshal)php_gtk_callback_marshal,
-										data, php_gtk_destroy_notify, FALSE, FALSE));
+										data, php_gtk_destroy_notify, FALSE, after));
 }
 
 PHP_FUNCTION(wrap_gtk_signal_connect)
 {
-	wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
+	wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1, 0);
 }
 %%
 override gtk_signal_connect_object
 PHP_FUNCTION(wrap_gtk_signal_connect_object)
 {
-	wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
+	wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0, 0);
+}
+%%
+override gtk_signal_connect_after
+PHP_FUNCTION(wrap_gtk_signal_connect_after)
+{
+	wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1, 1);
+}
+%%
+override gtk_signal_connect_object_after
+PHP_FUNCTION(wrap_gtk_signal_connect_object_after)
+{
+	wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0, 1);
+}
+%%
+override gtk_object_set_data
+PHP_FUNCTION(wrap_gtk_object_set_data)
+{
+	char *key;
+	zval *data;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "sV", &key, &data))
+		return;
+
+	zval_add_ref(&data);
+	gtk_object_set_data_full(PHP_GTK_GET(this_ptr), key, data, php_gtk_destroy_notify);
+}
+%%
+override gtk_object_get_data
+PHP_FUNCTION(wrap_gtk_object_get_data)
+{
+	char *key;
+	zval *data;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &key))
+		return;
+
+	data = gtk_object_get_data(PHP_GTK_GET(this_ptr), key);
+	if (data) {
+		*return_value = *data;
+		zval_copy_ctor(return_value);
+	}
 }
 %%
 override gtk_widget_intersect
@@ -1156,8 +1199,6 @@ getprop GtkBox children
 			add_next_index_zval(return_value, php_box_child);
 		}
 	}
-
-	return;
 %%
 getprop GtkCalendar marked_date
 	GtkCalendar *cal = GTK_CALENDAR(PHP_GTK_GET(object));
@@ -1180,8 +1221,6 @@ getprop GtkCalendar marked_date
 		for (i = 0; i < 31; i++)
 			add_next_index_long(return_value, cal->marked_date[i]);
 	}
-
-	return;
 %%
 override gtk_calendar_get_date
 PHP_FUNCTION(wrap_gtk_calendar_get_date)
@@ -1235,8 +1274,6 @@ getprop GtkFixed children
 			add_next_index_zval(return_value, php_fixed_child);
 		}
 	}
-
-	return;
 %%
 getprop GtkList selection
 	GtkListItem *item;
@@ -1265,8 +1302,6 @@ getprop GtkList selection
 		for (tmp = selection; tmp; tmp = tmp->next)
 			add_next_index_zval(return_value, php_gtk_new((GtkObject *)tmp->data));
 	}
-
-	return;
 %%
 getprop GtkCList selection
 	zval *php_item;
@@ -1293,8 +1328,6 @@ getprop GtkCList selection
 		for (tmp = selection; tmp; tmp = tmp->next)
 			add_next_index_long(return_value, GPOINTER_TO_INT(tmp->data));
 	}
-
-	return;
 %%
 ignore gtk_radio_menu_item_new_with_label
 %%
@@ -1409,3 +1442,11 @@ PHP_FUNCTION(wrap_gtk_color_selection_get_color)
 	else
 		*return_value = *php_gtk_build_value("(ddd)", value[0], value[1], value[2]);
 }
+%%
+getprop GtkCTree clist
+	zval *ret;
+
+	ret = php_gtk_new((GtkObject *)GTK_CLIST(PHP_GTK_GET(object)));
+
+	SEPARATE_ZVAL(&ret);
+	*return_value = *ret;
