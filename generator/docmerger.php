@@ -321,4 +321,5 @@ class XMLStack
     }
 }
 
+/* vim: set et sts=4: */
 ?>

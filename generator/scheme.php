@@ -103,7 +103,6 @@ class Defs_Parser {
     var $constructors   = array();  // object constructors
     var $methods        = array();  // object methods
     var $enums          = array();  // enums and flags
-    var $structs        = array();  // structures
     var $interfaces     = array();  // interfaces
     var $boxes          = array();  // boxed types
     var $c_name         = array();  // C names of entities
@@ -232,11 +231,23 @@ class Defs_Parser {
         $this->c_name[]     = &$object_def->c_name;
     }
 
-    function handle_define_struct($arg)
+    function handle_define_interface($arg)
     {
-        $struct_def         = new Struct_Def($arg);
-        $this->structs[]    = &$struct_def;
-        $this->c_name[]     = &$struct_def->c_name;
+        $interface_def      = new Interface_Def($arg);
+        $this->interfaces[$interface_def->in_module . $interface_def->name] = &$interface_def;
+        $this->c_name[]     = &$interface_def->c_name;
+    }
+
+    function handle_define_boxed($arg)
+    {
+        $boxed_def          = new Boxed_Def($arg);
+        $this->boxes[]      = &$boxed_def;
+        $this->c_name[]     = &$boxed_def->c_name;
+    }
+
+    function handle_define_pointer($arg)
+    {
+        trigger_error("TODO: implement Pointer_Def", E_WARNING);
     }
 
     function handle_include($arg)
@@ -250,7 +261,7 @@ class Defs_Parser {
     function handle_unknown($node)
     {
         /* noop */
-        die("unknown node ". var_export($node, 1));
+        die("unknown node:\n". var_export($node, 1));
     }
 
     function find_methods($obj)
@@ -282,11 +293,16 @@ class Defs_Parser {
     }
 }
 
-/*
+require './arg_types.php';
 $d = new Defs_Parser('test.defs');
 $d->start_parsing();
-var_dump($d->functions);
-*/
+#var_dump($d->constructors);
+#var_dump($d->functions);
+#var_dump($d->methods);
+#var_dump($d->objects);
+#var_dump($d->enums);
+#var_dump($d->boxes);
+#var_dump($d->interfaces);
 
-/* vim: set et: */
+/* vim: set et sts=4: */
 ?>

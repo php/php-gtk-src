@@ -849,4 +849,5 @@ $generator->create_source();
 
 error_reporting($old_error_reporting);
 
+/* vim: set et sts=4: */
 ?>

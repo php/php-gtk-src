@@ -43,7 +43,7 @@ class Enum_Def extends Definition {
     var $in_module  = null;
     var $c_name     = null;
     var $values     = array();
-    var $simple     = true;
+    var $typecode   = null;
 
     function Enum_Def($args)
     {
@@ -57,17 +57,10 @@ class Enum_Def extends Definition {
                 $this->in_module = $arg[1];
             else if ($arg[0] == 'c-name')
                 $this->c_name = $arg[1];
-            else if ($arg[0] == 'value') {
-                $value_name = null;
-                $value_c_name = null;
-                foreach (array_slice($arg, 1) as $value_arg) {
-                    if ($value_arg[0] == 'name')
-                        $value_name = $value_arg[1];
-                    else if ($value_arg[0] == 'c-name')
-                        $value_c_name = $value_arg[1];
-                }
-                $this->values[] = array($value_name, $value_c_name);
-            }
+            else if ($arg[0] == 'gtype-id')
+                $this->typecode = $arg[1];
+            else if ($arg[0] == 'values')
+                $this->values = array_slice($arg, 1);
         }
     }
 }
@@ -88,7 +81,8 @@ class Object_Def extends Definition {
     var $c_name     = null;
     var $ce         = null;
     var $fields     = array();
-    var $methods    = array();
+    var $typecode   = null;
+    var $implements = array();
 
     function Object_Def($args)
     {
@@ -101,24 +95,16 @@ class Object_Def extends Definition {
             if ($arg[0] == 'in-module')
                 $this->in_module = $arg[1];
             else if ($arg[0] == 'parent') {
-                if (count($arg) > 2)
-                    $this->parent = array($arg[1], $arg[2][0]);
-                else
-                    $this->parent = array($arg[1], null);
+                $this->parent = $arg[1];
             }
             else if ($arg[0] == 'c-name')
                 $this->c_name = $arg[1];
-            else if ($arg[0] == 'field') {
-                $field_type = null;
-                $field_name = null;
-                foreach (array_slice($arg, 1) as $field_arg) {
-                    if ($field_arg[0] == 'type-and-name') {
-                        $field_type = $field_arg[1];
-                        $field_name = $field_arg[2];
-                    }
-                }
-                $this->fields[] = array($field_type, $field_name);
-            }
+            else if ($arg[0] == 'gtype-id')
+                $this->typecode = $arg[1];
+            else if ($arg[0] == 'implements')
+                $this->implements[] = $arg[1];
+            else if ($arg[0] == 'fields')
+                $this->fields = array_slice($arg, 1);
         }
         $this->ce = strtolower($this->in_module . '_' . $this->name . '_ce');
     }
@@ -236,15 +222,17 @@ class Function_Def extends Definition {
     }
 }
 
-class Struct_Def extends Definition {
-    var $def_type   = 'struct';
+class Boxed_Def extends Definition {
     var $name       = null;
     var $in_module  = null;
     var $c_name     = null;
     var $ce         = null;
+    var $copy       = null;
+    var $release    = null;
     var $fields     = array();
+    var $typecode   = null;
 
-    function Struct_Def($args)
+    function Boxed_Def($args)
     {
         $this->name = array_shift($args);
 
@@ -256,21 +244,49 @@ class Struct_Def extends Definition {
                 $this->in_module = $arg[1];
             else if ($arg[0] == 'c-name')
                 $this->c_name = $arg[1];
-            else if ($arg[0] == 'field') {
-                $field_type = null;
-                $field_name = null;
-                foreach (array_slice($arg, 1) as $field_arg) {
-                    if ($field_arg[0] == 'type-and-name') {
-                        $field_type = $field_arg[1];
-                        $field_name = $field_arg[2];
-                    }
-                }
-                $this->fields[] = array($field_type, $field_name);
-            }
+            else if ($arg[0] == 'gtype-id')
+                $this->typecode = $arg[1];
+            else if ($arg[0] == 'copy-func')
+                $this->copy = $arg[1];
+            else if ($arg[0] == 'release-func')
+                $this->release = $arg[1];
+            else if ($arg[0] == 'fields')
+                $this->fields = array_slice($arg, 1);
         }
+
         $this->ce = strtolower($this->in_module . convert_typename($this->name) . '_ce');
     }
 }
 
-/* vim: set et: */
+class Interface_Def extends Definition {
+    var $name       = null;
+    var $in_module  = null;
+    var $c_name     = null;
+    var $ce         = null;
+    var $typecode   = null;
+
+    function Interface_Def($args)
+    {
+        $this->name = array_shift($args);
+
+        foreach ($args as $arg) {
+            if (!is_array($arg) || count($arg) < 2)
+                continue;
+
+            if ($arg[0] == 'in-module')
+                $this->in_module = $arg[1];
+            else if ($arg[0] == 'c-name')
+                $this->c_name = $arg[1];
+            else if ($arg[0] == 'gtype-id')
+                $this->typecode = $arg[1];
+        }
+
+        $this->ce = strtolower($this->in_module . convert_typename($this->name) . '_ce');
+    }
+}
+
+class Pointer_Def extends Definition {
+}
+
+/* vim: set et sts=4: */
 ?>

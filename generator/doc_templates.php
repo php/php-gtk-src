@@ -153,4 +153,5 @@ $prop_end_tpl = <<<EOD
 
 EOD;
 
+/* vim: set et sts=4: */
 ?>

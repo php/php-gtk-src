@@ -445,4 +445,5 @@ $parser->start_parsing();
 $generator->register_types();
 $generator->create_docs(array_slice($argv, 2));
 
+/* vim: set et sts=4: */
 ?>

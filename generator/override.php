@@ -156,4 +156,5 @@ class Overrides {
 	}
 }
 
+/* vim: set et sts=4: */
 ?>

@@ -170,4 +170,5 @@ zend_bool PHP_GTK_EXPORT_FUNC(php_%s_get)(zval *wrapper, %s *obj)
     return 1;
 }\n\n";
 
+/* vim: set et sts=4: */
 ?>
