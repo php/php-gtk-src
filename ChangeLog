@@ -1,3 +1,7 @@
+2002-01-24  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: Fix.
+
 2002-01-23  Frank M. Kromann  <frank@frontbase.com>
 
     * win32/makedist.cmd:
