@@ -1,3 +1,7 @@
+    - added event watcher, dialog, file selection, and panes examples to
+      gtk.php. (Markus)
+    - added Gtk::signal_(add|remove)_emission_hook(), Gtk::signal_name(), and
+      Gtk::signal_lookup() functions. (Markus)
     - added GtkCList::get_selection_info(). (Andrei)
     - added GtkCList methods set_row_data(), get_row_data(). (Markus)
     - added support for GtkScintilla, a text-editing widget. (Andrei)
