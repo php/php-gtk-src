@@ -27,6 +27,18 @@ Package=<4>
 
 ###############################################################################
 
+Project: "gtkhtml"="..\ext\gtkhtml\gtkhtml.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "libglade"="..\EXT\LIBGLADE\libglade.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -52,6 +64,18 @@ Package=<4>
 ###############################################################################
 
 Project: "php_win"=".\php_win.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "scintilla"="..\ext\scintilla\scintilla.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{

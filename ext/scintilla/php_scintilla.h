@@ -32,6 +32,9 @@
 extern php_gtk_ext_entry scintilla_ext_entry;
 #define scintilla_ext_ptr &scintilla_ext_entry
 
+void php_scintilla_register_constants(int module_number TSRMLS_DC);
+void php_scintilla_register_classes(void);
+
 #else
 
 #define scintilla_ext_ptr NULL

@@ -502,6 +502,9 @@ PHP_FUNCTION(gtk_scintilla_replace_target_re)
 override gtk_scintilla_search_in_target
 PHP_FUNCTION(gtk_scintilla_search_in_target)
 {
+#ifdef PHP_WIN32
+	RETURN_LONG(0);
+#else
 	int length, pos;
 	char *text;
 
@@ -511,6 +514,7 @@ PHP_FUNCTION(gtk_scintilla_search_in_target)
 		return;
 
 	RETURN_LONG(gtk_search_in_target(GTK_SCINTILLA(PHP_GTK_GET(this_ptr)), length, text));
+#endif
 }
 %%
 override gtk_scintilla_find_text
@@ -518,7 +522,7 @@ PHP_FUNCTION(gtk_scintilla_find_text)
 {
 	int flags;
 	char *text;
-	long pos, chrg_min = 0, chrg_max,
+	long chrg_min = 0, chrg_max,
 		 text_min, text_max;
 	GtkScintilla *scintilla = GTK_SCINTILLA(PHP_GTK_GET(this_ptr));
 
