@@ -584,6 +584,7 @@ PHP_FUNCTION(wrap_gtk_menu_item_new)
 
 	php_gtk_object_init(wrapped_obj, this_ptr);
 }
+
 %%
 ignore gtk_check_menu_item_new_with_label 
 %%
