@@ -115,6 +115,7 @@ void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 void php_gtk_input_marshal(gpointer a, gpointer data, int nargs, GtkArg *args);
 zval *php_gtk_args_as_hash(int nargs, GtkArg *args);
 GtkArg *php_gtk_hash_as_args(zval *hash, GtkType type, gint *nargs);
+int php_gtk_args_from_hash(GtkArg *args, int nparams, zval *hash);
 zval *php_gtk_arg_as_value(GtkArg *arg);
 int php_gtk_arg_from_value(GtkArg *arg, zval *value);
 zval *php_gtk_ret_as_value(GtkArg *ret);
@@ -181,6 +182,38 @@ char *php_gtk_zval_type_name(zval *arg);
 	}
 
 PHP_FUNCTION(wrap_no_constructor);
+
+inline char *php_gtk_zval_type_name(zval *arg)
+{
+	switch (Z_TYPE_P(arg)) {
+		case IS_NULL:
+			return "null";
+
+		case IS_LONG:
+			return "integer";
+
+		case IS_DOUBLE:
+			return "double";
+
+		case IS_STRING:
+			return "string";
+
+		case IS_ARRAY:
+			return "array";
+
+		case IS_OBJECT:
+			return Z_OBJCE_P(arg)->name;
+
+		case IS_BOOL:
+			return "boolean";
+
+		case IS_RESOURCE:
+			return "resource";
+
+		default:
+			return "unknown";
+	}
+}
 
 #endif /* HAVE_PHP_GTK */
 
