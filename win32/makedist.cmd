@@ -35,6 +35,7 @@ copy \php\php-gtk\test\gtk.php test
 copy \php\php-gtk\test\hello.php test
 copy \php\php-gtk\test\list.php test
 copy \php\php-gtk\test\scribble.php test
+copy \php\php-gtk\test\scrollpane.php test
 copy \php\php-gtk\test\spaned.php test
 copy \php\php-gtk\test\sqpane.php test
 copy \php\php-gtk\test\testgtkrc test
