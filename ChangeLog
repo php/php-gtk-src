@@ -1,3 +1,8 @@
+2005-03-11  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2:
+      Thoughts on reference counting and wrappers.
+
 2005-03-10  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/phpg_gobject.c:
