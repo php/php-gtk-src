@@ -529,23 +529,12 @@ class Generator {
                                                $object_module . '_' . $object_lname,
                                                count($object->fields) ? 'php_gtk_get_property' : 'NULL');
             */
-            if ($object->parent === null)
-                $this->register_classes .= sprintf($register_class_tpl,
-                                                   $object->ce,
-                                                   $object->in_module . $object->name,
-                                                   $object_module . '_' . $object_lname,
-                                                  'NULL',
-                                                  count($object->fields) ? 1 : 0,
-                                                  count($object->fields) ? 'php_' . $object_module . '_' . $object_lname . '_properties' : 'NULL');
-            else {
-                $parent_ce = strtolower($object->parent) . '_ce';
-                $this->register_classes .= sprintf($register_class_tpl,
-                                                   $object->ce,
-                                                   $object->in_module . $object->name,
-                                                   $parent_ce,
-                                                   $object->typecode);
-                //$this->register_classes .= "\tg_hash_table_insert(php_gtk_class_hash, g_strdup(\"Gtk$object->name\"), $object->ce);\n";
-            }
+            $this->register_classes .= sprintf($register_class_tpl,
+                                               $object->ce,
+                                               $object->in_module . $object->name,
+                                               strtolower($object->c_name),
+                                               $object->parent ? strtolower($object->parent) . '_ce' : 'NULL',
+                                               $object->typecode);
 
             /* XXX fix
             if (count($object->fields)) {
@@ -553,7 +542,7 @@ class Generator {
             }
             */
 
-            $functions_decl = sprintf($functions_decl_tpl, $object_module . '_' . $object_lname);
+            $functions_decl = sprintf($functions_decl_tpl, strtolower($object->c_name));
             $constructor = $this->parser->find_constructor($object);
             if (!$constructor || $this->overrides->is_ignored($constructor->c_name)) {
                 /* XXX fix
@@ -590,6 +579,7 @@ class Generator {
              * Insert get_type() as class method if the object is descended from
              * GtkObject.
              */
+            /* XXX replace with an overloaded property?
             if ($this->is_gtk_object[$object->in_module . $object->name]) {
                 $lclass = strtolower(substr(convert_typename($object->c_name), 1));
                 $functions_decl .= sprintf($function_entry_tpl,
@@ -598,6 +588,7 @@ class Generator {
                                            'NULL');
                 fwrite($fp, sprintf($get_type_tpl, $lclass, $lclass));
             }
+            */
 
             /* XXX
             foreach ($this->parser->find_methods($object) as $method) {
@@ -624,6 +615,7 @@ class Generator {
             }
             */
 
+            /* XXX fix
             if (isset($this->overrides->extra_methods[$object->c_name])) {
                 foreach ($this->overrides->extra_methods[$object->c_name] as $method_cname => $method_data) {
                     list($method_name, $method_override) = $method_data;
@@ -636,6 +628,7 @@ class Generator {
                                                'NULL');
                 }
             }
+            */
 
             if ($object->c_name == $this->function_class) {
                 $this->write_functions($fp, false, $functions_decl);

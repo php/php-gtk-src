@@ -74,7 +74,7 @@ $non_gtk_object_init_tpl = "
 
 $function_entry_tpl = "\t{\"%s\",	PHP_FN(%s),	%s},\n";
 $functions_decl_tpl = "
-static function_entry php_%s_functions[] = {
+static function_entry %s_methods[] = {
 ";
 
 $register_getter_tpl = "\tphp_gtk_register_prop_getter(%s, %s_get_property);\n";
@@ -117,9 +117,8 @@ void php_%s_register_classes(void)
 }\n";
 
 
-//$register_class_tpl = "\t%s = zend_register_internal_class_ex(&ce, %s, NULL TSRMLS_CC);\n";
 $register_class_tpl = "
-	%s = phpg_register_class(\"%s\", NULL, %s, 0, NULL, NULL, %s TSRMLS_CC);\n";
+	%s = phpg_register_class(\"%s\", %s_methods, %s, 0, NULL, NULL, %s TSRMLS_CC);\n";
 
 $class_entry_tpl = "PHP_GTK_EXPORT_CE(%s);\n";
 

@@ -331,11 +331,11 @@ PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC)
 		gobject_wrapper_key = g_quark_from_static_string(gobject_wrapper_id);
 	}
 
+    phpg_sink_object(obj);
     zend_objects_store_add_ref(zobj TSRMLS_CC);
     pobj = zend_object_store_get_object(zobj TSRMLS_CC);
     pobj->obj = obj;
-    pobj->dtor = g_object_unref;
-    phpg_sink_object(pobj->obj);
+    pobj->dtor = (phpg_dtor_t) g_object_unref;
     g_object_set_qdata(pobj->obj, gobject_wrapper_key, (void*)Z_OBJ_HANDLE_P(zobj));
 }
 /* }}} */
