@@ -283,7 +283,7 @@ static PHP_METHOD(GtkLabel, get_selection_bounds)
 		return;
 
 	gtk_label_get_selection_bounds(GTK_LABEL(PHP_GTK_GET(this_ptr)), &start, &end);
-	*return_value = *php_gtk_build_value("(ii)", start, end);
+	php_gtk_build_value(&return_value, "(ii)", start, end);
 }
 %%
 override gtk_label_get_layout_offsets
@@ -297,7 +297,7 @@ static PHP_METHOD(GtkLabel, get_layout_offsets)
 		return;
 
 	gtk_label_get_layout_offsets(GTK_LABEL(PHP_GTK_GET(this_ptr)), &x, &y);
-	*return_value = *php_gtk_build_value("(ii)", x, y);
+	php_gtk_build_value(&return_value, "(ii)", x, y);
 }
 %% }}}
 
