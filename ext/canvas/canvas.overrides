@@ -545,7 +545,9 @@ PHP_FUNCTION(gtk_canvas_item_set_points)
 		zend_hash_get_current_data(phash, (void **)&item) == SUCCESS;
 		zend_hash_move_forward(phash), j++) 
 	{
-		pointsAr->coords[j] =  Z_DVAL_PP(item); 
+      
+        convert_to_double(*item);	    
+        pointsAr->coords[j] =  Z_DVAL_PP(item); 
 	}
 	 
 	
