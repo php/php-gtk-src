@@ -505,8 +505,10 @@ PHP_FUNCTION(wrap_gtk_clist_append)
 	efree(list);
 }
 %%
-override gtk_menu_item_new_with_label
-PHP_FUNCTION(wrap_gtk_menu_item_new_with_label)
+ignore gtk_menu_item_new_with_label 
+%%
+override gtk_menu_item_new
+PHP_FUNCTION(wrap_gtk_menu_item_new)
 {
 	char *label;
 	GtkObject *wrapped_obj;
@@ -518,10 +520,11 @@ PHP_FUNCTION(wrap_gtk_menu_item_new_with_label)
 		return;
 	}
 
-	if (strlen(label) == 0)
-		wrapped_obj = (GtkObject *)gtk_menu_item_new();
+	if (label)
+		wrapped_obj = (GtkObject *)gtk_menu_item_new_with_label(label);		
 	else
-		wrapped_obj = (GtkObject *)gtk_menu_item_new_with_label(label);
+	    wrapped_obj = (GtkObject *)gtk_menu_item_new();
+
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkMenuItem object",
 				  get_active_function_name());
