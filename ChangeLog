@@ -1,3 +1,19 @@
+2004-07-30  Andrei Zmievski  <andreiz@gmail.com>
+
+    * generator/definitions.php:
+      Whitespace: tabs to spaces.
+
+    * generator/definitions.php
+      generator/scheme.php:
+      More work on parser update. Added some new stuff to Function_Defs.
+
+    * generator/scheme.php:
+      Convert tabs to spaces.
+
+    * generator/scheme.php:
+      Redo the scheme parser to support new-style .defs files. This breaks the
+      parsing until further changes are complete.
+
 2004-07-29  Andrei Zmievski  <andreiz@gmail.com>
 
     * (PHP_GTK_1)
