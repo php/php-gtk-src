@@ -28,7 +28,7 @@ function build_option_menu($items, $history = null)
 	foreach ($items as $item_name => $callback_data) {
 		$menu_item = &new GtkMenuItem($item_name);
 		array_unshift($callback_data, 'activate');
-		call_user_method_array('connect', $menu_item, $callback_data);
+		call_user_func_array(array(&$menu_item, 'connect'), $callback_data);
 		$menu->append($menu_item);
 		$menu_item->show();
 	}
