@@ -1,3 +1,10 @@
+2003-10-06  Alan Knowles  <alan@akbkhome.com>
+
+    * (GTK2)
+      main/php_gtk.h
+      main/php_gtk_object.c:
+      basic prelim work done for callback GValue to zval conversion
+
 2003-10-01  Frank M. Kromann  <frank@kromann.info>
 
     * (GTK2)
