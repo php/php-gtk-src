@@ -22,6 +22,7 @@ static void glade_connect_one(const gchar *handler_name, GtkObject *obj, const
 	zval **callback = NULL, **extra = NULL, **pass_object = NULL;
 	zval **callback_filename = NULL, **callback_lineno = NULL;
 	zval *object;
+	TSRMLS_FETCH();
 
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
@@ -37,7 +38,7 @@ static void glade_connect_one(const gchar *handler_name, GtkObject *obj, const
 		MAKE_STD_ZVAL(temp);
 		array_init(temp);
 		add_next_index_zval(temp, object);
-		php_array_merge(Z_ARRVAL_P(temp), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(temp), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 		REPLACE_ZVAL_VALUE(extra, temp, 0);
 	}
 
@@ -139,7 +140,7 @@ static void glade_connect_auto(const gchar *handler_name, GtkObject *obj,
 	}
 	
 	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(extra), 0 TSRMLS_CC);
 
 	callback_filename = zend_get_executed_filename(TSRMLS_C);
 	callback_lineno = zend_get_executed_lineno(TSRMLS_C);

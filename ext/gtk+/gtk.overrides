@@ -294,7 +294,7 @@ void php_gtk_input_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 	zval_add_ref(source_rsrc);
 	zend_hash_index_update(Z_ARRVAL_P(params), 0, (void*)source_rsrc, sizeof(zval *), NULL);
 	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 	input_args = php_gtk_hash_as_array(params);
 	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), input_args, 0, NULL TSRMLS_CC);
 	if (retval)
@@ -410,7 +410,7 @@ static void php_gtk_emission_hook_marshal(GtkObject *o, guint signal_id, guint n
 	add_next_index_long(params, signal_id);
 
 	gtk_args = php_gtk_args_as_hash(nargs, args);
-	php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0);
+	php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0 TSRMLS_CC);
 
 	zval_ptr_dtor(&gtk_args);
 
@@ -419,7 +419,7 @@ static void php_gtk_emission_hook_marshal(GtkObject *o, guint signal_id, guint n
 	 * array.
 	 */
 	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 	
 	hook_args = php_gtk_hash_as_array(params);
 
@@ -1368,7 +1368,7 @@ static void ctree_callback(GtkCTree *ctree, GtkCTreeNode *node, zval *callback_d
 	params = php_gtk_build_value("(NN)", php_gtk_new((GtkObject *)ctree),
 								 php_gtk_ctree_node_new(node));
 	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 
 	args = php_gtk_hash_as_array(params);
 
@@ -1848,7 +1848,7 @@ static void item_factory_callback(zval *callback_data, guint action, GtkWidget *
 	params = php_gtk_build_value("(iN)", action, php_gtk_new((GtkObject *)widget));
 	if (zend_hash_num_elements(Z_ARRVAL_P(callback_data)) > 3) {
 		zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&extra);
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 	}
 
 	args = php_gtk_hash_as_array(params);

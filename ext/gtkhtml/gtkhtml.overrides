@@ -228,7 +228,7 @@ static void php_gtk_html_save_callback(HTMLEngine *engine, gchar *string, guint 
 	params = php_gtk_build_value("(s)", string);
 
 	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 		
 	args = php_gtk_hash_as_array(params); 	 
 	
@@ -340,7 +340,7 @@ static void php_gtk_html_url_request_callback (GtkHTML *html, const char *url, G
 	zend_hash_next_index_insert(Z_ARRVAL_P(params), &myresource, sizeof(zval *), NULL);
 	
 	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 		
 	args = php_gtk_hash_as_array(params);
 	
@@ -425,7 +425,7 @@ gboolean gtk_htmleditorapi_check_word(GtkHTML *html, const gchar *word,  gpointe
 	params = php_gtk_build_value("(s)", word);
 
 	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 		
 	args = php_gtk_hash_as_array(params);
  
@@ -477,7 +477,7 @@ void gtk_htmleditorapi_suggestion_request(GtkHTML *html, const gchar *word, gpoi
 	params = php_gtk_build_value("(s)", word);
 
 	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 		
 	args = php_gtk_hash_as_array(params);
  
@@ -526,7 +526,7 @@ void gtk_htmleditorapi_add_to_session(GtkHTML *html, const gchar *word, gpointer
 	params = php_gtk_build_value("(s)", word);
 
 	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 		
 	args = php_gtk_hash_as_array(params);
  
@@ -577,7 +577,7 @@ void gtk_htmleditorapi_add_to_personal(GtkHTML *html, const gchar *word, gpointe
 	params = php_gtk_build_value("(s)", word);
 
 	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 		
 	args = php_gtk_hash_as_array(params);
  
@@ -630,7 +630,7 @@ gboolean gtk_htmleditorapi_command(GtkHTML *html, GtkHTMLCommandType com_type, g
 	params = php_gtk_build_value("(i)", (int) com_type);
 
 	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 		
 	args = php_gtk_hash_as_array(params);
  
@@ -701,7 +701,7 @@ GtkArg *gtk_htmleditorapi_event(GtkHTML *html, GtkHTMLEditorEventType event_type
 			g_warning ("Unsupported event.\n");
 	}
 	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 		
 	args = php_gtk_hash_as_array(params);
  
@@ -766,7 +766,7 @@ GtkWidget *gtk_htmleditorapi_create_input_line(GtkHTML *html,  gpointer data ) {
 
 
 	if (extra)
-		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
 		
 	args = php_gtk_hash_as_array(params);
  
