@@ -87,6 +87,43 @@ LINK32=link.exe
 
 # Name "libglade - Win32 Release_TS"
 # Name "libglade - Win32 Debug_TS"
+
+# Begin Group "Parsers"
+# PROP Default_Filter "defs"
+
+# Begin Source File
+
+SOURCE=.\libglade.defs
+
+!IF  "$(CFG)" == "libglade - Win32 Release_TS"
+
+USERDEP__LIBGL="libglade.overrides"	"libglade.defs"	
+# Begin Custom Build
+InputPath=.\libglade.defs
+
+"gen_libglade.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	php.exe -q ..\..\generator\generator.php -o ext\libglade\libglade.overrides -p libglade -r ext\gtk%%2b\gtk.defs ext\libglade\libglade.defs >gen_libglade.c 
+	grep -h "^PHP_GTK_EXPORT_CE" gen_libglade.c | sed -e "s/^/extern /" > gen_ce_libglade.h 
+	
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "libglade - Win32 Debug_TS"
+
+USERDEP__LIBGL="libglade.overrides"	"libglade.defs"	
+# Begin Custom Build
+InputPath=.\libglade.defs
+
+"gen_libglade.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	php.exe -q ..\..\generator\generator.php -o ext\libglade\libglade.overrides -p libglade -r ext\gtk%%2b\gtk.defs ext\libglade\libglade.defs >gen_libglade.c 
+	grep -h "^PHP_GTK_EXPORT_CE" gen_libglade.c | sed -e "s/^/extern /" > gen_ce_libglade.h 
+	
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# End Group
+
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
