@@ -46,8 +46,8 @@ class Generator {
     var $prefix             = null;
     var $lprefix            = null;
     var $function_class     = null;
-
-    var $is_gtk_object      = array('GtkObject' => true);
+    var $logfile            = null;
+    var $diversions         = null;
 
     var $constants          = '';
     var $template_map       = array('Object_Def' => array('constructor' => Templates::constructor_body,
@@ -65,11 +65,47 @@ class Generator {
     {
         $this->parser    = &$parser;
         $this->overrides = &$overrides;
-        $this->prefix    = $prefix;
+        $this->prefix    = ucfirst($prefix);
         $this->lprefix   = strtolower($prefix);
         $this->function_class = $function_class;
     }
+
+    function set_logfile($logfile) {
+        $this->logfile = fopen($logfile, 'w');
+    }
     
+    function log_print()
+    {
+        $args = func_get_args();
+        if (count($args) == 0) return;
+
+        $format = array_shift($args);
+
+        $output = vsprintf($format, $args);
+        echo $output;
+        fwrite($this->logfile, $output);
+    }
+
+    function log()
+    {
+        $args = func_get_args();
+        if (count($args) == 0) return;
+
+        $format = array_shift($args);
+
+        fwrite($this->logfile, vsprintf($format, $args));
+    }
+
+    function divert()
+    {
+        $args = func_get_args();
+        if (count($args) < 2) return;
+
+        list ($divert_id, $format) = $args;
+
+        @$this->diversions[$divert_id] .= vsprintf($format, array_slice($args, 2));
+    }
+
     function register_types($parser = null)
     {
         global  $matcher;
@@ -77,21 +113,7 @@ class Generator {
         if (!$parser)
             $parser = $this->parser;
 
-        /*
-        foreach ($parser->structs as $struct)
-            $matcher->register_struct($struct->c_name);
-            */
-
         foreach ($parser->objects as $object) {
-            /*
-            $gtk_obj_descendant = false;
-            if (isset($object->parent) &&
-                isset($this->is_gtk_object[$object->parent[1] . $object->parent[0]])) {
-                $this->is_gtk_object[$object->in_module . $object->name] = $this->is_gtk_object[$object->parent[1] . $object->parent[0]];
-                $gtk_obj_descendant = true;
-            }
-            */
-
             $matcher->register_object($object->c_name, $object->typecode);
         }
 
@@ -550,10 +572,10 @@ class Generator {
     {
         $method_defs = array();
 
+        $this->log_print("  %-20s ", "methods");
+        $num_written = $num_skipped = 0;
+
         $methods = $this->parser->find_methods($object);
-        if ($methods) {
-            fprintf(STDERR, "Writing methods for $object->c_name...\n");
-        }
 
         $dict['class'] = $object->c_name;
         $dict['scope'] = $object->c_name;
@@ -580,7 +602,7 @@ class Generator {
             if ($this->overrides->is_ignored($method_name)) continue;
 
             try {
-                if ($this->overrides->is_overriden($method_name)) {
+                if (($overriden = $this->overrides->is_overriden($method_name))) {
                     list($method_name, $method_override, $flags) = $this->overrides->get_override($method_name);
                     fwrite($this->fp, $method_override . "\n");
                     if (!isset($method_name))
@@ -602,23 +624,29 @@ class Generator {
                                              $object->in_module . $object->name,
                                              $method->name, 'NULL', $flags);
                 }
+                $this->divert("gen", "%s  %-11s %s::%s\n", $overriden ? "%%":"  ", "method", $object->c_name, $method->name);
+                $num_written++;
             } catch (Exception $e) {
-                fprintf(STDERR, "\tnot generating method %s::%s: %s\n", $object->c_name, $method->name, $e->getMessage());
+                $this->divert("notgen", "  %-11s %s::%s: %s\n", "method", $object->c_name, $method->name, $e->getMessage());
+                $num_skipped++;
             }
         }
+
+        $this->log_print("(%d written, %d skipped)\n", $num_written, $num_skipped);
 
         return $method_defs;
     }
 
     function write_constructor($object)
     {
+        $this->log_print("  %-20s ", "constructors");
+        $num_written = $num_skipped = 0;
+
         $ctors = $this->parser->find_constructor($object, $this->overrides);
 
         $ctor_defs = array();
 
         if ($ctors) {
-            fprintf(STDERR, "Writing constructors for $object->c_name...\n");
-
             $dict['class'] = $object->c_name;
             $dict['typecode'] = $object->typecode;;
             $first = 1;
@@ -640,7 +668,7 @@ class Generator {
                 $template = $this->template_map[get_class($object)][$template_name];
 
                 try {
-                    if ($this->overrides->is_overriden($ctor_name)) {
+                    if (($overriden = $this->overrides->is_overriden($ctor_name))) {
                         list(, $ctor_override, $ctor_flags) = $this->overrides->get_override($ctor_name);
                         if (!empty($ctor_flags))
                             $flags = $ctor_flags;
@@ -653,8 +681,11 @@ class Generator {
                     $ctor_defs[] = sprintf(Templates::method_entry,
                                            $ctor->is_constructor_of,
                                            $ctor_fe_name, 'NULL', $flags);
+                    $this->divert("gen", "%s  %-11s %s::%s\n", $overriden?"%%":"  ", "constructor", $object->c_name, $ctor_fe_name);
+                    $num_written++;
                 } catch (Exception $e) {
-                    fprintf(STDERR, "\tnot generating constructor %s for %s: %s\n", $ctor_fe_name, $object->c_name, $e->getMessage());
+                    $this->divert("notgen", "  %-11s %s::%s: %s\n", "constructor", $object->c_name, $ctor_fe_name, $e->getMessage());
+                    $num_skipped++;
                     // mark class as non-instantiable directly if we were trying
                     // to generate default constructor
                     if ($ctor_fe_name == '__construct') {
@@ -668,124 +699,17 @@ class Generator {
             $ctor_defs[] = sprintf(Templates::function_entry, '__construct', 'no_direct_constructor');
         }
 
+        $this->log_print("(%d written, %d skipped)\n", $num_written, $num_skipped);
         return $ctor_defs;
     }
 
-    function write_objects()
-    {
-        global  $function_entry_tpl,
-                $functions_decl_tpl,
-                $register_getter_tpl,
-                $init_class_tpl,
-                $register_class_tpl,
-                $get_type_tpl;
-        
-        foreach ($this->parser->objects as $object) {
-            fprintf(STDERR, $object->c_name. "\n");
-            $object_module = strtolower($object->in_module);
-            $object_lname = strtolower($object->name);
-
-            fwrite($this->fp, "\n/* object $object->c_name  */\n");
-            /*
-            $this->register_classes .= sprintf($init_class_tpl,
-                                               $object->in_module . $object->name,
-                                               $object_module . '_' . $object_lname,
-                                               count($object->fields) ? 'php_gtk_get_property' : 'NULL');
-            */
-            $this->register_classes .= sprintf($register_class_tpl,
-                                               $object->ce,
-                                               $object->in_module . $object->name,
-                                               strtolower($object->c_name),
-                                               $object->parent ? strtolower($object->parent) . '_ce' : 'NULL',
-                                               $object->typecode);
-
-            /* XXX fix
-            if (count($object->fields)) {
-                $this->register_classes .= sprintf($register_getter_tpl, $object->ce, $object_module . '_' . $object_lname);
-            }
-            */
-
-            $functions_decl = sprintf($functions_decl_tpl, strtolower($object->c_name));
-            $constructor = $this->parser->find_constructor($object);
-            if (!$constructor || $this->overrides->is_ignored($constructor->c_name)) {
-                /* XXX fix
-                $functions_decl .= sprintf($function_entry_tpl,
-                                           $object->in_module . $object->name,
-                                           'no_constructor', 'NULL');
-                                           */
-            } else if ($this->overrides->is_overriden($constructor->c_name)) {
-                /*
-                list(, $constructor_override) = $this->overrides->get_override($constructor->c_name);
-                fwrite($this->fp, $constructor_override . "\n");
-                $functions_decl .= sprintf($function_entry_tpl,
-                                           $constructor->is_constructor_of,
-                                           strtolower($constructor->c_name),
-                                           'NULL');
-                                           */
-            } else if (!$this->overrides->is_ignored($constructor->c_name)) {
-                /* XXX fix */
-                /*
-                if ($this->write_constructor($this->fp, $object->c_name, $this->is_gtk_object[$object->in_module . $object->name], $constructor)) {
-                    $functions_decl .= sprintf($function_entry_tpl,
-                                               $constructor->is_constructor_of,
-                                               strtolower($constructor->c_name),
-                                               'NULL');
-                } else {
-                    $functions_decl .= sprintf($function_entry_tpl,
-                                               $constructor->is_constructor_of,
-                                               'no_constructor', 'NULL');
-                }
-                */
-            }
-
-            /*
-             * Insert get_type() as class method if the object is descended from
-             * GtkObject.
-             */
-            /* XXX replace with an overloaded property?
-            if ($this->is_gtk_object[$object->in_module . $object->name]) {
-                $lclass = strtolower(substr(convert_typename($object->c_name), 1));
-                $functions_decl .= sprintf($function_entry_tpl,
-                                           'get_type',
-                                           $lclass .  '_get_type',
-                                           'NULL');
-                fwrite($this->fp, sprintf($get_type_tpl, $lclass, $lclass));
-            }
-            */
-
-            $this->write_methods($object);
-
-            /* XXX fix
-            if (isset($this->overrides->extra_methods[$object->c_name])) {
-                foreach ($this->overrides->extra_methods[$object->c_name] as $method_cname => $method_data) {
-                    list($method_name, $method_override) = $method_data;
-                    fwrite($this->fp, $method_override . "\n");
-                    if (!isset($method_name))
-                        $method_name = $method_cname;
-                    $functions_decl .= sprintf($function_entry_tpl,
-                                               strtolower($method_name),
-                                               strtolower($method_cname),
-                                               'NULL');
-                }
-            }
-            */
-
-            /* XXX fix 
-            if (count($object->fields))
-                $this->write_prop_getter($this->fp, $object);
-            */
-        }
-
-        $this->register_classes .= "\n" . implode("\n", $this->overrides->get_register_classes());
-    }
 
     function write_classes()
     {
-        fprintf(STDERR, "Writing classes...\n");
-
         $register_classes = '';
 
         if ($this->parser->functions) {
+            $this->log_print("\n%s\n%s\n", $this->prefix, str_repeat('~', 50));
             $func_defs = $this->write_functions();
 
             $register_classes .= aprintf(Templates::register_class,
@@ -825,7 +749,8 @@ class Generator {
         if (!$object->fields) {
             return 'NULL';
         }
-        fprintf(STDERR, "Writing property accessors for $object->c_name...\n");
+        $this->log_print("  %-20s ", "property accessors");
+        $num_written = $num_skipped = 0;
 
         $class = strtolower($object->c_name);
         $read_prefix  = 'phpg_' . $class .'_read_';
@@ -860,12 +785,14 @@ class Generator {
                     $overrides = $this->overrides->get_prop_override($object->c_name, $field_name);
                     if (isset($overrides['read'])) {
                         fwrite($this->fp, $overrides['read'] . "\n\n");
+                        $this->divert("gen", "%%%%  %-11s %s->%s\n", "reader for", $object->c_name, $field_name);
                     } else {
                         $read_func = 'NULL';
                     }
                     if (isset($overrides['write'])) {
                         fwrite($this->fp, $overrides['write'] . "\n\n");
                         $write_func = $write_prefix . $field_name;
+                        $this->divert("gen ", "%%%%  %-11s %s->%s\n", "writer for", $object->c_name, $field_name);
                     }
                 } else {
                     $handler = $matcher->get($field_type);
@@ -881,13 +808,18 @@ class Generator {
                                                     'post_code' => $info->get_post_code(),
                                                     'prop_access' => aprintf($this->template_map[$def_type]['prop'], $dict)
                                                    )));
+                    $this->divert("gen", "    %-11s %s->%s\n", "reader for", $object->c_name, $field_name);
                 }
                 $prop_defs[] = sprintf(Templates::prop_info_entry, 
                                        $field_name, $read_func, $write_func);
+                $num_written++;
             } catch (Exception $e) {
-                fprintf(STDERR, "\tnot generating reader function for %s->%s: %s\n", $object->c_name, $field_name, $e->getMessage());
+                $this->divert("notgen", "  %-11s %s->%s: %s\n", "reader for", $object->c_name, $field_name, $e->getMessage());
+                $num_skipped++;
             }
         }
+
+        $this->log_print("(%d written, %d skipped)\n", $num_written, $num_skipped);
 
         if ($prop_defs) {
             fwrite($this->fp, sprintf(Templates::prop_info_header, $class));
@@ -943,6 +875,8 @@ class Generator {
 
     function write_class($object)
     {
+        $this->log_print("\n%s\n%s\n", $object->c_name, str_repeat('~', 50));
+
         $object_module = strtolower($object->in_module);
         $object_lname = strtolower($object->name);
 
@@ -1002,7 +936,8 @@ class Generator {
     {
         $func_defs = array();
 
-        fprintf(STDERR, "Writing functions for $this->prefix...\n");
+        $this->log_print("  %-20s", "functions");
+        $num_written = $num_skipped = 0;
 
         $dict['scope'] = $this->lprefix;
 
@@ -1017,7 +952,7 @@ class Generator {
             if ($this->overrides->is_ignored($function->c_name)) continue;
 
             try {
-                if ($this->overrides->is_overriden($function->c_name)) {
+                if (($overriden = $this->overrides->is_overriden($function->c_name))) {
                     list($func_name, $function_override, $flags) = $this->overrides->get_override($function->c_name);
                     fwrite($this->fp, $function_override . "\n");
                     if ($func_name == $function->c_name)
@@ -1032,8 +967,11 @@ class Generator {
                                            $this->lprefix,
                                            $func_name, 'NULL', 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
                 }
+                $this->divert("gen", "%s  %-11s %s::%s\n", $overriden?"%%":"  ", "function", $this->lprefix, $function->name);
+                $num_written++;
             } catch (Exception $e) {
-                fprintf(STDERR, "\tnot generating function %s::%s: %s\n", $this->lprefix, $function->name, $e->getMessage());
+                $this->divert("notgen", "  %-11s %s::%s: %s\n", "function", $this->lprefix, $function->name, $e->getMessage());
+                $num_skipped++;
             }
         }
 
@@ -1042,6 +980,8 @@ class Generator {
             $func_defs[] = sprintf(Templates::method_entry,
                                    $this->lprefix,
                                    $func_name, 'NULL', 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
+            $this->divert("gen", "%%%%  %-11s %s::%s\n", "function", $this->lprefix, $func_name);
+            $num_written++;
         }
 
         sort($func_defs);
@@ -1051,62 +991,8 @@ class Generator {
             fwrite($this->fp, Templates::functions_decl_end);
         }
 
+        $this->log_print("(%d written, %d skipped)\n", $num_written, $num_skipped);
         return $func_defs;
-
-        /* XXX fix
-        foreach ($this->parser->functions as $function) {
-            if ($this->overrides->is_overriden($function->c_name)) {
-                list($function_name, $function_override) = $this->overrides->get_override($function->c_name);
-                fwrite($this->fp, $function_override . "\n");
-                if ($function->name == $function->c_name)
-                    $function_name = substr($function->name, strlen($this->lprefix) + 1);
-                else
-                    $function_name = $function->name;
-                $functions_decl .= sprintf($function_entry_tpl, 
-                                           strtolower($function_name), 
-                                           strtolower($function->c_name), 
-                                           'NULL');
-                $num_functions++;
-            }
-            else if (!$this->overrides->is_ignored($function->c_name)) {
-                if ($this->write_function($this->fp, $function)) {
-                    if ($function->name == $function->c_name)
-                        $function_name = substr($function->name, strlen($this->lprefix) + 1);
-                    else
-                        $function_name = $function->name;
-
-                    // hack to avoid macro conflict on win32
-                    $extra_name = "";
-                    if (strtolower($function->c_name) == "gdk_draw_pixmap")
-                        $extra_name = "_int";
-
-                    $functions_decl .= sprintf($function_entry_tpl, 
-                                               $function_name, 
-                                               strtolower($function->c_name) . $extra_name, 
-                                               'NULL');
-                    $num_functions++;
-                }
-            }
-        }
-        */
-        if ($separate_class)
-            $functions_decl .= $this->functions_decl_end;
-
-        // XXX if ($num_functions > 0) {
-            if ($separate_class) {
-                /*
-                $this->register_classes .= sprintf($init_class_tpl,
-                                                   $this->prefix,
-                                                   $this->lprefix,
-                                                   'NULL');
-                */
-                $this->register_classes .= sprintf($register_class_tpl,
-                                                   $this->lprefix . '_ce',
-                                                   $this->lprefix, $this->lprefix,
-                                                   'NULL', 0);
-                fwrite($this->fp, $functions_decl);
-            }
-        //}
     }
 
     function write_prop_lists()
@@ -1150,8 +1036,20 @@ class Generator {
         }
     }
 
+    function make_header($string)
+    {
+        $res = str_repeat('=', 72) . "\n";
+        $res .= str_pad($string, 72, " ", STR_PAD_BOTH) . "\n";
+        $res .= str_repeat('=', 72) . "\n";
+
+        return $res;
+    }
+
     function write_source($savefile)
     {
+        $this->not_generated_list = array();;
+        $this->log_print($this->make_header("Summary"));
+
         $this->fp = fopen($savefile, 'w');
         fwrite($this->fp, "#include \"php_gtk.h\"");
         fwrite($this->fp, "\n#if HAVE_PHP_GTK\n");
@@ -1162,6 +1060,15 @@ class Generator {
         $this->write_classes();
         fwrite($this->fp, "\n#endif /* HAVE_PHP_GTK */\n");
         fclose($this->fp);
+
+        $this->log("\n\n");
+        $this->log($this->make_header("Generated Items"));
+        $this->log("%%%% - overriden\n\n");
+        $this->log("%s", $this->diversions["gen"]);
+
+        $this->log("\n\n");
+        $this->log($this->make_header("Not Generated Items"));
+        $this->log("%s", $this->diversions["notgen"]);
     }
 }
 
@@ -1211,9 +1118,9 @@ if (isset($_SERVER['argc']) &&
 array_walk($argv, create_function('&$x', '$x = urldecode($x);'));
 
     
-$result = Console_Getopt::getopt($argv, 'o:p:c:r:f:');
+$result = Console_Getopt::getopt($argv, 'l:o:p:c:r:f:');
 if (!$result || count($result[1]) < 2)
-    fatal_error("usage: php -q generator.php [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] [-f savefile] defsfile\n");
+    die("usage: php generator.php [-l logfile] [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] [-f savefile] defsfile\n");
 
 list($opts, $argv) = $result;
 
@@ -1222,6 +1129,7 @@ $function_class = null;
 $overrides = new Overrides();
 $register_defs = array();
 $savefile = 'php://stdout';
+$logfile = 'php://stderr';
 
 foreach ($opts as $opt) {
     list($opt_spec, $opt_arg) = $opt;
@@ -1235,6 +1143,8 @@ foreach ($opts as $opt) {
         $register_defs[] = $opt_arg;
     } else if ($opt_spec == 'f') {
         $savefile = $opt_arg;
+    } else if ($opt_spec == 'l') {
+        $logfile = $opt_arg;
     }
 }
 
@@ -1244,6 +1154,7 @@ if (file_exists(dirname($argv[1]) . '/arg_types.php')) {
 
 $parser = new Defs_Parser($argv[1]);
 $generator = new Generator($parser, $overrides, $prefix, $function_class);
+$generator->set_logfile($logfile);
 foreach ($register_defs as $defs) {
     $type_parser = new Defs_Parser($defs);
     $type_parser->start_parsing();

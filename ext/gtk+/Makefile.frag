@@ -29,12 +29,13 @@ gen_%.c : %.defs
 	( \
 	 cd ext/gtk+ \
      && $(PHP) $(top_srcdir)/generator/generator.php \
+	 	-l gen_$(*F).log \
         -r atk-types.defs \
         -r pango-types.defs \
         -r gdk-types.defs \
         -r gtk-types.defs \
         -o $(*F).overrides \
         -p $(*F) \
-        -f $(@F) $(*F).defs 2>&1 | tee gen_$(*F).log \
+        -f $(@F) $(*F).defs \
      && grep -h "^PHP_GTK_EXPORT_CE" $(@F) | sed -e "s!^!extern !" > gen_$(*F).h \
 	)
