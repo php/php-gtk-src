@@ -2005,7 +2005,7 @@ function create_pane_options($paned, $frame_label, $label1, $label2)
 
 	$check_button = &new GtkCheckButton('Shrink');
 	$table->attach_defaults($check_button, 0, 1, 2, 3);
-	$check_button->set_active( true);
+	$check_button->set_active(true);
 	$check_button->connect_object('toggled', 'toggle_shrink', $paned->child1);
 
 	$label = &new GtkLabel($label2);
@@ -2013,12 +2013,12 @@ function create_pane_options($paned, $frame_label, $label1, $label2)
 
 	$check_button = &new GtkCheckButton('Resize');
 	$table->attach_defaults($check_button, 1, 2, 1, 2);
-	$check_button->set_active( true);
+	$check_button->set_active(true);
 	$check_button->connect_object('toggled', 'toggle_resize', $paned->child2);
 
 	$check_button = &new GtkCheckButton('Shrink');
 	$table->attach_defaults($check_button, 1, 2, 2, 3);
-	$check_button->set_active( true);
+	$check_button->set_active(true);
 	$check_button->connect_object('toggled', 'toggle_shrink', $paned->child2);
 
 	return $frame;
@@ -2035,11 +2035,11 @@ function create_panes()
 		$window->set_title('GtkPane');
 
 		$vbox = &new GtkVBox;
-		$window->add( $vbox);
+		$window->add($vbox);
 
 		$vpaned = &new GtkVPaned;
 		$vbox->pack_start($vpaned, true, true, 0);
-		$vpaned->set_border_width( 5);
+		$vpaned->set_border_width(5);
 
 		$hpaned = &new GtkHPaned;
 		$vpaned->add1($hpaned);
@@ -2124,7 +2124,7 @@ function create_file_selection()
 	$window->show_all();
 }
 
-function label_toggle( $dialog, $label, $dialog)
+function label_toggle($dialog, $label, $dialog)
 {
 	if (!$label)
 	{
@@ -2173,9 +2173,9 @@ function create_dialog()
 		$dialog->destroy();
 }
 
-function event_watcher( $object, $signal_id)
+function event_watcher($object, $signal_id)
 {
-	echo 'Event watch: ' . gtk::signal_name( $signal_id) . ' emitted for ' . gtk::type_name( $object->get_type()) . "\n";
+	echo 'Event watch: ' . gtk::signal_name($signal_id) . ' emitted for ' . gtk::type_name($object->get_type()) . "\n";
 	return true;
 }
 
@@ -2185,10 +2185,10 @@ function event_watcher_toggle($event_watcher_enter_id, $event_watcher_leave_id)
 		event_watcher_down(&$event_watcher_enter_id, &$event_watcher_leave_id);
 	else
 	{
-		$signal_id = Gtk::signal_lookup( 'enter_notify_event', GtkWidget::get_type());
-		$event_watcher_enter_id = gtk::signal_add_emission_hook( $signal_id, 'event_watcher');
-		$signal_id = Gtk::signal_lookup( 'leave_notify_event', GtkWidget::get_type());
-		$event_watcher_leave_id = gtk::signal_add_emission_hook( $signal_id, 'event_watcher');
+		$signal_id = Gtk::signal_lookup('enter_notify_event', GtkWidget::get_type());
+		$event_watcher_enter_id = gtk::signal_add_emission_hook($signal_id, 'event_watcher');
+		$signal_id = Gtk::signal_lookup('leave_notify_event', GtkWidget::get_type());
+		$event_watcher_leave_id = gtk::signal_add_emission_hook($signal_id, 'event_watcher');
 	}
 }
 
@@ -2196,10 +2196,10 @@ function event_watcher_down($event_watcher_enter_id, $event_watcher_leave_id)
 {
 	if ($event_watcher_enter_id)
 	{
-		$signal_id = Gtk::signal_lookup( 'enter_notify_event', GtkWidget::get_type());
+		$signal_id = Gtk::signal_lookup('enter_notify_event', GtkWidget::get_type());
 		gtk::signal_remove_emission_hook($signal_id, $event_watcher_enter_id);
 		$event_watcher_enter_id = 0;
-		$signal_id = Gtk::signal_lookup( 'leave_notify_event', GtkWidget::get_type());
+		$signal_id = Gtk::signal_lookup('leave_notify_event', GtkWidget::get_type());
 		gtk::signal_remove_emission_hook($signal_id, $event_watcher_leave_id);
 		$event_watcher_leave_id = 0;
 	}
@@ -2264,18 +2264,18 @@ function page_switch($notebook, $page, $page_num)
 	not passed to it. So we'll do a dirty workaround here. */
 
 	/* Set the icon of all pages to closed pixmap */
-	foreach( $notebook->children() as $child) {
+	foreach ($notebook->children() as $child) {
 		$tab_label = $notebook->get_tab_label($child);
 		$children = $tab_label->children();
 		$pixwid = $children[0];
-		$pixwid->set( $book_closed, $book_closed_mask);
+		$pixwid->set($book_closed, $book_closed_mask);
 	}
 
 	/* Set the icon of the current page to open pixmap */
 	$tab_label = $notebook->get_tab_label($notebook->get_nth_page($page_num));
 	$children = $tab_label->children();
 	$pixwid = $children[0];
-	$pixwid->set( $book_open, $book_open_mask);
+	$pixwid->set($book_open, $book_open_mask);
 }
 
 function tab_fill($button, $child, $notebook)
@@ -2316,7 +2316,7 @@ function notebook_rotate($notebook)
 
 function show_all_pages($notebook)
 {
-	foreach( $notebook->children() as $child)
+	foreach ($notebook->children() as $child)
 		$child->show();
 }
 
@@ -2350,7 +2350,7 @@ function create_pages($notebook, $start, $end)
 	global $book_closed, $book_closed_mask,
 		   $book_open, $book_open_mask;
 
-	for( $i = $start; $i <= $end; $i++)
+	for ($i = $start; $i <= $end; $i++)
 	{
 		$child = &new GtkFrame("Page $i");
 		$child->set_border_width(10);
@@ -2428,7 +2428,7 @@ function create_notebook()
 
 		$sample_notebook = new GtkNotebook;
 		$sample_notebook->connect('switch_page', 'page_switch');
-		$sample_notebook->set_tab_pos( GTK_POS_TOP);
+		$sample_notebook->set_tab_pos(GTK_POS_TOP);
 		$box1->pack_start($sample_notebook, true, true, 0);
 		$sample_notebook->set_border_width(10);
 		$sample_notebook->realize();
