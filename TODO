@@ -6,6 +6,7 @@
 * Figure out what's up with getting/setting gc background/foreground colors and
   how to get RGB values from pixels.
 * Provide access to GTK version number.
+* Fix $dialog->vbox->show() crash.
 
 In PHP
 ------

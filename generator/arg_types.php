@@ -392,7 +392,8 @@ class Object_Arg extends Arg_Type {
 	{
 		$var_list->add('zval', '*ret');
 		return 	"	ret = php_gtk_new((GtkObject *)%s);\n" .
-				"	*return_value = *ret;";
+				"	*return_value = *ret;\n" .
+				"	return;";
 	}
 }
 
@@ -437,14 +438,16 @@ class Boxed_Arg extends Arg_Type {
 	{
 		$var_list->add(substr($type, 0, -1), '*ret');
 		return "	ret = %s;\n" .
-			   "	*return_value = *php_" . $this->php_type . "_new(ret);";
+			   "	*return_value = *php_" . $this->php_type . "_new(ret);\n" .
+			   "	return;";
 	}
 }
 
 class Atom_Arg extends Int_Arg {
 	function write_return($type, &$var_list)
 	{
-		return "	*return_value = *php_gdk_atom_new(%s);";
+		return "	*return_value = *php_gdk_atom_new(%s);\n" .
+			   "	return;";
 	}
 }
 
