@@ -4797,7 +4797,7 @@
   (c-name gtk_label_new)
   (is-constructor-of GtkLabel)
   (return-type GtkWidget*)
-  (parameter (type-and-name const-gchar* str))
+  (parameter (type-and-name const-gchar* str) (default "NULL"))
 )
 
 (method set_text
@@ -4818,7 +4818,7 @@
   (of-object Label (Gtk))
   (c-name gtk_label_set_pattern)
   (return-type none)
-  (parameter (type-and-name const-gchar* pattern))
+  (parameter (type-and-name const-gchar* pattern) (default "NULL"))
 )
 
 (method set_line_wrap
