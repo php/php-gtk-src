@@ -1,3 +1,10 @@
+2005-03-14  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/Makefile.frag
+      ext/gtk+/gtk.overrides
+      generator/override.php:
+      Make it possible to include files from inside overrides.
+
 2005-03-13  Andrei Zmievski  <andrei@gravitonic.com>
 
     * generator/arg_types.php
