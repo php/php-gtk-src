@@ -1,3 +1,4 @@
+    - fixed i18n support in menu items and radio button constructors. (Steph)
     - fixed a crash bug when using non-string variables to access
       overloaded object's properties. (Andrei)
     - fixed a crash bug in GtkCheckButton constructor. (Andrei)
