@@ -40,7 +40,6 @@ function parse($filename)
         $pos = 0;
         $len = strlen($line);
         $lineno++;
-        var_dump($line);
         while ($pos < $len) {
             if (strpos($whitespace, $line{$pos}) !== false) {
                 $pos++; continue;
@@ -128,6 +127,7 @@ class Defs_Parser {
 
     function _parse_or_load($defs_file)
     {
+        /* XXX disable caching for now
         $cache_file = $defs_file.'.cache';
         if (@is_file($cache_file) &&
             filemtime($cache_file) > filemtime($defs_file)) {
@@ -136,11 +136,12 @@ class Defs_Parser {
             $this->parse_cache = fread($fp, filesize($cache_file));
             fclose($fp);
         } else {
+            */
             error_log("Parsing file \"$defs_file\".");
             $this->file_name = basename($defs_file);
             $this->file_path = dirname($defs_file);
-            $this->parse_tree = parse(fopen($defs_file, 'r'));
-        }
+            $this->parse_tree = parse($defs_file, 'r');
+        //}
     }
 
     function start_parsing($tree = NULL)
@@ -191,7 +192,7 @@ class Defs_Parser {
             $this->handle_unknown($node);
     }
 
-    function handle_enum($arg)
+    function handle_define_enum($arg)
     {
         $enum_def       = new Enum_Def($arg);
         if (basename($this->file_path) == 'gtk+')
@@ -200,14 +201,14 @@ class Defs_Parser {
         $this->c_name[] = &$enum_def->c_name;
     }
 
-    function handle_flags($arg)
+    function handle_define_flags($arg)
     {
         $flag_def       = new Flag_Def($arg);
         $this->enums[]  = &$flag_def;
         $this->c_name[] = &$flag_def->c_name;
     }
 
-    function handle_function($arg)
+    function handle_define_function($arg)
     {
         $function_def       = new Function_Def($arg);
         if (isset($function_def->is_constructor_of))
@@ -217,21 +218,21 @@ class Defs_Parser {
         $this->c_name[]     = &$function_def->c_name;
     }
 
-    function handle_method($arg)
+    function handle_define_method($arg)
     {
         $method_def         = new Method_Def($arg);
         $this->methods[]    = &$method_def;
         $this->c_name[]     = &$method_def->c_name;
     }
 
-    function handle_object($arg)
+    function handle_define_object($arg)
     {
         $object_def         = new Object_Def($arg);
         $this->objects[$object_def->in_module . $object_def->name] = &$object_def;
         $this->c_name[]     = &$object_def->c_name;
     }
 
-    function handle_struct($arg)
+    function handle_define_struct($arg)
     {
         $struct_def         = new Struct_Def($arg);
         $this->structs[]    = &$struct_def;
@@ -242,13 +243,14 @@ class Defs_Parser {
     {
         $include_file = $this->file_path . "/" . $arg[0];
         error_log("Parsing file \"$include_file\".");
-        $include_tree = parse(fopen($include_file, 'r'));
+        $include_tree = parse($include_file, 'r');
         $this->start_parsing($include_tree);
     }
 
     function handle_unknown($node)
     {
         /* noop */
+        die("unknown node ". var_export($node, 1));
     }
 
     function find_methods($obj)
@@ -280,5 +282,11 @@ class Defs_Parser {
     }
 }
 
-?>
+/*
+$d = new Defs_Parser('test.defs');
+$d->start_parsing();
+var_dump($d->functions);
+*/
+
 /* vim: set et: */
+?>

@@ -21,7 +21,15 @@
 
 /* $Id$ */
 
-class Enum_Def {
+abstract class Definition {
+	function guess_return_value_ownership()
+	{
+		/* TODO implement */
+		throw new Exception();
+	}
+}
+
+class Enum_Def extends Definition {
 	var $def_type 	= 'enum';
 	var $name 		= null;
 	var $in_module 	= null;
@@ -64,7 +72,7 @@ class Flag_Def extends Enum_Def {
 	}
 }
 
-class Object_Def {
+class Object_Def extends Definition {
 	var $def_type	= 'object';
 	var $name		= null;
 	var $in_module	= null;
@@ -108,7 +116,7 @@ class Object_Def {
 	}
 }
 
-class Method_Def {
+class Method_Def extends Definition {
 	var $name 			= null;
 	var $of_object 		= null;
 	var $c_name 		= null;
@@ -157,12 +165,13 @@ class Method_Def {
 	}
 }
 
-class Function_Def {
+class Function_Def extends Definition {
 	var $name 				= null;
 	var $in_module 			= null;
 	var $is_constructor_of	= null;
 	var $c_name 			= null;
 	var $return_type		= null;
+	var $caller_owns_return = false;
 	var $params				= array();
 	var $varargs			= false;
 
@@ -181,20 +190,22 @@ class Function_Def {
 				$this->c_name = $arg[1];
 			else if ($arg[0] == 'return-type')
 				$this->return_type = $arg[1];
-			else if ($arg[0] == 'parameter') {
+			else if ($arg[0] == 'caller-owns-return')
+				$this->caller_owns_return = in_array($arg[1], array('t', '#t'));
+			else if ($arg[0] == 'parameters') {
 				$param_type = null;
 				$param_name = null;
 				$param_default = null;
 				$param_null = false;
 				foreach (array_slice($arg, 1) as $param_arg) {
-					if ($param_arg[0] == 'type-and-name') {
-						$param_type = $param_arg[1];
-						$param_name = $param_arg[2];
+					$param_type = $param_arg[0];
+					$param_name = $param_arg[1];
+					foreach (array_slice($param_arg, 2) as $opt_arg) {
+						if ($opt_arg[0] == 'default')
+							$param_default = $opt_arg[1];
+						else if ($opt_arg[0] == 'null-ok')
+							$param_null = true;
 					}
-					else if ($param_arg[0] == 'default')
-						$param_default = $param_arg[1];
-					else if ($param_arg[0] == 'null-ok')
-						$param_null = true;
 				}
 				$this->params[] = array($param_type, $param_name,
 										$param_default, $param_null);
@@ -204,7 +215,7 @@ class Function_Def {
 	}
 }
 
-class Struct_Def {
+class Struct_Def extends Definition {
 	var $def_type 	= 'struct';
 	var $name 		= null;
 	var $in_module 	= null;
