@@ -27,6 +27,9 @@ ignore gtk_canvas_w2c_d
 /* it's not needed- you dont need floating point pixel coords! */ 
 
 %%
+ignore   gtk_canvas_item_new
+
+%%
 override gtk_canvas_item_reparent
 
 PHP_FUNCTION(gtk_canvas_item_reparent)
@@ -475,17 +478,17 @@ PHP_FUNCTION(gtk_canvas_widget_new)
 
 
 %%
-override gtk_canvas_item_new
+override gtk_canvas_group_new
 
 
 
 
 
-PHP_FUNCTION(gtk_canvas_item_new)
+PHP_FUNCTION(gtk_canvas_group_new)
 {
 	zval *parent;
 	zval *hash;
-	long type;
+	long type = GTK_CANVAS_TYPE_CANVAS_GROUP;
 	char *first_arg_name;
 	GtkObject *wrapped_obj;
 	GtkArg *args;
@@ -494,7 +497,7 @@ PHP_FUNCTION(gtk_canvas_item_new)
 	
 	NOT_STATIC_METHOD();
 
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oia", &parent, gtk_canvasgroup_ce, &type, &hash)) {
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oa", &parent, gtk_canvasgroup_ce,  &hash)) {
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
@@ -509,7 +512,7 @@ PHP_FUNCTION(gtk_canvas_item_new)
 		return;
 	}
 
-	php_gtk_object_init(wrapped_obj, this_ptr);
+	php_gtk_object_init(wrapped_obj, this_ptr); 
 
 }
 

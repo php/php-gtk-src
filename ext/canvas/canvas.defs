@@ -168,6 +168,15 @@
   (parameter (type-and-name GtkType type))
 
 )
+(function gtk_canvas_group_new 
+  (c-name gtk_canvas_group_new)
+  (is-constructor-of GtkCanvasGroup)
+  (return-type GtkCanvasGroup*)
+  (parameter (type-and-name GtkCanvasGroup*        parent))
+  (parameter (type-and-name GtkType type))
+
+)
+
 
 
 

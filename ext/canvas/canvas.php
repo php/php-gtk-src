@@ -36,7 +36,7 @@ $ellipse = & new GtkCanvasEllipse($root,array(
                                      "y1"=> 80.0,
                                      "x2"=> 280.0,
                                      "y2"=> 140.0,
-                                     "fill_color_rgba" =>0x5f9ea080,
+                                     "fill_color_rgba" =>0xff0000c0,
                                      "outline_color"=> "black",
                                      "width_pixels"=> 0));
 
@@ -102,7 +102,7 @@ $window->add($canvas);
 $window->show_all();
 $dragging = false;
 
-$canvas->set_pixels_per_unit(.5);
+$canvas->set_pixels_per_unit(1);
 print_r($canvas->w2c(100,200));
 print_r($canvas->c2w(100,200));
 print_r($canvas->window_to_world(100,200));
