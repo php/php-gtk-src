@@ -1,3 +1,13 @@
+2003-07-15  Frank M. Kromann  <frank@kromann.info>
+
+    * (ZE2_PORT)
+      win32/php_win.c:
+      look for the exe in c:\php5
+
+    * (ZE2_PORT)
+      ext/gtk+/php_gtk.dsp:
+      Fixing bad formated include path for ze2
+
 2003-07-10  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (ZE2_PORT)
