@@ -1,3 +1,15 @@
+2004-08-01  Andrei Zmievski  <andreiz@gmail.com>
+
+    * (PHP_GTK_1)
+      ext/gtk+/gtk.defs:
+      Expose the following (read-only) GtkToolbar properties:
+        - style
+        - space_style
+        - space_size
+        - orientation
+      
+      To set these, use the API calls.
+
 2004-07-31  Andrei Zmievski  <andreiz@gmail.com>
 
     * generator/definitions.php:
