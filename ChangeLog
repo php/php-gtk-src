@@ -1,3 +1,76 @@
+2005-01-17  Andrei Zmievski  <andreiz@gravitonic.com>
+
+    * ext/gtk+/gtk.defs
+      generator/generator.php:
+      - Fix static constructor generation.
+      - Adjust GtkComboBox and GtkComboBoxEntry static constructors so they
+        are not in the Gtk:: namespace, but rather in GtkComboBox:: and such.
+
+    * ext/gtk+/gtk.overrides
+      generator/arg_types.php
+      main/php_gtk.c
+      main/php_gtk.h
+      main/phpg_gobject.c:
+      A few other small fixes.
+
+    * generator/generator.php
+      generator/templates.php:
+      Support static constructors better.
+
+    * ext/extra/extra.defs:
+      Merge from branch (GtkSheetRange struct)
+
+    * (PHP_GTK_1)
+      ext/extra/extra.defs:
+      Add GtkSheetRange struct.
+
+    * (PHP_GTK_1)
+      generator/generator.php:
+      Fix the structure constructor function entry.
+
+    * build2/build.mk:
+      Use $PHPIZE.
+
+    * buildconf:
+      buildconf now takes an optional parameter to specify the location of
+      'phpize' script. This is needed if you have both PHP 5 and PHP 4
+      installed and the default location is incorrect. The switch is
+      --with-phpize=<path to phpize>.
+
+    * generator/generator.php
+      generator/scheme.php
+      generator/templates.php:
+      - Sort method definitions alphabetically, but put constructors at the
+        top.
+      - Allow specification of function entry flags via overrides.
+      - Allow more than one constructor per class. The first constructor in
+        the .defs file will be considered the 'default' one and will be
+        generated or overriden as __construct. The rest become static methods
+        and are named the same as the C function without the class name at the
+        beginning, i.e. gtk_button_new_with_mnemonic become new_with_mnemonic.
+
+    * main/php_gtk.h:
+      Fix typo.
+
+    * generator/templates.php:
+      Throw the PhpGtkConstructException in constructors.
+
+    * generator/override.php:
+      Allow specification of function entry flags for each override.
+
+    * ext/gtk+/v1.gtk.overrides:
+      Add overrides from version 1, for reference.
+
+    * ext/gtk+/gtk.overrides:
+      Only new and vetted overrides will appear in this file. The previous
+      ones are in v1.gtk.overrides.
+
+    * ext/gtk+/gtk.defs:
+      Indicate additional GtkButton constructors.
+
+    * ext/gtk+/Makefile.frag:
+      Log the generation messages to a file gen_<id>.log
+
 2005-01-07  Andrei Zmievski  <andreiz@gravitonic.com>
 
     * main/php_gtk.h
