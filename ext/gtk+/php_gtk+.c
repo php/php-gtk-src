@@ -146,16 +146,20 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 	le_gtk_object = zend_register_list_destructors_ex(release_gtk_object_rsrc, NULL, "GtkObject", module_number);
 
 	init_gtk();
-	php_gtk_register_constants();
-	php_gdk_register_constants();
+	php_gtk_register_constants(module_number ELS_CC);
+	php_gdk_register_constants(module_number ELS_CC);
 	php_gtk_register_classes();
 	php_gdk_register_classes();
 	php_gtk_plus_register_types(module_number);
+
+	return SUCCESS;
 }
 
 PHP_GTK_XSHUTDOWN_FUNCTION(gtk_plus)
 {
 	gtk_exit(0);
+
+	return SUCCESS;
 }
 
 php_gtk_ext_entry gtk_plus_ext_entry = {

@@ -36,7 +36,7 @@
 typedef void (*prop_getter_t)(zval *return_value, zval *object, zend_llist_element **element, int *result);
 typedef int (*prop_setter_t)(zval *object, zend_llist_element **element, zval *value);
 
-#define EXT_INIT_ARGS			int module_number
+#define EXT_INIT_ARGS			int module_number ELS_DC
 #define EXT_SHUTDOWN_ARGS		void
 
 #define PHP_GTK_XINIT(ext)		php_gtk_xinit_##ext
