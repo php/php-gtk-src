@@ -1,3 +1,15 @@
+2004-07-31  Andrei Zmievski  <andreiz@gmail.com>
+
+    * generator/definitions.php:
+      Fix access to static vars.
+
+    * generator/definitions.php:
+      Update Function_Def and Method_Def with more parameters.
+
+    * generator/definitions.php:
+      - Add Definition::$true_values static property;
+      * Fix accumulation of parameters in Function_Defs.
+
 2004-07-30  Andrei Zmievski  <andreiz@gmail.com>
 
     * generator/definitions.php:
