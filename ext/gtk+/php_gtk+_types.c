@@ -571,6 +571,34 @@ PHP_FUNCTION(gdk_window_set_icon)
 	gdk_window_set_icon(PHP_GDK_WINDOW_GET(this_ptr), icon_window, pixmap, mask);
 }
 
+PHP_FUNCTION(gdk_window_copy_area)
+{
+	zval *gc, *php_src_window;
+	GdkWindow *src_window = NULL;
+	int x, y, src_x, src_y, width, height;
+	zend_class_entry *ce;
+
+	NOT_STATIC_METHOD();
+
+	if (Z_OBJCE_P(this_ptr)->refcount == gdk_window_ce->refcount)
+		ce = gdk_window_ce;
+	else if (Z_OBJCE_P(this_ptr)->refcount == gdk_pixmap_ce->refcount)
+		ce = gdk_pixmap_ce;
+	else if (Z_OBJCE_P(this_ptr)->refcount == gdk_bitmap_ce->refcount)
+		ce = gdk_bitmap_ce;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OiiNiiii", &gc, gdk_gc_ce, &x, &y,
+							&php_src_window, ce, &src_x, &src_y,
+							&width, &height))
+		return;
+
+	if (Z_TYPE_P(php_src_window) != IS_NULL)
+		src_window = PHP_GDK_WINDOW_GET(php_src_window);
+
+	gdk_window_copy_area(PHP_GDK_WINDOW_GET(this_ptr), PHP_GDK_GC_GET(gc), x, y,
+						 src_window, src_x, src_y, width, height);
+}
+
 static function_entry php_gdk_window_functions[] = {
 	{"GdkWindow",		PHP_FN(no_direct_constructor), NULL},
 	{"gdkwindow",		PHP_FN(no_direct_constructor), NULL},
@@ -583,6 +611,7 @@ static function_entry php_gdk_window_functions[] = {
 	{"property_change", PHP_FN(gdk_window_property_change), NULL},
 	{"property_delete", PHP_FN(gdk_window_property_delete), NULL},
 	{"set_icon",		PHP_FN(gdk_window_set_icon), NULL},
+	{"copy_area",		PHP_FN(gdk_window_copy_area), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -590,6 +619,7 @@ static function_entry php_gdk_bitmap_functions[] = {
 	{"GdkBitmap",		PHP_FN(no_direct_constructor), NULL},
 	{"gdkbitmap",		PHP_FN(no_direct_constructor), NULL},
 	{"new_gc", 			PHP_FN(gdk_window_new_gc), NULL},
+	{"copy_area",		PHP_FN(gdk_window_copy_area), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -625,6 +655,7 @@ static function_entry php_gdk_pixmap_functions[] = {
 	{"property_get", 	PHP_FN(gdk_window_property_get), NULL},
 	{"property_change", PHP_FN(gdk_window_property_change), NULL},
 	{"property_delete", PHP_FN(gdk_window_property_delete), NULL},
+	{"copy_area",		PHP_FN(gdk_window_copy_area), NULL},
 	{NULL, NULL, NULL}
 };
 
