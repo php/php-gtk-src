@@ -73,7 +73,6 @@
 )
 
 
-
 ;; this is a bit fake, but it's a shit load easier for the user to understand...
 
 (function gtk_canvas_item_new 
@@ -631,12 +630,6 @@
   (return-type GtkWidget*)
 )
 
-(function gtk_canvas_new_aa 
-  (c-name gtk_canvas_new_aa)
-  (is-constructor-of GtkCanvas)
-  (return-type GtkWidget*)
-)
-
 (method root 
   (of-object Canvas (Gtk))
   (c-name gtk_canvas_root)
@@ -796,3 +789,15 @@
   (parameter (type-and-name GdkGC*        gc))
 )
 
+
+(object CanvasAA
+  (in-module Gtk)
+  (parent Canvas (Gtk))
+  (c-name GtkCanvasAA )
+)
+
+(function gtk_canvas_aa_new
+  (c-name gtk_canvas_new_aa)
+  (is-constructor-of GtkCanvasAA)
+  (return-type GtkWidget*)
+)

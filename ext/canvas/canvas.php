@@ -12,7 +12,7 @@ $window->connect_object('destroy', array('gtk', 'main_quit'));
 
 
 
-$canvas= &new GtkCanvas();
+$canvas= &new GtkCanvasAA();
 $canvas->set_usize(600,800);
 
 $root = $canvas->root();
@@ -40,7 +40,7 @@ $ellipse = & new GtkCanvasEllipse($root,array(
                                      "outline_color"=> "black",
                                      "width_pixels"=> 0));
 
-                                  
+$ellipse->connect('event','canvas_event');                             
                                      
 $text = & new GtkCanvasText($root,array(
                                      "x"=> 10.0,  
@@ -50,7 +50,7 @@ $text = & new GtkCanvasText($root,array(
                                     "font_gdk" => gdk::font_load    ('-*-helvetica-*'),
                                     "anchor" => 'center',
                                     ));
-
+$text->connect('event','canvas_event');
 $button = &new GtkButton('hello world');
 $button->show();
 $text = & new GtkCanvasWidget($root,array(
@@ -93,7 +93,7 @@ $polygon->set_points( array(
                               290.0,  330.0
                         )  
                 );
-                
+$polygon->connect('event','canvas_event');                
                
 
 
@@ -104,6 +104,8 @@ $window->show_all();
 gtk::main();
 
 $dragging = false;
+
+ 
 
 
 function canvas_event($canvasItem,$event) 

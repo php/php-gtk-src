@@ -556,3 +556,21 @@ PHP_FUNCTION(gtk_canvas_item_set_points)
 }
 
 
+
+
+%%
+override gtk_canvas_aa_get_type
+
+
+PHP_FUNCTION(gtk_canvas_aa_get_type)
+{
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	RETURN_LONG(gtk_canvas_get_type());
+}
+
+
+
+
+
