@@ -1,3 +1,28 @@
+2001-08-07  Frank M. Kromann  <frank@frontbase.com>
+
+    * test/gtk.php: Getting rid of some warnings
+
+2001-08-07  Andrei Zmievski  <andrei@ispi.net>
+
+    * test/window.xpm: oops
+
+    * test/window.xpm: More interesting color scheme.
+
+2001-08-07  Frank M. Kromann  <frank@frontbase.com>
+
+    * test/window.xpm: Adding sample xpm
+
+2001-08-07  Andrei Zmievski  <andrei@ispi.net>
+
+    * test/gtk.php: call_user_method_array() is deprecated
+
+2001-08-07  Frank M. Kromann  <frank@frontbase.com>
+
+    * generator/arg_types.php: Fix for crash in ctree under windows,
+    This was a problem with the UTF-8 stuff on windows.
+
+    * generator/templates.php: More TSRMLS_FETCH()
+
 2001-08-06  Andrei Zmievski  <andrei@ispi.net>
 
     * generator/h2def.py: Adding script that generates .defs files.
