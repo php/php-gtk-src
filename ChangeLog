@@ -1,3 +1,8 @@
+2005-03-16  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk.c:
+      Move php_gtk_ext_registry init/destroy into module cycle.
+
 2005-03-15  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/phpg_support.c:
