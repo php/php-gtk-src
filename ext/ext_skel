@@ -62,6 +62,7 @@ cd ../$widget/
 perl -p -i -e "s/skeleton/$widget/g" $file_list
 perl -p -i -e "s/Skeleton/$Widget/g" $file_list
 perl -p -i -e "s/SKELETON/$WIDGET/g" $file_list
+perl -p -i -e "s/^dnl  //" config.m4
 
 mv php_skeleton.c php_$widget.c
 mv php_skeleton.h php_$widget.h
