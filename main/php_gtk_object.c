@@ -1,0 +1,427 @@
+/*
+   +----------------------------------------------------------------------+
+   | PHP version 4.0                                                      |
+   +----------------------------------------------------------------------+
+   | Copyright (c) 1997, 1998, 1999, 2000 The PHP Group                   |
+   +----------------------------------------------------------------------+
+   | This source file is subject to version 2.02 of the PHP license,      |
+   | that is bundled with this package in the file LICENSE, and is        |
+   | available at through the world-wide-web at                           |
+   | http://www.php.net/license/2_02.txt.                                 |
+   | If you did not receive a copy of the PHP license and are unable to   |
+   | obtain it through the world-wide-web, please send a note to          |
+   | license@php.net so we can mail you a copy immediately.               |
+   +----------------------------------------------------------------------+
+   | Authors: Andrei Zmievski <andrei@php.net>                            |
+   +----------------------------------------------------------------------+
+ */
+
+#include "php_gtk.h"
+
+#if HAVE_PHP_GTK
+
+int le_gtk;
+
+static const char *php_gtk_wrapper_key = "php_gtk::wrapper";
+
+void php_gtk_object_init(GtkObject *obj, zval *wrapper)
+{
+	gtk_object_ref(obj);
+	gtk_object_sink(obj);
+
+	php_gtk_set_object(wrapper, obj, le_gtk);
+}
+
+void php_gtk_set_object(zval *wrapper, void *obj, int rsrc_type)
+{
+	zval *handle;
+
+	MAKE_STD_ZVAL(handle);
+	Z_TYPE_P(handle) = IS_LONG;
+	Z_LVAL_P(handle) = zend_list_insert(obj, rsrc_type);
+	zend_hash_index_update(Z_OBJPROP_P(wrapper), 0, &handle, sizeof(zval *), NULL);
+	if (rsrc_type == le_gtk)
+		gtk_object_set_data_full(obj, php_gtk_wrapper_key, wrapper, php_gtk_destroy_notify);
+}
+
+void *php_gtk_get_object(zval *wrapper, int rsrc_type)
+{
+	void *obj;
+	zval **handle;
+	int type;
+	
+	if (Z_TYPE_P(wrapper) != IS_OBJECT) {
+		php_error(E_ERROR, "Wrapper is not an object");
+	}
+	if (zend_hash_index_find(Z_OBJPROP_P(wrapper), 0, (void **)&handle) == FAILURE) {
+		php_error(E_ERROR, "Underlying object missing");
+	}
+	obj = zend_list_find(Z_LVAL_PP(handle), &type);
+	if (!obj || type != rsrc_type) {
+		php_error(E_ERROR, "Underlying object missing or of invalid type");
+	}
+
+	return obj;
+}
+
+int php_gtk_get_enum_value(GtkType enum_type, zval *enum_val, int *result)
+{
+	if (!enum_val)
+		return 0;
+
+	if (Z_TYPE_P(enum_val) == IS_LONG) {
+		*result = Z_LVAL_P(enum_val);
+		return 1;
+	} else if (Z_TYPE_P(enum_val) == IS_STRING) {
+		GtkEnumValue *info = gtk_type_enum_find_value(enum_type, Z_STRVAL_P(enum_val));
+		if (!info) {
+			php_error(E_WARNING, "Could not translate enum value '%s'", Z_STRVAL_P(enum_val));
+			return 0;
+		}
+		*result = info->value;
+		return 1;
+	}
+
+	php_error(E_WARNING, "enum values must be integers or strings");
+	return 0;
+}
+
+int php_gtk_get_flag_value(GtkType flag_type, zval *flag_val, int *result)
+{
+	if (!flag_val)
+		return 0;
+
+	if (Z_TYPE_P(flag_val) == IS_LONG) {
+		*result = Z_LVAL_P(flag_val);
+		return 1;
+	} else if (Z_TYPE_P(flag_val) == IS_STRING) {
+		GtkFlagValue *info = gtk_type_flags_find_value(flag_type, Z_STRVAL_P(flag_val));
+		if (!info) {
+			php_error(E_WARNING, "Could not translate flag value '%s'", Z_STRVAL_P(flag_val));
+			return 0;
+		}
+		*result = info->value;
+		return 1;
+	} else if (Z_TYPE_P(flag_val) == IS_ARRAY) {
+		zval **flag;
+
+		for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(flag_val));
+			 zend_hash_get_current_data(Z_ARRVAL_P(flag_val), (void **)&flag) == SUCCESS;
+			 zend_hash_move_forward(Z_ARRVAL_P(flag_val))) {
+			if (Z_TYPE_PP(flag) == IS_LONG)
+				*result |= Z_LVAL_PP(flag);
+			else if (Z_TYPE_PP(flag) == IS_STRING) {
+				GtkFlagValue *info = gtk_type_flags_find_value(flag_type, Z_STRVAL_PP(flag));
+				if (!info) {
+					php_error(E_WARNING, "Could not translate flag value '%s'", Z_STRVAL_PP(flag));
+					return 0;
+				}
+				*result |= info->value;
+			} else {
+				php_error(E_WARNING, "flag arrays can contain only integers or strings");
+				return 0;
+			}
+		}
+
+		return 1;
+	}
+
+	php_error(E_WARNING, "flag values must be integers or strings");
+	return 0;
+}
+
+/* Generic callback marshal. */
+void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *args)
+{
+	zval *gtk_args;
+	zval *signal_data = (zval *)data;
+	zval **func, **extra = NULL;
+	zval *wrapper = NULL;
+	zval **wrapper_ptr = &wrapper;
+	zval *params;
+	zval *retval = NULL;
+	zval *tmp;
+	zval ***signal_args;
+	ELS_FETCH();
+
+	gtk_args = php_gtk_args_as_hash(nargs, args);
+	
+	if (!php_gtk_check_callable(signal_data)) {
+		zend_hash_index_find(Z_ARRVAL_P(signal_data), 0, (void **)&func);
+		zend_hash_index_find(Z_ARRVAL_P(signal_data), 1, (void **)&extra);
+		if (zend_hash_num_elements(Z_ARRVAL_P(signal_data)) > 2) {
+			zend_hash_index_find(Z_ARRVAL_P(signal_data), 2, (void **)&wrapper_ptr);
+			zval_add_ref(&wrapper);
+		}
+	} else
+		func = &signal_data;
+
+	if (!wrapper && o)
+		wrapper = php_gtk_new(o);
+
+	if (wrapper) {
+		MAKE_STD_ZVAL(params);
+		array_init(params);
+		zend_hash_next_index_insert(Z_ARRVAL_P(params), &wrapper, sizeof(zval *), NULL);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0);
+		zval_del_ref(&gtk_args);
+	} else
+		params = gtk_args;
+
+	if (extra)
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+	
+	signal_args = php_gtk_hash_as_array(params);
+
+	call_user_function_ex(EG(function_table), NULL, *func, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), signal_args, 1, NULL);
+
+	php_gtk_ret_from_value(&args[nargs], retval);
+
+	if (retval)
+		zval_ptr_dtor(&retval);
+	efree(signal_args);
+	zval_del_ref(&params);
+}
+
+void php_gtk_destroy_notify(gpointer user_data)
+{
+	zval *value = (zval *)user_data;
+	zval_del_ref(&value);
+}
+
+zval *php_gtk_new(GtkObject *obj)
+{
+	zval *wrapper;
+	zend_class_entry *ce;
+	GtkType type;
+	gchar *type_name;
+	
+    if ((wrapper = (zval *)gtk_object_get_data(obj, php_gtk_wrapper_key))) {
+		zval_add_ref(&wrapper);
+		return wrapper;
+	}
+
+	MAKE_STD_ZVAL(wrapper);
+
+	if (!obj) {
+		ZVAL_NULL(wrapper);
+		return wrapper;
+	}
+
+	type = GTK_OBJECT_TYPE(obj);
+	while ((ce = g_hash_table_lookup(php_gtk_class_hash, gtk_type_name(type))) == NULL)
+		type = gtk_type_parent(type);
+
+	object_init_ex(wrapper, ce);
+	gtk_object_ref(obj);
+	php_gtk_set_object(wrapper, obj, le_gtk);
+
+	return wrapper;
+}
+
+zval *php_gtk_args_as_hash(int nargs, GtkArg *args)
+{
+	zval *hash;
+	zval *item;
+	int i;
+
+	MAKE_STD_ZVAL(hash);
+	array_init(hash);
+	for (i = 0; i < nargs; i++) {
+		item = php_gtk_arg_as_value(&args[i]);
+		if (!item) {
+			MAKE_STD_ZVAL(item);
+			ZVAL_NULL(item);
+		}
+		zend_hash_next_index_insert(Z_ARRVAL_P(hash), &item, sizeof(zval *), NULL);
+	}
+
+	return hash;
+}
+
+zval *php_gtk_arg_as_value(GtkArg *arg)
+{
+	zval *value;
+
+	MAKE_STD_ZVAL(value);
+	switch (GTK_FUNDAMENTAL_TYPE(arg->type)) {
+		case GTK_TYPE_INVALID:
+		case GTK_TYPE_NONE:
+			ZVAL_NULL(value);
+			break;
+
+		case GTK_TYPE_CHAR:
+		case GTK_TYPE_UCHAR:
+			ZVAL_STRINGL(value, &GTK_VALUE_CHAR(*arg), 1, 1);
+			break;
+
+		case GTK_TYPE_BOOL:
+			ZVAL_BOOL(value, GTK_VALUE_BOOL(*arg));
+			break;
+
+		case GTK_TYPE_ENUM:
+		case GTK_TYPE_FLAGS:
+		case GTK_TYPE_INT:
+			ZVAL_LONG(value, GTK_VALUE_INT(*arg));
+			break;
+
+		case GTK_TYPE_LONG:
+			ZVAL_LONG(value, GTK_VALUE_INT(*arg));
+			break;
+
+		case GTK_TYPE_UINT:
+			ZVAL_LONG(value, GTK_VALUE_UINT(*arg));
+			break;
+
+		case GTK_TYPE_ULONG:
+			ZVAL_LONG(value, GTK_VALUE_ULONG(*arg));
+			break;
+
+		case GTK_TYPE_FLOAT:
+			ZVAL_DOUBLE(value, GTK_VALUE_FLOAT(*arg));
+			break;
+
+		case GTK_TYPE_DOUBLE:
+			ZVAL_DOUBLE(value, GTK_VALUE_DOUBLE(*arg));
+			break;
+
+		case GTK_TYPE_STRING:
+			if (GTK_VALUE_STRING(*arg) != NULL) {
+				ZVAL_STRING(value, GTK_VALUE_STRING(*arg), 1);
+			} else
+				ZVAL_NULL(value);
+			break;
+
+		case GTK_TYPE_ARGS:
+			value = php_gtk_args_as_hash(GTK_VALUE_ARGS(*arg).n_args,
+										 GTK_VALUE_ARGS(*arg).args);
+			break;
+
+		case GTK_TYPE_OBJECT:
+			if (GTK_VALUE_OBJECT(*arg) != NULL)
+				value = php_gtk_new(GTK_VALUE_OBJECT(*arg));
+			else
+				ZVAL_NULL(value);
+			break;
+
+		case GTK_TYPE_POINTER:
+			php_error(E_WARNING, "%s(): internal error: GTK_TYPE_POINTER unsupported",
+					  get_active_function_name());
+			ZVAL_NULL(value);
+			break;
+
+		case GTK_TYPE_BOXED:
+			if (arg->type == GTK_TYPE_GDK_EVENT)
+				value = php_gdk_event_new(GTK_VALUE_BOXED(*arg));
+			else if (arg->type == GTK_TYPE_GDK_WINDOW)
+				value = php_gdk_window_new(GTK_VALUE_BOXED(*arg));
+			else
+				ZVAL_NULL(value);
+			break;
+
+		case GTK_TYPE_FOREIGN:
+		case GTK_TYPE_CALLBACK:
+		case GTK_TYPE_SIGNAL:
+			php_error(E_WARNING, "%s(): internal error: GTK_TYPE_FOREIGN, GTK_TYPE_CALLBACK, or GTK_TYPE_SIGNAL under development",
+					  get_active_function_name());
+			break;
+	}
+
+	return value;
+}
+
+void php_gtk_ret_from_value(GtkArg *ret, zval *value)
+{
+	switch (GTK_FUNDAMENTAL_TYPE(ret->type)) {
+		case GTK_TYPE_NONE:
+		case GTK_TYPE_INVALID:
+			break;
+
+		case GTK_TYPE_BOOL:
+			convert_to_boolean(value);
+			*GTK_RETLOC_BOOL(*ret) = Z_BVAL_P(value);
+			break;
+
+		case GTK_TYPE_CHAR:
+			convert_to_string(value);
+			*GTK_RETLOC_BOOL(*ret) = Z_STRVAL_P(value)[0];
+			break;
+
+		case GTK_TYPE_ENUM:
+			if (!php_gtk_get_enum_value(ret->type, value, GTK_RETLOC_ENUM(*ret)))
+				*GTK_RETLOC_ENUM(*ret) = 0;
+			break;
+
+		case GTK_TYPE_FLAGS:
+			if (!php_gtk_get_flag_value(ret->type, value, GTK_RETLOC_FLAGS(*ret)))
+				*GTK_RETLOC_FLAGS(*ret) = 0;
+			break;
+
+		case GTK_TYPE_INT:
+			convert_to_long(value);
+			*GTK_RETLOC_INT(*ret) = Z_LVAL_P(value);
+			break;
+
+		case GTK_TYPE_UINT:
+			convert_to_long(value);
+			*GTK_RETLOC_UINT(*ret) = Z_LVAL_P(value);
+			break;
+
+		case GTK_TYPE_LONG:
+			convert_to_long(value);
+			*GTK_RETLOC_LONG(*ret) = Z_LVAL_P(value);
+			break;
+
+		case GTK_TYPE_ULONG:
+			convert_to_long(value);
+			*GTK_RETLOC_ULONG(*ret) = Z_LVAL_P(value);
+			break;
+
+		case GTK_TYPE_FLOAT:
+			convert_to_double(value);
+			*GTK_RETLOC_FLOAT(*ret) = Z_DVAL_P(value);
+			break;
+
+		case GTK_TYPE_DOUBLE:
+			convert_to_double(value);
+			*GTK_RETLOC_DOUBLE(*ret) = Z_DVAL_P(value);
+			break;
+
+		case GTK_TYPE_STRING:
+			convert_to_string(value);
+			*GTK_RETLOC_STRING(*ret) = g_strdup(Z_STRVAL_P(value));
+			break;
+
+		case GTK_TYPE_OBJECT:
+			if (Z_TYPE_P(value) == IS_OBJECT && php_gtk_check_class(value, g_hash_table_lookup(php_gtk_class_hash, "GtkObject")))
+				*GTK_RETLOC_OBJECT(*ret) = PHP_GTK_GET(value);
+			else
+				*GTK_RETLOC_OBJECT(*ret) = NULL;
+			break;
+
+		case GTK_TYPE_BOXED:
+			if (ret->type == GTK_TYPE_GDK_EVENT) {
+				if (php_gtk_check_class(value, gdk_event_ce))
+					*GTK_RETLOC_BOXED(*ret) = PHP_GDK_EVENT_GET(value);
+				else
+					*GTK_RETLOC_BOXED(*ret) = NULL;
+			} else if (ret->type == GTK_TYPE_GDK_WINDOW) {
+				if (php_gtk_check_class(value, gdk_window_ce))
+					*GTK_RETLOC_BOXED(*ret) = PHP_GDK_WINDOW_GET(value);
+				else
+					*GTK_RETLOC_BOXED(*ret) = NULL;
+			} else
+				*GTK_RETLOC_BOXED(*ret) = NULL;
+			break;
+
+		case GTK_TYPE_POINTER:
+			php_error(E_WARNING, "internal error: GTK_TYPE_POINTER not supported");
+			break;
+
+		default:
+			g_assert_not_reached();
+			break;
+	}
+}
+
+#endif  /* HAVE_PHP_GTK */

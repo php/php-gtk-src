@@ -1,0 +1,608 @@
+/* vim: set ft=cpp: */
+%%
+ignore-glob
+	*_get_type
+	gtk_marshal_*
+	gtk_arg_*
+	gtk_args_*
+	gtk_signal_connect*
+	gtk_signal_add_emission_hook*
+	gtk_signal_new*
+	gtk_init_add_*
+	gtk_quit_add_*
+	gtk_timeout_add_*
+	gtk_idle_add_*
+	gtk_accelerator_*
+	gtk_target_list_*
+%%
+ignore
+	gtk_init
+	gtk_init_check
+	gtk_exit
+	gtk_set_locale
+	gtk_accel_group_ref
+	gtk_accel_group_unref
+	gtk_accel_group_lock
+	gtk_accel_group_unlock
+	gtk_accel_groups_activate
+	gtk_accel_group_activate
+	gtk_accel_group_attach
+	gtk_accel_group_detach
+	gtk_accel_group_get_entry
+	gtk_accel_group_lock_entry
+	gtk_accel_group_unlock_entry
+	gtk_accel_group_add
+	gtk_accel_group_remove
+	gtk_accel_group_handle_add
+	gtk_accel_group_handle_remove
+	gtk_accel_group_create_add
+	gtk_accel_group_create_remove
+	gtk_accel_groups_from_object
+	gtk_accel_group_entries_from_object
+	gtk_signal_set_funcs
+	gtk_signal_lookup
+	gtk_signal_disconnect_by_func
+	gtk_signal_disconnect_by_data
+	gtk_signal_handler_block_by_func
+	gtk_signal_handler_block_by_data
+	gtk_signal_handler_unblock_by_func
+	gtk_signal_handler_unblock_by_data
+	gtk_signal_handler_pending_by_func
+	gtk_signal_n_emissions
+	gtk_signal_n_emissions_by_name
+	gtk_signal_name
+	gtk_signal_remove_emission_hook
+	gtk_signal_query
+	gtk_signal_emit
+	gtk_signal_emit_by_name
+	gtk_signal_emitv
+	gtk_signal_emitv_by_name
+	gtk_quit_remove_by_data
+	gtk_idle_remove_by_data
+	gtk_object_weakref
+	gtk_object_weakunref
+	gtk_object_get
+	gtk_object_getv
+	gtk_object_set
+	gtk_object_setv
+	gtk_object_set_data
+	gtk_object_set_data_full
+	gtk_object_get_data
+	gtk_object_set_user_data
+	gtk_object_get_user_data
+	gtk_object_set_data_by_id
+	gtk_object_set_data_by_id_full
+	gtk_object_get_data_by_id
+	gtk_object_remove_data_by_id
+	gtk_object_remove_no_notify_by_id
+	gtk_object_arg_set
+	gtk_object_arg_get
+	gtk_trace_referencing
+	gtk_widget_get
+	gtk_widget_getv
+	gtk_widget_set
+	gtk_widget_setv
+	gtk_container_get_toplevels
+	gtk_container_add_child_arg_type
+	gtk_container_query_child_args
+	gtk_container_child_args_collect
+	gtk_container_child_arg_get_info
+	gtk_container_foreach
+	gtk_container_foreach_full
+	gtk_container_forall
+	gtk_container_child_getv
+	gtk_container_child_setv
+	gtk_container_add_with_args
+	gtk_container_addv
+	gtk_container_child_set
+	gtk_container_arg_set
+	gtk_container_arg_get
+	gtk_progress_bar_new
+	gtk_clist_set_row_data_full
+	gtk_window_add_embedded_xid
+	gtk_window_remove_embedded_xid
+	gtk_range_trough_click
+	gtk_range_default_htrough_click
+	gtk_range_default_vtrough_click
+	gtk_tooltips_data_get
+	gtk_type_check_object_cast
+	gtk_type_check_class_cast
+	gtk_type_register_enum
+	gtk_type_register_flags
+	gtk_preview_uninit
+	gtk_item_factory_create_item
+	gtk_item_factory_delete_entry
+	gtk_item_factory_delete_entries
+	gtk_item_factory_popup_with_data
+	gtk_item_factory_popup_data
+	gtk_item_factory_set_translate_func
+	gtk_item_factory_create_items_ac
+	gtk_item_factory_create_menu_entries
+	gtk_menu_attach_to_widget
+	gtk_radio_menu_item_group
+	gtk_radio_menu_item_set_group
+	gtk_radio_button_group
+	gtk_radio_button_set_group
+%%
+ignore
+	gtk_object_new
+	gtk_object_newv
+	gtk_object_query_args
+	gtk_object_add_arg_type
+	gtk_object_args_collect
+	gtk_object_arg_get_info
+	gtk_widget_new
+	gtk_widget_newv
+%%
+ignore
+	gtk_true
+	gtk_false
+	gtk_key_snooper_install
+	gtk_key_snooper_remove
+	gtk_get_current_event
+	gtk_get_event_widget
+	gtk_propagate_event
+%%
+ignore
+	GtkPrivateFlags
+	GdkDebugFlag
+	GdkColorInfoFlags
+%%
+ignore
+	gtk_container_dequeue_resize_handler
+	gtk_window_reposition
+%%
+ignore-glob gtk_radio_button_new_*
+%%
+override gtk_timeout_add
+PHP_FUNCTION(wrap_gtk_timeout_add)
+{
+	guint32 interval;
+	zval *func = NULL;
+	zval *extra;
+	zval *data;
+
+	if (ZEND_NUM_ARGS() < 2) {
+		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
+				  get_active_function_name(), ZEND_NUM_ARGS());
+		return;
+	}
+
+	if (!php_gtk_parse_args(2, "iV", &interval, &func))
+		return;
+
+	if (!php_gtk_check_callable(func)) {
+		php_error(E_WARNING, "%s() expects argument 2 to be callable",
+				  get_active_function_name());
+		return;
+	}
+	
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
+	data = php_gtk_build_value("(VN)", func, extra);
+	RETURN_LONG(gtk_timeout_add_full(interval, NULL,
+									 (GtkCallbackMarshal)php_gtk_callback_marshal,
+									 data, php_gtk_destroy_notify));
+}
+%%
+override gtk_idle_add
+PHP_FUNCTION(wrap_gtk_idle_add)
+{
+	zval *func = NULL;
+	zval *extra;
+	zval *data;
+
+	if (ZEND_NUM_ARGS() < 1) {
+		php_error(E_WARNING, "%s() requires at least 1 arguments, %d given",
+				  get_active_function_name(), ZEND_NUM_ARGS());
+		return;
+	}
+
+	if (!php_gtk_parse_args(1, "V", &func))
+		return;
+
+	if (!php_gtk_check_callable(func)) {
+		php_error(E_WARNING, "%s() expects argument 1 to be callable",
+				  get_active_function_name());
+		return;
+	}
+	
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 1, ZEND_NUM_ARGS());
+	data = php_gtk_build_value("(VN)", func, extra);
+	RETURN_LONG(gtk_idle_add_full(GTK_PRIORITY_DEFAULT, NULL,
+								 (GtkCallbackMarshal)php_gtk_callback_marshal,
+								 data, php_gtk_destroy_notify));
+}
+%%
+override gtk_quit_add
+PHP_FUNCTION(wrap_gtk_quit_add)
+{
+	gint main_level;
+	zval *func = NULL;
+	zval *extra;
+	zval *data;
+
+	if (ZEND_NUM_ARGS() < 2) {
+		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
+				  get_active_function_name(), ZEND_NUM_ARGS());
+		return;
+	}
+
+	if (!php_gtk_parse_args(2, "iV", &main_level, &func))
+		return;
+
+	if (!php_gtk_check_callable(func)) {
+		php_error(E_WARNING, "%s() expects argument 2 to be callable",
+				  get_active_function_name());
+		return;
+	}
+	
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
+	data = php_gtk_build_value("(VN)", func, extra);
+	RETURN_LONG(gtk_quit_add_full(main_level, NULL,
+								 (GtkCallbackMarshal)php_gtk_callback_marshal,
+								 data, php_gtk_destroy_notify));
+}
+%%
+override gtk_input_add_full
+PHP_FUNCTION(wrap_gtk_input_add_full)
+{
+    int source;
+    GdkInputCondition condition;
+	zval *func = NULL;
+	zval *extra;
+	zval *data;
+
+	if (ZEND_NUM_ARGS() < 2) {
+		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
+				  get_active_function_name(), ZEND_NUM_ARGS());
+		return;
+	}
+
+	if (!php_gtk_parse_args(2, "iiV", &source, &condition, &func))
+		return;
+
+	if (!php_gtk_check_callable(func)) {
+		php_error(E_WARNING, "%s() expects argument 3 to be callable",
+				  get_active_function_name());
+		return;
+	}
+
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
+	data = php_gtk_build_value("(VN)", func, extra);
+	RETURN_LONG(gtk_input_add_full(source, condition, NULL,
+								 (GtkCallbackMarshal)php_gtk_callback_marshal,
+								 data, php_gtk_destroy_notify));
+}
+%%
+override gtk_signal_connect
+PHP_FUNCTION(wrap_gtk_signal_connect)
+{
+	char *name = NULL;
+	zval *func = NULL;
+	zval *extra;
+	zval *data;
+	int signum;
+
+	NOT_STATIC_METHOD();
+
+	if (ZEND_NUM_ARGS() < 2) {
+		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
+				  get_active_function_name(), ZEND_NUM_ARGS());
+		return;
+	}
+
+	if (!php_gtk_parse_args(2, "sV", &name, &func))
+		return;
+
+	if (!php_gtk_check_callable(func)) {
+		php_error(E_WARNING, "%s() expects argument 2 to be callable",
+				  get_active_function_name());
+		return;
+	}
+	
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
+	data = php_gtk_build_value("(VN)", func, extra);
+	signum = gtk_signal_connect_full(PHP_GTK_GET(this_ptr), name, NULL,
+									 (GtkCallbackMarshal)php_gtk_callback_marshal,
+									 data, php_gtk_destroy_notify, FALSE, FALSE);
+	RETURN_LONG(signum);
+}
+%%
+override gtk_widget_intersect
+PHP_FUNCTION(wrap_gtk_widget_intersect)
+{
+	GdkRectangle area, intersection;
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iiii", &(area.x), &(area.y), &(area.width), &(area.height)))
+		return;
+
+	if (gtk_widget_intersect(GTK_WIDGET(PHP_GTK_GET(this_ptr)), &area, &intersection)) {
+		array_init(return_value);
+		add_index_long(return_value, 0, (int)area.x);
+		add_index_long(return_value, 1, (int)area.y);
+		add_index_long(return_value, 2, (int)area.width);
+		add_index_long(return_value, 3, (int)area.height);
+		return;
+	}
+	else
+		RETURN_NULL();
+}
+%%
+override gtk_menu_attach_to_widget
+static void gtk_menu_detacher(GtkWidget *widget, GtkMenu *menu)
+{
+	GtkMenu *remove_menu;
+	g_return_if_fail(widget != NULL);
+	g_return_if_fail(GTK_IS_MENU(widget));
+	
+	remove_menu = GTK_MENU(widget);
+//	g_return_if_fail(remove_menu->menu == (GtkWidget*) menu);
+	
+//	remove_menu->menu = NULL;
+}
+
+PHP_FUNCTION(wrap_gtk_menu_attach_to_widget)
+{
+	zval *php_widget = NULL;
+	GtkWidget* obj = NULL;
+
+	NOT_STATIC_METHOD();
+	
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &php_widget, gtk_widget_ce))
+		return;
+
+	gtk_menu_attach_to_widget(GTK_MENU(PHP_GTK_GET(this_ptr)), GTK_WIDGET(PHP_GTK_GET(php_widget)), gtk_menu_detacher);
+}
+%%
+override gtk_curve_get_vector
+PHP_FUNCTION(wrap_gtk_curve_get_vector)
+{
+	long veclen, i;
+	gfloat *vector = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &veclen))
+		return;
+
+	vector = emalloc(sizeof(gfloat) * veclen);
+	gtk_curve_get_vector(GTK_CURVE(PHP_GTK_GET(this_ptr)), (int)veclen, vector);
+	array_init(return_value);
+	for (i = 0; i < veclen; i++)
+		add_index_double(return_value, i, vector[i]);
+	efree(vector);
+}
+%%
+override gtk_curve_set_vector
+PHP_FUNCTION(wrap_gtk_curve_set_vector)
+{
+	long veclen, i;
+	gfloat *vector = NULL;
+	zval *php_vector, **temp_vector;
+	HashTable *target_hash;
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_vector))
+		return;
+
+	target_hash = HASH_OF(php_vector);
+	veclen = zend_hash_num_elements(target_hash);
+	vector = emalloc(sizeof(gfloat) * veclen + 1);
+	zend_hash_internal_pointer_reset(target_hash);
+	i = 0;
+	while (zend_hash_get_current_data(target_hash, (void **)&temp_vector) == SUCCESS) {
+		vector[i] = Z_DVAL_PP(temp_vector);
+		i++;
+		zend_hash_move_forward(target_hash);
+	}
+	
+	gtk_curve_set_vector(GTK_CURVE(PHP_GTK_GET(this_ptr)), (int)veclen, vector);
+	RETURN_NULL();
+}
+%%
+overrides gtk_rc_get_default_files
+PHP_FUNCTION(wrap_gtk_rc_get_default_files)
+{
+	gchar **ret;
+	int i = 0;
+	
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	ret = gtk_rc_get_default_files();
+	if (ret) {
+		array_init(return_value);
+		while (*ret) {
+			add_index_string(return_value, i, *ret, 1);
+			*ret++;
+		}
+		g_free(ret);
+	} else
+		RETURN_NULL();
+}
+%%
+override gtk_clist_new_with_titles
+PHP_FUNCTION(wrap_gtk_clist_new_with_titles)
+{
+	GtkObject *wrapped_obj;
+	gint columns, i;
+	gchar **titles;
+	zval *php_titles, **temp_title;
+	HashTable *target_hash;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_titles)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+	
+	target_hash = HASH_OF(php_titles);
+	columns = zend_hash_num_elements(target_hash);
+	if (columns > 0) {
+		titles = emalloc(sizeof(gchar *) * (columns + 1));
+		i = 0;
+		while (zend_hash_get_current_data(target_hash, (void **)&temp_title) == SUCCESS) {
+			convert_to_string_ex(temp_title);
+			titles[i] = estrdup(Z_STRVAL_PP(temp_title));
+			i++;
+			zend_hash_move_forward(target_hash);
+		}
+		titles[i] = NULL;
+		wrapped_obj = (GtkObject *)gtk_clist_new_with_titles(columns, titles);
+		efree(titles);
+	}
+	else
+		wrapped_obj = (GtkObject *)gtk_clist_new(0);
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkScrolledWindow object",
+				  get_active_function_name());
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr);	
+}
+%%
+override gtk_clist_append
+PHP_FUNCTION(wrap_gtk_clist_append)
+{
+	gint columns, i, res;
+	gchar **titles;
+	zval *php_titles, **temp_title;
+	HashTable *target_hash;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_titles)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+	
+	target_hash = HASH_OF(php_titles);
+	columns = zend_hash_num_elements(target_hash);
+	if (columns > 0) {
+		titles = emalloc(sizeof(gchar *) * (columns + 1));
+		i = 0;
+		while (zend_hash_get_current_data(target_hash, (void **)&temp_title) == SUCCESS) {
+			convert_to_string_ex(temp_title);
+			titles[i] = estrdup(Z_STRVAL_PP(temp_title));
+			i++;
+			zend_hash_move_forward(target_hash);
+		}
+		titles[i] = NULL;
+		RETURN_LONG(gtk_clist_append(GTK_CLIST(PHP_GTK_GET(this_ptr)), titles));
+		efree(titles);
+	}
+	else
+		RETURN_NULL();
+}
+%%
+override gtk_menu_item_new_with_label
+PHP_FUNCTION(wrap_gtk_menu_item_new_with_label)
+{
+	char *label;
+	GtkObject *wrapped_obj;
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &label)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	if (strlen(label) == 0)
+		wrapped_obj = (GtkObject *)gtk_menu_item_new();
+	else
+		wrapped_obj = (GtkObject *)gtk_menu_item_new_with_label(label);
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkMenuItem object",
+				  get_active_function_name());
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr);
+}
+%%
+override gtk_file_selection_new
+PHP_FUNCTION(wrap_gtk_file_selection_new)
+{
+	char *title = NULL;
+	zval *destroy_action = NULL, *ok_action = NULL, *cancel_action = NULL;
+	zval *data;
+	GtkObject *wrapped_obj;
+	
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sVVV", &title, &destroy_action, &ok_action, &cancel_action)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	wrapped_obj = (GtkObject *)gtk_file_selection_new(title);
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkFileSelection object",
+				  get_active_function_name());
+		return;
+	}
+
+	if (destroy_action) {
+		if (!php_gtk_check_callable(destroy_action)) {
+			php_error(E_WARNING, "%s() expects argument 2 to be callable",
+					  get_active_function_name());
+			return;
+		}
+
+		data = php_gtk_build_value("(V)", destroy_action);
+		gtk_signal_connect_full(GTK_OBJECT(wrapped_obj), "destroy", NULL,
+									 (GtkCallbackMarshal)php_gtk_callback_marshal,
+									 data, php_gtk_destroy_notify, FALSE, FALSE);
+	}
+
+	if (ok_action) {
+		if (!php_gtk_check_callable(ok_action)) {
+			php_error(E_WARNING, "%s() expects argument 3 to be callable",
+					  get_active_function_name());
+			return;
+		}
+
+		data = php_gtk_build_value("(V)", ok_action);
+		gtk_signal_connect_full(GTK_OBJECT(GTK_FILE_SELECTION(wrapped_obj)->ok_button), "clicked", NULL,
+									(GtkCallbackMarshal)php_gtk_callback_marshal,
+									data, NULL, FALSE, FALSE);
+	}
+	gtk_signal_connect_object(GTK_OBJECT(GTK_FILE_SELECTION(wrapped_obj)->ok_button), "clicked", 
+								GTK_SIGNAL_FUNC(gtk_widget_destroy), (gpointer)wrapped_obj);
+
+	if (cancel_action) {
+		if (!php_gtk_check_callable(cancel_action)) {
+			php_error(E_WARNING, "%s() expects argument 4 to be callable",
+					  get_active_function_name());
+			return;
+		}
+
+		data = php_gtk_build_value("(V)", cancel_action);
+		gtk_signal_connect_full(GTK_OBJECT(GTK_FILE_SELECTION(wrapped_obj)->cancel_button), "clicked", NULL,
+									(GtkCallbackMarshal)php_gtk_callback_marshal,
+									data, NULL, FALSE, FALSE);
+	}
+	gtk_signal_connect_object(GTK_OBJECT(GTK_FILE_SELECTION(wrapped_obj)->cancel_button), "clicked", 
+								GTK_SIGNAL_FUNC(gtk_widget_destroy), (gpointer)wrapped_obj);
+
+	php_gtk_object_init(wrapped_obj, this_ptr);
+}
+%%
+override gdk_color_parse
+PHP_FUNCTION(wrap_gdk_color_parse)
+{
+	char *spec;
+	GdkColor color;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &spec))
+		return;
+
+	if (gdk_color_parse(spec, &color))
+		*return_value = *php_gdk_color_new(&color);
+}
