@@ -5,7 +5,7 @@ dnl  PHP_GTK_ARG_ENABLE(skeleton,for GtkSkeleton support,
 dnl  [  --enable-skeleton       Enable GtkSkeleton support])
 
 dnl  if test "$PHP_GTK_SKELETON" != "no"; then
-dnl    for x in /usr/local /usr; do
+dnl    for x in /usr /usr/local; do
 dnl      if test -f $x/include/gtkskeleton.h; then
 dnl        SKELETON_DIR=$x
 dnl        SKELETON_INCDIR=$x/include
