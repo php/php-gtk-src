@@ -1,4 +1,4 @@
-;; -*- scheme -*-
+; -*- scheme -*-
 
 ; object definitions ...
 (object Object
@@ -44,6 +44,7 @@
   (field (type-and-name GdkWindow* window))
   (field (type-and-name GtkAllocation allocation))
   (field (type-and-name guint state))
+  (field (type-and-name GtkWidget* parent))
 )
 
 (object Separator
