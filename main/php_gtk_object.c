@@ -191,20 +191,6 @@ PHP_GTK_API zend_class_entry* php_gtk_register_class(const char *class_name, fun
 
 	real_ce = zend_register_internal_class_ex(&ce, parent, NULL TSRMLS_CC);
 
-	while (ptr->fname) {
-		if (!strncmp(ptr->fname, real_ce->name, real_ce->name_length)) {
-			zif.arg_types = ptr->func_arg_types;
-			zif.function_name = real_ce->name;
-			zif.handler = ptr->handler;
-			zif.scope = real_ce;
-			zif.type = ZEND_INTERNAL_FUNCTION;
-			zend_hash_update(&real_ce->function_table, real_ce->name, real_ce->name_length+1, &zif, sizeof(zend_function), (void**)&function);
-			real_ce->constructor = function;
-			break;
-		}
-		ptr++;
-	}
-	
 	if (zend_hash_index_find(&php_gtk_prop_desc, (long)real_ce->parent, (void **)&parent_prop_desc) == SUCCESS) {
 		if (parent_prop_desc->have_getter)
 			prop_desc.have_getter = 1;
