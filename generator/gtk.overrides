@@ -167,8 +167,6 @@ ignore
 	gtk_draw_slider
 	gtk_draw_handle
 %%
-ignore-glob gtk_radio_button_new_*
-%%
 register_class gtk_box_child_ce
 	INIT_CLASS_ENTRY(ce, "gtkboxchild", NULL);
 	gtk_box_child_ce = zend_register_internal_class_ex(&ce, NULL, NULL);
@@ -504,6 +502,7 @@ PHP_FUNCTION(wrap_gtk_clist_new)
 
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkCList object", get_active_function_name());
+		php_gtk_invalidate(this_ptr);
 		return;
 	}
 
@@ -652,6 +651,7 @@ PHP_FUNCTION(wrap_gtk_menu_item_new)
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkMenuItem object",
 				  get_active_function_name());
+		php_gtk_invalidate(this_ptr);
 		return;
 	}
 
@@ -682,6 +682,7 @@ PHP_FUNCTION(wrap_gtk_check_menu_item_new)
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkCheckMenuItem object",
 				  get_active_function_name());
+		php_gtk_invalidate(this_ptr);
 		return;
 	}
 
@@ -738,6 +739,7 @@ PHP_FUNCTION(wrap_gtk_list_item_new)
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkListItem object",
 				get_active_function_name());
+		php_gtk_invalidate(this_ptr);
 		return;
 	}
 
@@ -767,6 +769,7 @@ PHP_FUNCTION(wrap_gtk_tree_item_new)
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkTreeItem object",
 				get_active_function_name());
+		php_gtk_invalidate(this_ptr);
 		return;
 	}
 
@@ -796,6 +799,7 @@ PHP_FUNCTION(wrap_gtk_button_new)
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkButton object",
 				  get_active_function_name());
+		php_gtk_invalidate(this_ptr);
 		return;
 	}
 
@@ -825,6 +829,7 @@ PHP_FUNCTION(wrap_gtk_toggle_button_new)
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkToggleButton object",
 				  get_active_function_name());
+		php_gtk_invalidate(this_ptr);
 		return;
 	}
 
@@ -852,6 +857,7 @@ PHP_FUNCTION(wrap_gtk_check_button_new)
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkCheckButton object",
 				  get_active_function_name());
+		php_gtk_invalidate(this_ptr);
 		return;
 	}
 
@@ -912,6 +918,7 @@ PHP_FUNCTION(wrap_gtk_ctree_new_with_titles)
 
 	if (!wrapped_obj) {
 		php_error(E_WARNING, "%s(): could not create GtkCTree object", get_active_function_name());
+		php_gtk_invalidate(this_ptr);
 		return;
 	}
 
@@ -1261,3 +1268,110 @@ getprop GtkList selection
 
 	return;
 %%
+getprop GtkCList selection
+	zval *php_item;
+	GList *tmp;
+	GList *selection = GTK_CLIST(PHP_GTK_GET(object))->selection;
+	zend_overloaded_element *property;
+	zend_llist_element *next = (*element)->next;
+	int prop_index;
+
+	if (next) {
+		int i = 0;
+		property = (zend_overloaded_element *)next->data;
+		if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
+			*element = next;
+			prop_index = Z_LVAL(property->element);
+			for (tmp = selection, i = 0; tmp; tmp = tmp->next, i++) {
+				if (i == prop_index) {
+					RETURN_LONG(GPOINTER_TO_INT(tmp->data));
+				}
+			}
+		}
+	} else {
+		array_init(return_value);
+		for (tmp = selection; tmp; tmp = tmp->next)
+			add_next_index_long(return_value, GPOINTER_TO_INT(tmp->data));
+	}
+
+	return;
+%%
+ignore gtk_radio_menu_item_new_with_label
+%%
+override gtk_radio_menu_item_new
+PHP_FUNCTION(wrap_gtk_radio_menu_item_new)
+{
+	zval *php_group = NULL;
+	gchar *text = NULL;
+	GtkRadioMenuItem *group = NULL;
+	GtkObject *wrapped_obj = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Ns", &php_group, gtk_radiomenuitem_ce, &text))
+		return;
+
+	if (Z_TYPE_P(php_group) != IS_NULL)
+		group = GTK_RADIO_MENU_ITEM(PHP_GTK_GET(php_group));
+
+	if (!text) {
+		if (!group)
+			wrapped_obj = (GtkObject *)gtk_radio_menu_item_new(NULL);
+		else
+			wrapped_obj = (GtkObject *)gtk_radio_menu_item_new(group->group);
+	} else {
+		if (!group)
+			wrapped_obj = (GtkObject *)gtk_radio_menu_item_new_with_label(NULL, text);
+		else
+			wrapped_obj = (GtkObject *)gtk_radio_menu_item_new_with_label(group->group, text);
+	}
+
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkRadioMenuItem object",
+				  get_active_function_name());
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr);	
+}
+%%
+ignore-glob gtk_radio_button_new_*
+%%
+override gtk_radio_button_new
+PHP_FUNCTION(wrap_gtk_radio_button_new)
+{
+	zval *php_group = NULL;
+	gchar *text = NULL;
+	GtkRadioButton *group = NULL;
+	GtkObject *wrapped_obj = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Ns", &php_group, gtk_radiobutton_ce, &text))
+		return;
+
+	if (Z_TYPE_P(php_group) != IS_NULL)
+		group = GTK_RADIO_BUTTON(PHP_GTK_GET(php_group));
+
+	if (!text) {
+		if (!group)
+			wrapped_obj = (GtkObject *)gtk_radio_button_new(NULL);
+		else
+			wrapped_obj = (GtkObject *)gtk_radio_button_new(group->group);
+	} else {
+		if (!group)
+			wrapped_obj = (GtkObject *)gtk_radio_button_new_with_label(NULL, text);
+		else
+			wrapped_obj = (GtkObject *)gtk_radio_button_new_with_label(group->group, text);
+	}
+
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkRadioButton object",
+				  get_active_function_name());
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr);	
+}

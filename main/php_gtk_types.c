@@ -557,39 +557,12 @@ static function_entry php_gdk_window_functions[] = {
 	{NULL, NULL, NULL}
 };
 
-PHP_FUNCTION(gdk_pixmap_create_from_xpm)
-{
-	zval *window, *php_trans_color;
-	gchar *filename;
-	GdkColor *trans_color = NULL;
-	GdkPixmap *pixmap = NULL;
-	GdkBitmap *mask;
-
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ONs", &window, gdk_window_ce,
-							&php_trans_color, gdk_color_ce, &filename))
-		return;
-
-	if (Z_TYPE_P(php_trans_color) != IS_NULL)
-		trans_color = PHP_GDK_COLOR_GET(php_trans_color);
-
-	pixmap = gdk_pixmap_create_from_xpm(PHP_GDK_WINDOW_GET(window), &mask, trans_color, filename);
-	if (!pixmap) {
-		php_error(E_WARNING, "%s() cannot load pixmap", get_active_function_name());
-		return;
-	}
-	
-	*return_value = *php_gtk_build_value("(NN)", php_gdk_window_new(pixmap), php_gdk_window_new(mask));
-	gdk_pixmap_unref(pixmap);
-	gdk_bitmap_unref(mask);
-}
-
 static function_entry php_gdk_pixmap_functions[] = {
 	{"gdkpixmap",		PHP_FN(wrap_no_direct_constructor), NULL},
 	{"new_gc", 			PHP_FN(gdk_window_new_gc), NULL},
 	{"property_get", 	PHP_FN(gdk_window_property_get), NULL},
 	{"property_change", PHP_FN(gdk_window_property_change), NULL},
 	{"property_delete", PHP_FN(gdk_window_property_delete), NULL},
-	{"create_from_xpm", PHP_FN(gdk_pixmap_create_from_xpm), NULL},
 	{NULL, NULL, NULL}
 };
 

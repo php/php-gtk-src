@@ -41,6 +41,7 @@
   (parent Object (Gtk))
   (c-name GtkWidget)
   (field (type-and-name GtkStyle* style))
+  (field (type-and-name GdkWindow* window))
 )
 
 (object Separator
@@ -531,6 +532,10 @@
   (c-name GtkCList)
   (field (type-and-name gint focus_row))
   (field (type-and-name gint rows))
+  (field (type-and-name gint sort_column))
+  (field (type-and-name GtkSortType sort_type))
+  (field (type-and-name GList* selection))
+  (field (type-and-name GtkSelectionMode selection_mode))
 )
 
 (object CTree

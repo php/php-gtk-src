@@ -19,3 +19,66 @@ PHP_FUNCTION(wrap_gdk_color_parse)
 	else
 		php_error(E_WARNING, "%s() could not parse color spec '%s'", get_active_function_name(), color_spec);
 }
+%%
+override gdk_pixmap_create_from_xpm
+PHP_FUNCTION(wrap_gdk_pixmap_create_from_xpm)
+{
+	zval *window, *php_trans_color;
+	gchar *filename;
+	GdkColor *trans_color = NULL;
+	GdkPixmap *pixmap = NULL;
+	GdkBitmap *mask;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ONs", &window, gdk_window_ce,
+							&php_trans_color, gdk_color_ce, &filename))
+		return;
+
+	if (Z_TYPE_P(php_trans_color) != IS_NULL)
+		trans_color = PHP_GDK_COLOR_GET(php_trans_color);
+
+	pixmap = gdk_pixmap_create_from_xpm(PHP_GDK_WINDOW_GET(window), &mask, trans_color, filename);
+	if (!pixmap) {
+		php_error(E_WARNING, "%s() cannot load pixmap", get_active_function_name());
+		return;
+	}
+	
+	*return_value = *php_gtk_build_value("(NN)", php_gdk_window_new(pixmap), php_gdk_window_new(mask));
+	gdk_pixmap_unref(pixmap);
+	gdk_bitmap_unref(mask);
+}
+%%
+override gdk_pixmap_create_from_xpm_d
+PHP_FUNCTION(wrap_gdk_pixmap_create_from_xpm_d)
+{
+	zval *window, *php_trans_color, *php_data;
+	zval **line;
+	GdkColor *trans_color = NULL;
+	GdkPixmap *pixmap = NULL;
+	GdkBitmap *mask;
+	char **data;
+	int len, i = 0;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ONa/", &window, gdk_window_ce,
+							&php_trans_color, gdk_color_ce, &php_data))
+		return;
+
+	len = zend_hash_num_elements(Z_ARRVAL_P(php_data));
+	data = emalloc(len * sizeof(char *));
+	for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_data));
+		 zend_hash_get_current_data(Z_ARRVAL_P(php_data), (void **)&line) == SUCCESS;
+		 zend_hash_move_forward(Z_ARRVAL_P(php_data))) {
+		convert_to_string_ex(line);
+		data[i++] = Z_STRVAL_PP(line);
+	}
+
+	pixmap = gdk_pixmap_create_from_xpm_d(PHP_GDK_WINDOW_GET(window), &mask, trans_color, data);
+	efree(data);
+	if (!pixmap) {
+		php_error(E_WARNING, "%s() cannot create pixmap", get_active_function_name());
+		return;
+	}
+
+	*return_value = *php_gtk_build_value("(NN)", php_gdk_window_new(pixmap), php_gdk_window_new(mask));
+	gdk_pixmap_unref(pixmap);
+	gdk_bitmap_unref(mask);
+}
