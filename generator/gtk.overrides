@@ -447,14 +447,13 @@ PHP_FUNCTION(wrap_gtk_curve_set_vector)
 	}
 	
 	gtk_curve_set_vector(GTK_CURVE(PHP_GTK_GET(this_ptr)), veclen, vector);
-	RETURN_NULL();
+	RETURN_TRUE;
 }
 %%
 overrides gtk_rc_get_default_files
 PHP_FUNCTION(wrap_gtk_rc_get_default_files)
 {
 	gchar **ret;
-	int i = 0;
 	
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
 		return;
@@ -463,7 +462,7 @@ PHP_FUNCTION(wrap_gtk_rc_get_default_files)
 	if (ret) {
 		array_init(return_value);
 		while (*ret) {
-			add_index_string(return_value, i, *ret, 1);
+			add_next_index_string(return_value, *ret, 1);
 			*ret++;
 		}
 		g_free(ret);
@@ -996,35 +995,41 @@ PHP_FUNCTION(wrap_gtk_container_children)
 }
 %%
 override gtk_item_factory_create_items
-static void item_factory_callback(zval *callback, guint action, GtkWidget *widget)
+static void item_factory_callback(zval *callback_data, guint action, GtkWidget *widget)
 {
 	zval *retval = NULL;
-	zval *action_arg, *widget_arg;
-	zval **args[2];
+	zval **callback, **extra;
+	zval *params;
+	zval ***args;
 	char *callable_name = NULL;
 	ELS_FETCH();
 
-	if (!php_gtk_is_callable(callback, &callable_name)) {
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
+	if (!php_gtk_is_callable(*callback, &callable_name)) {
 		php_error(E_WARNING, "unable to call item factory callback %s", callable_name);
 		g_free(callable_name);
 		return;
 	}
 
-	MAKE_STD_ZVAL(action_arg);
-	ZVAL_LONG(action_arg, action);
-	widget_arg = php_gtk_new((GtkObject *)widget);
-	args[0] = &action_arg;
-	args[1] = &widget_arg;
+	params = php_gtk_build_value("(iN)", action, php_gtk_new((GtkObject *)widget));
+	if (zend_hash_num_elements(Z_ARRVAL_P(callback_data)) > 1) {
+		zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0);
+	}
 
-	call_user_function_ex(EG(function_table), NULL, callback, &retval, 2, args, 1, NULL);
-	zval_ptr_dtor(&widget_arg);
+	args = php_gtk_hash_as_array(params);
+
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 1, NULL);
 	if (retval)
 		zval_ptr_dtor(&retval);
+	efree(args);
+	zval_ptr_dtor(&params);
 }
 
 PHP_FUNCTION(wrap_gtk_item_factory_create_items)
 {
-	zval *list, **item, *callback;
+	zval *list, **item, *callback_data,
+		 *callback, *extra = NULL;
 	GtkItemFactoryEntry entry;
 	GtkItemFactory *factory;
 	int i = 0;
@@ -1038,9 +1043,9 @@ PHP_FUNCTION(wrap_gtk_item_factory_create_items)
 	zend_hash_internal_pointer_reset(Z_ARRVAL_P(list));
 	while (zend_hash_get_current_data(Z_ARRVAL_P(list), (void**)&item) == SUCCESS) {
 		if (Z_TYPE_PP(item) != IS_ARRAY ||
-			!php_gtk_parse_args_hash(*item, "ssVis", &entry.path,
+			!php_gtk_parse_args_hash(*item, "ssVis|a", &entry.path,
 									 &entry.accelerator, &callback,
-									 &entry.callback_action, &entry.item_type)) {
+									 &entry.callback_action, &entry.item_type, &extra)) {
 			php_error(E_WARNING, "%s() was unable to parse item #%d in the input array",
 					  get_active_function_name(), i+1);
 			return;
@@ -1049,15 +1054,41 @@ PHP_FUNCTION(wrap_gtk_item_factory_create_items)
 		if (Z_TYPE_P(callback) == IS_NULL)
 			entry.callback = NULL;
 		else {
-			zval_add_ref(&callback);
+			if (extra)
+				callback_data = php_gtk_build_value("(VV)", callback, extra);
+			else
+				callback_data = php_gtk_build_value("(V)", callback);
 			entry.callback = (GtkItemFactoryCallback)item_factory_callback;
 		}
 
-		gtk_item_factory_create_item(factory, &entry, callback, 1);
+		gtk_item_factory_create_item(factory, &entry, callback_data, 1);
 
 		i++;
 		zend_hash_move_forward(Z_ARRVAL_P(list));
 	}
 
+	RETURN_TRUE;
+}
+%%
+override gtk_combo_set_popdown_strings
+PHP_FUNCTION(wrap_gtk_combo_set_popdown_strings)
+{
+	zval *php_list, **item;
+	GList *list = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a/", &php_list))
+		return;
+
+	zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_list));
+	while (zend_hash_get_current_data(Z_ARRVAL_P(php_list), (void **)&item) == SUCCESS) {
+		convert_to_string_ex(item);
+		list = g_list_append(list, Z_STRVAL_PP(item));
+		zend_hash_move_forward(Z_ARRVAL_P(php_list));
+	}
+
+	gtk_combo_set_popdown_strings(GTK_COMBO(PHP_GTK_GET(this_ptr)), list);
+	g_list_free(list);
 	RETURN_TRUE;
 }

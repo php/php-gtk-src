@@ -573,6 +573,10 @@ static zval *php_gtk_build_single(char **format, va_list *va)
 				return php_gtk_build_hash(format, va, ')', php_gtk_count_specs(*format, ')'));
 
 			case 'b':
+				MAKE_STD_ZVAL(result);
+				ZVAL_BOOL(result, (zend_bool)va_arg(*va, int));
+				return result;
+
 			case 'h':
 			case 'i':
 				MAKE_STD_ZVAL(result);

@@ -289,32 +289,6 @@ function create_button_box()
 }
 
 
-function tips_query_widget_entered($tips_query, $widget, $tip_text,
-								   $tip_private, $toggle)
-{
-	if ($toggle->get_active()) {
-		$tips_query->set_text($tip_text ? 'There is a Tip!' : 'There is no Tip!');
-      /* don't let GtkTipsQuery reset its label */
-		$tips_query->emit_stop_by_name('widget_entered');
-	}
-}
-
-
-function tips_query_widget_selected($tips_query, $widget, $tip_text,
-									$tip_private, $event)
-{
-	if ($widget) {
-		print 'Help "';
-		print $tip_private ? $tip_private : 'None';
-		print '" requested for <';
-		print get_class($widget);
-		print ">\n";
-	}
-
-	return true;
-}
-
-
 function create_tooltips()
 {
 	global	$windows;
@@ -367,6 +341,31 @@ function create_tooltips()
 		$button->connect_object('clicked', 'start_query', $tips_query);
 		$tooltips->set_tip($button, 'Start the Tooltips Inspector', 'ContextHelp/buttons/?');
 
+		function tips_query_widget_entered($tips_query, $widget, $tip_text,
+										   $tip_private, $toggle)
+		{
+			if ($toggle->get_active()) {
+				$tips_query->set_text($tip_text ? 'There is a Tip!' : 'There is no Tip!');
+				/* don't let GtkTipsQuery reset its label */
+				$tips_query->emit_stop_by_name('widget_entered');
+			}
+		}
+
+
+		function tips_query_widget_selected($tips_query, $widget, $tip_text,
+											$tip_private, $event)
+		{
+			if ($widget) {
+				print 'Help "';
+					print $tip_private ? $tip_private : 'None';
+				print '" requested for <';
+				print get_class($widget);
+				print ">\n";
+			}
+
+			return true;
+		}
+
 		$box3->pack_start($tips_query);
 		$tips_query->set_caller($button);
 		$tips_query->connect('widget_entered', 'tips_query_widget_entered', $toggle);
@@ -403,16 +402,162 @@ function create_tooltips()
 }
 
 
+function create_toggle_buttons()
+{
+	global	$windows;
+
+	if (!isset($windows['toggle_buttons'])) {
+		$window = &new GtkWindow;
+		$windows['toggle_buttons'] = $window;
+		$window->connect('delete-event', 'delete_event');
+		$window->set_title('Toggle buttons');
+		$window->set_border_width(0);
+
+		$box1 = &new GtkVBox();
+		$window->add($box1);
+		$box1->show();
+
+		$box2 = &new GtkVBox(false, 10);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2);
+		$box2->show();
+
+		for ($i = 1; $i <= 4; $i++) {
+			$button = &new GtkToggleButton('button' . $i);
+			$box2->pack_start($button);
+			$button->show();
+		}
+
+		$separator = &new GtkHSeparator();
+		$box1->pack_start($separator, false);
+		$separator->show();
+
+		$box2 = &new GtkVBox(false, 10);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2, false);
+		$box2->show();
+
+		$button = &new GtkButton('close');
+		$button->connect('clicked', 'close_window');
+		$box2->pack_start($button);
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$button->grab_default();
+		$button->show();
+	}
+	$windows['toggle_buttons']->show();
+}
+
+
+function create_entry()
+{
+	global	$windows;
+
+	if (!isset($windows['entry'])) {
+		$window = &new GtkWindow;
+		$windows['entry'] = $window;
+		$window->connect('delete-event', 'delete_event');
+		$window->set_title('entry');
+		$window->set_border_width(0);
+
+		$box1 = &new GtkVBox();
+		$window->add($box1);
+		$box1->show();
+
+		$box2 = &new GtkVBox(false, 10);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2);
+		$box2->show();
+
+		$entry = &new GtkEntry();
+		$entry->set_text('Hello World');
+		$entry->select_region(0, 5);
+		$box2->pack_start($entry);
+		$entry->show();
+
+		$strings[] = "item0";
+		$strings[] = "item0 item1";
+		$strings[] = "item0 item1 item2";
+		$strings[] = "item0 item1 item2 item3";
+		$strings[] = "item0 item1 item2 item3 item4";
+		$strings[] = "item0 item1 item2 item3 item4 item5";
+		$strings[] = "item0 item1 item2 item3 item4";
+		$strings[] = "item0 item1 item2 item3";
+		$strings[] = "item0 item1 item2";
+		$strings[] = "item0 item1";
+		$strings[] = "item0";
+
+		$cb = &new GtkCombo();
+		$cb->set_popdown_strings($strings);
+		$cb_entry = $cb->entry;
+		$cb_entry->set_text('Hello World');
+		$cb_entry->select_region(0, -1);
+		$box2->pack_start($cb);
+		$cb->show();
+
+		function entry_toggle_editable($check_button, $entry)
+		{
+			$entry->set_editable($check_button->get_active());
+		}
+
+		function entry_toggle_sensitive($check_button, $entry)
+		{
+			$entry->set_sensitive($check_button->get_active());
+		}
+
+		function entry_toggle_visibility($check_button, $entry)
+		{
+			$entry->set_visibility($check_button->get_active());
+		}
+
+		$editable_check = &new GtkCheckButton('Editable');
+		$editable_check->connect('toggled', 'entry_toggle_editable', $entry);
+		$editable_check->set_active(true);
+		$box2->pack_start($editable_check, false);
+		$editable_check->show();
+
+		$visibility_check = &new GtkCheckButton('Visible');
+		$visibility_check->connect('toggled', 'entry_toggle_visibility', $entry);
+		$visibility_check->set_active(true);
+		$box2->pack_start($visibility_check, false);
+		$visibility_check->show();
+
+		$sensitive_check = &new GtkCheckButton('Sensitive');
+		$sensitive_check->connect('toggled', 'entry_toggle_sensitive', $entry);
+		$sensitive_check->set_active(true);
+		$box2->pack_start($sensitive_check, false);
+		$sensitive_check->show();
+
+		$separator = &new GtkHSeparator();
+		$box1->pack_start($separator, false);
+		$separator->show();
+
+		$box2 = &new GtkVBox(false, 10);
+		$box2->set_border_width(10);
+		$box1->pack_start($box2, false);
+		$box2->show();
+
+		$button = &new GtkButton('close');
+		$button->connect('clicked', 'close_window');
+		$box2->pack_start($button);
+		$button->set_flags(GTK_CAN_DEFAULT);
+		$button->grab_default();
+		$button->show();
+	}
+	$windows['entry']->show();
+}
+
+
 function create_main_window()
 {
 	$buttons = array(
 					 'buttons'			=> 'create_buttons',
 					 'labels'			=> 'create_labels',
 					 'button box'		=> 'create_button_box',
-					 'toggle buttons'	=> null,
+					 'toggle buttons'	=> 'create_toggle_buttons',
 					 'check buttons'	=> null,
 					 'radio buttons'	=> null,
 					 'tooltips'			=> 'create_tooltips',
+					 'entry'			=> 'create_entry',
 					);
 
 	$window = &new GtkWindow();
