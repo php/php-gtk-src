@@ -1,3 +1,4 @@
+/* vim: set ft=cpp: */
 %%
 headers
 
@@ -12,7 +13,6 @@ headers
 
 #include "ext/gtk+/php_gtk+.h"
 #include "ext/gtkhtml/php_gtkhtml.h"
-int le_gtkhtmlstream;
 
 /* Hack to make the enums work */
 typedef enum {
@@ -25,26 +25,47 @@ static void php_gtkhtmlstream_destruct(zend_rsrc_list_entry *rsrc TSRMLS_DC);
 
 %%
 constants
-        REGISTER_LONG_CONSTANT("GTK_HTML_STREAM_OK", GTK_HTML_STREAM_OK, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("GTK_HTML_STREAM_OK", GTK_HTML_STREAM_OK, CONST_CS | CONST_PERSISTENT);
 	REGISTER_LONG_CONSTANT("GTK_HTML_STREAM_ERROR", GTK_HTML_STREAM_ERROR, CONST_CS | CONST_PERSISTENT);
-	
-	le_gtkhtmlstream = zend_register_list_destructors_ex(php_gtkhtmlstream_destruct, NULL, "GtkHTMLStream", module_number);
 	
 %%
 ignore-glob
   *_get_type
+
 %%
-
-override gtk_html_begin
-
-static void php_gtkhtmlstream_destruct(zend_rsrc_list_entry *rsrc TSRMLS_DC)
+ignore gtk_html_new_from_string
+%%
+override gtk_html_new
+PHP_FUNCTION(gtk_html_new)
 {
+	GtkObject *wrapped_obj;
+	char *str = NULL;
+	int str_len;
 
-	php_gtkhtmlstream_s *pgs= (php_gtkhtmlstream_s *) rsrc->ptr;
-	/* should this also free the gtkhtmlstream object? */
-	//gtk_html_stream_close (pgs->gs,GTK_HTML_STREAM_ERROR);
-	efree(pgs);
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|s#", &str, &str_len)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	if (str)
+		wrapped_obj = (GtkObject *)gtk_html_new_from_string(str, str_len);
+	else
+		wrapped_obj = (GtkObject *)gtk_html_new();
+
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkHTML object",
+				  get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr);
 }
+
+%%
+override gtk_html_begin
 
 PHP_FUNCTION(gtk_html_begin)
 {
@@ -1012,15 +1033,15 @@ PHP_FUNCTION(gtk_html_insert_link)
 %%override gtk_html_get_url
 PHP_FUNCTION(gtk_html_get_url)
 {
-	gchar *ret=NULL;
+	const gchar *ret = NULL;
 
 	NOT_STATIC_METHOD();
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
 		return;
-        
-      /* if (html_engine_is_selection_active (  GTK_HTML(PHP_GTK_GET(this_ptr))->engine))  */
-	  ret = html_engine_get_url(  GTK_HTML(PHP_GTK_GET(this_ptr))->engine);
+
+	/* if (html_engine_is_selection_active (  GTK_HTML(PHP_GTK_GET(this_ptr))->engine))  */
+	ret = html_engine_get_url(  GTK_HTML(PHP_GTK_GET(this_ptr))->engine);
 	if (ret) {
 		RETURN_STRING((char *)ret, 1);
 	}
@@ -1033,14 +1054,15 @@ PHP_FUNCTION(gtk_html_get_url)
 
 PHP_FUNCTION(gtk_html_get_target)
 {
-	gchar *ret=NULL;
+	const gchar *ret = NULL;
         
 	NOT_STATIC_METHOD();
 
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
 		return;
-        /* if (html_engine_is_selection_active (  GTK_HTML(PHP_GTK_GET(this_ptr))->engine))  */
-	  ret = html_engine_get_target( GTK_HTML(PHP_GTK_GET(this_ptr))->engine );
+
+	/* if (html_engine_is_selection_active (  GTK_HTML(PHP_GTK_GET(this_ptr))->engine))  */
+	ret = html_engine_get_target( GTK_HTML(PHP_GTK_GET(this_ptr))->engine );
 	if (ret) {
 		RETURN_STRING((char *)ret, 1);
 	}

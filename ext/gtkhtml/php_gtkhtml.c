@@ -27,13 +27,22 @@
 #include <gconf/gconf.h>
 #endif
 
-
-
 #if HAVE_HTML
+
+int le_gtkhtmlstream;
 
 #ifdef PHP_GTK_COMPILE_DL_GTKHTML
 PHP_GTK_GET_EXTENSION(gtkhtml)
 #endif
+
+static void php_gtkhtmlstream_destruct(zend_rsrc_list_entry *rsrc TSRMLS_DC)
+{
+
+	php_gtkhtmlstream_s *pgs= (php_gtkhtmlstream_s *) rsrc->ptr;
+	/* should this also free the gtkhtmlstream object? */
+	//gtk_html_stream_close (pgs->gs,GTK_HTML_STREAM_ERROR);
+	efree(pgs);
+}
 
 PHP_GTK_XINIT_FUNCTION(gtkhtml)
 {
@@ -49,10 +58,9 @@ PHP_GTK_XINIT_FUNCTION(gtkhtml)
 	gconf_error = NULL;
 #endif 
 
-	gdk_rgb_init ();
+	le_gtkhtmlstream = zend_register_list_destructors_ex(php_gtkhtmlstream_destruct, NULL, "GtkHTMLStream", module_number);
 
-	gtk_widget_set_default_colormap (gdk_rgb_get_cmap ());
-	gtk_widget_set_default_visual (gdk_rgb_get_visual ());
+	gdk_rgb_init ();
 
 	php_gtkhtml_register_constants(module_number TSRMLS_CC);
 	php_gtkhtml_register_classes();

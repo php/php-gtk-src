@@ -27,7 +27,8 @@
 
 #if HAVE_HTML
 #include <gtkhtml/gtkhtml.h>
-int le_gtkhtmlstream;
+
+extern int le_gtkhtmlstream;
 
 extern php_gtk_ext_entry gtkhtml_ext_entry;
 
