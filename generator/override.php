@@ -22,11 +22,13 @@
 /* $Id$ */
 
 class Overrides {
-	var $ignores 		= array();
-	var $glob_ignores 	= array();
-	var $overrides		= array();
-	var $extra_methods	= array();
-	var $getprops		= array();
+	var $ignores			= array();
+	var $glob_ignores		= array();
+	var $overrides			= array();
+	var $extra_methods		= array();
+	var $getprops			= array();
+	var $register_classes	= array();
+	var $headers			= '';
 
 	function Overrides($file_name = null)
 	{
@@ -89,6 +91,14 @@ class Overrides {
 					$this->getprops[$class_name][$prop_name] = $rest;
 				}
 				break;
+
+			case 'headers':
+				$this->headers .= "\n" . $rest . "\n";
+				break;
+
+			case 'register_class':
+				$this->register_classes[$words[0]] = $rest;
+				break;
 		}
 	}
 
@@ -123,6 +133,16 @@ class Overrides {
 	function get_prop($class_name, $prop_name)
 	{
 		return $this->getprops[$class_name][$prop_name];
+	}
+
+	function get_headers()
+	{
+		return $this->headers;
+	}
+
+	function get_register_classes()
+	{
+		return $this->register_classes;
 	}
 }
 
