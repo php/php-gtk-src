@@ -1,3 +1,32 @@
+2001-03-09  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS
+      generator/gtk.defs: Add 'has_selection' property to GtkEditable.
+
+    * generator/gtk.defs: Added CTree properties.
+
+2001-03-09  Frank M. Kromann  <frank@frontbase.com>
+
+    * generator/generator.php:
+    Setting time limit to 5 min to allow build on slow computers.
+
+2001-03-09  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk_util.c:
+    Just in case, modifying php_gtk_build_value() to allow building
+    associative arrays.
+
+    * TODO
+      generator/generator.php
+      generator/gtk.defs
+      generator/gtk.overrides
+      generator/override.php
+      generator/templates.php:
+    * Modified generator to allow overriding object properties.
+    * Added helper GtkBoxChild class.
+    * Added properties for GtkMisc, GtkArrow, GtkBox, and GtkCalendar classes.
+    * Modified GtkCalendar::get_date() to return an array of the results.
+
 2001-03-08  Andrei Zmievski  <andrei@ispi.net>
 
     * TODO
