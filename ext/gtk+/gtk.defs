@@ -188,6 +188,9 @@
   (parameters
    '("const-gchar*" "string")
   )
+  (properties
+   '("label")
+  )
 )
 
 (define-method accelerator_width
@@ -393,6 +396,12 @@
    '("const-gchar*" "tooltip")
    '("const-gchar*" "stock_id")
   )
+  (properties
+   '("name")
+   '("label")
+   '("tooltip")
+   '("stock_id")
+  )
 )
 
 (define-method get_name
@@ -539,6 +548,9 @@
   (return-type "GtkActionGroup*")
   (parameters
    '("const-gchar*" "name")
+  )
+  (properties
+   '("name")
   )
 )
 
@@ -728,12 +740,20 @@
   (is-constructor-of "GtkAdjustment")
   (return-type "GtkObject*")
   (parameters
-    '("gdouble" "value")
-    '("gdouble" "lower")
-    '("gdouble" "upper")
-    '("gdouble" "step_increment")
-    '("gdouble" "page_increment")
-    '("gdouble" "page_size")
+    '("gdouble" "value" (default 0.0))
+    '("gdouble" "lower" (default 0.0))
+    '("gdouble" "upper" (default 0.0))
+    '("gdouble" "step_increment" (default 0.0))
+    '("gdouble" "page_increment" (default 0.0))
+    '("gdouble" "page_size" (default 0.0))
+  )
+  (properties
+    '("value" (optional))
+    '("lower" (optional))
+    '("upper" (optional))
+    '("step_increment" (argname "step_incr") (optional))
+    '("page_increment" (argname "page_incr") (optional))
+    '("page_size" (optional))
   )
 )
 
@@ -793,6 +813,12 @@
     '("gfloat" "xscale" (default "1.0"))
     '("gfloat" "yscale" (default "1.0"))
   )
+  (properties
+    '("xalign" (optional))
+    '("yalign" (optional))
+    '("xscale" (optional))
+    '("yscale" (optional))
+  )
 )
 
 (define-method set
@@ -848,6 +874,10 @@
     '("GtkArrowType" "arrow_type")
     '("GtkShadowType" "shadow_type")
   )
+  (properties
+    '("arrow_type")
+    '("shadow_type")
+  )
 )
 
 (define-method set
@@ -879,6 +909,13 @@
     '("gfloat" "yalign" (default "0.5"))
     '("gfloat" "ratio" (default "1.0"))
     '("gboolean" "obey_child" (default "TRUE"))
+  )
+  (properties
+    '("label" (optional))
+    '("xalign" (optional))
+    '("yalign" (optional))
+    '("ratio" (optional))
+    '("obey_child" (optional))
   )
 )
 
@@ -3090,6 +3127,9 @@
   (parameters
     '("const-gchar*" "title" (default "NULL"))
   )
+  (properties
+    '("title")
+  )
 )
 
 
@@ -5275,6 +5315,9 @@
   (parameters
     '("const-gchar*" "label")
   )
+  (properties
+    '("label")
+  )
 )
 
 (define-function expander_new_with_mnemonic
@@ -5881,6 +5924,9 @@
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "title" (default "NULL"))
+  )
+  (properties
+    '("title" (optional))
   )
 )
 
@@ -6557,6 +6603,9 @@
   (parameters
     '("const-gchar*" "title" (optional))
   )
+  (properties
+    '("title")
+  )
 )
 
 (define-method get_font_name
@@ -6611,6 +6660,9 @@
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label" (default "NULL"))
+  )
+  (properties
+    '("label" (optional))
   )
 )
 
@@ -6839,6 +6891,10 @@
     '("gboolean" "homogeneous" (default "FALSE"))
     '("gint" "spacing" (default "0"))
   )
+  (properties
+    '("homogeneous" (optional))
+    '("spacing" (optional))
+  )
 )
 
 
@@ -6886,6 +6942,9 @@
   (parameters
     '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
   )
+  (properties
+    '("adjustment" (optional))
+  )
 )
 
 (define-function gtk_hscale_new_with_range
@@ -6914,6 +6973,9 @@
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
+  )
+  (properties
+    '("adjustment" (optional))
   )
 )
 
@@ -8312,12 +8374,18 @@
   (parameters
     '("const-char*" "string" (default "NULL"))
   )
+  (properties
+    '("label" (argname "str") (optional))
+  )
 )
 
 (define-function gtk_label_new_with_mnemonic
   (c-name "gtk_label_new_with_mnemonic")
   (is-constructor-of "GtkLabel")
   (return-type "GtkWidget*")
+  (parameters
+   '("const-char*" "string" (default "NULL"))
+  )
   (properties
     '("label" (argname "str") (optional))
   )
@@ -8582,6 +8650,10 @@
   (parameters
     '("GtkAdjustment*" "hadjustment" (null-ok) (default "NULL"))
     '("GtkAdjustment*" "vadjustment" (null-ok) (default "NULL"))
+  )
+  (properties
+    '("hadjustment" (optional))
+    '("vadjustment" (optional))
   )
 )
 
@@ -11077,6 +11149,13 @@
     '("const-gchar*" "stock_id")
     '("gint" "value")
   )
+  (properties
+    '("name")
+    '("label")
+    '("tooltip")
+    '("stock_id")
+    '("value")
+  )
 )
 
 (define-method set_group
@@ -11788,6 +11867,10 @@
     '("GtkAdjustment" "hadjustment" (null-ok) (default "NULL"))
     '("GtkAdjustment" "vadjustment" (null-ok) (default "NULL"))
   )
+  (properties
+    '("hadjustment" (optional))
+    '("vadjustment" (optional))
+  )
 )
 
 (define-method set_hadjustment
@@ -12291,6 +12374,9 @@
   (parameters
     '("GtkSizeGroupMode" "mode")
   )
+  (properties
+    '("mode")
+  )
 )
 
 (define-method set_mode
@@ -12394,6 +12480,11 @@
     '("GtkAdjustment" "adjustment" (null-ok) (default "NULL"))
     '("gdouble" "climb_rate" (default "0.0"))
     '("guint" "digits" (default "0"))
+  )
+  (properties
+    '("adjustment" (optional))
+    '("climb_rate" (optional))
+    '("digits" (optional))
   )
 )
 
@@ -13588,6 +13679,11 @@
     '("guint" "n_columns" (default "1"))
     '("gboolean" "homogeneous" (default "FALSE"))
   )
+  (properties
+    '("n_rows" (argname "rows") (optional))
+    '("n_columns" (argname "columns") (optional))
+    '("homogeneous" (optional))
+  )
 )
 
 (define-method resize
@@ -13744,7 +13840,10 @@
   (is-constructor-of "GtkTextBuffer")
   (return-type "GtkTextBuffer*")
   (parameters
-    '("GtkTextTagTable" "tag_table" (null-ok) (default "NULL"))
+    '("GtkTextTagTable*" "tag_table" (null-ok) (default "NULL"))
+  )
+  (properties
+    '("tag_table" (argname "table") (optional))
   )
 )
 
@@ -15045,6 +15144,9 @@
   (parameters
     '("const-gchar*" "name" (null-ok) (default "NULL"))
   )
+  (properties
+    '("name" (optional))
+  )
 )
 
 (define-method get_priority
@@ -15189,6 +15291,9 @@
   (c-name "gtk_text_view_new_with_buffer")
   (is-constructor-of "GtkTextView")
   (return-type "GtkWidget*")
+  (parameters
+    '("GtkTextBuffer*" "buffer" (null-ok) (default "NULL"))
+  )
   (properties
     '("buffer" (optional))
   )
@@ -15732,6 +15837,12 @@
     '("const-gchar*" "label")
     '("const-gchar*" "tooltip")
     '("const-gchar*" "stock_id")
+  )
+  (properties
+    '("name")
+    '("label")
+    '("tooltip")
+    '("stock_id")
   )
 )
 
@@ -17285,6 +17396,9 @@
   (parameters
     '("GtkTreeModel*" "model")
   )
+  (properties
+    '("model" (argname "child_model"))
+  )
 )
 
 (define-method get_model
@@ -17811,6 +17925,9 @@
   (c-name "gtk_tree_view_new_with_model")
   (is-constructor-of "GtkTreeView")
   (return-type "GtkWidget*")
+  (parameters
+    '("GtkTreeModel*" "model" (null-ok) (default "NULL"))
+  )
   (properties
     '("model" (optional))
   )
@@ -18985,6 +19102,10 @@
     '("gboolean" "homogeneous" (default "FALSE"))
     '("gint" "spacing" (default "0"))
   )
+  (properties
+    '("homogeneous" (optional))
+    '("spacing" (optional))
+  )
 )
 
 
@@ -19007,6 +19128,10 @@
   (parameters
     '("GtkAdjustment*" "hadjustment" (null-ok) (default "NULL"))
     '("GtkAdjustment*" "vadjustment" (null-ok) (default "NULL"))
+  )
+  (properties
+    '("hadjustment" (optional))
+    '("vadjustment" (optional))
   )
 )
 
@@ -19101,6 +19226,9 @@
   (parameters
     '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
   )
+  (properties
+    '("adjustment" (optional))
+  )
 )
 
 (define-function gtk_vscale_new_with_range
@@ -19129,6 +19257,9 @@
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "adjustment" (null-ok) (default "NULL"))
+  )
+  (properties
+    '("adjustment" (optional))
   )
 )
 
@@ -20235,6 +20366,9 @@
   (return-type "GtkWidget*")
   (parameters
     '("GtkWindowType" "type" (default "GTK_WINDOW_TOPLEVEL"))
+  )
+  (properties
+    '("type" (optional))
   )
 )
 
