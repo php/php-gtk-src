@@ -672,11 +672,12 @@ zval php_gtk_get_property(zend_property_reference *property_reference)
 			}
 
 			if ((getter_retval = invoke_getter(&object, &result, &element) == FAILURE)) {
-				getter_retval = zend_hash_find(Z_OBJPROP(object),
+				if ((getter_retval = zend_hash_find(Z_OBJPROP(object),
 											   Z_STRVAL(overloaded_property->element),
 											   Z_STRLEN(overloaded_property->element)+1,
-											   (void **)&prop_result);
-				result = **prop_result;
+											   (void **)&prop_result)) == SUCCESS) {
+					result = **prop_result;
+				}
 			}
 		} else if (Z_TYPE_P(overloaded_property) == OE_IS_ARRAY) {
 			/* Trying to access index on a non-array. */
