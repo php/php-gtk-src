@@ -132,8 +132,6 @@ static void glade_connect_auto(const gchar *handler_name, GtkObject *obj,
 	array_init(params);
 
 	if (connect_object) {
-		zval *temp;
-
 		pass_object = 0;
 		object = php_gtk_new(connect_object);
 		add_next_index_zval(params, object);

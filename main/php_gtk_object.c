@@ -701,6 +701,7 @@ int php_gtk_arg_from_value(GtkArg *arg, zval *value)
 			break;
 
 		case GTK_TYPE_ARGS:
+		case GTK_TYPE_POINTER:
 		case GTK_TYPE_C_CALLBACK:
 			php_error(E_WARNING, "Unsupported type");
 			g_assert_not_reached();
