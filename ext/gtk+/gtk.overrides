@@ -1660,7 +1660,7 @@ PHP_FUNCTION(wrap_gtk_radio_menu_item_new)
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Ns", &php_group, gtk_radiomenuitem_ce, &text))
 		return;
 
-	if (Z_TYPE_P(php_group) != IS_NULL)
+	if (php_group && Z_TYPE_P(php_group) != IS_NULL)
 		group = GTK_RADIO_MENU_ITEM(PHP_GTK_GET(php_group));
 
 	if (!text) {
@@ -1700,7 +1700,7 @@ PHP_FUNCTION(wrap_gtk_radio_button_new)
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Ns", &php_group, gtk_radiobutton_ce, &text))
 		return;
 
-	if (Z_TYPE_P(php_group) != IS_NULL)
+	if (php_group && Z_TYPE_P(php_group) != IS_NULL)
 		group = GTK_RADIO_BUTTON(PHP_GTK_GET(php_group));
 
 	if (!text) {
