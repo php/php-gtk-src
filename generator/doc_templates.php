@@ -91,6 +91,14 @@ $constructor_start_tpl = <<<EOD
 
 EOD;
 
+$constructor_alt_start_tpl = <<<EOD
+
+ <constructor id="%s.%s.constructor.%s">
+  <funcsynopsis>
+   <funcprototype>
+
+EOD;
+
 $constructor_end_tpl = <<<EOD
    </funcprototype>
   </funcsynopsis>

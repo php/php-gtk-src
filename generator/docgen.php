@@ -2,7 +2,7 @@
 /*
  * PHP-GTK - The PHP language bindings for GTK+
  *
- * Copyright (C) 2001,2002 Andrei Zmievski <andrei@php.net>
+ * Copyright (C) 2001-2004 Andrei Zmievski <andrei@php.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,427 +23,727 @@
 
 set_time_limit(300);
 
-require "Getopt.php";
-require "arg_types.php";
-require "override.php";
-require "scheme.php";
-require "docmerger.php";
-require "doc_templates.php";
+require 'Getopt.php';
+require 'arg_types.php';
+require 'override.php';
+require 'scheme.php';
+require 'docmerger2.php';
+require 'doc_templates.php';
 
+/**
+ * DocGenerator class. It generates docs.
+ */
 class DocGenerator {
-	var $parser 	= null;
-	var $overrides  = null;
-	var $prefix		= null;
-	var $output_dir = null;
-	var $fp			= null;
-	var $docmerger  = null;
+    var $parser     = null;
+    var $overrides  = null;
+    var $prefix     = null;
+    var $output_dir = null;
+    var $fp         = null;
+    var $docmerger  = null;
 
-	function DocGenerator(&$parser, &$overrides, &$docmerger, $prefix, $output_dir)
-	{
-		$this->parser 	 	= &$parser;
-		$this->overrides	= &$overrides;
-		$this->docmerger    = &$docmerger;
-		$this->prefix	 	= $prefix;
-		if ($output_dir)
-			$this->output_dir	= $output_dir;
-		else
-			$this->fp = fopen('php://stdout', 'w');
-	}
+    /**
+     * Constructor.
+     *
+     * @access public
+     * @param  &object   $parser
+     * @param  &resource $overrides  File pointer to the overrides file.
+     * @param  &object   $docmerger
+     * @param  string    $prefix     The prefix for the docs.
+     * @param  string    $output_dir The directory to write to.
+     * @return void
+     */
+    function DocGenerator(&$parser, &$overrides, &$docmerger, $prefix, $output_dir)
+    {
+        $this->parser       = &$parser;
+        $this->overrides    = &$overrides;
+        $this->docmerger    = &$docmerger;
+        $this->prefix       = $prefix;
 
-	function create_docs($classes)
-	{
-		foreach ($classes as $key => $val)
-			$classes[$key] = strtolower($val);
-								 
-		function sort_objects($a, $b)
-		{
-			return strcmp($a->c_name, $b->c_name);
+        // Check to see if an output_dir was passed.
+        if ($output_dir) {
+            $this->output_dir = $output_dir;
+        } else {
+            // If not write to stdout
+            $this->fp = fopen('php://stdout', 'w');
+        }
+    }
+
+    /**
+     * Creates the docs. Workhorse for class.
+     *
+     * @access public
+     * @param  array  $classes Associative array of classes to build docs for.
+     * @return void
+     */
+    function create_docs($classes)
+    {
+        // Make each classname lowercase
+        foreach ($classes as $key => $val) {
+            $classes[$key] = strtolower($val);
+        }
+
+        /**
+         * Object sorter. Puts objects in alphabetical order.
+         */
+        function sort_objects($a, $b)
+        {
+            return strcmp($a->c_name, $b->c_name);
+        }
+        
+        // Get objects from parser.
+        $parser_objects = $this->parser->objects;
+
+        // Sort objects from parser.
+        usort($parser_objects, 'sort_objects');
+
+        // Create the docs for each object.
+        foreach ($parser_objects as $object) {
+            
+            // Get object name as lowercase module + name
+            $object_lcname = strtolower($object->in_module . $object->name);
+            
+            // Skip objects not in classes array.
+            if (count($classes) && !in_array($object_lcname, $classes))
+                continue;
+
+            // If we have an output directory, write the docs there.
+            if ($this->output_dir) {
+                print "Generating $object_lcname.xml...";
+                //$this->fp = fopen($this->output_dir.'/'.$object_lcname.'.xml', 'w');
+                $this->write_class($object, $this->output_dir.'/'.$object_lcname.'.xml');
+                //fclose($this->fp);
+                print "\n";
+            } else {
+                // Otherwise write the docs to stdout.
+                $this->write_class($object);
+            }
+        }
+
+        // Check to see if we are writing miscellaneous functions.
+        // ex: gtk::timeout_add()
+        if (count($classes) == 0) {
+            // Write to the output directory.
+            if ($this->output_dir) {
+                print "Generating ".$this->prefix."-functions.xml...";
+                $this->fp = fopen($this->output_dir.'/'.$this->prefix.'-functions.xml', 'w');
+                $this->write_functions();
+                fclose($this->fp);
+                print "\n";
+            } else {
+                // Write to stdout
+                $this->write_functions();
+            }
+        }
+    }
+    
+    /**
+     * Registers object types?
+     *
+     * @access public
+     * @param  object $parser
+     * @return void
+     */
+    function register_types($parser = null)
+    {
+        global $matcher;
+
+        // Use the classes parser if one wasn't given to 
+        // the function.
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+
+        // Register each object in the parser.
+        foreach ($parser->objects as $object) {
+            $matcher->register_object($object->c_name, $object->typecode);
+        }
+        
+        // Register all of the enums.
+        foreach ($parser->enums as $enum) {
+            if ($enum->def_type == 'flags') {
+                $matcher->register_flag($enum->c_name);
+            } else {
+                $matcher->register_enum($enum->c_name);
+            }
+        }
+    }
+
+    /**
+     * Writes the docs for the given class.
+     *
+     * @access public
+     * @param  object $object The class to write docs for.
+     * @return void
+     */
+    function write_class($object, $path = NULL)
+    {
+        global  $class_start_tpl,
+                $class_end_tpl,
+                $update_docs;
+
+        // Create the name as module + name
+        $object_name = $object->in_module . $object->name;
+
+        // Prep-a-r-e the docs if we are just updating.
+        // I was under the impression that this doesn't work.
+        if($update_docs) {
+            $this->docmerger->prepair($object_name);
+        }
+
+		// Open the file after the merge if we can.
+		if (!empty($path)) {
+			$this->fp = fopen($path, 'w');
 		}
-		$parser_objects = $this->parser->objects;
-		usort($parser_objects, 'sort_objects');
 
-		foreach ($parser_objects as $object) {
-			$object_lcname = strtolower($object->in_module . $object->name);
-			if (count($classes) && !in_array($object_lcname, $classes))
-				continue;
-
-			if ($this->output_dir) {
-				print "Generating $object_lcname.xml...";
-				$this->fp = fopen($this->output_dir.'/'.$object_lcname.'.xml', 'w');
-				$this->write_class($object);
-				fclose($this->fp);
-				print "\n";
-			} else
-				$this->write_class($object);
-		}
-
-		if (count($classes) == 0) {
-			if ($this->output_dir) {
-				print "Generating ".$this->prefix."-functions.xml...";
-				$this->fp = fopen($this->output_dir.'/'.$this->prefix.'-functions.xml', 'w');
-				$this->write_functions();
-				fclose($this->fp);
-				print "\n";
-			} else
-				$this->write_functions();
-		}
-	}
-	
-	function register_types($parser = null)
-	{
-		global	$matcher;
-
-		if (!$parser)
-			$parser = $this->parser;
-
-		foreach ($parser->objects as $object)
-			$matcher->register_object($object->c_name);
-
-		foreach ($parser->enums as $enum) {
-			if ($enum->def_type == 'flags')
-				$matcher->register_flag($enum->c_name);
-			else
-				$matcher->register_enum($enum->c_name);
-		}
-	}
-
-	function write_class($object)
-	{
-		global	$class_start_tpl,
-				$class_end_tpl,
-				$update_docs;
-
-		$object_name = $object->in_module . $object->name;
-
-		if($update_docs)
-			$this->docmerger->prepair($object_name);
-
-		fwrite($this->fp,
-			   sprintf($class_start_tpl,
-					   $this->prefix,
-					   strtolower($object_name),
-					   $object_name,
-					   $object->parent[1] . $object->parent[0],
-					      $update_docs?$this->docmerger->get_section_contents(NULL, CLASSENTRY, SHORTDESC):NULL,
-					   $update_docs?$this->docmerger->get_section_contents(NULL, CLASSENTRY, DESC):NULL
-					   ));
-
-		$this->write_constructor($object);
-		$this->write_methods($object);
-		$this->write_properties($object);
-		if($update_docs)
+		// Check for the classmeta from file.
+		$id = $this->prefix . '.' . strtolower($object_name);
+		$merged = $this->docmerger->getSectionContentsById($id);
+		if (empty($merged)) {
+			// Write the opening of the doc file from a template.
 			fwrite($this->fp,
-				  $this->docmerger->get_section_contents(NULL, SIGNALS, NULL));
-
-		fwrite($this->fp, $class_end_tpl);
-	}
-
-	function write_properties($object)
-	{
-		global	$props_start_tpl,
-				$props_end_tpl;
-
-		if (count($object->fields) == 0)
-			return;
-		
-		fwrite($this->fp, $props_start_tpl);
-
-		foreach ($object->fields as $field) {
-			$this->write_property($object, $field);
-		}
-		
-		fwrite($this->fp, $props_end_tpl);
-	}
-
-	function write_property($object, $field)
-	{
-		global	$prop_start_tpl,
-				$prop_end_tpl;
-
-		list($field_type, $field_name) = $field;
-		if (($doc_type = $this->get_type($field_type)) === false) {
-			$doc_type = 'XXX';
-		}
-
-		fwrite($this->fp, sprintf($prop_start_tpl, $this->prefix,
-								  strtolower($object->in_module . $object->name),
-								  $field_name, $field_name, $doc_type));
-		fwrite($this->fp, $prop_end_tpl);
-	}
-
-	function write_methods($object)
-	{
-		global	$methods_start_tpl,
-				$methods_end_tpl;
-
-		$methods = $this->parser->find_methods($object);
-		if (count($methods))
-			fwrite($this->fp, $methods_start_tpl);
-
-		foreach ($methods as $method) {
-			if ($this->overrides->is_overriden($method->c_name)) {
-				$this->write_method($method, true);
-			} else if (!$this->overrides->is_ignored($method->c_name)) {
-				$this->write_method($method, false);
-			}
-		}
-
-		if (count($methods))
-			fwrite($this->fp, $methods_end_tpl);
-	}
-
-	function write_functions()
-	{
-		foreach ($this->parser->functions as $function) {
-			if ($this->overrides->is_overriden($function->c_name)) {
-				$this->write_method($function, true);
-			} else if (!$this->overrides->is_ignored($function->c_name)) {
-				$this->write_method($function, false);
-			}
-		}
-	}
-
-	function write_constructor($object)
-	{
-		global	$constructor_start_tpl,
-				$constructor_end_tpl,
-				$funcproto_tpl,
-				$no_parameter_tpl,
-				$update_docs;
-
-		$constructor = $this->parser->find_constructor($object);
-		
-		if ($constructor) {
-			if ($this->overrides->is_overriden($constructor->c_name)) {
-				$overriden = true;
-			} else if (!$this->overrides->is_ignored($constructor->c_name)) {
-				$overriden = false;
-			} else
-				return;
-		} else
-			return;
-
-		if (!$overriden) {
-			if (($paramdef = $this->get_paramdef($constructor)) === false)
-				return;
-		}
-
-		$object_name = $constructor->is_constructor_of;
-
-		fwrite($this->fp,
-			   sprintf($constructor_start_tpl,
-					   $this->prefix,
-					   strtolower($object_name)));
-
-		$funcdef = sprintf($funcproto_tpl,
-						   '',
-						   $object_name,
-						   $overriden ? sprintf($no_parameter_tpl, 'XXX') : $paramdef);
-		fwrite($this->fp, preg_replace('!^ !m', '', $funcdef));
-
-		fwrite($this->fp, 
-			   sprintf($constructor_end_tpl,
-					   $update_docs?$this->docmerger->get_section_contents(NULL, CONSTRUCTOR, SHORTDESC):NULL,
-					   $update_docs?$this->docmerger->get_section_contents(NULL, CONSTRUCTOR, DESC):NULL
-					   ));	
-	}
-
-	function write_method($method, $overriden)
-	{
-		global	$method_start_tpl,
-				$method_func_start_tpl,
-				$method_end_tpl,
-				$funcproto_tpl,
-				$no_parameter_tpl,
-				$update_docs;
-
-		if (!$overriden) {
-			if (($paramdef = $this->get_paramdef($method)) === false ||
-				($return = $this->get_type($method->return_type)) === false)
-				return;
-		}
-
-		if (isset($method->of_object)) {
-			$object_name = $method->of_object[1] . $method->of_object[0];
-
-			fwrite($this->fp,
-				   sprintf($method_start_tpl,
+				   sprintf($class_start_tpl,
 						   $this->prefix,
 						   strtolower($object_name),
-						   $method->name));
-		} else
-			fwrite($this->fp,
-				   sprintf($method_func_start_tpl,
-						   $this->prefix,
-						   $method->name));
+						   $object_name,
+						   $object->parent,
+						   NULL, NULL
+						   )
+				   );
+		} else {
+			fwrite($this->fp, '<classentry id="' . $this->prefix . '.' . strtolower($object_name) . "\">\n");
+			fwrite($this->fp, $merged);
+		}
 
-		fwrite($this->fp,
-			   sprintf($funcproto_tpl,
-					   $overriden ? 'XXX' : $return,
-					   $method->name,
-					   $overriden ? sprintf($no_parameter_tpl, 'XXX') : $paramdef));
+        // Write the constructor.
+        $this->write_constructor($object);
+        
+        // Write the class methods.
+        $this->write_methods($object);
+        
+        // Write the properties.
+        $this->write_properties($object);
+
+        // If updating, write something else. I have to come back to this.
+        if($update_docs) {
+            fwrite($this->fp,
+                   $this->docmerger->getSectionContentsByName('signals')
+				   );
+        }
+
+        // Close off the file with another template.
+        fwrite($this->fp, $class_end_tpl);
+
+		fclose($this->fp);
+    }
+
+    /**
+     * Writes the class properties to the current file.
+     *
+     * FIXME: automatically link to get_* and set_* functions
+     *
+     * @access public
+     * @param  object $object The class to write docs for.
+     * @return void.
+     */
+    function write_properties($object)
+    {
+        global  $props_start_tpl,
+                $props_end_tpl;
+
+        // Check to see if the class has any publicly
+        // accessible properties.
+        if (count($object->fields) == 0) {
+            return;
+        }
+
+        // Write the opening for the properties section.
+        fwrite($this->fp, $props_start_tpl);
+
+        // Write each property.
+        foreach ($object->fields as $field) {
+            $this->write_property($object, $field);
+        }
+        
+        // Write the closing of the properties section.
+        fwrite($this->fp, $props_end_tpl);
+    }
+
+    /**
+     * Writes one property to the current file.
+     *
+     * @access public
+     * @param  object $object The class to write docs for.
+     * @param  array  $field  The property to create docs for.
+     * @return void
+     */
+    function write_property($object, $field)
+    {
+        // The property templates.
+        global  $prop_start_tpl,
+                $prop_end_tpl;
+
+        // Get the property type and name.
+        list($field_type, $field_name) = $field;
+
+        // If we can't determine what the real type is use XXX
+        try {
+			$doc_type = $this->get_type($field_type);
+		} catch (Exception $ex) {
+            $doc_type = 'XXX';
+        }
+
+        // Write the opening from a template.
+        fwrite($this->fp, sprintf($prop_start_tpl, $this->prefix,
+                                  strtolower($object->in_module . $object->name),
+                                  $field_name, $field_name, $doc_type));
+        
+        // Write the closing from a template.
+        fwrite($this->fp, $prop_end_tpl);
+    }
+
+    /**
+     * Write the class methods to the current file.
+     *
+     * FIXME: automatically link to get_* and set_* functions
+     *
+     * @access public
+     * @param  object $object The class to write docs for.
+     * @return void
+     */
+    function write_methods($object)
+    {
+        // The methods section templates.
+        global  $methods_start_tpl,
+                $methods_end_tpl;
+
+        // Get methods from the object.
+        $methods = $this->parser->find_methods($object);
+
+        // Only write the template if there are methods
+        // for this class.
+        if (count($methods)) {
+            fwrite($this->fp, $methods_start_tpl);
+        }
+
+        // Write each method to the current file.
+        foreach ($methods as $method) {
+            if ($this->overrides->is_overriden($method->c_name)) {
+                // The default method was overriden.
+                $this->write_method($method, true);
+            } else if (!$this->overrides->is_ignored($method->c_name)) {
+                // Don't write a method that is ignored.
+                $this->write_method($method, false);
+            }
+        }
+
+        // Write the closing template if there were methods
+        // to be written.
+        if (count($methods)) {
+            fwrite($this->fp, $methods_end_tpl);
+        }
+    }
+
+    /**
+     * Writes functions that don't belong to a particular class.
+     *
+     * @access public
+     * @param  none
+     * @return void
+     */
+    function write_functions()
+    {
+        // Write each function.
+        foreach ($this->parser->functions as $function) {
+            if ($this->overrides->is_overriden($function->c_name)) {
+                // Function was overriden.
+                $this->write_method($function, true);
+            } else if (!$this->overrides->is_ignored($function->c_name)) {
+                // Don't write functions that are ignored.
+                $this->write_method($function, false);
+            }
+        }
+    }
+
+    /**
+     * Writes the class constructor.
+     *
+     * @access public
+     * @param  object $object The class to write docs for.
+     * @return void
+     */
+    function write_constructor($object)
+    {
+        // The constructor templates.
+        global  $constructor_start_tpl,
+				$constructor_alt_start_tpl,
+                $constructor_end_tpl,
+                $funcproto_tpl,
+                $no_parameter_tpl,
+                $update_docs;
 		
-		fwrite($this->fp, 
-			   sprintf($method_end_tpl,
-					   $update_docs?$this->docmerger->get_section_contents($method->name, METHOD, SHORTDESC):NULL,
-					   $update_docs?$this->docmerger->get_section_contents($method->name, METHOD, DESC):NULL
-					   ));
-	}
-
-	function get_paramdef($function)
-	{
-		global	$matcher,
-				$parameter_tpl,
-				$no_parameter_tpl,
-				$opt_parameter_tpl;
-
-		if ($function->varargs)
-			return false;
-
-		foreach ($function->params as $params_array) {
-			list($param_type, $param_name, $param_default, $param_null) = $params_array;
-
-			if (($doc_type = $this->get_type($param_type)) === false)
-				return false;
-
-			if (isset($param_default))
-				$paramdef .= sprintf($opt_parameter_tpl, $doc_type, $param_name, $param_default);
-			else
-				$paramdef .= sprintf($parameter_tpl, $doc_type, $param_name);
+		// Get the constructor method from the class.
+        $constructors = $this->parser->find_constructor($object, $this->overrides);
+		if (count($constructors) > 0) {
+			//FIXME: find duplicates
+			foreach ($constructors as $constr_number => $constructor) {
+        
+				// If a constructor was found, check to see if it was
+				// overriden or ignore.
+				if ($constructor) {
+					if ($this->overrides->is_overriden($constructor->c_name)) {
+						$overriden = true;
+					} else if (!$this->overrides->is_ignored($constructor->c_name)) {
+						$overriden = false;
+					} else {
+						return;
+					}
+				} else {
+					// No constructor found.
+					return;
+				}
+		
+				// If it hasn't been overriden, get the parameters.
+				if (!$overriden) {
+					if (($paramdef = $this->get_paramdef($constructor)) === false) {
+						// No parameters found!
+						return;
+					}
+				}
+		
+				// Get the class that the constructor instantiates.
+				$object_name = $constructor->is_constructor_of;
+				$is_main_constructor = $constr_number == 0;
+				
+				if (!$is_main_constructor) {
+					//get the real function name
+					$function_name = substr($constructor->c_name, strpos($constructor->c_name, "_new_") + 1);
+				}
+		
+				$id = $this->prefix . '.' . strtolower($object_name) . '.constructor';
+				$merged = $this->docmerger->getSectionContentsById($id);
+				if (empty($merged)) {
+					// Write the constructor opening template.
+					if ($is_main_constructor) {
+						//first constructor
+						fwrite($this->fp,
+							sprintf($constructor_start_tpl,
+									$this->prefix,
+									strtolower($object_name),
+									$constr_number));
+					} else {
+						//not the first constructor -> static factory method
+						fwrite($this->fp,
+							sprintf($constructor_alt_start_tpl,
+									$this->prefix,
+									strtolower($object_name),
+									$function_name));
+					}
+					
+					// Create the function prototype docs from a template.
+					$function_fullname = $is_main_constructor ? $object_name : $object_name . '::' . $function_name;
+					$funcdef = sprintf($funcproto_tpl,
+									'',
+									$function_fullname,
+									$overriden ? sprintf($no_parameter_tpl, 'XXX') : $paramdef);
+					
+					// Write the function prototype docs to the current file.
+					fwrite($this->fp, preg_replace('!^ !m', '', $funcdef));
+					
+					// Write the constructor closing from a template.
+					fwrite($this->fp, 
+						sprintf($constructor_end_tpl,
+								NULL,
+								NULL
+								)
+						);    
+				} else {
+					fwrite($this->fp, $merged);
+				}
+			}//foreach constructor
 		}
+	}//function write_constructor($object)
+	
+	
 
-		return $paramdef ? $paramdef : sprintf($no_parameter_tpl, 'void');
-	}
+    /**
+     * Writes a single method to the current file.
+     *
+     * @access public
+     * @param  object $method    The method to write docs for.
+     * @param  bool   $overriden Whether or not the method was overriden.
+     * @return void
+     */
+    function write_method($method, $overriden)
+    {
+        // The method templates.
+        global  $method_start_tpl,
+                $method_func_start_tpl,
+                $method_end_tpl,
+                $funcproto_tpl,
+                $no_parameter_tpl,
+                $update_docs;
 
-	function get_type($in_type)
-	{
-		global	$matcher;
-		static 	$type_map = 
-			array('none'			=> 'void',
-				  
-				  'char*'			=> 'string',
-				  'gchar*'			=> 'string',
-				  'const-char*'		=> 'string',
-				  'const-gchar*'	=> 'string',
-				  'string'			=> 'string',
-				  'static_string'	=> 'string',
-				  'unsigned-char*'	=> 'string',
-				  'guchar*'			=> 'string',
+        // Get the parameters if the method was not overriden.
+        if (!$overriden) {
+			//TODO: check if alright
+			try {
+				$paramdef = $this->get_paramdef($method);
+				$return = $this->get_type($method->return_type);
+			} catch (Exception $ex) {
+                return;
+            }
+        }
 
-				  'char'			=> 'char',
-				  'gchar'			=> 'char',
-				  'guchar'			=> 'char',
+        // Write the method to the current file with the object name.
+        if (isset($method->of_object)) {
+            $object_name = $method->of_object;
 
-				  'int'				=> 'int',
-				  'gint'			=> 'int',
-				  'guint'			=> 'int',
-				  'short'			=> 'int',
-				  'gshort'			=> 'int',
-				  'gushort'			=> 'int',
-				  'long'			=> 'int',
-				  'glong'			=> 'int',
-				  'gulong'			=> 'int',
-
-				  'guint8'			=> 'int',
-				  'gint8'			=> 'int',
-				  'guint16'			=> 'int',
-				  'gint16'			=> 'int',
-				  'guint32'			=> 'int',
-				  'gint32'			=> 'int',
-				  'GtkType'			=> 'int',
-
-				  'gboolean'		=> 'bool',
-
-				  'double'			=> 'double',
-				  'gdouble'			=> 'double',
-				  'float'			=> 'double',
-				  'gfloat'			=> 'double',
-
-				  'GdkDrawable*'	=> 'GdkWindow');
-
-		$type_handler = &$matcher->get($in_type);
-		if ($type_handler === null)
-			return false;
-
-		if (isset($type_map[$in_type]))
-			return $type_map[$in_type];
-		else {
-			$in_type = str_replace('*', '', $in_type);
-			$type_handler_class = get_class($type_handler);
-			if ($type_handler_class == 'object_arg' ||
-				$type_handler_class == 'boxed_arg')
-				return "<classname>$in_type</classname>";
-			else if ($type_handler_class == 'enum_arg' ||
-					 $type_handler_class == 'flags_arg')
-				return "<enumname>$in_type</enumname>";
-			else
-				return $in_type;
+			$id = $this->prefix . '.' . strtolower($object_name) . '.method.' . $method->name;
+			$merged = $this->docmerger->getSectionContentsById($id);
+			if (empty($merged)) {
+				fwrite($this->fp,
+					   sprintf($method_start_tpl,
+							   $this->prefix,
+							   strtolower($object_name),
+							   $method->name));
+			} else {
+				fwrite($this->fp, $merged);
+			}
+        } else {
+            // The object name is not available.
+            fwrite($this->fp,
+                   sprintf($method_func_start_tpl,
+                           $this->prefix,
+                           $method->name));
+        }
+		if (empty($merged)) {
+			// Write the method docs to the current file.
+			fwrite($this->fp,
+				   sprintf($funcproto_tpl,
+						   $overriden ? 'XXX' : $return,
+						   $method->name,
+						   $overriden ? sprintf($no_parameter_tpl, 'XXX') : $paramdef));
+			
+			// Close off the method docs.
+			fwrite($this->fp, 
+				   sprintf($method_end_tpl,
+						   NULL,
+						   NULL
+						   )
+				   );
 		}
 	}
+
+    /**
+     * Gets the parameters for the given function.
+     *
+     * @access public
+     * @param  object $function The function to get params for.
+     * @return void
+     */
+    function get_paramdef($function)
+    {
+        global  $matcher,
+                $parameter_tpl,
+                $no_parameter_tpl,
+                $opt_parameter_tpl;
+
+        // Check to see if the function has variable arguments.
+        if ($function->varargs) {
+            return false;
+        }
+
+        if (count($function->params) > 0) {
+            // Get the info about each parameter.
+            foreach ($function->params as $params_array) {
+                list($param_type, $param_name, $param_default, $param_null) = $params_array;
+
+                // Get the php type from the c type.
+                if (($doc_type = $this->get_type($param_type)) === false) {
+                    return false;
+                }
+
+                // Check for a default value.
+                if (isset($param_default)) {
+                    $paramdef .= sprintf($opt_parameter_tpl, $doc_type, $param_name, $param_default);
+                } else {
+                    $paramdef .= sprintf($parameter_tpl, $doc_type, $param_name);
+                }
+            }
+        }
+
+        // Return either the parameter string or a no param string
+        return $paramdef ? $paramdef : sprintf($no_parameter_tpl, 'void');
+    }
+
+    /**
+     * Gets a PHP type from a C type.
+     *
+     * @access public
+     * @param  string $in_type The C type.
+     * @return string The PHP type or false if no match
+     */
+    function get_type($in_type)
+    {
+        global $matcher;
+        
+        // Key = C Type, Val = PHP type
+        static $type_map = array('none'           => 'void',
+
+                                 'char*'          => 'string',
+                                 'gchar*'         => 'string',
+                                 'const-char*'    => 'string',
+                                 'const-gchar*'   => 'string',
+                                 'string'         => 'string',
+                                 'static_string'  => 'string',
+                                 'unsigned-char*' => 'string',
+                                 'guchar*'        => 'string',
+                                 
+                                 'char'           => 'char',
+                                 'gchar'          => 'char',
+                                 'guchar'         => 'char',
+                                 
+                                 'int'            => 'int',
+                                 'gint'           => 'int',
+                                 'guint'          => 'int',
+                                 'short'          => 'int',
+                                 'gshort'         => 'int',
+                                 'gushort'        => 'int',
+                                 'long'           => 'int',
+                                 'glong'          => 'int',
+                                 'gulong'         => 'int',
+                                 
+                                 'guint8'         => 'int',
+                                 'gint8'          => 'int',
+                                 'guint16'        => 'int',
+                                 'gint16'         => 'int',
+                                 'guint32'        => 'int',
+                                 'gint32'         => 'int',
+                                 'GtkType'        => 'int',
+                                 
+                                 'gboolean'       => 'bool',
+                                 
+                                 'double'         => 'double',
+                                 'gdouble'        => 'double',
+                                 'float'          => 'double',
+                                 'gfloat'         => 'double',
+                                 
+                                 'GdkDrawable*'   => 'GdkWindow');
+        
+        // Check for a type handler.
+		try {
+	        $type_handler = &$matcher->get($in_type);
+        } catch (Exception $ex) {
+            return false;
+        }
+
+        // If we have an exact match, return it.
+        if (isset($type_map[$in_type])) {
+            return $type_map[$in_type];
+        } else {
+            // Otherwise try to figure it out.
+            $in_type = str_replace('*', '', $in_type);
+
+            // See if the type is an object.
+            $type_handler_class = get_class($type_handler);
+            if ($type_handler_class == 'object_arg' ||
+                $type_handler_class == 'boxed_arg') {
+                return "<classname>$in_type</classname>";
+            } else if ($type_handler_class == 'enum_arg' ||
+                       $type_handler_class == 'flags_arg') {
+                // Type is an enum or a flag
+                return "<enumname>$in_type</enumname>";
+            } else {
+                // Can't figure it out. Just give it back.
+                return $in_type;
+            }
+        }
+    }
 }
 
 /* For backwards compatibility. */
 chdir(dirname(__FILE__));
 
-$argc = $HTTP_SERVER_VARS['argc'];
-$argv = $HTTP_SERVER_VARS['argv'];
+// Use $_SERVER if available.
+if (isset($_SERVER)) {
+    $argc = $_SERVER['argc'];
+    $argv = $_SERVER['argv'];
+} else {
+    $argc = $HTTP_SERVER_VARS['argc'];
+    $argv = $HTTP_SERVER_VARS['argv'];
+}
 
 /* An ugly hack to counteract PHP's pernicious desire to treat + as an argument
    separator in command-line version. */
-array_walk($argv, create_function('&$x', '$x = urldecode($x);'));
+// I don't need this. It causes trouble.
+// array_walk($argv, create_function('&$x', '$x = urldecode($x);'));
 
+// Use PEAR::Console_Getopt to get the arguments from the 
+// command line.
 $result = Console_Getopt::getopt($argv, 'o:p:r:d:s:l:u');
-if (!$result || count($result[1]) < 2)
-	die(
-"Usage: php -q generator.php [OPTION] defsfile [class ...]
-
-  -o <file>         use overrides in <file>
-  -p <prefix>       use <prefix> for docs
-  -r <file>         register types from <file>
-  -d <path>         output files to this directory
-  -s <path>         documentation dir
-  -l <lang>         Language
-  -u                Update existing docs
-");
-
+if (!$result || count($result[1]) < 2) {
+    // Set up the help message.
+    die(
+        "Usage: php -q generator.php [OPTION] defsfile [class ...]\n\n" . 
+        "  -o <file>         use overrides in <file>\n" . 
+        "  -p <prefix>       use <prefix> for docs\n" . 
+        "  -r <file>         register types from <file>\n" . 
+        "  -d <path>         output files to this directory\n" . 
+        "  -s <path>         documentation dir\n" . 
+        "  -l <lang>         Language\n" . 
+        "  -u                Update existing docs\n"
+        );
+}
 list($opts, $argv) = $result;
 
+// Set the default options.
 $prefix = 'gtk';
 $overrides = new Overrides();
 $lang = 'en';
 $update_docs = FALSE;
 
+// Override the defaults with the command line options.
 foreach ($opts as $opt) {
-	list($opt_spec, $opt_arg) = $opt;
-	if ($opt_spec == 'o') {
-		$overrides = new Overrides($opt_arg);
-	} else if ($opt_spec == 'p') {
-		$prefix = $opt_arg;
-	} else if ($opt_spec == 'r') {
-		$type_parser = new Defs_Parser($opt_arg);
-		$type_parser->start_parsing();
-		DocGenerator::register_types($type_parser);
-	} else if ($opt_spec == 'd') {
-		$output_dir = $opt_arg;
-	} else if ($opt_spec == 's') {
-		$docs_dir =	$opt_arg;
-	} else if ($opt_spec ==	'l') {
-		$lang =	$opt_arg;
-	} else if ($opt_spec ==	'u') {
-		$update_docs = TRUE;
-	}
+    list($opt_spec, $opt_arg) = $opt;
+    if ($opt_spec == 'o') {
+        $overrides = new Overrides($opt_arg);
+    } else if ($opt_spec == 'p') {
+        $prefix = $opt_arg;
+    } else if ($opt_spec == 'r') {
+        $type_parser = new Defs_Parser($opt_arg);
+        $type_parser->start_parsing();
+        DocGenerator::register_types($type_parser);
+    } else if ($opt_spec == 'd') {
+        $output_dir = $opt_arg;
+    } else if ($opt_spec == 's') {
+        $docs_dir = $opt_arg;
+    } else if ($opt_spec ==    'l') {
+        $lang = $opt_arg;
+    } else if ($opt_spec ==    'u') {
+        $update_docs = TRUE;
+    }
 }
 
+// Create a new defs parser.
 $parser = new Defs_Parser($argv[1]);
 
-if($update_docs)
-	$docmerger = new DocMerger($docs_dir, $lang, $prefix);
+// Create a DocMerger if updating.
+//if($update_docs) {
+    $docmerger = new DocMerger($docs_dir, $lang, $prefix);
+//}
 
-$generator = new DocGenerator($parser, $overrides, $docmerger, $prefix,	$output_dir);
+// Create the generator.
+$generator = new DocGenerator($parser, $overrides, $docmerger, $prefix, $output_dir);
 
+// Get to work.
 $parser->start_parsing();
 $generator->register_types();
 $generator->create_docs(array_slice($argv, 2));
 
-/* vim: set et sts=4: */
+/*
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ */
 ?>
