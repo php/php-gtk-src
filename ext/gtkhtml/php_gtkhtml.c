@@ -37,36 +37,31 @@ PHP_GTK_GET_EXTENSION(gtkhtml)
 
 PHP_GTK_XINIT_FUNCTION(gtkhtml)
 {
-
-
 #ifdef GTKHTML_HAVE_GCONF 
 	GConfError *gconf_error;
 	char **argv;	  
 	
 	argv = (char **)g_new(char *, 1);
 	argv[0] = g_strdup(SG(request_info).path_translated);
-/* 	printf("argv0 %s", argv[0]); */
-  	if (!gconf_init(1, argv, &gconf_error))
-     		gconf_error_destroy(gconf_error);
+	/* 	printf("argv0 %s", argv[0]); */
+	if (!gconf_init(1, argv, &gconf_error))
+		gconf_error_destroy(gconf_error);
 	gconf_error = NULL;
 #endif 
 
-        gdk_rgb_init ();
-	
+	gdk_rgb_init ();
+
 	gtk_widget_set_default_colormap (gdk_rgb_get_cmap ());
 	gtk_widget_set_default_visual (gdk_rgb_get_visual ());
-	
 
-
-        php_gtkhtml_register_constants(module_number TSRMLS_CC);
+	php_gtkhtml_register_constants(module_number TSRMLS_CC);
 	php_gtkhtml_register_classes();
 
 	return SUCCESS;
 }
 
 php_gtk_ext_entry gtkhtml_ext_entry = {
-	"html",
-       
+	"gtkhtml",
 	PHP_GTK_XINIT(gtkhtml),
 	NULL,
 };

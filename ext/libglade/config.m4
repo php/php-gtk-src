@@ -47,8 +47,6 @@ AC_SUBST(LIBGLADE_LIBS)
 
 PHP_GTK_ARG_ENABLE(libglade,for libglade support,
 [
-                       PHP-GTK Extensions Options
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   --disable-libglade      Disable libglade support],yes)
 
 if test "$PHP_GTK_LIBGLADE" != "no"; then

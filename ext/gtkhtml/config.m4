@@ -34,9 +34,10 @@ AC_SUBST(HTML_HAVE_GCONFTEST)
 
  
 PHP_GTK_ARG_ENABLE(gtkhtml,for gtkhtml support,
-[  --enable-gtkhtml        Enable gtkhtml support])
+[
+  --enable-gtkhtml        Enable gtkhtml support])
 
-if test "$PHP_GTK_HTML" != "no"; then
+if test "$PHP_GTK_GTKHTML" != "no"; then
   PHP_PATH_GNOME_CONFIG(have_gnomeconfig=yes,have_gnomeconfig=no)
   if test "$have_gnomeconfig" != "yes"; then
     AC_MSG_ERROR(Unable to locate gnomeconfig)
@@ -50,5 +51,5 @@ if test "$PHP_GTK_HTML" != "no"; then
     PHP_SUBST(HTML_SHARED_LIBADD)
 
     PHP_GTK_EXTENSION(gtkhtml, $php_gtk_ext_shared)
-  fi  
+  fi
 fi
