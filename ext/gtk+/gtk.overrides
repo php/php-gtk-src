@@ -20,7 +20,7 @@ ignore-glob
 	gtk_args_*
 	gtk_signal_connect*
 	gtk_signal_new*
-	gtk_init_add_*
+	gtk_init_add*
 	gtk_quit_add_*
 	gtk_timeout_add_*
 	gtk_idle_add_*
