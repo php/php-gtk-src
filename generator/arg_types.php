@@ -392,6 +392,7 @@ class Object_Arg extends Arg_Type {
 	{
 		$var_list->add('zval', '*ret');
 		return 	"	ret = php_gtk_new((GtkObject *)%s);\n" .
+				"	SEPARATE_ZVAL(&ret);\n" .
 				"	*return_value = *ret;\n" .
 				"	return;";
 	}

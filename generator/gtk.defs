@@ -595,6 +595,12 @@
   (field (type-and-name GtkWidget* help_button))
 )
 
+(object TipsQuery
+  (in-module Gtk)
+  (parent Label (Gtk))
+  (c-name GtkTipsQuery)
+)
+
 ;; Enumerations and flags ...
 
 (flags AccelFlags

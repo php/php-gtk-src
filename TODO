@@ -10,6 +10,5 @@
 
 In PHP
 ------
-* Fix call_user_method_*() functions to force object by reference.
 * Modify var_dump() and print_r() to check get property handlers when
   dumping information.

@@ -143,9 +143,8 @@ void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *
 {
 	zval *gtk_args;
 	zval *signal_data = (zval *)data;
-	zval **func, **extra = NULL;
+	zval **func, **extra = NULL, **pass_wrapper;
 	zval *wrapper = NULL;
-	zval **wrapper_ptr = &wrapper;
 	zval *params;
 	zval *retval = NULL;
 	zval *tmp;
@@ -157,20 +156,18 @@ void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *
 	if (!php_gtk_check_callable(signal_data)) {
 		zend_hash_index_find(Z_ARRVAL_P(signal_data), 0, (void **)&func);
 		zend_hash_index_find(Z_ARRVAL_P(signal_data), 1, (void **)&extra);
-		if (zend_hash_num_elements(Z_ARRVAL_P(signal_data)) > 2) {
-			zend_hash_index_find(Z_ARRVAL_P(signal_data), 2, (void **)&wrapper_ptr);
-			zval_add_ref(&wrapper);
-		}
+		zend_hash_index_find(Z_ARRVAL_P(signal_data), 2, (void **)&pass_wrapper);
 	} else
 		func = &signal_data;
 
-	if (!wrapper && o)
+	if (Z_LVAL_PP(pass_wrapper) && o)
 		wrapper = php_gtk_new(o);
 
 	if (wrapper) {
 		MAKE_STD_ZVAL(params);
 		array_init(params);
-		zend_hash_next_index_insert(Z_ARRVAL_P(params), &wrapper, sizeof(zval *), NULL);
+		if (Z_LVAL_PP(pass_wrapper))
+			zend_hash_next_index_insert(Z_ARRVAL_P(params), &wrapper, sizeof(zval *), NULL);
 		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(gtk_args), 0);
 		zval_ptr_dtor(&gtk_args);
 	} else
@@ -636,5 +633,55 @@ int php_gtk_set_property(zend_property_reference *property_reference, zval *valu
 	zval_dtor(&overloaded_property->element);
 	return retval;
 }
+
+
+void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference *property_reference)
+{
+	zval result;
+	zend_overloaded_element *overloaded_property;
+	zval method_name = ((zend_overloaded_element *)property_reference->elements_list->tail->data)->element;
+	zend_llist_element *element;
+	zend_llist_element *stop_element;
+	zval *object = property_reference->object;
+	prop_getter_t *getter;
+	zend_class_entry *ce;
+	int found = FAILURE;
+
+	/*
+	 * We want to stop at the last overloaded object reference - the rest can
+	 * contain array and method references, that's fine.
+	 */
+	for (stop_element=property_reference->elements_list->tail;
+		 stop_element &&
+		 (Z_TYPE_P((zend_overloaded_element *)stop_element->data) == OE_IS_ARRAY ||
+		  Z_TYPE_P((zend_overloaded_element *)stop_element->data) == OE_IS_METHOD);
+		 stop_element=stop_element->prev);
+
+	for (element=property_reference->elements_list->head; element && element!=stop_element; element=element->next) {
+		overloaded_property = (zend_overloaded_element *) element->data;
+		if (Z_TYPE_P(overloaded_property) != OE_IS_OBJECT ||
+			Z_TYPE(overloaded_property->element) != IS_STRING ||
+			Z_TYPE_P(object) != IS_OBJECT) {
+			php_error(E_WARNING, "Error invoking method '%s'", Z_STRVAL(method_name));
+			return;
+		}
+
+		for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
+			if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
+				(*getter)(&result, object, &element, &found);
+			}
+		}
+		if (found == FAILURE) {
+			php_error(E_WARNING, "Error invoking method '%s' on property '%s'", Z_STRVAL(method_name), Z_STRVAL(overloaded_property->element));
+			return;
+		}
+		object = &result;
+
+		zval_dtor(&overloaded_property->element);
+	}
+
+	zval_dtor(&method_name);
+}
+
 
 #endif  /* HAVE_PHP_GTK */
