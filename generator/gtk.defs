@@ -531,6 +531,11 @@
   (in-module Gtk)
   (parent CList (Gtk))
   (c-name GtkCTree)
+  (field (type-and-name gint tree_indent))
+  (field (type-and-name gint tree_spacing))
+  (field (type-and-name gint tree_column))
+  (field (type-and-name GtkCTreeLineStyle line_style))
+  (field (type-and-name GtkCTreeExpanderStyle expander_style))
 )
 
 (object Calendar
