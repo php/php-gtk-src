@@ -77,7 +77,7 @@ class Var_List {
 \*======================================================================*/
 class Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 &$parse_list, &$arg_list, &$extra_code, &$after_code, &$parse_type,
 						 $in_constructor)
 	{
 		trigger_error("This is an abstract class", E_USER_ERROR);
@@ -99,7 +99,7 @@ class None_Arg extends Arg_Type {
 
 class String_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 &$parse_list, &$arg_list, &$extra_code, &$after_code, &$parse_type,
 						 $in_constructor)
 	{
 		if (isset($default)) {
@@ -139,14 +139,16 @@ class String_Arg extends Arg_Type {
 
 class StringRef_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 &$parse_list, &$arg_list, &$extra_code, &$after_code, &$parse_type,
 						 $in_constructor)
 	{
 		$var_list->add('zval', '*php_' . $name . ' = NULL');
+		$var_list->add('gchar', '*gtk_' . $name . ' = NULL');
 		$parse_list[] 	= '&php_' . $name;
 		$parse_type[]	= "F";
-		$arg_list[] 	= "($type)&Z_STRVAL_P(php_$name)";
+		$arg_list[] 	= "&gtk_$name";
 		$extra_code[]	= "	convert_to_string(php_$name);\n";
+		$after_code[]	= "ZVAL_STRING(php_$name, gtk_$name, 1);\n";
 		return 'V';
 	}
 
@@ -157,7 +159,7 @@ class StringRef_Arg extends Arg_Type {
 
 class Char_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 &$parse_list, &$arg_list, &$extra_code, &$after_code, &$parse_type,
 						 $in_constructor)
 	{
 		if (isset($default))
@@ -175,13 +177,14 @@ class Char_Arg extends Arg_Type {
 		$var_list->add('gchar', 'ret[2]');
 		return "	ret[0] = %s;\n"    .
 			   "	ret[1] = '\\0';\n" .
+			   "	%s\n" .
 			   "	RETURN_STRINGL(ret, 1, 1);";
 	}
 }
 
 class Int_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 &$parse_list, &$arg_list, &$extra_code, &$after_code, &$parse_type,
 						 $in_constructor)
 	{
 		if (isset($default))
@@ -196,13 +199,16 @@ class Int_Arg extends Arg_Type {
 	
 	function write_return($type, &$var_list)
 	{
-		return '	RETURN_LONG(%s);';
+		$var_list->add('long', 'php_retval');
+		return "	php_retval = %s;\n" .
+			   "	%s\n" .
+			   "	RETURN_LONG(php_retval);";
 	}
 }
 
 class IntRef_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 &$parse_list, &$arg_list, &$extra_code, &$after_code, &$parse_type,
 						 $in_constructor)
 	{
 		$var_list->add('zval', '*php_' . $name . ' = NULL');
@@ -220,7 +226,7 @@ class IntRef_Arg extends Arg_Type {
 
 class Bool_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 &$parse_list, &$arg_list, &$extra_code, &$after_code, &$parse_type,
 						 $in_constructor)
 	{
 		if (isset($default))
@@ -235,13 +241,16 @@ class Bool_Arg extends Arg_Type {
 	
 	function write_return($type, &$var_list)
 	{
-		return '	RETURN_BOOL(%s);';
+		$var_list->add('gboolean', 'php_retval');
+		return "	php_retval = %s;\n" .
+			   "	%s\n" .
+			   "	RETURN_BOOL(php_retval);";
 	}
 }
 
 class Double_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 &$parse_list, &$arg_list, &$extra_code, &$after_code, &$parse_type,
 						 $in_constructor)
 	{
 		if (isset($default))
@@ -256,7 +265,10 @@ class Double_Arg extends Arg_Type {
 	
 	function write_return($type, &$var_list)
 	{
-		return '	RETURN_DOUBLE(%s);';
+		$var_list->add('double', 'php_retval');
+		return "	php_retval = %s;\n" .
+			   "	%s\n" .
+			   "	RETURN_DOUBLE(php_retval);";
 	}
 }
 
@@ -275,7 +287,7 @@ class Enum_Arg extends Arg_Type {
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 &$parse_list, &$arg_list, &$extra_code, &$after_code, &$parse_type,
 						 $in_constructor)
 	{
 		if (isset($default))
@@ -293,7 +305,10 @@ class Enum_Arg extends Arg_Type {
 	
 	function write_return($type, &$var_list)
 	{
-		return '	RETURN_LONG(%s);';
+		$var_list->add('long', 'php_retval');
+		return "	php_retval = %s;\n" .
+			   "	%s\n" .
+			   "	RETURN_LONG(php_retval);";
 	}
 }
 
@@ -312,7 +327,7 @@ class Flags_Arg extends Arg_Type {
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 &$parse_list, &$arg_list, &$extra_code, &$after_code, &$parse_type,
 						 $in_constructor)
 	{
 		if (isset($default))
@@ -330,7 +345,10 @@ class Flags_Arg extends Arg_Type {
 	
 	function write_return($type, &$var_list)
 	{
-		return '	RETURN_LONG(%s);';
+		$var_list->add('long', 'php_retval');
+		return "	php_retval = %s;\n" .
+			   "	%s\n" .
+			   "	RETURN_LONG(php_retval);";
 	}
 }
 
@@ -345,7 +363,7 @@ class Object_Arg extends Arg_Type {
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 &$parse_list, &$arg_list, &$extra_code, &$after_code, &$parse_type,
 						 $in_constructor)
 	{
 		if ($null_ok) {
@@ -394,6 +412,7 @@ class Object_Arg extends Arg_Type {
 	{
 		$var_list->add('zval', '*ret');
 		return 	"	ret = php_gtk_new((GtkObject *)%s);\n" .
+			   "	%s\n" .
 				"	SEPARATE_ZVAL(&ret);\n" .
 				"	*return_value = *ret;\n" .
 				"	return;";
@@ -402,7 +421,7 @@ class Object_Arg extends Arg_Type {
 
 class Rect_Arg extends Arg_Type {
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$parse_type,
+						 &$parse_list, &$arg_list, &$extra_code, &$after_code, &$parse_type,
 						 $in_constructor)
 	{
 		$var_list->add(substr($type, 0, -1), $name);
@@ -428,7 +447,7 @@ class Boxed_Arg extends Arg_Type {
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
-						 &$parse_list, &$arg_list, &$extra_code, &$array_code)
+						 &$parse_list, &$arg_list, &$extra_code, &$after_code, &$array_code)
 	{
 		$var_list->add('zval', '*' . $name);
 		$parse_list[]	= '&' . $name;
@@ -441,6 +460,7 @@ class Boxed_Arg extends Arg_Type {
 	{
 		$var_list->add(substr($type, 0, -1), '*ret');
 		return "	ret = %s;\n" .
+			   "	%s\n" .
 			   "	*return_value = *php_" . $this->php_type . "_new(ret);\n" .
 			   "	return;";
 	}
@@ -450,6 +470,7 @@ class Atom_Arg extends Int_Arg {
 	function write_return($type, &$var_list)
 	{
 		return "	*return_value = *php_gdk_atom_new(%s);\n" .
+			   "	%s\n" .
 			   "	return;";
 	}
 }
