@@ -1,3 +1,11 @@
+2002-06-04  Andrei Zmievski  <andrei@php.net>
+
+    * NEWS: *** empty log message ***
+
+    * ext/gtk+/gtk.overrides
+      ext/gdkpixbuf/Makefile.frag: Fix GdkPixbuf generation.
+    Fix UTF8 stuff for menu items and radio buttons.
+
 2002-05-28  Andrei Zmievski  <andrei@php.net>
 
     * NEWS: *** empty log message ***
