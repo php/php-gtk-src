@@ -96,8 +96,6 @@ class Generator {
 		$parse_list = array('');
 		$arg_list 	= array('');
 		$extra_code = array();
-		$after_code = array();
-		$parse_type = array();
 
 		if ($method->varargs)
 			trigger_error("varargs functions not supported", E_USER_ERROR);
@@ -121,15 +119,12 @@ class Generator {
 											$parse_list,
 											$arg_list,
 											$extra_code,
-											$after_code,
-											$parse_type,
 											false);
 		}
 
 		$arg_list 	= implode(', ', $arg_list);
 		$parse_list = implode(', ', $parse_list);
 		$extra_code = implode('', $extra_code);
-		$after_code = implode('', $after_code);
 
 		$method_call = sprintf($method_call_tpl,
 							   $method->c_name,
@@ -140,10 +135,9 @@ class Generator {
 			error_log("Could not write function $method->name (return type $method->return_type)");
 			return false;
 		}
-		$return_tpl = $ret_handler->write_return($method->return_type, $var_list);
+		$return_tpl = $ret_handler->write_return($method->return_type, $var_list, true);
 		$return_code = sprintf($return_tpl,
-							   $method_call,
-							   $after_code);
+							   $method_call);
 		
 		$method_code = sprintf($method_tpl,
 							   strtolower($method->c_name),
@@ -168,8 +162,6 @@ class Generator {
 		$parse_list = array('');
 		$arg_list 	= array();
 		$extra_code = array();
-		$after_code = array();
-		$parse_type = array();
 
 		foreach ($constructor->params as $params_array) {
 			list($param_type, $param_name, $param_default, $param_null) = $params_array;
@@ -190,15 +182,12 @@ class Generator {
 											$parse_list,
 											$arg_list,
 											$extra_code,
-											$after_code,
-											$parse_type,
 											true);
 		}
 
 		$arg_list 	= implode(', ', $arg_list);
 		$parse_list = implode(', ', $parse_list);
 		$extra_code = implode('', $extra_code);
-		$after_code = implode('', $after_code);
 
 		$var_list->add('GtkObject', '*wrapped_obj');
 
@@ -228,8 +217,6 @@ class Generator {
 		$parse_list = array('');
 		$arg_list 	= array();
 		$extra_code = array();
-		$after_code = array();
-		$parse_type = array();
 
 		if ($function->varargs)
 			trigger_error("varargs functions not supported", E_USER_ERROR);
@@ -253,15 +240,12 @@ class Generator {
 											$parse_list,
 											$arg_list,
 											$extra_code,
-											$after_code,
-											$parse_type,
 											false);
 		}
 
 		$arg_list 	= implode(', ', $arg_list);
 		$parse_list = implode(', ', $parse_list);
 		$extra_code = implode('', $extra_code);
-		$after_code = implode('', $after_code);
 
 		$function_call = sprintf($function_call_tpl,
 								 $function->c_name,
@@ -271,10 +255,9 @@ class Generator {
 			error_log("Could not write function $function->name (return type $function->return_type)");
 			return;
 		}
-		$return_tpl = $ret_handler->write_return($function->return_type, $var_list);
+		$return_tpl = $ret_handler->write_return($function->return_type, $var_list, true);
 		$return_code = sprintf($return_tpl,
-							   $function_call,
-							   $after_code);
+							   $function_call);
 
 		$function_code = sprintf($function_tpl,
 								 strtolower($function->c_name),
@@ -313,7 +296,7 @@ class Generator {
 					continue;
 				}
 
-				$prop_tpl = $handler->write_return($field_type, $var_list);
+				$prop_tpl = $handler->write_return($field_type, $var_list, false);
 				$prop_code = sprintf($prop_tpl,
 									 $obj_cast . '(PHP_GTK_GET(object))->' . $field_name, "");
 				$prop_code = str_replace("\n", "\n\t", $prop_code);

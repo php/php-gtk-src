@@ -28,6 +28,7 @@ int le_gtk;
 HashTable php_gtk_prop_getters;
 HashTable php_gtk_prop_setters;
 HashTable php_gtk_rsrc_hash;
+HashTable php_gtk_type_hash;
 
 static const char *php_gtk_wrapper_key = "php_gtk::wrapper";
 
@@ -46,20 +47,13 @@ void php_gtk_set_object(zval *wrapper, void *obj, int rsrc_type)
 
 	MAKE_STD_ZVAL(handle);
 	Z_TYPE_P(handle) = IS_LONG;
-	if (rsrc_type == le_gtk) {
-		Z_LVAL_P(handle) = zend_list_insert(obj, rsrc_type);
-		zval_add_ref(&wrapper);
-		gtk_object_set_data_full(obj, php_gtk_wrapper_key, wrapper, php_gtk_destroy_notify);
-	} else {
-		if (zend_hash_index_find(&php_gtk_rsrc_hash, (long)obj, (void **)&rsrc) == SUCCESS)
-			Z_LVAL_P(handle) = Z_LVAL_PP(rsrc);
-		else {
-			Z_LVAL_P(handle) = zend_list_insert(obj, rsrc_type);
-			zval_add_ref(&handle);
-			zend_hash_index_update(&php_gtk_rsrc_hash, (long)obj, (void *)&handle, sizeof(zval *), NULL);
-		}
-	}
+	Z_LVAL_P(handle) = zend_list_insert(obj, rsrc_type);
 	zend_hash_index_update(Z_OBJPROP_P(wrapper), 0, &handle, sizeof(zval *), NULL);
+	zval_add_ref(&wrapper);
+	if (rsrc_type == le_gtk)
+		gtk_object_set_data_full(obj, php_gtk_wrapper_key, wrapper, php_gtk_destroy_notify);
+	else
+		zend_hash_index_update(&php_gtk_type_hash, (long)obj, (void *)&wrapper, sizeof(zval *), NULL);
 }
 
 void *php_gtk_get_object(zval *wrapper, int rsrc_type)
@@ -654,6 +648,7 @@ static inline int invoke_setter(zval *object, zval *value, zend_llist_element **
 zval php_gtk_get_property(zend_property_reference *property_reference)
 {
 	zval result;
+	zval *result_ptr = &result;
 	zval **prop_result;
 	zend_overloaded_element *overloaded_property;
 	zend_llist_element *element;
@@ -708,7 +703,8 @@ zval php_gtk_get_property(zend_property_reference *property_reference)
 		}
 	}
 
-    return result;
+	SEPARATE_ZVAL(&result_ptr);
+    return *result_ptr;
 }
 
 int php_gtk_set_property(zend_property_reference *property_reference, zval *value)

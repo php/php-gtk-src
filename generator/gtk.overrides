@@ -966,6 +966,7 @@ PHP_FUNCTION(wrap_gtk_ctree_insert_node)
 	zval *php_parent, *php_sibling, *php_text,
 		 *php_pixmap_closed, *php_pixmap_opened,
 		 *php_mask_closed, *php_mask_opened, **temp_text;
+	zval *php_ret;
 	gint spacing, columns, i;
 	zend_bool is_leaf, expanded;
 	GtkCTreeNode *parent = NULL, *sibling = NULL, *ret;
@@ -1019,7 +1020,9 @@ PHP_FUNCTION(wrap_gtk_ctree_insert_node)
 								pixmap_closed, mask_closed, pixmap_opened,
 								mask_opened, is_leaf, expanded);
 	efree(text);
-	*return_value = *php_gtk_ctree_node_new(ret);
+	php_ret = php_gtk_ctree_node_new(ret);
+	SEPARATE_ZVAL(&php_ret);
+	*return_value = *php_ret;
 }
 %%
 override gtk_ctree_post_recursive
@@ -1552,12 +1555,7 @@ PHP_FUNCTION(wrap_gtk_color_selection_get_color)
 }
 %%
 getprop GtkCTree clist
-	zval *ret;
-
-	ret = php_gtk_new((GtkObject *)GTK_CLIST(PHP_GTK_GET(object)));
-
-	SEPARATE_ZVAL(&ret);
-	*return_value = *ret;
+	*return_value = *php_gtk_new((GtkObject *)GTK_CLIST(PHP_GTK_GET(object)));
 %%
 getprop GtkCList row_list
 	GList *tmp;
