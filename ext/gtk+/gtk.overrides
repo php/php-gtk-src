@@ -267,8 +267,8 @@ override gtk_input_add_full
 PHP_FUNCTION(gtk_input_add_full)
 {
 	zval *source_rsrc;
+	int source;
 	int rsrc_type;
-	int *source;
     GdkInputCondition condition;
 	zval *callback = NULL;
 	zval *extra, *data;
@@ -284,17 +284,43 @@ PHP_FUNCTION(gtk_input_add_full)
 	if (!php_gtk_parse_args(3, "riV", &source_rsrc, &condition, &callback))
 		return;
 
-	source = zend_list_find(Z_LVAL_P(source_rsrc), &rsrc_type);
-	if (!source || rsrc_type != php_file_le_fopen()) {
-		php_error(E_WARNING, "%s() expects argument 1 to be a valid filehandle resource", get_active_function_name(TSRMLS_C));
-		return;
+#ifdef PHP_HAVE_STREAMS
+	{
+		php_stream *stream;
+		stream = zend_list_find(Z_LVAL_P(source_rsrc), &rsrc_type);
+		if (!stream || rsrc_type != php_file_le_stream()) {
+			php_error(E_WARNING, "%s() expects argument 1 to be a valid stream resource", get_active_function_name(TSRMLS_C));
+			return;
+		}
+		if (php_stream_can_cast(stream, PHP_STREAM_AS_SOCKETD) == SUCCESS) {
+			php_stream_cast(stream, PHP_STREAM_AS_SOCKETD, (void*)&source, 0);
+		} else if (php_stream_can_cast(stream, PHP_STREAM_AS_FD) == SUCCESS) {
+			php_stream_cast(stream, PHP_STREAM_AS_FD, (void*)&source, 0);
+		} else {
+			php_error(E_WARNING, "%s() could not use stream of type '%s'",
+					  get_active_function_name(), stream->ops->label);
+			return;
+		}
 	}
+#else
+	{
+		int *source_ptr;
+
+		source_ptr = zend_list_find(Z_LVAL_P(source_rsrc), &rsrc_type);
+		if (!source_ptr ||
+			(rsrc_type != php_file_le_fopen() && rsrc_type != php_file_le_popen())) {
+			php_error(E_WARNING, "%s() expects argument 1 to be a valid filehandle or pipe resource", get_active_function_name(TSRMLS_C));
+			return;
+		}
+		source = *source_ptr;
+	}
+#endif
 	
 	callback_filename = zend_get_executed_filename(TSRMLS_C);
 	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
 	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 3, ZEND_NUM_ARGS());
 	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
-	RETURN_LONG(gtk_input_add_full(*source, condition, NULL,
+	RETURN_LONG(gtk_input_add_full(source, condition, NULL,
 								 (GtkCallbackMarshal)php_gtk_input_marshal,
 								 data, php_gtk_destroy_notify));
 }
