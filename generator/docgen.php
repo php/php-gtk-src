@@ -27,6 +27,7 @@ require "Getopt.php";
 require "arg_types.php";
 require "override.php";
 require "scheme.php";
+require "docmerger.php";
 require "doc_templates.php";
 
 class DocGenerator {
@@ -35,11 +36,13 @@ class DocGenerator {
 	var $prefix		= null;
 	var $output_dir = null;
 	var $fp			= null;
+	var $docmerger  = null;
 
-	function DocGenerator(&$parser, &$overrides, $prefix, $output_dir)
+	function DocGenerator(&$parser, &$overrides, &$docmerger, $prefix, $output_dir)
 	{
 		$this->parser 	 	= &$parser;
 		$this->overrides	= &$overrides;
+		$this->docmerger    = &$docmerger;
 		$this->prefix	 	= $prefix;
 		if ($output_dir)
 			$this->output_dir	= $output_dir;
@@ -107,17 +110,30 @@ class DocGenerator {
 	function write_class($object)
 	{
 		global	$class_start_tpl,
-				$class_end_tpl;
+				$class_end_tpl,
+				$update_docs;
 
 		$object_name = $object->in_module . $object->name;
+
+		if($update_docs)
+			$this->docmerger->prepair($object_name);
+
 		fwrite($this->fp,
 			   sprintf($class_start_tpl,
 					   $this->prefix,
 					   strtolower($object_name),
 					   $object_name,
-					   $object->parent[1] . $object->parent[0]));
+					   $object->parent[1] . $object->parent[0],
+					      $update_docs?$this->docmerger->get_section_contents(NULL, CLASSENTRY, SHORTDESC):NULL,
+					   $update_docs?$this->docmerger->get_section_contents(NULL, CLASSENTRY, DESC):NULL
+					   ));
+
 		$this->write_constructor($object);
 		$this->write_methods($object);
+		if($update_docs)
+			fwrite($this->fp,
+				  $this->docmerger->get_section_contents(NULL, SIGNALS, NULL));
+
 		fwrite($this->fp, $class_end_tpl);
 	}
 
@@ -158,7 +174,8 @@ class DocGenerator {
 		global	$constructor_start_tpl,
 				$constructor_end_tpl,
 				$funcproto_tpl,
-				$no_parameter_tpl;
+				$no_parameter_tpl,
+				$update_docs;
 
 		$constructor = $this->parser->find_constructor($object);
 		
@@ -190,7 +207,11 @@ class DocGenerator {
 						   $overriden ? sprintf($no_parameter_tpl, 'XXX') : $paramdef);
 		fwrite($this->fp, preg_replace('!^ !m', '', $funcdef));
 
-		fwrite($this->fp, $constructor_end_tpl);
+		fwrite($this->fp, 
+			   sprintf($constructor_end_tpl,
+					   $update_docs?$this->docmerger->get_section_contents(NULL, CONSTRUCTOR, SHORTDESC):NULL,
+					   $update_docs?$this->docmerger->get_section_contents(NULL, CONSTRUCTOR, DESC):NULL
+					   ));	
 	}
 
 	function write_method($method, $overriden)
@@ -199,7 +220,8 @@ class DocGenerator {
 				$method_func_start_tpl,
 				$method_end_tpl,
 				$funcproto_tpl,
-				$no_parameter_tpl;
+				$no_parameter_tpl,
+				$update_docs;
 
 		if (!$overriden) {
 			if (($paramdef = $this->get_paramdef($method)) === false ||
@@ -227,7 +249,11 @@ class DocGenerator {
 					   $method->name,
 					   $overriden ? sprintf($no_parameter_tpl, 'XXX') : $paramdef));
 		
-		fwrite($this->fp, $method_end_tpl);
+		fwrite($this->fp, 
+			   sprintf($method_end_tpl,
+					   $update_docs?$this->docmerger->get_section_contents($method->name, METHOD, SHORTDESC):NULL,
+					   $update_docs?$this->docmerger->get_section_contents($method->name, METHOD, DESC):NULL
+					   ));
 	}
 
 	function get_paramdef($function)
@@ -325,7 +351,7 @@ class DocGenerator {
 $argc = $HTTP_SERVER_VARS['argc'];
 $argv = $HTTP_SERVER_VARS['argv'];
 
-$result = Console_Getopt::getopt($argv, 'o:p:r:d:');
+$result = Console_Getopt::getopt($argv, 'o:p:r:d:s:l:u');
 if (!$result || count($result[1]) < 2)
 	die(
 "Usage: php -q generator.php [OPTION] defsfile [class ...]
@@ -334,12 +360,17 @@ if (!$result || count($result[1]) < 2)
   -p <prefix>       use <prefix> for docs
   -r <file>         register types from <file>
   -d <path>         output files to this directory
+  -s <path>         documentation dir
+  -l <lang>         Language
+  -u                Update existing docs
 ");
 
 list($opts, $argv) = $result;
 
 $prefix = 'gtk';
 $overrides = new Overrides();
+$lang = 'en';
+$update_docs = FALSE;
 
 foreach ($opts as $opt) {
 	list($opt_spec, $opt_arg) = $opt;
@@ -353,11 +384,22 @@ foreach ($opts as $opt) {
 		DocGenerator::register_types($type_parser);
 	} else if ($opt_spec == 'd') {
 		$output_dir = $opt_arg;
+	} else if ($opt_spec == 's') {
+		$docs_dir =	$opt_arg;
+	} else if ($opt_spec ==	'l') {
+		$lang =	$opt_arg;
+	} else if ($opt_spec ==	'u') {
+		$update_docs = TRUE;
 	}
 }
 
 $parser = new Defs_Parser($argv[1]);
-$generator = new DocGenerator($parser, $overrides, $prefix, $output_dir);
+
+if($update_docs)
+	$docmerger = new DocMerger($docs_dir, $lang, $prefix);
+
+$generator = new DocGenerator($parser, $overrides, $docmerger, $prefix,	$output_dir);
+
 $parser->start_parsing();
 $generator->register_types();
 $generator->create_docs(array_slice($argv, 2));

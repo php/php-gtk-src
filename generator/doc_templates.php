@@ -27,10 +27,10 @@ $class_start_tpl = <<<EOD
   <classtitle>%s</classtitle>
   <classparent>%s</classparent>
   <shortdesc>
+%s
   </shortdesc>
   <desc>
-   <para>
-   </para>
+%s
   </desc>
  </classmeta>
 
@@ -74,10 +74,10 @@ $method_end_tpl = <<<EOD
     </funcprototype>
    </funcsynopsis>
    <shortdesc>
+%s
    </shortdesc>
    <desc>
-    <para>
-    </para>
+%s
    </desc>
   </method>
 
@@ -95,10 +95,10 @@ $constructor_end_tpl = <<<EOD
    </funcprototype>
   </funcsynopsis>
   <shortdesc>
+%s
   </shortdesc>
   <desc>
-   <para>
-   </para>
+%s
   </desc>
  </constructor>
 
@@ -115,7 +115,7 @@ $parameter_tpl = <<<EOD
 EOD;
 
 $opt_parameter_tpl = <<<EOD
-     <paramdef>%s <parameter><optional>%s = %s<optional></parameter></paramdef>
+     <paramdef>%s <parameter><optional>%s = %s</optional></parameter></paramdef>
 
 EOD;
 
