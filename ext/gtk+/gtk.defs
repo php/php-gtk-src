@@ -9914,7 +9914,7 @@
   (of-object Widget (Gtk))
   (c-name gtk_widget_draw)
   (return-type none)
-  (parameter (type-and-name GdkRectangle* area))
+  (parameter (type-and-name GdkRectangle* area) (default "NULL"))
 )
 
 (method draw_focus

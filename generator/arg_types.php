@@ -334,18 +334,29 @@ class Struct_Arg extends Arg_Type {
 		$this->struct_tpl 	=  "	if (!php_%s_get(php_%s, &%s)) {\n" .
 							   "		%sreturn;\n" .
 							   "	}\n\n";
+		$this->struct_def_tpl	=	"	if (php_%s && !php_%s_get(php_%s, &%s)) {\n" .
+									"		%sreturn;\n" .
+									"	}\n\n";
 	}
 
 	function write_param($type, $name, $default, $null_ok, &$var_list,
 						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
 	{
-		$var_list->add('zval', '*php_' . $name);
-		$var_list->add($this->struct_name, $name);
 		$typename = strtolower(substr(convert_typename($this->struct_name), 1));
+		$var_list->add($this->struct_name, $name);
 		$parse_list[] 	= '&php_' . $name . ', ' . $typename . '_ce';
-		$arg_list[] 	= '&' . $name;
-		$extra_pre_code[] = sprintf($this->struct_tpl, $typename, $name, $name,
-									$in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "");
+
+		if (isset($default) && $default == 'NULL') {
+			$var_list->add('zval', '*php_' . $name . ' = NULL');
+			$arg_list[] 	= '(php_' . $name . ' ? &'. $name . ' : NULL)';
+			$extra_pre_code[] = sprintf($this->struct_def_tpl, $name, $typename, $name, $name,
+										$in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "");
+		} else {
+			$var_list->add('zval', '*php_' . $name);
+			$arg_list[] 	= '&' . $name;
+			$extra_pre_code[] = sprintf($this->struct_tpl, $typename, $name, $name,
+										$in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "");
+		}
 
 		return 'O';
 	}
