@@ -1,3 +1,9 @@
+2003-02-07  Frank M. Kromann  <frank@kromann.info>
+
+    * win32/php_win.c:
+      Extend search to look for php.exe in the same directory where php_win.exe
+      is located
+
 2003-02-06  Frank M. Kromann  <frank@kromann.info>
 
     * win32/php_win.dsp:
