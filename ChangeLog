@@ -1,3 +1,21 @@
+2002-04-17  Andrei Zmievski  <andrei@php.net>
+
+    * NEWS: *** empty log message ***
+
+    * ext/gtk+/gtk.overrides: Finally fix the gtk::input_add() for all cases.
+
+2002-04-17  Alan Knowles  <alan@akbkhome.com>
+
+    * ext/scintilla/scintilla.defs:
+    modified return value of gtkscintilla::marker_add to an integer as corrected in gtkscintilla >= 0.8
+
+    * ext/scintilla/scintilla.overrides:
+    removed define for FIND_DOWN - no longer supported by gtkscintilla
+
+2002-04-17  Andrei Zmievski  <andrei@php.net>
+
+    * build2/build.mk: Use standard 'if' syntax (patch from Alan).
+
 2002-04-15  Andrei Zmievski  <andrei@php.net>
 
     * NEWS: *** empty log message ***
