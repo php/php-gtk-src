@@ -26,11 +26,19 @@ function destroy()
 /*
  * Called when button is clicked. Print the message and destroy the window.
  */
-function hello()
+function hello($button)
 {
 	global	$window;
 	print "Hello World!\n";
-	$window->destroy();
+
+	//var_dump($button->style->fg[0]);
+	$fg = $button->style->fg;
+		var_dump($fg);
+	$fg[0]= new GdkColor('#00ff00'); 
+	var_dump($fg);
+	$button->style->fg = $fg;
+	
+	//$window->destroy();
 }
 
 /*
@@ -59,8 +67,8 @@ $tt->enable();
 $window->add($button);
 $x= $button->parent;
 echo "VARDUMP: ";var_dump($x);
-$button->visible = 0;
-$button->sensitive = 0;
+//$button->visible = 0;
+//$button->sensitive = 0;
 /*
  * Show the window and all its child widgets.
  */

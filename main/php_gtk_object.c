@@ -113,7 +113,7 @@ static HashTable* php_gtk_get_properties(zval *object TSRMLS_DC)
 	char **ptr;
 	int found;
 	
-	printf("get properties called: \n");
+	/* printf("get properties called: \n"); */
 	
 	wrapper = (php_gtk_object *) zend_object_store_get_object(object TSRMLS_CC);
 	for (ce = Z_OBJCE_P(object); ce != NULL; ce = ce->parent) {
@@ -638,7 +638,7 @@ zval *php_gtk_arg_as_value(const GValue *arg)
 
 		default:
 			//g_assert_not_reached();
-			php_error(E_NOTICE, "internal error: Type %d unsupported in %s Line:%d",
+			php_error(E_NOTICE, "php_gtk_arg_as_value: internal error: Type %d unsupported in %s Line:%d",
 				(int) G_VALUE_TYPE(arg), __FILE__, __LINE__	);
 			return NULL;
 	}

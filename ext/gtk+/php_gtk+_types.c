@@ -2458,7 +2458,6 @@ static void release_gtk_rc_style_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 	gtk_rc_style_unref(obj);
 }
 
- 
 
 
 /* GtkStyle */
@@ -2649,11 +2648,13 @@ static void gtk_style_get_property(zval *return_value, zval *object, char *prop_
 	*result = FAILURE;
 }
 
-#if 0
+
 static int style_helper_set(style_array_type type, gpointer array, zval *value, char *prop_name)
 {
+	return FAILURE;
+#if 0
 	zend_overloaded_element *property;
-
+	
 	if (next) {
 		property = (zend_overloaded_element *)next->data;
 		if (Z_TYPE_P(property) == OE_IS_ARRAY && Z_TYPE(property->element) == IS_LONG) {
@@ -2719,8 +2720,9 @@ static int style_helper_set(style_array_type type, gpointer array, zval *value, 
 	}
 
 	return SUCCESS;
+#endif	
 }
-#endif
+
 
 static int gtk_style_set_property(zval *object, char *prop_name, zval *value)
 {
@@ -3137,7 +3139,7 @@ void php_gtk_plus_register_types(int module_number)
 
 
 	gdk_event_ce = php_gtk_register_class("GdkEvent", php_gdk_event_functions, NULL, 0, 0, NULL TSRMLS_CC);
-
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GdkEvent"), gdk_event_ce);
 	gdk_window_ce = php_gtk_register_class("GdkWindow", php_gdk_window_functions, NULL, 1, 0, php_gdk_window_properties TSRMLS_CC);
 	gdk_pixmap_ce = php_gtk_register_class("GdkPixmap", php_gdk_pixmap_functions, NULL, 1, 0, php_gdk_pixmap_properties TSRMLS_CC);
 	gdk_bitmap_ce = php_gtk_register_class("GdkBitmap", php_gdk_bitmap_functions, NULL, 1, 0, php_gdk_bitmap_properties TSRMLS_CC);
@@ -3145,9 +3147,15 @@ void php_gtk_plus_register_types(int module_number)
 	php_gtk_register_prop_getter(gdk_pixmap_ce, gdk_window_get_property);
 	php_gtk_register_prop_getter(gdk_bitmap_ce, gdk_window_get_property);
 
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GdkWindow"), gdk_window_ce);
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GdkPixmap"), gdk_pixmap_ce);
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GdkBitmap"), gdk_bitmap_ce);
+
+
 	gdk_color_ce = php_gtk_register_class("GdkColor", php_gdk_color_functions, NULL, 1, 1, php_gdk_color_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_color_ce, gdk_color_get_property);
 	php_gtk_register_prop_setter(gdk_color_ce, gdk_color_set_property);
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GdkColor"), gdk_color_ce);
 
 	//gdk_colormap_ce = php_gtk_register_class("GdkColormap", php_gdk_colormap_functions, NULL, 1, 0, php_gdk_colormap_properties TSRMLS_CC);
 	//php_gtk_register_prop_getter(gdk_colormap_ce, gdk_colormap_get_property);
@@ -3157,12 +3165,15 @@ void php_gtk_plus_register_types(int module_number)
 	
 	gdk_cursor_ce = php_gtk_register_class("GdkCursor", php_gdk_cursor_functions, NULL, 1, 0, php_gdk_cursor_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_cursor_ce, gdk_cursor_get_property);
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GdkCursor"), gdk_cursor_ce);
+	
 /*	
 	gdk_visual_ce = php_gtk_register_class("GdkVisual", php_gdk_visual_functions, NULL, 1, 0, php_gdk_visual_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_visual_ce, gdk_visual_get_property);
 */
 	gdk_font_ce = php_gtk_register_class("GdkFont", php_gdk_font_functions, NULL, 1, 0, php_gdk_font_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_font_ce, gdk_font_get_property);
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GdkFont"), gdk_font_ce);
 	// at present this is registed in the 
 	//gdk_gc_ce = php_gtk_register_class("GdkGC", php_gdk_gc_functions, NULL, 1, 1, php_gdk_gc_properties TSRMLS_CC);
 	//php_gtk_register_prop_getter(gdk_gc_ce, gdk_gc_get_property);
@@ -3173,31 +3184,40 @@ void php_gtk_plus_register_types(int module_number)
 
 	gtk_selection_data_ce = php_gtk_register_class("GtkSelectionData", php_gtk_selection_data_functions, NULL, 1, 0, php_gtk_selection_data_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_selection_data_ce, gtk_selection_data_get_property);
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GtkSelectionData"), gtk_selection_data_ce);
 
 	gtk_ctree_node_ce = php_gtk_register_class("GtkCTreeNode", php_gtk_ctree_node_functions, NULL, 1, 0, php_gtk_ctree_node_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_ctree_node_ce, gtk_ctree_node_get_property);
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GtkCTreeNode"), gtk_ctree_node_ce);
 
 	gtk_accel_group_ce = php_gtk_register_class("GtkAccelGroup", php_gtk_accel_group_functions, NULL, 0, 0, NULL TSRMLS_CC);
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GtkAccelGroup"), gtk_accel_group_ce);
 	/*
 	gtk_accel_label_ce = php_gtk_register_class("GtkLabelGroup", php_gtk_accel_label_functions, NULL, 0, 0, NULL TSRMLS_CC);
 	*/
 	gtk_style_ce = php_gtk_register_class("GtkStyle", php_gtk_style_functions, NULL, 1, 1, php_gtk_style_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_style_ce, gtk_style_get_property);
 	php_gtk_register_prop_setter(gtk_style_ce, gtk_style_set_property);
-
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GtkStyle"), gtk_style_ce);
+	
 	gtk_rc_style_ce = php_gtk_register_class("GtkRcStyle", php_gtk_rc_style_functions, NULL, 0, 0, NULL TSRMLS_CC);
-
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GtkRcStyle"), gtk_rc_style_ce);
+	
 	gtk_box_child_ce = php_gtk_register_class("GtkBoxChild", php_gtk_box_child_functions, NULL, 1, 0, php_gtk_box_child_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_box_child_ce, gtk_box_child_get_property);
-
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GtkBoxChild"), gtk_box_child_ce);
+	
 	gtk_table_child_ce = php_gtk_register_class("GtkTableChild", php_gtk_table_child_functions, NULL, 1, 0, php_gtk_table_child_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_table_child_ce, gtk_table_child_get_property);
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GtkTableChild"), gtk_table_child_ce);
 
 	gtk_fixed_child_ce = php_gtk_register_class("GtkFixedChild", php_gtk_fixed_child_functions, NULL, 1, 0, php_gtk_fixed_child_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_fixed_child_ce, gtk_fixed_child_get_property);
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GtkFixedChild"), gtk_fixed_child_ce);
 
 	gtk_clist_row_ce = php_gtk_register_class("GtkCListRow", php_gtk_clist_row_functions, NULL, 1, 0, php_gtk_clist_row_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_clist_row_ce, gtk_clist_row_get_property);
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GtkCListRow"), gtk_clist_row_ce);
 	
 	
 	//gdk_display_ce = php_gtk_register_class("GdkDisplay", NULL, NULL, 0, 0, NULL TSRMLS_CC);
