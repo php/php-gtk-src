@@ -19,9 +19,8 @@ normally be installed when you do 'make install' in the PHP source tree.
 Currently, PHP-GTK requires PHP 4.0.5 or greater to run, and 4.1.0 or greater to
 build.
 
-PHP-GTK supports GTK+ v1.2 and requires v1.2.6 or greater. GTK+ v2.0 is not yet
-supported but will be so in the future when v2.0 is out of the development phase
-and is used more widely. The latest stable release of GTK+ v1.2.x can be
+PHP-GTK supports GTK+ v1.2 and requires v1.2.6 or greater. GTK+ v2.x support is
+under development at the moment. The latest stable release of GTK+ v1.2.x can be
 obtained from ftp://ftp.gtk.org/pub/gtk/v1.2/.
 
 
