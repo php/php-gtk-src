@@ -832,8 +832,14 @@ PHP_FUNCTION(gtk_clist_get_text)
 	}
 
 #ifdef PHP_WIN32
-	cp_text = g_convert(text, strlen(text), GTK_G(codepage), "UTF-8", NULL, NULL, NULL);
-	RETURN_STRING(cp_text, 0);
+	if (text) {
+		cp_text = g_convert(text, strlen(text), GTK_G(codepage), "UTF-8", NULL, NULL, NULL);
+		RETURN_STRING(cp_text, 1);
+		g_free(cp_text);
+	}
+	else {
+		RETURN_STRING("", 1);
+	}
 #else
 	RETURN_STRING(text, 1);
 #endif
@@ -1456,8 +1462,14 @@ PHP_FUNCTION(gtk_ctree_node_get_text)
 	}
 
 #ifdef PHP_WIN32
-	cp_text = g_convert(text, strlen(text), GTK_G(codepage), "UTF-8", NULL, NULL, NULL);
-	RETURN_STRING(cp_text, 0);
+	if (text) {
+		cp_text = g_convert(text, strlen(text), GTK_G(codepage), "UTF-8", NULL, NULL, NULL);
+		RETURN_STRING(cp_text, 1);
+		g_free(cp_text);
+	}
+	else {
+		RETURN_STRING("", 1);
+	}
 #else
 	RETURN_STRING(text, 1);
 #endif
