@@ -1102,6 +1102,9 @@ PHP_FUNCTION(gtk_list_item_new)
 {
 	GtkObject *wrapped_obj;
 	gchar *text = NULL;
+#ifdef PHP_WIN32
+	gchar *utf8_text = NULL;
+#endif
 
 	NOT_STATIC_METHOD();
 
@@ -1110,8 +1113,15 @@ PHP_FUNCTION(gtk_list_item_new)
 		return;
 	}
 
-	if (text)
-		wrapped_obj = (GtkObject *)gtk_list_item_new_with_label(text);
+	if (text) {
+#ifdef PHP_WIN32
+		utf8_text = g_convert(text, strlen(text), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+		wrapped_obj = (GtkObject *)gtk_list_item_new(utf8_text);
+		if (utf8_text) g_free(utf8_text);
+#else
+		wrapped_obj = (GtkObject *)gtk_list_item_new(text);
+#endif
+	}
 	else
 		wrapped_obj = (GtkObject *)gtk_list_item_new();
 
@@ -1132,6 +1142,9 @@ PHP_FUNCTION(gtk_tree_item_new)
 {
 	GtkObject *wrapped_obj;
 	gchar *text = NULL;
+#ifdef PHP_WIN32
+	gchar *utf8_text = NULL;
+#endif
 
 	NOT_STATIC_METHOD();
 
@@ -1140,8 +1153,15 @@ PHP_FUNCTION(gtk_tree_item_new)
 		return;
 	}
 
-	if (text)
+	if (text) {
+#ifdef PHP_WIN32
+		utf8_text = g_convert(text, strlen(text), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+		wrapped_obj = (GtkObject *)gtk_tree_item_new_with_label(utf8_text);
+		if (utf8_text) g_free(utf8_text);
+#else
 		wrapped_obj = (GtkObject *)gtk_tree_item_new_with_label(text);
+#endif
+	}
 	else
 		wrapped_obj = (GtkObject *)gtk_tree_item_new();
 
