@@ -486,13 +486,13 @@ class Object_Arg extends Arg_Type {
                                     "        if (Z_TYPE_P(php_$name) == IS_NULL)\n" .
                                     "            $name = NULL;\n" .
                                     "        else\n" .
-                                    "            $name = $this->cast(PHPG_GET(php_$name));\n" .
+                                    "            $name = $this->cast(PHPG_GOBJECT(php_$name));\n" .
                                     "    }\n";
             } else {
                 $info->var_list->add($this->obj_name, '*' . $name . ' = NULL');
                 $info->var_list->add('zval', '*php_' . $name);
                 $info->pre_code[] = "    if (Z_TYPE_P(php_$name) != IS_NULL)\n" .
-                                    "        $name = $this->cast(PHPG_GET(php_$name));\n";
+                                    "        $name = $this->cast(PHPG_GOBJECT(php_$name));\n";
             }
 
             $info->add_parse_list('N', '&php_' . $name . ', ' . $this->obj_ce);
@@ -504,11 +504,11 @@ class Object_Arg extends Arg_Type {
                 $info->add_parse_list('O', '&php_' . $name . ', ' . $this->obj_ce);
                 $info->arg_list[] = $name;
                 $info->pre_code[] = "    if (php_$name)\n" .
-                                    "        $name = $this->cast(PHPG_GET(php_$name));\n";
+                                    "        $name = $this->cast(PHPG_GOBJECT(php_$name));\n";
             } else {
                 $info->var_list->add('zval', '*' . $name);
                 $info->add_parse_list('O', '&' . $name . ', ' . $this->obj_ce);
-                $info->arg_list[] = "$this->cast(PHPG_GET($name))";
+                $info->arg_list[] = "$this->cast(PHPG_GOBJECT($name))";
             }
         }
     }

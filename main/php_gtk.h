@@ -100,9 +100,9 @@ typedef struct {
 /* Private structure */
 typedef struct _phpg_closure_t phpg_closure_t;
 
-#define PHPG_GET_GOBJECT(zobj, type) \
+#define PHPG_GOBJECT_GET(zobj, type) \
 	(type)(((phpg_gobject_t*)zend_object_store_get_object((zobj) TSRMLS_CC))->obj)
-#define PHPG_GET(zobj) PHPG_GET_GOBJECT(zobj, GObject*)
+#define PHPG_GOBJECT(zobj) PHPG_GOBJECT_GET(zobj, GObject*)
 
 /*
  * Property read/write function types

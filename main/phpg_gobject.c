@@ -512,7 +512,7 @@ static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool use
         return;
     }
 
-    obj = PHPG_GET(this_ptr);
+    obj = PHPG_GOBJECT(this_ptr);
     if (!g_signal_parse_name(signal, G_OBJECT_TYPE(obj), &signal_id, &detail, TRUE)) {
         php_error(E_WARNING, "%s(): unknown signal name", get_active_function_name(TSRMLS_C));
         return;
@@ -562,7 +562,7 @@ static PHP_METHOD(GObject, __tostring)
 
     NOT_STATIC_METHOD();
 
-    obj = PHPG_GET(this_ptr);
+    obj = PHPG_GOBJECT(this_ptr);
     numc = snprintf(buf, sizeof(buf),
                     "[%s object (%s Gtk+ type)]", Z_OBJCE_P(this_ptr)->name,
                     obj ? G_OBJECT_TYPE_NAME(obj) : "uninitialized");

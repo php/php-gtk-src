@@ -44,7 +44,7 @@ static PHP_METHOD(%(class), %(name))
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list)))
 		return;
 %(pre_code)
-    %(return)%(cname)(%(cast)(PHPG_GET(this_ptr))%(arg_list));
+    %(return)%(cname)(%(cast)(PHPG_GOBJECT(this_ptr))%(arg_list));
 %(post_code)
 }\n\n";
 
