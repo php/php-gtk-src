@@ -127,8 +127,6 @@ ignore
 	gtk_radio_button_set_group
 	gtk_style_new
 	gtk_clist_construct
-%%
-ignore
 	gtk_object_new
 	gtk_object_newv
 	gtk_object_query_args
@@ -137,23 +135,13 @@ ignore
 	gtk_object_arg_get_info
 	gtk_widget_new
 	gtk_widget_newv
-%%
-ignore
 	gtk_key_snooper_install
 	gtk_key_snooper_remove
 	gtk_get_current_event
 	gtk_get_event_widget
 	gtk_propagate_event
-%%
-ignore
-	GtkArgFlags
-	GtkPrivateFlags
-%%
-ignore
 	gtk_container_dequeue_resize_handler
 	gtk_window_reposition
-%%
-ignore
 	gtk_draw_flat_box
 	gtk_draw_check
 	gtk_draw_option
@@ -166,6 +154,13 @@ ignore
 	gtk_draw_focus
 	gtk_draw_slider
 	gtk_draw_handle
+	gtk_container_queue_resize
+	gtk_container_clear_resize_widgets
+	gtk_container_child_composite_name
+%%
+ignore
+	GtkArgFlags
+	GtkPrivateFlags
 %% }}}
 
 %% {{{ General functions
