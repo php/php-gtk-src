@@ -1,3 +1,58 @@
+2001-03-05  Frank M. Kromann  <frank@frontbase.com>
+
+    * generator/arg_types.php
+      generator/generator.php:
+    Fixing the return value of parameters passed by ref.
+    Thsi has effect on clist_get_text() and other functions using gchar** types as argument.
+
+    * src/php_gtk_object.c:
+    Fixing crash when using file dialogs, caused by uninitialized variables.
+
+2001-03-05  Jan Lehnardt  <jan@lehnardt.de>
+
+    * generator/gtk.overrides:
+    Added label feature to GtkCheckMenuItem. I forgot nothing, hopefully ;-)
+
+2001-03-05  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/gtk.overrides: Allow specifying label for GtkCheckMenuItem.
+
+    * NEWS
+      README
+      TODO
+      src/php_gtk.h: VIM modeline changes and moving declaration a bit.
+
+2001-03-05  Frank M. Kromann  <frank@frontbase.com>
+
+    * src/php_gtk.h: Fixing build on win32.
+
+2001-03-05  Andrei Zmievski  <andrei@ispi.net>
+
+    * TODO: More stuff.
+
+    * NEWS
+      src/php_gtk.h
+      src/php_gtk_object.c
+      src/php_gtk_types.c
+      src/php_gtk_util.c:
+    * Renamed php_gtk_check_callable() to php_gtk_is_callable().
+    * Added an extra parameter to php_gtk_is_callable() that is filled in
+      with the name of the callable. Now just need to use it everywhere.
+    * Added php_gtk_parse_args_hash() internal function.
+
+    * generator/generator.php
+      generator/gtk.overrides
+      generator/override.php
+      generator/templates.php:
+    * Implemented support for menu creation via GtkItemFactory.
+    * Implemented get_type() methods for every Gtk* class.
+    * Enhanced overrides parsing to allow setting functions as class methods
+      or moving methods from one class to another.
+    * Renamed php_gtk_check_callable() to php_gtk_is_callable().
+    * Added an extra parameter to php_gtk_is_callable() that is filled in
+      with the name of the callable. Now just need to use it everywhere.
+    * Added php_gtk_parse_args_hash() internal function.
+
 2001-03-03  Andrei Zmievski  <andrei@ispi.net>
 
     * NEWS: News entry.
