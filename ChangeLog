@@ -1,3 +1,41 @@
+2001-05-05  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/gtk.overrides: Add insert_text() method back in.
+
+2001-05-05  James Moore  <James@phpuk.org>
+
+    * docs/configure.in
+      docs/stylesheets/xsl/.cvsignore
+      docs/stylesheets/xsl/update.xsl.in
+      docs/udocs.in
+      docs/.cvsignore
+      docs/Makefile.in:  - Importing scripts for building single xml files one
+
+     # At the moment you cannot update your html/php build but you can build a single xml file so
+     # the output appears in the build/test/<classname>/ dir as html, just autoconf, ./configure and
+     # then make filename.xml and it will update it for you, I hope to soon be able to update changed
+     # files in the existing HTML but thats going to take a few more hacks before its ready (mainly
+     # telling which xml files are newer than the html files then creating the correct XSL for them
+     # to be updated with... if you have questions just ask..
+
+2001-05-05  Andrei Zmievski  <andrei@ispi.net>
+
+    * src/php_gtk_types.c
+      NEWS: Can't wrap events properly as they are not refcounted.
+
+2001-05-05  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/en/classes/gtkaccelgroup.xml
+      docs/en/classes/gtkboxchild.xml
+      docs/en/classes/gtkclistrow.xml
+      docs/en/classes/gtkctreenode.xml
+      docs/en/classes/gtkfixedchild.xml
+      docs/en/classes/gtkselectiondata.xml
+      docs/en/classes/gtkstyle.xml
+      docs/manual.xml.in
+      docs/stylesheets/xsl/html/name_to_id.xsl:
+    Grumpy, Sneezy, Happy, Dopey, Itchy, Scratchy and Ringo
+
 2001-05-04  James Moore  <James@phpuk.org>
 
     * docs/stylesheets/xsl/html/chunk-common.xsl
