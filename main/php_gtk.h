@@ -145,6 +145,7 @@ extern HashTable phpg_prop_info;
 
 /* Exceptions */
 extern PHP_GTK_API zend_class_entry *phpg_generic_exception;
+extern PHP_GTK_API zend_class_entry *phpg_construct_exception;
 extern PHP_GTK_API zend_class_entry *phpg_type_exception;
 
 PHP_GTK_API zend_object_handlers php_gtk_handlers;
@@ -231,7 +232,11 @@ PHP_GTK_API zval* php_gtk_simple_signal_callback(GtkObject *o, gpointer data, zv
     do { \
 		TSRMLS_FETCH(); \
 		zend_throw_exception(exception, message, 0 TSRMLS_CC); \
+		return;
 	} while (0)
+
+#define PHPG_THROW_CONSTRUCT_EXCEPTION(type) \
+	PHPG_THROW_EXCEPTION(phpg_construct_exception, "could not construct " #type " object");
 
 PHP_GTK_API PHP_FUNCTION(no_constructor);
 PHP_GTK_API PHP_FUNCTION(no_direct_constructor);

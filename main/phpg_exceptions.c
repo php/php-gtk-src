@@ -23,6 +23,7 @@
 #if HAVE_PHP_GTK
 
 PHP_GTK_API zend_class_entry *phpg_generic_exception = NULL;
+PHP_GTK_API zend_class_entry *phpg_construct_exception = NULL;
 PHP_GTK_API zend_class_entry *phpg_type_exception = NULL;
 
 void phpg_register_exceptions()
@@ -34,6 +35,11 @@ void phpg_register_exceptions()
 	phpg_generic_exception = zend_register_internal_class_ex(&ce, zend_exception_get_default(), NULL TSRMLS_CC);
 	phpg_generic_exception->ce_flags |= ZEND_ACC_FINAL;
 	phpg_generic_exception->constructor->common.fn_flags |= ZEND_ACC_PROTECTED;
+
+	INIT_CLASS_ENTRY(ce, "PhpGtkConstructException", NULL);
+	phpg_construct_exception = zend_register_internal_class_ex(&ce, zend_exception_get_default(), NULL TSRMLS_CC);
+	phpg_construct_exception->ce_flags |= ZEND_ACC_FINAL;
+	phpg_construct_exception->constructor->common.fn_flags |= ZEND_ACC_PROTECTED;
 
 	INIT_CLASS_ENTRY(ce, "PhpGtkTypeException", NULL);
 	phpg_type_exception = zend_register_internal_class_ex(&ce, zend_exception_get_default(), NULL TSRMLS_CC);
