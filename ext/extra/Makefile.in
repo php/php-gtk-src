@@ -1,0 +1,16 @@
+LTLIBRARY_NAME          = libextra.la
+LTLIBRARY_SOURCES       = php_extra.c gen_extra.c
+LTLIBRARY_LIBADD        = $(EXTRA_SHARED_LIBADD)
+LTLIBRARY_SHARED_NAME   = php_gtk_extra.la
+LTLIBRARY_SHARED_LIBADD = $(EXTRA_SHARED_LIBADD)
+
+include $(top_srcdir)/build/dynlib.mk
+
+php_extra.o php_extra.lo php_extra.slo: gen_ce_extra.h
+
+gen_extra.c: extra.defs extra.overrides
+	$(PHP) -q $(top_srcdir)/generator/generator.php -o $(srcdir)/extra.overrides -p extra -r $(top_srcdir)/ext/gtk%2b/gtk.defs $(srcdir)/extra.defs > gen_extra.c
+
+gen_ce_extra.h: gen_extra.c
+	grep -h "^PHP_GTK_EXPORT_CE" gen_extra.c | sed -e "s!^!extern !" > gen_ce_extra.h
+
