@@ -95,7 +95,7 @@ static void init_gtk(void)
 	   one more time to make sure it stays in memory even after our .so is
 	   unloaded. */
 	//DL_LOAD("libgtk.so");
-	gtk_init(&argc,&argv);
+	
 	
 	if (!gtk_init_check(&argc, &argv)) {
 		if (argv != NULL) {
@@ -159,8 +159,8 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 {
 	le_gobject = zend_register_list_destructors_ex(release_gtk_object_rsrc, NULL, "GObject", module_number);
 
-	php_gtk_handlers = std_object_handlers;
-	php_gtk_handlers.get_property_zval_ptr = NULL;
+	php_gtk_handlers = zend_get_std_object_handlers();
+	/* php_gtk_handlers->get_property_zval_ptr = NULL; */
 
 	register_exception(TSRMLS_C);
 

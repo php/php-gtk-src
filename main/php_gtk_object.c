@@ -43,7 +43,7 @@ HashTable php_gtk_prop_desc;
 HashTable php_gtk_callback_hash;
 
 
-PHP_GTK_API zend_object_handlers php_gtk_handlers;
+PHP_GTK_API zend_object_handlers *php_gtk_handlers;
 
 static inline void php_gtk_destroy_object(php_gtk_object *object, zend_object_handle handle TSRMLS_DC)
 {
@@ -124,7 +124,7 @@ static HashTable* php_gtk_get_properties(zval *object TSRMLS_DC)
 	return wrapper->zobj.properties;
 }
 
-static zval **php_gtk_get_property_ptr(zval *object, zval *member TSRMLS_DC)
+static zval **php_gtk_get_property_ptr_ptr(zval *object, zval *member TSRMLS_DC)
 {
 	return zend_object_create_proxy(object, member TSRMLS_CC);
 }
@@ -183,13 +183,13 @@ static zend_object_value create_php_gtk_object(zend_class_entry *ce TSRMLS_DC)
 	php_gtk_object *object;
 	prop_desc_t *prop_desc;
 
-	zov.handlers = &php_gtk_handlers;
+	zov.handlers = php_gtk_handlers;
 
 	if (zend_hash_index_find(&php_gtk_prop_desc, (long)ce, (void **)&prop_desc) == SUCCESS) {
 		if (prop_desc->have_getter) {
-			zov.handlers->read_property    = php_gtk_read_property;
-			zov.handlers->get_properties   = php_gtk_get_properties;
-			zov.handlers->get_property_ptr = php_gtk_get_property_ptr;
+			zov.handlers->read_property        = php_gtk_read_property;
+			zov.handlers->get_properties       = php_gtk_get_properties;
+			zov.handlers->get_property_ptr_ptr = php_gtk_get_property_ptr_ptr;
 		}
 		if (prop_desc->have_setter) {
 			zov.handlers->write_property = php_gtk_write_property;
