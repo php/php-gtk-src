@@ -143,6 +143,7 @@ static void release_gtk_object_rsrc(zend_rsrc_list_entry *rsrc)
 
 PHP_GTK_XINIT_FUNCTION(gtk_plus)
 {
+	ELS_FETCH();
 	le_gtk_object = zend_register_list_destructors_ex(release_gtk_object_rsrc, NULL, "GtkObject", module_number);
 
 	init_gtk();
