@@ -551,7 +551,6 @@ PHP_FUNCTION(wrap_gtk_clist_get_text)
 
 	if (gtk_clist_get_text(GTK_CLIST(PHP_GTK_GET(this_ptr)), row, column, &text)) {
 		RETURN_STRING(text, 1);
-		efree(text);
 	}
 	else
 		RETURN_NULL();
