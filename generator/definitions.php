@@ -23,10 +23,17 @@
 
 abstract class Definition {
     static $true_values = array('#t', 't');
+    static $char_types  = array('char*', 'gchar*', 'string');
+
+    /* return true if caller owns return value */
     function guess_return_value_ownership()
     {
-        /* TODO implement */
-        throw new Exception();
+        if ($this->is_constructor_of)
+            $this->caller_owns_return = true;
+        else if (in_array($this->return_type, $char_types))
+            $this->caller_owns_return = true;
+        else
+            $this->caller_owns_return = false;
     }
 }
 
@@ -118,12 +125,14 @@ class Object_Def extends Definition {
 }
 
 class Method_Def extends Definition {
-    var $name           = null;
-    var $of_object      = null;
-    var $c_name         = null;
-    var $return_type    = null;
-    var $params         = array();
-    var $varargs        = false;
+    var $name               = null;
+    var $of_object          = null;
+    var $c_name             = null;
+    var $return_type        = null;
+    var $caller_owns_return = null;
+    var $params             = array();
+    var $varargs            = false;
+    var $deprecated         = null;
 
     function Method_Def($args)
     {
@@ -134,34 +143,38 @@ class Method_Def extends Definition {
                 continue;
 
             if ($arg[0] == 'of-object') {
-                if (count($arg) > 2)
-                    $this->of_object = array($arg[1], $arg[2][0]);
-                else
-                    $this->of_object = array($arg[1], null);
-            }
-            else if ($arg[0] == 'c-name')
+                $this->of_object = $arg[1];
+            } else if ($arg[0] == 'c-name')
                 $this->c_name = $arg[1];
             else if ($arg[0] == 'return-type')
                 $this->return_type = $arg[1];
-            else if ($arg[0] == 'parameter') {
+            else if ($arg[0] == 'caller-owns-return')
+                $this->caller_owns_return = in_array($arg[1], Definition::$true_values);
+            else if ($arg[0] == 'parameters') {
                 $param_type = null;
                 $param_name = null;
                 $param_default = null;
                 $param_null = false;
                 foreach (array_slice($arg, 1) as $param_arg) {
-                    if ($param_arg[0] == 'type-and-name') {
-                        $param_type = $param_arg[1];
-                        $param_name = $param_arg[2];
+                    $param_type = $param_arg[0];
+                    $param_name = $param_arg[1];
+                    foreach (array_slice($param_arg, 2) as $opt_arg) {
+                        if ($opt_arg[0] == 'default')
+                            $param_default = $opt_arg[1];
+                        else if ($opt_arg[0] == 'null-ok')
+                            $param_null = true;
                     }
-                    else if ($param_arg[0] == 'default')
-                        $param_default = $param_arg[1];
-                    else if ($param_arg[0] == 'null-ok')
-                        $param_null = true;
+                    $this->params[] = array($param_type, $param_name,
+                                            $param_default, $param_null);
                 }
-                $this->params[] = array($param_type, $param_name,
-                                        $param_default, $param_null);
             } else if ($arg[0] == 'varargs')
-                $this->varargs = $arg[1] == 't';
+                $this->varargs = in_array($arg[1], Definition::$true_values);
+            else if ($arg[0] == 'deprecated')
+                $this->deprecated = $arg[1];
+        }
+
+        if ($this->caller_owns_return === null && $this->return_type !== null) {
+            $this->guess_return_value_ownership();
         }
     }
 }
@@ -172,9 +185,10 @@ class Function_Def extends Definition {
     var $is_constructor_of  = null;
     var $c_name             = null;
     var $return_type        = null;
-    var $caller_owns_return = false;
+    var $caller_owns_return = null;
     var $params             = array();
     var $varargs            = false;
+    var $deprecated         = null;
 
     function Function_Def($args) {
         $this->name = array_shift($args);
@@ -212,6 +226,12 @@ class Function_Def extends Definition {
                 }
             } else if ($arg[0] == 'varargs')
                 $this->varargs = in_array($arg[1], Definition::$true_values);
+            else if ($arg[0] == 'deprecated')
+                $this->deprecated = $arg[1];
+        }
+
+        if ($this->caller_owns_return === null && $this->return_type !== null) {
+            $this->guess_return_value_ownership();
         }
     }
 }
