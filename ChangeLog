@@ -1,3 +1,12 @@
+2005-02-03  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * build2/build2.mk:
+      We do need to run aclocal to rebuild configure in case php_gtk.m4 or
+      other .m4 files changed.
+
+    * ext/gtk+/gtk.overrides:
+      Implement several properties of GtkTextAttributes.
+
 2005-01-29  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/pango.defs
