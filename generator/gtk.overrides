@@ -189,7 +189,6 @@ PHP_FUNCTION(wrap_gtk_timeout_add)
 	zval *data;
 	char *callback_filename;
 	uint callback_lineno;
-	ELS_FETCH();
 
 	if (ZEND_NUM_ARGS() < 2) {
 		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
@@ -217,7 +216,6 @@ PHP_FUNCTION(wrap_gtk_idle_add)
 	zval *data;
 	char *callback_filename;
 	uint callback_lineno;
-	ELS_FETCH();
 
 	if (ZEND_NUM_ARGS() < 1) {
 		php_error(E_WARNING, "%s() requires at least 1 argument, %d given",
@@ -246,7 +244,6 @@ PHP_FUNCTION(wrap_gtk_quit_add)
 	zval *data;
 	char *callback_filename;
 	uint callback_lineno;
-	ELS_FETCH();
 
 	if (ZEND_NUM_ARGS() < 2) {
 		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
@@ -275,7 +272,6 @@ PHP_FUNCTION(wrap_gtk_input_add_full)
 	zval *extra, *data;
 	char *callback_filename;
 	uint callback_lineno;
-	ELS_FETCH();
 
 	if (ZEND_NUM_ARGS() < 3) {
 		php_error(E_WARNING, "%s() requires at least 3 arguments, %d given",
@@ -304,7 +300,6 @@ static void wrap_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_
 	zval *data;
 	char *callback_filename;
 	uint callback_lineno;
-	ELS_FETCH();
 
 	NOT_STATIC_METHOD();
 
@@ -947,7 +942,6 @@ PHP_FUNCTION(wrap_gtk_item_factory_create_items)
 	int i = 0;
 	char *callback_filename;
 	uint callback_lineno;
-	ELS_FETCH();
 
 	NOT_STATIC_METHOD();
 
