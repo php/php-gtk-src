@@ -838,13 +838,19 @@ class Generator {
 
             try {
                 if ($this->overrides->is_overriden($function->c_name)) {
-                    // TODO support overriden functions
+                    list($func_name, $function_override, $flags) = $this->overrides->get_override($function->c_name);
+                    fwrite($this->fp, $function_override . "\n");
+                    if ($func_name == $function->c_name)
+                        $func_name = $function->name;
+                    $func_defs[] = sprintf(Templates::function_entry,
+                                           $this->lprefix,
+                                           $func_name, 'NULL', $flags ? $flags : 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
                 } else {
                     $code = $this->write_callable($function, Templates::function_body, true, false, $dict);
                     fwrite($this->fp, $code);
                     $func_defs[] = sprintf(Templates::function_entry,
-                                             $this->lprefix,
-                                             $func_name, 'NULL', 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
+                                           $this->lprefix,
+                                           $func_name, 'NULL', 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
                 }
             } catch (Exception $e) {
                 fprintf(STDERR, "\tnot generating function %s::%s: %s\n", $this->lprefix, $function->name, $e->getMessage());
