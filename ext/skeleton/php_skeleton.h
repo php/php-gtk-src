@@ -23,7 +23,7 @@
 #ifndef PHP_SKELETON_H
 #define PHP_SKELETON_H
 
-#include "php_skeleton.h"
+#include "php_gtk.h"
 
 #if HAVE_SKELETON
 
