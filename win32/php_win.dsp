@@ -101,6 +101,22 @@ SOURCE=.\php_win.c
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+# Begin Source File
+
+SOURCE=.\gdbtool.ico
+# End Source File
+# Begin Source File
+
+SOURCE=".\gdk-1.30.ico"
+# End Source File
+# Begin Source File
+
+SOURCE=.\icon1.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\php_win.rc
+# End Source File
 # End Group
 # End Target
 # End Project
