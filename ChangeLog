@@ -1,3 +1,32 @@
+2001-04-25  Markus Fischer  <mfischer@josefine.ben.tuwien.ac.at>
+
+    * docs/en/classes/gtklabel.xml: Fixed set_pattern() documentation
+
+    * docs/en/classes/gtkaccellabel.xml:
+    Removed comments; added some more descriptive information on refetch.
+
+    * docs/en/classes/gtktipsquery.xml: Updated descripton and some methods.
+
+2001-04-25  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/en/classes/gtkaspectframe.xml
+      docs/en/classes/gtkbutton.xml
+      docs/en/classes/gtkcheckbutton.xml
+      docs/en/classes/gtkcheckmenuitem.xml
+      docs/en/classes/gtkframe.xml
+      docs/en/classes/gtkitem.xml
+      docs/en/classes/gtkmenuitem.xml
+      docs/en/classes/gtkoptionmenu.xml
+      docs/en/classes/gtkradiobutton.xml
+      docs/en/classes/gtktogglebutton.xml
+      docs/manual.xml.in
+      docs/stylesheets/xsl/html/name_to_id.xsl:
+    SHELLSUIT#01 + got rid of that classentry error, hopefully forever -
+
+2001-04-25  Andrei Zmievski  <andrei@ispi.net>
+
+    * TODO: Add stuff.
+
 2001-04-24  James Moore  <James@phpuk.org>
 
     * docs/en/classes/gtkwidget.xml: Adding a bit more mark up...
