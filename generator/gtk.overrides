@@ -1732,7 +1732,7 @@ getprop GtkCTree row_list
 %%
 ignore gtk_ctree_node_set_row_data_full
 %%
-override gtk_ctree_node_set_row_data kwargs
+override gtk_ctree_node_set_row_data
 PHP_FUNCTION(wrap_gtk_ctree_node_set_row_data)
 {
 	zval *node, *data;

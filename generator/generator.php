@@ -42,7 +42,6 @@ class Generator {
 
 	var $constants	= '';
 	var $register_classes = '';
-	var $class_entries = array();
 
 	var $functions_decl_end = "\t{NULL, NULL, NULL}\n};\n\n";
 

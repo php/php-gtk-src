@@ -1,0 +1,302 @@
+<?php
+/*
+ * PHP-GTK - The PHP language bindings for GTK+
+ *
+ * Copyright (C) 2001 Andrei Zmievski <andrei@php.net>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/* $Id$ */
+
+set_time_limit(300);
+
+require "Getopt.php";
+require "arg_types.php";
+require "override.php";
+require "scheme.php";
+require "doc_templates.php";
+
+class DocGenerator {
+	var $parser 	= null;
+	var $overrides  = null;
+	var $prefix		= null;
+	var $fp			= null;
+
+	function DocGenerator(&$parser, &$overrides, $prefix)
+	{
+		$this->parser 	 = &$parser;
+		$this->overrides = &$overrides;
+		$this->prefix	 = $prefix;
+		$this->fp		 = fopen('php://stdout', 'w');
+	}
+
+	function create_docs($classes)
+	{
+		foreach ($classes as $key => $val)
+			$classes[$key] = strtolower($val);
+								 
+		function sort_objects($a, $b)
+		{
+			return strcmp($a->c_name, $b->c_name);
+		}
+		$parser_objects = $this->parser->objects;
+		usort($parser_objects, 'sort_objects');
+
+		foreach ($parser_objects as $object) {
+			$object_lcname = strtolower($object->c_name);
+			if (count($classes) && !in_array($object_lcname, $classes))
+				continue;
+
+			$this->write_class($object);
+		}
+	}
+	
+	function register_types($parser = null)
+	{
+		global	$matcher;
+
+		if (!$parser)
+			$parser = $this->parser;
+
+		foreach ($parser->objects as $object)
+			$matcher->register_object($object->c_name);
+
+		foreach ($parser->enums as $enum) {
+			if ($enum->def_type == 'flags')
+				$matcher->register_flag($enum->c_name);
+			else
+				$matcher->register_enum($enum->c_name);
+		}
+	}
+
+	function write_class($object)
+	{
+		global	$class_start_tpl,
+				$class_end_tpl;
+
+		$object_name = $object->in_module . $object->name;
+		fwrite($this->fp,
+			   sprintf($class_start_tpl,
+					   $this->prefix,
+					   strtolower($object_name),
+					   $object_name,
+					   $object->parent[1] . $object->parent[0]));
+		$this->write_constructor($object);
+		$this->write_methods($object);
+		fwrite($this->fp, $class_end_tpl);
+	}
+
+	function write_methods($object)
+	{
+		global	$methods_start_tpl,
+				$methods_end_tpl;
+
+		$methods = $this->parser->find_methods($object);
+		if (count($methods))
+			fwrite($this->fp, $methods_start_tpl);
+
+		foreach ($methods as $method) {
+			if ($this->overrides->is_overriden($method->c_name)) {
+				$this->write_method($method, true);
+			} else if (!$this->overrides->is_ignored($method->c_name)) {
+				$this->write_method($method, false);
+			}
+		}
+
+		if (count($methods))
+			fwrite($this->fp, $methods_end_tpl);
+	}
+
+	function write_constructor($object)
+	{
+		global	$constructor_start_tpl,
+				$constructor_end_tpl,
+				$funcproto_tpl,
+				$no_parameter_tpl;
+
+		$constructor = $this->parser->find_constructor($object);
+		
+		if ($constructor) {
+			if ($this->overrides->is_overriden($constructor->c_name)) {
+				$overriden = true;
+			} else if (!$this->overrides->is_ignored($constructor->c_name)) {
+				$overriden = false;
+			} else
+				return;
+		} else
+			return;
+
+		if (!$overriden) {
+			if (($paramdef = $this->get_paramdef($constructor)) === false)
+				return;
+		}
+
+		$object_name = $constructor->is_constructor_of;
+
+		fwrite($this->fp,
+			   sprintf($constructor_start_tpl,
+					   $this->prefix,
+					   strtolower($object_name)));
+
+		$funcdef = sprintf($funcproto_tpl,
+						   '',
+						   $object_name,
+						   $overriden ? sprintf($no_parameter_tpl, 'XXX') : $paramdef);
+		fwrite($this->fp, preg_replace('!^ !m', '', $funcdef));
+
+		fwrite($this->fp, $constructor_end_tpl);
+	}
+
+	function write_method($method, $overriden)
+	{
+		global	$method_start_tpl,
+				$method_end_tpl,
+				$funcproto_tpl,
+				$no_parameter_tpl;
+
+		if (!$overriden) {
+			if (($paramdef = $this->get_paramdef($method)) === false ||
+				($return = $this->get_type($method->return_type)) === false)
+				return;
+		}
+
+		$object_name = $method->of_object[1] . $method->of_object[0];
+
+		fwrite($this->fp,
+			   sprintf($method_start_tpl,
+					   $this->prefix,
+					   strtolower($object_name),
+					   $method->name));
+
+		fwrite($this->fp,
+			   sprintf($funcproto_tpl,
+					   $overriden ? 'XXX' : $return,
+					   $method->name,
+					   $overriden ? sprintf($no_parameter_tpl, 'XXX') : $paramdef));
+		
+		fwrite($this->fp, $method_end_tpl);
+	}
+
+	function get_paramdef($function)
+	{
+		global	$matcher,
+				$parameter_tpl,
+				$no_parameter_tpl,
+				$opt_parameter_tpl;
+
+		if ($function->varargs)
+			return false;
+
+		foreach ($function->params as $params_array) {
+			list($param_type, $param_name, $param_default, $param_null) = $params_array;
+
+			if (($doc_type = $this->get_type($param_type)) === false)
+				return false;
+
+			if (isset($param_default))
+				$paramdef .= sprintf($opt_parameter_tpl, $doc_type, $param_name, $param_default);
+			else
+				$paramdef .= sprintf($parameter_tpl, $doc_type, $param_name);
+		}
+
+		return $paramdef ? $paramdef : sprintf($no_parameter_tpl, 'void');
+	}
+
+	function get_type($in_type)
+	{
+		global	$matcher;
+		static 	$type_map = 
+			array('none'			=> 'void',
+				  
+				  'char*'			=> 'string',
+				  'gchar*'			=> 'string',
+				  'const-char*'		=> 'string',
+				  'const-gchar*'	=> 'string',
+				  'string'			=> 'string',
+				  'static_string'	=> 'string',
+				  'unsigned-char*'	=> 'string',
+				  'guchar*'			=> 'string',
+
+				  'char'			=> 'char',
+				  'gchar'			=> 'char',
+				  'guchar'			=> 'char',
+
+				  'int'				=> 'int',
+				  'gint'			=> 'int',
+				  'guint'			=> 'int',
+				  'short'			=> 'int',
+				  'gshort'			=> 'int',
+				  'gushort'			=> 'int',
+				  'long'			=> 'int',
+				  'glong'			=> 'int',
+				  'gulong'			=> 'int',
+
+				  'guint8'			=> 'int',
+				  'gint8'			=> 'int',
+				  'guint16'			=> 'int',
+				  'gint16'			=> 'int',
+				  'guint32'			=> 'int',
+				  'gint32'			=> 'int',
+				  'GtkType'			=> 'int',
+
+				  'gboolean'		=> 'bool',
+
+				  'double'			=> 'double',
+				  'gdouble'			=> 'double',
+				  'float'			=> 'double',
+				  'gfloat'			=> 'double',
+
+				  'GdkDrawable*'	=> 'GdkWindow');
+
+		$type_handler = &$matcher->get($in_type);
+		if ($type_handler === null)
+			return false;
+
+		if (isset($type_map[$in_type]))
+			return $type_map[$in_type];
+		else
+			return str_replace('*', '', $in_type);
+	}
+}
+
+$argc = $HTTP_SERVER_VARS['argc'];
+$argv = $HTTP_SERVER_VARS['argv'];
+
+$result = Console_Getopt::getopt($argv, 'o:p:');
+if (!$result || count($result[1]) < 2)
+	die("usage: php -q generator.php [-o overridesfile] [-p prefix] defsfile [class]\n");
+
+list($opts, $argv) = $result;
+
+$prefix = 'gtk';
+$overrides = new Overrides();
+
+foreach ($opts as $opt) {
+	list($opt_spec, $opt_arg) = $opt;
+	if ($opt_spec == 'o') {
+		$overrides = new Overrides($opt_arg);
+	} else if ($opt_spec == 'p') {
+		$prefix = $opt_arg;
+	}
+}
+
+$parser = new Defs_Parser($argv[1]);
+$generator = new DocGenerator($parser, $overrides, $prefix);
+$parser->start_parsing();
+$generator->register_types();
+$generator->create_docs(array_slice($argv, 2));
+
+?>
