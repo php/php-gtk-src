@@ -8,11 +8,23 @@ PHP_ARG_ENABLE(php-gtk,for PHP-GTK support,
   --enable-php-gtk        Enable PHP-GTK support])
 
 if test "$PHP_PHP_GTK" != "no"; then
+
   PHP_PREFIX=`$PHP_CONFIG --prefix`
   AC_MSG_CHECKING(for PHP executable in $PHP_PREFIX/bin)
   if test -x $PHP_PREFIX/bin/php; then
-    PHP=$PHP_PREFIX/bin/php
-    AC_MSG_RESULT(found)
+    PHP_VERSION=`$PHP_CONFIG --version`
+	AC_MSG_RESULT(found version $PHP_VERSION)
+	case $PHP_VERSION in
+       4.3*[)]
+	   PHP=$PHP_PREFIX/bin/php
+	;;
+	   *[)]
+	   AC_MSG_ERROR(
+PHP-GTK requires PHP 4.3.x to be built.
+Please use the --with-php-config option to specify
+the location of php-config for the required version.)
+	;;
+    esac
   else
     AC_MSG_ERROR(Could not locate PHP executable)
   fi
