@@ -25,259 +25,260 @@ require "definitions.php";
 
 $char_table = str_repeat(' ', 256);
 foreach (range(0, 255) as $i)
-	$char_table[$i] = chr($i);
+    $char_table[$i] = chr($i);
 $translation_table = preg_replace('![^a-zA-Z_]!', '_', $char_table);
 
 function parse($filename)
 {
-	$fp = fopen($filename, 'r');
-	$stack = array(array());
-	$whitespace = " \t\n\r";
-	$nonsymbol = $whitespace . '();\'"';
-	$lineno = 0;
-	$openlines = array();
-	while ($line = fgets($fp, 4096)) {
-		$pos = 0;
-		$len = strlen($line);
-		$lineno++;
-		var_dump($line);
-		while ($pos < $len) {
-			if (strpos($whitespace, $line{$pos}) !== false) {
-				$pos++; continue;
-			} else if ($line{$pos} == ';') {
-				break;
-			} else if (substr($line, $pos, 2) == "'(") {
-				$pos++; continue;
-			} else if ($line{$pos} == '(') {
-				array_push($stack, array());
-				$openlines[] = $lineno;
-			} else if ($line{$pos} == ')') {
-				if (!$openlines) {
-					trigger_error("[$filename:$lineno] Closing parenthesis found without a match");
-					return;
-				}
-				$closed = array_pop($stack);
-				array_push($stack[count($stack)-1], $closed);
-				array_pop($openlines);
-			} else if ($line{$pos} == '"') {
-				if (!$openlines) {
-					trigger_error("[$filename:$lineno] String found outside of s-expression");
-					return;
-				}
-				$endpos = strpos($line, '"', $pos+1);
-				if ($endpos === false) {
-					trigger_error("[$filename:$lineno] Unclosed quoted string");
-					return;
-				}
-				array_push($stack[count($stack)-1], substr($line, $pos+1, $endpos-$pos-1));
-				$pos = $endpos;
-			} else {
-				if (!$openlines) {
-					trigger_error("[$filename:$lineno] Identifier found outside of s-expression");
-					return;
-				}
-				$span = strcspn($line, $nonsymbol, $pos);
-				$symbol = substr($line, $pos, $span);
-				$pos += $span-1;
-				if (is_numeric($symbol)) {
-					$symbol = (double)$symbol;
-				}
-				array_push($stack[count($stack)-1], $symbol);
-			}
-			$pos++;
-		}
-	}
-	if ($openlines) {
-		trigger_error(sprintf("[$filename] Unclosed parentheses found on lines: %s", join(', ', $openlines)));
-		return;
-	}
-	return $stack[0];
+    $fp = fopen($filename, 'r');
+    $stack = array(array());
+    $whitespace = " \t\n\r";
+    $nonsymbol = $whitespace . '();\'"';
+    $lineno = 0;
+    $openlines = array();
+    while ($line = fgets($fp, 4096)) {
+        $pos = 0;
+        $len = strlen($line);
+        $lineno++;
+        var_dump($line);
+        while ($pos < $len) {
+            if (strpos($whitespace, $line{$pos}) !== false) {
+                $pos++; continue;
+            } else if ($line{$pos} == ';') {
+                break;
+            } else if (substr($line, $pos, 2) == "'(") {
+                $pos++; continue;
+            } else if ($line{$pos} == '(') {
+                array_push($stack, array());
+                $openlines[] = $lineno;
+            } else if ($line{$pos} == ')') {
+                if (!$openlines) {
+                    trigger_error("[$filename:$lineno] Closing parenthesis found without a match");
+                    return;
+                }
+                $closed = array_pop($stack);
+                array_push($stack[count($stack)-1], $closed);
+                array_pop($openlines);
+            } else if ($line{$pos} == '"') {
+                if (!$openlines) {
+                    trigger_error("[$filename:$lineno] String found outside of s-expression");
+                    return;
+                }
+                $endpos = strpos($line, '"', $pos+1);
+                if ($endpos === false) {
+                    trigger_error("[$filename:$lineno] Unclosed quoted string");
+                    return;
+                }
+                array_push($stack[count($stack)-1], substr($line, $pos+1, $endpos-$pos-1));
+                $pos = $endpos;
+            } else {
+                if (!$openlines) {
+                    trigger_error("[$filename:$lineno] Identifier found outside of s-expression");
+                    return;
+                }
+                $span = strcspn($line, $nonsymbol, $pos);
+                $symbol = substr($line, $pos, $span);
+                $pos += $span-1;
+                if (is_numeric($symbol)) {
+                    $symbol = (double)$symbol;
+                }
+                array_push($stack[count($stack)-1], $symbol);
+            }
+            $pos++;
+        }
+    }
+    if ($openlines) {
+        trigger_error(sprintf("[$filename] Unclosed parentheses found on lines: %s", join(', ', $openlines)));
+        return;
+    }
+    return $stack[0];
 }
 
 class Defs_Parser {
-	var $parse_tree 	= null;
-	var $parse_cache	= null;
-	var $file_path  	= null;
-	var $file_name  	= null;
-	var $objects		= array();	// objects
-	var $functions		= array();	// module functions
-	var $constructors	= array();  // object constructors
-	var $methods		= array();  // object methods
-	var $enums			= array();	// enums and flags
-	var $structs		= array();  // structures
-	var $interfaces     = array();  // interfaces
-	var $boxes          = array();  // boxed types
-	var $c_name			= array();  // C names of entities
+    var $parse_tree     = null;
+    var $parse_cache    = null;
+    var $file_path      = null;
+    var $file_name      = null;
+    var $objects        = array();  // objects
+    var $functions      = array();  // module functions
+    var $constructors   = array();  // object constructors
+    var $methods        = array();  // object methods
+    var $enums          = array();  // enums and flags
+    var $structs        = array();  // structures
+    var $interfaces     = array();  // interfaces
+    var $boxes          = array();  // boxed types
+    var $c_name         = array();  // C names of entities
 
-	function Defs_Parser($arg)
-	{
-		switch (gettype($arg)) {
-			case 'string':
-				$this->_parse_or_load($arg);
-				break;
+    function Defs_Parser($arg)
+    {
+        switch (gettype($arg)) {
+            case 'string':
+                $this->_parse_or_load($arg);
+                break;
 
-			case 'array':
-				$this->parse_tree = $arg;
-				break;
+            case 'array':
+                $this->parse_tree = $arg;
+                break;
 
-			default:
-				trigger_error('Constructor argument must be filename or array');
-				break;
-		}
-	}
+            default:
+                trigger_error('Constructor argument must be filename or array');
+                break;
+        }
+    }
 
-	function _parse_or_load($defs_file)
-	{
-		$cache_file = $defs_file.'.cache';
-		if (@is_file($cache_file) &&
-			filemtime($cache_file) > filemtime($defs_file)) {
-			error_log("Loading cache \"$cache_file\"");
-			$fp = fopen($cache_file, 'r');
-			$this->parse_cache = fread($fp, filesize($cache_file));
-			fclose($fp);
-		} else {
-			error_log("Parsing file \"$defs_file\".");
-			$this->file_name = basename($defs_file);
-			$this->file_path = dirname($defs_file);
-			$this->parse_tree = parse(fopen($defs_file, 'r'));
-		}
-	}
+    function _parse_or_load($defs_file)
+    {
+        $cache_file = $defs_file.'.cache';
+        if (@is_file($cache_file) &&
+            filemtime($cache_file) > filemtime($defs_file)) {
+            error_log("Loading cache \"$cache_file\"");
+            $fp = fopen($cache_file, 'r');
+            $this->parse_cache = fread($fp, filesize($cache_file));
+            fclose($fp);
+        } else {
+            error_log("Parsing file \"$defs_file\".");
+            $this->file_name = basename($defs_file);
+            $this->file_path = dirname($defs_file);
+            $this->parse_tree = parse(fopen($defs_file, 'r'));
+        }
+    }
 
-	function start_parsing($tree = NULL)
-	{
-		if (isset($this->parse_cache)) {
-			$this->unserialize($this->parse_cache);
-		} else {
-			if (!isset($tree))
-				$tree = $this->parse_tree;
-			foreach ($tree as $node)
-				$this->handle($node);
+    function start_parsing($tree = NULL)
+    {
+        if (isset($this->parse_cache)) {
+            $this->unserialize($this->parse_cache);
+        } else {
+            if (!isset($tree))
+                $tree = $this->parse_tree;
+            foreach ($tree as $node)
+                $this->handle($node);
 
-			if (is_writeable($this->file_path)) {
-				$cache_file = $this->file_path . '/' . $this->file_name . '.cache';
-				$fp = fopen($cache_file, 'w');
-				fwrite($fp, $this->serialize());
-				fclose($fp);
-			}
-		}
-	}
+            if (is_writeable($this->file_path)) {
+                $cache_file = $this->file_path . '/' . $this->file_name . '.cache';
+                $fp = fopen($cache_file, 'w');
+                fwrite($fp, $this->serialize());
+                fclose($fp);
+            }
+        }
+    }
 
-	function serialize()
-	{
-		return serialize((array)$this);
-	}
+    function serialize()
+    {
+        return serialize((array)$this);
+    }
 
-	function unserialize($buffer)
-	{
-		foreach (unserialize($buffer) as $var => $content) {
-			$this->$var = $content;
-		}
-	}
+    function unserialize($buffer)
+    {
+        foreach (unserialize($buffer) as $var => $content) {
+            $this->$var = $content;
+        }
+    }
 
-	function merge($parser)
-	{
-		$this->parse_tree = array_merge($this->parse_tree, $parser->parse_tree);
-	}
+    function merge($parser)
+    {
+        $this->parse_tree = array_merge($this->parse_tree, $parser->parse_tree);
+    }
 
-	function handle($node)
-	{
-		global	$char_table,
-				$translation_table;
+    function handle($node)
+    {
+        global  $char_table,
+                $translation_table;
 
-		$cmd = "handle_" . strtr($node[0], $char_table, $translation_table);
-		if (method_exists($this, $cmd))
-			$this->$cmd(array_slice($node, 1));
-		else
-			$this->handle_unknown($node);
-	}
+        $cmd = "handle_" . strtr($node[0], $char_table, $translation_table);
+        if (method_exists($this, $cmd))
+            $this->$cmd(array_slice($node, 1));
+        else
+            $this->handle_unknown($node);
+    }
 
-	function handle_enum($arg)
-	{
-		$enum_def 		= new Enum_Def($arg);
-		if (basename($this->file_path) == 'gtk+')
-			$enum_def->simple = false;
-		$this->enums[] 	= &$enum_def;
-		$this->c_name[] = &$enum_def->c_name;
-	}
+    function handle_enum($arg)
+    {
+        $enum_def       = new Enum_Def($arg);
+        if (basename($this->file_path) == 'gtk+')
+            $enum_def->simple = false;
+        $this->enums[]  = &$enum_def;
+        $this->c_name[] = &$enum_def->c_name;
+    }
 
-	function handle_flags($arg)
-	{
-		$flag_def 		= new Flag_Def($arg);
-		$this->enums[] 	= &$flag_def;
-		$this->c_name[] = &$flag_def->c_name;
-	}
+    function handle_flags($arg)
+    {
+        $flag_def       = new Flag_Def($arg);
+        $this->enums[]  = &$flag_def;
+        $this->c_name[] = &$flag_def->c_name;
+    }
 
-	function handle_function($arg)
-	{
-		$function_def 		= new Function_Def($arg);
-		if (isset($function_def->is_constructor_of))
-			$this->constructors[] = &$function_def;
-		else
-			$this->functions[] = &$function_def;
-		$this->c_name[] 	= &$function_def->c_name;
-	}
+    function handle_function($arg)
+    {
+        $function_def       = new Function_Def($arg);
+        if (isset($function_def->is_constructor_of))
+            $this->constructors[] = &$function_def;
+        else
+            $this->functions[] = &$function_def;
+        $this->c_name[]     = &$function_def->c_name;
+    }
 
-	function handle_method($arg)
-	{
-		$method_def 		= new Method_Def($arg);
-		$this->methods[] 	= &$method_def;
-		$this->c_name[] 	= &$method_def->c_name;
-	}
+    function handle_method($arg)
+    {
+        $method_def         = new Method_Def($arg);
+        $this->methods[]    = &$method_def;
+        $this->c_name[]     = &$method_def->c_name;
+    }
 
-	function handle_object($arg)
-	{
-		$object_def			= new Object_Def($arg);
-		$this->objects[$object_def->in_module . $object_def->name] = &$object_def;
-		$this->c_name[] 	= &$object_def->c_name;
-	}
+    function handle_object($arg)
+    {
+        $object_def         = new Object_Def($arg);
+        $this->objects[$object_def->in_module . $object_def->name] = &$object_def;
+        $this->c_name[]     = &$object_def->c_name;
+    }
 
-	function handle_struct($arg)
-	{
-		$struct_def			= new Struct_Def($arg);
-		$this->structs[]	= &$struct_def;
-		$this->c_name[] 	= &$struct_def->c_name;
-	}
+    function handle_struct($arg)
+    {
+        $struct_def         = new Struct_Def($arg);
+        $this->structs[]    = &$struct_def;
+        $this->c_name[]     = &$struct_def->c_name;
+    }
 
-	function handle_include($arg)
-	{
-		$include_file = $this->file_path . "/" . $arg[0];
-		error_log("Parsing file \"$include_file\".");
-		$include_tree = parse(fopen($include_file, 'r'));
-		$this->start_parsing($include_tree);
-	}
+    function handle_include($arg)
+    {
+        $include_file = $this->file_path . "/" . $arg[0];
+        error_log("Parsing file \"$include_file\".");
+        $include_tree = parse(fopen($include_file, 'r'));
+        $this->start_parsing($include_tree);
+    }
 
-	function handle_unknown($node)
-	{
-		/* noop */
-	}
+    function handle_unknown($node)
+    {
+        /* noop */
+    }
 
-	function find_methods($obj)
-	{
-		$obj_signature = array($obj->name, $obj->in_module);
-		$obj_methods = array();
+    function find_methods($obj)
+    {
+        $obj_signature = array($obj->name, $obj->in_module);
+        $obj_methods = array();
 
-		foreach ($this->methods as $method) {
-			if ($method->of_object == $obj_signature)
-				$obj_methods[] = $method;
-		}
+        foreach ($this->methods as $method) {
+            if ($method->of_object == $obj_signature)
+                $obj_methods[] = $method;
+        }
 
-		return $obj_methods;
-	}
+        return $obj_methods;
+    }
 
-	function find_constructor($obj)
-	{
-		foreach ($this->constructors as $constructor) {
-			if ($constructor->is_constructor_of == $obj->c_name)
-				return $constructor;
-		}
-	}
+    function find_constructor($obj)
+    {
+        foreach ($this->constructors as $constructor) {
+            if ($constructor->is_constructor_of == $obj->c_name)
+                return $constructor;
+        }
+    }
 
-	function find_parent($obj)
-	{
-		if (isset($obj->parent)) {
-			return $this->objects[$obj->parent[1] . $obj->parent[0]];
-		}
-	}
+    function find_parent($obj)
+    {
+        if (isset($obj->parent)) {
+            return $this->objects[$obj->parent[1] . $obj->parent[0]];
+        }
+    }
 }
 
 ?>
+/* vim: set et: */
