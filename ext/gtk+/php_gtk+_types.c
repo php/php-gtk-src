@@ -28,7 +28,13 @@
 #endif
 
 int le_php_gtk_wrapper;
+int le_gobject;
 int le_gdk_window;
+int le_gdk_drawable;
+int le_gdk_image;
+int le_gdk_screen;
+
+
 int le_gdk_bitmap;
 int le_gdk_color;
 int le_gdk_colormap;
@@ -37,11 +43,64 @@ int le_gdk_visual;
 int le_gdk_font;
 int le_gdk_gc;
 int le_gdk_drag_context;
-int le_gtk_accel_group;
-int le_gtk_style;
 
+
+
+
+int le_gtk_accel_group;
+int le_gtk_accel_label;
+int le_gtk_style;
+int le_gtk_rc_style;
+
+int le_gdk_display;
+int le_gtk_text_layout;
+int le_gtk_box;
+
+int le_gtk_button;
+int le_gtk_calendar;
+int le_gtk_check_menu_item;
+int le_gtk_clist;
+int le_gtk_color_selection;
+int le_gtk_combo;
+int le_gtk_container;
+int le_gtk_ctree;
+int le_gtk_item;
+int le_gtk_curve;
+int le_gtk_dialog;
+int le_gtk_drawing_area;
+int le_gtk_entry;
+int le_gtk_file_selection;
+
+
+
+
+int le_gtk_icon_factory;
+int le_gtk_im_context;
+int le_gtk_list_store;
+int le_gtk_settings;
+int le_gtk_size_group;
+int le_gtk_text_buffer;
+int le_gtk_text_anchor;
+int le_gtk_text_mark;
+int le_gtk_texttag;
+int le_gtk_tree_model_sort;
+int le_gtk_tree_selection;
+int le_gtk_tree_store;
+int le_gtk_tree_tag;
+int le_gtk_text_tag;
+
+int le_gtk_menu_shell;
+int le_gtk_text_tag_table;
+int le_gtk_text_child_anchor;
+int le_gtk_cell_renderer;
+int le_gtk_tree_view_column;
+
+PHP_GTK_EXPORT_CE(gobject_ce);
 PHP_GTK_EXPORT_CE(gdk_event_ce);
 PHP_GTK_EXPORT_CE(gdk_window_ce);
+PHP_GTK_EXPORT_CE(gdk_drawable_ce);
+PHP_GTK_EXPORT_CE(gdk_image_ce);
+
 PHP_GTK_EXPORT_CE(gdk_pixmap_ce);
 PHP_GTK_EXPORT_CE(gdk_bitmap_ce);
 PHP_GTK_EXPORT_CE(gdk_color_ce);
@@ -52,14 +111,48 @@ PHP_GTK_EXPORT_CE(gdk_visual_ce);
 PHP_GTK_EXPORT_CE(gdk_font_ce);
 PHP_GTK_EXPORT_CE(gdk_gc_ce);
 PHP_GTK_EXPORT_CE(gdk_drag_context_ce);
+
+PHP_GTK_EXPORT_CE(gdk_screen_ce);
+
+
+
 PHP_GTK_EXPORT_CE(gtk_selection_data_ce);
 PHP_GTK_EXPORT_CE(gtk_ctree_node_ce);
 PHP_GTK_EXPORT_CE(gtk_accel_group_ce);
+PHP_GTK_EXPORT_CE(gtk_accel_label_ce);
 PHP_GTK_EXPORT_CE(gtk_style_ce);
+PHP_GTK_EXPORT_CE(gtk_rc_style_ce);
 PHP_GTK_EXPORT_CE(gtk_box_child_ce);
 PHP_GTK_EXPORT_CE(gtk_table_child_ce);
 PHP_GTK_EXPORT_CE(gtk_fixed_child_ce);
 PHP_GTK_EXPORT_CE(gtk_clist_row_ce);
+PHP_GTK_EXPORT_CE(gdk_display_ce);
+PHP_GTK_EXPORT_CE(gtk_text_layout_ce);
+PHP_GTK_EXPORT_CE(gtk_text_tag_ce);
+
+
+PHP_GTK_EXPORT_CE(gtk_icon_factory_ce);
+PHP_GTK_EXPORT_CE(gtk_im_context_ce);
+PHP_GTK_EXPORT_CE(gtk_list_store_ce);
+PHP_GTK_EXPORT_CE(gtk_settings_ce);
+PHP_GTK_EXPORT_CE(gtk_size_group_ce);
+PHP_GTK_EXPORT_CE(gtk_text_buffer_ce);
+PHP_GTK_EXPORT_CE(gtk_text_anchor_ce);
+PHP_GTK_EXPORT_CE(gtk_texttag_ce);
+PHP_GTK_EXPORT_CE(gtk_text_mark_ce);
+PHP_GTK_EXPORT_CE(gtk_tree_model_sort_ce);
+PHP_GTK_EXPORT_CE(gtk_tree_selection_ce);
+PHP_GTK_EXPORT_CE(gtk_tree_store_ce);
+
+
+PHP_GTK_EXPORT_CE(gtk_menu_shell_ce);
+PHP_GTK_EXPORT_CE(gtk_text_tag_table_ce);
+PHP_GTK_EXPORT_CE(gtk_text_child_anchor_ce);
+PHP_GTK_EXPORT_CE(gtk_cell_renderer_ce);
+PHP_GTK_EXPORT_CE(gtk_tree_view_column_ce);
+
+
+ 
 
 static char *php_gdk_window_properties[] = {
     "width",
@@ -277,6 +370,54 @@ static char *php_gtk_clist_row_properties[] = {
     NULL
 };
 
+
+
+
+/* GObject */
+PHP_FUNCTION(gtk_signal_connect)
+{
+        php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1, 0);
+}
+PHP_FUNCTION(gtk_signal_connect_object)
+{
+        php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0, 0);
+}
+PHP_FUNCTION(gtk_signal_connect_after)
+{
+        php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1, 1);
+}
+
+PHP_FUNCTION(gtk_signal_connect_object_after)
+{
+        php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0, 1);
+}
+
+ 
+ 
+ 
+static function_entry php_gobject_functions[] = {
+	{"GObject",			PHP_FN(no_direct_constructor), NULL},
+	{"connect",			PHP_FN(gtk_signal_connect), NULL},
+	{"connect_object",		PHP_FN(gtk_signal_connect_object), NULL},
+	{"connect_after",		PHP_FN(gtk_signal_connect_after), NULL},
+	{"connect_object_after",	PHP_FN(gtk_signal_connect_object_after), NULL},
+	{NULL, NULL, NULL}
+};
+ 
+
+ 
+ 
+  
+
+
+ 
+
+
+
+
+
+
+
 /* GdkEvent */
 static function_entry php_gdk_event_functions[] = {
 	{"GdkEvent", PHP_FN(no_direct_constructor), NULL},
@@ -315,39 +456,56 @@ zval *php_gdk_event_new(GdkEvent *event)
 			break;
 
 		case GDK_EXPOSE:
-			add_property_zval(result, "area", php_gdk_rectangle_new(&event->expose.area));
+		/* TODO
+			add_property_zval(result, "area", php_gdk_rectangle_new(&event->expose.area)); */
 			add_property_long(result, "count", event->expose.count);
 			break;
 
+ 
+
+  
+
 		case GDK_MOTION_NOTIFY:
+			add_property_long(result, "send_event", event->motion.time);
 			add_property_long(result, "time", event->motion.time);
 			add_property_double(result, "x", event->motion.x);
 			add_property_double(result, "y", event->motion.y);
-			add_property_double(result, "pressure", event->motion.pressure);
-			add_property_double(result, "xtilt", event->motion.xtilt);
-			add_property_double(result, "ytilt", event->motion.ytilt);
+			
 			add_property_long(result, "state", event->motion.state);
 			add_property_bool(result, "is_hint", event->motion.is_hint);
-			add_property_long(result, "source", event->motion.source);
-			add_property_long(result, "deviceid", event->motion.deviceid);
 			add_property_double(result, "x_root", event->motion.x_root);
 			add_property_double(result, "y_root", event->motion.y_root);
+			/* THATS WHAT THE DOCS SAY! 
+			if (event->motion.axis != NULL) {
+				add_property_double(result, "axis_x", event->motion.axis[0]);
+				add_property_double(result, "axis_y", event->motion.axis[1]);
+			}
+			
+			add_property_long(result, "device_source", event->motion.device.source);
+			add_property_long(result, "device_mode", event->motion.device.mode);
+			add_property_long(result, "device_has_cursor", event->motion.device.has_cursor);
+			add_property_long(result, "device_axis_x", event->motion.device.axis[0]);
+			add_property_long(result, "device_axis_y", event->motion.device.axis[1]);
+			*/
+			/* montion.device.numkeys .... motion.device.keys[0]...*/
+
 			break;
+
+ 
 
 		case GDK_BUTTON_PRESS:      /*GdkEventButton            button*/
 		case GDK_2BUTTON_PRESS:     /*GdkEventButton            button*/
 		case GDK_3BUTTON_PRESS:     /*GdkEventButton            button*/
 		case GDK_BUTTON_RELEASE:    /*GdkEventButton            button*/
+			add_property_long(result, "send_event", event->button.send_event);
 			add_property_long(result, "time", event->button.time);
 			add_property_double(result, "x", event->button.x);
 			add_property_double(result, "y", event->button.y);
-			add_property_double(result, "pressure", event->button.pressure);
-			add_property_double(result, "xtilt", event->button.xtilt);
-			add_property_double(result, "ytilt", event->button.ytilt);
 			add_property_long(result, "state", event->button.state);
 			add_property_long(result, "button", event->button.button);
-			add_property_long(result, "source", event->button.source);
-			add_property_long(result, "deviceid", event->button.deviceid);
+			/*add_property_long(result, "axis", event->button.source);
+			add_property_long(result, "device", event->button.deviceid);
+			*/
 			add_property_double(result, "x_root", event->button.x_root);
 			add_property_double(result, "y_root", event->button.y_root);
 			break;
@@ -412,8 +570,8 @@ zval *php_gdk_event_new(GdkEvent *event)
 		case GDK_PROXIMITY_IN:
 		case GDK_PROXIMITY_OUT:
 			add_property_long(result, "time", event->proximity.time);
-			add_property_long(result, "source", event->proximity.source);
-			add_property_long(result, "deviceid", event->proximity.deviceid);
+			/*add_property_long(result, "source", event->proximity.source);
+			add_property_long(result, "deviceid", event->proximity.deviceid); */
 			break;
 
 		case GDK_DRAG_ENTER:
@@ -422,10 +580,13 @@ zval *php_gdk_event_new(GdkEvent *event)
 		case GDK_DRAG_STATUS:
 		case GDK_DROP_START:
 		case GDK_DROP_FINISHED:
+#ifdef DISABLED
 			add_property_zval(result, "context", php_gdk_drag_context_new(event->dnd.context));
+#endif			
 			add_property_long(result, "time", event->dnd.time);
 			add_property_long(result, "x_root", event->dnd.x_root);
 			add_property_long(result, "y_root", event->dnd.y_root);
+			
 			break;
 
 		case GDK_CLIENT_EVENT:
@@ -649,7 +810,7 @@ PHP_FUNCTION(gdk_window_property_get)
 		*return_value = *php_gtk_build_value("(NiN)", php_gdk_atom_new(atype), aformat, php_data);
 	}
 }
-
+/*
 PHP_FUNCTION(gdk_window_property_change)
 {
 	zval *php_property;
@@ -741,7 +902,7 @@ PHP_FUNCTION(gdk_window_property_change)
 	if (format != 8)
 		g_free(data);
 }
-
+*/
 PHP_FUNCTION(gdk_window_property_delete)
 {
 	zval *php_property;
@@ -823,7 +984,7 @@ static function_entry php_gdk_window_functions[] = {
 	{"set_cursor", 		PHP_FN(gdk_window_set_cursor), NULL},
 	{"new_gc", 			PHP_FN(gdk_window_new_gc), NULL},
 	{"property_get", 	PHP_FN(gdk_window_property_get), NULL},
-	{"property_change", PHP_FN(gdk_window_property_change), NULL},
+/*	{"property_change", PHP_FN(gdk_window_property_change), NULL}, */
 	{"property_delete", PHP_FN(gdk_window_property_delete), NULL},
 	{"set_icon",		PHP_FN(gdk_window_set_icon), NULL},
 	{"copy_area",		PHP_FN(gdk_window_copy_area), NULL},
@@ -865,8 +1026,8 @@ PHP_FUNCTION(gdkpixmap)
 static function_entry php_gdk_pixmap_functions[] = {
 	{"GdkPixmap",		PHP_FN(gdkpixmap), NULL},
 	{"new_gc", 			PHP_FN(gdk_window_new_gc), NULL},
-	{"property_get", 	PHP_FN(gdk_window_property_get), NULL},
-	{"property_change", PHP_FN(gdk_window_property_change), NULL},
+	{"property_get", 	PHP_FN(gdk_window_property_get), NULL}, 
+/*	{"property_change", PHP_FN(gdk_window_property_change), NULL},*/
 	{"property_delete", PHP_FN(gdk_window_property_delete), NULL},
 	{"copy_area",		PHP_FN(gdk_window_copy_area), NULL},
 	{NULL, NULL, NULL}
@@ -955,7 +1116,6 @@ static void gdk_window_get_property(zval *return_value, zval *object, char *prop
 	GdkWindow *win;
 	gint x, y;
 	GdkModifierType p_mask;
-	TSRMLS_FETCH();
 	
 	*result = SUCCESS;
 
@@ -1035,8 +1195,8 @@ static void release_gdk_window_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 	if (zend_hash_index_find(&php_gtk_type_hash, (long)obj, (void **)&wrapper_ptr) == SUCCESS) {
 		zval_ptr_dtor(wrapper_ptr);
 	}
-
-	if (gdk_window_get_type(obj) == GDK_WINDOW_PIXMAP)
+	
+	if (GDK_IS_PIXMAP(obj))
 		gdk_pixmap_unref(obj);
 	else
 		gdk_window_unref(obj);
@@ -1271,12 +1431,12 @@ zval *php_gdk_atom_new(GdkAtom atom)
 
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gdk_atom_ce);
-	add_property_long_ex(result, "atom", sizeof("atom"), atom TSRMLS_CC);
+	add_property_long_ex(result, "atom", sizeof("atom"), (long) atom);
 	atom_name = gdk_atom_name(atom);
 	if (atom_name)
-		add_property_string_ex(result, "string", sizeof("string"), atom_name, 0 TSRMLS_CC);
+		add_property_string_ex(result, "string", sizeof("string"), atom_name, 0);
 	else
-		add_property_null_ex(result, "string", sizeof("string") TSRMLS_CC);
+		add_property_null_ex(result, "string", sizeof("string"));
 
 	return result;
 }
@@ -1332,7 +1492,7 @@ static void gdk_cursor_get_property(zval *return_value, zval *object, char *prop
 	if (!strcmp(prop_name, "type")) {
 		RETURN_LONG(cursor->type);
 	} else if (!strcmp(prop_name, "name")) {
-		GtkEnumValue *vals = gtk_type_enum_get_values(GTK_TYPE_GDK_CURSOR_TYPE);
+		GtkEnumValue *vals = gtk_type_enum_get_values(GDK_TYPE_CURSOR_TYPE);
 		while (vals->value_name != NULL && vals->value != (unsigned)cursor->type)
 			vals++;
 		if (vals->value_nick) {
@@ -1347,6 +1507,7 @@ static void gdk_cursor_get_property(zval *return_value, zval *object, char *prop
 
 
 /* GdkVisual */
+/*
 static function_entry php_gdk_visual_functions[] = {
 	{"GdkVisual", PHP_FN(no_direct_constructor), NULL},
 	{NULL, NULL, NULL}
@@ -1428,7 +1589,7 @@ static void gdk_visual_get_property(zval *return_value, zval *object, char *prop
 	*result = FAILURE;
 }
 
-
+*/
 /* GdkFont */
 PHP_FUNCTION(gdk_font_width)
 {
@@ -1829,6 +1990,7 @@ static int gdk_gc_set_property(zval *object, char *prop_name, zval *value)
 
 
 /* GdkDragContext */
+#ifdef DISABLED
 static function_entry php_gdk_drag_context_functions[] = {
 	{"GdkDragContext", PHP_FN(no_direct_constructor), NULL},
 	{NULL, NULL, NULL}
@@ -1889,6 +2051,7 @@ static void gdk_drag_context_get_property(zval *return_value, zval *object, char
 		if (context->dest_window)
 			*return_value = *php_gdk_window_new(context->dest_window);
 		return;
+		/*
 	} else if (!strcmp(prop_name, "targets")) {
 		GList *tmp;
 
@@ -1896,6 +2059,7 @@ static void gdk_drag_context_get_property(zval *return_value, zval *object, char
 		for (tmp = context->targets; tmp; tmp = tmp->next)
 			add_next_index_zval(return_value, php_gdk_atom_new(GPOINTER_TO_INT(tmp->data)));
 		return;
+		*/
 	} else if (!strcmp(prop_name, "actions")) {
 		RETURN_LONG(context->actions);
 	} else if (!strcmp(prop_name, "suggested_action")) {
@@ -1909,7 +2073,7 @@ static void gdk_drag_context_get_property(zval *return_value, zval *object, char
 	*result = FAILURE;
 }
 
-
+#endif
 /* GtkSelectionData */
 PHP_FUNCTION(gtk_selection_data_set)
 {
@@ -2160,6 +2324,142 @@ static void release_gtk_accel_group_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 }
 
 
+
+
+
+
+
+
+
+
+
+/* GtkAccelLabel */
+/*
+PHP_FUNCTION(gtkaccellabel)
+{
+	GtkAccelLabel *accel_label;
+	
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	accel_label = gtk_accel_label_new();
+	php_gtk_set_object(this_ptr, accel_label, (php_gtk_dtor_t)gtk_accel_label_unref, 1);
+}
+
+ 
+ 
+static function_entry php_gtk_accel_label_functions[] = {
+	{"GtkAccelLabel",	PHP_FN(gtkaccellabel), NULL},
+	{NULL, NULL, NULL}
+};
+
+zval *php_gtk_accel_label_new(GtkAccelLabel *label)
+{
+	zval *result;
+	zval **wrapper_ptr;
+	TSRMLS_FETCH();
+
+	if (!label) {
+		MAKE_STD_ZVAL(result);
+		ZVAL_NULL(result);
+		return result;
+	}
+
+	if (zend_hash_index_find(&php_gtk_type_hash, (long)label, (void **)&wrapper_ptr) == SUCCESS) {
+		zval_add_ref(wrapper_ptr);
+		return *wrapper_ptr;
+	}
+
+	MAKE_STD_ZVAL(result);
+	object_init_ex(result, gtk_accel_label_ce);
+	gtk_accel_label_ref(label);
+	php_gtk_set_object(result, label, (php_gtk_dtor_t)gtk_accel_label_unref, 1);
+
+	return result;
+}
+
+static void release_gtk_accel_label_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
+{
+	GtkAccelLabel *obj = (GtkAccelLabel *)rsrc->ptr;
+	zval **wrapper_ptr;
+
+	if (zend_hash_index_find(&php_gtk_type_hash, (long)obj, (void **)&wrapper_ptr) == SUCCESS) {
+		zval_ptr_dtor(wrapper_ptr);
+	}
+
+	gtk_accel_label_unref(obj);
+}
+
+
+
+*/
+
+
+
+/* GtkRcStyle */
+
+PHP_FUNCTION(gtkrcstyle)
+{
+	GtkRcStyle *rc_style;
+	
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	rc_style = gtk_rc_style_new();
+	php_gtk_set_object(this_ptr, rc_style, (php_gtk_dtor_t)gtk_rc_style_unref, 1);
+}
+
+ 
+ 
+static function_entry php_gtk_rc_style_functions[] = {
+	{"GtkRcStyle",	PHP_FN(gtkrcstyle), NULL},
+	{NULL, NULL, NULL}
+};
+
+zval *php_gtk_rc_style_new(GtkRcStyle *rc_style)
+{
+	zval *result;
+	zval **wrapper_ptr;
+	TSRMLS_FETCH();
+
+	if (!rc_style) {
+		MAKE_STD_ZVAL(result);
+		ZVAL_NULL(result);
+		return result;
+	}
+
+	if (zend_hash_index_find(&php_gtk_type_hash, (long)rc_style, (void **)&wrapper_ptr) == SUCCESS) {
+		zval_add_ref(wrapper_ptr);
+		return *wrapper_ptr;
+	}
+
+	MAKE_STD_ZVAL(result);
+	object_init_ex(result, gtk_rc_style_ce);
+	gtk_rc_style_ref(rc_style);
+	php_gtk_set_object(result, rc_style, (php_gtk_dtor_t)gtk_rc_style_unref, 1);
+
+	return result;
+}
+
+static void release_gtk_rc_style_rsrc(zend_rsrc_list_entry *rsrc TSRMLS_DC)
+{
+	GtkRcStyle *obj = (GtkRcStyle*)rsrc->ptr;
+	zval **wrapper_ptr;
+
+	if (zend_hash_index_find(&php_gtk_type_hash, (long)obj, (void **)&wrapper_ptr) == SUCCESS) {
+		zval_ptr_dtor(wrapper_ptr);
+	}
+
+	gtk_rc_style_unref(obj);
+}
+
+ 
+
+
 /* GtkStyle */
 PHP_FUNCTION(gtkstyle)
 {
@@ -2283,9 +2583,11 @@ static void gtk_style_get_property(zval *return_value, zval *object, char *prop_
 	} else if (!strcmp(prop_name, "white")) {
 		*return_value = *php_gdk_color_new(&style->white);
 		return;
+		/*
 	} else if (!strcmp(prop_name, "font")) {
 		*return_value = *php_gdk_font_new(style->font);
 		return;
+		*/
 	} else if (!strcmp(prop_name, "black_gc")) {
 		*return_value = *php_gdk_gc_new(style->black_gc);
 		return;
@@ -2422,7 +2724,7 @@ static int style_helper_set(style_array_type type, gpointer array, zval *value, 
 static int gtk_style_set_property(zval *object, char *prop_name, zval *value)
 {
 	GtkStyle *style = PHP_GTK_STYLE_GET(object);
-
+	/*
 	if (!strcmp(prop_name, "font")) {
 		if (php_gtk_check_class(value, gdk_font_ce)) {
 			if (style->font)
@@ -2432,7 +2734,9 @@ static int gtk_style_set_property(zval *object, char *prop_name, zval *value)
 			php_error(E_WARNING, "'%s' property should be a GdkFont", prop_name);
 			return PG_ERROR;
 		}
-	} else if (!strcmp(prop_name, "black")) {
+		
+	} else */
+	if (!strcmp(prop_name, "black")) {
 		if (php_gtk_check_class(value, gdk_color_ce))
 			style->black = *PHP_GDK_COLOR_GET(value);
 		else {
@@ -2745,7 +3049,7 @@ static void gtk_clist_row_get_property(zval *return_value, zval *object, char *p
 
 void php_gtk_plus_register_types(int module_number)
 {
-    zend_class_entry ce;
+	zend_class_entry ce;
 	TSRMLS_FETCH();
 
     /*
@@ -2760,12 +3064,16 @@ void php_gtk_plus_register_types(int module_number)
 	le_gdk_gc = zend_register_list_destructors_ex(release_gdk_gc_rsrc, NULL, "GdkGC", module_number);
 	le_gdk_drag_context = zend_register_list_destructors_ex(release_gdk_drag_context_rsrc, NULL, "GdkDragContext", module_number);
 	le_gtk_accel_group = zend_register_list_destructors_ex(release_gtk_accel_group_rsrc, NULL, "GtkAccelGroup", module_number);
+	le_gtk_label_group = zend_register_list_destructors_ex(release_gtk_accel_label_rsrc, NULL, "GtkAccelLabel", module_number);
 	le_gtk_style = zend_register_list_destructors_ex(release_gtk_style_rsrc, NULL, "GtkStyle", module_number);
     */
+	gobject_ce   = php_gtk_register_class("GObject", php_gobject_functions, NULL, 0, 0, NULL TSRMLS_CC);
+	g_hash_table_insert(php_gtk_class_hash, g_strdup("GObject"), gobject_ce);
+
 
 	gdk_event_ce = php_gtk_register_class("GdkEvent", php_gdk_event_functions, NULL, 0, 0, NULL TSRMLS_CC);
 
-    gdk_window_ce = php_gtk_register_class("GdkWindow", php_gdk_window_functions, NULL, 1, 0, php_gdk_window_properties TSRMLS_CC);
+	gdk_window_ce = php_gtk_register_class("GdkWindow", php_gdk_window_functions, NULL, 1, 0, php_gdk_window_properties TSRMLS_CC);
 	gdk_pixmap_ce = php_gtk_register_class("GdkPixmap", php_gdk_pixmap_functions, NULL, 1, 0, php_gdk_pixmap_properties TSRMLS_CC);
 	gdk_bitmap_ce = php_gtk_register_class("GdkBitmap", php_gdk_bitmap_functions, NULL, 1, 0, php_gdk_bitmap_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_window_ce, gdk_window_get_property);
@@ -2776,27 +3084,27 @@ void php_gtk_plus_register_types(int module_number)
 	php_gtk_register_prop_getter(gdk_color_ce, gdk_color_get_property);
 	php_gtk_register_prop_setter(gdk_color_ce, gdk_color_set_property);
 
-	gdk_colormap_ce = php_gtk_register_class("GdkColormap", php_gdk_colormap_functions, NULL, 1, 0, php_gdk_colormap_properties TSRMLS_CC);
-	php_gtk_register_prop_getter(gdk_colormap_ce, gdk_colormap_get_property);
+	//gdk_colormap_ce = php_gtk_register_class("GdkColormap", php_gdk_colormap_functions, NULL, 1, 0, php_gdk_colormap_properties TSRMLS_CC);
+	//php_gtk_register_prop_getter(gdk_colormap_ce, gdk_colormap_get_property);
 
 	INIT_CLASS_ENTRY(ce, "GdkAtom", php_gdk_atom_functions);
 	gdk_atom_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 	
 	gdk_cursor_ce = php_gtk_register_class("GdkCursor", php_gdk_cursor_functions, NULL, 1, 0, php_gdk_cursor_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_cursor_ce, gdk_cursor_get_property);
-	
+/*	
 	gdk_visual_ce = php_gtk_register_class("GdkVisual", php_gdk_visual_functions, NULL, 1, 0, php_gdk_visual_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_visual_ce, gdk_visual_get_property);
-
+*/
 	gdk_font_ce = php_gtk_register_class("GdkFont", php_gdk_font_functions, NULL, 1, 0, php_gdk_font_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gdk_font_ce, gdk_font_get_property);
+	// at present this is registed in the 
+	//gdk_gc_ce = php_gtk_register_class("GdkGC", php_gdk_gc_functions, NULL, 1, 1, php_gdk_gc_properties TSRMLS_CC);
+	//php_gtk_register_prop_getter(gdk_gc_ce, gdk_gc_get_property);
+	//php_gtk_register_prop_setter(gdk_gc_ce, gdk_gc_set_property);
 
-	gdk_gc_ce = php_gtk_register_class("GdkGC", php_gdk_gc_functions, NULL, 1, 1, php_gdk_gc_properties TSRMLS_CC);
-	php_gtk_register_prop_getter(gdk_gc_ce, gdk_gc_get_property);
-	php_gtk_register_prop_setter(gdk_gc_ce, gdk_gc_set_property);
-
-	gdk_drag_context_ce = php_gtk_register_class("GdkDragContext", php_gdk_drag_context_functions, NULL, 1, 0, php_gdk_drag_context_properties TSRMLS_CC);
-	php_gtk_register_prop_getter(gdk_drag_context_ce, gdk_drag_context_get_property);
+	//gdk_drag_context_ce = php_gtk_register_class("GdkDragContext", php_gdk_drag_context_functions, NULL, 1, 0, php_gdk_drag_context_properties TSRMLS_CC);
+	//php_gtk_register_prop_getter(gdk_drag_context_ce, gdk_drag_context_get_property);
 
 	gtk_selection_data_ce = php_gtk_register_class("GtkSelectionData", php_gtk_selection_data_functions, NULL, 1, 0, php_gtk_selection_data_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_selection_data_ce, gtk_selection_data_get_property);
@@ -2805,10 +3113,14 @@ void php_gtk_plus_register_types(int module_number)
 	php_gtk_register_prop_getter(gtk_ctree_node_ce, gtk_ctree_node_get_property);
 
 	gtk_accel_group_ce = php_gtk_register_class("GtkAccelGroup", php_gtk_accel_group_functions, NULL, 0, 0, NULL TSRMLS_CC);
+	/*
+	gtk_accel_label_ce = php_gtk_register_class("GtkLabelGroup", php_gtk_accel_label_functions, NULL, 0, 0, NULL TSRMLS_CC);
+	*/
+	//gtk_style_ce = php_gtk_register_class("GtkStyle", php_gtk_style_functions, NULL, 1, 1, php_gtk_style_properties TSRMLS_CC);
+	//php_gtk_register_prop_getter(gtk_style_ce, gtk_style_get_property);
+	//php_gtk_register_prop_setter(gtk_style_ce, gtk_style_set_property);
 
-	gtk_style_ce = php_gtk_register_class("GtkStyle", php_gtk_style_functions, NULL, 1, 1, php_gtk_style_properties TSRMLS_CC);
-	php_gtk_register_prop_getter(gtk_style_ce, gtk_style_get_property);
-	php_gtk_register_prop_setter(gtk_style_ce, gtk_style_set_property);
+	gtk_rc_style_ce = php_gtk_register_class("GtkRcStyle", php_gtk_rc_style_functions, NULL, 0, 0, NULL TSRMLS_CC);
 
 	gtk_box_child_ce = php_gtk_register_class("GtkBoxChild", php_gtk_box_child_functions, NULL, 1, 0, php_gtk_box_child_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_box_child_ce, gtk_box_child_get_property);
@@ -2821,6 +3133,12 @@ void php_gtk_plus_register_types(int module_number)
 
 	gtk_clist_row_ce = php_gtk_register_class("GtkCListRow", php_gtk_clist_row_functions, NULL, 1, 0, php_gtk_clist_row_properties TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_clist_row_ce, gtk_clist_row_get_property);
+	
+	
+	//gdk_display_ce = php_gtk_register_class("GdkDisplay", NULL, NULL, 0, 0, NULL TSRMLS_CC);
+	//gtk_text_layout_ce = php_gtk_register_class("GtkTextLayout", NULL, NULL, 0, 0, NULL TSRMLS_CC);	
+	//gtk_box_ce = php_gtk_register_class("GtkBox", NULL, NULL, 0, 0, NULL TSRMLS_CC);	
+	
 }
 
 #endif
