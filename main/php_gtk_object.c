@@ -63,6 +63,7 @@ static inline zval* invoke_getter(zval *object, char *property)
 	zval result, *result_ptr = NULL;
 	int found = FAILURE;
 
+	ZVAL_NULL(&result);
 	for (ce = Z_OBJCE_P(object); ce != NULL && found != SUCCESS; ce = ce->parent) {
 		if (zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
 			(*getter)(&result, object, property, &found);
@@ -82,28 +83,27 @@ static HashTable* php_gtk_get_properties(zval *object TSRMLS_DC)
 	prop_desc_t *prop_desc;
 	prop_getter_t *getter;
 	zend_class_entry *ce;
-	zval *prop, *tmp;
-	HashTable *properties;
+	zval *prop;
+	php_gtk_object *wrapper;
 	char **ptr;
 	int found;
 
-	properties = (HashTable *) emalloc(sizeof(HashTable));
-	zend_hash_init(properties, 0, NULL, ZVAL_PTR_DTOR, 0);
-	zend_hash_copy(properties, Z_OBJPROP_P(object), (copy_ctor_func_t) zval_add_ref, (void *) &tmp, sizeof(zval *));
-
+	wrapper = (php_gtk_object *) zend_object_store_get_object(object TSRMLS_CC);
 	for (ce = Z_OBJCE_P(object); ce != NULL; ce = ce->parent) {
 		zend_hash_index_find(&php_gtk_prop_desc, (long)ce, (void **)&prop_desc);
 		if (prop_desc->prop_names &&
 			zend_hash_index_find(&php_gtk_prop_getters, (long)ce, (void **)&getter) == SUCCESS) {
 			for (ptr = prop_desc->prop_names; *ptr != NULL; ptr++) {
 				MAKE_STD_ZVAL(prop);
+				ZVAL_NULL(prop);
 				(*getter)(prop, object, *ptr, &found);
-				zend_hash_update(properties, *ptr, strlen(*ptr)+1, &prop, sizeof(zval *), NULL);
+				zval_add_ref(&prop); /* ugly hack until prop getters are fixed */
+				zend_hash_update(wrapper->zobj.properties, *ptr, strlen(*ptr)+1, &prop, sizeof(zval *), NULL);
 			}
 		}
 	}
 
-	return properties;
+	return wrapper->zobj.properties;
 }
 
 static zval **php_gtk_get_property_ptr(zval *object, zval *member TSRMLS_DC)

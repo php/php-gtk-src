@@ -80,7 +80,7 @@ static function_entry php_%s_functions[] = {
 $register_getter_tpl = "\tphp_gtk_register_prop_getter(%s, %s_get_property);\n";
 
 $prop_check_tpl =
-"%sif (!strncmp(prop_name, \"%s\", sizeof(\"%s\")-1)) {
+"%sif (!strcmp(prop_name, \"%s\")) {
 	%s
 	}";
 

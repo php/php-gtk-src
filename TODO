@@ -22,4 +22,8 @@ For ZE2
 
 * Fix infinite recursion on var_dump()
 
+* Fix prop getters to create their own zvals
+
+* Maybe add .ini options to control the extent of get_properties
+
 # vim: set tw=80 ai et sts=4:

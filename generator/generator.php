@@ -367,7 +367,6 @@ class Generator {
 			$prop_checks .= sprintf($prop_check_tpl,
 									$else_clause,
 									$field_name,
-									$field_name,
 									$prop_get_code);
 			$else_clause = ' else ';
 		}
