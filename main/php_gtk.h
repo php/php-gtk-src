@@ -23,6 +23,14 @@
 #ifndef _PHP_GTK_H
 #define _PHP_GTK_H
 
+#include "php.h"
+#include "php_ini.h"
+#ifdef PHP_WIN32
+#include "config.w32.h"
+#else
+#include "config.h"
+#endif
+
 #if HAVE_PHP_GTK
 
 #ifdef PHP_WIN32
@@ -30,17 +38,9 @@
 #  define PHP_GTK_API __declspec(dllimport)
 # else
 #  define PHP_GTK_API __declspec(dllexport)
-#endif
+# endif
 #else
-#define PHP_GTK_API
-#endif
-
-#include "php.h"
-#include "php_ini.h"
-#ifdef PHP_WIN32
-#include "config.w32.h"
-#else
-#include "config.h"
+# define PHP_GTK_API
 #endif
 
 #include "php_gtk_module.h"
@@ -162,8 +162,7 @@ PHP_FUNCTION(no_direct_constructor);
 
 extern char *php_gtk_zval_type_name(zval *arg);
 
-//ZEND_EXTERN_MODULE_GLOBALS(gtk);
-PHP_GTK_API extern ts_rsrc_id gtk_globals_id;
+PHP_GTK_API ZEND_EXTERN_MODULE_GLOBALS(gtk);
 
 #endif /* HAVE_PHP_GTK */
 
