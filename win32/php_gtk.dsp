@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PHP_GTK_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "." /I "..\\" /I "..\main" /I "..\..\php4" /I "..\..\php4\main" /I "..\..\php4\Zend" /I "..\..\php4\TSRM" /I "..\..\src\gtk+" /I "..\..\src\gtk+\gdk" /I "..\..\src\glib" /I "..\..\src\glib\glib" /I "..\..\src\pango" /I "..\..\src\libglade" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PHP_GTK_EXPORTS" /D "PHP_WIN32" /D "ZEND_WIN32" /D ZTS=1 /D ZEND_DEBUG=0 /D HAVE_PHP_GTK=1 /D HAVE_LIBGLADE=1 /D HAVE_SQPANE=1 /D "COMPILE_DL_PHP_GTK" /YX /FD /I /php4" /I /php4/main" /I /php4/Zend" /I /php4/TSRM" /I /src/gtk+" /I /src/gtk+/gdk" /I /src/glib" /I /php4" /I /php4/main" /I /php4/Zend" /I /php4/TSRM" /I /src/gtk+" /I /src/gtk+/gdk" /I /src/glib" " " " " " " " " " " " " " " /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /I "." /I "..\\" /I "..\main" /I "..\..\php4" /I "..\..\php4\main" /I "..\..\php4\Zend" /I "..\..\php4\TSRM" /I "..\..\src\gtk+" /I "..\..\src\gtk+\gdk" /I "..\..\src\glib" /I "..\..\src\glib\glib" /I "..\..\src\pango" /I "..\..\src\libglade" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PHP_GTK_EXPORTS" /D "PHP_WIN32" /D "ZEND_WIN32" /D ZTS=1 /D ZEND_DEBUG=0 /D HAVE_PHP_GTK=1 /D "COMPILE_DL_PHP_GTK" /D "TSRM_EXPORTS" /YX /FD /I /php4" /I /php4/main" /I /php4/Zend" /I /php4/TSRM" /I /src/gtk+" /I /src/gtk+/gdk" /I /src/glib" /I /php4" /I /php4/main" /I /php4/Zend" /I /php4/TSRM" /I /src/gtk+" /I /src/gtk+/gdk" /I /src/glib" " " " " " " " " " " " " " " /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386
-# ADD LINK32 php4ts.lib gtk-1.3.lib gdk-1.3.lib glib-1.3.lib gnu-intl.lib libglade.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386 /libpath:"..\..\php4\Release_TS" /libpath:"..\..\src\glib" /libpath:"..\..\src\gtk+\gtk" /libpath:"..\..\src\gtk+\gdk" /libpath:"..\..\src\intl" /libpath:"..\..\src\libglade"
+# ADD LINK32 php4ts.lib gtk-1.3.lib gdk-1.3.lib glib-1.3.lib gnu-intl.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386 /libpath:"..\..\php4\Release_TS" /libpath:"..\..\src\glib" /libpath:"..\..\src\gtk+\gtk" /libpath:"..\..\src\gtk+\gdk" /libpath:"..\..\src\intl"
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "php_gtk - Win32 Debug_TS"
@@ -70,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PHP_GTK_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "." /I "..\\" /I "..\main" /I "..\..\php4" /I "..\..\php4\main" /I "..\..\php4\Zend" /I "..\..\php4\TSRM" /I "..\..\src\gtk+" /I "..\..\src\gtk+\gdk" /I "..\..\src\glib" /I "..\..\src\glib\glib" /I "..\..\src\pango" /I "..\..\src\libglade" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PHP_GTK_EXPORTS" /D "PHP_WIN32" /D "ZEND_WIN32" /D ZTS=1 /D ZEND_DEBUG=1 /D HAVE_PHP_GTK=1 /D HAVE_LIBGLADE=1 /D HAVE_SQPANE=1 /D "COMPILE_DL_PHP_GTK" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "." /I "..\\" /I "..\main" /I "..\..\php4" /I "..\..\php4\main" /I "..\..\php4\Zend" /I "..\..\php4\TSRM" /I "..\..\src\gtk+" /I "..\..\src\gtk+\gdk" /I "..\..\src\glib" /I "..\..\src\glib\glib" /I "..\..\src\pango" /I "..\..\src\libglade" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "PHP_GTK_EXPORTS" /D "PHP_WIN32" /D "ZEND_WIN32" /D ZTS=1 /D ZEND_DEBUG=1 /D HAVE_PHP_GTK=1 /D "COMPILE_DL_PHP_GTK" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -177,89 +177,6 @@ SOURCE="..\ext\gtk+\gdk.overrides"
 # Begin Source File
 
 SOURCE="..\ext\gtk+\gtk.overrides"
-# End Source File
-# End Group
-# End Group
-# Begin Group "libGlade"
-
-# PROP Default_Filter ""
-# Begin Group "Source Files No. 2"
-
-# PROP Default_Filter "*.c"
-# Begin Source File
-
-SOURCE=..\ext\libglade\gen_libglade.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\ext\libglade\php_libglade.c
-# End Source File
-# End Group
-# Begin Group "Header Files No. 2"
-
-# PROP Default_Filter "*.h"
-# Begin Source File
-
-SOURCE=..\ext\libglade\gen_ce_libglade.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\ext\libglade\php_libglade.h
-# End Source File
-# End Group
-# Begin Group "Override Files No. 2"
-
-# PROP Default_Filter "*.override"
-# Begin Source File
-
-SOURCE=..\ext\libglade\libglade.overrides
-# End Source File
-# End Group
-# End Group
-# Begin Group "SQPane"
-
-# PROP Default_Filter ""
-# Begin Group "Source Files No. 3"
-
-# PROP Default_Filter "*.c"
-# Begin Source File
-
-SOURCE=..\ext\sqpane\gen_sqpane.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\ext\sqpane\gtksqpane.c
-
-!IF  "$(CFG)" == "php_gtk - Win32 Release_TS"
-
-!ELSEIF  "$(CFG)" == "php_gtk - Win32 Debug_TS"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\ext\sqpane\php_sqpane.c
-# End Source File
-# End Group
-# Begin Group "Header Files No. 3"
-
-# PROP Default_Filter "*.h"
-# Begin Source File
-
-SOURCE=..\ext\sqpane\gen_ce_sqpane.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\ext\sqpane\php_sqpane.h
-# End Source File
-# End Group
-# Begin Group "Override Files No. 3"
-
-# PROP Default_Filter "*.override"
-# Begin Source File
-
-SOURCE=..\ext\sqpane\sqpane.overrides
 # End Source File
 # End Group
 # End Group

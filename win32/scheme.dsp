@@ -88,7 +88,7 @@ SOURCE="..\ext\gtk+\gdk.defs"
 
 USERDEP__GDK_D="..\ext\gtk+\gdk.overrides"	"..\ext\gtk+\gdk.defs"	
 # Begin Custom Build
-InputDir=..\ext\gtk+
+InputDir=\php\php-gtk\ext\gtk+
 InputPath="..\ext\gtk+\gdk.defs"
 
 "$(InputDir)\gen_gdk.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
@@ -100,7 +100,7 @@ InputPath="..\ext\gtk+\gdk.defs"
 
 USERDEP__GDK_D="..\ext\gtk+\gdk.overrides"	"..\ext\gtk+\gdk.defs"	
 # Begin Custom Build
-InputDir=..\ext\gtk+
+InputDir=\php\php-gtk\ext\gtk+
 InputPath="..\ext\gtk+\gdk.defs"
 
 "$(InputDir)\gen_gdk.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
@@ -120,12 +120,12 @@ SOURCE=..\generator\generator.php
 # PROP Ignore_Default_Tool 1
 USERDEP__GENER="..\ext\gtk+\gen_gtk.c"	"..\ext\gtk+\gen_gdk.c"	
 # Begin Custom Build
-InputDir=..\generator
+InputDir=\php\php-gtk\generator
 InputPath=..\generator\generator.php
 
 BuildCmds= \
-	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\gtk+\gen_gtk.c ..\ext\gtk+\gen_gdk.c | sed -e "s/^/extern /" > ..\ext\gtk+\gen_ce_gtk.h \
-	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\gtk+\gen_gtk.c ..\ext\gtk+\gen_gdk.c | sed -e "s/^/extern /" > ..\ext\gtk+\gen_gtk.h \
+	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\gtk+\gen_gtk.c ..\ext\gtk+\gen_gdk.c | sed -e "s/^/PHP_GTK_API extern /" > ..\ext\gtk+\gen_ce_gtk.h \
+	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\gtk+\gen_gtk.c ..\ext\gtk+\gen_gdk.c | sed -e "s/^/PHP_GTK_API extern /" > ..\ext\gtk+\gen_gtk.h \
 	grep -h "PHP_GTK_EXPORT_FUNC" ..\ext\gtk+\gen_gtk.c ..\ext\gtk+\gen_gdk.c | sed -e "s/*obj)/&;/" >> ..\ext\gtk+\gen_gtk.h \
 	
 
@@ -140,12 +140,12 @@ BuildCmds= \
 
 USERDEP__GENER="..\ext\gtk+\gen_gtk.c"	"..\ext\gtk+\gen_gdk.c"	
 # Begin Custom Build
-InputDir=..\generator
+InputDir=\php\php-gtk\generator
 InputPath=..\generator\generator.php
 
 BuildCmds= \
-	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\gtk+\gen_gtk.c ..\ext\gtk+\gen_gdk.c | sed -e "s/^/extern /" > ..\ext\gtk+\gen_ce_gtk.h \
-	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\gtk+\gen_gtk.c ..\ext\gtk+\gen_gdk.c | sed -e "s/^/extern /" > ..\ext\gtk+\gen_gtk.h \
+	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\gtk+\gen_gtk.c ..\ext\gtk+\gen_gdk.c | sed -e "s/^/PHP_GTK_API extern /" > ..\ext\gtk+\gen_ce_gtk.h \
+	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\gtk+\gen_gtk.c ..\ext\gtk+\gen_gdk.c | sed -e "s/^/PHP_GTK_API extern /" > ..\ext\gtk+\gen_gtk.h \
 	grep -h "PHP_GTK_EXPORT_FUNC" ..\ext\gtk+\gen_gtk.c ..\ext\gtk+\gen_gdk.c | sed -e "s/*obj)/&;/" >> ..\ext\gtk+\gen_gtk.h \
 	
 
@@ -167,7 +167,7 @@ SOURCE="..\ext\gtk+\gtk.defs"
 
 USERDEP__GTK_D="..\ext\gtk+\gtk.overrides"	"..\ext\gtk+\gtk.defs"	
 # Begin Custom Build
-InputDir=..\ext\gtk+
+InputDir=\php\php-gtk\ext\gtk+
 InputPath="..\ext\gtk+\gtk.defs"
 
 "$(InputDir)\gen_gtk.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
@@ -179,7 +179,7 @@ InputPath="..\ext\gtk+\gtk.defs"
 
 USERDEP__GTK_D="..\ext\gtk+\gtk.overrides"	"..\ext\gtk+\gtk.defs"	
 # Begin Custom Build
-InputDir=..\ext\gtk+
+InputDir=\php\php-gtk\ext\gtk+
 InputPath="..\ext\gtk+\gtk.defs"
 
 "$(InputDir)\gen_gtk.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
@@ -198,26 +198,26 @@ SOURCE=..\ext\libglade\libglade.defs
 
 USERDEP__LIBGL="..\ext\libglade\libglade.overrides"	"..\ext\libglade\libglade.defs"	
 # Begin Custom Build
-InputDir=..\ext\libglade
+InputDir=\php\php-gtk\ext\libglade
 InputPath=..\ext\libglade\libglade.defs
 
 "$(InputDir)\gen_libglade.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	php.exe -q ..\generator\generator.php -o ext\libglade\libglade.overrides -p libglade -r ext\gtk%%2b\gtk.defs ext\libglade\libglade.defs >..\ext\libglade\gen_libglade.c \
-	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\libglade\gen_libglade.c | sed -e "s/^/extern /" > ..\ext\libglade\gen_ce_libglade.h \
-
+	php.exe -q ..\generator\generator.php -o ext\libglade\libglade.overrides -p libglade -r ext\gtk%%2b\gtk.defs ext\libglade\libglade.defs >..\ext\libglade\gen_libglade.c 
+	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\libglade\gen_libglade.c | sed -e "s/^/extern /" > ..\ext\libglade\gen_ce_libglade.h 
+	
 # End Custom Build
 
 !ELSEIF  "$(CFG)" == "Scheme - Win32 Debug_TS"
 
 USERDEP__LIBGL="..\ext\libglade\libglade.overrides"	"..\ext\libglade\libglade.defs"	
 # Begin Custom Build
-InputDir=..\ext\libglade
+InputDir=\php\php-gtk\ext\libglade
 InputPath=..\ext\libglade\libglade.defs
 
 "$(InputDir)\gen_libglade.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	php.exe -q ..\generator\generator.php -o ext\libglade\libglade.overrides -p libglade -r ext\gtk%%2b\gtk.defs ext\libglade\libglade.defs >..\ext\libglade\gen_libglade.c \
-	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\libglade\gen_libglade.c | sed -e "s/^/extern /" > ..\ext\libglade\gen_ce_libglade.h \
-
+	php.exe -q ..\generator\generator.php -o ext\libglade\libglade.overrides -p libglade -r ext\gtk%%2b\gtk.defs ext\libglade\libglade.defs >..\ext\libglade\gen_libglade.c 
+	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\libglade\gen_libglade.c | sed -e "s/^/extern /" > ..\ext\libglade\gen_ce_libglade.h 
+	
 # End Custom Build
 
 !ENDIF 
@@ -229,28 +229,28 @@ SOURCE=..\ext\sqpane\sqpane.defs
 
 !IF  "$(CFG)" == "Scheme - Win32 Release_TS"
 
-USERDEP__LIBGL="..\ext\sqpane\sqpane.overrides"	"..\ext\sqpane\sqpane.defs"	
+USERDEP__SQPAN="..\ext\sqpane\sqpane.overrides"	"..\ext\sqpane\sqpane.defs"	
 # Begin Custom Build
-InputDir=..\ext\sqpane
+InputDir=\php\php-gtk\ext\sqpane
 InputPath=..\ext\sqpane\sqpane.defs
 
 "$(InputDir)\gen_sqpane.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	php.exe -q ..\generator\generator.php -o ext\sqpane\sqpane.overrides -p SQPane -r ext\gtk%%2b\gtk.defs ext\sqpane\sqpane.defs >..\ext\sqpane\gen_sqpane.c \
-	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\sqpane\gen_sqpane.c | sed -e "s/^/extern /" > ..\ext\sqpane\gen_ce_sqpane.h \
-
+	php.exe -q ..\generator\generator.php -o ext\sqpane\sqpane.overrides -p SQPane -r ext\gtk%%2b\gtk.defs ext\sqpane\sqpane.defs >..\ext\sqpane\gen_sqpane.c 
+	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\sqpane\gen_sqpane.c | sed -e "s/^/extern /" > ..\ext\sqpane\gen_ce_sqpane.h 
+	
 # End Custom Build
 
 !ELSEIF  "$(CFG)" == "Scheme - Win32 Debug_TS"
 
-USERDEP__LIBGL="..\ext\sqpane\sqpane.overrides"	"..\ext\sqpane\sqpane.defs"	
+USERDEP__SQPAN="..\ext\sqpane\sqpane.overrides"	"..\ext\sqpane\sqpane.defs"	
 # Begin Custom Build
-InputDir=..\ext\sqpane
+InputDir=\php\php-gtk\ext\sqpane
 InputPath=..\ext\sqpane\sqpane.defs
 
 "$(InputDir)\gen_sqpane.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	php.exe -q ..\generator\generator.php -o ext\sqpane\sqpane.overrides -p SQPane -r ext\gtk%%2b\gtk.defs ext\sqpane\sqpane.defs >..\ext\sqpane\gen_sqpane.c \
-	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\sqpane\gen_sqpane.c | sed -e "s/^/extern /" > ..\ext\sqpane\gen_ce_sqpane.h \
-
+	php.exe -q ..\generator\generator.php -o ext\sqpane\sqpane.overrides -p SQPane -r ext\gtk%%2b\gtk.defs ext\sqpane\sqpane.defs >..\ext\sqpane\gen_sqpane.c 
+	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\sqpane\gen_sqpane.c | sed -e "s/^/extern /" > ..\ext\sqpane\gen_ce_sqpane.h 
+	
 # End Custom Build
 
 !ENDIF 

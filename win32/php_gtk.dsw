@@ -15,6 +15,18 @@ Package=<4>
 
 ###############################################################################
 
+Project: "libglade"="..\EXT\LIBGLADE\libglade.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "php_gtk"=".\php_gtk.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -31,6 +43,18 @@ Package=<4>
 ###############################################################################
 
 Project: "php_win"=".\php_win.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "sqpane"="..\ext\sqpane\sqpane.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
