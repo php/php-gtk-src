@@ -29,7 +29,7 @@ HashTable php_gtk_ext_registry;
 GHashTable *php_gtk_class_hash = NULL;
 
 zend_module_entry gtk_module_entry = {
-	"gtk",
+	"php-gtk",
 	NULL,
 	PHP_MINIT(gtk),
 	PHP_MSHUTDOWN(gtk),

@@ -833,7 +833,7 @@ function create_pixmap()
 		$box2->pack_start($button, false, false);
 		$button->show();
 
-		list($pixmap, $mask) = Gdk::pixmap_create_from_xpm($window->window, null, "test.xpm");
+		list($pixmap, $mask) = Gdk::pixmap_create_from_xpm($window->window, null, "window.xpm");
 		$pixmapwid = &new GtkPixmap($pixmap, $mask);
 		$label = &new GtkLabel("Pixmap\ntest");
 		$box3 = &new GtkHBox();
