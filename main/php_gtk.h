@@ -308,6 +308,7 @@ static inline zend_class_entry* phpg_class_from_gtype(GType gtype)
 	} while (0)
 
 void phpg_register_exceptions();
+gboolean phpg_handler_marshal(gpointer user_data);
 zend_bool phpg_handle_gerror(GError **error TSRMLS_DC);
 PHP_GTK_API zval* phpg_throw_gerror_exception(const char *domain, long code, const char *message TSRMLS_DC);
 

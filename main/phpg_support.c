@@ -439,6 +439,50 @@ PHP_GTK_API zend_class_entry* phpg_create_class(GType gtype)
 }
 /* }}} */
 
+/* {{{ phpg_handler_marshal */
+gboolean phpg_handler_marshal(gpointer user_data)
+{
+    zval *callback_data = (zval *) user_data;
+    zval **callback, **extra = NULL;
+    zval **callback_filename = NULL, **callback_lineno = NULL;
+    zval ***handler_args = NULL;
+    int num_handler_args = 0;
+    zval *retval = NULL;
+    char *callback_name;
+    gboolean result;
+    TSRMLS_FETCH();
+
+    /* Callback is always passed as the first element. */
+    zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
+    zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
+    zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&callback_filename);
+    zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_lineno);
+
+    if (!zend_is_callable(*callback, 0, &callback_name)) {
+        php_error(E_WARNING, "Unable to invoke handler callback '%s' specified in %s on line %ld", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
+        efree(callback_name);
+        return 0;
+    }
+
+    handler_args = php_gtk_hash_as_array(*extra);
+    num_handler_args = zend_hash_num_elements(Z_ARRVAL_PP(extra));
+
+    call_user_function_ex(EG(function_table), NULL, *callback, &retval, num_handler_args, handler_args, 0, NULL TSRMLS_CC);
+
+    result = FALSE;
+    if (retval) {
+        result = zval_is_true(retval);
+        zval_ptr_dtor(&retval);
+    }
+
+    efree(callback_name);
+    if (handler_args)
+        efree(handler_args);
+
+    return result;
+}
+/* }}} */
+
 #endif
 
 /* vim: set fdm=marker et sts=4: */

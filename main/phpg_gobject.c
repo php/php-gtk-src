@@ -298,7 +298,8 @@ static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool use
     NOT_STATIC_METHOD();
 
     if (ZEND_NUM_ARGS() < 2) {
-        php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
+        php_error(E_WARNING, "%s::%s() requires at least 2 arguments, %d given",
+                  get_active_class_name(NULL TSRMLS_CC),
                   get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
         return;
     }
