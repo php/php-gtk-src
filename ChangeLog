@@ -1,3 +1,12 @@
+2002-04-09  Andrei Zmievski  <andrei@php.net>
+
+    * ext/gtk+/gtk.overrides
+      main/php_gtk.h
+      main/php_gtk_object.c:
+    Newer PHP version have streams, which can be used as inputs to gtk::input_add().
+    We need to handle them differently depending on what version of PHP we are
+    compiling with.
+
 2002-04-03  Andrei Zmievski  <andrei@php.net>
 
     * NEWS: *** empty log message ***
