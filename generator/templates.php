@@ -63,6 +63,23 @@ PHP_METHOD(%(class), %(name))
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }\n\n";
 
+const static_constructor_body = "
+PHP_METHOD(%(class), %(name))
+{
+%(var_list)\tGObject *wrapped_obj;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
+	}
+%(pre_code)
+	wrapped_obj = (GObject *)%(cname)(%(arg_list));
+%(post_code)
+	if (!wrapped_obj) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
+	}
+    phpg_gobject_new(wrapped_obj, &return_value TSRMLS_CC);
+}\n\n";
+
 const method1_call = "%s(%s(PHP_GTK_GET(this_ptr))%s)";
 const method2_call = "%s(PHP_%s_GET(this_ptr)%s)";
 

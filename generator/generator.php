@@ -604,6 +604,10 @@ class Generator {
                         fwrite($this->fp, $ctor_override . "\n");
                     } else {
                         $dict['name'] = $ctor_fe_name;
+                        $template = Templates::constructor_body;
+                        if ($ctor_fe_name != '__construct') {
+                            $template = Templates::static_constructor_body;
+                        }
                         $code = $this->write_callable($ctor, Templates::constructor_body, false, false, $dict);
                         fwrite($this->fp, $code);
                     }
@@ -618,6 +622,7 @@ class Generator {
                         $object->ce_flags[] = 'ZEND_ACC_ABSTRACT';
                     }
                 }
+                $first = 0;
             }
         } else {
             // mark class as abstract
