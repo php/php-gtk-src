@@ -1,3 +1,8 @@
+2001-09-16  Frank M. Kromann  <frank@frontbase.com>
+
+    * generator/generator.php:
+    Adding hack to prevent gutter_size property generation on Win32
+
 2001-09-06  Frank M. Kromann  <frank@frontbase.com>
 
     * ext/gtk+/gtk.overrides
