@@ -1,3 +1,4 @@
+    - added GdkWindow::set_icon() method. (Andrei)
     - implemented GtkList methods insert_items() and prepend_items. (Andrei)
     - implemented new PHP-like build system that supports adding extensions to
       PHP-GTK. (Andrei)

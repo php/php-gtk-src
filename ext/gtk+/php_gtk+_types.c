@@ -537,6 +537,30 @@ PHP_FUNCTION(gdk_window_property_delete)
 	gdk_property_delete(PHP_GDK_WINDOW_GET(this_ptr), property);
 }
 
+PHP_FUNCTION(gdk_window_set_icon)
+{
+	zval *php_icon_window, *php_pixmap, *php_mask;
+	GdkWindow *icon_window = NULL;
+	GdkPixmap *pixmap = NULL;
+	GdkBitmap *mask = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "NNN", &php_icon_window,
+							gdk_window_ce, &php_pixmap, gdk_pixmap_ce,
+							&php_mask, gdk_bitmap_ce))
+		return;
+
+	if (Z_TYPE_P(php_icon_window) != IS_NULL)
+		icon_window = PHP_GDK_WINDOW_GET(php_icon_window);
+	if (Z_TYPE_P(php_pixmap) != IS_NULL)
+		pixmap = PHP_GDK_PIXMAP_GET(php_pixmap);
+	if (Z_TYPE_P(php_mask) != IS_NULL)
+		mask = PHP_GDK_BITMAP_GET(php_mask);
+
+	gdk_window_set_icon(PHP_GDK_WINDOW_GET(this_ptr), icon_window, pixmap, mask);
+}
+
 static function_entry php_gdk_window_functions[] = {
 	{"gdkwindow",		PHP_FN(wrap_no_direct_constructor), NULL},
 	{"raise", 			PHP_FN(gdk_window_raise), NULL},
@@ -547,6 +571,7 @@ static function_entry php_gdk_window_functions[] = {
 	{"property_get", 	PHP_FN(gdk_window_property_get), NULL},
 	{"property_change", PHP_FN(gdk_window_property_change), NULL},
 	{"property_delete", PHP_FN(gdk_window_property_delete), NULL},
+	{"set_icon",		PHP_FN(gdk_window_set_icon), NULL},
 	{NULL, NULL, NULL}
 };
 
