@@ -86,9 +86,10 @@ SOURCE="..\ext\gtk+\gdk.defs"
 
 !IF  "$(CFG)" == "Scheme - Win32 Release_TS"
 
+USERDEP__GDK_D="..\ext\gtk+\gdk.overrides"	"..\ext\gtk+\gdk.defs"	
 # Begin Custom Build
-InputDir=\php\php-gtk\ext\gtk+
-InputPath=..\ext\gtk+\gdk.defs
+InputDir=\PHP\php-gtk\ext\gtk+
+InputPath="..\ext\gtk+\gdk.defs"
 
 "$(InputDir)\gen_gdk.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	php.exe -q ..\generator\generator.php -o ext\gtk%%2b\gdk.overrides -p gdk ext\gtk%%2b\gdk.defs >..\ext\gtk+\gen_gdk.c
@@ -97,9 +98,10 @@ InputPath=..\ext\gtk+\gdk.defs
 
 !ELSEIF  "$(CFG)" == "Scheme - Win32 Debug_TS"
 
+USERDEP__GDK_D="..\ext\gtk+\gdk.overrides"	"..\ext\gtk+\gdk.defs"	
 # Begin Custom Build
-InputDir=\php\php-gtk\ext\gtk+
-InputPath=..\ext\gtk+\gdk.defs
+InputDir=\PHP\php-gtk\ext\gtk+
+InputPath="..\ext\gtk+\gdk.defs"
 
 "$(InputDir)\gen_gdk.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	php.exe -q ..\generator\generator.php -o ext\gtk%%2b\gdk.overrides -p gdk ext\gtk%%2b\gdk.defs >..\ext\gtk+\gen_gdk.c
@@ -116,9 +118,9 @@ SOURCE=..\generator\generator.php
 !IF  "$(CFG)" == "Scheme - Win32 Release_TS"
 
 # PROP Ignore_Default_Tool 1
-USERDEP__GENER="..\ext\gtk+\gen_gtk.c"	
+USERDEP__GENER="..\ext\gtk+\gen_gtk.c"	"..\ext\gtk+\gen_gdk.c"	
 # Begin Custom Build
-InputDir=\php\php-gtk\generator
+InputDir=\PHP\php-gtk\generator
 InputPath=..\generator\generator.php
 
 BuildCmds= \
@@ -136,13 +138,15 @@ BuildCmds= \
 
 !ELSEIF  "$(CFG)" == "Scheme - Win32 Debug_TS"
 
+USERDEP__GENER="..\ext\gtk+\gen_gtk.c"	"..\ext\gtk+\gen_gdk.c"	
 # Begin Custom Build
-InputDir=\php\php-gtk\generator
+InputDir=\PHP\php-gtk\generator
 InputPath=..\generator\generator.php
 
 BuildCmds= \
-	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\gtk%%2b\gen_gtk.c ..\ext\gtk%%2b\gen_gdk.c | sed -e "s!^!extern !" > ..\ext\gtk%%2b\gen_gtk.h \
-	grep -h "PHP_GTK_EXPORT_FUNC" ..\ext\gtk%%2b\gen_gtk.c ..\ext\gtk%%2b\gen_gdk.c | sed -e 's!$$!;!' >> ..\ext\gtk%%2b\gen_gtk.h \
+	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\gtk+\gen_gtk.c ..\ext\gtk+\gen_gdk.c | sed -e "s/^/extern /" > ..\ext\gtk+\gen_ce_gtk.h \
+	grep -h "^PHP_GTK_EXPORT_CE" ..\ext\gtk+\gen_gtk.c ..\ext\gtk+\gen_gdk.c | sed -e "s/^/extern /" > ..\ext\gtk+\gen_gtk.h \
+	grep -h "PHP_GTK_EXPORT_FUNC" ..\ext\gtk+\gen_gtk.c ..\ext\gtk+\gen_gdk.c | sed -e "s/*obj)/&;/" >> ..\ext\gtk+\gen_gtk.h \
 	
 
 "$(InputDir)\gen_ce_gtk.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
@@ -161,9 +165,10 @@ SOURCE="..\ext\gtk+\gtk.defs"
 
 !IF  "$(CFG)" == "Scheme - Win32 Release_TS"
 
+USERDEP__GTK_D="..\ext\gtk+\gtk.overrides"	"..\ext\gtk+\gtk.defs"	
 # Begin Custom Build
-InputDir=\php\php-gtk\ext\gtk+
-InputPath=..\ext\gtk+\gtk.defs
+InputDir=\PHP\php-gtk\ext\gtk+
+InputPath="..\ext\gtk+\gtk.defs"
 
 "$(InputDir)\gen_gtk.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	php.exe -q ..\generator\generator.php -o ext\gtk%%2b\gtk.overrides -p gtk ext\gtk%%2b\gtk.defs >..\ext\gtk+\gen_gtk.c
@@ -172,9 +177,10 @@ InputPath=..\ext\gtk+\gtk.defs
 
 !ELSEIF  "$(CFG)" == "Scheme - Win32 Debug_TS"
 
+USERDEP__GTK_D="..\ext\gtk+\gtk.overrides"	"..\ext\gtk+\gtk.defs"	
 # Begin Custom Build
-InputDir=\php\php-gtk\ext\gtk+
-InputPath=..\ext\gtk+\gtk.defs
+InputDir=\PHP\php-gtk\ext\gtk+
+InputPath="..\ext\gtk+\gtk.defs"
 
 "$(InputDir)\gen_gtk.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	php.exe -q ..\generator\generator.php -o ext\gtk%%2b\gtk.overrides -p gtk ext\gtk%%2b\gtk.defs >..\ext\gtk+\gen_gtk.c
@@ -190,19 +196,21 @@ SOURCE=..\ext\libglade\libglade.defs
 
 !IF  "$(CFG)" == "Scheme - Win32 Release_TS"
 
+USERDEP__LIBGL="..\ext\libglade\libglade.overrides"	"..\ext\libglade\libglade.defs"	
 # Begin Custom Build
-InputDir=\php\php-gtk\ext\libglade
+InputDir=\PHP\php-gtk\ext\libglade
 InputPath=..\ext\libglade\libglade.defs
 
-"$(InputDir)\php_gtk_libglade.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+"$(InputDir)\gen_libglade.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	php.exe -q ..\generator\generator.php -o ext\libglade\libglade.overrides -p libglade ext\libglade\libglade.defs >..\ext\libglade\gen_libglade.c
 
 # End Custom Build
 
 !ELSEIF  "$(CFG)" == "Scheme - Win32 Debug_TS"
 
+USERDEP__LIBGL="..\ext\libglade\libglade.overrides"	"..\ext\libglade\libglade.defs"	
 # Begin Custom Build
-InputDir=\php\php-gtk\ext\libglade
+InputDir=\PHP\php-gtk\ext\libglade
 InputPath=..\ext\libglade\libglade.defs
 
 "$(InputDir)\gen_libglade.c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
