@@ -972,7 +972,7 @@ PHP_FUNCTION(gdk_colormap_alloc)
 	}
 
 	if (!gdk_colormap_alloc_color(PHP_GDK_COLORMAP_GET(this_ptr), &color, writeable, best_match)) {
-		php_error(E_WARNING, "%s() could not allocate color");
+		php_error(E_NOTICE, "%s() could not allocate color");
 		return;
 	}
 

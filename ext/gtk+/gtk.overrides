@@ -637,10 +637,10 @@ PHP_FUNCTION(gtk_check_button_new)
 	if (label) {
 #ifdef PHP_WIN32
 		utf8_label = g_convert(label, strlen(label), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
-		wrapped_obj = (GtkObject *)gtk_check_menu_item_new_with_label(utf8_label);
+		wrapped_obj = (GtkObject *)gtk_check_button_new_with_label(utf8_label);
 		if (utf8_label) g_free(utf8_label);
 #else
-		wrapped_obj = (GtkObject *)gtk_check_menu_item_new_with_label(label);		
+		wrapped_obj = (GtkObject *)gtk_check_button_new_with_label(label);		
 #endif
 	}
     else    
