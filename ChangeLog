@@ -1,3 +1,31 @@
+2005-03-04  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk.c
+      main/php_gtk.h
+      main/phpg_gboxed.c
+      main/phpg_gobject.c
+      main/phpg_gtype.c:
+      - Fix "Invalid library: php_gtk2.so" message.
+      - Pass TSRM parameters where needed.
+
+    * ext/gtk+/gdk.overrides
+      main/phpg_gboxed.c:
+      Implement EXPOSE event type in GdkEvent properties.
+
+    * ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides:
+      - Implement GdkFont::extents().
+      - Fix php_gtk_build_value() calls due to API changes.
+
+    * main/php_gtk.h
+      main/php_gtk_util.c:
+      Make php_gtk_build_value() behave like other functions: if a NULL zval*
+      is passed in, create a value, otherwise work on the passed in one.
+      Cleans up the mess it used to create before.
+
+    * generator/templates.php:
+      Fix boxed type access.
+
 2005-03-01  Andrei Zmievski  <andrei@gravitonic.com>
 
     * php_gtk.m4
