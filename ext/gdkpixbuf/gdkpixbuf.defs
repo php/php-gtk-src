@@ -113,11 +113,11 @@
   (c-name gdk_pixbuf_new)
   (is-constructor-of GdkPixbuf)
   (return-type GdkPixbuf*)
-  (parameter (type-and-name GdkColorspace colorspace))
-  (parameter (type-and-name gboolean has_alpha))
-  (parameter (type-and-name int bits_per_sample))
   (parameter (type-and-name int width))
   (parameter (type-and-name int height))
+  (parameter (type-and-name gboolean has_alpha))
+  (parameter (type-and-name GdkColorspace colorspace) (default GDK_COLORSPACE_RGB))
+  (parameter (type-and-name int bits_per_sample) (default 8))
 )
 
 (method copy
@@ -233,12 +233,12 @@
   (parameter (type-and-name int alpha_threshold))
 )
 
-(method get_from_drawable
-  (of-object Pixbuf (Gdk))
+(function get_from_drawable
   (c-name gdk_pixbuf_get_from_drawable)
   (return-type GdkPixbuf*)
+  (parameter (type-and-name GdkPixbuf* dest) (null-ok))
   (parameter (type-and-name GdkDrawable* src))
-  (parameter (type-and-name GdkColormap* cmap))
+  (parameter (type-and-name GdkColormap* cmap) (null-ok))
   (parameter (type-and-name int src_x))
   (parameter (type-and-name int src_y))
   (parameter (type-and-name int dest_x))

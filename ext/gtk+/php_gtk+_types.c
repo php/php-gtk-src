@@ -2281,7 +2281,7 @@ static int style_helper_set(style_array_type type, gpointer array, zval *value, 
 				case STYLE_PIXMAP_ARRAY:
 					{
 						GdkWindow **pixmap_array = (GdkWindow **)array;
-						if (!php_gtk_check_class(value, gdk_window_ce) && Z_TYPE_P(value) != IS_NULL) {
+						if (!php_gtk_check_class(value, gdk_pixmap_ce) && Z_TYPE_P(value) != IS_NULL) {
 							php_error(E_WARNING, "can only assign a GdkPixmap or null");
 							return PG_ERROR;
 						}

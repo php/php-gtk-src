@@ -92,3 +92,29 @@ PHP_FUNCTION(gdk_pixbuf_fill)
 		}
 	}
 }
+%%
+override gdk_pixbuf_new
+PHP_FUNCTION(gdk_pixbuf_new)
+{
+    long width, height;
+    zend_bool has_alpha;
+    GdkPixbuf *wrapped_obj;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iib", &width, &height, &has_alpha)) {
+        php_gtk_invalidate(this_ptr);
+        return;
+    }
+
+    wrapped_obj = (GdkPixbuf *)gdk_pixbuf_new(GDK_COLORSPACE_RGB, (gboolean)has_alpha, 8, (int)width, (int)height);
+    if (!wrapped_obj) {
+        php_error(E_WARNING, "%s(): could not create GdkPixbuf object",
+                  get_active_function_name(TSRMLS_C));
+        php_gtk_invalidate(this_ptr);
+        return;
+    }
+
+    php_gtk_set_object(this_ptr, wrapped_obj, le_gdk_pixbuf);
+
+}
