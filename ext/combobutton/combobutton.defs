@@ -1,9 +1,9 @@
 ;; -*- scheme -*-
 ; object definitions ...
-(object ComboButton
+(object Combonutton
   (in-module Gtk)
   (parent Button (Gtk))
-  (c-name GtkComboButton)
+  (c-name GtkCombobutton)
   (field (type-and-name guint x_offset))
   (field (type-and-name guint y_offset))
   (field (type-and-name GtkArrowType arrowdir))
@@ -21,7 +21,7 @@
 
 (function gtk_combobutton_new
   (c-name gtk_combobutton_new)
-  (is-constructor-of GtkComboButton)
+  (is-constructor-of GtkCombobutton)
   (return-type GtkWidget*)
 )
 
