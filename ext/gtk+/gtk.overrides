@@ -1050,6 +1050,9 @@ PHP_FUNCTION(gtk_combo_set_popdown_strings)
 {
 	zval *php_list, **item;
 	GList *list = NULL;
+#ifdef PHP_WIN32
+	gchar *utf8_text = NULL;
+#endif
 
 	NOT_STATIC_METHOD();
 
@@ -1059,7 +1062,13 @@ PHP_FUNCTION(gtk_combo_set_popdown_strings)
 	zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_list));
 	while (zend_hash_get_current_data(Z_ARRVAL_P(php_list), (void **)&item) == SUCCESS) {
 		convert_to_string_ex(item);
+#ifdef PHP_WIN32
+		utf8_text = g_convert(Z_STRVAL_PP(item), Z_STRLEN_PP(item), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+		list = g_list_append(list, utf8_text);
+		if (utf8_text) g_free(utf8_text);
+#else
 		list = g_list_append(list, Z_STRVAL_PP(item));
+#endif
 		zend_hash_move_forward(Z_ARRVAL_P(php_list));
 	}
 
