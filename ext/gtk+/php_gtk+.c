@@ -184,7 +184,7 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 
 PHP_GTK_XSHUTDOWN_FUNCTION(gtk_plus)
 {
-	gtk_exit(0);
+	//gtk_exit(0);
 
 	return SUCCESS;
 }
