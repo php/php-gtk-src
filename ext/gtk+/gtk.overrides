@@ -1481,6 +1481,51 @@ PHP_FUNCTION(gtk_ctree_node_get_pixtext)
 	*return_value = *php_gtk_build_value("(siNN)", text, (int)spacing,
 										 php_pixmap, php_mask);
 }
+
+%%
+override gtk_ctree_find_by_row_data
+PHP_FUNCTION(gtk_ctree_find_by_row_data)
+{
+	zval *php_node, *data, *php_ret;
+	GtkCTreeNode *ret;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OV", &php_node, gtk_ctree_node_ce,
+							&data))
+		return;
+
+	ret = gtk_ctree_find_by_row_data(GTK_CTREE(PHP_GTK_GET(this_ptr)),
+									 PHP_GTK_CTREE_NODE_GET(php_node), data);
+	php_ret = php_gtk_ctree_node_new(ret);
+	SEPARATE_ZVAL(&php_ret);
+	*return_value = *php_ret;
+}
+
+%%
+override gtk_ctree_find_all_by_row_data
+PHP_FUNCTION(gtk_ctree_find_all_by_row_data)
+{
+	zval *php_node, *data;
+	zval *list, *item;
+	GList *ret, *tmp;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OV", &php_node, gtk_ctree_node_ce,
+							&data))
+		return;
+
+	ret = gtk_ctree_find_all_by_row_data(GTK_CTREE(PHP_GTK_GET(this_ptr)),
+										 PHP_GTK_CTREE_NODE_GET(php_node), data);
+	array_init(return_value);
+	for (tmp = ret; tmp != NULL; tmp = tmp->next) {
+		item = php_gtk_ctree_node_new((GtkCTreeNode *)tmp->data);
+		add_next_index_zval(return_value, item);
+	}
+	g_list_free(ret);
+}
+
 %%
 getprop GtkCTree selection
 	GList *tmp;

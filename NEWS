@@ -1,3 +1,4 @@
+    - added GtkCTree methods find_by_row_data, find_all_by_row_data. (Andrei)
     - added gtkhtml extension which provides support for GtkHTML, an HTML
       rendering widget. (Alan Knowles)
     - added GtkClist methods find_row_from_data(), get_pixmap(). (Andrei)
