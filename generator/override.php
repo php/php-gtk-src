@@ -19,6 +19,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/* $Id$ */
+
 class Overrides {
 	var $ignores 		= array();
 	var $glob_ignores 	= array();
@@ -68,8 +70,8 @@ class Overrides {
 				break;
 
 			case 'override':
-				list($func_cname, $func_name) = $words;
-				$this->overrides[$func_cname] = array($func_name, $rest);
+				list($func_cname) = $words;
+				$this->overrides[$func_cname] = array($func_cname, $rest);
 				break;
 		}
 	}
