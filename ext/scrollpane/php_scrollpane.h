@@ -27,6 +27,8 @@
 
 #if HAVE_SCROLLPANE
 
+#include "gen_ce_scrollpane.h"
+
 extern php_gtk_ext_entry scrollpane_ext_entry;
 #define scrollpane_ext_ptr &scrollpane_ext_entry
 

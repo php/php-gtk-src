@@ -27,6 +27,8 @@
 
 #if HAVE_SQPANE
 
+#include "gen_ce_sqpane.h"
+
 extern php_gtk_ext_entry sqpane_ext_entry;
 #define sqpane_ext_ptr &sqpane_ext_entry
 

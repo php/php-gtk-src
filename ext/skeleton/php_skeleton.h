@@ -27,6 +27,8 @@
 
 #if HAVE_SKELETON
 
+#include "gen_ce_skeleton.h"
+
 extern php_gtk_ext_entry skeleton_ext_entry;
 #define skeleton_ext_ptr &skeleton_ext_entry
 

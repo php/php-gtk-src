@@ -27,6 +27,8 @@
 
 #if HAVE_SCINTILLA
 
+#include "gen_ce_scintilla.h"
+
 extern php_gtk_ext_entry scintilla_ext_entry;
 #define scintilla_ext_ptr &scintilla_ext_entry
 

@@ -27,6 +27,8 @@
 
 #if HAVE_SPANED
 
+#include "gen_ce_spaned.h"
+
 extern php_gtk_ext_entry spaned_ext_entry;
 #define spaned_ext_ptr &spaned_ext_entry
 

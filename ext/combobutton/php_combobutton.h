@@ -27,6 +27,9 @@
 
 #if HAVE_COMBOBUTTON
 
+#include "gtkcombobutton.h"
+#include "gen_ce_combobutton.h"
+
 extern php_gtk_ext_entry combobutton_ext_entry;
 #define combobutton_ext_ptr &combobutton_ext_entry
 

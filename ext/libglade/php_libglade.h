@@ -28,6 +28,7 @@
 #if HAVE_LIBGLADE
 
 #include <glade/glade.h>
+#include "gen_ce_libglade.h"
 
 extern php_gtk_ext_entry libglade_ext_entry;
 #define libglade_ext_ptr &libglade_ext_entry

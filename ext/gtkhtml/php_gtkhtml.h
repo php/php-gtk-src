@@ -26,7 +26,9 @@
 #include "php_gtk.h"
 
 #if HAVE_HTML
+
 #include <gtkhtml/gtkhtml.h>
+#include "gen_ce_gtkhtml.h"
 
 extern int le_gtkhtmlstream;
 

@@ -27,6 +27,8 @@
 
 #if HAVE_PIEMENU
 
+#include "gen_ce_piemenu.h"
+
 extern php_gtk_ext_entry piemenu_ext_entry;
 #define piemenu_ext_ptr &piemenu_ext_entry
 
