@@ -25,6 +25,7 @@
 
 #include "php_gtk_module.h"
 #include "gtk/gtkinvisible.h"
+#include "ext/standard/file.h "
 
 #if HAVE_PHP_GTK
 
@@ -110,8 +111,6 @@ int php_gtk_get_flag_value(GtkType flag_type, zval *flag_val, int *result);
 zval php_gtk_get_property(zend_property_reference *property_reference);
 int php_gtk_set_property(zend_property_reference *property_reference, zval *value);
 void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference *property_reference);
-
-extern int php_file_le_fopen();
 
 static inline void php_gtk_register_prop_getter(zend_class_entry *ce, prop_getter_t getter)
 {
