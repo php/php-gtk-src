@@ -1,3 +1,15 @@
+2003-10-01  Frank M. Kromann  <frank@kromann.info>
+
+    * (GTK2)
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c:
+      Adding missing TSRMLS_FETCH() and TSRMLS_CC
+
+    * (GTK2)
+      main/php_gtk.h
+      main/php_gtk_object.c:
+      Adding missing TSRMLS_FETCH()
+
 2003-09-30  Alan Knowles  <alan@akbkhome.com>
 
     * (GTK2)
