@@ -1,3 +1,37 @@
+2001-08-11  Andrei Zmievski  <andrei@ispi.net>
+
+    * NEWS: *** empty log message ***
+
+    * main/php_gtk_ext.c.in
+      build2/genext.sh
+      ext/gtk+/config.m4
+      ext/libglade/config.m4
+      ext/scintilla/.cvsignore
+      ext/scintilla/Makefile.in
+      ext/scintilla/config.m4
+      ext/scintilla/php_scintilla.c
+      ext/scintilla/php_scintilla.h
+      ext/scintilla/scintilla.defs
+      ext/scintilla/scintilla.overrides
+      generator/generator.php:
+    - Fixed a couple of build issues.
+    - Fixed a problem where extensions other than gtk+ would not have properly
+      registered base classes.
+    - Added initial support for GtkScintilla text editing widget.
+
+    * ext/libglade/libglade.overrides
+      generator/generator.php
+      generator/templates.php
+      main/php_gtk.c
+      main/php_gtk.h
+      ext/gtk+/Makefile.in
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+_types.c:
+    - Implemented a workaround for registering classes with proper name
+      capitalization.
+    - Removed the unnecessary wrap_ prefix from internal function names.
+
 2001-08-10  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/gtk.overrides
