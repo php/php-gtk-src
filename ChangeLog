@@ -1,3 +1,17 @@
+2002-03-28  Andrei Zmievski  <andrei@php.net>
+
+    * ext/gtk+/php_gtk+_types.c:
+    A little fix to make sure that only GdkWindow really has access to these props.
+
+    * NEWS
+      TODO: *** empty log message ***
+
+    * ext/gtk+/php_gtk+_types.c:
+    Fixed GdkBitmap mess, it now has its own set of functions and you can
+    access its properties without getting an error. Also, some of the window
+    properties make sense only for GdkWindow so GdkPixmap/GdkBitmap get a
+    restricted set.
+
 2002-03-25  Andrei Zmievski  <andrei@ispi.net>
 
     * TODO: New stuff.
