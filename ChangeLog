@@ -1,3 +1,37 @@
+2004-07-29  Andrei Zmievski  <andreiz@gmail.com>
+
+    * (PHP_GTK_1)
+      ext/gtk+/gtk.overrides:
+      Implement append_element(), prepend_element(), and insert_element()
+      methods of GtkToolbar class.
+
+    * (PHP_GTK_1)
+      ext/gtk+/gtk.overrides:
+      Implement GtkToolbar::prepend_item() and GtkToolbar::insert_item().
+
+    * (PHP_GTK_1)
+      ext/canvas/canvas.php:
+      Update.
+
+    * (PHP_GTK_1)
+      ext/extra/plot.php:
+      Update example.
+
+    * (PHP_GTK_1)
+      ext/extra/extra.overrides
+      ext/extra/php_extra.c
+      ext/extra/sheet.php
+      ext/gtk+/php_gtk+.c
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_object.c:
+      Revert Alan's callback registry patch until later.
+
+    * (PHP_GTK_1)
+      ext/gtk+/gtk.overrides:
+      - Implement GtkToolbar::append_item().
+      * Revert Alan's callback registry patch until later.
+
 2004-07-27  Andrei Zmievski  <andreiz@gmail.com>
 
     * main/php_gtk.h
