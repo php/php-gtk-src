@@ -97,7 +97,7 @@ class Defs_Parser {
 	function _parse_or_load($defs_file)
 	{
 		$cache_file = $defs_file.'.cache';
-		if (is_file($cache_file) &&
+		if (@is_file($cache_file) &&
 			filemtime($cache_file) > filemtime($defs_file)) {
 			error_log("Loading cache \"$cache_file\"");
 			$fp = fopen($cache_file, 'r');
