@@ -2215,8 +2215,11 @@ ignore gtk_menu_item_new_with_label
 override gtk_menu_item_new
 PHP_FUNCTION(gtk_menu_item_new)
 {
-	char *label = NULL;
 	GtkObject *wrapped_obj;
+	char *label = NULL;
+#ifdef PHP_WIN32
+	gchar *utf8_label = NULL;
+#endif
 	
 	NOT_STATIC_METHOD();
 
@@ -2225,8 +2228,15 @@ PHP_FUNCTION(gtk_menu_item_new)
 		return;
 	}
 
-	if (label)
+	if (label) {
+#ifdef PHP_WIN32
+		utf8_label = g_convert(label, strlen(label), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
+		wrapped_obj = (GtkObject *)gtk_menu_item_new_with_label(utf8_label);
+		if (utf8_label) g_free(utf8_label);
+#else
 		wrapped_obj = (GtkObject *)gtk_menu_item_new_with_label(label);		
+#endif
+	}
 	else
 	    wrapped_obj = (GtkObject *)gtk_menu_item_new();
 
@@ -2510,9 +2520,9 @@ PHP_FUNCTION(gtk_radio_button_new)
 #ifdef PHP_WIN32
 		utf8_text = g_convert(text, strlen(text), "UTF-8", GTK_G(codepage), NULL, NULL, NULL);
 		if (!group)
-			wrapped_obj = (GtkObject *)gtk_radio_button_new_with_label(NULL, text);
+			wrapped_obj = (GtkObject *)gtk_radio_button_new_with_label(NULL, utf8_text);
 		else
-			wrapped_obj = (GtkObject *)gtk_radio_button_new_with_label(group->group, text);
+			wrapped_obj = (GtkObject *)gtk_radio_button_new_with_label(group->group, utf8_text);
 		if (utf8_text) g_free(utf8_text);
 #else
 		if (!group)
