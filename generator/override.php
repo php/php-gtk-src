@@ -71,7 +71,11 @@ class Overrides {
 
 			case 'override':
 				list($func_cname) = $words;
-				$this->overrides[$func_cname] = array($func_cname, $rest);
+				if (isset($words[1])) 
+					$func_name = $words[1];
+				else
+					$func_name = $func_cname;
+				$this->overrides[$func_cname] = array($func_name, $rest);
 				break;
 		}
 	}
