@@ -1,3 +1,35 @@
+2001-05-02  James Moore  <James@phpuk.org>
+
+    * docs/templates/classentry.tpl: Clean up the classentry slightly
+
+    * docs/stylesheets/xsl/html/hierarchy.xsl:
+    Correct the indenting of the class hierarchy
+
+2001-05-02  Andrei Zmievski  <andrei@ispi.net>
+
+    * generator/templates.php
+      src/php_gtk.h
+      src/php_gtk_object.c
+      src/php_gtk_types.c:
+    Changed the variable name to result to indicate what it really does.
+    Added PG_ERROR code because SUCCESS and FAILURE are not flexible enough.
+
+    * src/php_gtk_object.c:
+    Check for getter_retval before assigning the result.
+
+    * src/php_gtk.h: Remove experimental definitions.
+
+    * src/php_gtk_object.c
+      src/php_gtk_types.c
+      test/testgtkrc
+      docs/configure.in
+      generator/templates.php:
+    * Since Zend engine's object overloading is fairly broken, I implemented an
+      emulation layer that takes care of all the necessary details. So, now it's
+      possible to set properties on Gtk objects and read them later, e.g.
+      $window->foo[0] = $clist.
+    * Cleaned up boxed types get property handlers to conform to the new system.
+
 2001-05-01  James Moore  <James@phpuk.org>
 
     * docs/manual.xml.in: Whitespace
