@@ -49,8 +49,6 @@ PHP_FUNCTION(gdk_pixmap_create_from_xpm)
 	}
 	
 	*return_value = *php_gtk_build_value("(NN)", php_gdk_pixmap_new(pixmap), php_gdk_bitmap_new(mask));
-	gdk_pixmap_unref(pixmap);
-	gdk_bitmap_unref(mask);
 }
 %%
 override gdk_pixmap_create_from_xpm_d
@@ -91,8 +89,6 @@ PHP_FUNCTION(gdk_pixmap_create_from_xpm_d)
 	}
 
 	*return_value = *php_gtk_build_value("(NN)", php_gdk_pixmap_new(pixmap), php_gdk_bitmap_new(mask));
-	gdk_pixmap_unref(pixmap);
-	gdk_bitmap_unref(mask);
 }
 %%
 override gdk_pixmap_colormap_create_from_xpm
@@ -125,8 +121,6 @@ PHP_FUNCTION(gdk_pixmap_colormap_create_from_xpm)
 	}
 
 	*return_value = *php_gtk_build_value("(NN)", php_gdk_pixmap_new(pixmap), php_gdk_bitmap_new(mask));
-	gdk_pixmap_unref(pixmap);
-	gdk_bitmap_unref(mask);
 }
 %%
 override gdk_pixmap_colormap_create_from_xpm_d
@@ -172,6 +166,4 @@ PHP_FUNCTION(gdk_pixmap_colormap_create_from_xpm_d)
 	}
 
 	*return_value = *php_gtk_build_value("(NN)", php_gdk_pixmap_new(pixmap), php_gdk_bitmap_new(mask));
-	gdk_pixmap_unref(pixmap);
-	gdk_bitmap_unref(mask);
 }

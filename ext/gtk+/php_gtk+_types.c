@@ -945,7 +945,7 @@ zval *php_gdk_bitmap_new(GdkWindow *bitmap)
 	object_init_ex(result, gdk_bitmap_ce);
 
 	gdk_bitmap_ref(bitmap);
-	php_gtk_set_object(result, bitmap, (php_gtk_dtor_t)gdk_window_unref, 1);
+	php_gtk_set_object(result, bitmap, (php_gtk_dtor_t)gdk_bitmap_unref, 1);
 
 	return result;
 }
@@ -971,7 +971,9 @@ static void gdk_window_get_property(zval *return_value, zval *object, char *prop
 		gdk_window_get_size(win, NULL, &y);
 		RETURN_LONG(y);
 	} else if (!strcmp(prop_name, "colormap")) {
-		*return_value = *php_gdk_colormap_new(gdk_window_get_colormap(win));
+		if (Z_OBJCE_P(object) != gdk_bitmap_ce) {
+			*return_value = *php_gdk_colormap_new(gdk_window_get_colormap(win));
+		}
 		return;
 	} else if (!strcmp(prop_name, "type")) {
 		RETURN_LONG(gdk_window_get_type(win));
