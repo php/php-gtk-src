@@ -1,4 +1,15 @@
 ;; -*- scheme -*-
+;; Structs
+
+(struct Rectangle
+  (in-module Gdk)
+  (c-name GdkRectangle)
+  (field (type-and-name gint16 x))
+  (field (type-and-name gint16 y))
+  (field (type-and-name guint16 width))
+  (field (type-and-name guint16 height))
+)
+
 ;; Enumerations and flags ...
 
 (flags ColorInfoFlags

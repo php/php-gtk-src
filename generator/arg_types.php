@@ -86,6 +86,16 @@ class Arg_Type {
 	{
 		trigger_error("This is an abstract class", E_USER_ERROR);
 	}
+
+	function write_to_prop($obj, $name, $source)
+	{
+		trigger_error("This is an abstract class", E_USER_ERROR);
+	}
+
+	function write_from_prop($name)
+	{
+		trigger_error("This is an abstract class", E_USER_ERROR);
+	}
 }
 
 class None_Arg extends Arg_Type {
@@ -113,7 +123,9 @@ class String_Arg extends Arg_Type {
 			$arg_list[]   = 'utf8_' . $name;
 			$extra_post_code[]   = "\tg_free(utf8_$name);\n";
 			$extra_pre_code[] = "\tutf8_$name = g_convert($name, strlen($name), \"UTF-8\", \"CP1252\", NULL, NULL, NULL);\n";
-		}
+		} else
+			$arg_list[] = $name;
+
 		return 's';
 	}
 	
@@ -180,6 +192,20 @@ class Int_Arg extends Arg_Type {
 		$var_list->add('long', 'php_retval');
 		return "	php_retval = %s;\n" .
 			   "%s	RETURN_LONG(php_retval);";
+	}
+
+	function write_to_prop($obj, $name, $source)
+	{
+		return "	add_property_long($obj, \"$name\", $source);\n";
+	}
+
+	function write_from_prop($name)
+	{
+		return "	if (zend_hash_find(Z_OBJPROP_P(wrapper), \"$name\", sizeof(\"$name\"), (void **)&item) == SUCCESS && Z_TYPE_PP(item) == IS_LONG)\n" .
+        	   "		obj->$name = Z_LVAL_PP(item);\n" .
+    		   "	else\n" .
+        	   "		return 0;\n\n";
+
 	}
 }
 
@@ -296,6 +322,39 @@ class Flags_Arg extends Arg_Type {
 		$var_list->add('long', 'php_retval');
 		return "	php_retval = %s;\n" .
 			   "%s	RETURN_LONG(php_retval);";
+	}
+}
+
+class Struct_Arg extends Arg_Type {
+	var $struct_name = null;
+
+	function Struct_Arg($struct_name)
+	{
+		$this->struct_name = $struct_name;
+		$this->struct_tpl 	=  "	if (!php_%s_get(php_%s, &%s)) {\n" .
+							   "		%sreturn;\n" .
+							   "	}\n\n";
+	}
+
+	function write_param($type, $name, $default, $null_ok, &$var_list,
+						 &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
+	{
+		$var_list->add('zval', '*php_' . $name);
+		$var_list->add($this->struct_name, $name);
+		$typename = strtolower(substr(convert_typename($this->struct_name), 1));
+		$parse_list[] 	= '&php_' . $name . ', ' . $typename . '_ce';
+		$arg_list[] 	= '&' . $name;
+		$extra_pre_code[] = sprintf($this->struct_tpl, $typename, $name, $name,
+									$in_constructor ?  "php_gtk_invalidate(this_ptr);\n\t\t" : "");
+
+		return 'O';
+	}
+
+	function write_return($type, &$var_list, $separate)
+	{
+		$typename = strtolower(substr(convert_typename($this->struct_name), 1));
+		return 	"	*return_value = *php_{$typename}_new(&%s);\n" .
+				"	return;";
 	}
 }
 
@@ -548,6 +607,13 @@ class Arg_Matcher {
 	function register_flag($type)
 	{
 		$this->arg_types[$type] = new Flags_Arg($type);
+	}
+
+	function register_struct($type)
+	{
+		$struct_arg = new Struct_Arg($type);
+		$this->register($type, $struct_arg);
+		$this->register($type . '*', $struct_arg);
 	}
 
 	function register_object($type)

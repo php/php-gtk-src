@@ -73,6 +73,7 @@ class Defs_Parser {
 	var $constructors	= array();  // object constructors
 	var $methods		= array();  // object methods
 	var $enums			= array();	// enums and flags
+	var $structs		= array();  // structures
 	var $c_name			= array();  // C names of entities
 
 	
@@ -157,6 +158,13 @@ class Defs_Parser {
 		$object_def			= &new Object_Def($arg);
 		$this->objects[]	= &$object_def;
 		$this->c_name[] 	= &$object_def->c_name;
+	}
+
+	function handle_struct($arg)
+	{
+		$struct_def			= &new Struct_Def($arg);
+		$this->structs[]	= &$struct_def;
+		$this->c_name[] 	= &$struct_def->c_name;
 	}
 
 	function handle_include($arg)

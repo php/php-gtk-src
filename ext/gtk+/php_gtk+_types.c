@@ -59,7 +59,6 @@ PHP_GTK_EXPORT_CE(gtk_style_ce);
 PHP_GTK_EXPORT_CE(gtk_box_child_ce);
 PHP_GTK_EXPORT_CE(gtk_fixed_child_ce);
 PHP_GTK_EXPORT_CE(gtk_clist_row_ce);
-PHP_GTK_EXPORT_CE(gtk_allocation_ce);
 
 /* GdkEvent */
 static function_entry php_gdk_event_functions[] = {
@@ -98,13 +97,7 @@ zval *php_gdk_event_new(GdkEvent *event)
 			break;
 
 		case GDK_EXPOSE:
-			MAKE_STD_ZVAL(value);
-			object_init_ex(value, gtk_allocation_ce);
-			add_property_long(value, "x", event->expose.area.x);
-			add_property_long(value, "y", event->expose.area.y);
-			add_property_long(value, "width", event->expose.area.width);
-			add_property_long(value, "height", event->expose.area.height);
-			zend_hash_update(Z_OBJPROP_P(result), "area", sizeof("area"), &value, sizeof(zval *), NULL);
+			add_property_zval(result, "area", php_gdk_rectangle_new(&event->expose.area));
 			add_property_long(result, "count", event->expose.count);
 			break;
 
@@ -2573,9 +2566,6 @@ void php_gtk_plus_register_types(int module_number)
 	INIT_OVERLOADED_CLASS_ENTRY(ce, "gtkclistrow", NULL, NULL, php_gtk_get_property, php_gtk_set_property);
 	gtk_clist_row_ce = zend_register_internal_class_ex(&ce, NULL, NULL TSRMLS_CC);
 	php_gtk_register_prop_getter(gtk_clist_row_ce, gtk_clist_row_get_property);
-
-	INIT_CLASS_ENTRY(ce, "gtkallocation", NULL);
-	gtk_allocation_ce = zend_register_internal_class_ex(&ce, &zend_standard_class_def, NULL TSRMLS_CC);
 }
 
 #endif

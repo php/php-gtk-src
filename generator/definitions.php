@@ -203,4 +203,40 @@ class Function_Def {
 	}
 }
 
+class Struct_Def {
+	var $def_type 	= 'struct';
+	var $name 		= null;
+	var $in_module 	= null;
+	var $c_name 	= null;
+	var $ce			= null;
+	var $fields		= array();
+
+	function Struct_Def($args)
+	{
+		$this->name = array_shift($args);
+
+		foreach ($args as $arg) {
+			if (!is_array($arg) || count($arg) < 2)
+				continue;
+
+			if ($arg[0] == 'in-module')
+				$this->in_module = $arg[1];
+			else if ($arg[0] == 'c-name')
+				$this->c_name = $arg[1];
+			else if ($arg[0] == 'field') {
+				$field_type = null;
+				$field_name = null;
+				foreach (array_slice($arg, 1) as $field_arg) {
+					if ($field_arg[0] == 'type-and-name') {
+						$field_type = $field_arg[1];
+						$field_name = $field_arg[2];
+					}
+				}
+				$this->fields[] = array($field_type, $field_name);
+			}
+		}
+		$this->ce = strtolower($this->in_module . '_' . $this->name . '_ce');
+	}
+}
+
 ?>

@@ -31,7 +31,7 @@ function expose_event($widget, $event)
 	global	$pixmap;
 
 	gdk::draw_pixmap($widget->window,
-					 $widget->style->fg_gc[$widget->state()],
+					 $widget->style->fg_gc[$widget->state],
 					 $pixmap,
 					 $event->area->x, $event->area->y,
 					 $event->area->x, $event->area->y,

@@ -43,6 +43,7 @@
   (field (type-and-name GtkStyle* style))
   (field (type-and-name GdkWindow* window))
   (field (type-and-name GtkAllocation allocation))
+  (field (type-and-name guint state))
 )
 
 (object Separator
@@ -640,6 +641,24 @@
   (in-module Gtk)
   (parent Frame (Gtk))
   (c-name GtkAspectFrame)
+)
+
+;; Structs
+
+(struct Allocation
+  (in-module Gtk)
+  (c-name GtkAllocation)
+  (field (type-and-name gint16 x))
+  (field (type-and-name gint16 y))
+  (field (type-and-name guint16 width))
+  (field (type-and-name guint16 height))
+)
+
+(struct Requisition
+  (in-module Gtk)
+  (c-name GtkRequisition)
+  (field (type-and-name gint16 width))
+  (field (type-and-name gint16 height))
 )
 
 ;; Enumerations and flags ...

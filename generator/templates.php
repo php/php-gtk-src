@@ -93,6 +93,9 @@ static void %s_get_property(zval *return_value, zval *object, zend_llist_element
 $init_class_tpl = "
 	INIT_OVERLOADED_CLASS_ENTRY(ce, \"%s\", php_%s_functions, NULL, %s, php_gtk_set_property);\n";
 
+$struct_class_tpl = "
+	INIT_CLASS_ENTRY(ce, \"%s\", php_%s_functions);\n";
+
 $get_type_tpl = "
 PHP_FUNCTION(wrap_%s_get_type)
 {
@@ -114,5 +117,47 @@ void php_%s_register_classes(void)
 $register_class_tpl = "\t%s = zend_register_internal_class_ex(&ce, %s, NULL TSRMLS_CC);\n";
 
 $class_entry_tpl = "PHP_GTK_EXPORT_CE(%s);\n";
+
+$struct_init_tpl = "
+zval *PHP_GTK_EXPORT_FUNC(php_%s_new)(%s *obj)
+{
+   zval *result;
+
+    if (!obj) {
+        MAKE_STD_ZVAL(result);
+        ZVAL_NULL(result);
+        return result;
+    }
+
+    MAKE_STD_ZVAL(result);
+    object_init_ex(result, %s);
+
+%s
+    return result;
+}\n\n";
+
+$struct_construct_tpl = "
+PHP_FUNCTION(wrap_%s)
+{
+%s	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%s\"%s)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+%s}\n\n";
+
+$struct_get_tpl = "
+zend_bool PHP_GTK_EXPORT_FUNC(php_%s_get)(zval *wrapper, %s *obj)
+{
+    zval **item;
+
+    if (!php_gtk_check_class(wrapper, %s))
+        return 0;
+
+%s
+    return 1;
+}\n\n";
 
 ?>

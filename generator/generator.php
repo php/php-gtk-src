@@ -59,6 +59,9 @@ class Generator {
 		if (!$parser)
 			$parser = $this->parser;
 
+		foreach ($parser->structs as $struct)
+			$matcher->register_struct($struct->c_name);
+
 		foreach ($parser->objects as $object)
 			$matcher->register_object($object->c_name);
 
@@ -252,6 +255,10 @@ class Generator {
 											false);
 		}
 
+		if ($function->name == 'gtk_rc_parse') {
+			var_dump($arg_list); exit;
+		}
+
 		$arg_list 	= implode(', ', $arg_list);
 		$parse_list = implode(', ', $parse_list);
 		$extra_pre_code = implode('', $extra_pre_code);
@@ -324,6 +331,90 @@ class Generator {
 		fwrite($fp, sprintf($prop_getter_tpl,
 							strtolower($object->in_module . '_' .  $object->name),
 							$prop_checks));
+	}
+
+	function write_structs($fp)
+	{
+		global	$struct_class_tpl,
+				$struct_init_tpl,
+				$struct_construct_tpl,
+				$struct_get_tpl,
+				$register_class_tpl,
+				$functions_decl_tpl,
+				$function_entry_tpl,
+				$matcher;
+
+		foreach ($this->parser->structs as $struct) {
+			$struct_module = strtolower($struct->in_module);
+			$struct_lname = strtolower($struct->name);
+			fwrite($fp, "\n/* struct $struct->c_name */\n");
+
+			$this->register_classes .= sprintf($struct_class_tpl,
+											   $struct_module . $struct_lname,
+											   $struct_module . '_' . $struct_lname);
+			$this->register_classes .= sprintf($register_class_tpl, $struct->ce, 'NULL');
+
+			$init_prop_code = array();
+			$construct_prop_code = array();
+			$get_prop_code = array();
+			$specs		= '';
+			$var_list	= new Var_List();
+			$parse_list = array('');
+			$arg_list	= array();
+			$extra_pre_code = array();
+			$extra_post_code = array();
+
+			foreach ($struct->fields as $field_def) {
+				list($field_type, $field_name) = $field_def;
+				$handler = &$matcher->get($field_type);
+				if ($handler === null) {
+					error_log("Could not write struct $struct->c_name '$field_name' field (field type $field_type)");
+					return;
+				}
+
+				$init_prop_code[] = $handler->write_to_prop('result', $field_name, "obj->$field_name");
+				$get_prop_code[] = $handler->write_from_prop($field_name);
+				$construct_prop_code[] = $handler->write_to_prop('this_ptr', $field_name, $field_name);
+
+				$specs .= $handler->write_param($field_type,
+												$field_name,
+												null,
+												false,
+												$var_list,
+												$parse_list,
+												$arg_list,
+												$extra_pre_code,
+												$extra_post_code,
+												true);
+			}
+
+			/* write the initializer */
+			fwrite($fp, sprintf($struct_init_tpl,
+								$struct_module . '_' . $struct_lname,
+								$struct->in_module . $struct->name,
+								$struct->ce, implode('', $init_prop_code)));
+			
+			/* write getter */
+			fwrite($fp, sprintf($struct_get_tpl,
+								$struct_module . '_' . $struct_lname,
+								$struct->in_module . $struct->name,
+								$struct->ce, implode('', $get_prop_code)));
+
+			/* write the constructor */
+			fwrite($fp, sprintf($struct_construct_tpl,
+								strtolower($struct->c_name),
+								$var_list->to_string(),
+								$specs,
+								implode(', ', $parse_list),
+								implode('', $construct_prop_code)));
+			$functions_decl = sprintf($functions_decl_tpl, $struct_module . '_' . $struct_lname);
+			$functions_decl .= sprintf($function_entry_tpl,
+									   $struct_module . $struct_lname,
+									   strtolower($struct->c_name),
+									   'NULL');
+			$functions_decl .= $this->functions_decl_end;
+			fwrite($fp, $functions_decl);
+		}
 	}
 
 	function write_objects($fp)
@@ -493,6 +584,8 @@ class Generator {
 		global	$class_entry_tpl;
 
 		fwrite($fp, sprintf($class_entry_tpl, $this->prefix . '_ce'));
+		foreach ($this->parser->structs as $struct)
+			fwrite($fp, sprintf($class_entry_tpl, $struct->ce));
 		foreach ($this->parser->objects as $object)
 			fwrite($fp, sprintf($class_entry_tpl, $object->ce));
 		foreach ($this->overrides->get_register_classes() as $ce => $rest)
@@ -510,6 +603,7 @@ class Generator {
 		$this->write_constants($fp);
 		$this->write_class_entries($fp);
 		$this->write_functions($fp);
+		$this->write_structs($fp);
 		$this->write_objects($fp);
 		fwrite($fp, sprintf($register_classes_tpl,
 							$this->prefix,

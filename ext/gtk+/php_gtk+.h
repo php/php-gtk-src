@@ -43,7 +43,7 @@ extern int le_gdk_drag_context;
 extern int le_gtk_accel_group;
 extern int le_gtk_style;
 
-inline GdkAtom php_gdk_atom_get(zval *wrapper)
+static inline GdkAtom php_gdk_atom_get(zval *wrapper)
 {
 	zval **atom;
 	
@@ -90,7 +90,7 @@ extern PHP_GTK_EXPORT_CE(gtk_fixed_child_ce);
 extern PHP_GTK_EXPORT_CE(gtk_clist_row_ce);
 extern PHP_GTK_EXPORT_CE(gtk_allocation_ce);
 
-#include "gen_ce_gtk.h"
+#include "gen_gtk.h"
 
 zval *php_gtk_new(GtkObject *obj);
 zval *php_gdk_event_new(GdkEvent *event);
