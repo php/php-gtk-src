@@ -508,10 +508,18 @@ zval *php_gtk_arg_as_value(GtkArg *arg)
 			break;
 
 		case GTK_TYPE_FOREIGN:
+			value = (zval *)GTK_VALUE_FOREIGN(*arg).data;
+			zval_add_ref(&value);
+			break;
+
 		case GTK_TYPE_CALLBACK:
+			value = (zval *)GTK_VALUE_CALLBACK(*arg).data;
+			zval_add_ref(&value);
+			break;
+
 		case GTK_TYPE_SIGNAL:
-			php_error(E_WARNING, "%s(): internal error: GTK_TYPE_FOREIGN, GTK_TYPE_CALLBACK, or GTK_TYPE_SIGNAL under development",
-					  get_active_function_name());
+			value = (zval *)GTK_VALUE_SIGNAL(*arg).d;
+			zval_add_ref(&value);
 			break;
 
 		default:
