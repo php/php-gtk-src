@@ -686,7 +686,7 @@ zval *php_gdk_window_new(GdkWindow *window)
 	return result;
 }
 
-zval *php_gdk_pixmap_new(GdkPixmap *pixmap)
+PHP_GTK_API zval *php_gdk_pixmap_new(GdkPixmap *pixmap)
 {
 	zval *result;
 	zval **wrapper_ptr;
@@ -712,7 +712,7 @@ zval *php_gdk_pixmap_new(GdkPixmap *pixmap)
 	return result;
 }
 
-zval *php_gdk_bitmap_new(GdkWindow *bitmap)
+PHP_GTK_API zval *php_gdk_bitmap_new(GdkWindow *bitmap)
 {
 	zval *result;
 	zval **wrapper_ptr;
