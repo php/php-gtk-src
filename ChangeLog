@@ -1,3 +1,17 @@
+2001-10-19  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/gtk.defs:
+    Remove internal compute_position() method from GtkPaned.
+
+    * NEWS: Update news.
+
+    * NEWS
+      ext/gtk+/gtk.defs
+      generator/arg_types.php:
+    - Modified generator to allow omitting struct based classes for specified
+      functions.
+    - Made GdkRectangle argument to GtkWidget::draw() optional.
+
 2001-10-18  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gtk+/gtk.overrides
