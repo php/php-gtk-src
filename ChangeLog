@@ -1,3 +1,19 @@
+2001-04-20  Steph Fox  <steph.fox@btinternet.com>
+
+    * docs/en/classes/gtkarrow.xml
+      docs/en/classes/gtkcontainer.xml
+      docs/en/classes/gtkobject.xml
+      docs/manual.xml.in:
+    Corrections - just proving I read James' mail on occasion - + GtkArrow
+
+    * docs/en/classes/gtkbin.xml
+      docs/en/classes/gtkcontainer.xml
+      docs/en/classes/gtkobject.xml
+      docs/en/classes/gtkwidget.xml
+      docs/en/classes/gtkwindow.xml
+      docs/manual.xml.in:
+    These are not placeholders.  Most of the parameters are now in place in the existing files.  Few queries.
+
 2001-04-17  Steph Fox  <steph.fox@btinternet.com>
 
     * docs/en/classes/gtkobject.xml:
