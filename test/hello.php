@@ -38,8 +38,8 @@ function hello()
  * functions. Note that all constructors must be assigned by reference.
  */
 $window = &new GtkWindow();
-$window->connect('destroy', destroy);
-$window->connect('delete-event', delete_event);
+$window->connect('destroy', 'destroy');
+$window->connect('delete-event', 'delete_event');
 $window->set_border_width(10);
 
 /*
@@ -47,7 +47,7 @@ $window->set_border_width(10);
  * the button to the window.
  */
 $button = &new GtkButton('Hello World!');
-$button->connect('clicked', hello);
+$button->connect('clicked', 'hello');
 $window->add($button);
 
 /*
