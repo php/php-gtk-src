@@ -92,23 +92,19 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\src\gen_gdk.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\gen_gtk.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\php_gtk.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\src\php_gtk_gen_gdk.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\php_gtk_gen_gtk.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\src\php_gtk_object.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\php_gtk_types.c
 # End Source File
 # Begin Source File
 
@@ -171,5 +167,9 @@ SOURCE=..\generator\libglade.defs
 SOURCE=..\generator\libglade.overrides
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=.\README.txt
+# End Source File
 # End Target
 # End Project
