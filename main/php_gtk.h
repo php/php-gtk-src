@@ -38,15 +38,23 @@ extern int le_gdk_colormap;
 extern int le_gdk_cursor;
 extern int le_gdk_visual;
 extern int le_gdk_font;
+extern int le_gdk_gc;
+extern int le_gtk_selection_data;
+extern int le_gtk_ctree_node;
 
 extern zend_class_entry *gdk_event_ce;
 extern zend_class_entry *gdk_window_ce;
+extern zend_class_entry *gdk_pixmap_ce;
+extern zend_class_entry *gdk_bitmap_ce;
 extern zend_class_entry *gdk_color_ce;
 extern zend_class_entry *gdk_colormap_ce;
 extern zend_class_entry *gdk_atom_ce;
 extern zend_class_entry *gdk_cursor_ce;
 extern zend_class_entry *gdk_visual_ce;
 extern zend_class_entry *gdk_font_ce;
+extern zend_class_entry *gdk_gc_ce;
+extern zend_class_entry *gtk_selection_data_ce;
+extern zend_class_entry *gtk_ctree_node_ce;
 
 /* Useful macros. */
 #define PHP_GTK_GET(w) 			((GtkObject *)php_gtk_get_object(w, le_gtk))
@@ -58,6 +66,9 @@ extern zend_class_entry *gdk_font_ce;
 #define PHP_GDK_CURSOR_GET(w)	((GdkCursor *)php_gtk_get_object(w, le_gdk_cursor))
 #define PHP_GDK_VISUAL_GET(w)	((GdkVisual *)php_gtk_get_object(w, le_gdk_visual))
 #define PHP_GDK_FONT_GET(w)		((GdkFont *)php_gtk_get_object(w, le_gdk_font))
+#define PHP_GDK_GC_GET(w)		((GdkGC *)php_gtk_get_object(w, le_gdk_gc))
+#define PHP_GTK_SELECTION_DATA_GET(w) ((GtkSelectionData *)php_gtk_get_object(w, le_gtk_selection_data))
+#define PHP_GTK_CTREE_NODE_GET(w) ((GtkCTreeNode *)php_gtk_get_object(w, le_gtk_ctree_node))
 
 /* True globals. */
 extern GHashTable *php_gtk_class_hash;
@@ -88,6 +99,9 @@ zval *php_gdk_atom_new(GdkAtom obj);
 zval *php_gdk_cursor_new(GdkCursor *obj);
 zval *php_gdk_visual_new(GdkVisual *obj);
 zval *php_gdk_font_new(GdkFont *obj);
+zval *php_gdk_gc_new(GdkGC *obj);
+zval *php_gtk_selection_data_new(GtkSelectionData *data);
+zval *php_gtk_ctree_node_new(GtkCTreeNode *node);
 
 /* Utility functions. */
 int php_gtk_parse_args(int argc, char *format, ...);

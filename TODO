@@ -3,12 +3,12 @@
 * Finish boxed type support.
 * Investigate how to improve h2def.py or modify gdk.defs to define boxed type
   objects (GdkColormap, etc.)
-* Modify generic get/set property handlers to handle array index accesses.
 * Modify generic get/set property handlers to percolate up the inheritance chain
   looking for attributes.
-* Implemented optional zval separation when parsing arguments.
 * Think about separating static class methods, Gtk::widget_push_colormap ->
   GtkWidget::push_colormap.
+* Figure out what's up with getting/setting gc background/foreground colors and
+  how to get RGB values from pixels.
 
 In PHP
 ------

@@ -72,6 +72,7 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
 				if (*spec_walk == '#') {
 					int *p = va_arg(*va, int *);
 					*p = Z_STRLEN_PP(arg);
+					spec_walk++;
 				}
 			}
 			break;
@@ -101,8 +102,13 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
 				zval **p = va_arg(*va, zval **);
 				if (Z_TYPE_PP(arg) != IS_ARRAY)
 					return "array";
-				else
+				else {
+					if (*spec_walk == '/') {
+						SEPARATE_ZVAL(arg);
+						spec_walk++;
+					}
 					*p = *arg;
+				}
 			}
 			break;
 
@@ -112,8 +118,13 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
 				zend_class_entry *ce = va_arg(*va, zend_class_entry *);
 				if (Z_TYPE_PP(arg) != IS_OBJECT || !php_gtk_check_class(*arg, ce))
 					return ce->name;
-				else
+				else {
+					if (*spec_walk == '/') {
+						SEPARATE_ZVAL(arg);
+						spec_walk++;
+					}
 					*p = *arg;
+				}
 			}
 			break;
 
@@ -124,8 +135,13 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
 				if (Z_TYPE_PP(arg) != IS_NULL && (Z_TYPE_PP(arg) != IS_OBJECT || !php_gtk_check_class(*arg, ce))) {
 					sprintf(buf, "%s or null", ce->name);
 					return buf;
-				} else
+				} else {
+					if (*spec_walk == '/') {
+						SEPARATE_ZVAL(arg);
+						spec_walk++;
+					}
 					*p = *arg;
+				}
 			}
 			break;
 
@@ -134,14 +150,23 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf)
 				zval **p = va_arg(*va, zval **);
 				if (Z_TYPE_PP(arg) != IS_OBJECT)
 					return "object";
-				else
+				else {
+					if (*spec_walk == '/') {
+						SEPARATE_ZVAL(arg);
+						spec_walk++;
+					}
 					*p = *arg;
+				}
 			}
 			break;
 
 		case 'V':
 			{
 				zval **p = va_arg(*va, zval **);
+				if (*spec_walk == '/') {
+					SEPARATE_ZVAL(arg);
+					spec_walk++;
+				}
 				*p = *arg;
 			}
 			break;
@@ -243,6 +268,7 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 				break;
 
 			case '#':
+			case '/':
 				/* Pass */
 				break;
 
@@ -325,6 +351,9 @@ int php_gtk_parse_args_quiet(int argc, char *format, ...)
 int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce)
 {
 	zend_class_entry *ce;
+
+	if (Z_TYPE_P(wrapper) != IS_OBJECT)
+		return 0;
 
 	for (ce = Z_OBJCE_P(wrapper); ce != NULL; ce = ce->parent) {
 		if (ce == expected_ce)

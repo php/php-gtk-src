@@ -559,5 +559,8 @@ $matcher->register_boxed('GdkColormap', 'gdk_colormap');
 $matcher->register_boxed('GdkCursor', 'gdk_cursor');
 $matcher->register_boxed('GdkVisual', 'gdk_visual');
 $matcher->register_boxed('GdkFont', 'gdk_font');
+$matcher->register_boxed('GdkGC', 'gdk_gc');
+$matcher->register_boxed('GtkSelectionData', 'gtk_selection_data');
+$matcher->register_boxed('GtkCTreeNode', 'gtk_ctree_node');
 
 ?>
