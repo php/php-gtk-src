@@ -1,3 +1,12 @@
+2002-05-28  Andrei Zmievski  <andrei@php.net>
+
+    * NEWS: *** empty log message ***
+
+    * config.m4
+      main/php_gtk_object.c: Added --enable-debug option.
+    Fixed a crash bug that occurred when trying to use a non-string variable
+    to access properties of overloaded objects.
+
 2002-05-22  Andrei Zmievski  <andrei@php.net>
 
     * ext/gtk+/gtk.overrides
