@@ -1,3 +1,11 @@
+2003-10-12  Alan Knowles  <alan@akbkhome.com>
+
+    * (GTK2)
+      ext/gtk+/php_gtk+_types.c
+      main/php_gtk_object.c
+      test/gtk.php:
+      remove gtkstyle calls for the time being.. clist and ctree examples work
+
 2003-10-11  Alan Knowles  <alan@akbkhome.com>
 
     * (GTK2)
