@@ -1,3 +1,4 @@
+    - added GtkAspectFrame class definition. (Andrei)
     - optimized internal resource handling, this should save on memory. (Andrei)
     - fixed a bug that would corrupt object type when setting cascaded property.
       (Andrei)
