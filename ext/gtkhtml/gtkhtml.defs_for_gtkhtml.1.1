@@ -1,0 +1,807 @@
+;; -*- scheme -*-
+; object definitions ...
+ 
+ 
+
+; Creation 
+
+(object HTML 
+  (in-module Gtk)
+  (parent Layout (Gtk))
+  (c-name GtkHTML)
+)
+
+(enum FundamentalType
+  (in-module GtkHTML)
+  (c-name GtkHTMLFundamentalType)
+  (value (name paragraph_style) 	(c-name GTK_TYPE_HTMLPARAGRAPH_STYLE))
+  (value (name paragraph_alignment) 	(c-name GTK_TYPE_HTMLPARAGRAPH_ALIGNMENT))
+  (value (name font_style) 		(c-name GTK_TYPE_HTMLFONT_STYLE))
+) 
+ 
+ 
+(enum ParagraphStyle
+  (in-module GtkHTML)
+  (c-name GtkHTMLParagraphStyle)
+  (value (name normal) (c-name GTK_HTML_PARAGRAPH_STYLE_NORMAL))
+  (value (name h1) (c-name GTK_HTML_PARAGRAPH_STYLE_H1))
+  (value (name h2) (c-name GTK_HTML_PARAGRAPH_STYLE_H2))
+  (value (name h3) (c-name GTK_HTML_PARAGRAPH_STYLE_H3))
+  (value (name h4) (c-name GTK_HTML_PARAGRAPH_STYLE_H4))
+  (value (name h5) (c-name GTK_HTML_PARAGRAPH_STYLE_H5))
+  (value (name h6) (c-name GTK_HTML_PARAGRAPH_STYLE_H6))
+  (value (name address) (c-name GTK_HTML_PARAGRAPH_STYLE_ADDRESS))
+  (value (name pre) (c-name GTK_HTML_PARAGRAPH_STYLE_PRE))
+  (value (name itemdotted) (c-name GTK_HTML_PARAGRAPH_STYLE_ITEMDOTTED))
+  (value (name itemroman) (c-name GTK_HTML_PARAGRAPH_STYLE_ITEMROMAN))
+  (value (name itemdigit) (c-name GTK_HTML_PARAGRAPH_STYLE_ITEMDIGIT))
+  (value (name itemalpha) (c-name GTK_HTML_PARAGRAPH_STYLE_ITEMALPHA))
+)
+ 
+(enum ParagraphAlignment
+  (in-module GtkHTML)
+  (c-name GtkHTMLParagraphAlignment)
+  (value (name left) (c-name GTK_HTML_PARAGRAPH_ALIGNMENT_LEFT))
+  (value (name right) (c-name GTK_HTML_PARAGRAPH_ALIGNMENT_RIGHT))
+  (value (name center) (c-name GTK_HTML_PARAGRAPH_ALIGNMENT_CENTER))
+)
+(enum FontStyle
+  (in-module GtkHTML)
+  (c-name GtkHTMLFontStyle)
+  (value (name default      ) (c-name GTK_HTML_FONT_STYLE_DEFAULT))
+  (value (name size_1       ) (c-name GTK_HTML_FONT_STYLE_SIZE_1))
+  (value (name size_2       ) (c-name GTK_HTML_FONT_STYLE_SIZE_2))
+  (value (name size_3       ) (c-name GTK_HTML_FONT_STYLE_SIZE_3))
+  (value (name size_4       ) (c-name GTK_HTML_FONT_STYLE_SIZE_4))
+  (value (name size_5       ) (c-name GTK_HTML_FONT_STYLE_SIZE_5))
+  (value (name size_6       ) (c-name GTK_HTML_FONT_STYLE_SIZE_6))
+  (value (name size_7       ) (c-name GTK_HTML_FONT_STYLE_SIZE_7))
+  (value (name size_mask    ) (c-name GTK_HTML_FONT_STYLE_SIZE_MASK))
+  (value (name bold	    ) (c-name GTK_HTML_FONT_STYLE_BOLD))
+  (value (name italic       ) (c-name GTK_HTML_FONT_STYLE_ITALIC))
+  (value (name underline    ) (c-name GTK_HTML_FONT_STYLE_UNDERLINE))
+  (value (name strikeout    ) (c-name GTK_HTML_FONT_STYLE_STRIKEOUT))
+  (value (name fixed	    ) (c-name GTK_HTML_FONT_STYLE_FIXED))
+  (value (name subscript    ) (c-name GTK_HTML_FONT_STYLE_SUBSCRIPT))
+  (value (name superscript  ) (c-name GTK_HTML_FONT_STYLE_SUPERSCRIPT))
+)
+
+
+(enum CommandType
+  (in-module GtkHTML)
+  (c-name GtkHTMLCommandType)
+  (value (name undo) (c-name GTK_HTML_COMMAND_UNDO))
+  (value (name redo) (c-name GTK_HTML_COMMAND_REDO))
+  (value (name copy) (c-name GTK_HTML_COMMAND_COPY))
+  (value (name copy_and_disable_selection) (c-name GTK_HTML_COMMAND_COPY_AND_DISABLE_SELECTION))
+  (value (name cut) (c-name GTK_HTML_COMMAND_CUT))
+  (value (name paste) (c-name GTK_HTML_COMMAND_PASTE))
+
+  (value (name cut_line) (c-name GTK_HTML_COMMAND_CUT_LINE))
+
+  (value (name insert_paragraph) (c-name GTK_HTML_COMMAND_INSERT_PARAGRAPH))
+  (value (name insert_tab) (c-name GTK_HTML_COMMAND_INSERT_TAB))
+  (value (name insert_rule) (c-name GTK_HTML_COMMAND_INSERT_RULE))
+  (value (name insert_rule_param) (c-name GTK_HTML_COMMAND_INSERT_RULE_PARAM))
+  (value (name insert_image_param) (c-name GTK_HTML_COMMAND_INSERT_IMAGE_PARAM))
+  (value (name insert_tab_or_indent_more) (c-name GTK_HTML_COMMAND_INSERT_TAB_OR_INDENT_MORE))
+;  (value (name insert_tab_or_indent_more_or_next_cell) (c-name GTK_HTML_COMMAND_INSERT_TAB_OR_INDENT_MORE_OR_NEXT_CELL))
+
+  (value (name make_link) (c-name GTK_HTML_COMMAND_MAKE_LINK))
+  (value (name remove_link) (c-name GTK_HTML_COMMAND_REMOVE_LINK))
+
+  (value (name delete) (c-name GTK_HTML_COMMAND_DELETE))
+  (value (name delete_back) (c-name GTK_HTML_COMMAND_DELETE_BACK))
+  (value (name delete_back_or_indent_dec) (c-name GTK_HTML_COMMAND_DELETE_BACK_OR_INDENT_DEC))
+
+  (value (name selection_mode) (c-name GTK_HTML_COMMAND_SELECTION_MODE))
+  (value (name disable_selection) (c-name GTK_HTML_COMMAND_DISABLE_SELECTION))
+
+  (value (name bold_on) (c-name GTK_HTML_COMMAND_BOLD_ON))
+  (value (name bold_off) (c-name GTK_HTML_COMMAND_BOLD_OFF))
+  (value (name bold_toggle) (c-name GTK_HTML_COMMAND_BOLD_TOGGLE))
+
+  (value (name italic_on) (c-name GTK_HTML_COMMAND_ITALIC_ON))
+  (value (name italic_off) (c-name GTK_HTML_COMMAND_ITALIC_OFF))
+  (value (name italic_toggle) (c-name GTK_HTML_COMMAND_ITALIC_TOGGLE))
+
+  (value (name underline_on) (c-name GTK_HTML_COMMAND_UNDERLINE_ON))
+  (value (name underline_off) (c-name GTK_HTML_COMMAND_UNDERLINE_OFF))
+  (value (name underline_toggle) (c-name GTK_HTML_COMMAND_UNDERLINE_TOGGLE))
+
+  (value (name strikeout_on) (c-name GTK_HTML_COMMAND_STRIKEOUT_ON))
+  (value (name strikeout_off) (c-name GTK_HTML_COMMAND_STRIKEOUT_OFF))
+  (value (name strikeout_toggle) (c-name GTK_HTML_COMMAND_STRIKEOUT_TOGGLE))
+
+  (value (name size_minus_2) (c-name GTK_HTML_COMMAND_SIZE_MINUS_2))
+  (value (name size_minus_1) (c-name GTK_HTML_COMMAND_SIZE_MINUS_1))
+  (value (name size_plus_0) (c-name GTK_HTML_COMMAND_SIZE_PLUS_0))
+  (value (name size_plus_1) (c-name GTK_HTML_COMMAND_SIZE_PLUS_1))
+  (value (name size_plus_2) (c-name GTK_HTML_COMMAND_SIZE_PLUS_2))
+  (value (name size_plus_3) (c-name GTK_HTML_COMMAND_SIZE_PLUS_3))
+  (value (name size_plus_4) (c-name GTK_HTML_COMMAND_SIZE_PLUS_4))
+
+  (value (name size_increase) (c-name GTK_HTML_COMMAND_SIZE_INCREASE))
+  (value (name size_decrease) (c-name GTK_HTML_COMMAND_SIZE_DECREASE))
+
+  (value (name align_left) (c-name GTK_HTML_COMMAND_ALIGN_LEFT))
+  (value (name align_center) (c-name GTK_HTML_COMMAND_ALIGN_CENTER))
+  (value (name align_right) (c-name GTK_HTML_COMMAND_ALIGN_RIGHT))
+
+  (value (name indent_zero) (c-name GTK_HTML_COMMAND_INDENT_ZERO))
+  (value (name indent_inc) (c-name GTK_HTML_COMMAND_INDENT_INC))
+  (value (name indent_inc_or_next_cell) (c-name GTK_HTML_COMMAND_INDENT_INC_OR_NEXT_CELL))
+  (value (name indent_dec) (c-name GTK_HTML_COMMAND_INDENT_DEC))
+;  (value (name indent_dec_or_prev_cell) (c-name GTK_HTML_COMMAND_INDENT_DEC_OR_PREV_CELL))
+  (value (name indent_paragraph) (c-name GTK_HTML_COMMAND_INDENT_PARAGRAPH))
+
+  (value (name break_and_fill_line) (c-name GTK_HTML_COMMAND_BREAK_AND_FILL_LINE))
+  (value (name space_and_fill_line) (c-name GTK_HTML_COMMAND_SPACE_AND_FILL_LINE))
+
+  (value (name paragraph_style_normal) (c-name GTK_HTML_COMMAND_PARAGRAPH_STYLE_NORMAL))
+  (value (name paragraph_style_h1) (c-name GTK_HTML_COMMAND_PARAGRAPH_STYLE_H1))
+  (value (name paragraph_style_h2) (c-name GTK_HTML_COMMAND_PARAGRAPH_STYLE_H2))
+  (value (name paragraph_style_h3) (c-name GTK_HTML_COMMAND_PARAGRAPH_STYLE_H3))
+  (value (name paragraph_style_h4) (c-name GTK_HTML_COMMAND_PARAGRAPH_STYLE_H4))
+  (value (name paragraph_style_h5) (c-name GTK_HTML_COMMAND_PARAGRAPH_STYLE_H5))
+  (value (name paragraph_style_h6) (c-name GTK_HTML_COMMAND_PARAGRAPH_STYLE_H6))
+  (value (name paragraph_style_address) (c-name GTK_HTML_COMMAND_PARAGRAPH_STYLE_ADDRESS))
+  (value (name paragraph_style_pre) (c-name GTK_HTML_COMMAND_PARAGRAPH_STYLE_PRE))
+  (value (name paragraph_style_itemdotted) (c-name GTK_HTML_COMMAND_PARAGRAPH_STYLE_ITEMDOTTED))
+  (value (name paragraph_style_itemroman) (c-name GTK_HTML_COMMAND_PARAGRAPH_STYLE_ITEMROMAN))
+  (value (name paragraph_style_itemdigit) (c-name GTK_HTML_COMMAND_PARAGRAPH_STYLE_ITEMDIGIT))
+  (value (name paragraph_style_itemalpha) (c-name GTK_HTML_COMMAND_PARAGRAPH_STYLE_ITEMALPHA))
+
+  (value (name modify_selection_up) (c-name GTK_HTML_COMMAND_MODIFY_SELECTION_UP))
+  (value (name modify_selection_down) (c-name GTK_HTML_COMMAND_MODIFY_SELECTION_DOWN))
+  (value (name modify_selection_left) (c-name GTK_HTML_COMMAND_MODIFY_SELECTION_LEFT))
+  (value (name modify_selection_right) (c-name GTK_HTML_COMMAND_MODIFY_SELECTION_RIGHT))
+  (value (name modify_selection_pageup) (c-name GTK_HTML_COMMAND_MODIFY_SELECTION_PAGEUP))
+  (value (name modify_selection_pagedown) (c-name GTK_HTML_COMMAND_MODIFY_SELECTION_PAGEDOWN))
+  (value (name modify_selection_bol) (c-name GTK_HTML_COMMAND_MODIFY_SELECTION_BOL))
+  (value (name modify_selection_eol) (c-name GTK_HTML_COMMAND_MODIFY_SELECTION_EOL))
+  (value (name modify_selection_bod) (c-name GTK_HTML_COMMAND_MODIFY_SELECTION_BOD))
+  (value (name modify_selection_eod) (c-name GTK_HTML_COMMAND_MODIFY_SELECTION_EOD))
+  (value (name modify_selection_prev_word) (c-name GTK_HTML_COMMAND_MODIFY_SELECTION_PREV_WORD))
+  (value (name modify_selection_next_word) (c-name GTK_HTML_COMMAND_MODIFY_SELECTION_NEXT_WORD))
+
+  (value (name capitalize_word) (c-name GTK_HTML_COMMAND_CAPITALIZE_WORD))
+  (value (name upcase_word) (c-name GTK_HTML_COMMAND_UPCASE_WORD))
+  (value (name downcase_word) (c-name GTK_HTML_COMMAND_DOWNCASE_WORD))
+
+  (value (name spell_suggest) (c-name GTK_HTML_COMMAND_SPELL_SUGGEST))
+  (value (name spell_personal_dictionary_add) (c-name GTK_HTML_COMMAND_SPELL_PERSONAL_DICTIONARY_ADD))
+  (value (name spell_session_dictionary_add) (c-name GTK_HTML_COMMAND_SPELL_SESSION_DICTIONARY_ADD))
+
+  (value (name search) (c-name GTK_HTML_COMMAND_SEARCH))
+  (value (name search_incremental_forward) (c-name GTK_HTML_COMMAND_SEARCH_INCREMENTAL_FORWARD))
+  (value (name search_incremental_backward) (c-name GTK_HTML_COMMAND_SEARCH_INCREMENTAL_BACKWARD))
+  (value (name search_regex) (c-name GTK_HTML_COMMAND_SEARCH_REGEX))
+
+  (value (name focus_forward) (c-name GTK_HTML_COMMAND_FOCUS_FORWARD))
+  (value (name focus_backward) (c-name GTK_HTML_COMMAND_FOCUS_BACKWARD))
+
+  (value (name popup_menu) (c-name GTK_HTML_COMMAND_POPUP_MENU))
+  (value (name properties_dialog) (c-name GTK_HTML_COMMAND_PROPERTIES_DIALOG))
+
+  (value (name cursor_forward) (c-name GTK_HTML_COMMAND_CURSOR_FORWARD))
+  (value (name cursor_backward) (c-name GTK_HTML_COMMAND_CURSOR_BACKWARD))
+
+  (value (name insert_table_1_1) (c-name GTK_HTML_COMMAND_INSERT_TABLE_1_1))
+
+  (value (name table_insert_col_after) (c-name GTK_HTML_COMMAND_TABLE_INSERT_COL_AFTER))
+  (value (name table_insert_col_before) (c-name GTK_HTML_COMMAND_TABLE_INSERT_COL_BEFORE))
+  (value (name table_insert_row_after) (c-name GTK_HTML_COMMAND_TABLE_INSERT_ROW_AFTER))
+  (value (name table_insert_row_before) (c-name GTK_HTML_COMMAND_TABLE_INSERT_ROW_BEFORE))
+  (value (name table_delete_col) (c-name GTK_HTML_COMMAND_TABLE_DELETE_COL))
+  (value (name table_delete_row) (c-name GTK_HTML_COMMAND_TABLE_DELETE_ROW))
+
+  (value (name table_cell_inc_cspan) (c-name GTK_HTML_COMMAND_TABLE_CELL_INC_CSPAN))
+  (value (name table_cell_dec_cspan) (c-name GTK_HTML_COMMAND_TABLE_CELL_DEC_CSPAN))
+  (value (name table_cell_inc_rspan) (c-name GTK_HTML_COMMAND_TABLE_CELL_INC_RSPAN))
+  (value (name table_cell_dec_rspan) (c-name GTK_HTML_COMMAND_TABLE_CELL_DEC_RSPAN))
+
+  (value (name table_cell_join_left) (c-name GTK_HTML_COMMAND_TABLE_CELL_JOIN_LEFT))
+  (value (name table_cell_join_right) (c-name GTK_HTML_COMMAND_TABLE_CELL_JOIN_RIGHT))
+  (value (name table_cell_join_up) (c-name GTK_HTML_COMMAND_TABLE_CELL_JOIN_UP))
+  (value (name table_cell_join_down) (c-name GTK_HTML_COMMAND_TABLE_CELL_JOIN_DOWN))
+
+  (value (name table_border_width_inc) (c-name GTK_HTML_COMMAND_TABLE_BORDER_WIDTH_INC))
+  (value (name table_border_width_dec) (c-name GTK_HTML_COMMAND_TABLE_BORDER_WIDTH_DEC))
+  (value (name table_border_width_zero) (c-name GTK_HTML_COMMAND_TABLE_BORDER_WIDTH_ZERO))
+
+  (value (name text_set_default_color) (c-name GTK_HTML_COMMAND_TEXT_SET_DEFAULT_COLOR))
+
+  (value (name select_word) (c-name GTK_HTML_COMMAND_SELECT_WORD))
+  (value (name select_line) (c-name GTK_HTML_COMMAND_SELECT_LINE))
+  (value (name select_paragraph) (c-name GTK_HTML_COMMAND_SELECT_PARAGRAPH))
+  (value (name select_paragraph_extended) (c-name GTK_HTML_COMMAND_SELECT_PARAGRAPH_EXTENDED))
+  (value (name select_all) (c-name GTK_HTML_COMMAND_SELECT_ALL))
+
+  (value (name cursor_position_save) (c-name GTK_HTML_COMMAND_CURSOR_POSITION_SAVE))
+  (value (name cursor_position_restore) (c-name GTK_HTML_COMMAND_CURSOR_POSITION_RESTORE))
+
+  (value (name cursor_bod) (c-name GTK_HTML_COMMAND_CURSOR_BOD))
+  (value (name cursor_eod) (c-name GTK_HTML_COMMAND_CURSOR_EOD))
+
+  (value (name block_redraw) (c-name GTK_HTML_COMMAND_BLOCK_REDRAW))
+  (value (name unblock_redraw) (c-name GTK_HTML_COMMAND_UNBLOCK_REDRAW))
+
+  (value (name zoom_in) (c-name GTK_HTML_COMMAND_ZOOM_IN))
+  (value (name zoom_out) (c-name GTK_HTML_COMMAND_ZOOM_OUT))
+  (value (name zoom_reset) (c-name GTK_HTML_COMMAND_ZOOM_RESET))
+
+  (value (name table_spacing_inc) (c-name GTK_HTML_COMMAND_TABLE_SPACING_INC))
+  (value (name table_spacing_dec) (c-name GTK_HTML_COMMAND_TABLE_SPACING_DEC))
+  (value (name table_spacing_zero) (c-name GTK_HTML_COMMAND_TABLE_SPACING_ZERO))
+
+  (value (name table_padding_inc) (c-name GTK_HTML_COMMAND_TABLE_PADDING_INC))
+  (value (name table_padding_dec) (c-name GTK_HTML_COMMAND_TABLE_PADDING_DEC))
+  (value (name table_padding_zero) (c-name GTK_HTML_COMMAND_TABLE_PADDING_ZERO))
+
+  (value (name delete_table) (c-name GTK_HTML_COMMAND_DELETE_TABLE))
+  (value (name delete_table_row) (c-name GTK_HTML_COMMAND_DELETE_TABLE_ROW))
+  (value (name delete_table_column) (c-name GTK_HTML_COMMAND_DELETE_TABLE_COLUMN))
+  (value (name delete_table_cell_contents) (c-name GTK_HTML_COMMAND_DELETE_TABLE_CELL_CONTENTS))
+
+  (value (name grab_focus) (c-name GTK_HTML_COMMAND_GRAB_FOCUS))
+)
+
+(enum EditorEventType
+  (in-module GtkHTML)
+  (c-name GtkHTMLEditorEventType)
+; commented out to retain BC with older version of gtkhtml
+;  (value (name command) (c-name GTK_HTML_EDITOR_EVENT_COMMAND_BEFORE))
+;  (value (name command) (c-name GTK_HTML_EDITOR_EVENT_COMMAND_AFTER))
+  (value (name image_url) (c-name GTK_HTML_EDITOR_EVENT_IMAGE_URL))
+  (value (name delete) (c-name GTK_HTML_EDITOR_EVENT_DELETE))
+)
+
+
+ 
+(function gtk_html_new
+  (c-name gtk_html_new)
+  (is-constructor-of GtkHTML)
+  (return-type GtkHTML*)
+) 
+
+(function gtk_html_new_from_string
+  (c-name gtk_html_new_from_string)
+  (is-constructor-of GtkHTML)
+  (return-type GtkHTML*)
+  (parameter (type-and-name const-gchar*	str))
+  (parameter (type-and-name gint              len))
+) 
+
+
+(method gtk_html_set_editor_api
+  (of-object HTML (Gtk))
+  (c-name gtk_html_set_editor_api)
+  (return-type none)
+  (parameter (type-and-name GtkHTMLEditorAPI*  api))
+  (parameter (type-and-name gpointer          data))
+) 
+
+
+; parent iframe setting
+
+(method gtk_html_set_iframe_parent
+  (of-object HTML (Gtk))
+  (c-name gtk_html_set_iframe_parent)
+  (return-type none)
+  (parameter (type-and-name GtkWidget*    parent))
+  (parameter (type-and-name GtkHTMLObject*   frame))
+) 
+
+;; Debugging
+(method gtk_html_enable_debug
+  (of-object HTML (Gtk))
+  (c-name gtk_html_enable_debug)
+  (return-type none)
+  (parameter (type-and-name gboolean    debug))
+) 
+
+;; Behaviour
+
+(method allow_selection
+  (of-object HTML (Gtk))
+  (c-name gtk_html_allow_selection)
+  (parameter (type-and-name gboolean allow))
+  (return-type none)
+)
+
+(method select_word
+  (of-object HTML (Gtk))
+  (c-name gtk_html_select_word)
+  (return-type none)
+)
+  
+(method select_line
+  (of-object HTML (Gtk))
+  (c-name gtk_html_select_line)
+  (return-type none)
+)
+ 
+  
+(method select_paragraph
+  (of-object HTML (Gtk))
+  (c-name gtk_html_select_paragraph)
+  (return-type none)
+)
+
+(method select_paragraph_extended
+  (of-object HTML (Gtk))
+  (c-name gtk_html_select_paragraph_extended)
+  (return-type none)
+)
+
+(method select_all
+  (of-object HTML (Gtk))
+  (c-name gtk_html_select_all)
+  (return-type none)
+)
+
+(method request_paste
+  (of-object HTML (Gtk))
+  (c-name gtk_html_request_paste)
+  (return-type none)
+   (parameter (type-and-name GdkAtom   selection)) 
+   (parameter (type-and-name gint      type))
+   (parameter (type-and-name gint32    time))
+   (parameter (type-and-name gboolean  as_cite))
+)
+
+;; Loading
+
+
+
+
+(method begin
+  (of-object HTML (Gtk))
+  (c-name gtk_html_begin)
+  (return-type GtkHTMLStream*)
+)
+
+(method begin_content
+  (of-object HTML (Gtk))
+  (c-name gtk_html_begin_content)
+  (return-type GtkHTMLStream*)
+  (parameter (type-and-name const-gchar* content_type))
+)
+
+(method write
+ (of-object HTML (Gtk))
+  (c-name gtk_html_write)
+  (return-type none)
+  (parameter (type-and-name GtkHTMLStream*	       handle))
+  (parameter (type-and-name const-gchar*	      buffer))
+  (parameter (type-and-name size_t		       size))
+)
+
+
+(method end
+  (of-object HTML (Gtk))
+  (c-name gtk_html_end)
+  (return-type none)
+  (parameter (type-and-name GtkHTMLStream* 	 handle))
+  (parameter (type-and-name GtkHTMLStreamStatus  status))
+)
+
+   
+
+ 
+(method load_empty
+  (of-object HTML (Gtk))
+  (c-name gtk_html_load_empty)
+  (return-type none)
+)
+
+(method load_from_string
+  (of-object HTML (Gtk))
+  (c-name  gtk_html_load_from_string)
+  (return-type none)
+  (parameter (type-and-name gchar* text))
+  (parameter (type-and-name gint text_length))
+)  
+
+
+
+;; saving
+
+  
+(method save
+  (of-object HTML (Gtk))
+  (c-name gtk_html_save)
+  (return-type gboolean)
+  (parameter (type-and-name GtkHTMLSaveReceiverFn  receiver ))
+  (parameter (type-and-name  gpointer               data))
+)
+
+(method connect_url_request
+  (of-object HTML (Gtk))
+  (c-name gtk_html_connect_url_request)
+  (return-type guint)
+  (parameter (type-and-name const-gchar* name))
+  (parameter (type-and-name GtkSignalFunc func))
+  (parameter (type-and-name gpointer func_data))
+)
+
+(method export
+  (of-object HTML (Gtk))
+  (c-name gtk_html_export)
+  (return-type gboolean)
+  (parameter (type-and-name const-char* type))
+  (parameter (type-and-name GtkHTMLSaveReceiverFn  receiver ))
+  (parameter (type-and-name gpointer               data))
+)
+
+
+
+
+;; editable support
+
+
+
+(method set_editable
+  (of-object HTML (Gtk))
+  (c-name gtk_html_set_editable)
+  (return-type none)
+  (parameter (type-and-name gboolean editable))
+)
+
+(method get_editable
+  (of-object HTML (Gtk))
+  (c-name gtk_html_get_editable)
+  (return-type gboolean)
+)
+  
+
+
+;; printing support
+
+(method print_with_header_footer
+  (of-object HTML (Gtk))
+  (c-name gtk_html_print_with_header_footer)
+  (return-type none)
+  (parameter (type-and-name GnomePrintContext*	  print_context))
+  (parameter (type-and-name gdouble               header_height))
+  (parameter (type-and-name gdouble               footer_height))
+  (parameter (type-and-name GtkHTMLPrintCallback  header_print))
+  (parameter (type-and-name GtkHTMLPrintCallback  footer_print))
+  (parameter (type-and-name gpointer              user_data))
+)
+
+(method print
+  (of-object HTML (Gtk))
+  (c-name gtk_html_print)
+  (return-type none)
+  (parameter (type-and-name GnomePrintContext*	  print_context))
+)
+
+;; Title
+(method get_title
+  (of-object HTML (Gtk))
+  (c-name gtk_html_get_title)
+  (return-type static_string)
+)
+;; Anchors
+ 
+(method jump_to_anchor
+  (of-object HTML (Gtk))
+  (c-name gtk_html_jump_to_anchor)
+  (return-type gboolean)
+  (parameter (type-and-name string anchor))
+)
+  
+
+
+;; editing functions
+  
+
+(method get_paragraph_style
+  (of-object HTML (Gtk))
+  (c-name gtk_html_get_paragraph_style)
+  (return-type GtkHTMLParagraphStyle)
+)
+
+(method set_paragraph_style
+  (of-object HTML (Gtk))
+  (c-name gtk_html_set_paragraph_style)
+  (return-type none)
+  (parameter (type-and-name GtkHTMLParagraphStyle style))
+)
+
+(method set_indent
+  (of-object HTML (Gtk))
+  (c-name gtk_html_set_indent)
+  (return-type none)
+  (parameter (type-and-name GByteArray level))
+)
+
+(method modify_indent_by_delta
+  (of-object HTML (Gtk))
+  (c-name gtk_html_modify_indent_by_delta)
+  (return-type none)
+  (parameter (type-and-name gint delta))
+)
+
+(method set_font_style
+  (of-object HTML (Gtk))
+  (c-name gtk_html_set_font_style)
+  (return-type none)
+  (parameter (type-and-name GtkHTMLFontStyle           and_mask))
+  (parameter (type-and-name GtkHTMLFontStyle           or_mask))
+)  
+
+(method set_color
+  (of-object HTML (Gtk))
+  (c-name gtk_html_set_color)
+  (return-type none)
+  (parameter (type-and-name HTMLColor*           color))
+)
+
+(method toggle_font_style
+  (of-object HTML (Gtk))
+  (c-name gtk_html_toggle_font_style)
+  (return-type none)
+  (parameter (type-and-name GtkHTMLFontStyle           style))
+)
+
+(method get_paragraph_alignment
+  (of-object HTML (Gtk))
+  (c-name gtk_html_get_paragraph_alignment)
+  (return-type GtkHTMLParagraphAlignment)
+)    
+
+(method set_paragraph_alignment
+  (of-object HTML (Gtk))
+  (c-name gtk_html_set_paragraph_alignment)
+  (return-type none)
+  (parameter (type-and-name GtkHTMLParagraphAlignment           alignment))
+)    
+
+(method cut
+  (of-object HTML (Gtk))
+  (c-name gtk_html_cut)
+  (return-type none)
+)    
+
+(method copy
+  (of-object HTML (Gtk))
+  (c-name gtk_html_copy)
+  (return-type none)
+)    
+(method paste
+  (of-object HTML (Gtk))
+  (c-name gtk_html_paste)
+  (return-type none)
+)    
+(method undo
+  (of-object HTML (Gtk))
+  (c-name gtk_html_undo)
+  (return-type none)
+  (parameter (type-and-name gboolean as_cite))
+)    
+(method redo
+  (of-object HTML (Gtk))
+  (c-name gtk_html_redo)
+  (return-type none)
+)    
+
+
+(method insert_html
+  (of-object HTML (Gtk))
+  (c-name gtk_html_insert_html)
+  (return-type none)
+  (parameter (type-and-name const-gchar*   html_src))
+)    
+
+
+
+
+;;misc
+  
+  
+(method set_default_background_color
+  (of-object HTML (Gtk))
+  (c-name gtk_html_set_default_background_color)
+  (return-type none)
+  (parameter (type-and-name GdkColor c))
+)
+ 
+(method set_default_content_type
+  (of-object HTML (Gtk))
+  (c-name gtk_html_set_default_content_type)
+  (return-type none)
+  (parameter (type-and-name string content_type))
+)
+ 
+ 
+ 
+(method get_object_by_id
+  (of-object HTML (Gtk))
+  (c-name gtk_html_get_object_by_id)
+  (return-type none)
+  (parameter (type-and-name const-gchar*  id))
+)
+
+(method command
+  (of-object HTML (Gtk))
+  (c-name gtk_html_command)
+  (return-type none)
+  (parameter (type-and-name const-gchar*  command_name))
+)
+
+(method edit_make_cursor_visible
+  (of-object HTML (Gtk))
+  (c-name gtk_html_edit_make_cursor_visible)
+  (return-type none)
+) 
+
+ 
+;; gboolean  gtk_html_build_with_gconf              (void);
+
+
+(method set_magnification
+  (of-object HTML (Gtk))
+  (c-name gtk_html_set_magnification)
+  (return-type none)
+  (parameter (type-and-name gdouble magnification))
+)
+
+(method zoom_in
+  (of-object HTML (Gtk))
+  (c-name gtk_html_zoom_in)
+  (return-type none)
+)
+
+(method zoom_out
+  (of-object HTML (Gtk))
+  (c-name gtk_html_zoom_out)
+  (return-type none)
+)
+
+(method zoom_reset
+  (of-object HTML (Gtk))
+  (c-name gtk_html_zoom_reset)
+  (return-type none)
+)
+
+(method update_styles 
+  (of-object HTML (Gtk))
+  (c-name gtk_html_update_styles)
+  (return-type none)
+)    
+
+  
+
+ 
+ 
+;; Extra - non standard direct call methods!
+
+
+(method get_font_style 
+  (of-object HTML (Gtk))
+  (c-name gtk_html_get_font_style)
+  (return-type GdkFontStyle)
+)
+ 
+ 
+(method get_font_color
+  (of-object HTML (Gtk))
+  (c-name gtk_html_get_font_color)
+  (return-type GdkColor)
+)
+ 
+(method set_cursor_xy
+  (of-object HTML (Gtk))
+  (c-name gtk_html_set_cursor_xy)
+  (return-type none)
+  (parameter (type-and-name gint x))
+  (parameter (type-and-name gint y))
+)
+ 
+ 
+; links !
+
+(method insert_link
+  (of-object HTML (Gtk))
+  (parameter (type-and-name const-gchar*  url))
+  (parameter (type-and-name const-gchar*  target))
+  (c-name gtk_html_insert_link)
+  (return-type None)
+)
+ 
+
+(method get_url
+  (of-object HTML (Gtk))
+  (c-name gtk_html_get_url)
+  (return-type static_string)
+) 
+ 
+(method get_target
+  (of-object HTML (Gtk))
+  (c-name gtk_html_get_target)
+  (return-type static_string)
+) 
+  
+ 
+ 
+;; GtkHTMLEmbedded
+(object  HTMLEmbedded 
+  (in-module Gtk)
+  (parent  Bin (Gtk))
+  (c-name GtkHTMLEmbedded)
+)
+  
+(function gtk_html_embedded_new
+  (c-name gtk_html_embedded_new)
+  (is-constructor-of GtkHTMLEmbedded)
+    (return-type GtkBin*)
+     (parameter (type-and-name string classid))
+     (parameter (type-and-name string name))
+    (parameter (type-and-name string type))
+    (parameter  (type-and-name string data))
+   (parameter  (type-and-name int width))
+   (parameter  (type-and-name int height))
+  
+) 
+
+ 
+
+;(function gtk_html_embedded_set_parameter
+;  none
+;  ((GtkHTMLEmbedded ge)
+;   (string param)
+;   (string value)))
+
+;; get_parameter handled in a manual C wrapper
+
+;(function gtk_html_embedded_set_descent
+; none
+; ((GtkHtmlEmbedded ge)
+;  (int descent)))
+
+
+
+
+  ;; search
+(method issearch
+         (of-object HTML (Gtk))
+         (c-name  gtk_html_isearch)
+         (return-type none)
+         (parameter (type-and-name gboolean forward))
+)
+
+(method search
+         (of-object HTML (Gtk))
+         (c-name  gtk_html_engine_search)
+         (return-type gboolean)
+         (parameter (type-and-name const-gchar* text))
+         (parameter (type-and-name gboolean case_sensitive))
+         (parameter (type-and-name gboolean forward))
+         (parameter (type-and-name gboolean regular))
+)
+
+(method search_set_forward
+         (of-object HTML (Gtk))
+         (c-name  gtk_html_engine_search_set_forward)
+         (return-type none)
+         (parameter (type-and-name gboolean forward))
+)
+
+(method search_next
+         (of-object HTML (Gtk))
+         (c-name  gtk_html_engine_search_next)
+         (return-type gboolean)
+)
+
+(method search_incremental
+         (of-object HTML (Gtk))
+         (c-name  gtk_html_engine_search_incremental)
+         (return-type gboolean)
+         (parameter (type-and-name const-gchar* text))
+         (parameter (type-and-name gboolean forward))
+)
+
+

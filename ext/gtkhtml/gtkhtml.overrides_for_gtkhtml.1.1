@@ -1,0 +1,1079 @@
+/* vim: set ft=cpp: */
+%%
+headers
+
+
+#include <gtkhtml/gtkhtml.h>
+#include <gtkhtml/gtkhtml-embedded.h>
+#include <gtkhtml/gtkhtml-embedded.h>
+#include <gtkhtml/htmlengine-edit-fontstyle.h>
+#include <gtkhtml/htmlengine-edit-cut-and-paste.h>
+#include <gtkhtml/htmlcolor.h>
+#include <gtkhtml/htmltypes.h>
+#include <gtkhtml/htmlobject.h>
+#include <gtkhtml/htmlcursor.h>
+#include <gtkhtml/htmlengine-edit-movement.h>
+#include <gtkhtml/gtkhtml-search.h>
+
+
+#include "ext/gtk+/php_gtk+.h"
+#include "ext/gtkhtml/php_gtkhtml.h"
+
+/* Hack to make the enums work */
+typedef enum {
+      GTK_TYPE_HTMLPARAGRAPH_STYLE,
+      GTK_TYPE_HTMLPARAGRAPH_ALIGNMENT,
+      GTK_TYPE_HTMLFONT_STYLE
+} GtkHTMLFundamentalType;
+
+static void php_gtkhtmlstream_destruct(zend_rsrc_list_entry *rsrc TSRMLS_DC);
+
+%%
+constants
+    REGISTER_LONG_CONSTANT("GTK_HTML_STREAM_OK", GTK_HTML_STREAM_OK, CONST_CS | CONST_PERSISTENT);
+	REGISTER_LONG_CONSTANT("GTK_HTML_STREAM_ERROR", GTK_HTML_STREAM_ERROR, CONST_CS | CONST_PERSISTENT);
+	
+%%
+ignore-glob
+  *_get_type
+
+%%
+ignore gtk_html_new_from_string
+%%
+override gtk_html_new
+PHP_FUNCTION(gtk_html_new)
+{
+	GtkObject *wrapped_obj;
+	char *str = NULL;
+	int str_len;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|s#", &str, &str_len)) {
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	if (str)
+		wrapped_obj = (GtkObject *)gtk_html_new_from_string(str, str_len);
+	else
+		wrapped_obj = (GtkObject *)gtk_html_new();
+
+	if (!wrapped_obj) {
+		php_error(E_WARNING, "%s(): could not create GtkHTML object",
+				  get_active_function_name(TSRMLS_C));
+		php_gtk_invalidate(this_ptr);
+		return;
+	}
+
+	php_gtk_object_init(wrapped_obj, this_ptr);
+}
+
+%%
+override gtk_html_begin
+
+PHP_FUNCTION(gtk_html_begin)
+{
+	char *content_type;
+	php_gtkhtmlstream_s *pgs = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+	
+	pgs   = (php_gtkhtmlstream_s *) emalloc(sizeof(php_gtkhtmlstream_s));
+	pgs->gs = gtk_html_begin(GTK_HTML(PHP_GTK_GET(this_ptr)));
+
+	ZEND_REGISTER_RESOURCE(return_value, pgs, le_gtkhtmlstream);
+	pgs->id = Z_LVAL_P(return_value);        
+}
+
+%%
+override gtk_html_begin_content
+PHP_FUNCTION(gtk_html_begin_content)
+{
+	char *content_type;
+	php_gtkhtmlstream_s *pgs = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &content_type))
+		return;
+
+	pgs   = (php_gtkhtmlstream_s *) emalloc(sizeof(php_gtkhtmlstream_s));
+	pgs->gs = gtk_html_begin_content(GTK_HTML(PHP_GTK_GET(this_ptr)), content_type);
+
+	ZEND_REGISTER_RESOURCE(return_value, pgs, le_gtkhtmlstream);
+	pgs->id = Z_LVAL_P(return_value);
+}
+%%
+override gtk_html_write
+ 
+PHP_FUNCTION(gtk_html_write)
+{
+	zval **arg1, **arg2, **arg3=NULL;
+	int ret, type,i;
+	int num_bytes;
+	int issock=0;
+	int socketd=0;
+	char *string;
+	void *what;
+	php_gtkhtmlstream_s *pgs;
+
+	switch (ZEND_NUM_ARGS()) {
+		case 2:
+			if (zend_get_parameters_ex(2, &arg1, &arg2)==FAILURE) {
+				RETURN_FALSE;
+			}
+			convert_to_string_ex(arg2);
+			num_bytes = Z_STRLEN_PP(arg2);
+			break;
+
+		case 3:
+			if (zend_get_parameters_ex(3, &arg1, &arg2, &arg3)==FAILURE) {
+				RETURN_FALSE;
+			}
+			convert_to_string_ex(arg2);
+			convert_to_long_ex(arg3);
+			num_bytes = MIN(Z_LVAL_PP(arg3), Z_STRLEN_PP(arg2)); 
+			/*		num_bytes = Z_LVAL_PP(arg3); */
+			break;
+			
+		default:
+			WRONG_PARAM_COUNT;
+			/* NOTREACHED */
+			break;
+	}
+
+	what = zend_fetch_resource(arg1 TSRMLS_CC, -1, "GtkHTMLStream", &type, 1, le_gtkhtmlstream);
+	ZEND_VERIFY_RESOURCE(what);
+	pgs = (php_gtkhtmlstream_s *) what;
+ 
+	if (!arg3 && PG(magic_quotes_runtime)) {
+		zval_copy_ctor(*arg2);
+		php_stripslashes(Z_STRVAL_PP(arg2), &num_bytes TSRMLS_CC);
+	}
+ 	/* php_error(E_WARNING, "write using %p (size %d) ", pgs->gs, num_bytes);  */
+	// spec says (size_t) size 
+
+        /* 
+	string = Z_STRVAL_PP(arg2);
+	for (i=0;i<num_bytes;i++) {
+	  php_error(E_WARNING, "OUT: %p  %2x ", pgs->gs, string[i]); 
+	}
+        */
+	gtk_html_write(GTK_HTML(PHP_GTK_GET(this_ptr)),
+				   pgs->gs,  Z_STRVAL_PP(arg2), num_bytes);
+ 		
+ 	RETURN_NULL();
+}
+ 
+%%
+override gtk_html_end
+PHP_FUNCTION(gtk_html_end)
+{
+	GtkHTMLStreamStatus status;
+	zval *php_status = NULL;
+	zval *gs_zval;
+	php_gtkhtmlstream_s *pgs;
+	int resource_type;
+	char *buffer;
+	long  size;
+        
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "rV", &gs_zval, &php_status))
+		return;
+        
+	if (php_status) {
+		status = (GtkHTMLStreamStatus) php_status;
+	}
+	
+	pgs = (php_gtkhtmlstream_s *) zend_list_find(Z_RESVAL_P(gs_zval), &resource_type);
+	if (!pgs || resource_type != le_gtkhtmlstream) {
+		php_error(E_WARNING,"html_end needs a valid htmlstream resource");
+		return;
+	}
+         
+	gtk_html_end(GTK_HTML(PHP_GTK_GET(this_ptr)), pgs->gs, status);
+
+  	zend_list_delete(Z_RESVAL_P(gs_zval));
+  
+ 	RETURN_NULL();
+} 
+
+
+%%
+override gtk_html_save
+
+static void php_gtk_html_save_callback(HTMLEngine *engine, gchar *string, guint string_len, zval* callback_data)
+{
+	zval *retval = NULL;
+	zval **callback = NULL, **extra = NULL;
+	zval **callback_filename = NULL, **callback_lineno = NULL;
+	zval ***args, *params;
+	char *callback_name;
+	TSRMLS_FETCH();
+
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&callback_filename);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_lineno);
+
+	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
+		php_error(E_WARNING, "Unable to call html save callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
+		efree(callback_name);
+		return;
+	}
+
+	params = php_gtk_build_value("(s)", string);
+
+	if (extra)
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
+		
+	args = php_gtk_hash_as_array(params); 	 
+	
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 0, NULL TSRMLS_CC);
+	if (retval)
+		zval_ptr_dtor(&retval);
+	efree(args);
+	zval_ptr_dtor(&params);
+
+}
+
+PHP_FUNCTION(gtk_html_save)
+{
+
+	zval *callback = NULL;
+	zval *extra;
+	zval *data;
+	char *callback_filename;
+	uint callback_lineno;
+
+	if (ZEND_NUM_ARGS() < 1) {
+		php_error(E_WARNING, "%s() requires at least 1 arguments, %d given",
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+		return;
+	}
+
+	if (!php_gtk_parse_args(1, "V", &callback))
+		return;
+
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 1, ZEND_NUM_ARGS());
+	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
+	RETURN_BOOL(gtk_html_save(GTK_HTML(PHP_GTK_GET(this_ptr)),
+                     (GtkHTMLSaveReceiverFn) php_gtk_html_save_callback,  data));
+}
+
+
+%%
+override gtk_html_export
+ 
+PHP_FUNCTION(gtk_html_export)
+{
+
+	zval *callback = NULL;
+	
+	zval *extra;
+	zval *data;
+	char *callback_filename;
+        char *type;
+	uint callback_lineno;
+
+	if (ZEND_NUM_ARGS() < 1) {
+		php_error(E_WARNING, "%s() requires at least 1 arguments, %d given",
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+		return;
+	}
+
+	if (!php_gtk_parse_args(1, "sV", &type,&callback))
+		return;
+
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
+	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
+	RETURN_BOOL(gtk_html_export(GTK_HTML(PHP_GTK_GET(this_ptr)), type,
+                     (GtkHTMLSaveReceiverFn) php_gtk_html_save_callback,  data));
+}
+
+
+%%
+override gtk_html_connect_url_request
+
+static void php_gtk_html_url_request_callback (GtkHTML *html, const char *url, GtkHTMLStream *gs, zval* callback_data) 
+{
+
+	php_gtkhtmlstream_s *pgs;
+	zval *myresource = NULL; 
+	zval *retval = NULL;
+	zval **callback = NULL, **extra = NULL;
+	zval **callback_filename = NULL, **callback_lineno = NULL;
+	zval ***args, *params;
+	char *callback_name;
+	long gs_id;
+
+	TSRMLS_FETCH();
+
+ 	/* php_error(E_WARNING, "url request recieved %p as handle ", gs); */
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&callback_filename);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_lineno);
+
+	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
+		php_error(E_WARNING, "Unable to call url_request callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
+		efree(callback_name);
+		return;
+	}
+
+	params = php_gtk_build_value("(s)", url);
+	/* php_error(E_WARNING, "Using RESORUCE id %p ",gs_id); */
+        pgs   = (php_gtkhtmlstream_s *) emalloc(sizeof(php_gtkhtmlstream_s));
+	pgs->gs = gs;
+	MAKE_STD_ZVAL(myresource);
+	gs_id = zend_list_insert(pgs, le_gtkhtmlstream);
+	pgs->id = gs_id;
+	ZVAL_RESOURCE(myresource, gs_id);
+	
+	zend_hash_next_index_insert(Z_ARRVAL_P(params), &myresource, sizeof(zval *), NULL);
+	
+	if (extra)
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
+		
+	args = php_gtk_hash_as_array(params);
+	
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 0, NULL TSRMLS_CC);
+	if (retval)
+		zval_ptr_dtor(&retval);
+	efree(args);
+	zval_ptr_dtor(&params);
+
+}
+
+PHP_FUNCTION(gtk_html_connect_url_request)
+{
+	zval *callback = NULL;
+	zval *extra;
+	zval *data;
+	char *callback_filename;
+	uint callback_lineno;
+
+	if (ZEND_NUM_ARGS() < 1) {
+		php_error(E_WARNING, "%s() requires at least 1 arguments, %d given",
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+		return;
+	}
+
+	if (!php_gtk_parse_args(1, "V", &callback))
+		return;
+
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 1, ZEND_NUM_ARGS());
+	data = php_gtk_build_value("(VNsi)", callback, extra, callback_filename, callback_lineno);
+	RETURN_LONG(gtk_signal_connect (GTK_OBJECT(GTK_HTML(PHP_GTK_GET(this_ptr))), "url_requested",
+			    GTK_SIGNAL_FUNC (php_gtk_html_url_request_callback), data));
+ 
+}
+
+%% 
+override gtk_html_set_editor_api
+
+
+						
+												
+	
+
+ 
+ 
+gboolean gtk_htmleditorapi_check_word(GtkHTML *html, const gchar *word,  gpointer data ) {
+	zval* callback_data= (zval *) data;
+	zval *retval = NULL;			
+	zval **extra = NULL;			
+	zval ***args, *params;			
+	char *callback_name;
+	gboolean gtk_retval = 0;			
+	 
+	zval **cb_check_word = NULL;		
+	zval **cb_suggestion_request = NULL;	
+	zval **cb_add_to_session = NULL;	
+	zval **cb_add_to_personal = NULL;	
+	zval **cb_command = NULL;		       
+	zval **cb_event = NULL;			
+	zval **cb_create_input_line = NULL;	
+	zval **callback_filename = NULL;	
+	zval **callback_lineno = NULL;		
+						
+						
+	TSRMLS_FETCH();				
+ 	 					
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&cb_check_word);		
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 7, (void **)&extra);			
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 8, (void **)&callback_filename);	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 9, (void **)&callback_lineno);		
+	
+        if (!php_gtk_is_callable(*cb_check_word, 0, &callback_name)) {				
+		php_error(E_WARNING, 
+		    "Unable to call check_word callback '%s' specified in %s on line %d",	
+		    callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));	
+		efree(callback_name);	
+		return gtk_retval;			
+	}
+  
+	params = php_gtk_build_value("(s)", word);
+
+	if (extra)
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
+		
+	args = php_gtk_hash_as_array(params);
+ 
+	call_user_function_ex(EG(function_table), NULL, *cb_check_word, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 0, NULL TSRMLS_CC);
+
+	if (retval) {
+		if (zval_is_true(retval))
+		   gtk_retval =1;
+		zval_ptr_dtor(&retval);
+	}
+        zval_ptr_dtor(&params);
+	efree(args);
+	return gtk_retval;
+}
+
+void gtk_htmleditorapi_suggestion_request(GtkHTML *html, const gchar *word, gpointer data ) {
+	zval* callback_data= (zval *) data;
+	zval *retval = NULL;			
+	zval **extra = NULL;			
+	zval ***args, *params;			
+	char *callback_name;
+		
+	 
+	zval **cb_check_word = NULL;		
+	zval **cb_suggestion_request = NULL;	
+	zval **cb_add_to_session = NULL;	
+	zval **cb_add_to_personal = NULL;	
+	zval **cb_command = NULL;		       
+	zval **cb_event = NULL;			
+	zval **cb_create_input_line = NULL;	
+	zval **callback_filename = NULL;	
+	zval **callback_lineno = NULL;		
+						
+						
+	TSRMLS_FETCH();				
+ 	 					
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&cb_suggestion_request);	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 7, (void **)&extra);			
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 8, (void **)&callback_filename);	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 9, (void **)&callback_lineno);		
+	
+        if (!php_gtk_is_callable(*cb_suggestion_request, 0, &callback_name)) {				
+		php_error(E_WARNING, 
+		    "Unable to call suggestion_request callback '%s' specified in %s on line %d",	
+		    callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));	
+		efree(callback_name);	
+		return;			
+	}  
+	params = php_gtk_build_value("(s)", word);
+
+	if (extra)
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
+		
+	args = php_gtk_hash_as_array(params);
+ 
+	call_user_function_ex(EG(function_table), NULL, *cb_suggestion_request, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 0, NULL TSRMLS_CC);
+
+	if (retval) {
+		zval_ptr_dtor(&retval);
+	}
+        zval_ptr_dtor(&params);
+	efree(args);
+}
+
+void gtk_htmleditorapi_add_to_session(GtkHTML *html, const gchar *word, gpointer data ) {
+	zval* callback_data= (zval *) data;
+	zval *retval = NULL;			
+	zval **extra = NULL;			
+	zval ***args, *params;			
+	char *callback_name;
+		
+	 
+	zval **cb_check_word = NULL;		
+	zval **cb_suggestion_request = NULL;	
+	zval **cb_add_to_session = NULL;	
+	zval **cb_add_to_personal = NULL;	
+	zval **cb_command = NULL;		       
+	zval **cb_event = NULL;			
+	zval **cb_create_input_line = NULL;	
+	zval **callback_filename = NULL;	
+	zval **callback_lineno = NULL;		
+						
+						
+	TSRMLS_FETCH();				
+ 	 					
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&cb_add_to_session);	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 7, (void **)&extra);			
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 8, (void **)&callback_filename);	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 9, (void **)&callback_lineno);		
+	
+        if (!php_gtk_is_callable(*cb_add_to_session, 0, &callback_name)) {				
+		php_error(E_WARNING, 
+		    "Unable to call add_to_session callback '%s' specified in %s on line %d",	
+		    callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));	
+		efree(callback_name);	
+		return;			
+	}  
+	params = php_gtk_build_value("(s)", word);
+
+	if (extra)
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
+		
+	args = php_gtk_hash_as_array(params);
+ 
+	call_user_function_ex(EG(function_table), NULL, *cb_add_to_session, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 0, NULL TSRMLS_CC);
+
+	if (retval) {
+		zval_ptr_dtor(&retval);
+	}
+        zval_ptr_dtor(&params);
+	efree(args);
+  
+}
+
+void gtk_htmleditorapi_add_to_personal(GtkHTML *html, const gchar *word, gpointer data ) {
+	zval* callback_data= (zval *) data;
+
+	zval *retval = NULL;			
+	zval **extra = NULL;			
+	zval ***args, *params;			
+	char *callback_name;
+		
+	 
+	zval **cb_check_word = NULL;		
+	zval **cb_suggestion_request = NULL;	
+	zval **cb_add_to_session = NULL;	
+	zval **cb_add_to_personal = NULL;	
+	zval **cb_command = NULL;		       
+	zval **cb_event = NULL;			
+	zval **cb_create_input_line = NULL;	
+	zval **callback_filename = NULL;	
+	zval **callback_lineno = NULL;		
+						
+						
+	TSRMLS_FETCH();				
+ 	 					
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&cb_add_to_personal);	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 7, (void **)&extra);			
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 8, (void **)&callback_filename);	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 9, (void **)&callback_lineno);		
+	
+        if (!php_gtk_is_callable(*cb_add_to_personal, 0, &callback_name)) {				
+		php_error(E_WARNING, 
+		    "Unable to call add_to_personal callback '%s' specified in %s on line %d",	
+		    callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));	
+		efree(callback_name);	
+		return;			
+	}  
+	params = php_gtk_build_value("(s)", word);
+
+	if (extra)
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
+		
+	args = php_gtk_hash_as_array(params);
+ 
+	call_user_function_ex(EG(function_table), NULL, *cb_add_to_personal, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 0, NULL TSRMLS_CC);
+
+	if (retval) {
+		zval_ptr_dtor(&retval);
+	}
+        zval_ptr_dtor(&params);
+	efree(args);
+  
+ 
+}
+
+gboolean gtk_htmleditorapi_command(GtkHTML *html, GtkHTMLCommandType com_type, gpointer data ) {
+	zval* callback_data= (zval *) data;
+
+	zval *retval = NULL;			
+	zval **extra = NULL;			
+	zval ***args, *params;			
+	char *callback_name;
+	gboolean gtk_retval = 0;					
+	 
+	zval **cb_check_word = NULL;		
+	zval **cb_suggestion_request = NULL;	
+	zval **cb_add_to_session = NULL;	
+	zval **cb_add_to_personal = NULL;	
+	zval **cb_command = NULL;		       
+	zval **cb_event = NULL;			
+	zval **cb_create_input_line = NULL;	
+	zval **callback_filename = NULL;	
+	zval **callback_lineno = NULL;		
+						
+						
+	TSRMLS_FETCH();				
+ 	 					
+	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&cb_command);		
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 7, (void **)&extra);			
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 8, (void **)&callback_filename);	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 9, (void **)&callback_lineno);		
+	
+        if (!php_gtk_is_callable(*cb_command, 0, &callback_name)) {				
+		php_error(E_WARNING, 
+		    "Unable to call command callback '%s' specified in %s on line %d",	
+		    callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));	
+		efree(callback_name);	
+		return;			
+	}  
+	params = php_gtk_build_value("(i)", (int) com_type);
+
+	if (extra)
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
+		
+	args = php_gtk_hash_as_array(params);
+ 
+	call_user_function_ex(EG(function_table), NULL, *cb_command, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 0, NULL TSRMLS_CC);
+
+	if (retval) {
+		if (zval_is_true(retval))
+		   gtk_retval =1;
+		zval_ptr_dtor(&retval);
+	}
+        zval_ptr_dtor(&params);
+	efree(args);
+	return gtk_retval;
+
+}
+
+
+GtkArg *gtk_htmleditorapi_event(GtkHTML *html, GtkHTMLEditorEventType event_type, 
+             	GtkArg **gtkargs,	gpointer data ) {
+	zval* callback_data= (zval *) data;
+
+	zval *retval = NULL;			
+	zval **extra = NULL;			
+	zval ***args, *params;			
+	char *callback_name;
+	GtkArg *gtk_retval = NULL;					
+	 
+	zval **cb_check_word = NULL;		
+	zval **cb_suggestion_request = NULL;	
+	zval **cb_add_to_session = NULL;	
+	zval **cb_add_to_personal = NULL;	
+	zval **cb_command = NULL;		       
+	zval **cb_event = NULL;			
+	zval **cb_create_input_line = NULL;	
+	zval **callback_filename = NULL;	
+	zval **callback_lineno = NULL;		
+						
+						
+	TSRMLS_FETCH();				
+ 	 					
+ 		
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 5, (void **)&cb_event);			
+ 	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 7, (void **)&extra);			
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 8, (void **)&callback_filename);	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 9, (void **)&callback_lineno);		
+	
+        if (!php_gtk_is_callable(*cb_event, 0, &callback_name)) {				
+		php_error(E_WARNING, 
+		    "Unable to call event callback '%s' specified in %s on line %d",	
+		    callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));	
+		efree(callback_name);	
+		return;			
+	}  
+	
+	
+ 	
+	switch (event_type) {
+		case GTK_HTML_EDITOR_EVENT_COMMAND_BEFORE:
+		case GTK_HTML_EDITOR_EVENT_COMMAND_AFTER:
+   		case GTK_HTML_EDITOR_EVENT_IMAGE_URL:
+			params = php_gtk_build_value("(is)", (int) event_type,(const gchar *) gtkargs[0]); 
+			break;
+ 		case GTK_HTML_EDITOR_EVENT_DELETE:
+			params = php_gtk_build_value("(ii)",(int) event_type, 0); 
+			break;
+		default:
+			g_warning ("Unsupported event.\n");
+	}
+	if (extra)
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
+		
+	args = php_gtk_hash_as_array(params);
+ 
+	call_user_function_ex(EG(function_table), NULL, *cb_event, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 0, NULL TSRMLS_CC);
+
+	if (retval) {
+		if (zval_is_true(retval))
+			convert_to_string(retval);
+			*GTK_RETLOC_STRING(*gtk_retval) = g_strdup(Z_STRVAL_P(retval));
+ 		zval_ptr_dtor(&retval);
+	}
+	zval_ptr_dtor(&params);
+	efree(args);
+
+	return gtk_retval;
+}
+ 
+GtkWidget *gtk_htmleditorapi_create_input_line(GtkHTML *html,  gpointer data ) {
+	
+	zval* callback_data= (zval *) data;
+
+	zval *retval = NULL;			
+	zval **extra = NULL;			
+	zval ***args, *params;			
+	char *callback_name;
+	GtkWidget *gtk_retval = NULL;					
+	 
+	zval **cb_check_word = NULL;		
+	zval **cb_suggestion_request = NULL;	
+	zval **cb_add_to_session = NULL;	
+	zval **cb_add_to_personal = NULL;	
+	zval **cb_command = NULL;		       
+	zval **cb_event = NULL;			
+	zval **cb_create_input_line = NULL;	
+	zval **callback_filename = NULL;	
+	zval **callback_lineno = NULL;		
+						
+						
+	TSRMLS_FETCH();				
+ 	 					
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&cb_check_word);		
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&cb_suggestion_request);	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&cb_add_to_session);	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&cb_add_to_personal);	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&cb_command);		
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 5, (void **)&cb_event);			
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 6, (void **)&cb_create_input_line);	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 7, (void **)&extra);			
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 8, (void **)&callback_filename);	
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 9, (void **)&callback_lineno);		
+	
+        if (!php_gtk_is_callable(*cb_create_input_line, 0, &callback_name)) {				
+		php_error(E_WARNING, 
+		    "Unable to call create_input_line callback '%s' specified in %s on line %d",	
+		    callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));	
+		efree(callback_name);	
+		return;			
+	}  
+	
+	// how should this start empty...
+	params = php_gtk_build_value("(i)", 0);
+
+
+	if (extra)
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
+		
+	args = php_gtk_hash_as_array(params);
+ 
+	call_user_function_ex(EG(function_table), NULL, *cb_command, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 0, NULL TSRMLS_CC);
+	/* this should get an object as a return value */
+	if (retval) {
+		zval_ptr_dtor(&retval);
+	}
+        zval_ptr_dtor(&params);
+	efree(args);
+	
+	
+	return gtk_retval;
+
+}
+
+
+
+  
+PHP_FUNCTION(gtk_html_set_editor_api)
+{
+	zval *cb_check_word = NULL;
+	zval *cb_suggestion_request = NULL;
+	zval *cb_add_to_session = NULL;
+	zval *cb_add_to_personal = NULL;
+	zval *cb_command = NULL;
+	zval *cb_event = NULL;
+	zval *cb_create_input_line = NULL;
+	
+	zval *extra;
+	zval *data;
+	char *callback_filename;
+	uint callback_lineno;
+	GtkHTMLEditorAPI *editorapi;
+
+	if (ZEND_NUM_ARGS() < 7) {
+		php_error(E_WARNING, "%s() requires at least 7 argument, %d given",
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+		return;
+	}
+
+	if (!php_gtk_parse_args(1, "VVVVVVV", 
+	   	&cb_check_word,
+		&cb_suggestion_request,
+	   	&cb_add_to_session,
+		&cb_add_to_personal,
+		&cb_command,
+		&cb_event,
+		&cb_create_input_line
+	   
+	   ))	
+		return;
+
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 7, ZEND_NUM_ARGS());
+	
+	editorapi = (GtkHTMLEditorAPI *) emalloc(sizeof(GtkHTMLEditorAPI *));
+	editorapi->check_word = gtk_htmleditorapi_check_word;
+	editorapi->suggestion_request = gtk_htmleditorapi_suggestion_request;
+	editorapi->add_to_session = gtk_htmleditorapi_add_to_session;
+	editorapi->add_to_personal = gtk_htmleditorapi_add_to_personal;
+	editorapi->command = gtk_htmleditorapi_command;
+	editorapi->event = gtk_htmleditorapi_event; 
+	editorapi->create_input_line = gtk_htmleditorapi_create_input_line;
+
+	data = php_gtk_build_value("(VVVVVVVNsi)", 
+		cb_check_word,
+		cb_suggestion_request,
+	   	cb_add_to_session,
+		cb_add_to_personal,
+		cb_command,
+		cb_event,
+		cb_create_input_line, 
+		extra, 
+		callback_filename, 
+		callback_lineno);
+		
+	gtk_html_set_editor_api(GTK_HTML(PHP_GTK_GET(this_ptr)),
+                     editorapi,  data);
+ 	
+ 	RETURN_NULL();
+ 
+ 
+}
+ 
+%%override gtk_html_set_color
+
+PHP_FUNCTION(gtk_html_set_color) 
+{
+
+	gushort r,g,b;
+	HTMLColor *hcolor = NULL;
+	GdkColor color;
+	gchar *color_spec;
+	
+	NOT_STATIC_METHOD();
+	
+	switch (ZEND_NUM_ARGS()) {
+	case 1:
+		if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &color_spec)) {
+			php_error(E_WARNING, "%s() should recieve either string #rrggbb or r,g,b",
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+			return;	  
+		}
+		if (!gdk_color_parse(color_spec, &color)) {
+			php_error(E_WARNING, "%s() could not parse color spec '%s'", get_active_function_name(TSRMLS_C), color_spec);
+			return;
+		}
+		hcolor =  (HTMLColor *) html_color_new_from_gdk_color(&color);
+		break;
+	case 3:
+		if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "hhh", &r,&g,&b)) {
+			php_error(E_WARNING, "%s() should recieve either string #rrggbb or r,g,b",
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+			return;			
+		}	
+		hcolor =  (HTMLColor *) html_color_new_from_rgb(r, g, b);
+		break;
+	default:
+		WRONG_PARAM_COUNT;
+		/* NOTREACHED */
+		break;
+	}
+	gtk_html_set_color(GTK_HTML(PHP_GTK_GET(this_ptr)), hcolor);
+	RETURN_NULL();
+}	
+
+%%override gtk_html_set_default_background_color
+
+PHP_FUNCTION(gtk_html_set_default_background_color) 
+{
+
+ 	gushort r,g,b;
+	GdkColor color;
+	GdkColor lcolor;
+	gchar *color_spec;
+	
+	NOT_STATIC_METHOD();
+	
+	switch (ZEND_NUM_ARGS()) {
+	case 1:
+		if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &color_spec)) {
+			php_error(E_WARNING, "%s() should recieve either string #rrggbb or r,g,b",
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+			return;	
+		}	  
+		if (!gdk_color_parse(color_spec, &color)) {
+			php_error(E_WARNING, "%s() could not parse color spec '%s'", get_active_function_name(TSRMLS_C), color_spec);
+			return;
+		}
+		break;
+	case 3:
+		if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "hhh", &color.red,&color.green,&color.blue)) {
+			php_error(E_WARNING, "%s() should recieve either string #rrggbb or r,g,b",
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+			return;	
+		}	
+		break;
+	default:
+		WRONG_PARAM_COUNT;
+		/* NOTREACHED */
+		break;
+	}
+	gtk_html_set_default_background_color(GTK_HTML(PHP_GTK_GET(this_ptr)), &color);
+	RETURN_NULL();
+}	
+
+
+
+
+%%override gtk_html_get_font_style
+/* some more cool stuff - direct access! */
+PHP_FUNCTION(gtk_html_get_font_style)
+{
+        
+        GtkHTMLFontStyle php_retval;
+        GdkColor *result_obj;
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	php_retval = html_engine_get_font_style(GTK_HTML(PHP_GTK_GET(this_ptr))->engine);
+	RETURN_LONG((long) php_retval);
+}
+
+%%override gtk_html_get_font_color
+
+PHP_FUNCTION(gtk_html_get_font_color)
+{
+        
+        HTMLColor *hcolor = NULL;
+        
+        NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+        hcolor = html_engine_get_color(GTK_HTML(PHP_GTK_GET(this_ptr))->engine);
+        
+        *return_value = *php_gdk_color_new(&hcolor->color);
+	 
+}
+
+%%override gtk_html_insert_link
+
+PHP_FUNCTION(gtk_html_insert_link)
+{
+	gchar *url = NULL;
+	gchar *target = NULL;
+	int urllen=0;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s#s", &url, &urllen, &target))
+		return;
+		
+        if (urllen > 0) {
+  	  html_engine_insert_link(GTK_HTML(PHP_GTK_GET(this_ptr))->engine, url, target);
+	} else {
+	    html_engine_insert_link(GTK_HTML(PHP_GTK_GET(this_ptr))->engine, NULL,NULL);
+	}  
+	RETURN_NULL();
+}
+ 
+
+%%override gtk_html_get_url
+PHP_FUNCTION(gtk_html_get_url)
+{
+	const gchar *ret = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	/* if (html_engine_is_selection_active (  GTK_HTML(PHP_GTK_GET(this_ptr))->engine))  */
+	ret = html_engine_get_url(  GTK_HTML(PHP_GTK_GET(this_ptr))->engine);
+	if (ret) {
+		RETURN_STRING((char *)ret, 1);
+	}
+	else {
+		RETURN_NULL();
+	}
+}
+
+%%override gtk_html_get_target
+
+PHP_FUNCTION(gtk_html_get_target)
+{
+	const gchar *ret = NULL;
+        
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	/* if (html_engine_is_selection_active (  GTK_HTML(PHP_GTK_GET(this_ptr))->engine))  */
+	ret = html_engine_get_target( GTK_HTML(PHP_GTK_GET(this_ptr))->engine );
+	if (ret) {
+		RETURN_STRING((char *)ret, 1);
+	}
+	else {
+		RETURN_NULL();
+	}
+}
+%%override gtk_html_set_cursor_xy
+
+/* direct copy from gtkhtml.c */
+
+static GtkWidget *
+php_gtk_shift_to_iframe_parent (GtkWidget *widget, gint *x, gint *y)
+{
+	while (GTK_HTML (widget)->iframe_parent) {
+		if (x)
+			*x += widget->allocation.x;
+		if (y)
+			*y += widget->allocation.y;
+		widget = GTK_HTML (widget)->iframe_parent;
+	}
+
+	return widget;
+}
+
+
+PHP_FUNCTION(gtk_html_set_cursor_xy)
+{
+	GtkWidget *widget;
+	HTMLEngine *engine;
+	gint x, y;
+     
+	NOT_STATIC_METHOD();
+	
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &x,&y))
+		return;
+        
+	/* from shift_to_iframe_parent - not exposed by headers */
+	widget = GTK_WIDGET(PHP_GTK_GET(this_ptr));
+	widget = php_gtk_shift_to_iframe_parent (widget, &x, &y);
+
+	engine = GTK_HTML (widget)->engine;
+	if (/* GTK_HTML (widget)->button1_pressed && */ html_engine_get_editable (engine))
+		html_engine_jump_at (engine,
+				     x + engine->x_offset,
+				     y + engine->y_offset);
+	
+	RETURN_NULL();
+}
