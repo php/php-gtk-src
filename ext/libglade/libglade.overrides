@@ -59,7 +59,7 @@ static glade_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object)
 
 	if (ZEND_NUM_ARGS() < 2) {
 		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
-				  get_active_function_name(), ZEND_NUM_ARGS());
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
 		return;
 	}
 
@@ -109,7 +109,7 @@ static void glade_connect_auto(const gchar *handler_name, GtkObject *obj,
 	if (map && zend_hash_find(Z_ARRVAL_P(map), (char *)handler_name, strlen(handler_name) + 1, (void **)&callback_data) == SUCCESS) {
 		if (Z_TYPE_PP(callback_data) != IS_ARRAY ||
 			zend_hash_index_find(Z_ARRVAL_PP(callback_data), 0, (void **)&callback_ptr) == FAILURE) {
-			php_error(E_WARNING, "%s() is supplied with invalid callback structure for handler '%s'", get_active_function_name(), handler_name);
+			php_error(E_WARNING, "%s() is supplied with invalid callback structure for handler '%s'", get_active_function_name(TSRMLS_C), handler_name);
 			return; 
 		}
 		zval_add_ref(callback_ptr);
@@ -123,7 +123,7 @@ static void glade_connect_auto(const gchar *handler_name, GtkObject *obj,
 
 	if (!zend_is_callable(callback, 0, NULL)) {
 		php_error(E_WARNING, "%s() is unable to autoconnect callback for handler '%s'",
-				  get_active_function_name(), handler_name);
+				  get_active_function_name(TSRMLS_C), handler_name);
 		return;
 	}
 	

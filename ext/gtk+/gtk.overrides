@@ -555,7 +555,7 @@ PHP_FUNCTION(gtk_object_get)
 	ret = php_gtk_arg_as_value(&garg);
 	if (ret == NULL) {
 		php_error(E_WARNING, "%s() couldn't translate type",
-				  get_active_function_name());
+				  get_active_function_name(TSRMLS_C));
 		return;
 	}
 
