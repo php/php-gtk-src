@@ -111,9 +111,9 @@ PHP_FUNCTION(gtk_plot_axis_set_title)
 
 
 
-/*---------------------- Gtk Sheet Overrides --------------------------*/
+ 
 
-%% 
+%%
 override gtk_sheet_get_active_cell
 
 PHP_FUNCTION(gtk_sheet_get_active_cell)
