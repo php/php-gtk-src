@@ -320,14 +320,8 @@ PHP_FUNCTION(wrap_gtk_widget_intersect)
 
 	if (gtk_widget_intersect(GTK_WIDGET(PHP_GTK_GET(this_ptr)), &area, &intersection)) {
 		array_init(return_value);
-		add_index_long(return_value, 0, (int)area.x);
-		add_index_long(return_value, 1, (int)area.y);
-		add_index_long(return_value, 2, (int)area.width);
-		add_index_long(return_value, 3, (int)area.height);
-		return;
+		*return_value = *php_gtk_build_value("(iiii)", area.x, area.y, area.width, area.height);
 	}
-	else
-		RETURN_NULL();
 }
 %%
 override gtk_menu_attach_to_widget
@@ -359,16 +353,18 @@ PHP_FUNCTION(wrap_gtk_menu_attach_to_widget)
 override gtk_curve_get_vector
 PHP_FUNCTION(wrap_gtk_curve_get_vector)
 {
-	long veclen, i;
+	int veclen = -1, i;
 	gfloat *vector = NULL;
 
 	NOT_STATIC_METHOD();
 
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &veclen))
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|i", &veclen))
 		return;
 
+	if (veclen < 0)
+		veclen = GTK_CURVE(PHP_GTK_GET(this_ptr))->num_points;
 	vector = emalloc(sizeof(gfloat) * veclen);
-	gtk_curve_get_vector(GTK_CURVE(PHP_GTK_GET(this_ptr)), (int)veclen, vector);
+	gtk_curve_get_vector(GTK_CURVE(PHP_GTK_GET(this_ptr)), veclen, vector);
 	array_init(return_value);
 	for (i = 0; i < veclen; i++)
 		add_index_double(return_value, i, vector[i]);
@@ -378,7 +374,7 @@ PHP_FUNCTION(wrap_gtk_curve_get_vector)
 override gtk_curve_set_vector
 PHP_FUNCTION(wrap_gtk_curve_set_vector)
 {
-	long veclen, i;
+	int veclen, i;
 	gfloat *vector = NULL;
 	zval *php_vector, **temp_vector;
 	HashTable *target_hash;
@@ -390,16 +386,15 @@ PHP_FUNCTION(wrap_gtk_curve_set_vector)
 
 	target_hash = HASH_OF(php_vector);
 	veclen = zend_hash_num_elements(target_hash);
-	vector = emalloc(sizeof(gfloat) * veclen + 1);
+	vector = emalloc(sizeof(gfloat) * veclen);
 	zend_hash_internal_pointer_reset(target_hash);
 	i = 0;
 	while (zend_hash_get_current_data(target_hash, (void **)&temp_vector) == SUCCESS) {
-		vector[i] = Z_DVAL_PP(temp_vector);
-		i++;
+		vector[i++] = Z_DVAL_PP(temp_vector);
 		zend_hash_move_forward(target_hash);
 	}
 	
-	gtk_curve_set_vector(GTK_CURVE(PHP_GTK_GET(this_ptr)), (int)veclen, vector);
+	gtk_curve_set_vector(GTK_CURVE(PHP_GTK_GET(this_ptr)), veclen, vector);
 	RETURN_NULL();
 }
 %%
@@ -424,42 +419,52 @@ PHP_FUNCTION(wrap_gtk_rc_get_default_files)
 		RETURN_NULL();
 }
 %%
-override gtk_clist_new_with_titles
-PHP_FUNCTION(wrap_gtk_clist_new_with_titles)
+ignore gtk_clist_new_with_titles
+%%
+override gtk_clist_new
+PHP_FUNCTION(wrap_gtk_clist_new)
 {
 	GtkObject *wrapped_obj;
 	gint columns, i;
 	gchar **titles;
-	zval *php_titles, **temp_title;
+	zval *php_titles = NULL, **temp_title;
 	HashTable *target_hash;
 
 	NOT_STATIC_METHOD();
 
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_titles)) {
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i|a", &columns, &php_titles)) {
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
-	
-	target_hash = HASH_OF(php_titles);
-	columns = zend_hash_num_elements(target_hash);
-	if (columns > 0) {
-		titles = emalloc(sizeof(gchar *) * (columns + 1));
+
+	if (columns <= 0) {
+		php_error(E_WARNING, "%s() needs number of columns to be > 0", get_active_function_name());
+		return;
+	}
+
+	if (php_titles) {
+		SEPARATE_ZVAL(&php_titles);
+		if (zend_hash_num_elements(Z_ARRVAL_P(php_titles)) < columns) {
+			php_error(E_WARNING, "%s(): the array of titles is not long enough", get_active_function_name());
+			return;
+		}
+
+		target_hash = HASH_OF(php_titles);
+		titles = emalloc(sizeof(gchar *) * columns);
 		i = 0;
+		zend_hash_internal_pointer_reset(target_hash);
 		while (zend_hash_get_current_data(target_hash, (void **)&temp_title) == SUCCESS) {
 			convert_to_string_ex(temp_title);
-			titles[i] = estrdup(Z_STRVAL_PP(temp_title));
-			i++;
+			titles[i++] = estrndup(Z_STRVAL_PP(temp_title), Z_STRLEN_PP(temp_title));
 			zend_hash_move_forward(target_hash);
 		}
-		titles[i] = NULL;
 		wrapped_obj = (GtkObject *)gtk_clist_new_with_titles(columns, titles);
 		efree(titles);
-	}
-	else
-		wrapped_obj = (GtkObject *)gtk_clist_new(0);
+	} else
+		wrapped_obj = (GtkObject *)gtk_clist_new(columns);
+
 	if (!wrapped_obj) {
-		php_error(E_WARNING, "%s(): could not create GtkScrolledWindow object",
-				  get_active_function_name());
+		php_error(E_WARNING, "%s(): could not create GtkCList object", get_active_function_name());
 		return;
 	}
 
@@ -470,34 +475,34 @@ override gtk_clist_append
 PHP_FUNCTION(wrap_gtk_clist_append)
 {
 	gint columns, i, res;
-	gchar **titles;
-	zval *php_titles, **temp_title;
+	gchar **list;
+	zval *php_list, **text;
 	HashTable *target_hash;
 
 	NOT_STATIC_METHOD();
 
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_titles)) {
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_list)) {
 		php_gtk_invalidate(this_ptr);
 		return;
 	}
-	
-	target_hash = HASH_OF(php_titles);
-	columns = zend_hash_num_elements(target_hash);
-	if (columns > 0) {
-		titles = emalloc(sizeof(gchar *) * (columns + 1));
-		i = 0;
-		while (zend_hash_get_current_data(target_hash, (void **)&temp_title) == SUCCESS) {
-			convert_to_string_ex(temp_title);
-			titles[i] = estrdup(Z_STRVAL_PP(temp_title));
-			i++;
-			zend_hash_move_forward(target_hash);
-		}
-		titles[i] = NULL;
-		RETURN_LONG(gtk_clist_append(GTK_CLIST(PHP_GTK_GET(this_ptr)), titles));
-		efree(titles);
+
+	columns = GTK_CLIST(PHP_GTK_GET(this_ptr))->columns;
+	if (zend_hash_num_elements(Z_ARRVAL_P(php_list)) < columns) {
+		php_error(E_WARNING, "%s(): the array of strings is not long enough", get_active_function_name());
+		return;
 	}
-	else
-		RETURN_NULL();
+	
+	target_hash = HASH_OF(php_list);
+	list = emalloc(sizeof(gchar *) * columns);
+	i = 0;
+	zend_hash_internal_pointer_reset(target_hash);
+	while (zend_hash_get_current_data(target_hash, (void **)&text) == SUCCESS) {
+		convert_to_string_ex(text);
+		list[i++] = estrndup(Z_STRVAL_PP(text), Z_STRLEN_PP(text));
+		zend_hash_move_forward(target_hash);
+	}
+	ZVAL_LONG(return_value, gtk_clist_append(GTK_CLIST(PHP_GTK_GET(this_ptr)), list));
+	efree(list);
 }
 %%
 override gtk_menu_item_new_with_label

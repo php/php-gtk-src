@@ -6,6 +6,7 @@
 * Modify generic get/set property handlers to handle array index accesses.
 * Modify generic get/set property handlers to percolate up the inheritance chain
   looking for attributes.
+* Implemented optional zval separation when parsing arguments.
 
 In PHP
 ------

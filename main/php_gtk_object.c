@@ -320,6 +320,12 @@ zval *php_gtk_arg_as_value(GtkArg *arg)
 				value = php_gdk_event_new(GTK_VALUE_BOXED(*arg));
 			else if (arg->type == GTK_TYPE_GDK_WINDOW)
 				value = php_gdk_window_new(GTK_VALUE_BOXED(*arg));
+			else if (arg->type == GTK_TYPE_GDK_COLOR)
+				value = php_gdk_color_new(GTK_VALUE_BOXED(*arg));
+			else if (arg->type == GTK_TYPE_GDK_COLORMAP)
+				value = php_gdk_colormap_new(GTK_VALUE_BOXED(*arg));
+			else if (arg->type == GTK_TYPE_GDK_VISUAL)
+				value = php_gdk_visual_new(GTK_VALUE_BOXED(*arg));
 			else
 				ZVAL_NULL(value);
 			break;
@@ -413,6 +419,21 @@ void php_gtk_ret_from_value(GtkArg *ret, zval *value)
 			} else if (ret->type == GTK_TYPE_GDK_WINDOW) {
 				if (php_gtk_check_class(value, gdk_window_ce))
 					*GTK_RETLOC_BOXED(*ret) = PHP_GDK_WINDOW_GET(value);
+				else
+					*GTK_RETLOC_BOXED(*ret) = NULL;
+			} else if (ret->type == GTK_TYPE_GDK_COLOR) {
+				if (php_gtk_check_class(value, gdk_color_ce))
+					*GTK_RETLOC_BOXED(*ret) = PHP_GDK_COLOR_GET(value);
+				else
+					*GTK_RETLOC_BOXED(*ret) = NULL;
+			} else if (ret->type == GTK_TYPE_GDK_COLORMAP) {
+				if (php_gtk_check_class(value, gdk_colormap_ce))
+					*GTK_RETLOC_BOXED(*ret) = PHP_GDK_COLORMAP_GET(value);
+				else
+					*GTK_RETLOC_BOXED(*ret) = NULL;
+			} else if (ret->type == GTK_TYPE_GDK_VISUAL) {
+				if (php_gtk_check_class(value, gdk_visual_ce))
+					*GTK_RETLOC_BOXED(*ret) = PHP_GDK_VISUAL_GET(value);
 				else
 					*GTK_RETLOC_BOXED(*ret) = NULL;
 			} else
