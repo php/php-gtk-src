@@ -1682,7 +1682,7 @@ PHP_FUNCTION(gtkstyle)
 		return;
 
 	ret = gtk_style_new();
-	*return_value = *php_gtk_style_new(ret);
+	php_gtk_set_object(this_ptr, ret, le_gtk_style);
 }
 
 PHP_FUNCTION(gtk_style_copy)
