@@ -1116,6 +1116,7 @@ static void gdk_window_get_property(zval *return_value, zval *object, char *prop
 	GdkWindow *win;
 	gint x, y;
 	GdkModifierType p_mask;
+	TSRMLS_FETCH();
 	
 	*result = SUCCESS;
 
@@ -1431,12 +1432,12 @@ zval *php_gdk_atom_new(GdkAtom atom)
 
 	MAKE_STD_ZVAL(result);
 	object_init_ex(result, gdk_atom_ce);
-	add_property_long_ex(result, "atom", sizeof("atom"), (long) atom);
+	add_property_long_ex(result, "atom", sizeof("atom"), (long) atom TSRMLS_CC);
 	atom_name = gdk_atom_name(atom);
 	if (atom_name)
-		add_property_string_ex(result, "string", sizeof("string"), atom_name, 0);
+		add_property_string_ex(result, "string", sizeof("string"), atom_name, 0 TSRMLS_CC);
 	else
-		add_property_null_ex(result, "string", sizeof("string"));
+		add_property_null_ex(result, "string", sizeof("string") TSRMLS_CC);
 
 	return result;
 }

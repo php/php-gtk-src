@@ -122,6 +122,7 @@ typedef struct _php_gtk_object {
 static inline GdkAtom php_gdk_atom_get(zval *wrapper)
 {
 	zval **atom;
+	TSRMLS_FETCH();
 	
 	zend_hash_find(Z_OBJPROP_P(wrapper), "atom", sizeof("atom"), (void**)&atom);
 	return (GdkAtom)Z_LVAL_PP(atom);
