@@ -86,9 +86,8 @@ function build_option_menu($items, $history = null)
 }
 
 
-function toggle_reorderable($button, $clistwidget)
+function toggle_reorderable($button, $clist)
 {
-	global $clist; // until I fix callback arguments
 	$clist->set_reorderable($button->get_active());
 }
 
@@ -654,8 +653,7 @@ function create_ctree()
 
 		$check = &new GtkCheckButton('Reorderable');
 		$tooltips->set_tip($check, 'Tree items can be reordered by dragging.', '');
-		$check->connect('clicked', 'toggle_reorderable', $ctree);
-		$GLOBALS['clist'] = $ctree; // untill callback args work..
+		$check->connect('clicked', 'toggle_reorderable', $check,$ctree);
 		$check->set_active(true);
 		$hbox->pack_start($check, false);
 		$check->show();
@@ -1358,8 +1356,7 @@ function create_clist()
 		$button->show();
 
 		$button = &new GtkCheckButton('Reorderable');
-		$button->connect('clicked', 'toggle_reorderable', $clist);
-		$GLOBALS['clist'] = $clist; // untill callback args work..
+		$button->connect('clicked', 'toggle_reorderable', $button,$clist);
 		$button->set_active(true);
 		$hbox->pack_start($button, false);
 		$button->show();
@@ -1407,6 +1404,7 @@ function create_clist()
 
 		$col1 = &new GdkColor(56000, 0, 0);
 		$col2 = &new GdkColor(0, 56000, 32000);
+/*
 		$style = &new GtkStyle;
 		$style->fg[GTK_STATE_NORMAL] = $col1;
 		$style->base[GTK_STATE_NORMAL] = $col2;
@@ -1426,7 +1424,7 @@ function create_clist()
 					break;
 			}
 		}
-
+*/
 		$separator = &new GtkHSeparator();
 		$vbox->pack_start($separator, false);
 		$separator->show();
