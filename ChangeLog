@@ -1,3 +1,18 @@
+2001-08-15  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gtk+/gtk.overrides
+      NEWS:
+    - Remove GtkArgFlags, as they are not useful in PHP-GTK.
+    - Added GtkCList::get_selection_info() method. (Andrei)
+
+    * generator/generator.php
+      generator/override.php
+      ext/scintilla/scintilla.overrides
+      ext/gtk+/gtk.defs:
+    - Added 'action_area' property to GtkFileSelection.
+    - Added ability to specify custom constants in .overrides file.
+    - Added GtkScintilla constants.
+
 2001-08-14  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/Makefile.in
