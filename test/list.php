@@ -22,7 +22,7 @@ function delete_event()
  */
 $window = &new GtkWindow();
 $window->connect_object('destroy', array('gtk', 'main_quit'));
-$window->connect('delete-event', delete_event);
+$window->connect('delete-event', 'delete_event');
 
 /*
  * Create a button and connect its 'clicked' signal to destroy() function.
