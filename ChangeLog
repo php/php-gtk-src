@@ -1,3 +1,9 @@
+2001-12-01  Andrei Zmievski  <andrei@ispi.net>
+
+    * ext/gdkpixbuf/gdkpixbuf.overrides
+      NEWS:
+    Implemented GdkPixbuf::new_from_data().
+
 2001-11-30  Andrei Zmievski  <andrei@ispi.net>
 
     * ext/gdkpixbuf/gdk-pixbuf.php: Added GdkPixbuf example.
