@@ -1,0 +1,10 @@
+/* vim: set ft=cpp: */
+%%
+headers
+#include <gtkskeleton.h>
+#include "ext/gtk+/php_gtk+.h"
+%%
+constants
+%%
+ignore-glob
+  *_get_type
