@@ -8,7 +8,6 @@ headers
 
 /* TODO
  * implement gtk_adjustment_set_all
- * implement gtk_radio_tool_button_new
  */
 %% {{{ ignores [confirmed]
 
@@ -23,6 +22,7 @@ ignore-glob
 	gtk_marshal_*
 	gtk_quit_add_*
 	gtk_radio_button_new_*
+	gtk_radio_tool_button_new_*
 	gtk_signal_*
 	gtk_timeout_add_*
 
@@ -44,7 +44,6 @@ ignore-glob
 	gtk_idle_add_*
 	gtk_accelerator_*
 	gtk_target_list_*
-	gtk_radio_tool_button_new*
 %%
 ignore
 	gtk_accel_group_activate
@@ -657,7 +656,7 @@ PHP_METHOD
 			wrapped_obj = (GObject *) g_object_new(gtype, "group", group, "label", label,
 												   "use-underline", use_underline, NULL);
 		} else {
-			wrapped_obj = (GObject *) g_object_new(gtype, "group", group);
+			wrapped_obj = (GObject *) g_object_new(gtype, "group", group, NULL);
 		}
 	} else {
 		if (label) {
@@ -674,6 +673,47 @@ PHP_METHOD
 	phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
 
+%% }}}
+
+%% {{{ GtkRadioToolButton
+%%
+override gtk_radio_tool_button_new
+
+PHP_METHOD
+{
+	zval *php_group = NULL;
+	GtkRadioToolButton *group = NULL;
+	char *stock_id = NULL;
+	GObject *wrapped_obj;
+	GType gtype = phpg_gtype_from_zval(this_ptr);
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Ns", &php_group, gtkradiotoolbutton_ce, &stock_id)) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRadioToolButton);
+	}
+
+	if (php_group && Z_TYPE_P(php_group) != NULL) {
+		group = GTK_RADIO_TOOL_BUTTON(PHPG_GOBJECT(php_group));
+	}
+
+	if (group) {
+		if (stock_id) {
+			wrapped_obj = (GObject *) g_object_new(gtype, "group", group, "stock_id", stock_id, NULL);
+		} else {
+			wrapped_obj = (GObject *) g_object_new(gtype, "group", group, NULL);
+		}
+	} else {
+		if (stock_id) {
+			wrapped_obj = (GObject *) g_object_new(gtype, "stock_id", stock_id, NULL);
+		} else {
+			wrapped_obj = (GObject *) g_object_new(gtype, NULL);
+		}
+	}
+
+	if (!wrapped_obj) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRadioToolButton);
+	}
+	phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+}
 %% }}}
 
 %% {{{ GtkStyle [included]
