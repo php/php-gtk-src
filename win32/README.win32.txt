@@ -33,8 +33,15 @@ Copy this file to yor extension dir and you are ready to test the applications.
 copy all gtk-dll's to \winnt\system32. You can do this by executing 
 the script \php-gtk\win32\inst.cmd
 
-Inside a script you need to load the DLL dynamically using dl(). See the 
-exaples for more details. php.ini settings do not work, yet.
+You can load this extension from php.ini by adding this line
+
+	extension=php_gtk.dll
+
+It is not recomended to use this method if php is used for both Gtk and Web.
+The extenstion can't be loaded by php running under a web service.
+The extension can also be loaded with the dl() command.
+
+	dl("php_gtk.dll");
 
 On a command line type:
 	cd \php-gtk\test
