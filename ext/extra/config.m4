@@ -2,7 +2,7 @@ dnl $Id$
 dnl config.m4 for extra module
 
 PHP_GTK_ARG_ENABLE(extra,for GtkExtra support,
-[  --disable-extra         Disable GtkExtra support])
+[  --enable-extra          Enable GtkExtra support])
 
 if test "$PHP_GTK_EXTRA" != "no"; then
   for x in /usr /usr/local; do
