@@ -81,9 +81,10 @@ class Overrides {
                 else
                     $func_name = $func_cname;
                 if (isset($words[2]))
-                    $this->extra_methods[$words[2]][$func_cname] = array($func_name, $rest);
+                    $flags = $words[2];
                 else
-                    $this->overrides[$func_cname] = array($func_name, $rest);
+                    $flags = null;
+                $this->overrides[$func_cname] = array($func_name, $rest, $flags);
                 break;
 
             case 'getprop':
