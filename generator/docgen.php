@@ -275,9 +275,9 @@ class DocGenerator {
 $argc = $HTTP_SERVER_VARS['argc'];
 $argv = $HTTP_SERVER_VARS['argv'];
 
-$result = Console_Getopt::getopt($argv, 'o:p:');
+$result = Console_Getopt::getopt($argv, 'o:p:r:');
 if (!$result || count($result[1]) < 2)
-	die("usage: php -q generator.php [-o overridesfile] [-p prefix] defsfile [class]\n");
+	die("usage: php -q generator.php [-o overridesfile] [-p prefix] [-r typesfile] defsfile [class]\n");
 
 list($opts, $argv) = $result;
 
@@ -290,6 +290,10 @@ foreach ($opts as $opt) {
 		$overrides = new Overrides($opt_arg);
 	} else if ($opt_spec == 'p') {
 		$prefix = $opt_arg;
+	} else if ($opt_spec == 'r') {
+		$type_parser = new Defs_Parser($opt_arg);
+		$type_parser->start_parsing();
+		DocGenerator::register_types($type_parser);
 	}
 }
 
