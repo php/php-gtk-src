@@ -5,8 +5,6 @@
   objects (GdkColormap, etc.)
 * Modify generic get/set property handlers to percolate up the inheritance chain
   looking for attributes.
-* Think about separating static class methods, Gtk::widget_push_colormap ->
-  GtkWidget::push_colormap.
 * Figure out what's up with getting/setting gc background/foreground colors and
   how to get RGB values from pixels.
 
