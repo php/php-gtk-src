@@ -1,3 +1,4 @@
+    - made gtk::input_add() work with PHP streams. (Andrei)
     - fixed property and method access on GdkBitmap. (Andrei)
 
 Version 0.5.0 "monday starts on saturday" 24-Jan-2002
