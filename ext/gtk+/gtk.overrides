@@ -2305,25 +2305,25 @@ static void gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_objec
 
 PHP_FUNCTION(gtk_signal_connect)
 {
-	gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1, 0);
+	php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1, 0);
 }
 %%
 override gtk_signal_connect_object
 PHP_FUNCTION(gtk_signal_connect_object)
 {
-	gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0, 0);
+	php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0, 0);
 }
 %%
 override gtk_signal_connect_after
 PHP_FUNCTION(gtk_signal_connect_after)
 {
-	gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1, 1);
+	php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1, 1);
 }
 %%
 override gtk_signal_connect_object_after
 PHP_FUNCTION(gtk_signal_connect_object_after)
 {
-	gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0, 1);
+	php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0, 1);
 }
 %%
 override gtk_signal_emit
