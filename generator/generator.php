@@ -27,6 +27,8 @@
  *
  */
 
+set_time_limit(300);
+
 require "arg_types.php";
 require "override.php";
 require "scheme.php";
