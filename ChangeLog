@@ -1,3 +1,17 @@
+2001-03-02  Andrei Zmievski  <andrei@ispi.net>
+
+    * README: Hopefully, correct some confusion.
+
+2001-03-02  Peter Petermann  <zimt@cyberfly.net>
+
+    * test/gtk.php
+      test/hello.php
+      test/list.php: changed use of $OS for os detection
+    to use of constant PHP_OS,
+    $OS didnt work for detecting windows here,
+    and i couldnt find any documentation about it.
+    PHP_OS is a constant which shows right OS...
+
 2001-03-01  Andrei Zmievski  <andrei@ispi.net>
 
     * README: Make a note of PHP version required.
