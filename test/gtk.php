@@ -86,8 +86,9 @@ function build_option_menu($items, $history = null)
 }
 
 
-function toggle_reorderable($button, $clist)
+function toggle_reorderable($button, $clistwidget)
 {
+	global $clist; // until I fix callback arguments
 	$clist->set_reorderable($button->get_active());
 }
 
@@ -654,6 +655,7 @@ function create_ctree()
 		$check = &new GtkCheckButton('Reorderable');
 		$tooltips->set_tip($check, 'Tree items can be reordered by dragging.', '');
 		$check->connect('clicked', 'toggle_reorderable', $ctree);
+		$GLOBALS['clist'] = $ctree; // untill callback args work..
 		$check->set_active(true);
 		$hbox->pack_start($check, false);
 		$check->show();
@@ -1357,6 +1359,7 @@ function create_clist()
 
 		$button = &new GtkCheckButton('Reorderable');
 		$button->connect('clicked', 'toggle_reorderable', $clist);
+		$GLOBALS['clist'] = $clist; // untill callback args work..
 		$button->set_active(true);
 		$hbox->pack_start($button, false);
 		$button->show();
