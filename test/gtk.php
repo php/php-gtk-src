@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 
-if (strtoupper(substr(PHP_OS, 1, 3)) == 'WIN')
+if (strtoupper(substr($OS, 0, 3)) == 'WIN')
 	dl('php_gtk.dll');
 else
 	dl('php_gtk.so');
@@ -33,7 +33,7 @@ function create_buttons()
 	if (!isset($windows['buttons'])) {
 		$window = &new GtkWindow;
 		$windows['buttons'] = $window;
-		$window->connect('delete-event', delete_event);
+		$window->connect('delete-event', 'delete_event');
 		$window->set_title('GtkButton');
 
 		$box1 = &new GtkVBox();
@@ -78,7 +78,7 @@ function create_buttons()
 		$box2->show();
 
 		$button = &new GtkButton('close');
-		$button->connect('clicked', close_window);
+		$button->connect('clicked', 'close_window');
 		$box2->pack_start($button);
 		$button->set_flags(GTK_CAN_DEFAULT);
 		$button->grab_default();
@@ -185,8 +185,8 @@ function create_labels()
 function create_main_window()
 {
 	$buttons = array(
-					 'buttons'	=>	create_buttons,
-					 'labels'	=>	create_labels,
+					 'buttons'	=>	'create_buttons',
+					 'labels'	=>	'create_labels',
 					);
 
 	$window = &new GtkWindow();
@@ -195,8 +195,8 @@ function create_main_window()
 	$window->set_usize(200, 400);
 	$window->set_uposition(20, 20);
 
-	$window->connect('destroy', destroy);
-	$window->connect('delete-event', destroy);
+	$window->connect('destroy', 'destroy');
+	$window->connect('delete-event', 'destroy');
 
 	$box1 = &new GtkVBox();
 	$window->add($box1);
@@ -230,7 +230,7 @@ function create_main_window()
 	$box1->pack_start($box2, false);
 
 	$button = &new GtkButton('close');
-	$button->connect('clicked', destroy);
+	$button->connect('clicked', 'destroy');
 	$box2->pack_start($button);
 	$button->set_flags(GTK_CAN_DEFAULT);
 	$button->grab_default();
