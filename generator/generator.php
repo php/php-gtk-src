@@ -2,7 +2,7 @@
 /*
  * PHP-GTK - The PHP language bindings for GTK+
  *
- * Copyright (C) 2001,2002 Andrei Zmievski <andrei@php.net>
+ * Copyright (C) 2001-2004 Andrei Zmievski <andrei@php.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -550,16 +550,13 @@ class Generator {
 
             try {
                 if ($this->overrides->is_overriden($method_name)) {
-                /* XXX fix
-                    list($method_name, $method_override) = $this->overrides->get_override($method_name);
+                    list($method_name, $method_override, $flags) = $this->overrides->get_override($method_name);
                     fwrite($this->fp, $method_override . "\n");
                     if (!isset($method_name))
                         $method_name = $method->name;
-                    $functions_decl .= sprintf($function_entry_tpl,
-                                               strtolower($method->name),
-                                               strtolower($method->c_name),
-                                               'NULL');
-                                               */
+                    $method_defs[] = sprintf(Templates::function_entry,
+                                             $object->in_module . $object->name,
+                                             $method->name, 'NULL', $flags ?  $flags : 'ZEND_ACC_PUBLIC');
                 } else {
                     $code = $this->write_callable($method, Templates::method_body, true, true, $dict);
                     fwrite($this->fp, $code);
@@ -577,37 +574,57 @@ class Generator {
 
     function write_constructor($object)
     {
-        $ctor = $this->parser->find_constructor($object, $this->overrides);
+        $ctors = $this->parser->find_constructor($object, $this->overrides);
 
-        $ctor_def = null;
+        $ctor_defs = array();
 
-        if ($ctor) {
-            fprintf(STDERR, "Writing constructor for $object->c_name...\n");
+        if ($ctors) {
+            fprintf(STDERR, "Writing constructors for $object->c_name...\n");
 
             $dict['class'] = $object->c_name;
-            $dict['name'] = '__construct';
-            $ctor_name = $ctor->c_name;
+            $first = 1;
 
-            try {
-                if ($this->overrides->is_overriden($ctor_name)) {
+            foreach ($ctors as $ctor) {
+                $ctor_name = $ctor->c_name;
+                if ($first) {
+                    $ctor_fe_name = '__construct';
+                    $flags = 'ZEND_ACC_PUBLIC';
                 } else {
-                    $code = $this->write_callable($ctor, Templates::constructor_body, false, false, $dict);
-                    fwrite($this->fp, $code);
-                    $ctor_def = sprintf(Templates::function_entry,
-                                        $ctor->is_constructor_of,
-                                        '__construct', 'NULL', 'ZEND_ACC_PUBLIC');
+                    // remove class name from the constructor name, i.e. turn
+                    // gtk_button_new_with_mnemonic into new_with_mnemonic
+                    $ctor_fe_name = substr($ctor_name, strlen(convert_typename($ctor->is_constructor_of)));
+                    $flags = 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC';
                 }
-            } catch (Exception $e) {
-                fprintf(STDERR, "\tnot generating constructor for %s: %s\n", $object->c_name, $e->getMessage());
-                // mark class as abstract
-                $object->ce_flags[] = 'ZEND_ACC_ABSTRACT';
+
+                try {
+                    if ($this->overrides->is_overriden($ctor_name)) {
+                        list(, $ctor_override, $ctor_flags) = $this->overrides->get_override($ctor_name);
+                        if (!empty($ctor_flags))
+                            $flags = $ctor_flags;
+                        fwrite($this->fp, $ctor_override . "\n");
+                    } else {
+                        $dict['name'] = $ctor_fe_name;
+                        $code = $this->write_callable($ctor, Templates::constructor_body, false, false, $dict);
+                        fwrite($this->fp, $code);
+                    }
+                    $ctor_defs[] = sprintf(Templates::function_entry,
+                                           $ctor->is_constructor_of,
+                                           $ctor_fe_name, 'NULL', $flags);
+                } catch (Exception $e) {
+                    fprintf(STDERR, "\tnot generating constructor %s for %s: %s\n", $ctor_fe_name, $object->c_name, $e->getMessage());
+                    // mark class as abstract if we were trying to generate
+                    // default constructor
+                    if ($ctor_fe_name == '__construct') {
+                        $object->ce_flags[] = 'ZEND_ACC_ABSTRACT';
+                    }
+                }
             }
         } else {
             // mark class as abstract
             $object->ce_flags[] = 'ZEND_ACC_ABSTRACT';
         }
 
-        return $ctor_def;
+        return $ctor_defs;
     }
 
     function write_objects()
@@ -739,10 +756,11 @@ class Generator {
             $object_module = strtolower($object->in_module);
             $object_lname = strtolower($object->name);
 
-            $ctor_def = $this->write_constructor($object);
+            $ctor_defs = $this->write_constructor($object);
             $method_defs = $this->write_methods($object);
-            if ($ctor_def) {
-                array_unshift($method_defs, $ctor_def);
+            sort($method_defs);
+            if ($ctor_defs) {
+                $method_defs = array_merge($ctor_defs, $method_defs);
             }
 
             if ($method_defs) {

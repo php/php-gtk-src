@@ -298,12 +298,14 @@ class Defs_Parser {
 
     function find_constructor($obj, $overrides)
     {
+        $constructors = array();
         foreach ($this->constructors as $constructor) {
             if ($constructor->is_constructor_of == $obj->c_name &&
                 !$overrides->is_ignored($constructor->c_name)) {
-                return $constructor;
+                $constructors[] = $constructor;
             }
         }
+        return $constructors;
     }
 
     function find_parent($obj)
