@@ -7307,17 +7307,21 @@
   (return-type "GtkIconTheme*")
 )
 
-(define-function icon_theme_get_default
+(define-method get_default
   (c-name "gtk_icon_theme_get_default")
+  (of-object "GtkIconTheme")
   (return-type "GtkIconTheme*")
+  (static #t)
 )
 
-(define-function icon_theme_get_for_screen
+(define-method get_for_screen
   (c-name "gtk_icon_theme_get_for_screen")
+  (of-object "GtkIconTheme")
   (return-type "GtkIconTheme*")
   (parameters
     '("GdkScreen*" "screen")
   )
+  (static #t)
 )
 
 (define-method set_screen
@@ -7429,14 +7433,16 @@
   (return-type "gboolean")
 )
 
-(define-function icon_theme_add_builtin_icon
+(define-method add_builtin_icon
   (c-name "gtk_icon_theme_add_builtin_icon")
+  (of-object "GtkIconTheme")
   (return-type "none")
   (parameters
     '("const-gchar*" "icon_name")
     '("gint" "size")
     '("GdkPixbuf*" "pixbuf")
   )
+  (static #t)
 )
 
 (define-function gtk_icon_info_get_type
@@ -8077,8 +8083,10 @@
   )
 )
 
-(define-function item_factory_add_foreign
+(define-method add_foreign
   (c-name "gtk_item_factory_add_foreign")
+  (of-object "GtkItemFactory")
+  (static #t)
   (return-type "none")
   (parameters
     '("GtkWidget*" "accel_widget")
@@ -8087,6 +8095,7 @@
     '("guint" "keyval")
     '("GdkModifierType" "modifiers")
   )
+  (deprecated "use GtkMenuItem::set_accel_path() and GtkWidget::set_accel_path()")
 )
 
 (define-function item_factory_from_widget
@@ -8095,6 +8104,7 @@
   (parameters
     '("GtkWidget*" "widget")
   )
+  (deprecated "")
 )
 
 (define-function item_factory_path_from_widget
@@ -8103,6 +8113,7 @@
   (parameters
     '("GtkWidget*" "widget")
   )
+  (deprecated "")
 )
 
 (define-method get_item
@@ -12136,14 +12147,18 @@
   (return-type "GType")
 )
 
-(define-function settings_get_default
+(define-method get_default
   (c-name "gtk_settings_get_default")
+  (of-object "GtkSettings")
   (return-type "GtkSettings*")
+  (static #t)
 )
 
-(define-function settings_get_for_screen
+(define-method get_for_screen
   (c-name "gtk_settings_get_for_screen")
+  (of-object "GtkSettings")
   (return-type "GtkSettings*")
+  (static #t)
   (parameters
     '("GdkScreen*" "screen")
   )
@@ -19963,26 +19978,34 @@
   (return-type "none")
 )
 
-(define-function widget_push_colormap
+(define-method push_colormap
   (c-name "gtk_widget_push_colormap")
+  (of-object "GtkWidget")
+  (static #t)
   (return-type "none")
   (parameters
     '("GdkColormap*" "cmap")
   )
 )
 
-(define-function widget_push_composite_child
+(define-method push_composite_child
   (c-name "gtk_widget_push_composite_child")
+  (of-object "GtkWidget")
+  (static #t)
   (return-type "none")
 )
 
-(define-function widget_pop_composite_child
+(define-method pop_composite_child
   (c-name "gtk_widget_pop_composite_child")
+  (of-object "GtkWidget")
+  (static #t)
   (return-type "none")
 )
 
-(define-function widget_pop_colormap
+(define-method pop_colormap
   (c-name "gtk_widget_pop_colormap")
+  (of-object "GtkWidget")
+  (static #t)
   (return-type "none")
 )
 
@@ -20052,26 +20075,34 @@
   (varargs #t)
 )
 
-(define-function widget_get_default_style
+(define-method get_default_style
   (c-name "gtk_widget_get_default_style")
+  (of-object "GtkWidget")
+  (static #t)
   (return-type "GtkStyle*")
 )
 
-(define-function widget_set_default_colormap
+(define-method set_default_colormap
   (c-name "gtk_widget_set_default_colormap")
+  (of-object "GtkWidget")
+  (static #t)
   (return-type "none")
   (parameters
     '("GdkColormap*" "colormap")
   )
 )
 
-(define-function widget_get_default_colormap
+(define-method get_default_colormap
   (c-name "gtk_widget_get_default_colormap")
+  (of-object "GtkWidget")
+  (static #t)
   (return-type "GdkColormap*")
 )
 
-(define-function widget_get_default_visual
+(define-method get_default_visual
   (c-name "gtk_widget_get_default_visual")
+  (of-object "GtkWidget")
+  (static #t)
   (return-type "GdkVisual*")
 )
 
@@ -20090,16 +20121,20 @@
   (return-type "GtkTextDirection")
 )
 
-(define-function widget_set_default_direction
+(define-method set_default_direction
   (c-name "gtk_widget_set_default_direction")
+  (of-object "GtkWidget")
+  (static #t)
   (return-type "none")
   (parameters
     '("GtkTextDirection" "dir")
   )
 )
 
-(define-function widget_get_default_direction
+(define-method get_default_direction
   (c-name "gtk_widget_get_default_direction")
+  (of-object "GtkWidget")
+  (static #t)
   (return-type "GtkTextDirection")
 )
 
@@ -20570,8 +20605,10 @@
   (return-type "GList*")
 )
 
-(define-function window_set_default_icon
+(define-method set_default_icon
   (c-name "gtk_window_set_default_icon")
+  (of-object "GtkWindow")
+  (static #t)
   (return-type "none")
   (parameters
     '("GdkPixbuf*" "icon")
@@ -20587,8 +20624,10 @@
   )
 )
 
-(define-function window_set_auto_startup_notification
+(define-method set_auto_startup_notification
   (c-name "gtk_window_set_auto_startup_notification")
+  (of-object "GtkWindow")
+  (static #t)
   (return-type "none")
   (parameters
     '("gboolean" "setting")

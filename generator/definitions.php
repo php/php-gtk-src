@@ -120,6 +120,7 @@ class Method_Def extends Definition {
     var $params             = array();
     var $varargs            = false;
     var $deprecated         = null;
+    var $static             = false;
 
     function Method_Def($args)
     {
@@ -137,6 +138,8 @@ class Method_Def extends Definition {
                 $this->return_type = $arg[1];
             else if ($arg[0] == 'caller-owns-return')
                 $this->caller_owns_return = in_array($arg[1], self::$true_values);
+            else if ($arg[0] == 'static')
+                $this->static = true;
             else if ($arg[0] == 'parameters') {
                 $param_type = null;
                 $param_name = null;

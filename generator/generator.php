@@ -542,6 +542,7 @@ class Generator {
         }
 
         $dict['class'] = $object->c_name;
+        $dict['scope'] = $object->c_name;
         $dict['cast'] = preg_replace('!_TYPE_!', '_', $object->typecode, 1);
 
         foreach ($methods as $method) {
@@ -560,11 +561,17 @@ class Generator {
                                              $object->in_module . $object->name,
                                              $method->name, 'NULL', $flags ?  $flags : 'ZEND_ACC_PUBLIC');
                 } else {
-                    $code = $this->write_callable($method, Templates::method_body, true, true, $dict);
+                    if ($method->static) {
+                        $code = $this->write_callable($method, Templates::function_body, true, false, $dict);
+                        $flags = 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC';
+                    } else {
+                        $code = $this->write_callable($method, Templates::method_body, true, true, $dict);
+                        $flags = 'ZEND_ACC_PUBLIC';
+                    }
                     fwrite($this->fp, $code);
                     $method_defs[] = sprintf(Templates::function_entry,
                                              $object->in_module . $object->name,
-                                             $method->name, 'NULL', 'ZEND_ACC_PUBLIC');
+                                             $method->name, 'NULL', $flags);
                 }
             } catch (Exception $e) {
                 fprintf(STDERR, "\tnot generating method %s::%s: %s\n", $object->c_name, $method->name, $e->getMessage());
@@ -831,6 +838,7 @@ class Generator {
 
             try {
                 if ($this->overrides->is_overriden($function->c_name)) {
+                    // TODO support overriden functions
                 } else {
                     $code = $this->write_callable($function, Templates::function_body, true, false, $dict);
                     fwrite($this->fp, $code);
