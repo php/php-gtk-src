@@ -358,16 +358,37 @@ int php_gtk_parse_args_quiet(int argc, char *format, ...)
 	return retval;
 }
 
+static int php_gtk_parse_args_hash_impl(zval *hash, char *format, va_list *va, int quiet)
+{
+	zval ***args;
+	int retval;
+
+	args = php_gtk_hash_as_array(hash);
+	retval = parse_va_args(zend_hash_num_elements(Z_ARRVAL_P(hash)), args, format, va, quiet);
+	efree(args);
+
+	return retval;
+}
+
 int php_gtk_parse_args_hash(zval *hash, char *format, ...)
 {
 	va_list va;
 	int retval;
-	zval ***args;
 
 	va_start(va, format);
-	args = php_gtk_hash_as_array(hash);
-	retval = parse_va_args(zend_hash_num_elements(Z_ARRVAL_P(hash)), args, format, &va, 0);
-	efree(args);
+	retval = php_gtk_parse_args_hash_impl(hash, format, &va, 0);
+	va_end(va);
+
+	return retval;
+}
+
+int php_gtk_parse_args_hash_quiet(zval *hash, char *format, ...)
+{
+	va_list va;
+	int retval;
+
+	va_start(va, format);
+	retval = php_gtk_parse_args_hash_impl(hash, format, &va, 1);
 	va_end(va);
 
 	return retval;

@@ -155,6 +155,7 @@ zval *php_gtk_clist_row_new(GtkCListRow *clist_row);
 int php_gtk_parse_args(int argc, char *format, ...);
 int php_gtk_parse_args_quiet(int argc, char *format, ...);
 int php_gtk_parse_args_hash(zval *hash, char *format, ...);
+int php_gtk_parse_args_hash_quiet(zval *hash, char *format, ...);
 int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce);
 void php_gtk_invalidate(zval *wrapper);
 zend_bool php_gtk_is_callable(zval *callable, zend_bool syntax_only, char **callable_name);

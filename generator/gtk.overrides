@@ -1093,7 +1093,7 @@ PHP_FUNCTION(wrap_gtk_item_factory_create_items)
 	zend_hash_internal_pointer_reset(Z_ARRVAL_P(list));
 	while (zend_hash_get_current_data(Z_ARRVAL_P(list), (void**)&item) == SUCCESS) {
 		if (Z_TYPE_PP(item) != IS_ARRAY ||
-			!php_gtk_parse_args_hash(*item, "ssVis|a", &entry.path,
+			!php_gtk_parse_args_hash_quiet(*item, "ssVis|a", &entry.path,
 									 &entry.accelerator, &callback,
 									 &entry.callback_action, &entry.item_type, &extra)) {
 			php_error(E_WARNING, "%s() was unable to parse item #%d in the input array",
@@ -1539,4 +1539,72 @@ PHP_FUNCTION(wrap_gtk_ctree_node_get_row_data)
 	} else {
 		RETURN_NULL();
 	}
+}
+%%
+override gtk_menu_popup
+static void php_gtk_menu_position(GtkMenu *menu, int *x, int *y, zval *callback_data)
+{
+	zval **callback, *php_menu;
+	zval **callback_filename, **callback_lineno;
+	zval *retval, *params;
+	zval ***args;
+	char *callback_name;
+	ELS_FETCH();
+
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&callback_filename);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&callback_lineno);
+	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
+		php_error(E_WARNING, "unable to call menu position callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
+		efree(callback_name);
+		return;
+	}
+
+	params = php_gtk_build_value("(Nii)", php_gtk_new(GTK_OBJECT(menu)), *x, *y);
+	args = php_gtk_hash_as_array(params);
+
+	call_user_function_ex(EG(function_table), NULL, *callback, &retval, zend_hash_num_elements(Z_ARRVAL_P(params)), args, 1, NULL);
+
+	if (retval) {
+		if (Z_TYPE_P(retval) == IS_ARRAY &&
+			!php_gtk_parse_args_hash_quiet(retval, "ii", x, y)) {
+			php_error(E_WARNING, "unable to parse result of menu position callback");
+		}
+		zval_ptr_dtor(&retval);
+	}
+
+	efree(args);
+	zval_ptr_dtor(&params);
+}
+
+PHP_FUNCTION(wrap_gtk_menu_popup)
+{
+	zval *php_pms, *php_pmi;
+	GtkWidget *pms = NULL, *pmi = NULL;
+	zval *callback, *data;
+	int button, time;
+	char *callback_filename;
+	uint callback_lineno;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "NNVii", &php_pms, gtk_widget_ce,
+							&php_pmi, gtk_widget_ce, &callback, &button, &time))
+		return;
+
+	if (Z_TYPE_P(php_pms) != IS_NULL)
+		pms = GTK_WIDGET(PHP_GTK_GET(php_pms));
+	if (Z_TYPE_P(php_pmi) != IS_NULL)
+		pmi = GTK_WIDGET(PHP_GTK_GET(php_pmi));
+
+	if (Z_TYPE_P(callback) != IS_NULL) {
+		callback_filename = zend_get_executed_filename(ELS_C);
+		callback_lineno = zend_get_executed_lineno(ELS_C);
+		data = php_gtk_build_value("(Vsi)", callback, callback_filename, callback_lineno);
+		gtk_menu_popup(GTK_MENU(PHP_GTK_GET(this_ptr)), pms, pmi,
+					   (GtkMenuPositionFunc)php_gtk_menu_position, data,
+					   button, time);
+	} else
+		gtk_menu_popup(GTK_MENU(PHP_GTK_GET(this_ptr)), pms, pmi, NULL, NULL,
+					   button, time);
 }
