@@ -48,6 +48,7 @@ static inline void php_gtk_destroy_object(php_gtk_object *object, zend_object_ha
 {
     //FIXME zend_objects_call_destructor(object, handle TSRMLS_CC);
     /* Nuke the object */
+	/* printf("destroying object %8p\n", object); */
     zend_hash_destroy(object->zobj.properties);
     FREE_HASHTABLE(object->zobj.properties);
 	if (object->obj && object->dtor)
@@ -385,7 +386,7 @@ PHP_GTK_API void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nar
 
 	if (!zend_is_callable(*callback, 0, &callback_name)) {
 		if (callback_filename)
-			php_error(E_WARNING, "Unable to call signal callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
+			php_error(E_WARNING, "Unable to call signal callback '%s' specified in %s on line %ld", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
 		else
 			php_error(E_WARNING, "Unable to call callback '%s'", callback_name);
 		efree(callback_name);
@@ -454,7 +455,7 @@ void php_gtk_handler_marshal(gpointer a, gpointer data, int nargs, GtkArg *args)
 	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_lineno);
 
 	if (!php_gtk_is_callable(*callback, 0, &callback_name)) {
-		php_error(E_WARNING, "Unable to call handler callback '%s' specified in %s on line %d", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
+		php_error(E_WARNING, "Unable to call handler callback '%s' specified in %s on line %ld", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
 		efree(callback_name);
 		return;
 	}

@@ -112,7 +112,7 @@ static inline void php_gtk_set_object(zval *zobj, void *obj, php_gtk_dtor_t dtor
 	wrapper= (php_gtk_object *) zend_object_store_get_object(zobj TSRMLS_CC);
 	wrapper->obj = obj;
 	wrapper->dtor = dtor;
-	zend_objects_store_add_ref(zobj TSRMLS_CC);
+	//zend_objects_store_add_ref(zobj TSRMLS_CC);
 	if (boxed) {
 		zend_hash_index_update(&php_gtk_type_hash, (long)obj, (void *)&zobj, sizeof(zval *), NULL);
 	}
