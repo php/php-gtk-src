@@ -43,7 +43,7 @@ PHP_GTK_API zend_object_handlers php_gtk_handlers;
 
 const gchar *phpg_class_id = "phpg_class";
 GQuark phpg_class_key = 0;
-GType G_TYPE_PHP_OBJECT = 0;
+GType G_TYPE_PHP_VALUE = 0;
 
 zend_module_entry gtk_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
@@ -167,7 +167,7 @@ PHP_RINIT_FUNCTION(gtk)
 	phpg_gobject_register_self(TSRMLS_C);
 	phpg_gboxed_register_self(TSRMLS_C);
 
-	G_TYPE_PHP_OBJECT = g_boxed_type_register_static("PhpObject", php_object_copy, php_object_release);
+	G_TYPE_PHP_VALUE = g_boxed_type_register_static("PhpValue", php_object_copy, php_object_release);
 
 	if (php_gtk_startup_all_extensions(module_number) == FAILURE) {
 		php_error(E_WARNING, "Unable to start internal extensions");

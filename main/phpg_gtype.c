@@ -115,14 +115,19 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 			return G_TYPE_NONE;
 
 		/*
-		 * We check if the number corresponds to a valid GType. Returning the
+		 * We check if the number corresponds to a valid GType. Return the
 		 * corresponding type, if it does, assume a G_TYPE_INT otherwise.
 		 */
 		case IS_LONG:
 		{
 			GTypeQuery tq;
-			g_type_query(Z_LVAL_P(value), &tq);
-			return tq.type ? tq.type : G_TYPE_INT;
+
+			if (G_TYPE_IS_FUNDAMENTAL(Z_LVAL_P(value)) ||
+				G_TYPE_IS_CLASSED(Z_LVAL_P(value)) ||
+				G_TYPE_FUNDAMENTAL(Z_LVAL_P(value)) == G_TYPE_BOXED) {
+				return Z_LVAL_P(value);
+			}
+			return G_TYPE_INT;
 		}
 
 		case IS_DOUBLE:
@@ -143,6 +148,9 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 		case IS_BOOL:
 			return G_TYPE_BOOLEAN;
 
+		case IS_ARRAY:
+			return G_TYPE_PHP_VALUE;
+
 		case IS_OBJECT:
 			if (Z_OBJCE_P(value) == gtype_ce) {
 				phpg_gtype_t *object = zend_object_store_get_object(value TSRMLS_CC);
@@ -160,9 +168,9 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 						return Z_LVAL_PP(gtype);
 				} else {
 					/*
-					 * Or it's a regular PHP object, but with our own GType.
+					 * Or it's a regular PHP value, but with our own GType.
 					 */
-					return G_TYPE_PHP_OBJECT;
+					return G_TYPE_PHP_VALUE;
 				}
 			}
 			break;

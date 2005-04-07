@@ -193,7 +193,7 @@ extern HashTable phpg_prop_info;
 /* IDs for type identification */
 extern const gchar *phpg_class_id;
 extern GQuark phpg_class_key;
-extern GType G_TYPE_PHP_OBJECT;
+extern GType G_TYPE_PHP_VALUE;
 
 /* Exceptions */
 extern PHP_GTK_API zend_class_entry *phpg_generic_exception;

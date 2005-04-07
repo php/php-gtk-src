@@ -124,13 +124,14 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
         {
             phpg_gboxed_marshal_t *gbm;
 
-            if (G_VALUE_HOLDS(gval, G_TYPE_PHP_OBJECT)) {
+            if (G_VALUE_HOLDS(gval, G_TYPE_PHP_VALUE)) {
                 zval *object = (zval *) g_value_dup_boxed(gval);
+                MAKE_ZVAL_IF_NULL(*value);
                 if (object) {
-                    *value = object;
+                    REPLACE_ZVAL_VALUE(value, object, 1);
+                    zval_ptr_dtor(&object);
                     return SUCCESS;
                 } else {
-                    MAKE_ZVAL_IF_NULL(*value);
                     ZVAL_NULL(*value);
                     return FAILURE;
                 }
@@ -250,7 +251,7 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC)
 
             if (Z_TYPE_P(value) == IS_NULL) {
                 g_value_set_boxed(gval, NULL);
-            } else if (G_VALUE_HOLDS(gval, G_TYPE_PHP_OBJECT) && phpg_gtype_from_zval(value) == G_TYPE_PHP_OBJECT) {
+            } else if (G_VALUE_HOLDS(gval, G_TYPE_PHP_VALUE) && phpg_gtype_from_zval(value) == G_TYPE_PHP_VALUE) {
                 g_value_set_boxed(gval, value);
             } else if (Z_TYPE_P(value) == IS_OBJECT
                        && instanceof_function(Z_OBJCE_P(value), gboxed_ce TSRMLS_CC)
