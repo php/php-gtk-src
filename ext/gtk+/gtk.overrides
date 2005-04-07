@@ -38,6 +38,7 @@ ignore
 	gtk_init
 	gtk_init_check
 	gtk_list_store_newv
+	gtk_list_store_set_valist
 	gtk_true
 %% }}}
 	
@@ -201,6 +202,23 @@ constants
 	phpg_register_int_constant(gtk_ce, "PRIORITY_HIGH_IDLE", sizeof("PRIORITY_HIGH_IDLE")-1, G_PRIORITY_HIGH_IDLE);
 	phpg_register_int_constant(gtk_ce, "PRIORITY_DEFAULT_IDLE", sizeof("PRIORITY_DEFAULT_IDLE")-1, G_PRIORITY_DEFAULT_IDLE);
 	phpg_register_int_constant(gtk_ce, "PRIORITY_LOW", sizeof("PRIORITY_LOW")-1, G_PRIORITY_LOW);
+
+	/* Fundamental GTypes */
+	phpg_register_int_constant(gtk_ce, "TYPE_INVALID", sizeof("TYPE_INVALID")-1, G_TYPE_INVALID);
+	phpg_register_int_constant(gtk_ce, "TYPE_NONE", sizeof("TYPE_NONE")-1, G_TYPE_NONE);
+	phpg_register_int_constant(gtk_ce, "TYPE_INTERFACE", sizeof("TYPE_INTERFACE")-1, G_TYPE_INTERFACE);
+	phpg_register_int_constant(gtk_ce, "TYPE_CHAR", sizeof("TYPE_CHAR")-1, G_TYPE_CHAR);
+	phpg_register_int_constant(gtk_ce, "TYPE_BOOLEAN", sizeof("TYPE_BOOLEAN")-1, G_TYPE_BOOLEAN);
+	phpg_register_int_constant(gtk_ce, "TYPE_LONG", sizeof("TYPE_LONG")-1, G_TYPE_LONG);
+	phpg_register_int_constant(gtk_ce, "TYPE_ENUM", sizeof("TYPE_ENUM")-1, G_TYPE_ENUM);
+	phpg_register_int_constant(gtk_ce, "TYPE_FLAGS", sizeof("TYPE_FLAGS")-1, G_TYPE_FLAGS);
+	phpg_register_int_constant(gtk_ce, "TYPE_DOUBLE", sizeof("TYPE_DOUBLE")-1, G_TYPE_DOUBLE);
+	phpg_register_int_constant(gtk_ce, "TYPE_STRING", sizeof("TYPE_STRING")-1, G_TYPE_STRING);
+	phpg_register_int_constant(gtk_ce, "TYPE_POINTER", sizeof("TYPE_POINTER")-1, G_TYPE_POINTER);
+	phpg_register_int_constant(gtk_ce, "TYPE_BOXED", sizeof("TYPE_BOXED")-1, G_TYPE_BOXED);
+	phpg_register_int_constant(gtk_ce, "TYPE_PARAM", sizeof("TYPE_PARAM")-1, G_TYPE_PARAM);
+	phpg_register_int_constant(gtk_ce, "TYPE_OBJECT", sizeof("TYPE_OBJECT")-1, G_TYPE_OBJECT);
+	phpg_register_int_constant(gtk_ce, "TYPE_PHP_VALUE", sizeof("TYPE_PHP_VALUE")-1, G_TYPE_PHP_VALUE);
 %% }}}
 
 %% {{{ main loop
@@ -608,6 +626,7 @@ PHP_METHOD
 }
 %% }}}
 
+%% {{{ GtkListStore
 %%
 override gtk_list_store_new
 PHP_METHOD
@@ -643,6 +662,98 @@ PHP_METHOD
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
+
+%%
+override gtk_list_store_append
+PHP_METHOD
+{
+	GtkTreeIter iter;
+	zval *items = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|a", &items))
+		return;
+
+	gtk_list_store_append(GTK_LIST_STORE(PHPG_GOBJECT(this_ptr)), &iter);
+
+	/* TODO optionally set items */
+
+	phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
+override gtk_list_store_set
+PHP_METHOD
+{
+	zval ***items;
+	zval *php_iter;
+	GtkTreeIter *iter = NULL;
+	GtkTreeModel *model;
+	int i, argc = ZEND_NUM_ARGS();
+
+	NOT_STATIC_METHOD();
+
+	if (argc < 3) {
+		php_error(E_WARNING, "%s::%s() requires at least 3 arguments, %d given",
+				  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C), argc);
+		return;
+	}
+
+	if (!php_gtk_parse_args(1, "O", &php_iter, gtktreeiter_ce))
+		return;
+
+	iter = (GtkTreeIter *) PHPG_GBOXED(php_iter);
+
+	if ((argc-1) % 2) {
+		php_error(E_WARNING, "%s::%s() requires arguments 2-n to be column/value pairs",
+				  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+		return;
+	}
+
+	model = GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr));
+	items = php_gtk_func_args(argc);
+	for (i = 1; i < argc; i += 2) {
+		zval *zcolumn = *items[i];
+		zval *zvalue = *items[i+1];
+		gint column;
+		GValue value = { 0 };
+		
+		if (Z_TYPE_P(zcolumn) != IS_LONG) {
+			php_error(E_WARNING, "%s::%s() requires arguments %d to be an integer, %s given",
+					  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C),
+					  i, zend_zval_type_name(zcolumn));
+			efree(items);
+			return;
+		}
+
+		column = Z_LVAL_P(zcolumn);
+		if (column < 0 || column >= gtk_tree_model_get_n_columns(model)) {
+			php_error(E_WARNING, "%s::%s(): argument %d is out of range - model has %d column(s)",
+					  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C),
+					  i, gtk_tree_model_get_n_columns(model));
+			efree(items);
+			return;
+		}
+
+		g_value_init(&value, gtk_tree_model_get_column_type(model, column));
+
+		if (phpg_gvalue_from_zval(&value, zvalue TSRMLS_CC) == FAILURE) {
+			php_error(E_WARNING, "%s::%s(): argument %d is of the wrong type for column %d",
+					  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C),
+					  i+1, column);
+			efree(items);
+			return;
+		}
+
+		gtk_list_store_set_value(GTK_LIST_STORE(PHPG_GOBJECT(this_ptr)), iter, column, &value);
+
+		g_value_unset(&value);
+	}
+
+	efree(items);
+}
+%% }}}
 
 %% {{{ GtkMessageDialog
 %%
@@ -901,6 +1012,36 @@ PHP_METHOD
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
 %% }}}
+
+
+%%
+override gtk_tree_model_get_value
+PHP_METHOD
+{
+	zval *php_iter;
+	GtkTreeIter *iter;
+	GtkTreeModel *model;
+	gint column;
+	GValue value = { 0 };
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oi", &php_iter, gtktreeiter_ce, &column))
+		return;
+
+	model = GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr));
+	iter = (GtkTreeIter *) PHPG_GBOXED(php_iter);
+
+	if (column < 0 || column >= gtk_tree_model_get_n_columns(model)) {
+		php_error(E_WARNING, "%s::%s(): column  is out of range - model has %d column(s)",
+				  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C),
+				  gtk_tree_model_get_n_columns(model));
+		return;
+	}
+
+	gtk_tree_model_get_value(model, iter, column, &value);
+	phpg_gvalue_to_zval(&value, &return_value, TRUE TSRMLS_CC);
+}
 
 %% {{{ GtkWidget
 %%
