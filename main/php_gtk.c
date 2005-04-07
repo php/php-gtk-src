@@ -43,6 +43,7 @@ PHP_GTK_API zend_object_handlers php_gtk_handlers;
 
 const gchar *phpg_class_id = "phpg_class";
 GQuark phpg_class_key = 0;
+GType G_TYPE_PHP_OBJECT = 0;
 
 zend_module_entry gtk_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
@@ -89,6 +90,19 @@ static void php_gtk_prop_info_destroy(void *pi_hash)
 {
 	HashTable *pih = (HashTable *) pi_hash;
 	zend_hash_destroy(pih);
+}
+
+static gpointer php_object_copy(gpointer boxed)
+{
+	zval *object = (zval *) boxed;
+	zval_add_ref(&object);
+	return object;
+}
+
+static void php_object_release(gpointer boxed)
+{
+	zval *object = (zval *) boxed;
+	zval_ptr_dtor(&object);
 }
 
 PHP_MINIT_FUNCTION(gtk)
@@ -152,6 +166,8 @@ PHP_RINIT_FUNCTION(gtk)
 	phpg_gtype_register_self(TSRMLS_C);
 	phpg_gobject_register_self(TSRMLS_C);
 	phpg_gboxed_register_self(TSRMLS_C);
+
+	G_TYPE_PHP_OBJECT = g_boxed_type_register_static("PhpObject", php_object_copy, php_object_release);
 
 	if (php_gtk_startup_all_extensions(module_number) == FAILURE) {
 		php_error(E_WARNING, "Unable to start internal extensions");

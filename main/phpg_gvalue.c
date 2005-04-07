@@ -32,65 +32,75 @@
  * G_TYPE_PARAM
  */
 
+
 /* {{{ PHP_GTK_API phpg_gvalue_to_zval() */
 PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool copy_boxed TSRMLS_DC)
 {
     assert(value != NULL);
-    if (*value == NULL) {
-        MAKE_STD_ZVAL(*value);
-    }
 
     switch (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(gval))) {
         case G_TYPE_NONE:
+            MAKE_ZVAL_IF_NULL(*value);
             ZVAL_NULL(*value);
             break;
 
         case G_TYPE_CHAR:
             {
                 gchar val = g_value_get_char(gval);
+                MAKE_ZVAL_IF_NULL(*value);
                 ZVAL_STRINGL(*value, (char *)&val, 1, 1);
             }
 
         case G_TYPE_UCHAR:
             {
                 guchar val = g_value_get_uchar(gval);
+                MAKE_ZVAL_IF_NULL(*value);
                 ZVAL_STRINGL(*value, (char *)&val, 1, 1);
             }
             break;
 
         case G_TYPE_BOOLEAN:
+            MAKE_ZVAL_IF_NULL(*value);
             ZVAL_BOOL(*value, g_value_get_boolean(gval));
             break;
 
         case G_TYPE_INT:
+            MAKE_ZVAL_IF_NULL(*value);
             ZVAL_LONG(*value, (long)g_value_get_int(gval));
             break;
 
         case G_TYPE_LONG:
+            MAKE_ZVAL_IF_NULL(*value);
             ZVAL_LONG(*value, (long)g_value_get_long(gval));
             break;
 
         case G_TYPE_UINT:
+            MAKE_ZVAL_IF_NULL(*value);
             ZVAL_LONG(*value, (long)g_value_get_uint(gval));
             break;
 
         case G_TYPE_ULONG:
+            MAKE_ZVAL_IF_NULL(*value);
             ZVAL_LONG(*value, (long)g_value_get_ulong(gval));
             break;
 
         case G_TYPE_FLOAT:
+            MAKE_ZVAL_IF_NULL(*value);
             ZVAL_DOUBLE(*value, (double)g_value_get_float(gval));
             break;
 
         case G_TYPE_DOUBLE:
+            MAKE_ZVAL_IF_NULL(*value);
             ZVAL_DOUBLE(*value, (double)g_value_get_double(gval));
             break;
 
         case G_TYPE_ENUM:
+            MAKE_ZVAL_IF_NULL(*value);
             ZVAL_LONG(*value, (long)g_value_get_enum(gval));
             break;
 
         case G_TYPE_FLAGS:
+            MAKE_ZVAL_IF_NULL(*value);
             ZVAL_LONG(*value, (long)g_value_get_flags(gval));
             break;
 
@@ -98,6 +108,7 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
             {
                 const gchar *str = g_value_get_string(gval);
 
+                MAKE_ZVAL_IF_NULL(*value);
                 if (str != NULL) {
                     ZVAL_STRING(*value, (char *)str, 1);
                 } else
@@ -113,12 +124,22 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
         {
             phpg_gboxed_marshal_t *gbm;
 
-            if (G_VALUE_HOLDS(gval, G_TYPE_VALUE_ARRAY)) {
+            if (G_VALUE_HOLDS(gval, G_TYPE_PHP_OBJECT)) {
+                zval *object = (zval *) g_value_dup_boxed(gval);
+                if (object) {
+                    *value = object;
+                    return SUCCESS;
+                } else {
+                    MAKE_ZVAL_IF_NULL(*value);
+                    ZVAL_NULL(*value);
+                    return FAILURE;
+                }
+            } else if (G_VALUE_HOLDS(gval, G_TYPE_VALUE_ARRAY)) {
                 int i;
                 zval *item;
 
                 GValueArray *array = (GValueArray *) g_value_get_boxed(gval);
-                MAKE_STD_ZVAL(*value);
+                MAKE_ZVAL_IF_NULL(*value);
                 array_init(*value);
                 for (i = 0; i < array->n_values; i++) {
                     MAKE_STD_ZVAL(item);
@@ -126,6 +147,7 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
                     add_next_index_zval(*value, item);
                 }
             } else if ((gbm = phpg_gboxed_lookup_custom(G_VALUE_TYPE(gval)))) {
+                MAKE_STD_ZVAL(*value);
                 return gbm->to_zval(gval, value TSRMLS_CC);
             } else {
                 if (copy_boxed) {
@@ -228,6 +250,8 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC)
 
             if (Z_TYPE_P(value) == IS_NULL) {
                 g_value_set_boxed(gval, NULL);
+            } else if (G_VALUE_HOLDS(gval, G_TYPE_PHP_OBJECT) && phpg_gtype_from_zval(value) == G_TYPE_PHP_OBJECT) {
+                g_value_set_boxed(gval, value);
             } else if (Z_TYPE_P(value) == IS_OBJECT
                        && instanceof_function(Z_OBJCE_P(value), gboxed_ce TSRMLS_CC)
                        && G_VALUE_HOLDS(gval, ((phpg_gboxed_t*)PHPG_GET(value))->gtype)) {

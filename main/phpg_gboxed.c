@@ -177,6 +177,7 @@ void phpg_gboxed_register_self(TSRMLS_D)
 	if (gboxed_ce) return;
 
 	gboxed_ce = phpg_register_class("GBoxed", gboxed_methods, NULL, ZEND_ACC_EXPLICIT_ABSTRACT_CLASS, NULL, phpg_create_gboxed, G_TYPE_BOXED TSRMLS_CC);
+    phpg_register_int_constant(gboxed_ce, "gtype", sizeof("gtype")-1, G_TYPE_BOXED);
 }
 /* }}} */
 

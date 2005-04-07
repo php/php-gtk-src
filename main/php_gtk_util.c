@@ -718,11 +718,6 @@ static int php_gtk_count_specs(char *format, int endchar TSRMLS_DC)
 static zend_bool php_gtk_build_single(zval **result, char **format, va_list *va TSRMLS_DC);
 static zend_bool php_gtk_build_hash(zval **result_p, char **format, va_list *va, int endchar, int count TSRMLS_DC);
 
-#define MAKE_ZVAL_IF_NULL(z) \
-   do { \
-	   if (z == NULL) { MAKE_STD_ZVAL(z) }; \
-   } while (0);
-
 static zend_bool php_gtk_build_single(zval **result, char **format, va_list *va TSRMLS_DC)
 {
 	assert(result != NULL);

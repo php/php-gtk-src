@@ -396,6 +396,7 @@ void phpg_gobject_register_self(TSRMLS_D)
     phpg_gobject_handlers.del_ref = phpg_gobject_del_ref;
 
 	gobject_ce = phpg_register_class("GObject", gobject_methods, NULL, 0, NULL, NULL, G_TYPE_OBJECT TSRMLS_CC);
+    phpg_register_int_constant(gobject_ce, "gtype", sizeof("gtype")-1, G_TYPE_OBJECT);
 }
 
 #endif /* HAVE_PHP_GTK */

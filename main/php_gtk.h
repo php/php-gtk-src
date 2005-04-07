@@ -193,6 +193,7 @@ extern HashTable phpg_prop_info;
 /* IDs for type identification */
 extern const gchar *phpg_class_id;
 extern GQuark phpg_class_key;
+extern GType G_TYPE_PHP_OBJECT;
 
 /* Exceptions */
 extern PHP_GTK_API zend_class_entry *phpg_generic_exception;
@@ -307,6 +308,13 @@ static inline zend_class_entry* phpg_class_from_gtype(GType gtype)
 		zend_throw_exception(exception, message, 0 TSRMLS_CC); \
 		return retval; \
 	} while (0)
+
+
+#define MAKE_ZVAL_IF_NULL(z) \
+   do { \
+	   if (z == NULL) { MAKE_STD_ZVAL(z) }; \
+   } while (0);
+
 
 void phpg_register_exceptions();
 gboolean phpg_handler_marshal(gpointer user_data);

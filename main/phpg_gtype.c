@@ -151,13 +151,19 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 				}
 			} else {
 				zval **gtype;
-				if (zend_hash_find(&Z_OBJCE_P(value)->constants_table, "gtype", sizeof("gtype"), (void**)&gtype) == SUCCESS
+				/*
+				 * It's either a PHP object representing some Gtk+ object
+				 */
+				if (zend_hash_find(&Z_OBJCE_P(value)->constants_table, "gtype",
+								   sizeof("gtype"), (void**)&gtype) == SUCCESS
 					&& Z_TYPE_PP(gtype) == IS_LONG) {
-
 						return Z_LVAL_PP(gtype);
+				} else {
+					/*
+					 * Or it's a regular PHP object, but with our own GType.
+					 */
+					return G_TYPE_PHP_OBJECT;
 				}
-
-				return G_TYPE_OBJECT;
 			}
 			break;
 
