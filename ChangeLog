@@ -1,3 +1,42 @@
+2005-04-07  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      - Register some fundamental GTypes as constants.
+      - Implement GtkListStore::append(), GtkListStore::set(), and
+        GtkTreeModel::get_value().
+      
+      All this allows things like:
+      
+      class mine {
+          var $a = 5;
+          var $b;
+      
+          function __construct($b) {
+              $this->b = $b;
+          }
+      }
+      
+      $store = new GtkListStore(Gtk::TYPE_PHP_VALUE);
+      $iter = $store->append();
+      $o = new Mine(99);
+      $store->set($iter, 0, $o);
+      var_dump($store->get_value($iter, 0));
+
+    * main/php_gtk.c
+      main/php_gtk.h
+      main/phpg_gtype.c
+      main/phpg_gvalue.c:
+      - Better detection of valid GTypes in phpg_gtype_from_zval().
+
+    * main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_util.c
+      main/phpg_gboxed.c
+      main/phpg_gobject.c
+      main/phpg_gtype.c
+      main/phpg_gvalue.c:
+      Register our own boxed type to represent non-Gtk derived PHP objects.
+
 2005-04-05  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides:
