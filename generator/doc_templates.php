@@ -83,32 +83,44 @@ $method_end_tpl = <<<EOD
 
 EOD;
 
+$constructors_start_tpl = <<<EOD
+
+ <constructors>
+
+EOD;
+
+$constructors_end_tpl = <<<EOD
+
+ </constructors>
+
+EOD;
+
 $constructor_start_tpl = <<<EOD
 
- <constructor id="%s.%s.constructor">
-  <funcsynopsis>
-   <funcprototype>
+  <constructor id="%s.%s.constructor">
+   <funcsynopsis>
+    <funcprototype>
 
 EOD;
 
 $constructor_alt_start_tpl = <<<EOD
 
- <constructor id="%s.%s.constructor.%s">
-  <funcsynopsis>
-   <funcprototype>
+  <constructor id="%s.%s.constructor.%s">
+   <funcsynopsis>
+    <funcprototype>
 
 EOD;
 
 $constructor_end_tpl = <<<EOD
-   </funcprototype>
-  </funcsynopsis>
-  <shortdesc>
+    </funcprototype>
+   </funcsynopsis>
+   <shortdesc>
 %s
-  </shortdesc>
-  <desc>
+   </shortdesc>
+   <desc>
 %s
-  </desc>
- </constructor>
+   </desc>
+  </constructor>
 
 EOD;
 

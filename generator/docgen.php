@@ -215,7 +215,7 @@ class DocGenerator {
 		}
 
         // Write the constructor.
-        $this->write_constructor($object);
+        $this->write_constructors($object);
         
         // Write the class methods.
         $this->write_methods($object);
@@ -371,10 +371,12 @@ class DocGenerator {
      * @param  object $object The class to write docs for.
      * @return void
      */
-    function write_constructor($object)
+    function write_constructors($object)
     {
         // The constructor templates.
-        global  $constructor_start_tpl,
+        global  $constructors_start_tpl,
+				$constructors_end_tpl,
+				$constructor_start_tpl,
 				$constructor_alt_start_tpl,
                 $constructor_end_tpl,
                 $funcproto_tpl,
@@ -384,7 +386,7 @@ class DocGenerator {
 		// Get the constructor method from the class.
         $constructors = $this->parser->find_constructor($object, $this->overrides);
 		if (count($constructors) > 0) {
-			//FIXME: find duplicates
+
 			foreach ($constructors as $constr_number => $constructor) {
         
 				// If a constructor was found, check to see if it was
@@ -413,6 +415,10 @@ class DocGenerator {
 				// Get the class that the constructor instantiates.
 				$object_name = $constructor->is_constructor_of;
 				$is_main_constructor = $constr_number == 0;
+                
+                if ($is_main_constructor) {
+                    fwrite($this->fp, $constructors_start_tpl);
+                }
 				
 				if (!$is_main_constructor) {
 					//get the real function name
@@ -460,8 +466,11 @@ class DocGenerator {
 					fwrite($this->fp, $merged);
 				}
 			}//foreach constructor
-		}
-	}//function write_constructor($object)
+			
+            fwrite($this->fp, $constructors_end_tpl);
+
+		}//there is at least oneconstructor
+	}//function write_constructors($object)
 	
 	
 
