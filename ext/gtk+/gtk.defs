@@ -7918,12 +7918,14 @@
   )
 )
 
-(define-function icon_factory_lookup_default
+(define-method lookup_default
+  (of-object "GtkIconFactory")
   (c-name "gtk_icon_factory_lookup_default")
   (return-type "GtkIconSet*")
   (parameters
     '("const-gchar*" "stock_id")
   )
+  (static #t)
 )
 
 (define-function gtk_icon_factory_new

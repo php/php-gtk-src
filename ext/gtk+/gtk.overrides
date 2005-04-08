@@ -39,6 +39,7 @@ ignore
 	gtk_init_check
 	gtk_list_store_newv
 	gtk_list_store_set_valist
+	gtk_tree_view_new
 	gtk_true
 %% }}}
 	
@@ -46,7 +47,6 @@ ignore
 %%
 ignore-glob
 	gtk_idle_add_*
-	gtk_accelerator_*
 	gtk_target_list_*
 %%
 ignore
@@ -315,6 +315,60 @@ PHP_METHOD
 
 %% }}}
 
+%% {{{ functions
+%%
+override gtk_icon_size_lookup
+PHP_METHOD
+{
+	gint width, height;
+	zval *php_size = NULL;
+	GtkIconSize size;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_size))
+		return;
+
+    if (php_size && phpg_gvalue_get_enum(GTK_TYPE_ICON_SIZE, php_size, (gint *)&size) == FAILURE) {
+		return;
+	}
+
+	gtk_icon_size_lookup(size, &width, &height);
+
+	php_gtk_build_value(&return_value, "(ii)", width, height);
+}
+
+%%
+override gtk_stock_list_ids
+PHP_METHOD
+{
+	GSList *ids;
+
+	array_init(return_value);
+	for (ids = gtk_stock_list_ids(); ids; ids = ids->next) {
+		add_next_index_string(return_value, (char *) ids->data, 1);
+		g_free(ids->data);
+	}
+	g_slist_free(ids);
+}
+
+%%
+override gtk_stock_lookup
+PHP_METHOD
+{
+	char *stock_id;
+	GtkStockItem item;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &stock_id))
+		return;
+
+	if (gtk_stock_lookup(stock_id, &item)) {
+		php_gtk_build_value(&return_value, "(ssiis)", item.stock_id, item.label,
+							item.modifier, item.keyval, item.translation_domain);
+	} else {
+		return;
+	}
+}
+%% }}}
+
 %% {{{ GtkButton
 %%
 override gtk_button_new
@@ -467,6 +521,30 @@ PHP_METHOD
 	}
 
 	phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+}
+%% }}}
+
+%% {{{ GtkIconSet
+%%
+override gtk_icon_set_get_sizes
+PHP_METHOD
+{
+	GtkIconSize *sizes;
+	gint n_sizes, i;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	gtk_icon_set_get_sizes((GtkIconSet *)PHPG_GBOXED(this_ptr), &sizes, &n_sizes);
+	array_init(return_value);
+
+	for (i = 0; i < n_sizes; i++) {
+		add_next_index_long(return_value, sizes[i]);
+	}
+
+	g_free(sizes);
 }
 %% }}}
 
@@ -656,6 +734,7 @@ PHP_METHOD
 	wrapped_obj = g_object_newv(phpg_gtype_from_zval(this_ptr), 0, NULL);
 	gtk_list_store_set_column_types(GTK_LIST_STORE(wrapped_obj), argc, column_types);
 	efree(column_types);
+	efree(args);
 	if (!wrapped_obj) {
 		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkListStore);
 	}
@@ -1013,6 +1092,7 @@ PHP_METHOD
 }
 %% }}}
 
+%% {{{ GtkTreeModel
 
 %%
 override gtk_tree_model_get_value
@@ -1042,6 +1122,8 @@ PHP_METHOD
 	gtk_tree_model_get_value(model, iter, column, &value);
 	phpg_gvalue_to_zval(&value, &return_value, TRUE TSRMLS_CC);
 }
+
+%% }}}
 
 %% {{{ GtkWidget
 %%
