@@ -1,3 +1,16 @@
+2005-04-08  Christian Weiske  <cweiske@cweiske.de>
+
+    * generator/doc_templates.php
+      generator/docgen.php:
+      - XML requires <constructors> tag now
+      - fixed generation for classes with no constructor
+
+2005-04-08  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides:
+      Implement some functions and crap.
+
 2005-04-07  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides:
