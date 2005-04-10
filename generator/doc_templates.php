@@ -173,5 +173,20 @@ $prop_end_tpl = <<<EOD
 
 EOD;
 
+$etter_start_tpl = <<<EOD
+   <para>
+    See also: 
+EOD;
+
+$etter_end_tpl = <<<EOD
+   </para>
+
+EOD;
+
+$etter_link = <<<EOD
+    <function class="%s">%s</function>
+
+EOD;
+
 /* vim: set et sts=4: */
 ?>

@@ -23,6 +23,12 @@
 
 set_time_limit(300);
 
+var_dump(GObject::signal_list_names(GtkWidget::gtype));
+var_dump(GObject::signal_query(55));
+var_dump(GObject::signal_query("drag-motion", GtkWidget::gtype));
+
+die();
+
 require 'Getopt.php';
 require 'arg_types.php';
 require 'override.php';
@@ -266,7 +272,7 @@ class DocGenerator {
         
         // Write the closing of the properties section.
         fwrite($this->fp, $props_end_tpl);
-    }
+    }//function write_properties($object)
 
     /**
      * Writes one property to the current file.
@@ -299,7 +305,7 @@ class DocGenerator {
         
         // Write the closing from a template.
         fwrite($this->fp, $prop_end_tpl);
-    }
+    }//function write_property($object, $field)
 
     /**
      * Write the class methods to the current file.
@@ -315,10 +321,10 @@ class DocGenerator {
         // The methods section templates.
         global  $methods_start_tpl,
                 $methods_end_tpl;
-
+        
         // Get methods from the object.
         $methods = $this->parser->find_methods($object);
-
+        
         // Only write the template if there are methods
         // for this class.
         if (count($methods)) {
@@ -329,10 +335,10 @@ class DocGenerator {
         foreach ($methods as $method) {
             if ($this->overrides->is_overriden($method->c_name)) {
                 // The default method was overriden.
-                $this->write_method($method, true);
+                $this->write_method($method, true, $methods);
             } else if (!$this->overrides->is_ignored($method->c_name)) {
                 // Don't write a method that is ignored.
-                $this->write_method($method, false);
+                $this->write_method($method, false, $methods);
             }
         }
 
@@ -480,9 +486,10 @@ class DocGenerator {
      * @access public
      * @param  object $method    The method to write docs for.
      * @param  bool   $overriden Whether or not the method was overriden.
+     * @param  array  $methods   Array with all methods for this object. Used to cross-reference getter and setter
      * @return void
      */
-    function write_method($method, $overriden)
+    function write_method($method, $overriden, $methods = null)
     {
         // The method templates.
         global  $method_start_tpl,
@@ -537,7 +544,7 @@ class DocGenerator {
 			fwrite($this->fp, 
 				   sprintf($method_end_tpl,
 						   NULL,
-						   NULL
+						   $this->gen_etter_inks($method->name, $methods)
 						   )
 				   );
 		}
@@ -584,6 +591,47 @@ class DocGenerator {
         // Return either the parameter string or a no param string
         return $paramdef ? $paramdef : sprintf($no_parameter_tpl, 'void');
     }
+    
+    
+    
+    /**
+    * generates links to corresponding getter- or setter functions
+    * for inclusion in the <desc> section of the function method
+    */
+    function gen_etter_inks($methodname, $methods) 
+    {
+        global  $etter_start_tpl,
+                $etter_end_tpl,
+                $etter_link;
+                
+        if ($methods === null || count($methods) == 0 || 
+            (substr($methodname, 0, 4) != 'get_' && substr($methodname, 0, 4) != 'set_')
+        ) {
+            return '';
+        }
+        
+        //try to find the other ?etter
+        $foundone = false;
+        $all = '';
+        $base = substr($methodname, 4);
+        $funcs = array();
+        foreach ($methods as $method) {
+            if (substr($method->name, 4) == $base && $method->name != $methodname) {
+                $funcs[] = sprintf($etter_link,
+                                $method->of_object,
+                                $method->name
+                                );
+            }
+        }//foreach method
+        
+        if (count($funcs) > 0) {
+            $all .= $etter_start_tpl;
+            $all .= implode($funcs, ', ');
+            $all .= $etter_end_tpl;
+        }
+        
+        return $all;
+    }//function gen_etter_inks($methodname, $methods) 
 
     /**
      * Gets a PHP type from a C type.
