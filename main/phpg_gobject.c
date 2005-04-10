@@ -382,7 +382,7 @@ static void phpg_signal_list_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool list_n
 {
     zval *php_type;
     GType type;
-    GTypeClass *klass;
+    gpointer *klass;
     guint *ids, i, n;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_type))
@@ -397,7 +397,11 @@ static void phpg_signal_list_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool list_n
         return;
     }
 
-    klass = g_type_class_ref(type);
+    if (G_TYPE_IS_INTERFACE(type)) {
+        klass = g_type_default_interface_ref(type);
+    } else {
+        klass = g_type_class_ref(type);
+    }
     if (!klass) {
         php_error(E_WARNING, "%s::%s() could not get a reference to type class", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
     }
@@ -416,7 +420,11 @@ static void phpg_signal_list_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool list_n
     }
 
     g_free(ids);
-    g_type_class_unref(klass);
+    if (G_TYPE_IS_INTERFACE(type)) {
+        g_type_default_interface_unref(klass);
+    } else {
+        g_type_class_unref(klass);
+    }
 }
 
 static PHP_METHOD(GObject, signal_list_ids)
@@ -435,32 +443,38 @@ static PHP_METHOD(GObject, signal_query)
 {
     zval *php_type, *temp, *params;
     GType gtype;
-    GTypeClass *klass = NULL;
+    gpointer *klass = NULL;
     GSignalQuery query;
     char *signal_name = NULL;
-    guint signal_id, i;
+    guint signal_id = 0, i;
 
-    if (php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "sV", &signal_name, &php_type)) {
-        gtype = phpg_gtype_from_zval(php_type);
-        if (!gtype)
-            return;
-
-        if (!G_TYPE_IS_INSTANTIATABLE(gtype) && !G_TYPE_IS_INTERFACE(gtype)) {
-            php_error(E_WARNING, "%s::%s() requires the type to be instantiable or an interface", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-            return;
-        }
-  
-        klass = g_type_class_ref(gtype); 
-        if (!klass) {
-            php_error(E_WARNING, "%s::%s() could not get a reference to type class", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-            return;
-        }
-
-        signal_id = g_signal_lookup(signal_name, gtype);
-
-    } else if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "i", &signal_id) || !g_signal_name(signal_id)) {
-        php_error(E_WARNING, "%s::%s() requires the arguments to be either a valid signal_id, or a signal name plus object type", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+    if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "iV", &signal_id, &php_type) &&
+        !php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "sV", &signal_name, &php_type)) {
+        php_error(E_WARNING, "%s::%s() requires the arguments to be either a valid signal_id or a signal name, followed by the object type", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
         return;
+    }
+
+    gtype = phpg_gtype_from_zval(php_type);
+    if (!gtype)
+        return;
+
+    if (!G_TYPE_IS_INSTANTIATABLE(gtype) && !G_TYPE_IS_INTERFACE(gtype)) {
+        php_error(E_WARNING, "%s::%s() requires the type to be instantiable or an interface", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    if (G_TYPE_IS_INTERFACE(gtype)) {
+        klass = g_type_default_interface_ref(gtype); 
+    } else {
+        klass = g_type_class_ref(gtype); 
+    }
+    if (!klass) {
+        php_error(E_WARNING, "%s::%s() could not get a reference to type class", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    if (signal_name) {
+        signal_id = g_signal_lookup(signal_name, gtype);
     }
 
     g_signal_query(signal_id, &query);
@@ -490,8 +504,11 @@ static PHP_METHOD(GObject, signal_query)
     add_next_index_zval(return_value, params);
 
 signal_query_done:
-    if (klass)
-        g_type_class_unref(klass);
+    if (G_TYPE_IS_INTERFACE(gtype)) {
+        g_type_default_interface_unref(klass); 
+    } else {
+        g_type_class_unref(klass); 
+    }
 }
 /* }}} */
 
