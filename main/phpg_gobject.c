@@ -247,6 +247,7 @@ PHP_GTK_API void phpg_gobject_watch_closure(zval *zobj, GClosure *closure TSRMLS
 }
 /* }}} */
 
+/* {{{ phpg_gobject_construct */
 zend_bool phpg_gobject_construct(zval *this_ptr TSRMLS_DC)
 {
     GType my_type;
@@ -279,11 +280,37 @@ zend_bool phpg_gobject_construct(zval *this_ptr TSRMLS_DC)
     return 1;
 }
 
+/* }}} */
+
 /*
  * GObject PHP class definition
  */
 
 PHP_GTK_EXPORT_CE(gobject_ce) = NULL;
+
+/* {{{ GObject::__construct */
+static PHP_METHOD(GObject, __construct)
+{
+    phpg_gobject_construct(this_ptr TSRMLS_CC);
+}
+/* }}} */
+
+/* {{{ GObject::__tostring() */
+static PHP_METHOD(GObject, __tostring)
+{
+    char buf[256];
+    GObject *obj = NULL;
+    int numc = 0;
+
+    NOT_STATIC_METHOD();
+
+    obj = PHPG_GOBJECT(this_ptr);
+    numc = snprintf(buf, sizeof(buf),
+                    "[%s object (%s Gtk+ type)]", Z_OBJCE_P(this_ptr)->name,
+                    obj ? G_OBJECT_TYPE_NAME(obj) : "uninitialized");
+    RETURN_STRINGL(buf, numc, 1);
+}
+/* }}} */
 
 /* {{{ static phpg_signal_connect_impl() */
 static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool use_signal_object, zend_bool after)
@@ -350,37 +377,134 @@ static PHP_METHOD(GObject, connect_object_after)
 }
 /* }}} */
 
-/* {{{ GObject::__tostring() */
-static PHP_METHOD(GObject, __tostring)
+/* {{{ GObject::signal_list_ids/names */
+static void phpg_signal_list_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool list_names)
 {
-    char buf[256];
-    GObject *obj = NULL;
-    int numc = 0;
+    zval *php_type;
+    GType type;
+    GTypeClass *klass;
+    guint *ids, i, n;
 
-    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_type))
+        return;
 
-    obj = PHPG_GOBJECT(this_ptr);
-    numc = snprintf(buf, sizeof(buf),
-                    "[%s object (%s Gtk+ type)]", Z_OBJCE_P(this_ptr)->name,
-                    obj ? G_OBJECT_TYPE_NAME(obj) : "uninitialized");
-    RETURN_STRINGL(buf, numc, 1);
+    type = phpg_gtype_from_zval(php_type);
+    if (!type)
+        return;
+
+    if (!G_TYPE_IS_INSTANTIATABLE(type) && !G_TYPE_IS_INTERFACE(type)) {
+        php_error(E_WARNING, "%s::%s() requires the type to be instantiable or an interface", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    klass = g_type_class_ref(type);
+    if (!klass) {
+        php_error(E_WARNING, "%s::%s() could not get a reference to type class", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+    }
+
+    ids = g_signal_list_ids(type, &n);
+
+    array_init(return_value);
+    if (list_names) {
+        for (i = 0; i < n; i++) {
+            add_next_index_string(return_value, (char *)g_signal_name(ids[i]), 1);
+        }
+    } else {
+        for (i = 0; i < n; i++) {
+            add_next_index_long(return_value, ids[i]);
+        }
+    }
+
+    g_free(ids);
+    g_type_class_unref(klass);
+}
+
+static PHP_METHOD(GObject, signal_list_ids)
+{
+    phpg_signal_list_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
+}
+
+static PHP_METHOD(GObject, signal_list_names)
+{
+    phpg_signal_list_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
 }
 /* }}} */
 
-/* {{{ GObject::__construct */
-static PHP_METHOD(GObject, __construct)
+/* {{{ GObject::signal_query */
+static PHP_METHOD(GObject, signal_query)
 {
-    phpg_gobject_construct(this_ptr TSRMLS_CC);
+    zval *php_type, *temp, *params;
+    GType gtype;
+    GTypeClass *klass = NULL;
+    GSignalQuery query;
+    char *signal_name = NULL;
+    guint signal_id, i;
+
+    if (php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "sV", &signal_name, &php_type)) {
+        gtype = phpg_gtype_from_zval(php_type);
+        if (!gtype)
+            return;
+
+        if (!G_TYPE_IS_INSTANTIATABLE(gtype) && !G_TYPE_IS_INTERFACE(gtype)) {
+            php_error(E_WARNING, "%s::%s() requires the type to be instantiable or an interface", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+            return;
+        }
+  
+        klass = g_type_class_ref(gtype); 
+        if (!klass) {
+            php_error(E_WARNING, "%s::%s() could not get a reference to type class", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+            return;
+        }
+
+        signal_id = g_signal_lookup(signal_name, gtype);
+
+    } else if (!php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "i", &signal_id) || !g_signal_name(signal_id)) {
+        php_error(E_WARNING, "%s::%s() requires the arguments to be either a valid signal_id, or a signal name plus object type", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    g_signal_query(signal_id, &query);
+
+    if (query.signal_id == 0) {
+        goto signal_query_done;
+    }
+
+    array_init(return_value);
+
+    add_next_index_long(return_value, query.signal_id);
+    add_next_index_string(return_value, (char *)query.signal_name, 1);
+    MAKE_STD_ZVAL(temp);
+    phpg_gtype_new(temp, query.itype);
+    add_next_index_zval(return_value, temp);
+    add_next_index_long(return_value, query.signal_flags);
+    MAKE_STD_ZVAL(temp);
+    phpg_gtype_new(temp, query.return_type);
+    add_next_index_zval(return_value, temp);
+    MAKE_STD_ZVAL(params);
+    array_init(params);
+    for (i = 0; i < query.n_params; i++) {
+        MAKE_STD_ZVAL(temp);
+        phpg_gtype_new(temp, query.param_types[i]);
+        add_next_index_zval(params, temp);
+    }
+    add_next_index_zval(return_value, params);
+
+signal_query_done:
+    if (klass)
+        g_type_class_unref(klass);
 }
 /* }}} */
 
 static zend_function_entry gobject_methods[] = {
     PHP_ME(GObject, __construct, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(GObject, __tostring, NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(GObject, connect, NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(GObject, connect_after, NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(GObject, connect_object, NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(GObject, connect_object_after, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(GObject, __tostring, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, signal_list_ids, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+    PHP_ME(GObject, signal_list_names, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+    PHP_ME(GObject, signal_query, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	{NULL, NULL, NULL}
 };
 

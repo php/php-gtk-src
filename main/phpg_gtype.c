@@ -124,7 +124,8 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 
 			if (G_TYPE_IS_FUNDAMENTAL(Z_LVAL_P(value)) ||
 				G_TYPE_IS_CLASSED(Z_LVAL_P(value)) ||
-				G_TYPE_FUNDAMENTAL(Z_LVAL_P(value)) == G_TYPE_BOXED) {
+				G_TYPE_FUNDAMENTAL(Z_LVAL_P(value)) == G_TYPE_BOXED ||
+				G_TYPE_IS_INTERFACE(Z_LVAL_P(value))) {
 				return Z_LVAL_P(value);
 			}
 			return G_TYPE_INT;
