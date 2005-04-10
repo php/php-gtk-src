@@ -168,24 +168,32 @@ $prop_end_tpl = <<<EOD
    <shortdesc>
    </shortdesc>
    <desc>
+%s
    </desc>
   </property>
 
 EOD;
 
 $etter_start_tpl = <<<EOD
-   <para>
-    See also: 
+    <para>
+     See also: 
 EOD;
 
 $etter_end_tpl = <<<EOD
-   </para>
+
+    </para>
 
 EOD;
 
 $etter_link = <<<EOD
-    <function class="%s">%s</function>
 
+     <function class="%s">%s</function>
+EOD;
+
+
+$prop_link = <<<EOD
+
+     <propname class="%s">%s</propname>
 EOD;
 
 /* vim: set et sts=4: */

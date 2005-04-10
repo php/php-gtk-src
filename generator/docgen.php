@@ -23,12 +23,6 @@
 
 set_time_limit(300);
 
-var_dump(GObject::signal_list_names(GtkWidget::gtype));
-var_dump(GObject::signal_query(55));
-var_dump(GObject::signal_query("drag-motion", GtkWidget::gtype));
-
-die();
-
 require 'Getopt.php';
 require 'arg_types.php';
 require 'override.php';
@@ -242,10 +236,10 @@ class DocGenerator {
 		fclose($this->fp);
     }
 
+    
+    
     /**
      * Writes the class properties to the current file.
-     *
-     * FIXME: automatically link to get_* and set_* functions
      *
      * @access public
      * @param  object $object The class to write docs for.
@@ -274,6 +268,8 @@ class DocGenerator {
         fwrite($this->fp, $props_end_tpl);
     }//function write_properties($object)
 
+    
+    
     /**
      * Writes one property to the current file.
      *
@@ -304,13 +300,19 @@ class DocGenerator {
                                   $field_name, $field_name, $doc_type));
         
         // Write the closing from a template.
-        fwrite($this->fp, $prop_end_tpl);
+        fwrite($this->fp, sprintf($prop_end_tpl, 
+                                    $this->gen_etter_links(
+                                        $field_name,
+                                        $this->parser->find_methods($object),
+                                        null,
+                                        true)
+                                ));
     }//function write_property($object, $field)
 
+    
+    
     /**
      * Write the class methods to the current file.
-     *
-     * FIXME: automatically link to get_* and set_* functions
      *
      * @access public
      * @param  object $object The class to write docs for.
@@ -335,10 +337,10 @@ class DocGenerator {
         foreach ($methods as $method) {
             if ($this->overrides->is_overriden($method->c_name)) {
                 // The default method was overriden.
-                $this->write_method($method, true, $methods);
+                $this->write_method($method, true, $methods, $object->fields);
             } else if (!$this->overrides->is_ignored($method->c_name)) {
                 // Don't write a method that is ignored.
-                $this->write_method($method, false, $methods);
+                $this->write_method($method, false, $methods, $object->fields);
             }
         }
 
@@ -388,8 +390,9 @@ class DocGenerator {
                 $funcproto_tpl,
                 $no_parameter_tpl,
                 $update_docs;
-		
-		// Get the constructor method from the class.
+
+        // Get the constructor method from the class.
+        $constructed = false;
         $constructors = $this->parser->find_constructor($object, $this->overrides);
 		if (count($constructors) > 0) {
 
@@ -403,18 +406,18 @@ class DocGenerator {
 					} else if (!$this->overrides->is_ignored($constructor->c_name)) {
 						$overriden = false;
 					} else {
-						return;
+						break;
 					}
 				} else {
 					// No constructor found.
-					return;
+					break;
 				}
 		
 				// If it hasn't been overriden, get the parameters.
 				if (!$overriden) {
 					if (($paramdef = $this->get_paramdef($constructor)) === false) {
 						// No parameters found!
-						return;
+						break;
 					}
 				}
 		
@@ -423,6 +426,7 @@ class DocGenerator {
 				$is_main_constructor = $constr_number == 0;
                 
                 if ($is_main_constructor) {
+                    $constructed = true;
                     fwrite($this->fp, $constructors_start_tpl);
                 }
 				
@@ -473,8 +477,9 @@ class DocGenerator {
 				}
 			}//foreach constructor
 			
-            fwrite($this->fp, $constructors_end_tpl);
-
+            if ($constructed) {
+                fwrite($this->fp, $constructors_end_tpl);
+            }
 		}//there is at least oneconstructor
 	}//function write_constructors($object)
 	
@@ -486,10 +491,11 @@ class DocGenerator {
      * @access public
      * @param  object $method    The method to write docs for.
      * @param  bool   $overriden Whether or not the method was overriden.
-     * @param  array  $methods   Array with all methods for this object. Used to cross-reference getter and setter
+     * @param  array  $methods   Array with all methods for this object. Used to cross-link getter and setter
+     * @param  array  $properties Array with all properties for this object. Used to cross-link them with the method
      * @return void
      */
-    function write_method($method, $overriden, $methods = null)
+    function write_method($method, $overriden, $methods = null, $properties = null)
     {
         // The method templates.
         global  $method_start_tpl,
@@ -504,6 +510,9 @@ class DocGenerator {
 			//TODO: check if alright
 			try {
 				$paramdef = $this->get_paramdef($method);
+                if ($paramdef == '') {
+                    $paramdef = sprintf($no_parameter_tpl, 'void');
+                }
 				$return = $this->get_type($method->return_type);
 			} catch (Exception $ex) {
                 return;
@@ -544,11 +553,13 @@ class DocGenerator {
 			fwrite($this->fp, 
 				   sprintf($method_end_tpl,
 						   NULL,
-						   $this->gen_etter_inks($method->name, $methods)
+						   $this->gen_etter_links($method->name, $methods, $properties)
 						   )
 				   );
 		}
-	}
+	}//function write_method($method, $overriden, $methods = null, $properties = null)
+    
+    
 
     /**
      * Gets the parameters for the given function.
@@ -597,32 +608,52 @@ class DocGenerator {
     /**
     * generates links to corresponding getter- or setter functions
     * for inclusion in the <desc> section of the function method
+    *
+    * does the same for add_*, remove_* and so
+    *
+    * @return string The content to be written in the desc section
     */
-    function gen_etter_inks($methodname, $methods) 
+    function gen_etter_links($methodname, $methods, $properties, $is_property = false)
     {
         global  $etter_start_tpl,
                 $etter_end_tpl,
-                $etter_link;
+                $etter_link,
+                $prop_link;
                 
-        if ($methods === null || count($methods) == 0 || 
-            (substr($methodname, 0, 4) != 'get_' && substr($methodname, 0, 4) != 'set_')
-        ) {
+        if (!$is_property) {
+            $base = substr($methodname, strpos($methodname, '_') + 1);
+        } else {
+            $base = $methodname;
+        }
+        
+        if ($methods === null || count($methods) == 0 || $base == substr($methodname, 1)) {
             return '';
         }
         
-        //try to find the other ?etter
+        //other ?etter functions
         $foundone = false;
         $all = '';
-        $base = substr($methodname, 4);
         $funcs = array();
         foreach ($methods as $method) {
-            if (substr($method->name, 4) == $base && $method->name != $methodname) {
+            if (substr($method->name, strpos($method->name, '_') + 1) == $base && $method->name != $methodname) {
                 $funcs[] = sprintf($etter_link,
                                 $method->of_object,
                                 $method->name
                                 );
             }
         }//foreach method
+        
+        //now: check if a property with the same name exists
+        if ($properties != null && !$is_property && count($properties) > 0) {
+            foreach ($properties as $property) {
+                if ($property[1] == $base) {
+                    $funcs[] = sprintf($prop_link,
+                                        $methods[0]->of_object,
+                                        $property[1]
+                                        );
+                }
+            }
+        }
         
         if (count($funcs) > 0) {
             $all .= $etter_start_tpl;
@@ -631,7 +662,9 @@ class DocGenerator {
         }
         
         return $all;
-    }//function gen_etter_inks($methodname, $methods) 
+    }//function gen_etter_links($methodname, $methods, $properties) 
+
+  
 
     /**
      * Gets a PHP type from a C type.
