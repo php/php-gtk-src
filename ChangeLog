@@ -1,3 +1,28 @@
+2005-04-10  Christian Weiske  <cweiske@cweiske.de>
+
+    * generator/doc_templates.php
+      generator/docgen.php:
+      Some more changes for php-gtk2-doc
+
+2005-04-10  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/phpg_gobject.c:
+      Support interface too in signal querying.
+
+2005-04-10  Christian Weiske  <cweiske@cweiske.de>
+
+    * generator/doc_templates.php
+      generator/docgen.php:
+      Don't remember
+
+2005-04-10  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      main/phpg_gobject.c
+      main/phpg_gtype.c:
+      Implement GObject methods signal_list_ids(), signal_list_names(),
+      signal_query().
+
 2005-04-08  Christian Weiske  <cweiske@cweiske.de>
 
     * generator/doc_templates.php
