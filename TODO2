@@ -25,6 +25,7 @@ Base Functionality
 * Maybe use zend_call_function() instead of call_user_function_ex() to take
   advantage of function call cache
 * Construction of arbitrary GObjects() via argument lists
+* Integration with pkg-config
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~

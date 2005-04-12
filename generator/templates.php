@@ -80,6 +80,7 @@ static PHP_METHOD(%(class), %(name))
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
 	}
     phpg_gobject_new(&return_value, wrapped_obj TSRMLS_CC);
+    g_object_unref(wrapped_obj); /* phpg_gobject_new() increments reference count */
 }\n\n";
 
 const boxed_constructor_body = "
