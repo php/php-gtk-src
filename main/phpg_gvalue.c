@@ -28,7 +28,6 @@
 
 /* TODO
  * G_TYPE_POINTER
- * G_TYPE_INTERFACE
  * G_TYPE_PARAM
  */
 
@@ -118,6 +117,17 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
 
         case G_TYPE_OBJECT:
             phpg_gobject_new(value, g_value_get_object(gval) TSRMLS_CC);
+            break;
+
+        case G_TYPE_INTERFACE:
+            if (g_type_is_a(G_VALUE_TYPE(gval), G_TYPE_OBJECT)) {
+                phpg_gobject_new(value, g_value_get_object(gval) TSRMLS_CC);
+            } else {
+                php_error(E_WARNING, "Could not access interface %s", g_type_name(G_VALUE_TYPE(gval)));
+                MAKE_STD_ZVAL(*value);
+                ZVAL_NULL(*value);
+                return FAILURE;
+            }
             break;
 
         case G_TYPE_BOXED:
@@ -273,6 +283,17 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC)
                 g_value_set_object(gval, PHPG_GOBJECT(value));
             } else
                 return FAILURE;
+            break;
+
+        case G_TYPE_INTERFACE:
+            if (g_type_is_a(G_VALUE_TYPE(gval), G_TYPE_OBJECT) &&
+                Z_TYPE_P(value) == IS_OBJECT &&
+                G_TYPE_CHECK_INSTANCE_TYPE(PHPG_GOBJECT(value), G_VALUE_TYPE(gval))) {
+                g_value_set_object(gval, PHPG_GOBJECT(value));
+            } else {
+                php_error(E_WARNING, "Could not access interface %s", g_type_name(G_VALUE_TYPE(gval)));
+                return FAILURE;
+            }
             break;
 
         default:
