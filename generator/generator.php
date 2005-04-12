@@ -126,6 +126,10 @@ class Generator {
             $matcher->register_object($object->c_name, $object->typecode);
         }
 
+        foreach ($parser->interfaces as $interface) {
+            $matcher->register_object($interface->c_name, $interface->typecode);
+        }
+
         foreach ($parser->enums as $enum) {
             if ($enum->def_type == 'flags')
                 $matcher->register_flag($enum->c_name, $enum->typecode);
