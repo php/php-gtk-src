@@ -42,6 +42,17 @@ class StockItemBrowserDemo extends GtkWindow {
 		$scrolled->add($treeview);
 
 		$column = new GtkTreeViewColumn();
+		$column->set_title('Icon and Constant');
+
+		$cell_renderer = new GtkCellRendererPixbuf();
+		$column->pack_start($cell_renderer, false);
+		$column->set_attributes($cell_renderer, 'stock-id', 1);
+
+		$cell_renderer = new GtkCellRendererText();
+		$column->pack_start($cell_renderer, true);
+		$column->set_attributes($cell_renderer, 'text', 1);
+
+		$treeview->append_column($column);
 
 		$this->show_all();
 	}
@@ -91,6 +102,8 @@ class StockItemBrowserDemo extends GtkWindow {
 			$iter = $store->append();
 			$store->set($iter, 0, $info, 1, $id);
 		}
+
+		return $store;
 	}
 }
 
