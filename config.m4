@@ -16,8 +16,8 @@ if test "$PHP_PHP_GTK" != "no"; then
     AC_MSG_RESULT(found version $PHP_VERSION)
 
     case $PHP_VERSION in
-       4*) AC_MSG_ERROR(
-Could not locate PHP 5 or higher version executable.
+       4*|5.0*) AC_MSG_ERROR(
+Could not locate PHP 5.1 or higher version executable.
 Please use the --with-php-config option to specify
 the location of php-config for the required version.) ;;
     esac
