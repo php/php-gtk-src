@@ -1,3 +1,23 @@
+2005-04-12  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      ext/gtk+/gtk.overrides
+      generator/templates.php:
+      Static constructors should unref the created object after calling
+      phpg_gobject_new() since the refcount will be 2 after the call.
+
+    * config.m4:
+      Require PHP 5.1.0 or higher. Let's play with the latest toys.
+
+    * ext/gtk+/gtk.overrides:
+      Implement a few more tree view/store related methods.
+
+    * main/phpg_gvalue.c:
+      Support G_TYPE_INTERFACE in conversions to/from zval.
+
+    * generator/generator.php:
+      Register interface arg types.
+
 2005-04-10  Christian Weiske  <cweiske@cweiske.de>
 
     * generator/doc_templates.php
