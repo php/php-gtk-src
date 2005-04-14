@@ -306,6 +306,30 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC)
 }
 /* }}} */
 
+/* {{{ PHP_GTK_API phpg_param_gvalue_to_zval() */
+PHP_GTK_API int phpg_param_gvalue_to_zval(const GValue *gval, zval **value, zend_bool copy_boxed, const GParamSpec *pspec TSRMLS_DC)
+{
+    if (G_IS_PARAM_SPEC_UNICHAR(pspec)) {
+        /* TODO */
+        return FAILURE;
+    } else {
+        return phpg_gvalue_to_zval(gval, value, copy_boxed TSRMLS_CC);
+    }
+}
+/* }}} */
+
+/* {{{ PHP_GTK_API phpg_param_gvalue_from_zval() */
+PHP_GTK_API int phpg_param_gvalue_from_zval(GValue *gval, zval *value, const GParamSpec *pspec TSRMLS_DC)
+{
+    if (G_IS_PARAM_SPEC_UNICHAR(pspec)) {
+        /* TODO */
+        return FAILURE;
+    } else {
+        return phpg_gvalue_from_zval(gval, value TSRMLS_CC);
+    }
+}
+/* }}} */
+
 /* {{{ PHP_GTK_API phpg_gvalues_to_array() */
 PHP_GTK_API zval *phpg_gvalues_to_array(const GValue *values, uint n_values)
 {

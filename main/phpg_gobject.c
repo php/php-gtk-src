@@ -112,6 +112,7 @@ static void phpg_unref_by_handle(void *data)
 }
 /* }}} */
 
+/* {{{ phpg_gobject_del_ref */
 void phpg_gobject_del_ref(zval *zobject TSRMLS_DC)
 {
     zend_object_handle handle = Z_OBJ_HANDLE_P(zobject);
@@ -129,6 +130,7 @@ void phpg_gobject_del_ref(zval *zobject TSRMLS_DC)
 
     php_gtk_handlers.del_ref(zobject TSRMLS_CC);
 }
+/* }}} */
 
 /* {{{ PHP_GTK_API phpg_create_gobject() */
 PHP_GTK_API zend_object_value phpg_create_gobject(zend_class_entry *ce TSRMLS_DC)
@@ -325,14 +327,7 @@ static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool use
 
     NOT_STATIC_METHOD();
 
-    if (ZEND_NUM_ARGS() < 2) {
-        php_error(E_WARNING, "%s::%s() requires at least 2 arguments, %d given",
-                  get_active_class_name(NULL TSRMLS_CC),
-                  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
-        return;
-    }
-
-    if (!php_gtk_parse_args(2, "sV", &signal, &callback)) {
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 2, &extra, "sV", &signal, &callback)) {
         return;
     }
 
@@ -342,7 +337,7 @@ static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool use
         return;
     }
 
-    extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
+    //extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
     closure = phpg_closure_new(callback, extra, use_signal_object TSRMLS_CC);
     if (extra) {
         zval_ptr_dtor(&extra);
@@ -374,6 +369,75 @@ static PHP_METHOD(GObject, connect_object)
 static PHP_METHOD(GObject, connect_object_after)
 {
 	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, FALSE, TRUE);
+}
+/* }}} */
+
+/* {{{ GObject::get/set_property */
+static PHP_METHOD(GObject, get_property)
+{
+    char *property;
+    GParamSpec *pspec;
+    GValue value = { 0, };
+    GObject *obj;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &property))
+        return;
+
+    obj = PHPG_GOBJECT(this_ptr);
+    pspec = g_object_class_find_property(G_OBJECT_GET_CLASS(obj), property);
+    if (pspec == NULL) {
+        php_error(E_WARNING, "Class '%s' does not support property '%s'",
+                  g_type_name(G_TYPE_FROM_INSTANCE(obj)), property);
+        return;
+    }
+
+    if (!(pspec->flags & G_PARAM_READABLE)) {
+        php_error(E_WARNING, "Property '%s' is not readable", property);
+        return;
+    }
+
+    g_value_init(&value, G_PARAM_SPEC_VALUE_TYPE(pspec));
+    g_object_get_property(obj, property, &value);
+    phpg_param_gvalue_to_zval(&value, &return_value, TRUE, pspec TSRMLS_CC);
+    g_value_unset(&value);
+}
+
+static PHP_METHOD(GObject, set_property)
+{
+    char *property;
+    zval *php_value;
+    GParamSpec *pspec;
+    GValue value = { 0, };
+    GObject *obj;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "sV", &property, &php_value))
+        return;
+
+    obj = PHPG_GOBJECT(this_ptr);
+    pspec = g_object_class_find_property(G_OBJECT_GET_CLASS(obj), property);
+    if (pspec == NULL) {
+        php_error(E_WARNING, "Class '%s' does not support property '%s'",
+                  g_type_name(G_TYPE_FROM_INSTANCE(obj)), property);
+        return;
+    }
+
+    if (!(pspec->flags & G_PARAM_WRITABLE)) {
+        php_error(E_WARNING, "Property '%s' is not writable", property);
+        return;
+    }
+
+    g_value_init(&value, G_PARAM_SPEC_VALUE_TYPE(pspec));
+    if (phpg_param_gvalue_from_zval(&value, php_value, pspec TSRMLS_CC) == FAILURE) {
+        php_error(E_WARNING, "%s::%s(): could not convert value to property type",
+                  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+    g_object_set_property(obj, property, &value);
+    g_value_unset(&value);
 }
 /* }}} */
 
@@ -519,6 +583,8 @@ static zend_function_entry gobject_methods[] = {
 	PHP_ME(GObject, connect_after, NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(GObject, connect_object, NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(GObject, connect_object_after, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, get_property, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, set_property, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(GObject, signal_list_ids, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, signal_list_names, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, signal_query, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)

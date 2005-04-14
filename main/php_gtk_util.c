@@ -429,7 +429,7 @@ int php_gtk_parse_args(int argc, char *format, ...)
 	return retval;
 }
 
-int php_gtk_parse_args_quiet(int argc, char *format, ...)
+PHP_GTK_API int php_gtk_parse_args_quiet(int argc, char *format, ...)
 {
 	va_list va;
 	int retval;
@@ -437,6 +437,38 @@ int php_gtk_parse_args_quiet(int argc, char *format, ...)
 	va_start(va, format);
 	retval = php_gtk_parse_args_impl(argc, format, &va, 1);
 	va_end(va);
+
+	return retval;
+}
+
+PHP_GTK_API int php_gtk_parse_varargs(int argc, int min_args, zval **varargs, char *format, ...)
+{
+	va_list va;
+	int retval;
+	zval ***args;
+	TSRMLS_FETCH();
+
+	if (argc < min_args) {
+		php_error(E_WARNING, "%s::%s() requires at least %d arguments, %d given",
+				  get_active_class_name(NULL TSRMLS_CC),
+				  get_active_function_name(TSRMLS_C), min_args, argc);
+		return 0;
+	}
+
+	args = (zval ***)emalloc(argc * sizeof(zval **));
+	if (zend_get_parameters_array_ex(argc, args) == FAILURE) {
+		php_error(E_WARNING, "Could not obtain arguments for parsing in %s::%s()",
+				  get_active_class_name(NULL TSRMLS_CC),
+				  get_active_function_name(TSRMLS_C));
+		efree(args);
+		return 0;
+	}
+
+	va_start(va, format);
+	retval = php_gtk_parse_args_impl(min_args, format, &va, 0 TSRMLS_CC);
+	va_end(va);
+	*varargs = php_gtk_array_as_hash(args, argc, min_args, argc-min_args);
+	efree(args);
 
 	return retval;
 }
@@ -453,7 +485,7 @@ static int php_gtk_parse_args_hash_impl(zval *hash, char *format, va_list *va, i
 	return retval;
 }
 
-int php_gtk_parse_args_hash(zval *hash, char *format, ...)
+PHP_GTK_API int php_gtk_parse_args_hash(zval *hash, char *format, ...)
 {
 	va_list va;
 	int retval;
@@ -465,7 +497,7 @@ int php_gtk_parse_args_hash(zval *hash, char *format, ...)
 	return retval;
 }
 
-int php_gtk_parse_args_hash_quiet(zval *hash, char *format, ...)
+PHP_GTK_API int php_gtk_parse_args_hash_quiet(zval *hash, char *format, ...)
 {
 	va_list va;
 	int retval;
@@ -670,6 +702,24 @@ zval ***php_gtk_hash_as_array(zval *hash)
 		 zend_hash_get_current_data(Z_ARRVAL_P(hash), (void **)&values[i++]) == SUCCESS;
 		 zend_hash_move_forward(Z_ARRVAL_P(hash)));
 
+	return values;
+}
+
+zval** php_gtk_hash_as_array_offset(zval *hash, int offset, int *total)
+{
+	int argc = 0;
+	zval ***values;
+
+	if (hash)
+		argc = zend_hash_num_elements(Z_ARRVAL_P(hash));
+	values = (zval ***)emalloc(argc + offset * sizeof(zval **));
+	if (hash) {
+		for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(hash));
+			 zend_hash_get_current_data(Z_ARRVAL_P(hash), (void **)&values[offset++]) == SUCCESS;
+			 zend_hash_move_forward(Z_ARRVAL_P(hash)));
+	}
+
+	*total = argc + offset;
 	return values;
 }
 

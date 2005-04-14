@@ -158,6 +158,18 @@ PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, zend_boo
     return closure;
 }
 
+void phpg_cb_data_destroy(gpointer data)
+{
+    phpg_cb_data_t *cbd = (phpg_cb_data_t *) data;
+
+    zval_ptr_dtor(&cbd->callback);
+    if (cbd->user_args) {
+        zval_ptr_dtor(&cbd->user_args);
+    }
+    efree(cbd->src_filename);
+    efree(cbd);
+}
+
 #endif /* HAVE_PHP_GTK */
 
 /* vim: set fdm=marker et sts=4: */

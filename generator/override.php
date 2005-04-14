@@ -33,12 +33,14 @@ class Overrides {
     var $headers            = '';
     var $constants          = '';
     var $lineinfo           = array();
+    var $top_dir            = '';
 
     function Overrides($file_name = null)
     {
         if (!isset($file_name))
             return;
 
+        $this->top_dir = getcwd();
         $this->read_file($file_name);
     }
 
@@ -78,8 +80,9 @@ class Overrides {
         if (!$blocks)
             return;
 
+        $rel_path = substr($new_dir, strlen($this->top_dir)+1) . '/' . basename($file_name);
         foreach ($blocks as $block_info) {
-            $this->_parse_block($block_info[0], $block_info[1], $file_name);
+            $this->_parse_block($block_info[0], $block_info[1], $rel_path);
         }
 
         chdir($old_dir);

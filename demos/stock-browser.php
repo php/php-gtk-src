@@ -4,15 +4,23 @@ class StockItemInfo {
 	var $stock_id = '';
 	var $stock_item = null;
 	var $small_icon = null;
-	var $macro = '';
+	var $constant = '';
 	var $accel_str = '';
 
 	function __construct($stock_id = null) {
 		$this->stock_id = $stock_id;
 		if ($stock_id) {
-			$this->macro = id_to_macro($stock_id);
+			$this->constant = id_to_constant($stock_id);
 		}
 	}
+}
+
+class StockItemDisplay {
+	var $type_label;
+	var $constant_label;
+	var $id_label;
+	var $label_accel_label;
+	var $icon_image;
 }
 
 class StockItemBrowserDemo extends GtkWindow {
@@ -50,9 +58,18 @@ class StockItemBrowserDemo extends GtkWindow {
 
 		$cell_renderer = new GtkCellRendererText();
 		$column->pack_start($cell_renderer, true);
-		$column->set_attributes($cell_renderer, 'text', 1);
+		$column->set_cell_data_func($cell_renderer, 'constant_setter');
 
 		$treeview->append_column($column);
+
+		$cell_renderer = new GtkCellRendererText();
+		$treeview->insert_column_with_data_func(-1, 'Label', $cell_renderer, 'label_setter');
+
+		$cell_renderer = new GtkCellRendererText();
+		$treeview->insert_column_with_data_func(-1, 'Accelerator', $cell_renderer, 'accel_setter');
+
+		$cell_renderer = new GtkCellRendererText();
+		$treeview->insert_column_with_data_func(-1, 'ID', $cell_renderer, 'id_setter');
 
 		$this->show_all();
 	}
@@ -107,15 +124,39 @@ class StockItemBrowserDemo extends GtkWindow {
 	}
 }
 
-function id_to_macro($id)
+function id_to_constant($id)
 {
 	if (substr($id, 0, 3) == 'gtk') {
-		$macro = 'Gtk::STOCK' . preg_replace('!-([^-]+)!e', '"_".strtoupper("$1")', substr($id, 3));
+		$constant = 'Gtk::STOCK' . preg_replace('!-([^-]+)!e', '"_".strtoupper("$1")', substr($id, 3));
 	} else {
-		$macro = substr(preg_replace('!([^-]+)-?!e', 'strtoupper($1)', $id), 1);
+		$constant = substr(preg_replace('!([^-]+)-?!e', 'strtoupper($1)', $id), 1);
 	}
 
-	return $macro;
+	return $constant;
+}
+
+function constant_setter($column, $cell, $model, $iter)
+{
+	$info = $model->get_value($iter, 0);
+	$cell->set_property('text', $info->constant);
+}
+
+function label_setter($column, $cell, $model, $iter)
+{
+	$info = $model->get_value($iter, 0);
+	$cell->set_property('text', $info->stock_item[1]);
+}
+
+function accel_setter($column, $cell, $model, $iter)
+{
+	$info = $model->get_value($iter, 0);
+	$cell->set_property('text', $info->accel_str);
+}
+
+function id_setter($column, $cell, $model, $iter)
+{
+	$info = $model->get_value($iter, 0);
+	$cell->set_property('text', $info->stock_id);
 }
 
 new StockItemBrowserDemo();

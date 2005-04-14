@@ -75,23 +75,25 @@
 #define PHP_GTK_EXPORT_CE(ce) zend_class_entry *ce
 #define PHP_GTK_EXPORT_FUNC(func) func
 
-#if 0
-#define PHP_GTK_GET_GENERIC(w, type, le) ((type)php_gtk_get_object(w))
-#define PHP_GTK_GET(w)				PHP_GTK_GET_GENERIC(w, GtkObject*, le_gtk_object)
-#define PHP_GTK_SEPARATE_RETURN(return_value, result)			\
-	{															\
-		zval *ret;												\
-																\
-		ret = result;											\
-		SEPARATE_ZVAL(&ret);									\
-		*return_value = *ret;									\
-	}
-
-#undef PG_ERROR
-#define PG_ERROR -2
-#endif
-
 typedef void (*phpg_dtor_t)(void *);
+
+typedef struct {
+	zval *callback;
+	zval *user_args;
+	char *src_filename;
+	long src_lineno;
+} phpg_cb_data_t;
+
+static inline phpg_cb_data_t* phpg_cb_data_new(zval *callback, zval *user_args TSRMLS_DC)
+{
+	phpg_cb_data_t *cbd = emalloc(sizeof(phpg_cb_data_t));
+	cbd->callback = callback;
+	cbd->user_args = user_args;
+	cbd->src_filename = estrdup(zend_get_executed_filename(TSRMLS_C));
+	cbd->src_lineno = zend_get_executed_lineno(TSRMLS_C);
+	return cbd;
+}
+void phpg_cb_data_destroy(gpointer data);
 
 #define PHPG_OBJ_HEADER \
 	zend_object zobj;   \
@@ -154,6 +156,9 @@ typedef void (*prop_getter_t)(zval *return_value, zval *object, char *property, 
 typedef int (*prop_setter_t)(zval *object, char *property, zval *value);
 typedef zend_object_value (*create_object_func_t)(zend_class_entry *ce TSRMLS_DC);
 
+/*
+ * PHP-GTK Sub-extensions related stuff
+ */
 #define EXT_INIT_ARGS			int module_number TSRMLS_DC
 #define EXT_SHUTDOWN_ARGS		void
 
@@ -248,14 +253,16 @@ PHP_GTK_API void php_gtk_object_init(GtkObject *obj, zval *wrapper);
 /* Utility functions. */
 PHP_GTK_API void phpg_destroy_notify(gpointer user_data);
 PHP_GTK_API int php_gtk_parse_args(int argc, char *format, ...);
-int php_gtk_parse_args_quiet(int argc, char *format, ...);
-int php_gtk_parse_args_hash(zval *hash, char *format, ...);
-int php_gtk_parse_args_hash_quiet(zval *hash, char *format, ...);
+PHP_GTK_API int php_gtk_parse_args_quiet(int argc, char *format, ...);
+PHP_GTK_API int php_gtk_parse_varargs(int argc, int min_args, zval **varargs, char *format, ...);
+PHP_GTK_API int php_gtk_parse_args_hash(zval *hash, char *format, ...);
+PHP_GTK_API int php_gtk_parse_args_hash_quiet(zval *hash, char *format, ...);
 PHP_GTK_API int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce);
 PHP_GTK_API void php_gtk_invalidate(zval *wrapper);
 zend_bool php_gtk_is_callable(zval *callable, zend_bool syntax_only, char **callable_name);
 zval *php_gtk_array_as_hash(zval ***values, int num_values, int start, int length);
-zval ***php_gtk_hash_as_array(zval *hash);
+zval*** php_gtk_hash_as_array(zval *hash);
+zval*** php_gtk_hash_as_array_offset(zval *hash, int offset, int *total);
 zval ***php_gtk_func_args(int argc);
 PHP_GTK_API zval *php_gtk_func_args_as_hash(int argc, int start, int length);
 PHP_GTK_API void php_gtk_build_value(zval **result, char *format, ...);
@@ -339,6 +346,8 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value);
 /* GValue */
 PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool copy_boxed TSRMLS_DC);
 PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC);
+PHP_GTK_API int phpg_param_gvalue_to_zval(const GValue *gval, zval **value, zend_bool copy_boxed, const GParamSpec *pspec TSRMLS_DC);
+PHP_GTK_API int phpg_param_gvalue_from_zval(GValue *gval, zval *value, const GParamSpec *pspec TSRMLS_DC);
 PHP_GTK_API zval *phpg_gvalues_to_array(const GValue *values, uint n_values);
 PHP_GTK_API int phpg_gvalue_get_enum(GType enum_type, zval *enum_val, gint *result);
 PHP_GTK_API int phpg_gvalue_get_flags(GType flags_type, zval *flags_val, gint *result);

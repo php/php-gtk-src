@@ -3,7 +3,8 @@ COMMONDEFS=$(srcdir)/gtk-types.defs $(srcdir)/gdk-types.defs \
 
 GTK_OVERRIDES = \
 	$(srcdir)/gtk.overrides \
-	$(srcdir)/gtkstyle.overrides
+	$(srcdir)/gtkstyle.overrides \
+	$(srcdir)/gtktreeview.overrides
 
 $(srcdir)/gen_gtk.c: $(srcdir)/gtk.defs $(COMMONDEFS) $(srcdir)/gtk-extrafuncs.defs $(GTK_OVERRIDES)
 $(srcdir)/gen_gdk.c: $(srcdir)/gdk.defs $(COMMONDEFS) $(srcdir)/gdk.overrides
