@@ -1,3 +1,22 @@
+2005-04-14  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      ext/gtk+/Makefile.frag
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtktreeview.overrides
+      generator/override.php
+      main/php_gtk.h
+      main/php_gtk_util.c
+      main/phpg_closure.c
+      main/phpg_gobject.c
+      main/phpg_gvalue.c:
+      - Implement GObject::get/set_property()
+      - Add some helper functions for dealing with varargs functions and
+        simple callback marshalling.
+      - Implement some tree view stuff
+      
+      damn, i need a beer and a cookie
+
 2005-04-12  Andrei Zmievski  <andrei@gravitonic.com>
 
     * TODO2
