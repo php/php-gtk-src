@@ -441,6 +441,42 @@ static PHP_METHOD(GObject, set_property)
 }
 /* }}} */
 
+/* {{{ GObject::get/set_data */
+static PHP_METHOD(GObject, get_data)
+{
+    char *key;
+    zval *data;
+    GQuark quark;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &key))
+        return;
+
+    quark = g_quark_from_string(key);
+    data = g_object_get_qdata(PHPG_GOBJECT(this_ptr), quark);
+    if (data) {
+        RETURN_ZVAL(data, 1, 0);
+    }
+}
+
+static PHP_METHOD(GObject, set_data)
+{
+    char *key;
+    zval *data;
+    GQuark quark;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "sV", &key, &data))
+        return;
+
+    quark = g_quark_from_string(key);
+    zval_add_ref(&data);
+    g_object_set_qdata_full(PHPG_GOBJECT(this_ptr), quark, data, phpg_destroy_notify);
+}
+/* }}} */
+
 /* {{{ GObject::signal_list_ids/names */
 static void phpg_signal_list_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool list_names)
 {
@@ -585,6 +621,8 @@ static zend_function_entry gobject_methods[] = {
 	PHP_ME(GObject, connect_object_after, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(GObject, get_property, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(GObject, set_property, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, get_data, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, set_data, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(GObject, signal_list_ids, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, signal_list_names, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, signal_query, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)

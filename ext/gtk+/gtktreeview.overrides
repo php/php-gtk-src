@@ -247,6 +247,42 @@ PHP_METHOD
 
 %% }}}
 
+%% {{{ GtkTreeSelection
+
+%%
+override gtk_tree_selection_get_selected
+PHP_METHOD
+{
+    GtkTreeSelection *sel;
+    GtkTreeIter iter;
+    GtkTreeModel *model = NULL;
+    zval *php_iter = NULL, *php_model = NULL;
+    int result;
+
+    NOT_STATIC_METHOD();
+
+    sel = GTK_TREE_SELECTION(PHPG_GOBJECT(this_ptr));
+    if (gtk_tree_selection_get_mode(sel) == GTK_SELECTION_MULTIPLE) {
+        php_error(E_WARNING, "%s::%s() cannot be used because the selection mode is Gtk::SELECTION_MULTIPLE",
+                  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+    
+    result = gtk_tree_selection_get_selected(sel, &model, &iter);
+    phpg_gobject_new(&php_model, (GObject *)model TSRMLS_CC);
+    if (result) {
+        phpg_gboxed_new(&php_iter, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+        php_gtk_build_value(&return_value, "(NN)", php_model, php_iter);
+    } else {
+        php_gtk_build_value(&return_value, "(Nn)", php_model);
+    }
+}
+
+%% }}}
+
 %% {{{ GtkTreeView
 
 %%

@@ -1,0 +1,4 @@
+- Examining a widget's style property after it's unrealized can result in a
+  crash, since Gtk+ does not properly clean it up. This can happen if you
+  connect to 'destroy' signal for the widget, for example, and then var_dump()
+  the callback's first argument.

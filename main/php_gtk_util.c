@@ -189,6 +189,7 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int
 					case IS_DOUBLE:
 					case IS_BOOL:
 						convert_to_double_ex(arg);
+						if (as_zval) goto ret_zval;
 						*va_arg(*va, double *) = Z_DVAL_PP(arg);
 						break;
 
@@ -705,7 +706,7 @@ zval ***php_gtk_hash_as_array(zval *hash)
 	return values;
 }
 
-zval** php_gtk_hash_as_array_offset(zval *hash, int offset, int *total)
+zval*** php_gtk_hash_as_array_offset(zval *hash, int offset, int *total)
 {
 	int argc = 0;
 	zval ***values;
@@ -827,6 +828,11 @@ static zend_bool php_gtk_build_single(zval **result, char **format, va_list *va 
 				assert(*result != NULL);
 				if (*(*format - 1) != 'N')
 					zval_add_ref(result);
+				return 1;
+
+			case 'n':
+				MAKE_ZVAL_IF_NULL(*result);
+				ZVAL_NULL(*result);
 				return 1;
 
 			case ':':

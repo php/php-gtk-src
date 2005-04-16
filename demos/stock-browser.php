@@ -19,7 +19,7 @@ class StockItemDisplay {
 	var $type_label;
 	var $constant_label;
 	var $id_label;
-	var $label_accel_label;
+	var $accel_label;
 	var $icon_image;
 }
 
@@ -34,6 +34,7 @@ class StockItemBrowserDemo extends GtkWindow {
 			$this->connect_object('destroy', array('gtk', 'main_quit'));
 
 		$this->set_title(__CLASS__);
+		$this->set_position(Gtk::WIN_POS_CENTER);
 		$this->set_default_size(-1, 500);
 		$this->set_border_width(8);
 
@@ -70,6 +71,36 @@ class StockItemBrowserDemo extends GtkWindow {
 
 		$cell_renderer = new GtkCellRendererText();
 		$treeview->insert_column_with_data_func(-1, 'ID', $cell_renderer, 'id_setter');
+
+		$align = new GtkAlignment(0.5, 0, 0, 0);
+		$hbox->pack_end($align, true, true, 0);
+
+		$frame = new GtkFrame('Selection Info');
+		$align->add($frame);
+
+		$vbox = new GtkVBox(false, 8);
+		$vbox->set_border_width(4);
+		$frame->add($vbox);
+
+		$display = new StockItemDisplay();
+		$treeview->set_data('stock-display', $display);
+
+		$display->type_label = new GtkLabel();
+		$display->constant_label = new GtkLabel();
+		$display->id_label = new GtkLabel();
+		$display->accel_label = new GtkLabel();
+		$display->icon_image = new GtkImage();
+
+		$vbox->pack_start($display->type_label, false, false, 0);
+		$vbox->pack_start($display->icon_image, false, false, 0);
+		$vbox->pack_start($display->accel_label, false, false, 0);
+		$vbox->pack_start($display->constant_label, false, false, 0);
+		$vbox->pack_start($display->id_label, false, false, 0);
+
+		$selection = $treeview->get_selection();
+		$selection->set_mode(Gtk::SELECTION_SINGLE);
+
+		$selection->connect('changed', array($this, 'on_selection_changed'));
 
 		$this->show_all();
 	}
@@ -113,7 +144,7 @@ class StockItemBrowserDemo extends GtkWindow {
 			if ($info->stock_item[3] == 0) {
 				$info->accel_str = '';
 			} else {
-				$info->accel_str = Gtk::accelerator_get_label($info->stock_item[3], $info->stock_item[2]);
+				$info->accel_str = '<'.Gtk::accelerator_get_label($info->stock_item[3], $info->stock_item[2]).'>';
 			}
 
 			$iter = $store->append();
@@ -121,6 +152,45 @@ class StockItemBrowserDemo extends GtkWindow {
 		}
 
 		return $store;
+	}
+
+	function on_selection_changed($selection)
+	{
+		$treeview = $selection->get_tree_view();
+		$display = $treeview->get_data('stock-display');
+
+		list($model, $iter) = $selection->get_selected();
+		if ($iter) {
+			$info = $model->get_value($iter, 0);
+
+			if ($info->small_icon && $info->stock_item[1])
+				$display->type_label->set_text('Item and Icon');
+			else if ($info->small_icon)
+				$display->type_label->set_text('Icon Only');
+			else if ($info->stock_item[1])
+				$display->type_label->set_text('Item Only');
+			else
+				$display->type_label->set_text('<unknown>');
+
+			$display->constant_label->set_text($info->constant);
+			$display->id_label->set_text($info->stock_id);
+
+			if ($info->stock_item[1])
+				$display->accel_label->set_text_with_mnemonic($info->stock_item[1].' '.$info->accel_str);
+			else
+				$display->accel_label->set_text('');
+
+			if ($info->small_icon)
+				$display->icon_image->set_from_stock($info->stock_id, get_largest_size($info->stock_id));
+			else
+				$display->icon_image->set_from_pixbuf(null);
+		} else {
+			$display->type_label->set_text('No Selected Item');
+			$display->icon_image->set_from_pixbuf(null);
+			$display->constant_label->set_text('');
+			$display->id_label->set_text('');
+			$display->accel_label->set_text('');
+		}
 	}
 }
 
@@ -133,6 +203,24 @@ function id_to_constant($id)
 	}
 
 	return $constant;
+}
+
+function get_largest_size($id)
+{
+	$icon_set = GtkIconFactory::lookup_default($id);
+	$best_size = Gtk::ICON_SIZE_INVALID;
+	$best_pixels = 0;
+
+	$sizes = $icon_set->get_sizes();
+	foreach ($sizes as $size) {
+		list($w, $h) = Gtk::icon_size_lookup($size);
+		if ($w * $h > $best_pixels) {
+			$best_size = $size;
+			$best_pixels = $w * $h;
+		}
+	}
+
+	return $best_size;
 }
 
 function constant_setter($column, $cell, $model, $iter)
