@@ -17,12 +17,12 @@ PHP_EVAL_INCLINE($GTK_CFLAGS)
 PHP_EVAL_LIBLINE($GTK_LIBS, PHP_GTK2_SHARED_LIBADD)
 
 dnl Check for atk
-PKG_CHECK_MODULES(ATK, atk >= atk_required_version,,[AC_MSG_ERROR(PHP-GTK 2.x requires Gtk+ 2.x)])
+PKG_CHECK_MODULES(ATK,[atk >= atk_required_version],,[AC_MSG_ERROR(PHP-GTK 2.x requires Gtk+ 2.x)])
 PHP_EVAL_INCLINE($ATK_CFLAGS)
 PHP_EVAL_LIBLINE($ATK_LIBS, PHP_GTK2_SHARED_LIBADD)
 
 dnl Check for pango
-PKG_CHECK_MODULES(PANGO, pango >= pango_required_version,,[AC_MSG_ERROR(PHP-GTK 2.x requires Gtk+ 2.x)])
+PKG_CHECK_MODULES(PANGO,[pango >= pango_required_version],,[AC_MSG_ERROR(PHP-GTK 2.x requires Gtk+ 2.x)])
 PHP_EVAL_INCLINE($PANGO_CFLAGS)
 PHP_EVAL_LIBLINE($PANGO_LIBS, PHP_GTK2_SHARED_LIBADD)
 

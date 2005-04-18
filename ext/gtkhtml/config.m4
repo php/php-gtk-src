@@ -4,7 +4,7 @@ dnl config.m4 for gtkhtml module
 dnl PHP_PATH_GNOME_CONFIG([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND [, MODULES]]])
 dnl Test to see if gtkhtml is installed, and define GTKHTML_CFLAGS, LIBS
 dnl
-AC_DEFUN(PHP_PATH_GNOME_CONFIG,
+AC_DEFUN([PHP_PATH_GNOME_CONFIG],
 [dnl
 dnl Get the cflags and libraries from the gnome-config script
 dnl

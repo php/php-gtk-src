@@ -4,7 +4,7 @@ dnl config.m4 for libglade module
 dnl PHP_PATH_LIBGLADE([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND [, MODULES]]])
 dnl Test to see if libglade is installed, and define LIBGLADE_CFLAGS, LIBS
 dnl
-AC_DEFUN(PHP_PATH_LIBGLADE,
+AC_DEFUN([PHP_PATH_LIBGLADE],
 [dnl
 dnl Get the cflags and libraries from the libglade-config script
 dnl
