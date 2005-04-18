@@ -1,11 +1,14 @@
 <?php
+if( !class_exists("gtk")) {
+    dl('php_gtk2.so');
+}
 
 class StockItemInfo {
-	var $stock_id = '';
-	var $stock_item = null;
-	var $small_icon = null;
-	var $constant = '';
-	var $accel_str = '';
+	public $stock_id = '';
+	public $stock_item = null;
+	public $small_icon = null;
+	public $constant = '';
+	public $accel_str = '';
 
 	function __construct($stock_id = null) {
 		$this->stock_id = $stock_id;
@@ -16,11 +19,11 @@ class StockItemInfo {
 }
 
 class StockItemDisplay {
-	var $type_label;
-	var $constant_label;
-	var $id_label;
-	var $accel_label;
-	var $icon_image;
+	public $type_label;
+	public $constant_label;
+	public $id_label;
+	public $accel_label;
+	public $icon_image;
 }
 
 class StockItemBrowserDemo extends GtkWindow {
