@@ -1,6 +1,6 @@
 <?php
-if( !class_exists("gtk")) {
-    dl('php_gtk2.so');
+if( !class_exists('gtk')) {
+    dl('php_gtk2.' . PHP_SHLIB_SUFFIX);
 }
 
 class StockItemInfo {
