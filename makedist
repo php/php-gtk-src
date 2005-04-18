@@ -82,7 +82,7 @@ echo ""
 cd $DIR || exit 3
 
 # remove CVS stuff...
-find . \( -name CVS -o -name makedist -o -name .cvsignore \) -exec rm -rf {} \;
+find . \( -name CVS -o -name makedist -o -name cvsclean -o -name .cvsignore \) -exec rm -rf {} \;
 
 cd $MY_OLDPWD
 $ECHO_N "makedist: making gzipped tar archive...$ECHO_C"

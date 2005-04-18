@@ -19,4 +19,8 @@ do
 	esac
 done
 
+# Disable running autoconf/autoheader in phpize
+PHPIZE="PHP_AUTOCONF=\"touch configure\" PHP_AUTOHEADER=\"touch config.h.in\" $PHPIZE"
+
 PHPIZE=$PHPIZE ${MAKE:-make} -s -f build2/build.mk
+
