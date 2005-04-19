@@ -1,3 +1,22 @@
+2005-04-18  Jani Taskinen  <jani.taskinen@sci.fi>
+
+    * buildconf
+      cvsclean
+      makedist
+      build2/build.mk
+      build2/build2.mk:
+      - Added cvsclean script
+      - Fixed buildconf with new phpize which does not run aclocal anymore
+
+    * .cvsignore:
+      - php_gtk.m4 is not generated file, ext.m4 is.
+
+    * ext/gdkpixbuf/config.m4
+      ext/gtk+/config.m4
+      ext/gtkhtml/config.m4
+      ext/libglade/config.m4:
+      - Quote properly
+
 2005-04-16  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/config0.m4:
