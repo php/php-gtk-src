@@ -1,4 +1,9 @@
 <?php
+
+/*
+ * This really is not a recommended way to load the PHP-GTK, but it will suffice
+ * for the demo purposes.
+ */
 if( !class_exists('gtk')) {
     dl('php_gtk2.' . PHP_SHLIB_SUFFIX);
 }
