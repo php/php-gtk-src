@@ -21,6 +21,15 @@
 
 /* $Id$ */
 
+if (!class_exists('gtk')) {
+	//required for signal generation. no problem if its not available; then they are just omitted
+	if (!@dl('php_gtk2.' . PHP_SHLIB_SUFFIX)) {
+		echo "Signals will NOT be generated as you don't have php-gtk2 installed\r\n";
+		$GLOBALS['disable_signal_generation'] = true;
+	}
+}
+
+
 set_time_limit(300);
 
 require 'Getopt.php';
@@ -34,12 +43,12 @@ require 'doc_templates.php';
  * DocGenerator class. It generates docs.
  */
 class DocGenerator {
-    var $parser     = null;
-    var $overrides  = null;
-    var $prefix     = null;
-    var $output_dir = null;
-    var $fp         = null;
-    var $docmerger  = null;
+    protected $parser     = null;
+    protected $overrides  = null;
+    protected $prefix     = null;
+    protected $output_dir = null;
+    protected $fp         = null;
+    protected $docmerger  = null;
 
     /**
      * Constructor.
@@ -192,7 +201,11 @@ class DocGenerator {
 
 		// Open the file after the merge if we can.
 		if (!empty($path)) {
-			$this->fp = fopen($path, 'w');
+			$this->fp = @fopen($path, 'w');
+			if (!$this->fp) {
+				echo "\r\nERROR: can't open file " . $path . " for writing\r\n";
+				exit(2);
+			}
 		}
 
 		// Check for the classmeta from file.
@@ -222,6 +235,8 @@ class DocGenerator {
         
         // Write the properties.
         $this->write_properties($object);
+		
+		$this->write_signals($object);
 
         // If updating, write something else. I have to come back to this.
         if($update_docs) {
@@ -234,6 +249,8 @@ class DocGenerator {
         fwrite($this->fp, $class_end_tpl);
 
 		fclose($this->fp);
+		
+		$GLOBALS['docgenstats']['classes']++;
     }
 
     
@@ -307,6 +324,8 @@ class DocGenerator {
                                         null,
                                         true)
                                 ));
+		
+		$GLOBALS['docgenstats']['properties']++;
     }//function write_property($object, $field)
 
     
@@ -472,6 +491,7 @@ class DocGenerator {
 								NULL
 								)
 						);    
+					$GLOBALS['docgenstats']['constructors']++;
 				} else {
 					fwrite($this->fp, $merged);
 				}
@@ -557,7 +577,70 @@ class DocGenerator {
 						   )
 				   );
 		}
+		$GLOBALS['docgenstats']['functions']++;
 	}//function write_method($method, $overriden, $methods = null, $properties = null)
+	
+	
+	
+	/**
+	*	write the signals for the given class object.
+	*	works only if php-gtk2 module is installed and working
+	*	
+	*	@param $object	The class object which is passes to write_class
+	*/
+	function write_signals($object)
+	{
+		global	$signals_start_tpl,
+				$signal_start_tpl,
+				$cbfuncproto_tpl,
+				$no_parameter_tpl,
+				$signal_end_tpl,
+				$signals_end_tpl;
+				
+		if (isset($GLOBALS['disable_signal_generation']) && $GLOBALS['disable_signal_generation']) {
+			//is the second warning necessary?
+			echo "signals are NOT generated as you don't have php-gtk2 installed\r\n";
+			return;
+		}
+		
+		$classname = $object->c_name;
+		//why can't I do "$classname::gtype"?
+		eval("\$gtype = $classname::gtype;");
+		$signals = GObject::signal_list_names($gtype);
+
+		if (count($signals) == 0) {
+			return;
+		}
+		
+		fwrite($this->fp, $signals_start_tpl);
+		
+		foreach ($signals as $signalname) {
+			$GLOBALS['docgenstats']['signals']++;
+			fwrite($this->fp,
+				sprintf($signal_start_tpl,
+					$this->prefix,
+					strtolower($classname),
+					$signalname,
+					$signalname));
+			
+			$signal_info = GObject::signal_query($signalname, $gtype);
+			
+			$return_type = $this->get_type($signal_info[4]->name);
+			if (!$return_type && $signal_info[4]->name == 'void') {
+				$return_type = $signal_info[4]->name;
+			}
+			
+			fwrite($this->fp,
+				sprintf($cbfuncproto_tpl,
+					$return_type ? $return_type : '<!-- was: ' . $signal_info[4]->name . ' -->XXX',
+					$this->get_signal_paramdef($signal_info[5])
+					));
+
+			fwrite($this->fp, $signal_end_tpl);
+		}
+		
+		fwrite($this->fp, $signals_end_tpl);
+	}//function write_signals($object)
     
     
 
@@ -579,6 +662,8 @@ class DocGenerator {
         if ($function->varargs) {
             return false;
         }
+		
+		$paramdef = '';
 
         if (count($function->params) > 0) {
             // Get the info about each parameter.
@@ -600,8 +685,40 @@ class DocGenerator {
         }
 
         // Return either the parameter string or a no param string
-        return $paramdef ? $paramdef : sprintf($no_parameter_tpl, 'void');
-    }
+        return $paramdef != null ? $paramdef : sprintf($no_parameter_tpl, 'void');
+    }//function get_paramdef($function)
+	
+	
+	
+	/**
+	*	Returns the parameters for the signal callback
+	*	The normal get_paramdef can't be used as it requires 
+	*	 parameters which signal_query doesn't support
+	*
+	*	@param array	$signalparams element 5 of the GObject::signal_query return
+	*	@return string	The signal parameters as string
+	*/
+	function get_signal_paramdef($signalparams)
+	{
+		global	$parameter_tpl,
+				$no_parameter_tpl;
+		
+		$params = '';
+		
+		if (count($signalparams) > 0) {
+			foreach ($signalparams as $param) {
+				$type = $this->get_type($param->name);
+				
+				$params .= sprintf($parameter_tpl,
+							$type ? $type : '<!-- was: ' . $param->name . ' -->XXX',
+							'UNKNOWN');
+			}
+		} else {
+			$params .= sprintf($no_parameter_tpl, 'void');
+		}
+		
+		return $params;
+	}//function get_signal_paramdef($signalparams)
     
     
     
@@ -763,6 +880,14 @@ if (isset($_SERVER)) {
     $argv = $HTTP_SERVER_VARS['argv'];
 }
 
+$GLOBALS['docgenstats'] = array(
+	'classes'		=> 0,
+	'constructors'	=> 0,
+	'functions'		=> 0,
+	'properties'	=> 0,
+	'signals'		=> 0
+);
+
 /* An ugly hack to counteract PHP's pernicious desire to treat + as an argument
    separator in command-line version. */
 // I don't need this. It causes trouble.
@@ -829,6 +954,13 @@ $generator = new DocGenerator($parser, $overrides, $docmerger, $prefix, $output_
 $parser->start_parsing();
 $generator->register_types();
 $generator->create_docs(array_slice($argv, 2));
+
+//stats
+echo 'Some statistics:' . "\r\n";
+foreach ($GLOBALS['docgenstats'] as $name => $value) {
+	echo ' ' . str_pad($name, 12) . ' ' . str_pad($value, 4, ' ', STR_PAD_LEFT) . "\r\n";
+}
+
 
 /*
  * Local variables:

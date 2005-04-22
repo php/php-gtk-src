@@ -129,6 +129,11 @@ $funcproto_tpl = <<<EOD
 %s
 EOD;
 
+$cbfuncproto_tpl = <<<EOD
+     <funcdef>%s <cbfunction>callback</cbfunction></funcdef>
+%s
+EOD;
+
 $parameter_tpl = <<<EOD
      <paramdef>%s <parameter>%s</parameter></paramdef>
 
@@ -172,6 +177,39 @@ $prop_end_tpl = <<<EOD
    </desc>
   </property>
 
+EOD;
+
+$signals_start_tpl= <<<EOD
+
+ <signals>
+
+EOD;
+
+$signals_end_tpl= <<<EOD
+
+ </signals>
+
+EOD;
+
+$signal_start_tpl = <<<EOD
+
+  <signal id="%s.%s.signal.%s">
+   <signalname>%s</signalname>
+   <funcsynopsis>
+    <funcprototype>
+
+EOD;
+
+$signal_end_tpl = <<<EOD
+    </funcprototype>
+   </funcsynopsis>
+   <shortdesc>
+   </shortdesc>
+   <desc>
+
+   </desc>
+  </signal>
+  
 EOD;
 
 $etter_start_tpl = <<<EOD
