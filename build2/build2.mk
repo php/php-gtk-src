@@ -9,7 +9,7 @@ ext.m4: $(config_m4_files)
 	@echo rebuilding $@
 	@cat $(config_m4_files) > $@
 
-aclocal.m4: configure.in acinclude.m4
+aclocal.m4: configure.in acinclude.m4 ext.m4
 	@echo rebuilding $@
 	@aclocal
 	
