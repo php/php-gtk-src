@@ -1,3 +1,22 @@
+2005-04-22  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * build2/build2.mk:
+      aclocal.m4 depends on ext.m4.
+
+2005-04-22  Christian Weiske  <cweiske@cweiske.de>
+
+    * generator/doc_templates.php
+      generator/docgen.php:
+      - docgen generates signals now
+      - some stats when generating the docs from source:
+        we have
+         classes        10+17+146+8     =181
+         constructors    3+10+143+2     =158
+         functions      87+426+2072+111 =2696
+         properties      0+34+138+0     =172
+         signals         7+9+310+0      =326
+        now. That's really cool!
+
 2005-04-18  Jani Taskinen  <jani.taskinen@sci.fi>
 
     * buildconf
