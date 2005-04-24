@@ -20,13 +20,14 @@ Base Functionality
 * Interfaces
 * Pointers
 * Atoms
-- Implement __gtype, __doc, and other special properties, if possible
-- Deal with clone() handler in Zend
-- Maybe use zend_call_function() instead of call_user_function_ex() to take
+* Implement __gtype, __doc, and other special properties, if possible
+* Deal with clone() handler in Zend
+* Maybe use zend_call_function() instead of call_user_function_ex() to take
   advantage of function call cache
-- Construction of arbitrary GObjects() via argument lists
-- Integration with pkg-config
-- Support automatic UTF-8 <-> codepage conversion where necessary
+* Construction of arbitrary GObjects() via argument lists
+* Integration with pkg-config
+* Support automatic UTF-8 <-> codepage conversion where necessary
+* Provide access to GTK version number.
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
@@ -35,6 +36,8 @@ Classes and Functions
 * GtkTreeStore
 * GtkTreeView
 * GtkCellRenderer
+* Implement write prop handler for GdkColor, test cascaded overloads, i.e.
+  $style->base[GTK_STATE_NORMAL]->red = 55555.
 
 Fix
 ~~~

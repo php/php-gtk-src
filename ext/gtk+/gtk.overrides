@@ -35,6 +35,7 @@ ignore
     gtk_dialog_new
     gtk_exit
     gtk_false
+    gtk_icon_view_new_with_model
     gtk_init
     gtk_init_check
     gtk_true

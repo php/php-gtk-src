@@ -8583,6 +8583,7 @@
 )
 
 (define-function gtk_icon_view_new_with_model
+  (is-constructor-of "GtkIconView")
   (c-name "gtk_icon_view_new_with_model")
   (return-type "GtkWidget*")
   (parameters
