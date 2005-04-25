@@ -89,7 +89,7 @@
 (define-function gtk_about_dialog_new
   (is-constructor-of "GtkAboutDialog")
   (c-name "gtk_about_dialog_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -318,7 +318,7 @@
 (define-function gtk_accel_group_new
   (is-constructor-of "GtkAccelGroup")
   (c-name "gtk_accel_group_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkAccelGroup*")
 )
 
@@ -384,7 +384,7 @@
 (define-function gtk_accel_label_new
   (is-constructor-of "GtkAccelLabel")
   (c-name "gtk_accel_label_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "string")
@@ -547,7 +547,7 @@
 
 (define-function accelerator_get_label
   (c-name "gtk_accelerator_get_label")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("guint" "accelerator_key")
@@ -557,7 +557,7 @@
 
 (define-function accelerator_name
   (c-name "gtk_accelerator_name")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("guint" "accelerator_key")
@@ -837,7 +837,7 @@
 (define-function gtk_action_group_new
   (is-constructor-of "GtkActionGroup")
   (c-name "gtk_action_group_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkActionGroup*")
   (parameters
     '("const-gchar*" "name")
@@ -918,7 +918,7 @@
 (define-function gtk_action_new
   (is-constructor-of "GtkAction")
   (c-name "gtk_action_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkAction*")
   (parameters
     '("const-gchar*" "name")
@@ -1009,7 +1009,7 @@
 (define-function gtk_adjustment_new
   (is-constructor-of "GtkAdjustment")
   (c-name "gtk_adjustment_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkObject*")
   (parameters
     '("gdouble" "value")
@@ -1064,7 +1064,7 @@
 (define-function gtk_alignment_new
   (is-constructor-of "GtkAlignment")
   (c-name "gtk_alignment_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("gfloat" "xalign" (default "0.5"))
@@ -1112,7 +1112,7 @@
 (define-function gtk_arrow_new
   (is-constructor-of "GtkArrow")
   (c-name "gtk_arrow_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkArrowType" "arrow_type")
@@ -1142,7 +1142,7 @@
 (define-function gtk_aspect_frame_new
   (is-constructor-of "GtkAspectFrame")
   (c-name "gtk_aspect_frame_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label" (default "NULL"))
@@ -1269,7 +1269,7 @@
 (define-function binding_set_find
   (is-constructor-of "GtkBindingSet")
   (c-name "gtk_binding_set_find")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkBindingSet*")
   (parameters
     '("const-gchar*" "set_name")
@@ -1279,7 +1279,7 @@
 (define-function binding_set_new
   (is-constructor-of "GtkBindingSet")
   (c-name "gtk_binding_set_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkBindingSet*")
   (parameters
     '("const-gchar*" "set_name")
@@ -1308,7 +1308,7 @@
 (define-method copy
   (of-object "GtkBorder")
   (c-name "gtk_border_copy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkBorder*")
 )
 
@@ -1593,14 +1593,14 @@
 (define-function gtk_button_new
   (is-constructor-of "GtkButton")
   (c-name "gtk_button_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_button_new_from_stock
   (is-constructor-of "GtkButton")
   (c-name "gtk_button_new_from_stock")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "stock_id")
@@ -1610,7 +1610,7 @@
 (define-function gtk_button_new_with_label
   (is-constructor-of "GtkButton")
   (c-name "gtk_button_new_with_label")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -1620,7 +1620,7 @@
 (define-function gtk_button_new_with_mnemonic
   (is-constructor-of "GtkButton")
   (c-name "gtk_button_new_with_mnemonic")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -1758,7 +1758,7 @@
 (define-function gtk_calendar_new
   (is-constructor-of "GtkCalendar")
   (c-name "gtk_calendar_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -1936,7 +1936,7 @@
 (define-function gtk_cell_renderer_combo_new
   (is-constructor-of "GtkCellRendererCombo")
   (c-name "gtk_cell_renderer_combo_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkCellRenderer*")
 )
 
@@ -1983,7 +1983,7 @@
 (define-function gtk_cell_renderer_pixbuf_new
   (is-constructor-of "GtkCellRendererPixbuf")
   (c-name "gtk_cell_renderer_pixbuf_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkCellRenderer*")
 )
 
@@ -1995,7 +1995,7 @@
 (define-function gtk_cell_renderer_progress_new
   (is-constructor-of "GtkCellRendererProgress")
   (c-name "gtk_cell_renderer_progress_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkCellRenderer*")
 )
 
@@ -2054,7 +2054,7 @@
 (define-function gtk_cell_renderer_text_new
   (is-constructor-of "GtkCellRendererText")
   (c-name "gtk_cell_renderer_text_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkCellRenderer*")
 )
 
@@ -2087,7 +2087,7 @@
 (define-function gtk_cell_renderer_toggle_new
   (is-constructor-of "GtkCellRendererToggle")
   (c-name "gtk_cell_renderer_toggle_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkCellRenderer*")
 )
 
@@ -2139,7 +2139,7 @@
 (define-function gtk_cell_view_new
   (is-constructor-of "GtkCellView")
   (c-name "gtk_cell_view_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -2202,14 +2202,14 @@
 (define-function gtk_check_button_new
   (is-constructor-of "GtkCheckButton")
   (c-name "gtk_check_button_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_check_button_new_with_label
   (is-constructor-of "GtkCheckButton")
   (c-name "gtk_check_button_new_with_label")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -2219,7 +2219,7 @@
 (define-function gtk_check_button_new_with_mnemonic
   (is-constructor-of "GtkCheckButton")
   (c-name "gtk_check_button_new_with_mnemonic")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -2252,14 +2252,14 @@
 (define-function gtk_check_menu_item_new
   (is-constructor-of "GtkCheckMenuItem")
   (c-name "gtk_check_menu_item_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_check_menu_item_new_with_label
   (is-constructor-of "GtkCheckMenuItem")
   (c-name "gtk_check_menu_item_new_with_label")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -2269,7 +2269,7 @@
 (define-function gtk_check_menu_item_new_with_mnemonic
   (is-constructor-of "GtkCheckMenuItem")
   (c-name "gtk_check_menu_item_new_with_mnemonic")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -2332,6 +2332,7 @@
 (define-function check_version
   (c-name "gtk_check_version")
   (return-type "gchar*")
+  (caller-owns-return #f)
   (parameters
     '("guint" "required_major")
     '("guint" "required_minor")
@@ -2362,7 +2363,7 @@
 (define-function clipboard_get_for_display
   (is-constructor-of "GtkClipboard")
   (c-name "gtk_clipboard_get_for_display")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkClipboard*")
   (parameters
     '("GdkDisplay*" "display" (default "gdk_display_get_default()"))
@@ -2486,7 +2487,7 @@
 (define-method wait_for_text
   (of-object "GtkClipboard")
   (c-name "gtk_clipboard_wait_for_text")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -2606,7 +2607,7 @@
 (define-method get_column_title
   (of-object "GtkCList")
   (c-name "gtk_clist_get_column_title")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("gint" "column")
@@ -2740,7 +2741,7 @@
 (define-function gtk_clist_new
   (is-constructor-of "GtkCList")
   (c-name "gtk_clist_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (deprecated "use GtkListStore/GtkTreeView")
   (parameters
@@ -2751,7 +2752,7 @@
 (define-function gtk_clist_new_with_titles
   (is-constructor-of "GtkCList")
   (c-name "gtk_clist_new_with_titles")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (deprecated "use GtkListStore/GtkTreeView")
   (parameters
@@ -3221,14 +3222,14 @@
 (define-function color_button_new
   (is-constructor-of "GtkColorButton")
   (c-name "gtk_color_button_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function color_button_new_with_color
   (is-constructor-of "GtkColorButton")
   (c-name "gtk_color_button_new_with_color")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-GdkColor*" "color" (default "NULL"))
@@ -3282,7 +3283,7 @@
 (define-function gtk_color_selection_dialog_new
   (is-constructor-of "GtkColorSelectionDialog")
   (c-name "gtk_color_selection_dialog_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "title" (default "NULL"))
@@ -3358,7 +3359,7 @@
 (define-function gtk_color_selection_new
   (is-constructor-of "GtkColorSelection")
   (c-name "gtk_color_selection_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -3374,7 +3375,7 @@
 
 (define-function color_selection_palette_to_string
   (c-name "gtk_color_selection_palette_to_string")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("const-GdkColor*" "colors")
@@ -3494,21 +3495,21 @@
 (define-function gtk_combo_box_entry_new
   (is-constructor-of "GtkComboBoxEntry")
   (c-name "gtk_combo_box_entry_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function combo_box_entry_new_text
   (is-constructor-of "GtkComboBoxEntry")
   (c-name "gtk_combo_box_entry_new_text")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function combo_box_entry_new_with_model
   (is-constructor-of "GtkComboBoxEntry")
   (c-name "gtk_combo_box_entry_new_with_model")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkTreeModel*" "model")
@@ -3543,7 +3544,7 @@
 (define-method get_active_text
   (of-object "GtkComboBox")
   (c-name "gtk_combo_box_get_active_text")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -3607,21 +3608,21 @@
 (define-function gtk_combo_box_new
   (is-constructor-of "GtkComboBox")
   (c-name "gtk_combo_box_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function combo_box_new_text
   (is-constructor-of "GtkComboBox")
   (c-name "gtk_combo_box_new_text")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_combo_box_new_with_model
   (is-constructor-of "GtkComboBox")
   (c-name "gtk_combo_box_new_with_model")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkTreeModel*" "model")
@@ -3755,7 +3756,7 @@
 (define-function gtk_combo_new
   (is-constructor-of "GtkCombo")
   (c-name "gtk_combo_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (deprecated "use GtkComboBoxEntry")
 )
@@ -4360,7 +4361,7 @@
 (define-function gtk_ctree_new
   (is-constructor-of "GtkCTree")
   (c-name "gtk_ctree_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (deprecated "use GtkTreeStore/GtkTreeView")
   (parameters
@@ -4372,7 +4373,7 @@
 (define-function gtk_ctree_new_with_titles
   (is-constructor-of "GtkCTree")
   (c-name "gtk_ctree_new_with_titles")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (deprecated "use GtkTreeStore/GtkTreeView")
   (parameters
@@ -4848,7 +4849,7 @@
 (define-function gtk_curve_new
   (is-constructor-of "GtkCurve")
   (c-name "gtk_curve_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -4942,14 +4943,14 @@
 (define-function gtk_dialog_new
   (is-constructor-of "GtkDialog")
   (c-name "gtk_dialog_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_dialog_new_with_buttons
   (is-constructor-of "GtkDialog")
   (c-name "gtk_dialog_new_with_buttons")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "title" (default "NULL") (null-ok))
@@ -5564,7 +5565,7 @@
 (define-function gtk_drawing_area_new
   (is-constructor-of "GtkDrawingArea")
   (c-name "gtk_drawing_area_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -5610,7 +5611,7 @@
 (define-method get_chars
   (of-object "GtkEditable")
   (c-name "gtk_editable_get_chars")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("gint" "start_pos")
@@ -5779,7 +5780,7 @@
 (define-function gtk_entry_completion_new
   (is-constructor-of "GtkEntryCompletion")
   (c-name "gtk_entry_completion_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkEntryCompletion*")
 )
 
@@ -5917,14 +5918,14 @@
 (define-function gtk_entry_new
   (is-constructor-of "GtkEntry")
   (c-name "gtk_entry_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_entry_new_with_max_length
   (is-constructor-of "GtkEntry")
   (c-name "gtk_entry_new_with_max_length")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (deprecated "use GtkEntry() constructor instead")
   (parameters
@@ -6071,7 +6072,7 @@
 (define-function gtk_event_box_new
   (is-constructor-of "GtkEventBox")
   (c-name "gtk_event_box_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -6150,7 +6151,7 @@
 (define-function gtk_expander_new
   (is-constructor-of "GtkExpander")
   (c-name "gtk_expander_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -6163,7 +6164,7 @@
 (define-function expander_new_with_mnemonic
   (is-constructor-of "GtkExpander")
   (c-name "gtk_expander_new_with_mnemonic")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -6278,7 +6279,7 @@
 (define-function file_chooser_button_new
   (is-constructor-of "GtkFileChooserButton")
   (c-name "gtk_file_chooser_button_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "title")
@@ -6330,7 +6331,7 @@
 (define-function gtk_file_chooser_dialog_new
   (is-constructor-of "GtkFileChooserDialog")
   (c-name "gtk_file_chooser_dialog_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "title")
@@ -6344,7 +6345,7 @@
 (define-function file_chooser_dialog_new_with_backend
   (is-constructor-of "GtkFileChooserDialog")
   (c-name "gtk_file_chooser_dialog_new_with_backend")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "title")
@@ -6370,14 +6371,14 @@
 (define-method get_current_folder
   (of-object "GtkFileChooser")
   (c-name "gtk_file_chooser_get_current_folder")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
 (define-method get_current_folder_uri
   (of-object "GtkFileChooser")
   (c-name "gtk_file_chooser_get_current_folder_uri")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -6390,7 +6391,7 @@
 (define-method get_filename
   (of-object "GtkFileChooser")
   (c-name "gtk_file_chooser_get_filename")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -6415,14 +6416,14 @@
 (define-method get_preview_filename
   (of-object "GtkFileChooser")
   (c-name "gtk_file_chooser_get_preview_filename")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "char*")
 )
 
 (define-method get_preview_uri
   (of-object "GtkFileChooser")
   (c-name "gtk_file_chooser_get_preview_uri")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "char*")
 )
 
@@ -6458,7 +6459,7 @@
 (define-method get_uri
   (of-object "GtkFileChooser")
   (c-name "gtk_file_chooser_get_uri")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -6703,7 +6704,7 @@
 (define-function gtk_file_chooser_widget_new
   (is-constructor-of "GtkFileChooserWidget")
   (c-name "gtk_file_chooser_widget_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkFileChooserAction" "action")
@@ -6713,7 +6714,7 @@
 (define-function file_chooser_widget_new_with_backend
   (is-constructor-of "GtkFileChooserWidget")
   (c-name "gtk_file_chooser_widget_new_with_backend")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkFileChooserAction" "action")
@@ -6786,7 +6787,7 @@
 (define-function gtk_file_filter_new
   (is-constructor-of "GtkFileFilter")
   (c-name "gtk_file_filter_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkFileFilter*")
 )
 
@@ -6886,7 +6887,7 @@
 (define-function gtk_file_info_new
   (is-constructor-of "GtkFileInfo")
   (c-name "gtk_file_info_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkFileInfo*")
 )
 
@@ -7009,7 +7010,7 @@
 (define-function gtk_file_selection_new
   (is-constructor-of "GtkFileSelection")
   (c-name "gtk_file_selection_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "title" (default "NULL"))
@@ -7153,7 +7154,7 @@
 (define-method path_to_filename
   (of-object "GtkFileSystem")
   (c-name "gtk_file_system_path_to_filename")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("const-GtkFilePath*" "path")
@@ -7163,7 +7164,7 @@
 (define-method path_to_uri
   (of-object "GtkFileSystem")
   (c-name "gtk_file_system_path_to_uri")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("const-GtkFilePath*" "path")
@@ -7222,7 +7223,7 @@
 (define-method volume_get_display_name
   (of-object "GtkFileSystem")
   (c-name "gtk_file_system_volume_get_display_name")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "char*")
   (parameters
     '("GtkFileSystemVolume*" "volume")
@@ -7285,7 +7286,7 @@
 (define-function gtk_fixed_new
   (is-constructor-of "GtkFixed")
   (c-name "gtk_fixed_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -7353,14 +7354,14 @@
 (define-function gtk_font_button_new
   (is-constructor-of "GtkFontButton")
   (c-name "gtk_font_button_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_font_button_new_with_font
   (is-constructor-of "GtkFontButton")
   (c-name "gtk_font_button_new_with_font")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "fontname")
@@ -7431,7 +7432,7 @@
 (define-method get_font_name
   (of-object "GtkFontSelectionDialog")
   (c-name "gtk_font_selection_dialog_get_font_name")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -7449,7 +7450,7 @@
 (define-function gtk_font_selection_dialog_new
   (is-constructor-of "GtkFontSelectionDialog")
   (c-name "gtk_font_selection_dialog_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "title")
@@ -7487,7 +7488,7 @@
 (define-method get_font_name
   (of-object "GtkFontSelection")
   (c-name "gtk_font_selection_get_font_name")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -7505,7 +7506,7 @@
 (define-function gtk_font_selection_new
   (is-constructor-of "GtkFontSelection")
   (c-name "gtk_font_selection_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -7563,7 +7564,7 @@
 (define-function gtk_frame_new
   (is-constructor-of "GtkFrame")
   (c-name "gtk_frame_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label" (default "NULL"))
@@ -7618,7 +7619,7 @@
 (define-function gtk_gamma_curve_new
   (is-constructor-of "GtkGammaCurve")
   (c-name "gtk_gamma_curve_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -7715,7 +7716,7 @@
 (define-function gtk_handle_box_new
   (is-constructor-of "GtkHandleBox")
   (c-name "gtk_handle_box_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -7754,7 +7755,7 @@
 (define-function gtk_hbox_new
   (is-constructor-of "GtkHBox")
   (c-name "gtk_hbox_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("gboolean" "homogeneous" (default "FALSE"))
@@ -7784,7 +7785,7 @@
 (define-function gtk_hbutton_box_new
   (is-constructor-of "GtkHButtonBox")
   (c-name "gtk_hbutton_box_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -7812,7 +7813,7 @@
 (define-function gtk_hpaned_new
   (is-constructor-of "GtkHPaned")
   (c-name "gtk_hpaned_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -7824,7 +7825,7 @@
 (define-function gtk_hruler_new
   (is-constructor-of "GtkHRuler")
   (c-name "gtk_hruler_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -7836,7 +7837,7 @@
 (define-function gtk_hscale_new
   (is-constructor-of "GtkHScale")
   (c-name "gtk_hscale_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "adjustment" (default "NULL") (null-ok))
@@ -7849,7 +7850,7 @@
 (define-function gtk_hscale_new_with_range
   (is-constructor-of "GtkHScale")
   (c-name "gtk_hscale_new_with_range")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("gdouble" "min")
@@ -7866,7 +7867,7 @@
 (define-function gtk_hscrollbar_new
   (is-constructor-of "GtkHScrollbar")
   (c-name "gtk_hscrollbar_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "adjustment" (default "NULL") (null-ok))
@@ -7884,7 +7885,7 @@
 (define-function gtk_hseparator_new
   (is-constructor-of "GtkHSeparator")
   (c-name "gtk_hseparator_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -7931,7 +7932,7 @@
 (define-function gtk_icon_factory_new
   (is-constructor-of "GtkIconFactory")
   (c-name "gtk_icon_factory_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkIconFactory*")
 )
 
@@ -7944,7 +7945,7 @@
 (define-method copy
   (of-object "GtkIconInfo")
   (c-name "gtk_icon_info_copy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkIconInfo*")
 )
 
@@ -8032,7 +8033,7 @@
 (define-method copy
   (of-object "GtkIconSet")
   (c-name "gtk_icon_set_copy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkIconSet*")
 )
 
@@ -8059,7 +8060,7 @@
 (define-function icon_set_new_from_pixbuf
   (is-constructor-of "GtkIconSet")
   (c-name "gtk_icon_set_new_from_pixbuf")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkIconSet*")
   (parameters
     '("GdkPixbuf*" "pixbuf")
@@ -8151,7 +8152,7 @@
 (define-method copy
   (of-object "GtkIconSource")
   (c-name "gtk_icon_source_copy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkIconSource*")
 )
 
@@ -8223,7 +8224,7 @@
 (define-function icon_source_new
   (is-constructor-of "GtkIconSource")
   (c-name "gtk_icon_source_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkIconSource*")
 )
 
@@ -8344,7 +8345,7 @@
 (define-method get_example_icon_name
   (of-object "GtkIconTheme")
   (c-name "gtk_icon_theme_get_example_icon_name")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "char*")
 )
 
@@ -8426,7 +8427,7 @@
 (define-function gtk_icon_theme_new
   (is-constructor-of "GtkIconTheme")
   (c-name "gtk_icon_theme_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkIconTheme*")
 )
 
@@ -8578,7 +8579,7 @@
 (define-function gtk_icon_view_new
   (is-constructor-of "GtkIconView")
   (c-name "gtk_icon_view_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -8915,7 +8916,7 @@
 (define-function gtk_im_context_simple_new
   (is-constructor-of "GtkIMContextSimple")
   (c-name "gtk_im_context_simple_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkIMContext*")
 )
 
@@ -8936,7 +8937,7 @@
 (define-function gtk_im_multicontext_new
   (is-constructor-of "GtkIMMulticontext")
   (c-name "gtk_im_multicontext_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkIMContext*")
 )
 
@@ -9043,14 +9044,14 @@
 (define-function gtk_image_menu_item_new
   (is-constructor-of "GtkImageMenuItem")
   (c-name "gtk_image_menu_item_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_image_menu_item_new_from_stock
   (is-constructor-of "GtkImageMenuItem")
   (c-name "gtk_image_menu_item_new_from_stock")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "stock_id")
@@ -9061,7 +9062,7 @@
 (define-function gtk_image_menu_item_new_with_label
   (is-constructor-of "GtkImageMenuItem")
   (c-name "gtk_image_menu_item_new_with_label")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -9071,7 +9072,7 @@
 (define-function gtk_image_menu_item_new_with_mnemonic
   (is-constructor-of "GtkImageMenuItem")
   (c-name "gtk_image_menu_item_new_with_mnemonic")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -9090,14 +9091,14 @@
 (define-function gtk_image_new
   (is-constructor-of "GtkImage")
   (c-name "gtk_image_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function image_new_from_animation
   (is-constructor-of "GtkImage")
   (c-name "gtk_image_new_from_animation")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GdkPixbufAnimation*" "animation")
@@ -9107,7 +9108,7 @@
 (define-function image_new_from_file
   (is-constructor-of "GtkImage")
   (c-name "gtk_image_new_from_file")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "filename")
@@ -9126,7 +9127,7 @@
 (define-function image_new_from_icon_set
   (is-constructor-of "GtkImage")
   (c-name "gtk_image_new_from_icon_set")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkIconSet*" "icon_set")
@@ -9137,7 +9138,7 @@
 (define-function image_new_from_image
   (is-constructor-of "GtkImage")
   (c-name "gtk_image_new_from_image")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GdkImage*" "image")
@@ -9148,7 +9149,7 @@
 (define-function image_new_from_pixbuf
   (is-constructor-of "GtkImage")
   (c-name "gtk_image_new_from_pixbuf")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GdkPixbuf*" "pixbuf")
@@ -9158,7 +9159,7 @@
 (define-function image_new_from_pixmap
   (is-constructor-of "GtkImage")
   (c-name "gtk_image_new_from_pixmap")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GdkPixmap*" "pixmap")
@@ -9169,7 +9170,7 @@
 (define-function image_new_from_stock
   (is-constructor-of "GtkImage")
   (c-name "gtk_image_new_from_stock")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "stock_id")
@@ -9343,7 +9344,7 @@
 (define-function gtk_input_dialog_new
   (is-constructor-of "GtkInputDialog")
   (c-name "gtk_input_dialog_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -9369,14 +9370,14 @@
 (define-function gtk_invisible_new
   (is-constructor-of "GtkInvisible")
   (c-name "gtk_invisible_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_invisible_new_for_screen
   (is-constructor-of "GtkInvisible")
   (c-name "gtk_invisible_new_for_screen")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GdkScreen*" "screen")
@@ -9564,7 +9565,7 @@
 (define-function gtk_item_factory_new
   (is-constructor-of "GtkItemFactory")
   (c-name "gtk_item_factory_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkItemFactory*")
   (deprecated "use GTKUIManager")
   (parameters
@@ -9801,7 +9802,7 @@
 (define-function gtk_label_new
   (is-constructor-of "GtkLabel")
   (c-name "gtk_label_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-char*" "string" (default "NULL"))
@@ -9814,7 +9815,7 @@
 (define-function gtk_label_new_with_mnemonic
   (is-constructor-of "GtkLabel")
   (c-name "gtk_label_new_with_mnemonic")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-char*" "string" (default "NULL"))
@@ -10062,7 +10063,7 @@
 (define-function gtk_layout_new
   (is-constructor-of "GtkLayout")
   (c-name "gtk_layout_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "hadjustment" (default "NULL") (null-ok))
@@ -10203,7 +10204,7 @@
 (define-function gtk_list_item_new
   (is-constructor-of "GtkListItem")
   (c-name "gtk_list_item_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (deprecated "use GtkTreeView")
 )
@@ -10211,7 +10212,7 @@
 (define-function gtk_list_item_new_with_label
   (is-constructor-of "GtkListItem")
   (c-name "gtk_list_item_new_with_label")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (deprecated "use GtkTreeView")
   (parameters
@@ -10228,7 +10229,7 @@
 (define-function gtk_list_new
   (is-constructor-of "GtkList")
   (c-name "gtk_list_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (deprecated "use GtkListStore/GtkTreeView")
 )
@@ -10431,7 +10432,7 @@
 (define-function gtk_list_store_new
   (is-constructor-of "GtkListStore")
   (c-name "gtk_list_store_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkListStore*")
   (parameters
     '("gint" "n_columns")
@@ -10442,7 +10443,7 @@
 (define-function gtk_list_store_newv
   (is-constructor-of "GtkListStore")
   (c-name "gtk_list_store_newv")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkListStore*")
   (parameters
     '("gint" "n_columns")
@@ -10651,7 +10652,7 @@
 (define-function gtk_menu_bar_new
   (is-constructor-of "GtkMenuBar")
   (c-name "gtk_menu_bar_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -10734,14 +10735,14 @@
 (define-function gtk_menu_item_new
   (is-constructor-of "GtkMenuItem")
   (c-name "gtk_menu_item_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_menu_item_new_with_label
   (is-constructor-of "GtkMenuItem")
   (c-name "gtk_menu_item_new_with_label")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -10751,7 +10752,7 @@
 (define-function gtk_menu_item_new_with_mnemonic
   (is-constructor-of "GtkMenuItem")
   (c-name "gtk_menu_item_new_with_mnemonic")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -10825,7 +10826,7 @@
 (define-function gtk_menu_new
   (is-constructor-of "GtkMenu")
   (c-name "gtk_menu_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -11021,7 +11022,7 @@
 (define-function gtk_menu_tool_button_new
   (is-constructor-of "GtkMenuToolButton")
   (c-name "gtk_menu_tool_button_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkToolItem*")
   (parameters
     '("GtkWidget*" "icon_widget")
@@ -11085,7 +11086,7 @@
 (define-function gtk_message_dialog_new
   (is-constructor-of "GtkMessageDialog")
   (c-name "gtk_message_dialog_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkWindow*" "parent" (default "NULL") (null-ok))
@@ -11100,7 +11101,7 @@
 (define-function message_dialog_new_with_markup
   (is-constructor-of "GtkMessageDialog")
   (c-name "gtk_message_dialog_new_with_markup")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkWindow*" "parent")
@@ -11306,7 +11307,7 @@
 (define-function gtk_notebook_new
   (is-constructor-of "GtkNotebook")
   (c-name "gtk_notebook_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -11606,7 +11607,7 @@
 (define-function gtk_option_menu_new
   (is-constructor-of "GtkOptionMenu")
   (c-name "gtk_option_menu_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (deprecated "use GtkComboBox")
 )
@@ -12114,7 +12115,7 @@
 (define-function gtk_pixmap_new
   (is-constructor-of "GtkPixmap")
   (c-name "gtk_pixmap_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (deprecated "use GtkImage")
   (parameters
@@ -12175,7 +12176,7 @@
 (define-function gtk_plug_new
   (is-constructor-of "GtkPlug")
   (c-name "gtk_plug_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GdkNativeWindow" "socket_id")
@@ -12230,7 +12231,7 @@
 (define-function gtk_preview_new
   (is-constructor-of "GtkPreview")
   (c-name "gtk_preview_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (deprecated "use GtkDrawingArea")
   (parameters
@@ -12372,14 +12373,14 @@
 (define-function gtk_progress_bar_new
   (is-constructor-of "GtkProgressBar")
   (c-name "gtk_progress_bar_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_progress_bar_new_with_adjustment
   (is-constructor-of "GtkProgressBar")
   (c-name "gtk_progress_bar_new_with_adjustment")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "adjustment" (default "NULL") (null-ok))
@@ -12504,7 +12505,7 @@
 (define-method get_current_text
   (of-object "GtkProgress")
   (c-name "gtk_progress_get_current_text")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (deprecated "use GtkProgressBar")
 )
@@ -12522,7 +12523,7 @@
 (define-method get_text_from_value
   (of-object "GtkProgress")
   (c-name "gtk_progress_get_text_from_value")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (deprecated "use GtkProgressBar")
   (parameters
@@ -12689,7 +12690,7 @@
 (define-function gtk_radio_action_new
   (is-constructor-of "GtkRadioAction")
   (c-name "gtk_radio_action_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkRadioAction*")
   (parameters
     '("const-gchar*" "name")
@@ -12737,7 +12738,7 @@
 (define-function gtk_radio_button_new
   (is-constructor-of "GtkRadioButton")
   (c-name "gtk_radio_button_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GSList*" "group")
@@ -12747,7 +12748,7 @@
 (define-function radio_button_new_from_widget
   (is-constructor-of "GtkRadioButton")
   (c-name "gtk_radio_button_new_from_widget")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkRadioButton*" "group")
@@ -12757,7 +12758,7 @@
 (define-function radio_button_new_with_label
   (is-constructor-of "GtkRadioButton")
   (c-name "gtk_radio_button_new_with_label")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GSList*" "group")
@@ -12768,7 +12769,7 @@
 (define-function radio_button_new_with_label_from_widget
   (is-constructor-of "GtkRadioButton")
   (c-name "gtk_radio_button_new_with_label_from_widget")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkRadioButton*" "group")
@@ -12779,7 +12780,7 @@
 (define-function radio_button_new_with_mnemonic
   (is-constructor-of "GtkRadioButton")
   (c-name "gtk_radio_button_new_with_mnemonic")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GSList*" "group")
@@ -12790,7 +12791,7 @@
 (define-function radio_button_new_with_mnemonic_from_widget
   (is-constructor-of "GtkRadioButton")
   (c-name "gtk_radio_button_new_with_mnemonic_from_widget")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkRadioButton*" "group")
@@ -12828,7 +12829,7 @@
 (define-function gtk_radio_menu_item_new
   (is-constructor-of "GtkRadioMenuItem")
   (c-name "gtk_radio_menu_item_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GSList*" "group")
@@ -12844,7 +12845,7 @@
 (define-function gtk_radio_menu_item_new_with_label
   (is-constructor-of "GtkRadioMenuItem")
   (c-name "gtk_radio_menu_item_new_with_label")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GSList*" "group")
@@ -12864,7 +12865,7 @@
 (define-function gtk_radio_menu_item_new_with_mnemonic
   (is-constructor-of "GtkRadioMenuItem")
   (c-name "gtk_radio_menu_item_new_with_mnemonic")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GSList*" "group")
@@ -12904,14 +12905,14 @@
 (define-function gtk_radio_tool_button_new
   (is-constructor-of "GtkRadioToolButton")
   (c-name "gtk_radio_tool_button_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkToolItem*")
 )
 
 (define-function radio_tool_button_new_from_stock
   (is-constructor-of "GtkRadioToolButton")
   (c-name "gtk_radio_tool_button_new_from_stock")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkToolItem*")
   (parameters
     '("const-gchar*" "stock_id")
@@ -12921,7 +12922,7 @@
 (define-function radio_tool_button_new_from_widget
   (is-constructor-of "GtkRadioToolButton")
   (c-name "gtk_radio_tool_button_new_from_widget")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkToolItem*")
   (parameters
     '("GtkRadioToolButton*" "group")
@@ -12931,7 +12932,7 @@
 (define-function radio_tool_button_new_with_stock_from_widget
   (is-constructor-of "GtkRadioToolButton")
   (c-name "gtk_radio_tool_button_new_with_stock_from_widget")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkToolItem*")
   (parameters
     '("GtkRadioToolButton*" "group")
@@ -13070,7 +13071,7 @@
 
 (define-function rc_find_module_in_path
   (c-name "gtk_rc_find_module_in_path")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("const-gchar*" "module_file")
@@ -13079,7 +13080,7 @@
 
 (define-function rc_find_pixmap_in_path
   (c-name "gtk_rc_find_pixmap_in_path")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("GtkSettings*" "settings")
@@ -13095,19 +13096,19 @@
 
 (define-function rc_get_im_module_file
   (c-name "gtk_rc_get_im_module_file")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
 (define-function rc_get_im_module_path
   (c-name "gtk_rc_get_im_module_path")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
 (define-function rc_get_module_dir
   (c-name "gtk_rc_get_module_dir")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -13130,7 +13131,7 @@
 
 (define-function rc_get_theme_dir
   (c-name "gtk_rc_get_theme_dir")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -13252,7 +13253,7 @@
 (define-function rc_scanner_new
   (is-constructor-of "GtkRcScanner")
   (c-name "gtk_rc_scanner_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GScanner*")
 )
 
@@ -13267,7 +13268,7 @@
 (define-method copy
   (of-object "GtkRcStyle")
   (c-name "gtk_rc_style_copy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkRcStyle*")
 )
 
@@ -13279,7 +13280,7 @@
 (define-function gtk_rc_style_new
   (is-constructor-of "GtkRCStyle")
   (c-name "gtk_rc_style_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkRcStyle*")
 )
 
@@ -13298,7 +13299,7 @@
 (define-method copy
   (of-object "GtkRequisition")
   (c-name "gtk_requisition_copy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkRequisition*")
 )
 
@@ -13491,7 +13492,7 @@
 (define-function gtk_scrolled_window_new
   (is-constructor-of "GtkScrolledWindow")
   (c-name "gtk_scrolled_window_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment" "hadjustment" (default "NULL") (null-ok))
@@ -13603,7 +13604,7 @@
 (define-method copy
   (of-object "GtkSelectionData")
   (c-name "gtk_selection_data_copy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkSelectionData*")
 )
 
@@ -13741,7 +13742,7 @@
 (define-function gtk_separator_menu_item_new
   (is-constructor-of "GtkSeparatorMenuItem")
   (c-name "gtk_separator_menu_item_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -13759,7 +13760,7 @@
 (define-function gtk_separator_tool_item_new
   (is-constructor-of "GtkSeparatorToolItem")
   (c-name "gtk_separator_tool_item_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkToolItem*")
 )
 
@@ -13774,7 +13775,7 @@
 
 (define-function set_locale
   (c-name "gtk_set_locale")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -13893,7 +13894,7 @@
 (define-function size_group_new
   (is-constructor-of "GtkSizeGroup")
   (c-name "gtk_size_group_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkSizeGroup*")
   (parameters
     '("GtkSizeGroupMode" "mode")
@@ -13944,7 +13945,7 @@
 (define-function gtk_socket_new
   (is-constructor-of "GtkSocket")
   (c-name "gtk_socket_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -14044,7 +14045,7 @@
 (define-function gtk_spin_button_new
   (is-constructor-of "GtkSpinButton")
   (c-name "gtk_spin_button_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment" "adjustment" (default "NULL") (null-ok))
@@ -14061,7 +14062,7 @@
 (define-function gtk_spin_button_new_with_range
   (is-constructor-of "GtkSpinButton")
   (c-name "gtk_spin_button_new_with_range")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("gdouble" "min")
@@ -14192,7 +14193,7 @@
 (define-function gtk_statusbar_new
   (is-constructor-of "GtkStatusbar")
   (c-name "gtk_statusbar_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -14255,7 +14256,7 @@
 (define-method copy
   (of-object "GtkStockItem")
   (c-name "gtk_stock_item_copy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkStockItem*")
 )
 
@@ -14323,7 +14324,7 @@
 (define-method copy
   (of-object "GtkStyle")
   (c-name "gtk_style_copy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkStyle*")
 )
 
@@ -14356,7 +14357,7 @@
 (define-function gtk_style_new
   (is-constructor-of "GtkStyle")
   (c-name "gtk_style_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkStyle*")
 )
 
@@ -14480,7 +14481,7 @@
 (define-function gtk_table_new
   (is-constructor-of "GtkTable")
   (c-name "gtk_table_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("guint" "n_rows" (default "1"))
@@ -14613,7 +14614,7 @@
 (define-function gtk_target_list_new
   (is-constructor-of "GtkTargetList")
   (c-name "gtk_target_list_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTargetList*")
   (parameters
     '("const-GtkTargetEntry*" "targets")
@@ -14650,14 +14651,14 @@
 (define-function gtk_tearoff_menu_item_new
   (is-constructor-of "GtkTearoffMenuItem")
   (c-name "gtk_tearoff_menu_item_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-method copy
   (of-object "GtkTextAttributes")
   (c-name "gtk_text_attributes_copy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTextAttributes*")
 )
 
@@ -14678,7 +14679,7 @@
 (define-function gtk_text_attributes_new
   (is-constructor-of "GtkTextAttributes")
   (c-name "gtk_text_attributes_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTextAttributes*")
 )
 
@@ -14980,7 +14981,7 @@
 (define-method get_slice
   (of-object "GtkTextBuffer")
   (c-name "gtk_text_buffer_get_slice")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("const-GtkTextIter*" "start")
@@ -15007,7 +15008,7 @@
 (define-method get_text
   (of-object "GtkTextBuffer")
   (c-name "gtk_text_buffer_get_text")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("const-GtkTextIter*" "start")
@@ -15157,7 +15158,7 @@
 (define-function gtk_text_buffer_new
   (is-constructor-of "GtkTextBuffer")
   (c-name "gtk_text_buffer_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTextBuffer*")
   (parameters
     '("GtkTextTagTable*" "tag_table" (default "NULL") (null-ok))
@@ -15277,7 +15278,7 @@
 (define-function gtk_text_child_anchor_new
   (is-constructor-of "GtkTextChildAnchor")
   (c-name "gtk_text_child_anchor_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTextChildAnchor*")
 )
 
@@ -15449,7 +15450,7 @@
 (define-method copy
   (of-object "GtkTextIter")
   (c-name "gtk_text_iter_copy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTextIter*")
 )
 
@@ -15738,7 +15739,7 @@
 (define-method get_slice
   (of-object "GtkTextIter")
   (c-name "gtk_text_iter_get_slice")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("const-GtkTextIter*" "end")
@@ -15754,7 +15755,7 @@
 (define-method get_text
   (of-object "GtkTextIter")
   (c-name "gtk_text_iter_get_text")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("const-GtkTextIter*" "end")
@@ -15790,7 +15791,7 @@
 (define-method get_visible_slice
   (of-object "GtkTextIter")
   (c-name "gtk_text_iter_get_visible_slice")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("const-GtkTextIter*" "end")
@@ -15800,7 +15801,7 @@
 (define-method get_visible_text
   (of-object "GtkTextIter")
   (c-name "gtk_text_iter_get_visible_text")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("const-GtkTextIter*" "end")
@@ -16015,7 +16016,7 @@
 (define-function gtk_text_tag_new
   (is-constructor-of "GtkTextTag")
   (c-name "gtk_text_tag_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTextTag*")
   (parameters
     '("const-gchar*" "name" (default "NULL") (null-ok))
@@ -16076,7 +16077,7 @@
 (define-function gtk_text_tag_table_new
   (is-constructor-of "GtkTextTagTable")
   (c-name "gtk_text_tag_table_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTextTagTable*")
 )
 
@@ -16379,14 +16380,14 @@
 (define-function gtk_text_view_new
   (is-constructor-of "GtkTextView")
   (c-name "gtk_text_view_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_text_view_new_with_buffer
   (is-constructor-of "GtkTextView")
   (c-name "gtk_text_view_new_with_buffer")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkTextBuffer*" "buffer" (default "NULL") (null-ok))
@@ -16633,7 +16634,7 @@
 (define-function gtk_tips_query_new
   (is-constructor-of "GtkTipsQuery")
   (c-name "gtk_tips_query_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -16688,7 +16689,7 @@
 (define-function gtk_toggle_action_new
   (is-constructor-of "GtkToggleAction")
   (c-name "gtk_toggle_action_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkToggleAction*")
   (parameters
     '("const-gchar*" "name")
@@ -16754,14 +16755,14 @@
 (define-function gtk_toggle_button_new
   (is-constructor-of "GtkToggleButton")
   (c-name "gtk_toggle_button_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_toggle_button_new_with_label
   (is-constructor-of "GtkToggleButton")
   (c-name "gtk_toggle_button_new_with_label")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -16771,7 +16772,7 @@
 (define-function gtk_toggle_button_new_with_mnemonic
   (is-constructor-of "GtkToggleButton")
   (c-name "gtk_toggle_button_new_with_mnemonic")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("const-gchar*" "label")
@@ -16835,14 +16836,14 @@
 (define-function gtk_toggle_tool_button_new
   (is-constructor-of "GtkToggleToolButton")
   (c-name "gtk_toggle_tool_button_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkToolItem*")
 )
 
 (define-function toggle_tool_button_new_from_stock
   (is-constructor-of "GtkToggleToolButton")
   (c-name "gtk_toggle_tool_button_new_from_stock")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkToolItem*")
   (parameters
     '("const-gchar*" "stock_id")
@@ -16896,7 +16897,7 @@
 (define-function gtk_tool_button_new
   (is-constructor-of "GtkToolButton")
   (c-name "gtk_tool_button_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkToolItem*")
   (parameters
     '("GtkWidget*" "icon_widget" (default "NULL") (null-ok))
@@ -16907,7 +16908,7 @@
 (define-function tool_button_new_from_stock
   (is-constructor-of "GtkToolButton")
   (c-name "gtk_tool_button_new_from_stock")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkToolItem*")
   (parameters
     '("const-gchar*" "stock_id")
@@ -17036,7 +17037,7 @@
 (define-function gtk_tool_item_new
   (is-constructor-of "GtkToolItem")
   (c-name "gtk_tool_item_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkToolItem*")
 )
 
@@ -17329,7 +17330,7 @@
 (define-function gtk_toolbar_new
   (is-constructor-of "GtkToolbar")
   (c-name "gtk_toolbar_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -17509,7 +17510,7 @@
 (define-function gtk_tooltips_new
   (is-constructor-of "GtkTooltips")
   (c-name "gtk_tooltips_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTooltips*")
 )
 
@@ -17604,7 +17605,7 @@
 (define-method copy
   (of-object "GtkTreeIter")
   (c-name "gtk_tree_iter_copy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTreeIter*")
 )
 
@@ -17804,7 +17805,7 @@
 (define-method get_path
   (of-object "GtkTreeModel")
   (c-name "gtk_tree_model_get_path")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTreePath*")
   (parameters
     '("GtkTreeIter*" "iter")
@@ -17814,7 +17815,7 @@
 (define-method get_string_from_iter
   (of-object "GtkTreeModel")
   (c-name "gtk_tree_model_get_string_from_iter")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
   (parameters
     '("GtkTreeIter*" "iter")
@@ -17983,7 +17984,7 @@
 (define-method convert_child_path_to_path
   (of-object "GtkTreeModelSort")
   (c-name "gtk_tree_model_sort_convert_child_path_to_path")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTreePath*")
   (parameters
     '("GtkTreePath*" "child_path")
@@ -18003,7 +18004,7 @@
 (define-method convert_path_to_child_path
   (of-object "GtkTreeModelSort")
   (c-name "gtk_tree_model_sort_convert_path_to_child_path")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTreePath*")
   (parameters
     '("GtkTreePath*" "sorted_path")
@@ -18033,7 +18034,7 @@
 (define-function gtk_tree_model_sort_new_with_model
   (is-constructor-of "GtkTreeModelSort")
   (c-name "gtk_tree_model_sort_new_with_model")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTreeModel*")
   (parameters
     '("GtkTreeModel*" "model")
@@ -18079,7 +18080,7 @@
 (define-method copy
   (of-object "GtkTreePath")
   (c-name "gtk_tree_path_copy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTreePath*")
 )
 
@@ -18128,7 +18129,7 @@
 (define-function gtk_tree_path_new
   (is-constructor-of "GtkTreePath")
   (c-name "gtk_tree_path_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTreePath*")
 )
 
@@ -18178,7 +18179,7 @@
 (define-method to_string
   (of-object "GtkTreePath")
   (c-name "gtk_tree_path_to_string")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -18212,7 +18213,7 @@
 (define-method get_path
   (of-object "GtkTreeRowReference")
   (c-name "gtk_tree_row_reference_get_path")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTreePath*")
 )
 
@@ -18233,7 +18234,7 @@
 (define-function gtk_tree_row_reference_new
   (is-constructor-of "GtkTreeRowReference")
   (c-name "gtk_tree_row_reference_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTreeRowReference*")
   (parameters
     '("GtkTreeModel*" "model")
@@ -18244,7 +18245,7 @@
 (define-function gtk_tree_row_reference_new_proxy
   (is-constructor-of "GtkTreeRowReference")
   (c-name "gtk_tree_row_reference_new_proxy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTreeRowReference*")
   (parameters
     '("GObject*" "proxy")
@@ -18609,7 +18610,7 @@
 (define-function gtk_tree_store_new
   (is-constructor-of "GtkTreeStore")
   (c-name "gtk_tree_store_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTreeStore*")
   (parameters
     '("gint" "n_columns")
@@ -18620,7 +18621,7 @@
 (define-function gtk_tree_store_newv
   (is-constructor-of "GtkTreeStore")
   (c-name "gtk_tree_store_newv")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkTreeStore*")
   (parameters
     '("gint" "n_columns")
@@ -18931,14 +18932,14 @@
 (define-function gtk_tree_view_column_new
   (is-constructor-of "GtkTreeViewColumn")
   (c-name "gtk_tree_view_column_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkObject*")
 )
 
 (define-function gtk_tree_view_column_new_with_attributes
   (is-constructor-of "GtkTreeViewColumn")
   (c-name "gtk_tree_view_column_new_with_attributes")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkObject*")
   (parameters
     '("gchar*" "title")
@@ -19448,14 +19449,14 @@
 (define-function gtk_tree_view_new
   (is-constructor-of "GtkTreeView")
   (c-name "gtk_tree_view_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
 (define-function gtk_tree_view_new_with_model
   (is-constructor-of "GtkTreeView")
   (c-name "gtk_tree_view_new_with_model")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkTreeModel*" "model" (default "NULL") (null-ok))
@@ -19836,7 +19837,7 @@
 (define-method get_ui
   (of-object "GtkUIManager")
   (c-name "gtk_ui_manager_get_ui")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -19862,7 +19863,7 @@
 (define-function gtk_ui_manager_new
   (is-constructor-of "GtkUIManager")
   (c-name "gtk_ui_manager_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkUIManager*")
 )
 
@@ -19907,7 +19908,7 @@
 (define-function gtk_vbox_new
   (is-constructor-of "GtkVBox")
   (c-name "gtk_vbox_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("gboolean" "homogeneous" (default "FALSE"))
@@ -19937,7 +19938,7 @@
 (define-function gtk_vbutton_box_new
   (is-constructor-of "GtkVButtonBox")
   (c-name "gtk_vbutton_box_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -19983,7 +19984,7 @@
 (define-function gtk_viewport_new
   (is-constructor-of "GtkViewport")
   (c-name "gtk_viewport_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "hadjustment" (default "NULL") (null-ok))
@@ -20030,7 +20031,7 @@
 (define-function gtk_vpaned_new
   (is-constructor-of "GtkVPaned")
   (c-name "gtk_vpaned_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -20042,7 +20043,7 @@
 (define-function gtk_vruler_new
   (is-constructor-of "GtkVRuler")
   (c-name "gtk_vruler_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -20054,7 +20055,7 @@
 (define-function gtk_vscale_new
   (is-constructor-of "GtkVScale")
   (c-name "gtk_vscale_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "adjustment" (default "NULL") (null-ok))
@@ -20067,7 +20068,7 @@
 (define-function gtk_vscale_new_with_range
   (is-constructor-of "GtkVScale")
   (c-name "gtk_vscale_new_with_range")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("gdouble" "min")
@@ -20084,7 +20085,7 @@
 (define-function gtk_vscrollbar_new
   (is-constructor-of "GtkVScrollbar")
   (c-name "gtk_vscrollbar_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkAdjustment*" "adjustment" (default "NULL") (null-ok))
@@ -20102,7 +20103,7 @@
 (define-function gtk_vseparator_new
   (is-constructor-of "GtkVSeparator")
   (c-name "gtk_vseparator_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
 )
 
@@ -20220,14 +20221,14 @@
 (define-method create_pango_context
   (of-object "GtkWidget")
   (c-name "gtk_widget_create_pango_context")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "PangoContext*")
 )
 
 (define-method create_pango_layout
   (of-object "GtkWidget")
   (c-name "gtk_widget_create_pango_layout")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "PangoLayout*")
   (parameters
     '("const-gchar*" "text")
@@ -20328,7 +20329,7 @@
 (define-method get_composite_name
   (of-object "GtkWidget")
   (c-name "gtk_widget_get_composite_name")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -20630,7 +20631,7 @@
 (define-function gtk_widget_new
   (is-constructor-of "GtkWidget")
   (c-name "gtk_widget_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GType" "type")
@@ -21433,7 +21434,7 @@
 (define-function window_group_new
   (is-constructor-of "GtkWindowGroup")
   (c-name "gtk_window_group_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWindowGroup*")
 )
 
@@ -21498,7 +21499,7 @@
 (define-function gtk_window_new
   (is-constructor-of "GtkWindow")
   (c-name "gtk_window_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
   (parameters
     '("GtkWindowType" "type" (default "GTK_WINDOW_TOPLEVEL"))

@@ -24,7 +24,7 @@
 (define-method name
   (of-object "GdkAtom")
   (c-name "gdk_atom_name")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -110,7 +110,7 @@
 (define-function gdk_color_new
   (is-constructor-of "GdkColor")
   (c-name "gdk_color_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkColor")
 )
 
@@ -173,7 +173,7 @@
 (define-function gdk_colormap_new
   (is-constructor-of "GdkColormap")
   (c-name "gdk_colormap_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkColormap*")
   (parameters
     '("GdkVisual*" "visual")
@@ -199,7 +199,7 @@
 (define-function cursor_new
   (is-constructor-of "GdkCursor")
   (c-name "gdk_cursor_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkCursor*")
   (parameters
     '("GdkCursorType" "cursor_type")
@@ -209,7 +209,7 @@
 (define-function cursor_new_for_display
   (is-constructor-of "GdkCursor")
   (c-name "gdk_cursor_new_for_display")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkCursor*")
   (parameters
     '("GdkDisplay*" "display")
@@ -220,7 +220,7 @@
 (define-function cursor_new_from_pixbuf
   (is-constructor-of "GdkCursor")
   (c-name "gdk_cursor_new_from_pixbuf")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkCursor*")
   (parameters
     '("GdkDisplay*" "display")
@@ -233,7 +233,7 @@
 (define-function cursor_new_from_pixmap
   (is-constructor-of "GdkCursor")
   (c-name "gdk_cursor_new_from_pixmap")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkCursor*")
   (parameters
     '("GdkPixmap*" "source")
@@ -514,7 +514,7 @@
 (define-function gdk_display_open
   (is-constructor-of "GdkDisplay")
   (c-name "gdk_display_open")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkDisplay*")
   (parameters
     '("const-gchar*" "display_name")
@@ -660,7 +660,7 @@
 (define-function drag_context_new
   (is-constructor-of "GdkDragContext")
   (c-name "gdk_drag_context_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkDragContext*")
 )
 
@@ -1147,7 +1147,7 @@
 (define-method get_image
   (of-object "GdkDrawable")
   (c-name "gdk_drawable_get_image")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkImage*")
   (parameters
     '("gint" "x")
@@ -1336,7 +1336,7 @@
 (define-function event_new
   (is-constructor-of "GdkEvent")
   (c-name "gdk_event_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkEvent*")
   (parameters
     '("GdkEventType" "type")
@@ -1405,7 +1405,7 @@
 (define-function font_load
   (is-constructor-of "GdkFont")
   (c-name "gdk_font_load")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkFont*")
   (parameters
     '("const-gchar*" "font_name")
@@ -1476,7 +1476,7 @@
 (define-function gc_new
   (is-constructor-of "GdkGC")
   (c-name "gdk_gc_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkGC*")
   (parameters
     '("GdkDrawable*" "drawable")
@@ -1747,7 +1747,7 @@
 (define-function gdk_image_new
   (is-constructor-of "GdkImage")
   (c-name "gdk_image_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkImage*")
   (parameters
     '("GdkImageType" "type")
@@ -1950,7 +1950,7 @@
 (define-method add_alpha
   (of-object "GdkPixbuf")
   (c-name "gdk_pixbuf_add_alpha")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixbuf*")
   (parameters
     '("gboolean" "substitute_color")
@@ -2033,7 +2033,7 @@
 (define-function gdk_pixbuf_animation_new_from_file
   (is-constructor-of "GdkPixbufAnimation")
   (c-name "gdk_pixbuf_animation_new_from_file")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixbufAnimation*")
   (parameters
     '("const-char*" "filename")
@@ -2087,7 +2087,7 @@
 (define-method composite_color_simple
   (of-object "GdkPixbuf")
   (c-name "gdk_pixbuf_composite_color_simple")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixbuf*")
   (parameters
     '("int" "dest_width")
@@ -2103,7 +2103,7 @@
 (define-method copy
   (of-object "GdkPixbuf")
   (c-name "gdk_pixbuf_copy")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixbuf*")
 )
 
@@ -2133,7 +2133,7 @@
 (define-method get_description
   (of-object "GdkPixbufFormat")
   (c-name "gdk_pixbuf_format_get_description")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -2152,7 +2152,7 @@
 (define-method get_name
   (of-object "GdkPixbufFormat")
   (c-name "gdk_pixbuf_format_get_name")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -2315,7 +2315,7 @@
 (define-function gdk_pixbuf_loader_new_with_type
   (is-constructor-of "GdkPixbufLoader")
   (c-name "gdk_pixbuf_loader_new_with_type")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixbufLoader*")
   (parameters
     '("const-char*" "image_type")
@@ -2347,7 +2347,7 @@
 (define-function gdk_pixbuf_new
   (is-constructor-of "GdkPixbuf")
   (c-name "gdk_pixbuf_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixbuf*")
   (parameters
     '("GdkColorspace" "colorspace")
@@ -2361,7 +2361,7 @@
 (define-function pixbuf_new_from_array
   (is-constructor-of "GdkPixbuf")
   (c-name "gdk_pixbuf_new_from_array")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixbuf*")
   (parameters
     '("PyArrayObject*" "array")
@@ -2373,7 +2373,7 @@
 (define-function pixbuf_new_from_data
   (is-constructor-of "GdkPixbuf")
   (c-name "gdk_pixbuf_new_from_data")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixbuf*")
   (parameters
     '("const-guchar*" "data")
@@ -2391,7 +2391,7 @@
 (define-function pixbuf_new_from_file
   (is-constructor-of "GdkPixbuf")
   (c-name "gdk_pixbuf_new_from_file")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixbuf*")
   (parameters
     '("const-char*" "filename")
@@ -2402,7 +2402,7 @@
 (define-function pixbuf_new_from_file_at_size
   (is-constructor-of "GdkPixbuf")
   (c-name "gdk_pixbuf_new_from_file_at_size")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixbuf*")
   (parameters
     '("const-char*" "filename")
@@ -2415,7 +2415,7 @@
 (define-function pixbuf_new_from_inline
   (is-constructor-of "GdkPixbuf")
   (c-name "gdk_pixbuf_new_from_inline")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixbuf*")
   (parameters
     '("gint" "data_length")
@@ -2428,7 +2428,7 @@
 (define-function pixbuf_new_from_xpm_data
   (is-constructor-of "GdkPixbuf")
   (c-name "gdk_pixbuf_new_from_xpm_data")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixbuf*")
   (parameters
     '("const-char**" "data")
@@ -2438,7 +2438,7 @@
 (define-method subpixbuf
   (of-object "GdkPixbuf")
   (c-name "gdk_pixbuf_new_subpixbuf")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixbuf*")
   (parameters
     '("int" "src_x")
@@ -2557,7 +2557,7 @@
 (define-method scale_simple
   (of-object "GdkPixbuf")
   (c-name "gdk_pixbuf_scale_simple")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixbuf*")
   (parameters
     '("int" "dest_width")
@@ -2628,7 +2628,7 @@
 
 (define-function pixmap_foreign_new
   (c-name "gdk_pixmap_foreign_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixmap*")
   (parameters
     '("GdkNativeWindow" "anid")
@@ -2637,7 +2637,7 @@
 
 (define-function pixmap_foreign_new_for_display
   (c-name "gdk_pixmap_foreign_new_for_display")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixmap*")
   (parameters
     '("GdkDisplay*" "display")
@@ -2670,7 +2670,7 @@
 (define-function gdk_pixmap_new
   (is-constructor-of "GdkPixmap")
   (c-name "gdk_pixmap_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkPixmap*")
   (parameters
     '("GdkDrawable*" "drawable" (null-ok))
@@ -2778,7 +2778,7 @@
 (define-function gdk_rectangle_new
   (is-constructor-of "GdkRectangle")
   (c-name "gdk_rectangle_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkRectangle")
 )
 
@@ -3034,7 +3034,7 @@
 (define-method make_display_name
   (of-object "GdkScreen")
   (c-name "gdk_screen_make_display_name")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "gchar*")
 )
 
@@ -3337,7 +3337,7 @@
 (define-function visual_get_best_with_both
   (is-constructor-of "GdkVisual")
   (c-name "gdk_visual_get_best_with_both")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkVisual*")
   (parameters
     '("gint" "depth")
@@ -3518,7 +3518,7 @@
 
 (define-function window_foreign_new
   (c-name "gdk_window_foreign_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkWindow*")
   (parameters
     '("GdkNativeWindow" "anid")
@@ -3527,7 +3527,7 @@
 
 (define-function window_foreign_new_for_display
   (c-name "gdk_window_foreign_new_for_display")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkWindow*")
   (parameters
     '("GdkDisplay*" "display")
@@ -3816,7 +3816,7 @@
 (define-function new
   (is-constructor-of "GdkWindow")
   (c-name "gdk_window_new")
-  (caller-owns-return "1")
+  (caller-owns-return #t)
   (return-type "GdkWindow*")
   (parameters
     '("GdkWindow*" "parent")
