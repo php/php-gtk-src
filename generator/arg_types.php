@@ -174,11 +174,12 @@ class String_Arg extends Arg_Type {
         if ($owns_return) {
             $info->var_list->add('gchar', '*php_retval');
             $info->var_list->add('gchar', '*cp_ret');
+            $info->var_list->add('gsize', 'cp_len');
             $info->var_list->add('zend_bool', 'free_result');
             $info->post_code[] = 
                    "    if (php_retval) {\n"                        .
-                   "        cp_ret = phpg_from_utf8(php_retval, strlen(php_retval), &free_result TSRMLS_CC);\n" .
-                   "        RETVAL_STRING((char *)cp_ret, 1);\n"    .
+                   "        cp_ret = phpg_from_utf8(php_retval, strlen(php_retval), &cp_len, &free_result TSRMLS_CC);\n" .
+                   "        RETVAL_STRINGL((char *)cp_ret, cp_len, 1);\n"    .
                    "        g_free(php_retval);\n"                  .
                    "        if (free_result)\n"                     .
                    "            g_free(cp_ret);\n"                  .
@@ -190,8 +191,8 @@ class String_Arg extends Arg_Type {
             $info->var_list->add('zend_bool', 'free_result');
             $info->post_code[] = 
                    "    if (php_retval) {\n"                           .
-                   "        cp_ret = phpg_from_utf8(php_retval, strlen(php_retval), &free_result TSRMLS_CC);\n" .
-                   "        RETVAL_STRING((char *)cp_ret, 1);\n"       .
+                   "        cp_ret = phpg_from_utf8(php_retval, strlen(php_retval), &cp_len, &free_result TSRMLS_CC);\n" .
+                   "        RETVAL_STRINGL((char *)cp_ret, cp_len, 1);\n"       .
                    "        if (free_result)\n"                        .
                    "            g_free(cp_ret);\n"                     .
                    "    } else {\n"                                    .

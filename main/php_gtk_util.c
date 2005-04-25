@@ -179,13 +179,30 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int
 					case IS_BOOL:
 					{
 						gchar *utf8 = NULL;
+						gsize utf8_len = 0;
 						zend_bool free_utf8 = 0;
 
 						convert_to_string_ex(arg);
 						if ((int)strlen(Z_STRVAL_PP(arg)) != Z_STRLEN_PP(arg))
 							return "string without null bytes";
-						if (as_zval) goto ret_zval;
-						utf8 = phpg_to_utf8(Z_STRVAL_PP(arg), Z_STRLEN_PP(arg), &free_utf8 TSRMLS_CC);
+
+						if (as_zval) {
+							utf8 = phpg_to_utf8(Z_STRVAL_PP(arg), Z_STRLEN_PP(arg), &utf8_len, &free_utf8 TSRMLS_CC);
+							if (utf8) {
+								if (free_utf8) {
+									SEPARATE_ZVAL(arg);
+									zval_dtor(*arg);
+									ZVAL_STRINGL(*arg, utf8, utf8_len, 1);
+									g_free(utf8);
+								}
+							} else {
+								return "string in supported encoding";
+							}
+
+							goto ret_zval;
+						}
+
+						utf8 = phpg_to_utf8(Z_STRVAL_PP(arg), Z_STRLEN_PP(arg), &utf8_len, &free_utf8 TSRMLS_CC);
 						if (utf8) {
 							*va_arg(*va, char **) = utf8;
 							*va_arg(*va, zend_bool *) = free_utf8;
@@ -381,7 +398,7 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 				break;
 
 			case 'i': case 'h': case 'l': case 'c':
-			case 's': case 'd': case 'b':
+			case 's': case 'd': case 'b': case 'u':
 			case 'a': case 'N': case 'r':
 			case 'O': case 'o': case 'V':
 				max_argc++;

@@ -299,17 +299,18 @@ static inline zend_class_entry* phpg_class_from_gtype(GType gtype)
 
 zend_bool phpg_handle_gerror(GError **error TSRMLS_DC);
 
-static inline gchar* phpg_to_utf8(const gchar *str, int str_len, zend_bool *free_orig TSRMLS_DC)
+static inline gchar* phpg_to_utf8(const gchar *str, zend_uint str_len, gsize *utf8_len, zend_bool *free_orig TSRMLS_DC)
 {
 	gchar *utf8_str = NULL;
 	GError *error = NULL;
 
 	*free_orig = 0;
 	if (!str || str_len == 0 || GTK_G(is_utf8)) {
+		utf8_len = str_len;
 		return (char *)str;
 	}
 
-	utf8_str = g_convert(str, str_len, "UTF-8", GTK_G(codepage), NULL, NULL, &error);
+	utf8_str = g_convert(str, str_len, "UTF-8", GTK_G(codepage), NULL, utf8_len, &error);
 	if (phpg_handle_gerror(&error TSRMLS_CC)) {
 		g_free(utf8_str);
 		return NULL;
@@ -319,17 +320,18 @@ static inline gchar* phpg_to_utf8(const gchar *str, int str_len, zend_bool *free
 	}
 }
 
-static inline gchar* phpg_from_utf8(const gchar *str, int str_len, zend_bool *free_orig TSRMLS_DC)
+static inline gchar* phpg_from_utf8(const gchar *str, zend_uint str_len, gsize *cp_len, zend_bool *free_orig TSRMLS_DC)
 {
 	gchar *cp_str = NULL;
 	GError *error = NULL;
 
 	*free_orig = 0;
 	if (!str || str_len == 0 || GTK_G(is_utf8)) {
+		*cp_len = str_len;
 		return (char *)str;
 	}
 
-	cp_str = g_convert(str, str_len, GTK_G(codepage), "UTF-8", NULL, NULL, &error);
+	cp_str = g_convert(str, str_len, GTK_G(codepage), "UTF-8", NULL, cp_len, &error);
 	if (phpg_handle_gerror(&error TSRMLS_CC)) {
 		g_free(cp_str);
 		return NULL;
