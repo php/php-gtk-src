@@ -262,7 +262,7 @@ class Method_Def extends Definition {
         if ($this->c_name)
             fwrite($fp, "  (c-name \"$this->c_name\")\n");
         if ($this->caller_owns_return)
-            fwrite($fp, "  (caller-owns-return \"$this->caller_owns_return\")\n");
+            fwrite($fp, "  (caller-owns-return #t)\n");
         if ($this->return_type)
             fwrite($fp, "  (return-type \"$this->return_type\")\n");
         if ($this->deprecated)
@@ -416,7 +416,7 @@ class Function_Def extends Definition {
         if ($this->c_name)
             fwrite($fp, "  (c-name \"$this->c_name\")\n");
         if ($this->caller_owns_return)
-            fwrite($fp, "  (caller-owns-return \"$this->caller_owns_return\")\n");
+            fwrite($fp, "  (caller-owns-return #t)\n");
         if ($this->return_type)
             fwrite($fp, "  (return-type \"$this->return_type\")\n");
         if ($this->deprecated)
