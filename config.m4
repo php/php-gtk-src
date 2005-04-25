@@ -26,6 +26,11 @@ the location of php-config for the required version.) ;;
     AC_MSG_ERROR(Could not locate PHP executable)
   fi
 
+  PHP_SAPI=`$PHP --version | sed -n 's/.*(\(...\)).*/\1/p'`
+  if test "$PHP_SAPI" != "cli" ; then
+    AC_MSG_ERROR(PHP CLI version is required[,] $PHP_SAPI found)
+  fi
+
   AC_PROG_AWK
   PHP_SUBST(AWK)
 
