@@ -1,3 +1,11 @@
+2005-04-24  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO
+      TODO2
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides:
+      -** empty log message ***
+
 2005-04-22  Andrei Zmievski  <andrei@gravitonic.com>
 
     * build2/build2.mk:
