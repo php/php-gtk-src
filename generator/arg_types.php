@@ -164,7 +164,7 @@ class String_Arg extends Arg_Type {
         } else
             $info->var_list->add('char', '*' . $name);
         $info->var_list->add('zend_bool', 'free_' . $name);
-        $info->add_parse_list('s', array("&$name", "&free_$name"));
+        $info->add_parse_list('u', array("&$name", "&free_$name"));
         $info->arg_list[] = $name;
         $info->post_code[] = "\tif (free_$name) g_free($name);\n";
     }

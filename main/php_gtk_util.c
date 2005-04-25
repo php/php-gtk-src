@@ -149,6 +149,34 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int
 					case IS_LONG:
 					case IS_DOUBLE:
 					case IS_BOOL:
+						convert_to_string_ex(arg);
+						if ((int)strlen(Z_STRVAL_PP(arg)) != Z_STRLEN_PP(arg))
+							return "string without null bytes";
+						if (as_zval) goto ret_zval;
+						*va_arg(*va, char **) = Z_STRVAL_PP(arg);;
+						if (*spec_walk == '#') {
+							*va_arg(*va, int *) = Z_STRLEN_PP(arg);
+							spec_walk++;
+						}
+						break;
+
+					case IS_ARRAY:
+					case IS_OBJECT:
+					case IS_RESOURCE:
+					default:
+						return "string";
+				}
+			}
+			break;
+
+		case 'u':
+			{
+				switch (Z_TYPE_PP(arg)) {
+					case IS_NULL:
+					case IS_STRING:
+					case IS_LONG:
+					case IS_DOUBLE:
+					case IS_BOOL:
 					{
 						gchar *utf8 = NULL;
 						zend_bool free_utf8 = 0;
@@ -163,10 +191,6 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int
 							*va_arg(*va, zend_bool *) = free_utf8;
 						} else {
 							return "string in supported encoding";
-						}
-						if (*spec_walk == '#') {
-							*va_arg(*va, int *) = Z_STRLEN_PP(arg);
-							spec_walk++;
 						}
 						break;
 					}
