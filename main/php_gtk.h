@@ -185,6 +185,9 @@ struct _php_gtk_ext_entry {
 /*
  * True globals.
  * */
+
+PHP_GTK_API ZEND_EXTERN_MODULE_GLOBALS(gtk);
+
 extern zend_llist php_gtk_ext_registry;
 PHP_GTK_API extern GHashTable *php_gtk_class_hash;
 extern HashTable php_gtk_rsrc_hash;
@@ -293,6 +296,49 @@ static inline zend_class_entry* phpg_class_from_gtype(GType gtype)
 	assert(ce != NULL);
 	return ce;
 }
+
+zend_bool phpg_handle_gerror(GError **error TSRMLS_DC);
+
+static inline gchar* phpg_to_utf8(const gchar *str, int str_len, zend_bool *free_orig TSRMLS_DC)
+{
+	gchar *utf8_str = NULL;
+	GError *error = NULL;
+
+	*free_orig = 0;
+	if (!str || str_len == 0 || GTK_G(is_utf8)) {
+		return (char *)str;
+	}
+
+	utf8_str = g_convert(str, str_len, "UTF-8", GTK_G(codepage), NULL, NULL, &error);
+	if (phpg_handle_gerror(&error TSRMLS_CC)) {
+		g_free(utf8_str);
+		return NULL;
+	} else {
+		*free_orig = 1;
+		return utf8_str;
+	}
+}
+
+static inline gchar* phpg_from_utf8(const gchar *str, int str_len, zend_bool *free_orig TSRMLS_DC)
+{
+	gchar *cp_str = NULL;
+	GError *error = NULL;
+
+	*free_orig = 0;
+	if (!str || str_len == 0 || GTK_G(is_utf8)) {
+		return (char *)str;
+	}
+
+	cp_str = g_convert(str, str_len, GTK_G(codepage), "UTF-8", NULL, NULL, &error);
+	if (phpg_handle_gerror(&error TSRMLS_CC)) {
+		g_free(cp_str);
+		return NULL;
+	} else {
+		*free_orig = 1;
+		return cp_str;
+	}
+}
+
 #define NOT_STATIC_METHOD() \
 	if (!this_ptr) { \
 		php_error(E_WARNING, "%s::%s() is not a static method", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C)); \
@@ -325,7 +371,6 @@ static inline zend_class_entry* phpg_class_from_gtype(GType gtype)
 
 void phpg_register_exceptions();
 gboolean phpg_handler_marshal(gpointer user_data);
-zend_bool phpg_handle_gerror(GError **error TSRMLS_DC);
 PHP_GTK_API zval* phpg_throw_gerror_exception(const char *domain, long code, const char *message TSRMLS_DC);
 
 PHP_GTK_API PHP_FUNCTION(no_constructor);
@@ -396,8 +441,6 @@ PHP_GTK_API void phpg_watch_closure(zval *obj, GClosure *closure TSRMLS_DC);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtype_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gobject_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gboxed_ce);
-
-PHP_GTK_API ZEND_EXTERN_MODULE_GLOBALS(gtk);
 
 #endif /* HAVE_PHP_GTK */
 

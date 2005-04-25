@@ -227,7 +227,7 @@ class Generator {
                     $n++;
                 }
             }
-            $dict['specs'] = preg_replace('!([^|])!', '^$1', $dict['specs']);
+            $dict['specs'] = preg_replace(',([^|!/]),', '^$1', $dict['specs']);
             $dict['parse_list'] = $info->get_parse_list();
             $dict['pre_code'] = '';
             $dict['post_code'] = '';

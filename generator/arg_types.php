@@ -163,61 +163,40 @@ class String_Arg extends Arg_Type {
             $info->var_list->add('char', '*' . $name . ' = ' . $default);
         } else
             $info->var_list->add('char', '*' . $name);
-        $info->add_parse_list('s', '&' . $name);
-
-        if (strtoupper(substr(PHP_OS, 0,3) == "WIN")) {
-            $info->var_list->add('gchar', '*utf8_' . $name . ' = NULL');
-            $info->arg_list[]  = 'utf8_' . $name;
-            $info->post_code[] = "\tif (utf8_$name) g_free(utf8_$name);\n";
-            $info->pre_code[]  = "\tif ($name) utf8_$name = g_convert($name, strlen($name), \"UTF-8\", GTK_G(codepage), NULL, NULL, NULL);\n";
-        } else
-            $info->arg_list[] = $name;
+        $info->var_list->add('zend_bool', 'free_' . $name);
+        $info->add_parse_list('s', array("&$name", "&free_$name"));
+        $info->arg_list[] = $name;
+        $info->post_code[] = "\tif (free_$name) g_free($name);\n";
     }
     
     function write_return($type, $owns_return, $info)
     {
-        if (!$owns_return) {
-            $info->var_list->add('const gchar', '*php_retval');
-            if (strtoupper(substr(PHP_OS, 0,3) == "WIN")) {
-                $info->var_list->add('gchar', '*cp_ret');
-                $info->post_code[] = 
-                       "    if (php_retval) {\n"                           .
-                       "        cp_ret = g_convert(php_retval, strlen(php_retval), GTK_G(codepage), \"UTF-8\", NULL, NULL, NULL);\n" .
-                       "        RETVAL_STRING((char *)cp_ret, 1);\n"       .
-                       "        g_free(cp_ret);\n"                         .
-                       "    } else {\n"                                    .
-                       "        RETVAL_NULL();\n"                          .
-                       "    }";
-            } else {
-                $info->post_code[] = 
-                       "    if (php_retval) {\n"                           .
-                       "        RETVAL_STRING((char *)php_retval, 1);\n"   .
-                       "    } else {\n"                                    .
-                       "        RETVAL_NULL();\n"                          .
-                       "    }";
-            }
-
-        } else {
+        if ($owns_return) {
             $info->var_list->add('gchar', '*php_retval');
-            if (strtoupper(substr(PHP_OS, 0,3) == "WIN")) {
-                $info->var_list->add('gchar', '*cp_ret');
-                $info->post_code[] = 
-                       "    if (php_retval) {\n"                        .
-                       "        cp_ret = g_convert(php_retval, strlen(php_retval), GTK_G(codepage), \"UTF-8\", NULL, NULL, NULL);\n" .
-                       "        RETVAL_STRING((char *)cp_ret, 1);\n"    .
-                       "        g_free(cp_ret);\n"                      .
-                       "        g_free(php_retval);\n"                  .
-                       "    } else\n"                                   .
-                       "        RETVAL_NULL();";
-            }
-            else {
-                $info->post_code[] = 
-                       "    if (php_retval) {\n"                   .
-                       "        RETVAL_STRING(php_retval, 1);\n"   .
-                       "        g_free(php_retval);\n"             .
-                       "    } else\n"                              .
-                       "        RETVAL_NULL();";
-            }
+            $info->var_list->add('gchar', '*cp_ret');
+            $info->var_list->add('zend_bool', 'free_result');
+            $info->post_code[] = 
+                   "    if (php_retval) {\n"                        .
+                   "        cp_ret = phpg_from_utf8(php_retval, strlen(php_retval), &free_result TSRMLS_CC);\n" .
+                   "        RETVAL_STRING((char *)cp_ret, 1);\n"    .
+                   "        g_free(php_retval);\n"                  .
+                   "        if (free_result)\n"                     .
+                   "            g_free(cp_ret);\n"                  .
+                   "    } else\n"                                   .
+                   "        RETVAL_NULL();";
+        } else {
+            $info->var_list->add('const gchar', '*php_retval');
+            $info->var_list->add('gchar', '*cp_ret');
+            $info->var_list->add('zend_bool', 'free_result');
+            $info->post_code[] = 
+                   "    if (php_retval) {\n"                           .
+                   "        cp_ret = phpg_from_utf8(php_retval, strlen(php_retval), &free_result TSRMLS_CC);\n" .
+                   "        RETVAL_STRING((char *)cp_ret, 1);\n"       .
+                   "        if (free_result)\n"                        .
+                   "            g_free(cp_ret);\n"                     .
+                   "    } else {\n"                                    .
+                   "        RETVAL_NULL();\n"                          .
+                   "    }";
         }
     }
 }

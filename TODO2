@@ -26,7 +26,7 @@ Base Functionality
   advantage of function call cache
 * Construction of arbitrary GObjects() via argument lists
 * Integration with pkg-config
-* Support automatic UTF-8 <-> codepage conversion where necessary
++ Support automatic UTF-8 <-> codepage conversion where necessary
 * Provide access to GTK version number.
 
 Classes and Functions

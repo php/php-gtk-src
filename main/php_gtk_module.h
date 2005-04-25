@@ -28,10 +28,8 @@
 
 #if HAVE_PHP_GTK
 
-/* XXX
 extern zend_module_entry gtk_module_entry;
 #define phpext_php_gtk_ptr &gtk_module_entry
-*/
 
 PHP_MINIT_FUNCTION(gtk);
 PHP_MSHUTDOWN_FUNCTION(gtk);
@@ -41,6 +39,7 @@ PHP_MINFO_FUNCTION(gtk);
 
 ZEND_BEGIN_MODULE_GLOBALS(gtk)
    char *codepage;
+   zend_bool is_utf8;
 ZEND_END_MODULE_GLOBALS(gtk)
 
 #ifdef ZTS

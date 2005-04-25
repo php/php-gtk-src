@@ -70,8 +70,36 @@ ZEND_GET_MODULE(gtk)
 
 static void php_gtk_startup_shared_extensions(int module_number);
 
+
+ZEND_API ZEND_INI_MH(OnUpdateCodepage)
+{
+	char **p;
+#ifndef ZTS
+	char *base = (char *) mh_arg2;
+#else
+	char *base;
+
+	base = (char *) ts_resource(*((int *) mh_arg2));
+#endif
+
+	p = (char **) (base+(size_t) mh_arg1);
+
+	if (!new_value) {
+		new_value = "ISO-8859-1";
+	} else {
+		if (!strcasecmp(new_value, "UTF-8")) {
+			GTK_G(is_utf8) = 1;
+		} else {
+			GTK_G(is_utf8) = 0;
+		}
+	}
+
+	*p = new_value;
+	return SUCCESS;
+}
+
 PHP_INI_BEGIN()
-	STD_PHP_INI_ENTRY    ("php-gtk.codepage", "CP1252",	PHP_INI_SYSTEM,	OnUpdateString, codepage,	zend_gtk_globals,	gtk_globals)
+	STD_PHP_INI_ENTRY    ("php-gtk.codepage", "iso-8859-1",	PHP_INI_ALL,	OnUpdateCodepage, codepage,	zend_gtk_globals,	gtk_globals)
 	PHP_INI_ENTRY        ("php-gtk.extensions", NULL, PHP_INI_SYSTEM, NULL)
 PHP_INI_END()
 
