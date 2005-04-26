@@ -340,7 +340,9 @@ class Generator {
                 }
 
                 $dict['ctor_with_props'] = false;
-                if ($object->def_type == 'object' && !$ctor->params) {
+                /* Use simple no-prop constructor only for default constructors
+                   with no parameters. */
+                if ($object->def_type == 'object' && !$ctor->params && $first) {
                     $template = Templates::constructor_without_props;
                     $dict['ctor_with_props'] = true;
                 } else if ($object->def_type == 'object' && $ctor->properties) {

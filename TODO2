@@ -28,6 +28,8 @@ Base Functionality
 * Integration with pkg-config
 + Support automatic UTF-8 <-> codepage conversion where necessary
 * Provide access to GTK version number.
+* Fix crash when doing var_dump() on GtkStyle due to GtkStyleHelper not
+  implementing get_properties and get_class_entry
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
