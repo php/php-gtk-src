@@ -69,13 +69,13 @@ class ButtonBox extends GtkWindow
 	{
 		$frame = new GtkFrame($title);
 		if ($horizontal) {
-			$box = new GtkHBox();
+			$box = new GtkHButtonBox();
 		} else {
-			$box = new GtkVBox();
+			$box = new GtkVButtonBox();
 		}
 		
 		$box->set_border_width(5);
-//		$box->set_layout($layout);
+		$box->set_layout($layout);
 		$box->set_spacing($spacing);
 		
 		$frame->add($box);
