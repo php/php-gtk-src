@@ -1,3 +1,49 @@
+2005-04-25  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * generator/arg_types.php
+      main/php_gtk.h
+      main/php_gtk_util.c:
+      Support utf8 conversion in property-based constructors. Optimize string
+      handling by avoiding strlen()'s.
+
+    * generator/arg_types.php
+      main/php_gtk_util.c:
+      Use 'u' specifier to force strings to be utf-8.
+
+    * TODO2
+      generator/arg_types.php
+      generator/generator.php
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_module.h
+      main/php_gtk_util.c:
+      Implement automatic conversion to/from UTF-8 when passing or receiving
+      strings. The conversion is based on php-gtk.codepage setting, which
+      defaults to ISO-8859-1 if not specified.
+      
+      Note that Gtk+ expects all input string parameters to be in UTF-8, so we
+      do the conversion where we can, to save users trouble. However, if a
+      functions takes an array of strings as a parameter, we cannot convert it
+      automatically. The user should convert each value using iconv().
+
+    * generator/definitions.php:
+      Fix caller-owns-return output.
+
+    * ext/gtk+/gdk.defs
+      ext/gtk+/gtk.defs:
+      Fix caller-owns-return values.
+
+    * config.m4:
+      Check for CLI version.
+
+    * ext/gtk+/config.m4:
+      -** empty log message ***
+
+2005-04-25  Jani Taskinen  <jani.taskinen@sci.fi>
+
+    * ext/gtk+/config.m4:
+      - Fixed error messages to point at right package
+
 2005-04-24  Andrei Zmievski  <andrei@gravitonic.com>
 
     * TODO
