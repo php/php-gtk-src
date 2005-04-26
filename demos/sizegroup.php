@@ -87,7 +87,7 @@ class SizeGroup extends GtkWindow
 		$label = new GtkLabel($label_text);
 		$label->set_use_underline(true);
 		$label->set_alignment(0, 1);
-		$table->attach($label, 0, 1, $row, $row + 1, GTK_EXPAND + GTK_FILL, 0, 0, 0);
+		$table->attach($label, 0, 1, $row, $row + 1, Gtk::EXPAND + Gtk::FILL, 0, 0, 0);
 		
 		$option_menu = $this->create_option_menu($options);
 		$label->set_mnemonic_widget($option_menu);
@@ -99,15 +99,17 @@ class SizeGroup extends GtkWindow
 	
 	function create_option_menu($options)
 	{
-		$option_menu = new GtkComboBox();
-		$model = new GtkListStore(Gtk::TYPE_STRING);
-		$option_menu->set_model($model);
+//		$option_menu = new GtkComboBox();
+//		$model = new GtkListStore(Gtk::TYPE_STRING);
+//		$option_menu->set_model($model);
 		
-//		$option_menu = GtkComboBox::new_text();
+		$option_menu = GtkComboBox::new_text();
 		
 		foreach ($options as $option) {
-			$iter = $model->append();
-			$model->set($iter, 0, $option);
+//			$iter = $model->append();
+//			$model->set($iter, 0, $option);
+
+			$option_menu->append($option);
 		}
 		
 		$option_menu->set_active(0);
