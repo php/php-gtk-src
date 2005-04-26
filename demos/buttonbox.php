@@ -42,10 +42,10 @@ class ButtonBox extends GtkWindow
 		
 		$frame_horiz->add($vbox);
 		
-		$vbox->pack_start($this->create_framedbox(true, "Spread", 40, GTK_BUTTONBOX_SPREAD));
-		$vbox->pack_start($this->create_framedbox(true, "Edge"	, 40, GTK_BUTTONBOX_EDGE));
-		$vbox->pack_start($this->create_framedbox(true, "Start"	, 40, GTK_BUTTONBOX_START));
-		$vbox->pack_start($this->create_framedbox(true, "End"	, 40, GTK_BUTTONBOX_END));
+		$vbox->pack_start($this->create_framedbox(true, "Spread", 40, Gtk::BUTTONBOX_SPREAD));
+		$vbox->pack_start($this->create_framedbox(true, "Edge"	, 40, Gtk::BUTTONBOX_EDGE));
+		$vbox->pack_start($this->create_framedbox(true, "Start"	, 40, Gtk::BUTTONBOX_START));
+		$vbox->pack_start($this->create_framedbox(true, "End"	, 40, Gtk::BUTTONBOX_END));
 		
 		$frame_vert = new GtkFrame("Vertical Button Boxes");
 		$box->pack_start($frame_vert, true, true, 10);
@@ -55,10 +55,10 @@ class ButtonBox extends GtkWindow
 		
 		$frame_vert->add($hbox);
 		
-		$hbox->pack_start($this->create_framedbox(false, "Spread"	, 40, GTK_BUTTONBOX_SPREAD));
-		$hbox->pack_start($this->create_framedbox(false, "Edge"		, 40, GTK_BUTTONBOX_EDGE));
-		$hbox->pack_start($this->create_framedbox(false, "Start"	, 40, GTK_BUTTONBOX_START));
-		$hbox->pack_start($this->create_framedbox(false, "End"		, 40, GTK_BUTTONBOX_END));
+		$hbox->pack_start($this->create_framedbox(false, "Spread"	, 40, Gtk::BUTTONBOX_SPREAD));
+		$hbox->pack_start($this->create_framedbox(false, "Edge"		, 40, Gtk::BUTTONBOX_EDGE));
+		$hbox->pack_start($this->create_framedbox(false, "Start"	, 40, Gtk::BUTTONBOX_START));
+		$hbox->pack_start($this->create_framedbox(false, "End"		, 40, Gtk::BUTTONBOX_END));
 		
 		return $box;
 	}
@@ -80,16 +80,13 @@ class ButtonBox extends GtkWindow
 		
 		$frame->add($box);
 		
-//		$button = GtkButton::new_from_stock('gtk-ok');
-		$button = new GtkButton('gtk-ok');
+		$button = GtkButton::new_from_stock(Gtk::STOCK_OK);
 		$box->add($button);
 
-//		$button = GtkButton::new_from_stock('gtk-cancel');
-		$button = new GtkButton('gtk-cancel');
+		$button = GtkButton::new_from_stock(Gtk::STOCK_CANCEL);
 		$box->add($button);
 		
-//		$button = GtkButton::new_from_stock('gtk-help');
-		$button = new GtkButton('gtk-help');
+		$button = GtkButton::new_from_stock(Gtk::STOCK_HELP);
 		$box->add($button);
 
 		return $frame;

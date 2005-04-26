@@ -132,7 +132,7 @@ class PHPGtk2Demo extends GtkWindow
 		$text_view->set_buffer($this->description_buffer);
 		$text_view->set_editable(false);
 		$text_view->set_cursor_visible(false);
-		$text_view->set_wrap_mode(GTK_WRAP_WORD);
+		$text_view->set_wrap_mode(Gtk::WRAP_WORD);
 		
 		return $scrolled_window;
 	}
