@@ -188,6 +188,7 @@ class String_Arg extends Arg_Type {
         } else {
             $info->var_list->add('const gchar', '*php_retval');
             $info->var_list->add('gchar', '*cp_ret');
+            $info->var_list->add('gsize', 'cp_len');
             $info->var_list->add('zend_bool', 'free_result');
             $info->post_code[] = 
                    "    if (php_retval) {\n"                           .

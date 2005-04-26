@@ -100,6 +100,18 @@ PHP_GTK_API void phpg_gtype_new(zval *zobj, GType type TSRMLS_DC)
 	object->type = type;
 }
 
+PHP_GTK_API GType phpg_gtype_from_class(zend_class_entry *ce)
+{
+	zval **gtype;
+
+    if (!ce || zend_hash_find(&ce->constants_table, "gtype", sizeof("gtype"), (void**)&gtype) == FAILURE) {
+		php_error(E_WARNING, "PHP-GTK internal error: could not get typecode from class");
+		return 0;
+	}
+
+	return Z_LVAL_PP(gtype);
+}
+
 /* TODO add support for boxed types */
 PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 {
@@ -120,8 +132,6 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 		 */
 		case IS_LONG:
 		{
-			GTypeQuery tq;
-
 			if (G_TYPE_IS_FUNDAMENTAL(Z_LVAL_P(value)) ||
 				G_TYPE_IS_CLASSED(Z_LVAL_P(value)) ||
 				G_TYPE_FUNDAMENTAL(Z_LVAL_P(value)) == G_TYPE_BOXED ||

@@ -483,6 +483,7 @@ gboolean phpg_handler_marshal(gpointer user_data)
 }
 /* }}} */
 
+/* {{{ phpg_parse_ctor_props */
 PHP_GTK_API zend_bool phpg_parse_ctor_props(GType gtype, zval **php_args, GParameter *params, guint *n_params, char **prop_names TSRMLS_DC)
 {
     GObjectClass *klass;
@@ -515,6 +516,7 @@ PHP_GTK_API zend_bool phpg_parse_ctor_props(GType gtype, zval **php_args, GParam
 
     return TRUE;
 }
+/* }}} */
 
 #endif
 

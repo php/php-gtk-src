@@ -404,7 +404,7 @@ PHP_METHOD
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton);
     }
 
-    wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), "label", stock,
+    wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_class(EG(scope)), "label", stock,
                                           "use-stock", TRUE, "use-underline", TRUE, NULL);
 
     if (!wrapped_obj) {

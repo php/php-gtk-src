@@ -306,7 +306,7 @@ static inline gchar* phpg_to_utf8(const gchar *str, zend_uint str_len, gsize *ut
 
 	*free_orig = 0;
 	if (!str || str_len == 0 || GTK_G(is_utf8)) {
-		utf8_len = str_len;
+		*utf8_len = str_len;
 		return (char *)str;
 	}
 
@@ -388,6 +388,7 @@ PHP_GTK_API void phpg_register_string_constant(zend_class_entry *ce, char *name,
 void phpg_gtype_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gtype_new(zval *zobj, GType type TSRMLS_DC);
 PHP_GTK_API GType phpg_gtype_from_zval(zval *value);
+PHP_GTK_API GType phpg_gtype_from_class(zend_class_entry *ce);
 
 
 /* GValue */
