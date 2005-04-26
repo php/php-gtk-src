@@ -109,7 +109,7 @@ class SizeGroup extends GtkWindow
 //			$iter = $model->append();
 //			$model->set($iter, 0, $option);
 
-			$option_menu->append($option);
+			$option_menu->append_text($option);
 		}
 		
 		$option_menu->set_active(0);
