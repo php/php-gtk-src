@@ -1,3 +1,17 @@
+2005-04-26  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      generator/generator.php:
+      Fix generation of static constructors without parameters.
+
+    * ext/gtk+/gtk.overrides
+      generator/arg_types.php
+      main/php_gtk.h
+      main/phpg_gtype.c
+      main/phpg_support.c:
+      Fix static property based constructors by using phpg_gtype_from_class()
+      since this_ptr is NULL.
+
 2005-04-25  Andrei Zmievski  <andrei@gravitonic.com>
 
     * generator/arg_types.php
