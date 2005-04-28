@@ -34,12 +34,28 @@ Base Functionality
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
 * GtkListStore
+        append() should accept a list of ordered column values
 * GtkTreeModel
 * GtkTreeStore
 * GtkTreeView
 * GtkCellRenderer
 * Implement write prop handler for GdkColor, test cascaded overloads, i.e.
   $style->base[GTK_STATE_NORMAL]->red = 55555.
+
+* CheckMenuItem
+        should accept a label as first parameter and a boolean as
+        second (use or not underline)
+* GtkImageMenuItem
+        should accept a stock-id as first parameter and the accell
+        group as the second one
+* GtkRadioMenuItem
+        GtkRadioMenuItem cannot be instantiated directly
+* GtkCombo
+        Call to undefined method GtkCombo::set_popdown_strings()
+* GtkMenu
+        Call to undefined method GtkMenu::popup()
+* GtkTextBuffer
+* GtkClipboard
 
 Fix
 ~~~
@@ -69,12 +85,4 @@ Thoughts on reference counting and wrappers
   + done
 ]
 
-General Fixes
-~~~~~~~~~~~~~
-* CheckMenuItem should accept a label as first parameter and a boolean as
-  second (use or not underline)
-* ImageMenuItem should accept a stock-id as first parameter and the accell
-  group as the second one
-* Class GtkRadioMenuItem cannot be instantiated directly
-* Call to undefined method GtkCombo::set_popdown_strings()
-* Call to undefined method GtkMenu::popup()
+
