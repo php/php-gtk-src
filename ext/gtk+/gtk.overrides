@@ -810,7 +810,7 @@ PHP_METHOD
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRadioButton);
     }
 
-    if (php_group && Z_TYPE_P(php_group) != NULL) {
+    if (php_group && Z_TYPE_P(php_group) != IS_NULL) {
         group = GTK_RADIO_BUTTON(PHPG_GOBJECT(php_group));
     }
 
@@ -854,7 +854,7 @@ PHP_METHOD
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRadioToolButton);
     }
 
-    if (php_group && Z_TYPE_P(php_group) != NULL) {
+    if (php_group && Z_TYPE_P(php_group) != IS_NULL) {
         group = GTK_RADIO_TOOL_BUTTON(PHPG_GOBJECT(php_group));
     }
 
