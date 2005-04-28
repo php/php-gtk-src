@@ -69,3 +69,12 @@ Thoughts on reference counting and wrappers
   + done
 ]
 
+General Fixes
+~~~~~~~~~~~~~
+* CheckMenuItem should accept a label as first parameter and a boolean as
+  second (use or not underline)
+* ImageMenuItem should accept a stock-id as first parameter and the accell
+  group as the second one
+* Class GtkRadioMenuItem cannot be instantiated directly
+* Call to undefined method GtkCombo::set_popdown_strings()
+* Call to undefined method GtkMenu::popup()
