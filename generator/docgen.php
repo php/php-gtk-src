@@ -633,7 +633,7 @@ class DocGenerator {
 			fwrite($this->fp,
 				sprintf($cbfuncproto_tpl,
 					$return_type ? $return_type : '<!-- was: ' . $signal_info[4]->name . ' -->XXX',
-					$this->get_signal_paramdef($signal_info[5])
+					$this->get_signal_paramdef($signal_info[5], $classname)
 					));
 
 			fwrite($this->fp, $signal_end_tpl);
@@ -696,14 +696,21 @@ class DocGenerator {
 	*	 parameters which signal_query doesn't support
 	*
 	*	@param array	$signalparams element 5 of the GObject::signal_query return
+	*	@param string	The class name of the class for which the signals are generated
 	*	@return string	The signal parameters as string
 	*/
-	function get_signal_paramdef($signalparams)
+	function get_signal_paramdef($signalparams, $classname = null)
 	{
 		global	$parameter_tpl,
 				$no_parameter_tpl;
 		
 		$params = '';
+		
+		if ($classname != null) {
+				$params .= sprintf($parameter_tpl,
+							$classname,
+							strtolower(substr($classname, 3)));
+		}
 		
 		if (count($signalparams) > 0) {
 			foreach ($signalparams as $param) {
@@ -713,12 +720,10 @@ class DocGenerator {
 							$type ? $type : '<!-- was: ' . $param->name . ' -->XXX',
 							'UNKNOWN');
 			}
-		} else {
-			$params .= sprintf($no_parameter_tpl, 'void');
 		}
 		
 		return $params;
-	}//function get_signal_paramdef($signalparams)
+	}//function get_signal_paramdef($signalparams, $classname = null)
     
     
     
