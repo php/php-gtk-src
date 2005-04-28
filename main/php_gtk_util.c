@@ -939,7 +939,7 @@ static zend_bool php_gtk_build_hash(zval **result_p, char **format, va_list *va,
 			if (!php_gtk_build_single(&single, format, va TSRMLS_CC)) {
 				zval_ptr_dtor(&key);
 				zval_ptr_dtor(&result);
-				return NULL;
+				return 0;
 			}
 
 			if (Z_TYPE_P(key) != IS_STRING && Z_TYPE_P(key) != IS_LONG)
