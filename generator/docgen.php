@@ -86,6 +86,9 @@ class DocGenerator {
      */
     function create_docs($classes)
     {
+    	global	$refentry_start_tpl,
+    			$refentry_end_tpl;
+    			
         // Make each classname lowercase
         foreach ($classes as $key => $val) {
             $classes[$key] = strtolower($val);
@@ -135,7 +138,18 @@ class DocGenerator {
             if ($this->output_dir) {
                 print "Generating ".$this->prefix."-functions.xml...";
                 $this->fp = fopen($this->output_dir.'/'.$this->prefix.'-functions.xml', 'w');
+                
+                fwrite($this->fp,
+                	sprintf($refentry_start_tpl,
+                			strtolower($this->prefix),
+                			ucfirst(strtolower($this->prefix)),
+                			ucfirst(strtolower($this->prefix))
+                			));
+
                 $this->write_functions();
+
+				fwrite($this->fp, $refentry_end_tpl);
+
                 fclose($this->fp);
                 print "\n";
             } else {

@@ -234,5 +234,23 @@ $prop_link = <<<EOD
      <propname class="%s">%s</propname>
 EOD;
 
+$refentry_start_tpl = <<<EOD
+
+<refentry id="%s.functions">
+ <refmeta>
+   <refentrytitle>%s Functions</refentrytitle>
+   <shortdesc>
+     %s functions not belonging to any class.
+   </shortdesc>
+ </refmeta>
+
+EOD;
+
+$refentry_end_tpl = <<<EOD
+
+</refentry>
+
+EOD;
+
 /* vim: set et sts=4: */
 ?>
