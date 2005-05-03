@@ -56,6 +56,7 @@ Classes and Functions
         Call to undefined method GtkMenu::popup()
 * GtkTextBuffer
 * GtkClipboard
+* GtkWindow constructor should accept title text as parameter
 
 Fix
 ~~~
