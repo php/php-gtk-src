@@ -62,6 +62,8 @@ Classes and Functions
 * GtkNotebook can't use switch-page signal as GPointer isn't implemented
 * GtkNotebook->get_nth_page() crashes
 * GtkEntries can't be var_dumped, probably something missing
+* GtkTextBuffer->set_text's 2nd parameter should be optional
+* GtkTreeModelFilter constructor doesn't take a model
 
 Fix
 ~~~
