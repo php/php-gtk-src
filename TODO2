@@ -57,6 +57,11 @@ Classes and Functions
 * GtkTextBuffer
 * GtkClipboard
 * GtkWindow constructor should accept title text as parameter
+* GtkNotebook->append_page should allow just a string as second parameter (title for page) instead of only wanting a gtklabel or so
+* GtkNotebook crashes when connecting callback to move-focus-out signal
+* GtkNotebook can't use switch-page signal as GPointer isn't implemented
+* GtkNotebook->get_nth_page() crashes
+* GtkEntries can't be var_dumped, probably something missing
 
 Fix
 ~~~
