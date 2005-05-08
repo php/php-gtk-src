@@ -26,6 +26,7 @@
 
 #include "gen_gdk.h"
 
+/* {{{ phpg_rectangle_from_zval */
 PHP_GTK_API int phpg_rectangle_from_zval(zval *value, GdkRectangle *rectangle TSRMLS_DC)
 {
 	phpg_return_val_if_fail(rectangle != NULL, FAILURE);
@@ -45,6 +46,7 @@ PHP_GTK_API int phpg_rectangle_from_zval(zval *value, GdkRectangle *rectangle TS
 
 	return FAILURE;
 }
+/* }}} */
 
 /* {{{ Style Array Helper */
 
@@ -245,6 +247,7 @@ PHP_GTK_API void phpg_create_style_helper(zval **zobj, GtkStyle *style, int type
 
 /* }}} */
 
+/* {{{ GdkRectangle marshalling */
 static int phpg_gdk_rectangle_from_zval(const zval *value, GValue *gvalue TSRMLS_DC)
 {
     GdkRectangle rect;
@@ -262,6 +265,62 @@ static int phpg_gdk_rectangle_to_zval(const GValue *gvalue, zval **value TSRMLS_
 {
     GdkRectangle *rect = (GdkRectangle *) g_value_get_boxed(gvalue);
     phpg_gboxed_new(value, GDK_TYPE_RECTANGLE, rect, TRUE, TRUE);
+
+    return SUCCESS;
+}
+/* }}} */
+
+int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items)
+{
+    gint n_cols, i;
+    GtkTreeModel *child;
+    GtkTreeIter child_iter;
+    zval **item;
+
+    assert(items != NULL);
+
+    if (!GTK_IS_LIST_STORE(model) && !GTK_IS_TREE_STORE(model) &&
+        !GTK_IS_TREE_MODEL_SORT(model) && !GTK_IS_TREE_MODEL_FILTER(model)) {
+        php_error(E_WARNING, "Cannot set row: unknown model type");
+        return FAILURE;
+    }
+
+    if (GTK_IS_TREE_MODEL_SORT(model)) {
+        child = gtk_tree_model_sort_get_model(GTK_TREE_MODEL_SORT(model));
+        gtk_tree_model_sort_convert_iter_to_child_iter(GTK_TREE_MODEL_SORT(model), &child_iter, iter);
+        return phpg_model_set_row(child, &child_iter, items);
+    }
+
+    if (GTK_IS_TREE_MODEL_FILTER(model)) {
+        child = gtk_tree_model_filter_get_model(GTK_TREE_MODEL_FILTER(model));
+        gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(model), &child_iter, iter);
+        return phpg_model_set_row(child, &child_iter, items);
+    }
+    
+    n_cols = gtk_tree_model_get_n_columns(model);
+    if (zend_hash_num_elements(Z_ARRVAL_P(items)) != n_cols) {
+        php_error(E_WARNING, "Cannot set row: number of row elements does not match the model");
+        return FAILURE;
+    }
+
+    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(items)), i = 0;
+         zend_hash_get_current_data(Z_ARRVAL_P(items), (void **)&item) == SUCCESS;
+         zend_hash_move_forward(Z_ARRVAL_P(items)), i++) {
+        GValue value = { 0, };
+        g_value_init(&value, gtk_tree_model_get_column_type(model, i));
+        if (phpg_gvalue_from_zval(&value, *item TSRMLS_CC) == FAILURE) {
+            php_error(E_WARNING, "Cannot set row: type of element %d does not match the model", i);
+            return FAILURE;
+        }
+
+        if (GTK_IS_LIST_STORE(model)) {
+            gtk_list_store_set_value(GTK_LIST_STORE(model), iter, i, &value);
+        } else if (GTK_IS_TREE_STORE(model)) {
+            gtk_tree_store_set_value(GTK_TREE_STORE(model), iter, i, &value);
+        }
+
+        g_value_unset(&value);
+    }
 
     return SUCCESS;
 }

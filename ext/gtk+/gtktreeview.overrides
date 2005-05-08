@@ -119,7 +119,8 @@ PHP_METHOD
 
     gtk_list_store_append(GTK_LIST_STORE(PHPG_GOBJECT(this_ptr)), &iter);
 
-    /* TODO optionally set items */
+    if (items && phpg_model_set_row(GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr)), &iter, items) == SUCCESS)
+        return;
 
     phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }

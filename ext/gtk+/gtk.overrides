@@ -40,6 +40,8 @@ ignore
     gtk_init_check
     gtk_menu_item_new_with_label
     gtk_menu_item_new_with_mnemonic
+    gtk_radio_menu_item_new_with_label
+    gtk_radio_menu_item_new_with_mnemonic
     gtk_true
 %% }}}
     
@@ -793,6 +795,96 @@ PHP_METHOD
 
 }
 %% }}}
+
+%% {{{ GtkRadioMenuItem
+%%
+override gtk_radio_menu_item_new
+PHP_METHOD
+{
+    zval *php_group = NULL;
+    char *label = NULL;
+    zend_bool use_underline = 0;
+    GtkRadioMenuItem *group = NULL;
+    GObject *wrapped_obj;
+    GType gtype = phpg_gtype_from_zval(this_ptr);
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Nsb", &php_group, gtkradiomenuitem_ce, &label, &use_underline)) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRadioButton);
+    }
+
+    if (php_group && Z_TYPE_P(php_group) != IS_NULL) {
+        group = GTK_RADIO_MENU_ITEM(PHPG_GOBJECT(php_group));
+    }
+
+    wrapped_obj = (GObject *) g_object_new(gtype, NULL);
+
+    if (label) {
+        GtkWidget *accel_label;
+        accel_label = g_object_new(GTK_TYPE_ACCEL_LABEL, NULL);
+        gtk_misc_set_alignment(GTK_MISC(accel_label), 0.0, 0.5);
+        gtk_container_add(GTK_CONTAINER(wrapped_obj), accel_label);
+        if (use_underline)
+            gtk_label_set_text_with_mnemonic(GTK_LABEL(accel_label), label);
+        else
+            gtk_label_set_text(GTK_LABEL(accel_label), label);
+        gtk_accel_label_set_accel_widget(GTK_ACCEL_LABEL(accel_label), GTK_WIDGET(wrapped_obj));
+        gtk_widget_show(accel_label);
+    }
+    if (group) {
+        gtk_radio_menu_item_set_group(GTK_RADIO_MENU_ITEM(wrapped_obj), gtk_radio_menu_item_get_group(group));
+    }
+
+    if (!wrapped_obj) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRadioButton);
+    }
+    phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+
+}
+
+%%
+override gtk_radio_menu_item_set_group
+PHP_METHOD
+{
+    zval *php_group = NULL;
+    GtkRadioMenuItem *group = NULL;
+    GSList *list;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_group, gtkradiomenuitem_ce)) {
+        return;
+    }
+
+    group = GTK_RADIO_MENU_ITEM(PHPG_GOBJECT(php_group));
+    list = gtk_radio_menu_item_get_group(group);
+    if (list == gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(PHPG_GOBJECT(this_ptr)))) {
+        return;
+    }
+    gtk_radio_menu_item_set_group(GTK_RADIO_MENU_ITEM(PHPG_GOBJECT(this_ptr)), list);
+}
+
+%%
+override gtk_radio_menu_item_get_group
+PHP_METHOD
+{
+    GSList *list, *tmp;
+    zval *item;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    list = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(PHPG_GOBJECT(this_ptr)));
+    array_init(return_value);
+    for (tmp = list; tmp; tmp = tmp->next) {
+        MAKE_STD_ZVAL(item);
+        phpg_gobject_new(&item, G_OBJECT(tmp->data) TSRMLS_CC);
+        add_next_index_zval(return_value, item);
+    }
+}
+/* }}} */
 
 %% {{{ GtkRadioButton
 %%
