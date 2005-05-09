@@ -333,7 +333,7 @@ static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool use
 
     obj = PHPG_GOBJECT(this_ptr);
     if (!g_signal_parse_name(signal, G_OBJECT_TYPE(obj), &signal_id, &detail, TRUE)) {
-        php_error(E_WARNING, "%s(): unknown signal name", get_active_function_name(TSRMLS_C));
+        php_error(E_WARNING, "%s(): unknown signal name '%s'", get_active_function_name(TSRMLS_C), signal);
         return;
     }
 
