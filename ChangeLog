@@ -1,3 +1,12 @@
+2005-05-08  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/gtktreeview.overrides
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c:
+      - Make GtkTreeModel::append() accept an optional array with data values.
+      - Implement GtkRadioMenuItem constructor and set/get_group() methods.
+
 2005-05-04  Christian Weiske  <cweiske@cweiske.de>
 
     * TODO2:
