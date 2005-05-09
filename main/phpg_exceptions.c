@@ -32,23 +32,23 @@ void phpg_register_exceptions()
 	zend_class_entry ce;
 	TSRMLS_FETCH();
 
-	INIT_CLASS_ENTRY(ce, "PhpGtkGenericException", NULL);
+	INIT_CLASS_ENTRY(ce, "PhpGtkException", NULL);
 	phpg_generic_exception = zend_register_internal_class_ex(&ce, zend_exception_get_default(), NULL TSRMLS_CC);
 	phpg_generic_exception->ce_flags |= ZEND_ACC_FINAL;
 	phpg_generic_exception->constructor->common.fn_flags |= ZEND_ACC_PROTECTED;
 
 	INIT_CLASS_ENTRY(ce, "PhpGtkConstructException", NULL);
-	phpg_construct_exception = zend_register_internal_class_ex(&ce, zend_exception_get_default(), NULL TSRMLS_CC);
+	phpg_construct_exception = zend_register_internal_class_ex(&ce, phpg_generic_exception, NULL TSRMLS_CC);
 	phpg_construct_exception->ce_flags |= ZEND_ACC_FINAL;
 	phpg_construct_exception->constructor->common.fn_flags |= ZEND_ACC_PROTECTED;
 
 	INIT_CLASS_ENTRY(ce, "PhpGtkTypeException", NULL);
-	phpg_type_exception = zend_register_internal_class_ex(&ce, zend_exception_get_default(), NULL TSRMLS_CC);
+	phpg_type_exception = zend_register_internal_class_ex(&ce, phpg_generic_exception, NULL TSRMLS_CC);
 	phpg_type_exception->ce_flags |= ZEND_ACC_FINAL;
 	phpg_type_exception->constructor->common.fn_flags |= ZEND_ACC_PROTECTED;
 
 	INIT_CLASS_ENTRY(ce, "PhpGtkGErrorException", NULL);
-	phpg_gerror_exception = zend_register_internal_class_ex(&ce, zend_exception_get_default(), NULL TSRMLS_CC);
+	phpg_gerror_exception = zend_register_internal_class_ex(&ce, phpg_generic_exception, NULL TSRMLS_CC);
 	phpg_gerror_exception->ce_flags |= ZEND_ACC_FINAL;
 	phpg_gerror_exception->constructor->common.fn_flags |= ZEND_ACC_PROTECTED;
 	zend_declare_property_string(phpg_gerror_exception, "domain", sizeof("domain")-1, "", ZEND_ACC_PUBLIC TSRMLS_CC);
