@@ -69,7 +69,7 @@ PHP_METHOD
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iiii", &(rect.x), &(rect.y),
                             &(rect.width), &(rect.height))) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION();
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GdkRectangle);
     }
 
     pobj = zend_object_store_get_object(this_ptr TSRMLS_CC);
