@@ -291,6 +291,8 @@ class DocGenerator {
         fwrite($this->fp, $props_start_tpl);
 
         // Write each property.
+        usort($object->fields, array(&$this, 'compareProperties'));
+
         foreach ($object->fields as $field) {
             $this->write_property($object, $field);
         }
@@ -298,6 +300,16 @@ class DocGenerator {
         // Write the closing of the properties section.
         fwrite($this->fp, $props_end_tpl);
     }//function write_properties($object)
+    
+    
+    
+    /**
+    *   user-defined comparator for sorting properties
+    */
+    function compareProperties($prop1, $prop2)
+    {
+        return strcmp($prop1[1], $prop2[1]);
+    }//function compareProperties($prop1, $prop2)
 
     
     
@@ -365,6 +377,8 @@ class DocGenerator {
         if (count($methods)) {
             fwrite($this->fp, $methods_start_tpl);
         }
+        
+        usort($methods, array(&$this, 'compareMethods'));
 
         // Write each method to the current file.
         foreach ($methods as $method) {
@@ -382,7 +396,19 @@ class DocGenerator {
         if (count($methods)) {
             fwrite($this->fp, $methods_end_tpl);
         }
-    }
+    }//function write_methods($object)
+    
+    
+    
+    /**
+    *   user-defined comparator for method sorting
+    */
+    function compareMethods($method1, $method2)
+    {
+        return strcmp($method1->name, $method2->name);
+    }//function compareMethods($method1, $method2)
+    
+    
 
     /**
      * Writes functions that don't belong to a particular class.
@@ -575,86 +601,88 @@ class DocGenerator {
                            $this->prefix,
                            $method->name));
         }
-		if (empty($merged)) {
-			// Write the method docs to the current file.
-			fwrite($this->fp,
-				   sprintf($funcproto_tpl,
-						   $overriden ? 'XXX' : $return,
-						   $method->name,
-						   $overriden ? sprintf($no_parameter_tpl, 'XXX') : $paramdef));
-			
-			// Close off the method docs.
-			fwrite($this->fp, 
-				   sprintf($method_end_tpl,
-						   NULL,
-						   $this->gen_etter_links($method->name, $methods, $properties)
-						   )
-				   );
-		}
-		$GLOBALS['docgenstats']['functions']++;
-	}//function write_method($method, $overriden, $methods = null, $properties = null)
-	
-	
-	
-	/**
-	*	write the signals for the given class object.
-	*	works only if php-gtk2 module is installed and working
-	*	
-	*	@param $object	The class object which is passes to write_class
-	*/
-	function write_signals($object)
-	{
-		global	$signals_start_tpl,
-				$signal_start_tpl,
-				$cbfuncproto_tpl,
-				$no_parameter_tpl,
-				$signal_end_tpl,
-				$signals_end_tpl;
-				
-		if (isset($GLOBALS['disable_signal_generation']) && $GLOBALS['disable_signal_generation']) {
-			//is the second warning necessary?
-			echo "signals are NOT generated as you don't have php-gtk2 installed\r\n";
-			return;
-		}
-		
-		$classname = $object->c_name;
-		//why can't I do "$classname::gtype"?
-		eval("\$gtype = $classname::gtype;");
-		$signals = GObject::signal_list_names($gtype);
-
-		if (count($signals) == 0) {
-			return;
-		}
-		
-		fwrite($this->fp, $signals_start_tpl);
-		
-		foreach ($signals as $signalname) {
-			$GLOBALS['docgenstats']['signals']++;
-			fwrite($this->fp,
-				sprintf($signal_start_tpl,
-					$this->prefix,
-					strtolower($classname),
-					$signalname,
-					$signalname));
-			
-			$signal_info = GObject::signal_query($signalname, $gtype);
-			
-			$return_type = $this->get_type($signal_info[4]->name);
-			if (!$return_type && $signal_info[4]->name == 'void') {
-				$return_type = $signal_info[4]->name;
-			}
-			
-			fwrite($this->fp,
-				sprintf($cbfuncproto_tpl,
-					$return_type ? $return_type : '<!-- was: ' . $signal_info[4]->name . ' -->XXX',
-					$this->get_signal_paramdef($signal_info[5], $classname)
-					));
-
-			fwrite($this->fp, $signal_end_tpl);
-		}
-		
-		fwrite($this->fp, $signals_end_tpl);
-	}//function write_signals($object)
+        if (empty($merged)) {
+            // Write the method docs to the current file.
+            fwrite($this->fp,
+                    sprintf($funcproto_tpl,
+                            $overriden ? 'XXX' : $return,
+                            $method->name,
+                            $overriden ? sprintf($no_parameter_tpl, 'XXX') : $paramdef));
+            
+            // Close off the method docs.
+            fwrite($this->fp, 
+                    sprintf($method_end_tpl,
+                            NULL,
+                            $this->gen_etter_links($method->name, $methods, $properties)
+                            )
+                    );
+        }
+        $GLOBALS['docgenstats']['functions']++;
+    }//function write_method($method, $overriden, $methods = null, $properties = null)
+    
+    
+    
+    /**
+    *	write the signals for the given class object.
+    *	works only if php-gtk2 module is installed and working
+    *	
+    *	@param $object	The class object which is passes to write_class
+    */
+    function write_signals($object)
+    {
+        global	$signals_start_tpl,
+                $signal_start_tpl,
+                $cbfuncproto_tpl,
+                $no_parameter_tpl,
+                $signal_end_tpl,
+                $signals_end_tpl;
+                
+        if (isset($GLOBALS['disable_signal_generation']) && $GLOBALS['disable_signal_generation']) {
+            //is the second warning necessary?
+            echo "signals are NOT generated as you don't have php-gtk2 installed\r\n";
+            return;
+        }
+        
+        $classname = $object->c_name;
+        //why can't I do "$classname::gtype"?
+        eval("\$gtype = $classname::gtype;");
+        $signals = GObject::signal_list_names($gtype);
+    
+        if (count($signals) == 0) {
+            return;
+        }
+        
+        fwrite($this->fp, $signals_start_tpl);
+        
+        sort($signals);
+        
+        foreach ($signals as $signalname) {
+            $GLOBALS['docgenstats']['signals']++;
+            fwrite($this->fp,
+                sprintf($signal_start_tpl,
+                    $this->prefix,
+                    strtolower($classname),
+                    $signalname,
+                    $signalname));
+            
+            $signal_info = GObject::signal_query($signalname, $gtype);
+            
+            $return_type = $this->get_type($signal_info[4]->name);
+            if (!$return_type && $signal_info[4]->name == 'void') {
+                $return_type = $signal_info[4]->name;
+            }
+            
+            fwrite($this->fp,
+                sprintf($cbfuncproto_tpl,
+                    $return_type ? $return_type : '<!-- was: ' . $signal_info[4]->name . ' -->XXX',
+                    $this->get_signal_paramdef($signal_info[5], $classname)
+                    ));
+    
+            fwrite($this->fp, $signal_end_tpl);
+        }
+        
+        fwrite($this->fp, $signals_end_tpl);
+    }//function write_signals($object)
     
     
 
