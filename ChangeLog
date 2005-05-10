@@ -1,3 +1,11 @@
+2005-05-09  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/phpg_gobject.c:
+      Expose signal name in the error message (patch from Markus Fischer).
+
+    * main/phpg_exceptions.c:
+      Make PhpGtkException the parent exception class for all other ones.
+
 2005-05-08  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides
