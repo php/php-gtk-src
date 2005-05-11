@@ -1,3 +1,16 @@
+2005-05-10  Christian Weiske  <cweiske@cweiske.de>
+
+    * generator/docgen.php:
+      same space stuff
+
+2005-05-10  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.overrides:
+      -** empty log message ***
+
+    * ext/gtk+/gtktreeview.overrides:
+      Commit an adjusted patch from Markus for some GtkTreeStore methods.
+
 2005-05-09  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/phpg_gobject.c:
