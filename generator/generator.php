@@ -243,6 +243,7 @@ class Generator {
 
         $num_written = $num_skipped = 0;
         $method_entries = array();
+        $method_entries_noarginfo = array();
 
         $methods = $this->parser->find_methods($object);
 
@@ -266,6 +267,7 @@ class Generator {
         }
 
         $object->methods = array();
+        $methodarginfos = '';
 
         foreach ($methods as $method) {
             $method_name = $method->c_name;
@@ -274,6 +276,44 @@ class Generator {
             if ($this->overrides->is_ignored($method_name)) continue;
 
             try {
+                $len = 20 - strlen($method->name);
+                if ($len < 0) { $len = 0; }
+                if (count($method->params) == 0) {
+                    $reflection_func = str_repeat(' ', $len) . 'NULL';
+                    $arginfo = null;
+                } else {
+                    $reflection_funcname = 'arginfo_' . strtolower($object->in_module) . '_' . strtolower($object->c_name) . '_'. $method->name;
+                    $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
+                    
+                    $param_count = 0;
+                    $optparam_count = 0;
+                    $argparams = '';
+                    foreach ($method->params as $paraminfo) {
+                        $param_count++;
+                        if ($paraminfo[2] !== null) {
+                            //if this is set, we've got a default value -> optional parameter
+                            $optparam_count++;
+                        }
+                        
+                        $paramtype = str_replace('const-', '', str_replace('*', '', $paraminfo[0]));
+                        if (Generator::is_php_type($paramtype)) {
+                            $argparams .= sprintf(Templates::reflection_arg, $paraminfo[1]);
+                        } else {
+                            $argparams .= sprintf(Templates::reflection_objarg, $paraminfo[1], $paramtype);
+                        }
+                    }
+                    if ($optparam_count > 0) {
+                        //with optional count
+                        $arginfo = sprintf(Templates::reflection_arginfoex_begin, $reflection_funcname, $param_count - $optparam_count);
+                    } else {
+                        //simple one
+                        $arginfo = sprintf(Templates::reflection_arginfo_begin, $reflection_funcname);
+                    }
+                    
+                    $arginfo .= $argparams;
+                    $arginfo .= Templates::reflection_arginfo_end;
+                }
+                
                 if (($overriden = $this->overrides->is_overriden($method_name))) {
                     list($method_name, $method_override, $flags) = $this->overrides->get_override($method_name);
                     if (!isset($method_name))
@@ -281,6 +321,8 @@ class Generator {
                     $method_override = preg_replace('!^.*(PHP_METHOD).*$!m', "static $1($object->in_module$object->name, $method_name)", $method_override);
                     $this->write_override($method_override, $method->c_name);
                     $method_entries[$method_name] = array($object->in_module . $object->name,
+                                                          $method_name, $reflection_func, $flags ?  $flags : 'ZEND_ACC_PUBLIC');
+                    $method_entries_noarginfo[$method_name] = array($object->in_module . $object->name,
                                                           $method_name, 'NULL', $flags ?  $flags : 'ZEND_ACC_PUBLIC');
                 } else {
                     if ($method->static) {
@@ -293,12 +335,21 @@ class Generator {
                     }
                     $this->fp->write($code);
                     $method_entries[$method->name] = array($object->in_module . $object->name,
+                                                           $method->name, $reflection_func, $flags);
+                    $method_entries_noarginfo[$method->name] = array($object->in_module . $object->name,
                                                            $method->name, 'NULL', $flags);
                 }
+                
                 $this->divert("gen", "%s  %-11s %s::%s\n", $overriden ? "%%":"  ", "method", $object->c_name, $method->name);
                 $num_written++;
                 $this->cover["methods"]->written();
-                $object->methods[$method->name] = 1;
+                
+                if ($arginfo === null) {
+                    $object->methods[$method->name] = 1;
+                } else {
+                    $methodarginfos .= $arginfo;
+                    $object->methods[$method->name] = 2;
+                }
             } catch (Exception $e) {
                 $this->divert("notgen", "  %-11s %s::%s: %s\n", "method", $object->c_name, $method->name, $e->getMessage());
                 $num_skipped++;
@@ -308,7 +359,7 @@ class Generator {
 
         $this->log_print("(%d written, %d skipped)\n", $num_written, $num_skipped);
 
-        return $method_entries;
+        return array($method_entries, $method_entries_noarginfo, $methodarginfos);
     }
 
     function write_constructor($object)
@@ -597,7 +648,7 @@ class Generator {
         return array($create_func, $extra_reg_info);
     }
 
-    function make_method_defs($class, $method_entries)
+    function make_method_defs($class, $method_entries, $arginfo = true)
     {
         $method_defs = array();
 
@@ -610,10 +661,16 @@ class Generator {
                     $interface = $this->parser->interfaces[$interface_name];
                     $iface_methods = array_diff_key($interface->methods, $method_entries);
                     $method_defs[] = "\n\t/***   $interface_name interface implementations   ***/\n\n";
+                    
                     foreach ($iface_methods as $iface_method=>$dummy) {
+                        if (!$arginfo || $dummy == 1) {
+                            $reflection_func = 'NULL';
+                        } else {
+                            $reflection_func = 'arginfo_' . strtolower($interface->in_module) . '_' . strtolower($interface->c_name) . '_'. $iface_method;
+                        }
                         $method_defs[] = sprintf(Templates::alias_entry,
                                                  $interface_name, $iface_method,
-                                                 $iface_method, 'NULL', 'ZEND_ACC_PUBLIC');
+                                                 $iface_method, $reflection_func, 'ZEND_ACC_PUBLIC');
                     }
                 }
             }
@@ -649,18 +706,28 @@ class Generator {
             list($create_func, $extra_reg_info) = $this->write_object_handlers($class);
         }
 
-        $method_entries = $this->write_methods($class);
+        list($method_entries, $method_entries_noarginfo, $arginfo) = $this->write_methods($class);
         ksort($method_entries);
-        $method_defs = $this->make_method_defs($class, $method_entries);
+        ksort($method_entries_noarginfo);
+        $method_defs           = $this->make_method_defs($class, $method_entries);
+        $method_defs_noarginfo = $this->make_method_defs($class, $method_entries_noarginfo, false);
 
         if ($ctor_defs) {
-            $method_defs = array_merge($ctor_defs, $method_defs);
+            $method_defs           = array_merge($ctor_defs, $method_defs);
+            $method_defs_noarginfo = array_merge($ctor_defs, $method_defs_noarginfo);
         }
 
         if ($method_defs) {
-            $this->fp->write(sprintf(Templates::functions_decl, strtolower($class->c_name)));
-            $this->fp->write(join('', $method_defs));
-            $this->fp->write(Templates::functions_decl_end);
+            $this->fp->write(Templates::reflection_if);
+                $this->fp->write($arginfo);
+                $this->fp->write(sprintf(Templates::functions_decl, strtolower($class->c_name)));
+                $this->fp->write(join('', $method_defs));
+                $this->fp->write(Templates::functions_decl_end);
+            $this->fp->write(Templates::reflection_else);
+                $this->fp->write(sprintf(Templates::functions_decl, strtolower($class->c_name)));
+                $this->fp->write(join('', $method_defs_noarginfo));
+                $this->fp->write(Templates::functions_decl_end);
+            $this->fp->write(Templates::reflection_endif);
         }
 
         if ($class->def_type == 'object' && $class->implements) {
@@ -863,6 +930,205 @@ class Generator {
 
         $this->write_coverage_info();
     }
+    
+    
+    /**
+     * Checks if the given type is a simple php type
+     *
+     * All unsupported classes have to be here as php5 functions weird if
+     *  reflection is used with this ones...
+     * Use generator/reflection_class_checker.php to missing classes, and
+     *  add them here
+     *
+     * @access public
+     * @param  string $in_type The C type.
+     * @return boolean true if its a simple type
+     */
+    function is_php_type($in_type)
+    {
+        // Key = C Type, Val = PHP type
+        static $type_map = array('none'           => 'void',
+
+                                 'char*'          => 'string',
+                                 'gchar*'         => 'string',
+                                 'const-char*'    => 'string',
+                                 'const-gchar*'   => 'string',
+                                 'string'         => 'string',
+                                 'static_string'  => 'string',
+                                 'unsigned-char*' => 'string',
+                                 'guchar*'        => 'string',
+                                 
+                                 'char'           => 'char',
+                                 'gchar'          => 'char',
+                                 'guchar'         => 'char',
+                                 
+                                 'int'            => 'int',
+                                 'gint'           => 'int',
+                                 'guint'          => 'int',
+                                 'short'          => 'int',
+                                 'gshort'         => 'int',
+                                 'gushort'        => 'int',
+                                 'long'           => 'int',
+                                 'glong'          => 'int',
+                                 'gulong'         => 'int',
+                                 
+                                 'guint8'         => 'int',
+                                 'gint8'          => 'int',
+                                 'guint16'        => 'int',
+                                 'gint16'         => 'int',
+                                 'guint32'        => 'int',
+                                 'gint32'         => 'int',
+                                 
+                                 //all enumeration classes here
+                                 //gtk enums
+                                 'GtkAccelFlags'        => 'int',
+                                 'GtkAnchorType'        => 'int',
+                                 'GtkArrowType'         => 'int',
+                                 'GtkAttachOptions'     => 'int',
+                                 'GtkButtonBoxStyle'    => 'int',
+                                 'GtkCalendarDisplayOptions' => 'int',
+                                 'GtkCellRendererState' => 'int',
+                                 'GtkCornerType'        => 'int',
+                                 'GtkCTreeExpanderStyle'=> 'int',
+                                 'GtkCTreeLineStyle'    => 'int',
+                                 'GtkCurveType'         => 'int',
+                                 'GtkDeleteType'        => 'int',
+                                 'GtkDestroyNotify'     => 'int',
+                                 'GtkDirectionType'     => 'int',
+                                 'GtkExpanderStyle'     => 'int',
+                                 'GtkFileChooserAction' => 'int',
+                                 'GtkIconLookupFlags'   => 'int',
+                                 'GtkIconSize'          => 'int',
+                                 'GtkIMPreeditStyle'    => 'int',
+                                 'GtkIMStatusStyle'     => 'int',
+                                 'GtkJustification'     => 'int',
+                                 'GtkMatchType'         => 'int',
+                                 'GtkMetricType'        => 'int',
+                                 'GtkMovementStep'      => 'int',
+                                 'GtkOrientation'       => 'int',
+                                 'GtkPackType'          => 'int',
+                                 'GtkPathPriorityType'  => 'int',
+                                 'GtkPathType'          => 'int',
+                                 'GtkPolicyType'        => 'int',
+                                 'GtkPositionType'      => 'int',
+                                 'GtkPreviewType'       => 'int',
+                                 'GtkProgressBarOrientation' => 'int',
+                                 'GtkProgressBarStyle'  => 'int',
+                                 'GtkReliefStyle'       => 'int',
+                                 'GtkResizeMode'        => 'int',
+                                 'GtkScrollStep'        => 'int',
+                                 'GtkScrollType'        => 'int',
+                                 'GtkSelectionMode'     => 'int',
+                                 'GtkShadowType'        => 'int',
+                                 'GtkSideType'          => 'int',
+                                 'GtkSizeGroupMode'     => 'int',
+                                 'GtkSpinButtonUpdatePolicy' => 'int',
+                                 'GtkSpinType'          => 'int',
+                                 'GtkStateType'         => 'int',
+                                 'GtkSubmenuDirection'  => 'int',
+                                 'GtkSubmenuPlacement'  => 'int',
+                                 'GtkTextDirection'     => 'int',
+                                 'GtkTextSearchFlags'   => 'int',
+                                 'GtkTextWindowType'    => 'int',
+                                 'GtkToolbarStyle'      => 'int',
+                                 'GtkTreeCellDataFunc'  => 'int',
+                                 'GtkTreeModel'         => 'int',
+                                 'GtkTreeViewColumnSizing' => 'int',
+                                 'GtkType'              => 'int',
+                                 'GtkUIManagerItemType' => 'int',
+                                 'GtkUpdateType'        => 'int',
+                                 'GtkVisibility'        => 'int',
+                                 'GtkWindowPosition'    => 'int',
+                                 'GtkWindowType'        => 'int',
+                                 'GtkWrapMode'          => 'int',
+                                 'GtkSortType'          => 'int',
+                                 
+                                 //gdk enums
+                                 'GdkAxisUse'           => 'int',
+                                 'GdkBitmap'            => 'int',
+                                 'GdkByteOrder'         => 'int',
+                                 'GdkCapStyle'          => 'int',
+                                 'GdkCursorType'        => 'int',
+                                 'GdkCrossingMode'      => 'int',
+                                 'GdkDragAction'        => 'int',
+                                 'GdkDragProtocol'      => 'int',
+                                 'GdkEventType'         => 'int',
+                                 'GdkEventMask'         => 'int',
+                                 'GdkExtensionMode'     => 'int',
+                                 'GdkGravity'           => 'int',
+                                 'GdkFill'              => 'int',
+                                 'GdkFillRule'          => 'int',
+                                 'GdkFilterReturn'      => 'int',
+                                 'GdkFontType'          => 'int',
+                                 'GdkFunction'          => 'int',
+                                 'GdkGCValuesMask'      => 'int',
+                                 'GdkGrabStatus'        => 'int',
+                                 'GdkImageType'         => 'int',
+                                 'GdkInputCondition'    => 'int',
+                                 'GdkInputSource'       => 'int',
+                                 'GdkInputMode'         => 'int',
+                                 'GdkInterpType'        => 'int',
+                                 'GdkJoinStyle'         => 'int',
+                                 'GdkLineStyle'         => 'int',
+                                 'GdkModifierType'      => 'int',
+                                 'GdkNotifyType'        => 'int',
+                                 'GdkOverlapType'       => 'int',
+                                 'GdkOwnerChange'       => 'int',
+                                 'GdkPixbufAlphaMode'   => 'int',
+                                 'GdkPropertyState'     => 'int',
+                                 'GdkPropMode'          => 'int',
+                                 'GdkRgbDither'         => 'int',
+                                 'GdkScrollDirection'   => 'int',
+                                 'GdkSettingAction'     => 'int',
+                                 'GdkSubwindowMode'     => 'int',
+                                 'GdkVisibilityState'   => 'int',
+                                 'GdkVisualType'        => 'int',
+                                 'GdkWindowAttributesType'  => 'int',
+                                 'GdkWindowClass'       => 'int',
+                                 'GdkWindowEdge'        => 'int',
+                                 'GdkWindowHints'       => 'int',
+                                 'GdkWindowState'       => 'int',
+                                 'GdkWindowTypeHint'    => 'int',
+                                 'GdkWMDecoration'      => 'int',
+                                 'GdkWMFunction'        => 'int',
+                                 
+                                 //Pango enums
+                                 'PangoAlignment'       => 'int',
+                                 'PangoDirection'       => 'int',
+                                 'PangoEllipsizeMode'   => 'int',
+                                 'PangoFontMask'        => 'int',
+                                 'PangoRectangle'       => 'int',
+                                 'PangoStretch'         => 'int',
+                                 'PangoStyle'           => 'int',
+                                 'PangoTabAlign'        => 'int',
+                                 'PangoVariant'         => 'int',
+                                 'PangoWeight'          => 'int',
+                                 'PangoWrapMode'        => 'int',
+                                 
+                                 //Atk enums
+                                 'AtkRole'              => 'int',
+                                 'AtkRelationType'      => 'int',
+                                 'AtkStateType'         => 'int',
+                                                                  
+                                 //some more
+                                 'GDestroyNotify'       => 'int',
+                                 'GError'               => 'int',
+                                 'GSList'               => 'int',
+                                 'GValue'               => 'int',
+                                 
+                                 'gpointer'             => 'int',
+                                 
+                                 'gboolean'       => 'bool',
+                                 
+                                 'double'         => 'double',
+                                 'gdouble'        => 'double',
+                                 'float'          => 'double',
+                                 'gfloat'         => 'double',
+                                 
+                                 'GdkDrawable*'   => 'GdkWindow');
+        
+        return isset($type_map[$in_type]);
+    }//function is_php_type($in_type)
 }
 
 /* simple fatal_error function 
