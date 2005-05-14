@@ -1,3 +1,27 @@
+2005-05-13  Christian Weiske  <cweiske@cweiske.de>
+
+    * generator/generator.php
+      generator/reflection.php
+      generator/reflection_class_checker.php:
+      The generator writes reflection information for normal
+      functions now. If you want to compile them, add
+      to config.h (Andrei, could you add a configure switch?)
+      
+      The time difference between a build with and without reflection
+      is minimal (0.4s), so I vote for enabling it by default.
+      
+      The reflection.php is a small helper script if you want to write
+      reflection code by hand (e.g. for phpg_object.c or so), and
+      reflection_class_checker.php checks the generated .c files
+      for unsupported classes which might cause php5 to behave
+      weird when reflection is used.
+
+    * main/phpg_gobject.c:
+      Created reflection info for GObject.
+      Has to be enabled with
+      
+      Andrei, where could you extend the config file for this?
+
 2005-05-10  Christian Weiske  <cweiske@cweiske.de>
 
     * generator/docgen.php:
