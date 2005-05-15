@@ -197,7 +197,7 @@ const alias_entry = "\tPHP_MALIAS(%s, %s, %s, %s, %s)\n";
 const functions_decl = "
 static function_entry %s_methods[] = {
 ";
-const functions_decl_end = "\t{ NULL, NULL, NULL }\n};\n\n";
+const functions_decl_end = "\t{ NULL, NULL, NULL }\n};\n";
 
 const custom_handlers_init = "\t%(class)_object_handlers = php_gtk_handlers;\n";
 const custom_handler_set = "\t%(class)_object_handlers.%(handler) = phpg_%(class)_%(handler)_handler;\n";
@@ -279,6 +279,27 @@ void phpg_%s_register_constants(const char *strip_prefix)
 }\n";
 
 const register_enum = "\tphpg_register_%s(%s, strip_prefix, %s);\n";
+
+const reflection_arginfo_begin = "
+static
+ZEND_BEGIN_ARG_INFO(%s, 0)
+";
+const reflection_arginfoex_begin = "
+static
+ZEND_BEGIN_ARG_INFO_EX(%s, 0, 0, %d)
+";
+const reflection_arginfo_end = "ZEND_END_ARG_INFO();
+";
+const reflection_arg = "    ZEND_ARG_INFO(0, %s)
+";
+const reflection_objarg = "    ZEND_ARG_OBJ_INFO(0, %s, %s, 0)
+";
+
+const reflection_if = "
+#if ENABLE_REFLECTION";
+const reflection_else = "#else /* ENABLE_REFLECTION */";
+const reflection_endif = "#endif /* ENABLE_REFLECTION */
+";
 
 }
 
