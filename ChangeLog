@@ -1,3 +1,8 @@
+2005-05-15  Christian Weiske  <cweiske@cweiske.de>
+
+    * generator/templates.php:
+      I forgot to commit the templates... thanks Markus
+
 2005-05-13  Christian Weiske  <cweiske@cweiske.de>
 
     * generator/generator.php
