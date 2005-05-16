@@ -34,7 +34,6 @@ Base Functionality
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
 * GtkListStore
-        append() should accept a list of ordered column values
 * GtkTreeModel
 * GtkTreeStore
 * GtkTreeView
@@ -48,8 +47,6 @@ Classes and Functions
 * GtkImageMenuItem
         should accept a stock-id as first parameter and the accell
         group as the second one
-* GtkRadioMenuItem
-        GtkRadioMenuItem cannot be instantiated directly
 * GtkCombo
         Call to undefined method GtkCombo::set_popdown_strings()
 * GtkMenu

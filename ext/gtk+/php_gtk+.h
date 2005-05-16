@@ -33,6 +33,8 @@ typedef enum { STYLE_COLOR_ARRAY, STYLE_GC_ARRAY, STYLE_PIXMAP_ARRAY} style_help
 
 PHP_GTK_API int phpg_rectangle_from_zval(zval *value, GdkRectangle *rectangle TSRMLS_DC);
 PHP_GTK_API void phpg_create_style_helper(zval **zobj, GtkStyle *style, int type, gpointer array TSRMLS_DC);
+PHP_GTK_API int phpg_tree_path_from_zval(const zval *value, GtkTreePath **path TSRMLS_DC);
+PHP_GTK_API int phpg_tree_path_to_zval(GtkTreePath *path, zval **value TSRMLS_DC);
 
 int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items);
 

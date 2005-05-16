@@ -491,7 +491,7 @@ PHP_GTK_API zend_bool phpg_parse_ctor_props(GType gtype, zval **php_args, GParam
     int i, n;
 
     klass = g_type_class_ref(gtype);
-    g_return_val_if_fail(klass != NULL, FALSE);
+    phpg_return_val_if_fail_quiet(klass != NULL, FALSE);
 
     for (n = i = 0; php_args[i]; i++) {
         spec = g_object_class_find_property(klass, prop_names[i]);

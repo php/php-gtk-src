@@ -9,14 +9,21 @@ static void phpg_store_set_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool is_tree)
 
 %% {{{ ignores
 %%
+ignore-glob
+    gtk_tree_path_*
+%%
 ignore
-    gtk_tree_view_column_set_attributes
     gtk_list_store_newv
     gtk_list_store_set_valist
+    gtk_tree_row_reference_new_proxy
+    gtk_tree_row_reference_inserted
+    gtk_tree_row_reference_deleted
+    gtk_tree_row_reference_reordered
     gtk_tree_store_newv
     gtk_tree_store_set_valist
     gtk_tree_view_new
     gtk_tree_view_column_new
+    gtk_tree_view_column_set_attributes
 %% }}}
 
 %% {{{ GtkCellLayout

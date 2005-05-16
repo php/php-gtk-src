@@ -815,6 +815,64 @@ class GError_Arg extends Arg_Type {
 }
 /* }}} */
 
+/* {{{ GtkTreePath_Arg */
+class GtkTreePath_Arg extends Arg_Type {
+    const normal_tpl = "
+    if (phpg_tree_path_from_zval(php_%(name), &%(name) TSRMLS_CC) == FAILURE) {
+        php_error(E_WARNING, \"%s::%s() expects %(name) to be a valid tree path specification\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        %(on_error);
+    }\n";
+    const null_tpl = "
+    if (Z_TYPE_P(php_%(name)) != IS_NULL) {
+        if (phpg_tree_path_from_zval(php_%(name), &%(name) TSRMLS_CC) == FAILURE) {
+            php_error(E_WARNING, \"%s::%s() expects %(name) to be a valid tree path specification\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+            %(on_error);
+        }
+    }\n";
+    const free_path_tpl = "
+    if (%(name))
+        gtk_tree_path_free(%(name));\n";
+
+    function write_param($type, $name, $default, $null_ok, $info)
+    {
+        if ($null_ok) {
+            $info->var_list->add('GtkTreePath', '*' . $name . ' = NULL');
+            $info->var_list->add('zval', '*php_' . $name);
+            $info->arg_list[] = $name;
+            $info->add_parse_list('V', '&php_' . $name);
+            $info->pre_code[] = aprintf(self::null_tpl, array('name' => $name,
+                                                              'on_error' => $info->error_action));
+            $info->post_code[] = aprintf(self::free_path_tpl, array('name' => $name));
+        } else {
+            $info->var_list->add('GtkTreePath', '*' . $name);
+            $info->var_list->add('zval', '*php_' . $name);
+            $info->arg_list[] = $name;
+            $info->add_parse_list('V', '&php_' . $name);
+            $info->pre_code[] = aprintf(self::normal_tpl, array('name' => $name,
+                                                                'on_error' => $info->error_action));
+            $info->post_code[] = aprintf(self::free_path_tpl, array('name' => $name));
+        }
+    }
+
+    function write_return($type, $owns_return, $info)
+    {
+        $info->var_list->add('GtkTreePath', '*php_retval');
+        if ($owns_return) {
+            $info->post_code[] = "
+    if (php_retval) {
+        phpg_tree_path_to_zval(php_retval, &return_value TSRMLS_CC);
+        gtk_tree_path_free(php_retval);
+    }\n";
+        } else {
+            $info->post_code[] = "
+    if (php_retval) {
+        phpg_tree_path_to_zval(php_retval, &return_value TSRMLS_CC);
+    }\n";
+        }
+    }
+}
+/* }}} */
+
 /* {{{ Arg_Matcher */
 class Arg_Matcher {
     var $arg_types = array();
@@ -966,6 +1024,7 @@ $matcher->register('GdkRectangle', new GdkRectangle_Arg);
 $matcher->register_object('GObject', 'G_TYPE_OBJECT');
 $matcher->register('GType', new GType_Arg);
 $matcher->register('GError**', new GError_Arg);
+$matcher->register('GtkTreePath*', new GtkTreePath_Arg);
 
 /* }}} */
 

@@ -48,6 +48,112 @@ PHP_GTK_API int phpg_rectangle_from_zval(zval *value, GdkRectangle *rectangle TS
 }
 /* }}} */
 
+/* {{{ GdkRectangle marshalling */
+static int phpg_gdk_rectangle_from_zval(const zval *value, GValue *gvalue TSRMLS_DC)
+{
+    GdkRectangle rect;
+
+    if (phpg_rectangle_from_zval((zval *)value, &rect TSRMLS_CC) == FAILURE) {
+        return FAILURE;
+    }
+
+    g_value_set_boxed(gvalue, &rect);
+    
+    return SUCCESS;
+}
+
+static int phpg_gdk_rectangle_to_zval(const GValue *gvalue, zval **value TSRMLS_DC)
+{
+    GdkRectangle *rect = (GdkRectangle *) g_value_get_boxed(gvalue);
+    phpg_gboxed_new(value, GDK_TYPE_RECTANGLE, rect, TRUE, TRUE TSRMLS_CC);
+
+    return SUCCESS;
+}
+/* }}} */
+
+/* {{{ phpg_tree_path_from_zval */
+PHP_GTK_API int phpg_tree_path_from_zval(const zval *value, GtkTreePath **path TSRMLS_DC)
+{
+    switch (Z_TYPE_P(value)) {
+        case IS_STRING:
+            *path = gtk_tree_path_new_from_string(Z_STRVAL_P(value));
+            phpg_return_val_if_fail_quiet(*path != NULL, FAILURE);
+            break;
+
+        case IS_LONG:
+            *path = gtk_tree_path_new();
+            gtk_tree_path_append_index(*path, Z_LVAL_P(value));
+            break;
+
+        case IS_ARRAY:
+        {
+            zval **index;
+
+            if (zend_hash_num_elements(Z_ARRVAL_P(value)) < 1) {
+                return FAILURE;
+            }
+
+            *path = gtk_tree_path_new();
+            for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(value));
+                 zend_hash_get_current_data(Z_ARRVAL_P(value), (void**)&index) == SUCCESS;
+                 zend_hash_move_forward(Z_ARRVAL_P(value))) {
+                if (Z_TYPE_PP(index) != IS_LONG) {
+                    php_error(E_WARNING, "Tree path elements have to be integers");
+                    gtk_tree_path_free(*path);
+                    return FAILURE;
+                }
+                gtk_tree_path_append_index(*path, Z_LVAL_PP(index));
+            }
+            break;
+        }
+
+        default:
+            return FAILURE;
+    }
+
+    return SUCCESS;
+}
+/* }}} */
+
+/* {{{ phpg_tree_path_to_zval */
+PHP_GTK_API int phpg_tree_path_to_zval(GtkTreePath *path, zval **value TSRMLS_DC)
+{
+    int depth, i, *indices;
+
+    phpg_return_val_if_fail_quiet(path != NULL, FAILURE);
+    depth = gtk_tree_path_get_depth(path);
+    indices = gtk_tree_path_get_indices(path);
+    MAKE_ZVAL_IF_NULL(*value);
+    array_init(*value);
+    for (i = 0; i < depth; i++) {
+        add_next_index_long(*value, indices[i]);
+    }
+
+    return SUCCESS;
+}
+/* }}} */
+
+/* {{{ GtkTreePath marshalling */
+static int phpg_gtk_tree_path_from_zval(const zval *value, GValue *gvalue TSRMLS_DC)
+{
+    GtkTreePath *path = NULL;
+
+    if (phpg_tree_path_from_zval(value, &path) == FAILURE) {
+        return FAILURE;
+    }
+
+    g_value_set_boxed(gvalue, path);
+    gtk_tree_path_free(path);
+    return SUCCESS;
+}
+
+static int phpg_gtk_tree_path_to_zval(const GValue *gvalue, zval **value TSRMLS_DC)
+{
+    GtkTreePath *path = (GtkTreePath *)g_value_get_boxed(gvalue);;
+    return phpg_tree_path_to_zval(path, value TSRMLS_CC);;
+}
+/* }}} */
+
 /* {{{ Style Array Helper */
 
 typedef struct {
@@ -247,29 +353,7 @@ PHP_GTK_API void phpg_create_style_helper(zval **zobj, GtkStyle *style, int type
 
 /* }}} */
 
-/* {{{ GdkRectangle marshalling */
-static int phpg_gdk_rectangle_from_zval(const zval *value, GValue *gvalue TSRMLS_DC)
-{
-    GdkRectangle rect;
-
-    if (phpg_rectangle_from_zval((zval *)value, &rect) == FAILURE) {
-        return FAILURE;
-    }
-
-    g_value_set_boxed(gvalue, &rect);
-    
-    return SUCCESS;
-}
-
-static int phpg_gdk_rectangle_to_zval(const GValue *gvalue, zval **value TSRMLS_DC)
-{
-    GdkRectangle *rect = (GdkRectangle *) g_value_get_boxed(gvalue);
-    phpg_gboxed_new(value, GDK_TYPE_RECTANGLE, rect, TRUE, TRUE);
-
-    return SUCCESS;
-}
-/* }}} */
-
+/* {{{ GtkTreeModel */
 int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items)
 {
     gint n_cols, i;
@@ -324,12 +408,17 @@ int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items)
 
     return SUCCESS;
 }
+/* }}} */
 
 void php_gtk_plus_register_types()
 {
     phpg_gboxed_register_custom(GDK_TYPE_RECTANGLE,
                                 phpg_gdk_rectangle_from_zval,
                                 phpg_gdk_rectangle_to_zval);
+
+    phpg_gboxed_register_custom(GTK_TYPE_TREE_PATH,
+                                phpg_gtk_tree_path_from_zval,
+                                phpg_gtk_tree_path_to_zval);
 }
 
 /* {{{ old code */
