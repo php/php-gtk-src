@@ -1,3 +1,13 @@
+2005-05-16  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      ext/gtk+/gtktreeview.overrides
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      generator/arg_types.php
+      main/phpg_support.c:
+      Implement support for GtkTreePath as arg type.
+
 2005-05-15  Christian Weiske  <cweiske@cweiske.de>
 
     * generator/templates.php:
