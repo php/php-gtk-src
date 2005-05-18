@@ -1,3 +1,10 @@
+2005-05-17  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtktreeview.overrides:
+      - Fix unboxing of parent iter in GtkTreeStore::append().
+      - Return iter unless setting the row fails.
+      Patch by Markus Fischer.
+
 2005-05-16  Andrei Zmievski  <andrei@gravitonic.com>
 
     * TODO2
