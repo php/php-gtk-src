@@ -718,16 +718,16 @@ class Generator {
         }
 
         if ($method_defs) {
-            $this->fp->write(Templates::reflection_if);
+//            $this->fp->write(Templates::reflection_if);
                 $this->fp->write($arginfo);
                 $this->fp->write(sprintf(Templates::functions_decl, strtolower($class->c_name)));
                 $this->fp->write(join('', $method_defs));
                 $this->fp->write(Templates::functions_decl_end);
-            $this->fp->write(Templates::reflection_else);
-                $this->fp->write(sprintf(Templates::functions_decl, strtolower($class->c_name)));
-                $this->fp->write(join('', $method_defs_noarginfo));
-                $this->fp->write(Templates::functions_decl_end);
-            $this->fp->write(Templates::reflection_endif);
+//            $this->fp->write(Templates::reflection_else);
+//                $this->fp->write(sprintf(Templates::functions_decl, strtolower($class->c_name)));
+//                $this->fp->write(join('', $method_defs_noarginfo));
+//                $this->fp->write(Templates::functions_decl_end);
+//            $this->fp->write(Templates::reflection_endif);
         }
 
         if ($class->def_type == 'object' && $class->implements) {
