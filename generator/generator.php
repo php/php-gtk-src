@@ -740,6 +740,12 @@ class Generator {
         $num_written = $num_skipped = 0;
 
         $dict['scope'] = $this->prefix;
+        
+        $function_arginfos = '';
+        
+        $object = null;
+        $object->in_module = $this->prefix;
+        $object->c_name = $this->prefix;
 
         foreach ($this->parser->functions as $function) {
             $func_name = $function->name;
@@ -752,6 +758,8 @@ class Generator {
             if ($this->overrides->is_ignored($function->c_name)) continue;
 
             try {
+                list($arginfo, $reflection_func) = $this->genReflectionArgInfo($function, $object);
+                
                 if (($overriden = $this->overrides->is_overriden($function->c_name))) {
                     list($func_name, $function_override, $flags) = $this->overrides->get_override($function->c_name);
                     if (empty($func_name) || $func_name == $function->c_name)
@@ -766,11 +774,15 @@ class Generator {
                     $this->fp->write($code);
                     $func_defs[] = sprintf(Templates::method_entry,
                                            $this->prefix,
-                                           $func_name, 'NULL', 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
+                                           $func_name, $reflection_func, 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
                 }
                 $this->divert("gen", "%s  %-11s %s::%s\n", $overriden?"%%":"  ", "function", $this->prefix, $function->name);
                 $num_written++;
                 $this->cover["funcs"]->written();
+                
+                if ($arginfo !== null) {
+                    $function_arginfos .= $arginfo;
+                }
             } catch (Exception $e) {
                 $this->divert("notgen", "  %-11s %s::%s: %s\n", "function", $this->prefix, $function->name, $e->getMessage());
                 $num_skipped++;
@@ -792,6 +804,7 @@ class Generator {
 
         sort($func_defs);
         if ($func_defs) {
+            $this->fp->write($function_arginfos);
             $this->fp->write(sprintf(Templates::functions_decl, strtolower($this->lprefix)));
             $this->fp->write(join('', $func_defs));
             $this->fp->write(Templates::functions_decl_end);
@@ -1009,6 +1022,7 @@ class Generator {
                                  'GtkDirectionType'     => 'int',
                                  'GtkExpanderStyle'     => 'int',
                                  'GtkFileChooserAction' => 'int',
+                                 'GtkFunction'          => 'int',
                                  'GtkIconLookupFlags'   => 'int',
                                  'GtkIconSize'          => 'int',
                                  'GtkIMPreeditStyle'    => 'int',
@@ -1038,6 +1052,7 @@ class Generator {
                                  'GtkSpinButtonUpdatePolicy' => 'int',
                                  'GtkSpinType'          => 'int',
                                  'GtkStateType'         => 'int',
+                                 'GtkStockItem'         => 'int',
                                  'GtkSubmenuDirection'  => 'int',
                                  'GtkSubmenuPlacement'  => 'int',
                                  'GtkTextDirection'     => 'int',
@@ -1125,6 +1140,7 @@ class Generator {
                                  'AtkRole'              => 'int',
                                  'AtkRelationType'      => 'int',
                                  'AtkStateType'         => 'int',
+                                 'AtkTextAttribute'     => 'int',
                                                                   
                                  //some more
                                  'GDestroyNotify'       => 'int',
