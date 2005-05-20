@@ -243,7 +243,6 @@ class Generator {
 
         $num_written = $num_skipped = 0;
         $method_entries = array();
-        $method_entries_noarginfo = array();
 
         $methods = $this->parser->find_methods($object);
 
@@ -276,43 +275,7 @@ class Generator {
             if ($this->overrides->is_ignored($method_name)) continue;
 
             try {
-                $len = 20 - strlen($method->name);
-                if ($len < 0) { $len = 0; }
-                if (count($method->params) == 0) {
-                    $reflection_func = str_repeat(' ', $len) . 'NULL';
-                    $arginfo = null;
-                } else {
-                    $reflection_funcname = 'arginfo_' . strtolower($object->in_module) . '_' . strtolower($object->c_name) . '_'. $method->name;
-                    $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
-                    
-                    $param_count = 0;
-                    $optparam_count = 0;
-                    $argparams = '';
-                    foreach ($method->params as $paraminfo) {
-                        $param_count++;
-                        if ($paraminfo[2] !== null) {
-                            //if this is set, we've got a default value -> optional parameter
-                            $optparam_count++;
-                        }
-                        
-                        $paramtype = str_replace('const-', '', str_replace('*', '', $paraminfo[0]));
-                        if (Generator::is_php_type($paramtype)) {
-                            $argparams .= sprintf(Templates::reflection_arg, $paraminfo[1]);
-                        } else {
-                            $argparams .= sprintf(Templates::reflection_objarg, $paraminfo[1], $paramtype);
-                        }
-                    }
-                    if ($optparam_count > 0) {
-                        //with optional count
-                        $arginfo = sprintf(Templates::reflection_arginfoex_begin, $reflection_funcname, $param_count - $optparam_count);
-                    } else {
-                        //simple one
-                        $arginfo = sprintf(Templates::reflection_arginfo_begin, $reflection_funcname);
-                    }
-                    
-                    $arginfo .= $argparams;
-                    $arginfo .= Templates::reflection_arginfo_end;
-                }
+                list($arginfo, $reflection_func) = $this->genReflectionArgInfo($method, $object);
                 
                 if (($overriden = $this->overrides->is_overriden($method_name))) {
                     list($method_name, $method_override, $flags) = $this->overrides->get_override($method_name);
@@ -322,8 +285,6 @@ class Generator {
                     $this->write_override($method_override, $method->c_name);
                     $method_entries[$method_name] = array($object->in_module . $object->name,
                                                           $method_name, $reflection_func, $flags ?  $flags : 'ZEND_ACC_PUBLIC');
-                    $method_entries_noarginfo[$method_name] = array($object->in_module . $object->name,
-                                                          $method_name, 'NULL', $flags ?  $flags : 'ZEND_ACC_PUBLIC');
                 } else {
                     if ($method->static) {
                         $code = $this->write_callable($method, Templates::function_body, true, false, $dict);
@@ -336,8 +297,6 @@ class Generator {
                     $this->fp->write($code);
                     $method_entries[$method->name] = array($object->in_module . $object->name,
                                                            $method->name, $reflection_func, $flags);
-                    $method_entries_noarginfo[$method->name] = array($object->in_module . $object->name,
-                                                           $method->name, 'NULL', $flags);
                 }
                 
                 $this->divert("gen", "%s  %-11s %s::%s\n", $overriden ? "%%":"  ", "method", $object->c_name, $method->name);
@@ -359,7 +318,7 @@ class Generator {
 
         $this->log_print("(%d written, %d skipped)\n", $num_written, $num_skipped);
 
-        return array($method_entries, $method_entries_noarginfo, $methodarginfos);
+        return array($method_entries, $methodarginfos);
     }
 
     function write_constructor($object)
@@ -370,6 +329,7 @@ class Generator {
         $ctors = $this->parser->find_constructor($object, $this->overrides);
 
         $ctor_defs = array();
+        $ctor_arginfos = '';
 
         if ($ctors) {
             $dict['class'] = $object->c_name;
@@ -404,6 +364,8 @@ class Generator {
                 }
 
                 try {
+                    list($arginfo, $reflection_func) = $this->genReflectionArgInfo($ctor, $object);
+                    
                     if (($overriden = $this->overrides->is_overriden($ctor_name))) {
                         list(, $ctor_override, $ctor_flags) = $this->overrides->get_override($ctor_name);
                         if (!empty($ctor_flags))
@@ -418,10 +380,14 @@ class Generator {
 
                     $ctor_defs[] = sprintf(Templates::method_entry,
                                            $ctor->is_constructor_of,
-                                           $ctor_fe_name, 'NULL', $flags);
+                                           $ctor_fe_name, $reflection_func, $flags);
                     $this->divert("gen", "%s  %-11s %s::%s\n", $overriden?"%%":"  ", "constructor", $object->c_name, $ctor_fe_name);
                     $num_written++;
                     $this->cover["ctors"]->written();
+                    
+                    if ($arginfo !== null) {
+                        $ctor_arginfos .= $arginfo;
+                    }
                 } catch (Exception $e) {
                     $this->divert("notgen", "  %-11s %s::%s: %s\n", "constructor", $object->c_name, $ctor_fe_name, $e->getMessage());
                     $num_skipped++;
@@ -459,8 +425,8 @@ class Generator {
         }
 
         $this->log_print("(%d written, %d skipped)\n", $num_written, $num_skipped);
-        return $ctor_defs;
-    }
+        return array($ctor_defs, $ctor_arginfos);
+    }//function write_constructor($object)
 
     function write_classes()
     {
@@ -648,7 +614,7 @@ class Generator {
         return array($create_func, $extra_reg_info);
     }
 
-    function make_method_defs($class, $method_entries, $arginfo = true)
+    function make_method_defs($class, $method_entries)
     {
         $method_defs = array();
 
@@ -663,7 +629,7 @@ class Generator {
                     $method_defs[] = "\n\t/***   $interface_name interface implementations   ***/\n\n";
                     
                     foreach ($iface_methods as $iface_method=>$dummy) {
-                        if (!$arginfo || $dummy == 1) {
+                        if ($dummy == 1) {
                             $reflection_func = 'NULL';
                         } else {
                             $reflection_func = 'arginfo_' . strtolower($interface->in_module) . '_' . strtolower($interface->c_name) . '_'. $iface_method;
@@ -701,33 +667,26 @@ class Generator {
 
         if ($class->def_type != 'interface') {
             /* interfaces don't have these */
-            $ctor_defs = $this->write_constructor($class);
+            list($ctor_defs, $ctor_arginfo) = $this->write_constructor($class);
             $prop_info = $this->write_prop_handlers($class);
             list($create_func, $extra_reg_info) = $this->write_object_handlers($class);
         }
 
-        list($method_entries, $method_entries_noarginfo, $arginfo) = $this->write_methods($class);
+        list($method_entries, $method_arginfo) = $this->write_methods($class);
         ksort($method_entries);
-        ksort($method_entries_noarginfo);
         $method_defs           = $this->make_method_defs($class, $method_entries);
-        $method_defs_noarginfo = $this->make_method_defs($class, $method_entries_noarginfo, false);
+        
+        $arginfo = $ctor_arginfo . $method_arginfo;
 
         if ($ctor_defs) {
             $method_defs           = array_merge($ctor_defs, $method_defs);
-            $method_defs_noarginfo = array_merge($ctor_defs, $method_defs_noarginfo);
         }
 
         if ($method_defs) {
-//            $this->fp->write(Templates::reflection_if);
-                $this->fp->write($arginfo);
-                $this->fp->write(sprintf(Templates::functions_decl, strtolower($class->c_name)));
-                $this->fp->write(join('', $method_defs));
-                $this->fp->write(Templates::functions_decl_end);
-//            $this->fp->write(Templates::reflection_else);
-//                $this->fp->write(sprintf(Templates::functions_decl, strtolower($class->c_name)));
-//                $this->fp->write(join('', $method_defs_noarginfo));
-//                $this->fp->write(Templates::functions_decl_end);
-//            $this->fp->write(Templates::reflection_endif);
+            $this->fp->write($arginfo);
+            $this->fp->write(sprintf(Templates::functions_decl, strtolower($class->c_name)));
+            $this->fp->write(join('', $method_defs));
+            $this->fp->write(Templates::functions_decl_end);
         }
 
         if ($class->def_type == 'object' && $class->implements) {
@@ -932,6 +891,57 @@ class Generator {
     }
     
     
+    
+    /**
+    *   generates an ZEND_ARGINFO entry for this method
+    *   based on the parameters and returns it
+    *
+    *   @param Method $method The method (or constructor) to generate the arginfo for
+    *   @return string The arginfo
+    */
+    function genReflectionArgInfo($method, $class)
+    {
+        $len = 20 - strlen($method->name);
+        if ($len < 0) { $len = 0; }
+        if (count($method->params) == 0) {
+            $reflection_func = str_repeat(' ', $len) . 'NULL';
+            $arginfo = null;
+        } else {
+            $reflection_funcname = 'arginfo_' . strtolower($class->in_module) . '_' . strtolower($class->c_name) . '_'. $method->name;
+            $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
+            
+            $param_count = 0;
+            $optparam_count = 0;
+            $argparams = '';
+            foreach ($method->params as $paraminfo) {
+                $param_count++;
+                if ($paraminfo[2] !== null) {
+                    //if this is set, we've got a default value -> optional parameter
+                    $optparam_count++;
+                }
+                
+                $paramtype = str_replace('const-', '', str_replace('*', '', $paraminfo[0]));
+                if (Generator::is_php_type($paramtype)) {
+                    $argparams .= sprintf(Templates::reflection_arg, $paraminfo[1]);
+                } else {
+                    $argparams .= sprintf(Templates::reflection_objarg, $paraminfo[1], $paramtype);
+                }
+            }
+            if ($optparam_count > 0) {
+                //with optional count
+                $arginfo = sprintf(Templates::reflection_arginfoex_begin, $reflection_funcname, $param_count - $optparam_count);
+            } else {
+                //simple one
+                $arginfo = sprintf(Templates::reflection_arginfo_begin, $reflection_funcname);
+            }
+            
+            $arginfo .= $argparams;
+            $arginfo .= Templates::reflection_arginfo_end;
+        }
+        return array($arginfo, $reflection_func);
+    }//function genReflectionArgInfo($method)
+    
+    
     /**
      * Checks if the given type is a simple php type
      *
@@ -986,6 +996,7 @@ class Generator {
                                  'GtkArrowType'         => 'int',
                                  'GtkAttachOptions'     => 'int',
                                  'GtkButtonBoxStyle'    => 'int',
+                                 'GtkButtonsType'       => 'int',
                                  'GtkCalendarDisplayOptions' => 'int',
                                  'GtkCellRendererState' => 'int',
                                  'GtkCornerType'        => 'int',
@@ -994,6 +1005,7 @@ class Generator {
                                  'GtkCurveType'         => 'int',
                                  'GtkDeleteType'        => 'int',
                                  'GtkDestroyNotify'     => 'int',
+                                 'GtkDialogFlags'       => 'int',
                                  'GtkDirectionType'     => 'int',
                                  'GtkExpanderStyle'     => 'int',
                                  'GtkFileChooserAction' => 'int',
@@ -1003,6 +1015,7 @@ class Generator {
                                  'GtkIMStatusStyle'     => 'int',
                                  'GtkJustification'     => 'int',
                                  'GtkMatchType'         => 'int',
+                                 'GtkMessageType'       => 'int',
                                  'GtkMetricType'        => 'int',
                                  'GtkMovementStep'      => 'int',
                                  'GtkOrientation'       => 'int',
@@ -1033,7 +1046,9 @@ class Generator {
                                  'GtkToolbarStyle'      => 'int',
                                  'GtkTreeCellDataFunc'  => 'int',
                                  'GtkTreeModel'         => 'int',
+                                 'GtkTreePath'          => 'int',
                                  'GtkTreeViewColumnSizing' => 'int',
+                                 'GtkTreeViewDropPosition' => 'int',
                                  'GtkType'              => 'int',
                                  'GtkUIManagerItemType' => 'int',
                                  'GtkUpdateType'        => 'int',
@@ -1048,6 +1063,7 @@ class Generator {
                                  'GdkBitmap'            => 'int',
                                  'GdkByteOrder'         => 'int',
                                  'GdkCapStyle'          => 'int',
+                                 'GdkColorspace'        => 'int',
                                  'GdkCursorType'        => 'int',
                                  'GdkCrossingMode'      => 'int',
                                  'GdkDragAction'        => 'int',
