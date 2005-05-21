@@ -1,3 +1,18 @@
+2005-05-20  Christian Weiske  <cweiske@cweiske.de>
+
+    * generator/generator.php:
+      static functions have parameter reflection.
+      Overridden methods not.
+
+    * generator/generator.php:
+      constructor reflection is in now
+
+    * generator/generator.php:
+      Commented out conditional reflection generation
+
+    * TODO2:
+      some more missing things
+
 2005-05-17  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtktreeview.overrides:
