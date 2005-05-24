@@ -1,3 +1,9 @@
+2005-05-23  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      ext/gtk+/gtktreeview.overrides:
+      Implement GtkTreeModel::iter_children(). (patch by Markus Fischer)
+
 2005-05-20  Christian Weiske  <cweiske@cweiske.de>
 
     * generator/generator.php:
