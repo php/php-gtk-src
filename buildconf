@@ -3,7 +3,8 @@
 
 rm -f build2/generated_lists
 
-PHPIZE=phpize
+# If there is no environment variable, fallback using phpize in PATH
+test -z "$PHPIZE" && PHPIZE=phpize
 
 for bc_option
 do
