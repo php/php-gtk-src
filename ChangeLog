@@ -1,3 +1,8 @@
+2005-06-02  Jani Taskinen  <jani.taskinen@sci.fi>
+
+    * buildconf:
+      - Use the $PHPIZE from environment if it is not empty
+
 2005-05-23  Andrei Zmievski  <andrei@gravitonic.com>
 
     * TODO2
