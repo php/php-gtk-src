@@ -42,9 +42,6 @@ Classes and Functions
 * Implement write prop handler for GdkColor, test cascaded overloads, i.e.
   $style->base[GTK_STATE_NORMAL]->red = 55555.
 
-* CheckMenuItem
-        should accept a label as first parameter and a boolean as
-        second (use or not underline)
 * GtkImageMenuItem
         should accept a stock-id as first parameter and the accell
         group as the second one
