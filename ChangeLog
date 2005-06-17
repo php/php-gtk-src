@@ -1,3 +1,12 @@
+2005-06-16  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      ext/gtk+/gtk.overrides:
+      Some menu item stuff.
+
+    * TODO2:
+      Says who.
+
 2005-06-02  Jani Taskinen  <jani.taskinen@sci.fi>
 
     * buildconf:
