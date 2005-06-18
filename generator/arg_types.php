@@ -928,10 +928,12 @@ class Arg_Matcher {
 
     function get($type)
     {
-        /* TODO check for GdkEvent**? */
         if (isset($this->arg_types[$type])) {
             return $this->arg_types[$type];
         } else {
+            if (substr($type, 0, 8) == 'GdkEvent' && substr($type, -1) == '*') {
+                return $this->arg_types['GdkEvent*'];
+            }
             throw new Exception("unknown type '$type'");
         }
     }
