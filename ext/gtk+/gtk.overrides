@@ -78,25 +78,6 @@ ignore
     gtk_adjustment_set_all
     gtk_clist_construct
     gtk_clist_set_row_data_full
-    gtk_container_add_child_arg_type
-    gtk_container_addv
-    gtk_container_add_with_args
-    gtk_container_arg_get
-    gtk_container_arg_set
-    gtk_container_child_arg_get_info
-    gtk_container_child_args_collect
-    gtk_container_child_composite_name
-    gtk_container_child_getv
-    gtk_container_child_set
-    gtk_container_child_setv
-    gtk_container_clear_resize_widgets
-    gtk_container_dequeue_resize_handler
-    gtk_container_forall
-    gtk_container_foreach
-    gtk_container_foreach_full
-    gtk_container_get_toplevels
-    gtk_container_query_child_args
-    gtk_container_queue_resize
     gtk_draw_box_gap
     gtk_draw_check
     gtk_draw_cross
@@ -485,6 +466,8 @@ PHP_METHOD
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
 %% }}}
+
+%% include gtkcontainer.overrides
 
 %% {{{ GtkDialog
 %%
@@ -1047,9 +1030,7 @@ PHP_METHOD
 }
 %% }}}
 
-%% {{{ GtkStyle [included]
 %% include gtkstyle.overrides
-%% }}}
 
 %% {{{ GtkTextAttributes
 

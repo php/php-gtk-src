@@ -1,0 +1,40 @@
+/* vim: set et ft=cpp fdm=marker: */
+%%
+headers
+static ZEND_METHOD(GtkContainer, get_children);
+
+%%
+ignore
+	gtk_container_child_set_valist
+	gtk_container_child_get_valist
+	gtk_container_foreach_full
+
+%%
+override gtk_container_get_children
+PHP_METHOD
+{
+	GList *children, *item;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+		return;
+
+	children = gtk_container_get_children(GTK_CONTAINER(PHPG_GOBJECT(this_ptr)));
+
+    array_init(return_value);
+	for (item = children; item; item = item->next) {
+		zval *php_child = NULL;
+        phpg_gobject_new(&php_child, G_OBJECT(item->data) TSRMLS_CC);
+        add_next_index_zval(return_value, php_child);
+	}
+    g_list_free(children);
+}
+
+%%
+override gtk_container_children
+PHP_METHOD
+{
+	phpg_warn_deprecated("use GtkContainer::get_children()" TSRMLS_CC);
+    PHP_FN(GtkContainer_get_children)(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+}

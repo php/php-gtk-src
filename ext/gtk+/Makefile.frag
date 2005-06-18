@@ -3,6 +3,7 @@ COMMONDEFS=$(srcdir)/gtk-types.defs $(srcdir)/gdk-types.defs \
 
 GTK_OVERRIDES = \
 	$(srcdir)/gtk.overrides \
+	$(srcdir)/gtkcontainer.overrides \
 	$(srcdir)/gtkstyle.overrides \
 	$(srcdir)/gtktreeview.overrides
 

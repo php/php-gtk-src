@@ -664,6 +664,7 @@ class Generator {
         $extra_reg_info = '';
         $ctor_defs = null;
         $prop_info = 'NULL';
+        $ctor_arginfo = '';
 
         if ($class->def_type != 'interface') {
             /* interfaces don't have these */

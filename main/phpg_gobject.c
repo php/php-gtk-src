@@ -477,6 +477,60 @@ static PHP_METHOD(GObject, set_data)
 }
 /* }}} */
 
+/* {{{ GObject::handler_* */
+static PHP_METHOD(GObject, block)
+{
+    guint handler_id;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &handler_id)) {
+        return;
+    }
+
+    g_signal_handler_block(PHPG_GOBJECT(this_ptr), handler_id);
+}
+
+static PHP_METHOD(GObject, unblock)
+{
+    guint handler_id;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &handler_id)) {
+        return;
+    }
+
+    g_signal_handler_unblock(PHPG_GOBJECT(this_ptr), handler_id);
+}
+
+static PHP_METHOD(GObject, disconnect)
+{
+    guint handler_id;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &handler_id)) {
+        return;
+    }
+
+    g_signal_handler_disconnect(PHPG_GOBJECT(this_ptr), handler_id);
+}
+
+static PHP_METHOD(GObject, is_connected)
+{
+    guint handler_id;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &handler_id)) {
+        return;
+    }
+
+    RETURN_BOOL(g_signal_handler_is_connected(PHPG_GOBJECT(this_ptr), handler_id));
+}
+/* }}} */
+
 /* {{{ GObject::signal_list_ids/names */
 static void phpg_signal_list_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool list_names)
 {
@@ -614,7 +668,6 @@ signal_query_done:
 
 
 /* {{{ GObject reflection info */
-#if ENABLE_REFLECTION
 static
 ZEND_BEGIN_ARG_INFO_EX(arginfo_gobject_connect, 0, 0, 2)
     ZEND_ARG_INFO(0, signal)
@@ -693,30 +746,15 @@ static zend_function_entry gobject_methods[] = {
     PHP_ME(GObject, set_property,         arginfo_gobject_set_property          , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, get_data,             arginfo_gobject_get_data              , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, set_data,             arginfo_gobject_set_data              , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, block,                NULL                                  , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, unblock,              NULL                                  , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, disconnect,           NULL                                  , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, is_connected,         NULL                                  , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, signal_list_ids,      arginfo_gobject_signal_list_ids       , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, signal_list_names,    arginfo_gobject_signal_list_names     , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, signal_query,         arginfo_gobject_signal_query          , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     {NULL, NULL, NULL}
 };
-#else /* ENABLE_REFLECTION */
-static zend_function_entry gobject_methods[] = {
-    PHP_ME(GObject, __construct, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(GObject, __tostring, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(GObject, connect, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(GObject, connect_after, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(GObject, connect_object, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(GObject, connect_object_after, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(GObject, get_property, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(GObject, set_property, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(GObject, get_data, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(GObject, set_data, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(GObject, signal_list_ids, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-    PHP_ME(GObject, signal_list_names, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-    PHP_ME(GObject, signal_query, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-    {NULL, NULL, NULL}
-};
-
-#endif /* ENABLE_REFLECTION */
 /* }}} */
 
 
