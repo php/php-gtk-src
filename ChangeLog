@@ -1,3 +1,18 @@
+2005-06-18  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      generator/arg_types.php:
+      Make functions understand event arg type.
+
+    * TODO2
+      ext/gtk+/Makefile.frag
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtkcontainer.overrides
+      generator/generator.php
+      main/phpg_gobject.c:
+      - Implement some signal_handler_* methods.
+      - Implemeng GtkContainer::children(), get_children()
+
 2005-06-16  Andrei Zmievski  <andrei@gravitonic.com>
 
     * TODO2
