@@ -150,7 +150,11 @@ typedef struct {
 #define PHPG_PROP_READ_FN(class, name) \
 	phpg_##class##_read_##name
 #define PHPG_PROP_READER(class, name) \
-	static int PHPG_PROP_READ_FN(class, name)(void *object, zval *return_value)
+	static int PHPG_PROP_READ_FN(class, name)(void *object, zval *return_value TSRMLS_DC)
+#define PHPG_PROP_WRITE_FN(class, name) \
+	phpg_##class##_write_##name
+#define PHPG_PROP_WRITER(class, name) \
+	static int PHPG_PROP_WRITE_FN(class, name)(void *object, zval *rvalue TSRMLS_DC)
 
 typedef void (*prop_getter_t)(zval *return_value, zval *object, char *property, int *result);
 typedef int (*prop_setter_t)(zval *object, char *property, zval *value);

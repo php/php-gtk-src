@@ -917,7 +917,10 @@ class Generator {
     {
         $len = 20 - strlen($method->name);
         if ($len < 0) { $len = 0; }
-        if (count($method->params) == 0) {
+        /* TODO make Christian fix this so that overriden funcs aren't subject
+         * to this
+         */
+        if (true || count($method->params) == 0) {
             $reflection_func = str_repeat(' ', $len) . 'NULL';
             $arginfo = null;
         } else {

@@ -114,13 +114,15 @@
   (return-type "GdkColor")
 )
 
-(define-function color_parse
+(define-method color_parse
   (c-name "gdk_color_parse")
+  (of-object "GdkColor")
   (return-type "gint")
   (parameters
     '("const-gchar*" "spec")
     '("GdkColor*" "color")
   )
+  (static #t)
 )
 
 (define-method white
@@ -149,14 +151,17 @@
   (return-type "GdkScreen*")
 )
 
-(define-function colormap_get_system
+(define-method get_system
+  (of-object "GdkColormap")
   (c-name "gdk_colormap_get_system")
   (return-type "GdkColormap*")
+  (static #t)
 )
 
 (define-function colormap_get_system_size
   (c-name "gdk_colormap_get_system_size")
   (return-type "gint")
+  (deprecated "")
 )
 
 (define-function gdk_colormap_get_type

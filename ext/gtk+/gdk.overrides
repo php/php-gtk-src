@@ -16,10 +16,19 @@ headers
 #undef GDK_DISPLAY
 #define GDK_DISPLAY(object) (GDK_DISPLAY_OBJECT(object))
 
+#define MAX_INTENSITY 65535
+
 /* Forward declaration, since gen_gtk.h is generated later. */
 extern PHP_GTK_EXPORT_CE(gtkwidget_ce);
 
 #include "gen_pango.h"
+
+static inline int clamp_int(int value, int low, int high)
+{
+    return (value < low ? low : (value > high ? high : value));
+}
+
+static ZEND_METHOD(GdkColormap, alloc_color);
 
 /* {{{ ignores */
 %%
@@ -37,12 +46,202 @@ ignore
 
 /* }}} */
 
+%% {{{ GdkColor
+
 %%
 override gdk_color_new
 PHP_METHOD
 {
-    /* TODO */
+    guint red = 0;
+    guint green = 0;
+    guint blue = 0;
+    guint pixel = 0;
+    GdkColor color;
+    phpg_gboxed_t *pobj = NULL;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|iiii", &red, &green, &blue, &pixel))
+        return;
+
+    color.red = clamp_int(red, 0, MAX_INTENSITY);
+    color.green = clamp_int(green, 0, MAX_INTENSITY);
+    color.blue = clamp_int(blue, 0, MAX_INTENSITY);
+    color.pixel = pixel;
+
+    pobj = zend_object_store_get_object(this_ptr TSRMLS_CC);
+    pobj->gtype = GDK_TYPE_COLOR;
+    pobj->boxed = g_boxed_copy(GDK_TYPE_COLOR, &color);
+    pobj->free_on_destroy = TRUE;
 }
+
+%%
+override gdk_color_parse parse ZEND_ACC_PUBLIC|ZEND_ACC_STATIC
+PHP_METHOD
+{
+	gchar *color_spec;
+	GdkColor color;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &color_spec)) {
+		return;
+	}
+
+	if (gdk_color_parse(color_spec, &color)) {
+        phpg_gboxed_new(&return_value, GDK_TYPE_COLOR, &color, TRUE, TRUE TSRMLS_CC);
+    } else {
+        php_error(E_WARNING, "%s::%s() could not parse color spec '%s'",
+                  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C), color_spec);
+        RETURN_FALSE;
+    }
+}
+
+%%
+override-prop GdkColor red
+PHPG_PROP_READER
+{
+	RETVAL_LONG(((GdkColor *)((phpg_gboxed_t *)object)->boxed)->red);
+    return SUCCESS;
+}
+%%
+override-prop GdkColor green
+PHPG_PROP_READER
+{
+	RETVAL_LONG(((GdkColor *)((phpg_gboxed_t *)object)->boxed)->green);
+    return SUCCESS;
+}
+%%
+override-prop GdkColor blue
+PHPG_PROP_READER
+{
+	RETVAL_LONG(((GdkColor *)((phpg_gboxed_t *)object)->boxed)->blue);
+    return SUCCESS;
+}
+%%
+override-prop GdkColor pixel
+PHPG_PROP_READER
+{
+	RETVAL_LONG(((GdkColor *)((phpg_gboxed_t *)object)->boxed)->pixel);
+    return SUCCESS;
+}
+
+%%
+override-handler GdkColor write_property
+void phpg_gdkcolor_write_property_handler(zval *object, zval *member, zval *value TSRMLS_DC)
+{
+    zval tmp_value;
+	zval tmp_member;
+    GdkColor *color;
+
+ 	if (member->type != IS_STRING) {
+		tmp_member = *member;
+		zval_copy_ctor(&tmp_member);
+		convert_to_string(&tmp_member);
+		member = &tmp_member;
+	}
+
+    if (value->type != IS_LONG) {
+        tmp_value = *value;
+        zval_copy_ctor(&tmp_value);
+        convert_to_long(&tmp_value);
+        value = &tmp_value;
+    }
+
+    color = (GdkColor *)PHPG_GBOXED(object);
+    if (!strcmp(Z_STRVAL_P(member), "pixel")) {
+        color->pixel = Z_LVAL_P(value);
+    } else {
+        if (!strcmp(Z_STRVAL_P(member), "red")) {
+            color->red = clamp_int(Z_LVAL_P(value), 0, MAX_INTENSITY);
+        } else if (!strcmp(Z_STRVAL_P(member), "green")) {
+            color->green = clamp_int(Z_LVAL_P(value), 0, MAX_INTENSITY);
+        } else if (!strcmp(Z_STRVAL_P(member), "blue")) {
+            color->blue = clamp_int(Z_LVAL_P(value), 0, MAX_INTENSITY);
+        }
+    }
+
+	if (member == &tmp_member) {
+		zval_dtor(member);
+	}
+	if (value == &tmp_value) {
+		zval_dtor(value);
+	}
+}
+
+%%
+override-handler GdkColor get_properties
+HashTable* phpg_gdkcolor_get_properties_handler(zval *object TSRMLS_DC)
+{
+    phpg_head_t *poh = NULL;
+    poh = (phpg_head_t *) zend_object_store_get_object(object TSRMLS_CC);
+    phpg_get_properties_helper(object, poh->zobj.properties TSRMLS_CC,
+                               STRS(red), STRS(green), STRS(blue), STRS(pixel), NULL);
+
+	return poh->zobj.properties;
+}
+
+%%
+override gdk_color_alloc
+PHP_METHOD
+{
+	phpg_warn_deprecated("use GdkColormap::alloc_color()" TSRMLS_CC);
+    PHP_FN(GdkColormap_alloc_color)(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+}
+%% }}}
+
+%% {{{ GdkColormap
+
+%%
+override gdk_colormap_alloc_color
+PHP_METHOD
+{
+    GdkColor color = { 0, 0, 0, 0 };
+    guint red = 0, green = 0, blue = 0;
+    zend_bool writeable = FALSE;
+    zend_bool best_match = TRUE;
+    zval *php_color;
+	gchar *color_spec;
+
+    NOT_STATIC_METHOD();
+
+    if (php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "iii|bb", &red, &green, &blue, &writeable, &best_match)) {
+        color.red = clamp_int(red, 0, MAX_INTENSITY);
+        color.green = clamp_int(green, 0, MAX_INTENSITY);
+        color.blue = clamp_int(blue, 0, MAX_INTENSITY);
+    } else if (php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "O|bb",
+                                        &php_color, gdkcolor_ce, &writeable, &best_match)) {
+        color = *(GdkColor*)PHPG_GBOXED(php_color);
+    } else if (php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "s|bb", &color_spec, &writeable, &best_match)) {
+        if (!gdk_color_parse(color_spec, &color)) {
+            php_error(E_WARNING, "%s::%s() could not parse color spec '%s'",
+                      get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C), color_spec);
+            RETURN_FALSE;
+        }
+    } else {
+            php_error(E_WARNING, "%s::%s() requires color to be specified as an RGB triplet, GdkColor, or a string", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+    }
+
+	if (!gdk_colormap_alloc_color(GDK_COLORMAP(PHPG_GOBJECT(this_ptr)), &color, writeable, best_match)) {
+        php_error(E_WARNING, "%s::%s() could not allocate color", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        RETURN_FALSE;
+	}
+
+    phpg_gboxed_new(&return_value, GDK_TYPE_COLOR, &color, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
+override gdk_colormap_query_color
+PHP_METHOD
+{
+    GdkColor color = { 0 , 0 , 0 , 0 };
+    guint pixel;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &pixel))
+        return;
+    gdk_colormap_query_color(GDK_COLORMAP(PHPG_GOBJECT(this_ptr)), pixel, &color);
+    phpg_gboxed_new(&return_value, GDK_TYPE_COLOR, &color, TRUE, TRUE TSRMLS_CC);
+}
+
+%% }}}
 
 %%
 override gdk_text_extents

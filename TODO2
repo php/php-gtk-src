@@ -39,8 +39,6 @@ Classes and Functions
 * GtkTreeStore
 * GtkTreeView
 * GtkCellRenderer
-* Implement write prop handler for GdkColor, test cascaded overloads, i.e.
-  $style->base[GTK_STATE_NORMAL]->red = 55555.
 
 * GtkImageMenuItem
         should accept a stock-id as first parameter and the accell
