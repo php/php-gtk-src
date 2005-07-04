@@ -1,3 +1,12 @@
+2005-07-03  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      ext/gtk+/gdk.defs
+      ext/gtk+/gdk.overrides
+      generator/generator.php
+      main/php_gtk.h:
+      Some GdkColor and GdkColormap related stuff.
+
 2005-06-18  Andrei Zmievski  <andrei@gravitonic.com>
 
     * TODO2
