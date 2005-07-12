@@ -37,6 +37,7 @@ Classes and Functions
 * GtkListStore
 * GtkTreeModel
 * GtkTreeStore
+	Some iterator functions as get_iter() are expecting a GBoxed parameter.
 * GtkTreeView
 * GtkCellRenderer
 
@@ -48,6 +49,8 @@ Classes and Functions
 * GtkMenu
         Call to undefined method GtkMenu::popup()
 * GtkTextBuffer
+	Some iterator functions as get_start_iter() and get_iter_at_line() are expecting a GBoxed parameter.
+
 * GtkClipboard
 * GtkNotebook->append_page should allow just a string as second parameter (title for page) instead of only wanting a gtklabel or so
 * GtkNotebook crashes when connecting callback to move-focus-out signal
