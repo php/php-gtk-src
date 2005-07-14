@@ -15,7 +15,7 @@ if test "$PHP_PHP_GTK" != "no"; then
     PHP_VERSION=`$PHP_CONFIG --version`
 	AC_MSG_RESULT(found version $PHP_VERSION)
 	case $PHP_VERSION in
-       4.3*[)]
+       4.3*|4.4*[)]
 	   PHP=$PHP_PREFIX/bin/php
 	;;
 	   *[)]
