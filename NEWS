@@ -1,3 +1,8 @@
+Version 1.0.2 "eschelon, may i help you?" 14-Jul-2005
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - Updated to accept PHP 4.4.x during configuration. (Andrei)
+    - Some build system fixes. (Andrei)
+
 Version 1.0.1 "you thought we were done?" 09-Aug-2004
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - buildconf script now takes an optional --with-phpize=<path> option to
