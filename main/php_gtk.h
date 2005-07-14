@@ -33,7 +33,7 @@
 
 #if HAVE_PHP_GTK
 
-#define PHP_GTK_VERSION "0.5.1"
+#define PHP_GTK_VERSION "1.0.2"
 
 #ifdef PHP_WIN32
 # ifdef GTK_SHARED
