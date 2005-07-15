@@ -1,3 +1,17 @@
+2005-07-14  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * (PHP_GTK_1)
+      NEWS:
+      -** empty log message ***
+
+    * (PHP_GTK_1)
+      main/php_gtk.h:
+      Up version to 1.0.2.
+
+    * (PHP_GTK_1)
+      config.m4:
+      Accept PHP 4.4.x as well.
+
 2005-07-12  Pablo Dall'Oglio  <pablo@univates.br>
 
     * TODO2:
