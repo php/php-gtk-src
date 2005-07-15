@@ -37,7 +37,7 @@ PHP_GTK_API extern int le_gdk_color;
 extern int le_gdk_colormap;
 extern int le_gdk_cursor;
 extern int le_gdk_visual;
-extern int le_gdk_font;
+PHP_GTK_API extern int le_gdk_font;
 extern int le_gdk_gc;
 extern int le_gdk_drag_context;
 extern int le_gtk_accel_group;
