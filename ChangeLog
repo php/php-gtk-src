@@ -1,3 +1,9 @@
+2005-07-15  Frank M. Kromann  <frank@kromann.info>
+
+    * (PHP_GTK_1)
+      ext/gtk+/php_gtk+.h:
+      Adding missing export
+
 2005-07-14  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (PHP_GTK_1)
