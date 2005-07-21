@@ -180,7 +180,9 @@ class PHPGtk2Demo extends GtkWindow
     {
         $files = glob(dirname(__FILE__).'/*.php');
         foreach ($files as $id => $file) {
-            if (basename($file) != basename(__FILE__) && basename($file) != 'stock-browser.php') {
+            if (basename($file) != basename(__FILE__) 
+            && basename($file) != 'stock-browser.php'
+            && basename($file) != 'WidgetEditor.php') {
                 if (!@include_once($file)) {
                     continue;
                 }
