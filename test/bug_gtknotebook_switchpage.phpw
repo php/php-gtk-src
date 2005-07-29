@@ -1,0 +1,33 @@
+<?php
+/**
+*   Problem: When the switch-page signal is emitted,
+*   a gpointer is needed - but that's not defined
+*/
+class Notebooktest extends GtkWindow
+{
+    public function __construct()
+    {
+        parent::__construct();
+        
+        $this->connect_object('destroy', array('gtk', 'main_quit'));
+        
+        $notebook = new GtkNotebook();
+        $this->add($notebook);
+        
+        $notebook->append_page(new GtkLabel('Page1'), new GtkLabel('Label1'));
+        $notebook->append_page(new GtkLabel('Page2'), new GtkLabel('Label2'));
+        $notebook->connect('switch-page', array($this, 'onSwitchNotebookPage'));
+        $this->show_all();
+    }
+    
+    function onSwitchNotebookPage(GtkNotebook $notebook) {
+//        echo 'switch' . "\r\n";
+    }
+}
+
+if (!($argc > 1 && $argv[1] == 'debug')) {
+    error_reporting(E_ERROR);
+}
+new Notebooktest();
+echo 'ok';
+?>
