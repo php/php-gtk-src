@@ -28,6 +28,7 @@ class Overrides {
     var $prop_overrides     = array();
     var $handler_overrides  = array();
     var $extra_methods      = array();
+    var $extra_arginfo      = array();//reflection information
     var $getprops           = array();
     var $register_classes   = array();
     var $headers            = '';
@@ -162,6 +163,12 @@ class Overrides {
                 $this->lineinfo["$class.$method"] = array($blocklineno + 1, $file_name);
                 break;
 
+            case 'add-arginfo':
+                $name = $words[0];
+                $this->extra_arginfo[$name] = $rest;
+                $this->lineinfo[$name] = array($blocklineno + 1, $file_name);
+                break;
+
             case 'headers':
                 $this->headers .= $rest;
                 $this->lineinfo['headers'] = array($blocklineno + 1, $file_name);
@@ -251,6 +258,17 @@ class Overrides {
     {
         return $this->lineinfo[$id];
     }
+
+    function has_extra_arginfo($name)
+    {
+        return isset($this->extra_arginfo[$name]);
+    }
+
+    function get_extra_arginfo($name)
+    {
+        return $this->extra_arginfo[$name];
+    }
+
 }
 
 /* vim: set et sts=4: */

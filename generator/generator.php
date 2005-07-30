@@ -278,6 +278,7 @@ class Generator {
                 list($arginfo, $reflection_func) = $this->genReflectionArgInfo($method, $object);
                 
                 if (($overriden = $this->overrides->is_overriden($method_name))) {
+var_dump($method_name);
                     list($method_name, $method_override, $flags) = $this->overrides->get_override($method_name);
                     if (!isset($method_name))
                         $method_name = $method->name;
@@ -911,22 +912,36 @@ class Generator {
     *   based on the parameters and returns it
     *
     *   @param Method $method The method (or constructor) to generate the arginfo for
-    *   @return string The arginfo
+    *   @return array The arginfo (string) and the name of the reflection function
     */
     function genReflectionArgInfo($method, $class)
     {
         $len = 20 - strlen($method->name);
         if ($len < 0) { $len = 0; }
-        /* TODO make Christian fix this so that overriden funcs aren't subject
-         * to this
-         */
-        if (true || count($method->params) == 0) {
+
+        if (count($method->params) == 0) {
             $reflection_func = str_repeat(' ', $len) . 'NULL';
             $arginfo = null;
-        } else {
-            $reflection_funcname = 'arginfo_' . strtolower($class->in_module) . '_' . strtolower($class->c_name) . '_'. $method->name;
+        } else if (($overriden = $this->overrides->is_overriden($method->c_name))) {
+            //overridden function - extra arginfo in override file?
+            $reflection_funcname = Generator::getReflectionFuncName($method, $class);
             $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
-            
+
+            if ($this->overrides->has_extra_arginfo($reflection_funcname)) {
+                list($line, $filename) = $this->overrides->get_line_info($reflection_funcname);
+                $arginfo  = sprintf("#line %d \"%s\"\n", $line, $filename);
+                $arginfo .= $this->overrides->get_extra_arginfo($reflection_funcname);
+            } else {
+                //no arginfo
+                $reflection_func = str_repeat(' ', $len) . 'NULL';
+                $arginfo = null;
+                //var_dump('No arginfo for overridden ' . $reflection_funcname);
+            }
+
+        } else {
+            $reflection_funcname = Generator::getReflectionFuncName($method, $class);
+            $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
+
             $param_count = 0;
             $optparam_count = 0;
             $argparams = '';
@@ -936,7 +951,7 @@ class Generator {
                     //if this is set, we've got a default value -> optional parameter
                     $optparam_count++;
                 }
-                
+
                 $paramtype = str_replace('const-', '', str_replace('*', '', $paraminfo[0]));
                 if (Generator::is_php_type($paramtype)) {
                     $argparams .= sprintf(Templates::reflection_arg, $paraminfo[1]);
@@ -951,14 +966,22 @@ class Generator {
                 //simple one
                 $arginfo = sprintf(Templates::reflection_arginfo_begin, $reflection_funcname);
             }
-            
+
             $arginfo .= $argparams;
             $arginfo .= Templates::reflection_arginfo_end;
         }
         return array($arginfo, $reflection_func);
-    }//function genReflectionArgInfo($method)
-    
-    
+    }//function genReflectionArgInfo($method, $class)
+
+
+
+    function getReflectionFuncName($method, $class)
+    {
+        return 'arginfo_' . strtolower($class->in_module) . '_' . strtolower($class->c_name) . '_'. $method->name;
+    }//function getReflectionFuncName($method, $class)
+
+
+
     /**
      * Checks if the given type is a simple php type
      *
