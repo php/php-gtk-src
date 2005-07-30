@@ -278,7 +278,6 @@ class Generator {
                 list($arginfo, $reflection_func) = $this->genReflectionArgInfo($method, $object);
                 
                 if (($overriden = $this->overrides->is_overriden($method_name))) {
-var_dump($method_name);
                     list($method_name, $method_override, $flags) = $this->overrides->get_override($method_name);
                     if (!isset($method_name))
                         $method_name = $method->name;
