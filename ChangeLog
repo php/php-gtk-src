@@ -1,3 +1,24 @@
+2005-07-29  Christian Weiske  <cweiske@cweiske.de>
+
+    * test/bug_gtkiconview_toggle-cursor-item.phpw
+      test/bug_gtknotebook_switchpage.phpw
+      test/bugconfig.php.in
+      test/bugrunner.php:
+      Small test suite for bugs.
+      To use it:
+      - install xautomation program (xte) from
+      http://hoopajoo.net/projects/xautomation.html
+      - copy bugconfig.php.in to bugconfig.php and change the location of your
+         php5 executable
+      - run bugrunner.php: It will execute all bug_*.phpw.
+      - If this scripts echo 'ok' means that everything was ok, the bug doesn't
+         exist any more. However, if anything other than 'ok' is echoed: The bug
+         still exists.
+      - All the single bug scripts can be run with "debug" as parameter
+         which shows the real error message
+      
+      I know that it's not nice, but it works for now.
+
 2005-07-15  Frank M. Kromann  <frank@kromann.info>
 
     * (PHP_GTK_1)
