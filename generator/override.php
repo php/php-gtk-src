@@ -164,9 +164,9 @@ class Overrides {
                 break;
 
             case 'add-arginfo':
-                $name = $words[0];
-                $this->extra_arginfo[$name] = $rest;
-                $this->lineinfo[$name] = array($blocklineno + 1, $file_name);
+                $method = $words[0];
+                $this->extra_arginfo[$method] = $rest;
+                $this->lineinfo["$method.arginfo"] = array($blocklineno + 1, $file_name);
                 break;
 
             case 'headers':

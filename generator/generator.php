@@ -923,13 +923,15 @@ class Generator {
             $arginfo = null;
         } else if (($overriden = $this->overrides->is_overriden($method->c_name))) {
             //overridden function - extra arginfo in override file?
-            $reflection_funcname = Generator::getReflectionFuncName($method, $class);
-            $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
+            $method_name = $method->c_name;
 
-            if ($this->overrides->has_extra_arginfo($reflection_funcname)) {
-                list($line, $filename) = $this->overrides->get_line_info($reflection_funcname);
+            if ($this->overrides->has_extra_arginfo($method_name)) {
+                $reflection_funcname = Generator::getReflectionFuncName($method, $class);
+                $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
+
+                list($line, $filename) = $this->overrides->get_line_info($method_name);
                 $arginfo  = sprintf("#line %d \"%s\"\n", $line, $filename);
-                $arginfo .= $this->overrides->get_extra_arginfo($reflection_funcname);
+                $arginfo .= str_replace('ARGINFO_NAME', $reflection_funcname, $this->overrides->get_extra_arginfo($method_name));
             } else {
                 //no arginfo
                 $reflection_func = str_repeat(' ', $len) . 'NULL';

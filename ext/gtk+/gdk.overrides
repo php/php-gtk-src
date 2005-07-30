@@ -74,9 +74,9 @@ PHP_METHOD
 }
 
 %%
-add-arginfo arginfo_gdk_gdkcolor_color_parse
+add-arginfo gdk_color_parse
 static
-ZEND_BEGIN_ARG_INFO(arginfo_gdk_gdkcolor_color_parse, 0)
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, color)
 ZEND_END_ARG_INFO();
 
