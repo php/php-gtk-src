@@ -923,15 +923,20 @@ class Generator {
             $arginfo = null;
         } else if (($overriden = $this->overrides->is_overriden($method->c_name))) {
             //overridden function - extra arginfo in override file?
-            $method_name = $method->c_name;
+            $class_name  = $class->c_name;
+            $overrideinfo = $this->overrides->get_override($method->c_name);
+            $method_name = $overrideinfo[0];
+            if (empty($method_name) || $method_name == $method->c_name) {
+                $method_name = $method->name;
+            }
 
-            if ($this->overrides->has_extra_arginfo($method_name)) {
+            if ($this->overrides->has_extra_arginfo($class_name, $method_name)) {
                 $reflection_funcname = Generator::getReflectionFuncName($method, $class);
                 $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
 
-                list($line, $filename) = $this->overrides->get_line_info($method_name);
+                list($line, $filename) = $this->overrides->get_line_info("$class_name.$method_name.arginfo");
                 $arginfo  = sprintf("#line %d \"%s\"\n", $line, $filename);
-                $arginfo .= str_replace('ARGINFO_NAME', $reflection_funcname, $this->overrides->get_extra_arginfo($method_name));
+                $arginfo .= str_replace('ARGINFO_NAME', $reflection_funcname, $this->overrides->get_extra_arginfo($class_name, $method_name));
             } else {
                 //no arginfo
                 $reflection_func = str_repeat(' ', $len) . 'NULL';
