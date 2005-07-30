@@ -251,103 +251,7 @@ PHP_METHOD
 
 %% }}}
 
-%%
-override gdk_text_extents
-PHP_METHOD
-{
-	char *text;
-	int length, lbearing, rbearing, width, ascent, descent;
-
-	NOT_STATIC_METHOD();
-
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s#", &text, &length))
-		return;
-
-    gdk_text_extents((GdkFont *)PHPG_GBOXED(this_ptr), text, length, &lbearing, &rbearing, &width, &ascent, &descent);
-    php_gtk_build_value(&return_value, "(iiiii)", lbearing, rbearing, width, ascent, descent);
-}
-
-%%
-override gdk_rectangle_new
-PHP_METHOD
-{
-    phpg_gboxed_t *pobj = NULL;
-    GdkRectangle rect = { 0, 0, 0, 0 };
-
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iiii", &(rect.x), &(rect.y),
-                            &(rect.width), &(rect.height))) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GdkRectangle);
-    }
-
-    pobj = zend_object_store_get_object(this_ptr TSRMLS_CC);
-    pobj->gtype = GDK_TYPE_RECTANGLE;
-    pobj->boxed = g_boxed_copy(GDK_TYPE_RECTANGLE, &rect);
-    pobj->free_on_destroy = TRUE;
-}
-
-%%
-override gdk_rectangle_intersect
-PHP_METHOD
-{
-    GdkRectangle rect, dest;
-    zval *php_rect;
-
-    NOT_STATIC_METHOD();
-
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_rect))
-		return;
-
-    if (phpg_rectangle_from_zval(php_rect, &rect) == FAILURE) {
-        php_error(E_WARNING, "%s::%s() expects area argument to be either a 4-element array or a GdkRectangle object", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-        return;
-    }
-
-    if (gdk_rectangle_intersect((GdkRectangle*)PHPG_GBOXED(this_ptr), &rect, &dest)) {
-        phpg_gboxed_new(&return_value, GDK_TYPE_RECTANGLE, &dest, TRUE, TRUE TSRMLS_CC);
-    } else {
-        RETURN_FALSE;
-    }
-}
-
-%%
-override gdk_rectangle_union
-PHP_METHOD
-{
-    GdkRectangle rect, dest;
-    zval *php_rect;
-
-    NOT_STATIC_METHOD();
-
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_rect))
-		return;
-
-    if (phpg_rectangle_from_zval(php_rect, &rect) == FAILURE) {
-        php_error(E_WARNING, "%s::%s() expects area argument to be either a 4-element array or a GdkRectangle object", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-        return;
-    }
-
-    gdk_rectangle_union((GdkRectangle*)PHPG_GBOXED(this_ptr), &rect, &dest);
-    phpg_gboxed_new(&return_value, GDK_TYPE_RECTANGLE, &dest, TRUE, TRUE TSRMLS_CC);
-}
-
-%%
-override-prop GdkDrawable xid
-PHPG_PROP_READER
-{
-#if defined(GDK_WINDOWING_X11)
-	RETVAL_LONG(GDK_DRAWABLE_XID(((GdkDrawable *)((phpg_gobject_t *)object)->obj)));
-#else
-    php_error(E_WARNING, "xid property is not supported");
-#endif
-    return SUCCESS;
-}
-
-%%override-prop GdkPixbuf pixel_array
-PHPG_PROP_READER
-{
-    /* TODO */
-    return SUCCESS;
-}
+%% {{{ GdkEvent
 
 %%
 override-handler GdkEvent read_property
@@ -473,4 +377,144 @@ HashTable* phpg_gdkevent_get_properties_handler(zval *object TSRMLS_DC)
                                STRS(type), STRS(window), STRS(send_event), NULL);
 
 	return poh->zobj.properties;
+}
+
+%% }}}
+
+%% {{{ GdkPixbuf
+
+%%
+override gdk_pixbuf_render_pixmap_and_mask
+PHP_METHOD
+{
+    int alpha_threshold = 127;
+    GdkPixmap *pixmap;
+    GdkBitmap *mask;
+    zval *php_pixmap = NULL;
+    zval *php_mask = NULL;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|i", &alpha_threshold))
+        return;
+
+    gdk_pixbuf_render_pixmap_and_mask(GDK_PIXBUF(PHPG_GOBJECT(this_ptr)), &pixmap, &mask, alpha_threshold);
+    if (pixmap) {
+        phpg_gobject_new(&php_pixmap, (GObject*)pixmap TSRMLS_CC);
+        gdk_pixmap_unref(pixmap);
+    } else {                            
+        MAKE_STD_ZVAL(php_pixmap);
+    }
+
+    if (mask) {
+        phpg_gobject_new(&php_mask, (GObject*)mask TSRMLS_CC);
+        gdk_bitmap_unref(mask);
+    } else {
+        MAKE_STD_ZVAL(php_mask);
+    }
+
+    php_gtk_build_value(&return_value, "(NN)", php_pixmap, php_mask);
+}
+
+%%override-prop GdkPixbuf pixel_array
+PHPG_PROP_READER
+{
+    /* TODO */
+    return SUCCESS;
+}
+
+%% }}}
+
+%% {{{ GdkRectangle
+
+%%
+override gdk_rectangle_new
+PHP_METHOD
+{
+    phpg_gboxed_t *pobj = NULL;
+    GdkRectangle rect = { 0, 0, 0, 0 };
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iiii", &(rect.x), &(rect.y),
+                            &(rect.width), &(rect.height))) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GdkRectangle);
+    }
+
+    pobj = zend_object_store_get_object(this_ptr TSRMLS_CC);
+    pobj->gtype = GDK_TYPE_RECTANGLE;
+    pobj->boxed = g_boxed_copy(GDK_TYPE_RECTANGLE, &rect);
+    pobj->free_on_destroy = TRUE;
+}
+
+%%
+override gdk_rectangle_intersect
+PHP_METHOD
+{
+    GdkRectangle rect, dest;
+    zval *php_rect;
+
+    NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_rect))
+		return;
+
+    if (phpg_rectangle_from_zval(php_rect, &rect) == FAILURE) {
+        php_error(E_WARNING, "%s::%s() expects area argument to be either a 4-element array or a GdkRectangle object", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    if (gdk_rectangle_intersect((GdkRectangle*)PHPG_GBOXED(this_ptr), &rect, &dest)) {
+        phpg_gboxed_new(&return_value, GDK_TYPE_RECTANGLE, &dest, TRUE, TRUE TSRMLS_CC);
+    } else {
+        RETURN_FALSE;
+    }
+}
+
+%%
+override gdk_rectangle_union
+PHP_METHOD
+{
+    GdkRectangle rect, dest;
+    zval *php_rect;
+
+    NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_rect))
+		return;
+
+    if (phpg_rectangle_from_zval(php_rect, &rect) == FAILURE) {
+        php_error(E_WARNING, "%s::%s() expects area argument to be either a 4-element array or a GdkRectangle object", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    gdk_rectangle_union((GdkRectangle*)PHPG_GBOXED(this_ptr), &rect, &dest);
+    phpg_gboxed_new(&return_value, GDK_TYPE_RECTANGLE, &dest, TRUE, TRUE TSRMLS_CC);
+}
+
+%% }}}
+
+%%
+override gdk_text_extents
+PHP_METHOD
+{
+	char *text;
+	int length, lbearing, rbearing, width, ascent, descent;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s#", &text, &length))
+		return;
+
+    gdk_text_extents((GdkFont *)PHPG_GBOXED(this_ptr), text, length, &lbearing, &rbearing, &width, &ascent, &descent);
+    php_gtk_build_value(&return_value, "(iiiii)", lbearing, rbearing, width, ascent, descent);
+}
+
+%%
+override-prop GdkDrawable xid
+PHPG_PROP_READER
+{
+#if defined(GDK_WINDOWING_X11)
+	RETVAL_LONG(GDK_DRAWABLE_XID(((GdkDrawable *)((phpg_gobject_t *)object)->obj)));
+#else
+    php_error(E_WARNING, "xid property is not supported");
+#endif
+    return SUCCESS;
 }

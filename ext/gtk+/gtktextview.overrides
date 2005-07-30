@@ -1,0 +1,93 @@
+/* vim: set ft=cpp fdm=marker et: */
+
+%% {{{ GtkTextBuffer
+
+%%
+override gtk_text_buffer_get_start_iter
+PHP_METHOD
+{
+    GtkTextIter iter;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_text_buffer_get_start_iter(GTK_TEXT_BUFFER(PHPG_GOBJECT(this_ptr)), &iter);
+    phpg_gboxed_new(&return_value, GTK_TYPE_TEXT_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
+override gtk_text_buffer_get_end_iter
+PHP_METHOD
+{
+    GtkTextIter iter;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(PHPG_GOBJECT(this_ptr)), &iter);
+    phpg_gboxed_new(&return_value, GTK_TYPE_TEXT_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
+override gtk_text_buffer_get_iter_at_line
+PHP_METHOD
+{
+    GtkTextIter iter;
+    int line_number;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &line_number))
+        return;
+
+    gtk_text_buffer_get_iter_at_line(GTK_TEXT_BUFFER(PHPG_GOBJECT(this_ptr)), &iter, line_number);
+    phpg_gboxed_new(&return_value, GTK_TYPE_TEXT_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
+override gtk_text_buffer_get_iter_at_line_offset
+PHP_METHOD
+{
+    GtkTextIter iter;
+    int line_number, char_offset;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &line_number, &char_offset))
+        return;
+
+    gtk_text_buffer_get_iter_at_line_offset(GTK_TEXT_BUFFER(PHPG_GOBJECT(this_ptr)), &iter, line_number, char_offset);
+    phpg_gboxed_new(&return_value, GTK_TYPE_TEXT_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
+override gtk_text_buffer_get_iter_at_line_index
+PHP_METHOD
+{
+    GtkTextIter iter;
+    int line_number, byte_offset;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &line_number, byte_offset))
+        return;
+
+    gtk_text_buffer_get_iter_at_line_index(GTK_TEXT_BUFFER(PHPG_GOBJECT(this_ptr)), &iter, line_number, byte_offset);
+    phpg_gboxed_new(&return_value, GTK_TYPE_TEXT_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
+override gtk_text_buffer_get_iter_at_offset
+PHP_METHOD
+{
+    GtkTextIter iter;
+    int char_offset;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &char_offset))
+        return;
+
+    gtk_text_buffer_get_iter_at_offset(GTK_TEXT_BUFFER(PHPG_GOBJECT(this_ptr)), &iter, char_offset);
+    phpg_gboxed_new(&return_value, GTK_TYPE_TEXT_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%% }}}

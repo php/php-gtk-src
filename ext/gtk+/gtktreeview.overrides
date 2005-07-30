@@ -292,6 +292,33 @@ PHP_METHOD
 %% {{{ GtkTreeModel
 
 %%
+override gtk_tree_model_get_iter
+PHP_METHOD
+{
+    zval *php_path;
+    GtkTreeIter iter;
+    GtkTreePath *path;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &path))
+        return;
+
+    if (phpg_tree_path_from_zval(php_path, &path TSRMLS_CC) == FAILURE) {
+        php_error(E_WARNING, "%s::%s() expects path argument to be a valid tree path specification", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    if (gtk_tree_model_get_iter(GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr)), &iter, path)) {
+        gtk_tree_path_free(path);
+        phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+    } else {
+        gtk_tree_path_free(path);
+        php_error(E_WARNING, "%s::%s(): invalid tree path", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+    }
+}
+
+%%
 override gtk_tree_model_get_iter_first
 PHP_METHOD
 {

@@ -5,6 +5,7 @@ GTK_OVERRIDES = \
 	$(srcdir)/gtk.overrides \
 	$(srcdir)/gtkcontainer.overrides \
 	$(srcdir)/gtkstyle.overrides \
+	$(srcdir)/gtktextview.overrides \
 	$(srcdir)/gtktreeview.overrides
 
 $(srcdir)/gen_gtk.c: $(srcdir)/gtk.defs $(COMMONDEFS) $(srcdir)/gtk-extrafuncs.defs $(GTK_OVERRIDES)

@@ -587,12 +587,6 @@ class Boxed_Arg extends Arg_Type {
             }
 
             $info->add_parse_list('N', array('&php_' . $name, 'gboxed_ce'));
-            $typename = preg_replace('!^(const-)?([^*]+)(\*)?$!', '$2', $type);
-            if ($typename != $this->boxed_type) {
-                $info->arg_list[] = '(' . substr($type, 0, -1) . ' *)' . $name;
-            } else {
-                $info->arg_list[] = $name;
-            }
         } else {
             if (isset($default)) {
                 $info->var_list->add($this->boxed_type, '*' . $name . ' = ' . $default);
@@ -611,6 +605,12 @@ class Boxed_Arg extends Arg_Type {
             }
 
             $info->add_parse_list('O', array('&php_' . $name, 'gboxed_ce'));
+        }
+
+        $typename = preg_replace('!^(const-)?([^*]+)(\*)?$!', '$2', $type);
+        if ($typename != $this->boxed_type) {
+            $info->arg_list[] = '(' . substr($type, 0, -1) . ' *)' . $name;
+        } else {
             $info->arg_list[] = $name;
         }
     }

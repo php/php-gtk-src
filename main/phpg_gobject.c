@@ -734,6 +734,7 @@ ZEND_BEGIN_ARG_INFO(arginfo_gobject_signal_query, 0)
     ZEND_ARG_INFO(0, gtype)
 ZEND_END_ARG_INFO();
 
+/* }}} */
 
 static zend_function_entry gobject_methods[] = {
     PHP_ME(GObject, __construct,          NULL                                  , ZEND_ACC_PUBLIC)
@@ -755,7 +756,6 @@ static zend_function_entry gobject_methods[] = {
     PHP_ME(GObject, signal_query,         arginfo_gobject_signal_query          , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     {NULL, NULL, NULL}
 };
-/* }}} */
 
 
 void phpg_gobject_register_self(TSRMLS_D)
