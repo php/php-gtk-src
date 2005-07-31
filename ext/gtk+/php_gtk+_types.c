@@ -160,6 +160,7 @@ typedef struct {
     GtkStyle *style; /* here only so we can make sure it persists */
     gpointer array;
     style_helper_type type;
+    HashTable *properties; /* dummy */
 } style_helper;
 
 static const uint STYLE_NUM_STATES = 5;
@@ -297,6 +298,31 @@ static int style_helper_has_dimension(zval *object, zval *offset, int check_empt
     return 1;
 }
 
+static HashTable* style_helper_get_properties(zval *object TSRMLS_DC)
+{
+    int i;
+    zval *result;
+    zval offset;
+    style_helper *sh = (style_helper *) zend_object_store_get_object(object TSRMLS_CC);
+
+    offset.type = IS_LONG;
+    for (i = 0; i < STYLE_NUM_STATES; i++) {
+        offset.value.lval = i;
+        result = style_helper_read_dimension(object, &offset, BP_VAR_R TSRMLS_CC);
+        INIT_PZVAL(result);
+        zend_hash_index_update(sh->properties, i, &result, sizeof(zval *), NULL);
+    }
+
+    return sh->properties;
+}
+
+int style_helper_get_class_name(zval *object, char **class_name, zend_uint *class_name_len, int parent TSRMLS_DC)
+{
+	*class_name_len = sizeof("StyleHelper");
+	*class_name = estrndup("StyleHelper", sizeof("StyleHelper")-1);
+    return SUCCESS;
+}
+
 static int style_helper_count_elements(zval *object, long *count TSRMLS_DC)
 {
     *count = STYLE_NUM_STATES;
@@ -316,12 +342,12 @@ static zend_object_handlers style_helper_handlers = {
 	NULL,						 /* unset_property */
 	style_helper_has_dimension,	 /* has_dimension */
 	NULL,                        /* unset_dimension */
-	NULL,						 /* get_properties */
+	style_helper_get_properties, /* get_properties */
 	NULL,						 /* get_method */
 	NULL,						 /* call_method */
 	NULL,						 /* get_constructor */
 	NULL,						 /* get_class_entry */
-	NULL,						 /* get_class_name */
+	style_helper_get_class_name, /* get_class_name */
 	NULL,						 /* compare_objects */
 	NULL,						 /* cast_object */
 	style_helper_count_elements, /* count_elements */
@@ -329,6 +355,8 @@ static zend_object_handlers style_helper_handlers = {
 
 ZEND_API void style_helper_free_storage(style_helper *sh TSRMLS_DC)
 {
+    zend_hash_destroy(sh->properties);
+    FREE_HASHTABLE(sh->properties);
     g_object_unref(sh->style);
     efree(sh);
 }
@@ -340,6 +368,8 @@ PHP_GTK_API void phpg_create_style_helper(zval **zobj, GtkStyle *style, int type
     sh->array = array;
     sh->type = type;
     sh->style = g_object_ref(style);
+	ALLOC_HASHTABLE(sh->properties);
+	zend_hash_init(sh->properties, 0, NULL, ZVAL_PTR_DTOR, 0);
 
     assert(zobj != NULL);
     if (*zobj == NULL) {
