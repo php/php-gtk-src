@@ -31,6 +31,13 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkTextBuffer get_iter_at_line
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, line_number)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_text_buffer_get_iter_at_line
 PHP_METHOD
 {
@@ -44,6 +51,14 @@ PHP_METHOD
     gtk_text_buffer_get_iter_at_line(GTK_TEXT_BUFFER(PHPG_GOBJECT(this_ptr)), &iter, line_number);
     phpg_gboxed_new(&return_value, GTK_TYPE_TEXT_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }
+
+%%
+add-arginfo GtkTextBuffer get_iter_at_line_offset
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, line_number)
+    ZEND_ARG_INFO(0, char_offset)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_text_buffer_get_iter_at_line_offset
@@ -61,6 +76,14 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkTextBuffer get_iter_at_line_index
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, line_number)
+    ZEND_ARG_INFO(0, byte_offset)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_text_buffer_get_iter_at_line_index
 PHP_METHOD
 {
@@ -74,6 +97,13 @@ PHP_METHOD
     gtk_text_buffer_get_iter_at_line_index(GTK_TEXT_BUFFER(PHPG_GOBJECT(this_ptr)), &iter, line_number, byte_offset);
     phpg_gboxed_new(&return_value, GTK_TYPE_TEXT_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }
+
+%%
+add-arginfo GtkTextBuffer get_iter_at_offset
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, char_offset)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_text_buffer_get_iter_at_offset

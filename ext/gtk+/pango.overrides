@@ -20,6 +20,13 @@ PHP_METHOD
 %%
 ignore pango_font_description_new_from_string
 %%
+add-arginfo PangoFontDescription __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, str)
+ZEND_END_ARG_INFO();
+
+%%
 override pango_font_description_new
 PHP_METHOD
 {

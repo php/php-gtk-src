@@ -28,6 +28,15 @@ ignore
 
 %% {{{ GtkCellLayout
 %%
+add-arginfo GtkCellLayout set_attributes
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+    ZEND_ARG_INFO(0, cell)
+    ZEND_ARG_INFO(0, attribute)
+    ZEND_ARG_INFO(0, column)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_cell_layout_set_attributes
 PHP_METHOD
 {
@@ -79,6 +88,15 @@ PHP_METHOD
 
 %% {{{ GtkListStore
 %%
+add-arginfo GtkListStore __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+    ZEND_ARG_INFO(0, type_col_0)
+    ZEND_ARG_INFO(0, type_col_1)
+    ZEND_ARG_INFO(0, ...)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_list_store_new
 PHP_METHOD
 {
@@ -116,6 +134,13 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkListStore append
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, items)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_list_store_append
 PHP_METHOD
 {
@@ -134,6 +159,15 @@ PHP_METHOD
 
     phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }
+
+%%
+add-arginfo GtkListStore set
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, iter)
+    ZEND_ARG_INFO(0, column)
+    ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_list_store_set
@@ -219,6 +253,15 @@ PHP_METHOD
 
 %% {{{ GtkTreeStore
 %%
+add-arginfo GtkTreeStore __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+    ZEND_ARG_INFO(0, type_col_0)
+    ZEND_ARG_INFO(0, type_col_1)
+    ZEND_ARG_INFO(0, ...)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_tree_store_new
 PHP_METHOD
 {
@@ -254,6 +297,14 @@ PHP_METHOD
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
+
+%%
+add-arginfo GtkTreeStore apend
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, iter)
+    ZEND_ARG_INFO(0, items)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_tree_store_append
@@ -383,6 +434,13 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkTreeModel iter_children
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, parent_iter)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_tree_model_iter_children
 PHP_METHOD
 {
@@ -445,6 +503,16 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkTreeView
+
+%%
+add-arginfo GtkTreeView insert_column_with_data_func
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, position)
+    ZEND_ARG_INFO(0, title)
+    ZEND_ARG_INFO(0, cellrenderer)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_tree_view_insert_column_with_data_func
@@ -520,6 +588,14 @@ PHP_METHOD
 
 %% {{{ GtkTreeViewColumn
 %%
+add-arginfo GtkTreeViewColumn new_with_attributes
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, title)
+    ZEND_ARG_INFO(0, cellrenderer)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_tree_view_column_new_with_attributes
 PHP_METHOD
 {
@@ -584,6 +660,14 @@ PHP_METHOD
 
     phpg_gobject_set_wrapper(this_ptr, (GObject *)tvc);
 }
+
+%%
+add-arginfo GtkTreeViewColumn set_cell_data_func
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, cellrenderer)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_tree_view_column_set_cell_data_func
