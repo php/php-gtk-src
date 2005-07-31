@@ -17,6 +17,9 @@ Base Functionality
 + Support signal connection and closures
 + Custom boxed types
 + Make error messages display Class::Method() instead of just method name
++ Support automatic UTF-8 <-> codepage conversion where necessary
++ Fix crash when doing var_dump() on GtkStyle due to GtkStyleHelper not
+  implementing get_properties and get_class_entry
 * Some classes need to be coded in C entirely, see gtk-types.c
 * Interfaces
 * Pointers
@@ -27,10 +30,7 @@ Base Functionality
   advantage of function call cache
 * Construction of arbitrary GObjects() via argument lists
 * Integration with pkg-config
-+ Support automatic UTF-8 <-> codepage conversion where necessary
 * Provide access to GTK version number.
-* Fix crash when doing var_dump() on GtkStyle due to GtkStyleHelper not
-  implementing get_properties and get_class_entry
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
