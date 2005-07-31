@@ -207,6 +207,15 @@ constants
 %% }}}
 
 %% {{{ main loop
+
+%%
+add-arginfo Gtk timeout_add
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, interval)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_timeout_add
 
@@ -256,11 +265,28 @@ PHP_METHOD
 }
 
 %%
+add-arginfo Gtk timeout_add_priority
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, interval)
+    ZEND_ARG_INFO(0, priority)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
+
+%%
 add Gtk timeout_add_priority
 PHP_METHOD
 {
     phpg_gtk_timeout_add_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
 }
+
+%%
+add-arginfo Gtk quit_add
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, main_level)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_quit_add
@@ -301,6 +327,7 @@ PHP_METHOD
 %% }}}
 
 %% {{{ functions
+
 %%
 override gtk_icon_size_lookup
 PHP_METHOD
@@ -336,6 +363,13 @@ PHP_METHOD
 }
 
 %%
+add-arginfo Gtk stock_lookup
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, stock_id)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_stock_lookup
 PHP_METHOD
 {
@@ -355,6 +389,15 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkButton
+
+%%
+add-arginfo GtkButton __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, text)
+    ZEND_ARG_INFO(0, use_underline)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_button_new
 PHP_METHOD
@@ -382,6 +425,13 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkButton new_from_stock
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, stock)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_button_new_from_stock new_from_stock ZEND_ACC_PUBLIC|ZEND_ACC_STATIC
 PHP_METHOD
 {
@@ -405,6 +455,14 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkCheckButton
+%%
+add-arginfo GtkCheckButton __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, text)
+    ZEND_ARG_INFO(0, use_underline)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_check_button_new
 PHP_METHOD
@@ -433,6 +491,14 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkCheckMenuItem
+%%
+add-arginfo GtkCheckMenuItem __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, text)
+    ZEND_ARG_INFO(0, use_underline)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_check_menu_item_new
 PHP_METHOD
@@ -470,6 +536,16 @@ PHP_METHOD
 %% include gtkcontainer.overrides
 
 %% {{{ GtkDialog
+%%
+add-arginfo GtkDialog new_with_buttons
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, title)
+    ZEND_ARG_INFO(0, parent)
+    ZEND_ARG_INFO(0, flags)
+    ZEND_ARG_INFO(0, buttons)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_dialog_new_with_buttons
 PHP_METHOD
@@ -573,6 +649,14 @@ PHP_METHOD
 
 %% {{{ GtkImageMenuItem
 %%
+add-arginfo GtkImageMenuItem __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, stock_id)
+    ZEND_ARG_INFO(0, accel_group)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_image_menu_item_new
 PHP_METHOD
 {
@@ -610,6 +694,17 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkFileChooserDialog
+%%
+add-arginfo GtkFileChooserDialog new_with_backend
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, title)
+    ZEND_ARG_INFO(0, parent)
+    ZEND_ARG_INFO(0, action)
+    ZEND_ARG_INFO(0, buttons)
+    ZEND_ARG_INFO(0, backend)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_file_chooser_dialog_new_with_backend
 PHP_METHOD
@@ -692,6 +787,14 @@ PHP_METHOD
 
 %% {{{ GtkLabel
 %%
+add-arginfo GtkLabel __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, text)
+    ZEND_ARG_INFO(0, use_underline)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_label_new
 PHP_METHOD
 {
@@ -767,6 +870,17 @@ PHP_METHOD
 
 %% {{{ GtkMessageDialog
 %%
+add-arginfo GtkMessageDialog __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, parent)
+    ZEND_ARG_INFO(0, flags)
+    ZEND_ARG_INFO(0, type)
+    ZEND_ARG_INFO(0, buttons)
+    ZEND_ARG_INFO(0, message)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_message_dialog_new
 PHP_METHOD
 {
@@ -821,6 +935,14 @@ PHP_METHOD
 
 %% {{{ GtkMenuItem
 %%
+add-arginfo GtkMenuItem __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, text)
+    ZEND_ARG_INFO(0, use_underline)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_menu_item_new
 PHP_METHOD
 {
@@ -856,6 +978,15 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkRadioMenuItem
+%%
+add-arginfo GtkRadioMenuItem __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, group)
+    ZEND_ARG_INFO(0, text)
+    ZEND_ARG_INFO(0, use_underline)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_radio_menu_item_new
 PHP_METHOD
@@ -899,6 +1030,13 @@ PHP_METHOD
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 
 }
+
+%%
+add-arginfo GtkRadioMenuItem set_group
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, group)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_radio_menu_item_set_group
@@ -947,6 +1085,15 @@ PHP_METHOD
 
 %% {{{ GtkRadioButton
 %%
+add-arginfo GtkRadioButton __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, group)
+    ZEND_ARG_INFO(0, text)
+    ZEND_ARG_INFO(0, use_underline)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_radio_button_new
 PHP_METHOD
 {
@@ -990,6 +1137,14 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkRadioToolButton
+%%
+add-arginfo GtkRadioToolButton __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, group)
+    ZEND_ARG_INFO(0, stock_id)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_radio_tool_button_new
 
@@ -1121,6 +1276,14 @@ PHPG_PROP_READER
 
 %% {{{ GtkToggleButton
 %%
+add-arginfo GtkToggleButton __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, text)
+    ZEND_ARG_INFO(0, use_underline)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_toggle_button_new
 PHP_METHOD
 {
@@ -1148,6 +1311,13 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkWidget
+%%
+add-arginfo GtkWidget intersect
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, area)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_widget_intersect
 PHP_METHOD
