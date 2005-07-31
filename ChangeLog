@@ -1,3 +1,198 @@
+2005-07-30  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gdk.overrides
+      generator/generator.php
+      generator/override.php:
+      Changed the add-arginfo override to Andrei's wish:
+      
+      %%
+      add-arginfo GdkColor parse
+      static
+      ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+          ZEND_ARG_INFO(0, color)
+      ZEND_END_ARG_INFO();
+
+    * ext/gtk+/gdk.overrides
+      generator/generator.php
+      generator/override.php:
+      Modified arginfo override notation so that one just has to write:
+      
+      %%
+      add-arginfo gdk_color_parse
+      static
+      ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+          ZEND_ARG_INFO(0, color)
+      ZEND_END_ARG_INFO();
+
+2005-07-30  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      ext/gtk+/Makefile.frag
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtktextview.overrides
+      ext/gtk+/gtktreeview.overrides
+      ext/libglade/config.m4
+      generator/arg_types.php
+      main/phpg_gobject.c:
+      - Fixed a bug in generator that result in event args not being aast
+      properly.
+      * Implemented GdkPixbuf::render_pixmap_and_mask();
+      * Implemented a bunch of GtkTextBuffer iterator methods.
+      * Implemented GtkTreeModel::get_iter().
+      * Modified libglade's build config to use pkg-config
+
+2005-07-30  Christian Weiske  <cweiske@cweiske.de>
+
+    * generator/generator.php:
+      Removed debugging var_dump
+
+    * ext/gtk+/gdk.overrides
+      generator/generator.php
+      generator/override.php:
+      Overridden functions don't get an arginfo by default now.
+      Instead, it is possible to define your own arginfo in
+      the override file, e.g.
+      
+      %%
+      add-arginfo arginfo_gdk_gdkcolor_color_parse
+      static
+      ZEND_BEGIN_ARG_INFO(arginfo_gdk_gdkcolor_color_parse, 0)
+          ZEND_ARG_INFO(0, color)
+      ZEND_END_ARG_INFO();
+      
+      which will be associated with the overridden function.
+      Parameter reflection is enabled now.
+
+2005-07-30  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/canvas/.cvsignore:
+      -** empty log message ***
+
+    * ext/canvas/Makefile.frag
+      ext/canvas/Makefile.in
+      ext/canvas/canvas.defs
+      ext/canvas/canvas.overrides
+      ext/canvas/canvas.php
+      ext/canvas/config.m4
+      ext/canvas/php_canvas.c
+      ext/canvas/php_canvas.h
+      ext/combobutton/.cvsignore
+      ext/combobutton/Makefile.frag
+      ext/combobutton/Makefile.in
+      ext/combobutton/README
+      ext/combobutton/combobutton.defs
+      ext/combobutton/combobutton.dsp
+      ext/combobutton/combobutton.overrides
+      ext/combobutton/config.m4
+      ext/combobutton/gtkcombobutton.c
+      ext/combobutton/gtkcombobutton.h
+      ext/combobutton/php_combobutton.c
+      ext/combobutton/php_combobutton.h
+      ext/extra/.cvsignore
+      ext/extra/Makefile.frag
+      ext/extra/Makefile.in
+      ext/extra/config.m4
+      ext/extra/extra.defs
+      ext/extra/extra.dsp
+      ext/extra/extra.overrides
+      ext/extra/php_extra.c
+      ext/extra/php_extra.h
+      ext/extra/plot.php
+      ext/extra/sheet.php
+      ext/gdkpixbuf/.cvsignore
+      ext/gdkpixbuf/Makefile.frag
+      ext/gdkpixbuf/Makefile.in
+      ext/gdkpixbuf/config.m4
+      ext/gdkpixbuf/gdk-pixbuf.php
+      ext/gdkpixbuf/gdkpixbuf.defs
+      ext/gdkpixbuf/gdkpixbuf.dsp
+      ext/gdkpixbuf/gdkpixbuf.overrides
+      ext/gdkpixbuf/php_gdkpixbuf.c
+      ext/gdkpixbuf/php_gdkpixbuf.h
+      ext/gtkhtml/.cvsignore
+      ext/gtkhtml/Makefile.frag
+      ext/gtkhtml/Makefile.in
+      ext/gtkhtml/config.m4
+      ext/gtkhtml/gtkhtml.defs
+      ext/gtkhtml/gtkhtml.overrides
+      ext/gtkhtml/gtkhtml.php
+      ext/gtkhtml/php_gtkhtml.c
+      ext/gtkhtml/php_gtkhtml.h
+      ext/imlib/Makefile.frag
+      ext/imlib/Makefile.in
+      ext/imlib/arg_types.php
+      ext/imlib/config.m4
+      ext/imlib/imlib.defs
+      ext/imlib/imlib.overrides
+      ext/imlib/php_imlib.c
+      ext/imlib/php_imlib.h
+      ext/piemenu/.cvsignore
+      ext/piemenu/Makefile.frag
+      ext/piemenu/Makefile.in
+      ext/piemenu/README
+      ext/piemenu/config.m4
+      ext/piemenu/gdkaddons.c
+      ext/piemenu/gdkaddons.h
+      ext/piemenu/gtkaddons.c
+      ext/piemenu/gtkaddons.h
+      ext/piemenu/gtkpiemenu.c
+      ext/piemenu/gtkpiemenu.h
+      ext/piemenu/php_piemenu.c
+      ext/piemenu/php_piemenu.h
+      ext/piemenu/piemenu.defs
+      ext/piemenu/piemenu.overrides
+      ext/scintilla/.cvsignore
+      ext/scintilla/Makefile.frag
+      ext/scintilla/Makefile.in
+      ext/scintilla/config.m4
+      ext/scintilla/php_scintilla.c
+      ext/scintilla/php_scintilla.h
+      ext/scintilla/scintilla.defs
+      ext/scintilla/scintilla.dsp
+      ext/scintilla/scintilla.overrides
+      ext/scrollpane/.cvsignore
+      ext/scrollpane/Makefile.frag
+      ext/scrollpane/Makefile.in
+      ext/scrollpane/README
+      ext/scrollpane/config.m4
+      ext/scrollpane/gtkscrollpane.c
+      ext/scrollpane/gtkscrollpane.h
+      ext/scrollpane/php_scrollpane.c
+      ext/scrollpane/php_scrollpane.h
+      ext/scrollpane/scrollpane.defs
+      ext/scrollpane/scrollpane.dsp
+      ext/scrollpane/scrollpane.overrides
+      ext/spaned/.cvsignore
+      ext/spaned/Makefile.frag
+      ext/spaned/Makefile.in
+      ext/spaned/README
+      ext/spaned/config.m4
+      ext/spaned/gtkshpaned.c
+      ext/spaned/gtkshpaned.h
+      ext/spaned/gtkspaned.c
+      ext/spaned/gtkspaned.h
+      ext/spaned/gtksvpaned.c
+      ext/spaned/gtksvpaned.h
+      ext/spaned/php_spaned.c
+      ext/spaned/php_spaned.h
+      ext/spaned/spaned.defs
+      ext/spaned/spaned.dsp
+      ext/spaned/spaned.overrides
+      ext/sqpane/.cvsignore
+      ext/sqpane/Makefile.frag
+      ext/sqpane/Makefile.in
+      ext/sqpane/README
+      ext/sqpane/config.m4
+      ext/sqpane/gtksqpane.c
+      ext/sqpane/gtksqpane.h
+      ext/sqpane/php_sqpane.c
+      ext/sqpane/php_sqpane.h
+      ext/sqpane/sqpane.defs
+      ext/sqpane/sqpane.dsp
+      ext/sqpane/sqpane.overrides:
+      Remove extensions that are either unsupported or have not been ported
+      yet, from HEAD. They are still on PHP_GTK_1 branch.
+
 2005-07-29  Christian Weiske  <cweiske@cweiske.de>
 
     * test/bug_gtkiconview_toggle-cursor-item.phpw
