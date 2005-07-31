@@ -522,7 +522,7 @@ PHP_METHOD
 add-arginfo GdkRectangle union
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
-    ZEND_ARG_OBJ_INFO(0, rect)
+    ZEND_ARG_INFO(0, rect)
 ZEND_END_ARG_INFO();
 
 %%
