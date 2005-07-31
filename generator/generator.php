@@ -769,7 +769,7 @@ class Generator {
                     $this->write_override($function_override, $function->c_name);
                     $func_defs[] = sprintf(Templates::method_entry,
                                            $this->prefix,
-                                           $func_name, 'NULL', $flags ? $flags : 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
+                                           $func_name, $reflection_func, $flags ? $flags : 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
                 } else {
                     $code = $this->write_callable($function, Templates::function_body, true, false, $dict);
                     $this->fp->write($code);
@@ -780,7 +780,7 @@ class Generator {
                 $this->divert("gen", "%s  %-11s %s::%s\n", $overriden?"%%":"  ", "function", $this->prefix, $function->name);
                 $num_written++;
                 $this->cover["funcs"]->written();
-                
+
                 if ($arginfo !== null) {
                     $function_arginfos .= $arginfo;
                 }
@@ -793,13 +793,19 @@ class Generator {
 
         if ($this->overrides->have_extra_methods($this->prefix)) {
             foreach ($this->overrides->get_extra_methods($this->prefix) as $func_name => $func_body) {
+                list($arginfo, $reflection_func) = $this->genReflectionArgInfo(null, $object, $func_name);
+
                 $func_body = preg_replace('!^.*(PHP_METHOD).*$!m', "static $1($this->prefix, $func_name)", $func_body);
                 $this->write_override($func_body, $this->prefix, $func_name);
                 $func_defs[] = sprintf(Templates::method_entry,
                                        $this->prefix,
-                                       $func_name, 'NULL', 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
+                                       $func_name, $reflection_func, 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC');
                 $this->divert("gen", "%%%%  %-11s %s::%s\n", "function", $this->prefix, $func_name);
                 $num_written++;
+
+                if ($arginfo !== null) {
+                    $function_arginfos .= $arginfo;
+                }
             }
         }
 
@@ -911,30 +917,35 @@ class Generator {
     *   generates an ZEND_ARGINFO entry for this method
     *   based on the parameters and returns it
     *
-    *   @param Method $method           The method (or constructor) to generate the arginfo for
+    *   @param Method $method           The method (or constructor) to generate the arginfo for (if NULL, then we check for overridden only)
     *   @param Class  $class            The class of the method
     *   @param string $det_method_name  Special determined method name if it can't be calculated from the method object
     *   @return array The arginfo (string) and the name of the reflection function
     */
     function genReflectionArgInfo($method, $class, $det_method_name = null)
     {
-        $len = 20 - strlen($method->name);
+        if ($det_method_name !== null) {
+            $len = 20 - strlen($det_method_name);
+        } else {
+            $len = 20 - strlen($method->name);
+        }
         if ($len < 0) { $len = 0; }
 
-        if (($overriden = $this->overrides->is_overriden($method->c_name))) {
+        if ($method === null || ($overriden = $this->overrides->is_overriden($method->c_name))) {
             //overridden function - extra arginfo in override file?
             $class_name  = $class->c_name;
-            $overrideinfo = $this->overrides->get_override($method->c_name);
-            $method_name = $overrideinfo[0];
-            if (empty($method_name) || $method_name == $method->c_name) {
-                $method_name = $method->name;
-            }
             if ($det_method_name !== null) {
                 $method_name = $det_method_name;
+            } else {
+                $overrideinfo = $this->overrides->get_override($method->c_name);
+                $method_name = $overrideinfo[0];
+                if (empty($method_name) || $method_name == $method->c_name) {
+                    $method_name = $method->name;
+                }
             }
 
             if ($this->overrides->has_extra_arginfo($class_name, $method_name)) {
-                $reflection_funcname = Generator::getReflectionFuncName($method, $class);
+                $reflection_funcname = Generator::getReflectionFuncName($method, $class, $det_method_name);
                 $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
 
                 list($line, $filename) = $this->overrides->get_line_info("$class_name.$method_name.arginfo");
@@ -987,10 +998,13 @@ class Generator {
 
 
 
-    function getReflectionFuncName($method, $class)
+    function getReflectionFuncName($method, $class, $det_method_name = null)
     {
+        if ($method === null) {
+            $method->name = $det_method_name;
+        }
         return 'arginfo_' . strtolower($class->in_module) . '_' . strtolower($class->c_name) . '_'. $method->name;
-    }//function getReflectionFuncName($method, $class)
+    }//function getReflectionFuncName($method, $class, $det_method_name = null)
 
 
 
