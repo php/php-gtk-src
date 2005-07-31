@@ -22,19 +22,20 @@
 /* $Id$ */
 
 class Overrides {
-    var $ignores            = array();
-    var $glob_ignores       = array();
-    var $overrides          = array();
-    var $prop_overrides     = array();
-    var $handler_overrides  = array();
-    var $extra_methods      = array();
-    var $extra_arginfo      = array();//reflection information
-    var $getprops           = array();
-    var $register_classes   = array();
-    var $headers            = '';
-    var $constants          = '';
-    var $lineinfo           = array();
-    var $top_dir            = '';
+    var $ignores              = array();
+    var $glob_ignores         = array();
+    var $overrides            = array();
+    var $prop_overrides       = array();
+    var $handler_overrides    = array();
+    var $extra_methods        = array();
+    var $extra_arginfo        = array();//reflection information
+    var $unused_extra_arginfo = array();//which reflection information has not been used
+    var $getprops             = array();
+    var $register_classes     = array();
+    var $headers              = '';
+    var $constants            = '';
+    var $lineinfo             = array();
+    var $top_dir              = '';
 
     function Overrides($file_name = null)
     {
@@ -167,6 +168,7 @@ class Overrides {
                 $class  = $words[0];
                 $method = $words[1];
                 $this->extra_arginfo[$class][$method] = $rest;
+                $this->unused_extra_arginfo[$class][$method] = true;
                 $this->lineinfo["$class.$method.arginfo"] = array($blocklineno + 1, $file_name);
                 break;
 
@@ -265,9 +267,17 @@ class Overrides {
         return isset($this->extra_arginfo[$class][$name]);
     }
 
-    function get_extra_arginfo($class, $name)
+    function get_extra_arginfo($class, $name, $change_unused = true)
     {
+        if ($change_unused) {
+            unset($this->unused_extra_arginfo[$class][$name]);
+        }
         return $this->extra_arginfo[$class][$name];
+    }
+    
+    function get_unused_arginfo()
+    {
+        return $this->unused_extra_arginfo;
     }
 
 }

@@ -364,8 +364,8 @@ class Generator {
                 }
 
                 try {
-                    list($arginfo, $reflection_func) = $this->genReflectionArgInfo($ctor, $object);
-                    
+                    list($arginfo, $reflection_func) = $this->genReflectionArgInfo($ctor, $object, $ctor_fe_name);
+
                     if (($overriden = $this->overrides->is_overriden($ctor_name))) {
                         list(, $ctor_override, $ctor_flags) = $this->overrides->get_override($ctor_name);
                         if (!empty($ctor_flags))
@@ -902,6 +902,7 @@ class Generator {
         $this->log("%s", $this->diversions["notgen"]);
 
         $this->write_coverage_info();
+        $this->write_unused_info();
     }
     
     
@@ -910,24 +911,26 @@ class Generator {
     *   generates an ZEND_ARGINFO entry for this method
     *   based on the parameters and returns it
     *
-    *   @param Method $method The method (or constructor) to generate the arginfo for
+    *   @param Method $method           The method (or constructor) to generate the arginfo for
+    *   @param Class  $class            The class of the method
+    *   @param string $det_method_name  Special determined method name if it can't be calculated from the method object
     *   @return array The arginfo (string) and the name of the reflection function
     */
-    function genReflectionArgInfo($method, $class)
+    function genReflectionArgInfo($method, $class, $det_method_name = null)
     {
         $len = 20 - strlen($method->name);
         if ($len < 0) { $len = 0; }
 
-        if (count($method->params) == 0) {
-            $reflection_func = str_repeat(' ', $len) . 'NULL';
-            $arginfo = null;
-        } else if (($overriden = $this->overrides->is_overriden($method->c_name))) {
+        if (($overriden = $this->overrides->is_overriden($method->c_name))) {
             //overridden function - extra arginfo in override file?
             $class_name  = $class->c_name;
             $overrideinfo = $this->overrides->get_override($method->c_name);
             $method_name = $overrideinfo[0];
             if (empty($method_name) || $method_name == $method->c_name) {
                 $method_name = $method->name;
+            }
+            if ($det_method_name !== null) {
+                $method_name = $det_method_name;
             }
 
             if ($this->overrides->has_extra_arginfo($class_name, $method_name)) {
@@ -944,6 +947,9 @@ class Generator {
                 //var_dump('No arginfo for overridden ' . $reflection_funcname);
             }
 
+        } else if (count($method->params) == 0) {
+            $reflection_func = str_repeat(' ', $len) . 'NULL';
+            $arginfo = null;
         } else {
             $reflection_funcname = Generator::getReflectionFuncName($method, $class);
             $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
@@ -985,6 +991,28 @@ class Generator {
     {
         return 'arginfo_' . strtolower($class->in_module) . '_' . strtolower($class->c_name) . '_'. $method->name;
     }//function getReflectionFuncName($method, $class)
+
+
+
+    function write_unused_info()
+    {
+        $unused = $this->overrides->get_unused_arginfo();
+        
+        $unused_count = 0;
+        $output = '';
+        foreach ($unused as $class => $methods) {
+            foreach ($methods as $method => $true) {
+                $unused_count++;
+                list($line, $filename) = $this->overrides->get_line_info("$class.$method.arginfo");
+                $output .= ' ' . str_pad($class . '::' . $method, 40) . ' ' . $filename . '#' . $line . "\n";
+            }
+        }
+        if ($unused_count > 0) {
+            $this->log_print('Unused arginfo overrides:' . "\n");
+            $this->log_print($output);
+            $this->log_print("\n\n");
+        }
+    }
 
 
 

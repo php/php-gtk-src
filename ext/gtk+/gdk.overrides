@@ -49,6 +49,16 @@ ignore
 %% {{{ GdkColor
 
 %%
+add-arginfo GdkColor __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, red)
+    ZEND_ARG_INFO(0, blue)
+    ZEND_ARG_INFO(0, green)
+    ZEND_ARG_INFO(0, allocated)
+ZEND_END_ARG_INFO();
+
+%%
 override gdk_color_new
 PHP_METHOD
 {
