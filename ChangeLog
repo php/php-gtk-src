@@ -1,3 +1,42 @@
+2005-07-31  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/pango.overrides:
+      I promise to compile before committing in the future *duck*
+
+    * ext/gtk+/gtktextview.overrides
+      ext/gtk+/gtktreeview.overrides
+      ext/gtk+/pango.overrides:
+      Rest of arginfos for override files
+
+    * ext/gtk+/gtk.overrides:
+      The slave wrote arginfos for all overriden functions :)
+      I noted that gtk_file_chooser_dialog_new_with_backend and
+      gtk_dialog_new_with_buttons aren't created? Andrei?
+
+    * generator/generator.php:
+      Arginfos for "add"ed methods and a fix for not-linked arginfos for
+      overrridden methods
+
+    * ext/gtk+/gdk.overrides
+      generator/generator.php:
+      Small gdk arginfo fix and generator fixes for problematic gdk classes
+
+    * ext/gtk+/gdk.overrides:
+      Arginfos for all overridden gdk methods
+
+    * ext/gtk+/gdk.overrides
+      generator/generator.php
+      generator/override.php:
+      Constructors can have arginfo overrides now
+
+2005-07-31  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2:
+      -** empty log message ***
+
+    * ext/gtk+/php_gtk+_types.c:
+      Fix StyleHelper so that it does not crash var_dump().
+
 2005-07-30  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gdk.overrides
