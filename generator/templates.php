@@ -292,7 +292,7 @@ const reflection_arginfo_end = "ZEND_END_ARG_INFO();
 ";
 const reflection_arg = "    ZEND_ARG_INFO(0, %s)
 ";
-const reflection_objarg = "    ZEND_ARG_OBJ_INFO(0, %s, %s, 0)
+const reflection_objarg = "    ZEND_ARG_OBJ_INFO(0, %s, %s, 1)
 ";
 
 const reflection_if = "
