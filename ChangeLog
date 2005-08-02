@@ -1,3 +1,8 @@
+2005-08-01  Christian Weiske  <cweiske@cweiske.de>
+
+    * generator/templates.php:
+      Telling Zend engine that NULL values are allowed
+
 2005-07-31  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/pango.overrides:
