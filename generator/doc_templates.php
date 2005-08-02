@@ -252,5 +252,47 @@ $refentry_end_tpl = <<<EOD
 
 EOD;
 
+
+$enums_start = <<<EOD
+<?xml version="1.0" encoding="utf-8" ?>
+<enums id="%senum">
+
+EOD;
+
+$enums_end = <<<EOD
+</enums>
+
+EOD;
+
+$enum_start = <<<EOD
+
+
+ <enum id="%s.enum.%s">
+  <enumname>%s%s</enumname>
+  <desc>
+   <simpara>
+    
+   </simpara>
+  </desc>
+
+EOD;
+
+$enum_end = <<<EOD
+ </enum>
+
+EOD;
+
+$enum_option = <<<EOD
+  <enumoption>
+   <value>%d</value>
+   <optionname>%s::%s</optionname>
+   <shortdesc>
+    
+   </shortdesc>
+  </enumoption>
+
+EOD;
+
+
 /* vim: set et sts=4: */
 ?>
