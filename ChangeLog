@@ -1,3 +1,9 @@
+2005-08-02  Christian Weiske  <cweiske@cweiske.de>
+
+    * generator/doc_templates.php
+      generator/docgen_enum.php:
+      Enumeration generator for php-gtk2
+
 2005-08-01  Christian Weiske  <cweiske@cweiske.de>
 
     * generator/templates.php:
