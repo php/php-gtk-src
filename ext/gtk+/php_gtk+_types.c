@@ -353,7 +353,7 @@ static zend_object_handlers style_helper_handlers = {
 	style_helper_count_elements, /* count_elements */
 };
 
-ZEND_API void style_helper_free_storage(style_helper *sh TSRMLS_DC)
+static void style_helper_free_storage(style_helper *sh TSRMLS_DC)
 {
     zend_hash_destroy(sh->properties);
     FREE_HASHTABLE(sh->properties);

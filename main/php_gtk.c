@@ -71,7 +71,7 @@ ZEND_GET_MODULE(gtk)
 static void php_gtk_startup_shared_extensions(int module_number);
 
 
-ZEND_API ZEND_INI_MH(OnUpdateCodepage)
+static ZEND_INI_MH(OnUpdateCodepage)
 {
 	char **p;
 #ifndef ZTS
