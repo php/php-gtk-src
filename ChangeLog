@@ -1,3 +1,9 @@
+2005-08-21  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/php_gtk+_types.c
+      main/php_gtk.c:
+      Remove ZEND_API from a couple of funcs.
+
 2005-08-02  Christian Weiske  <cweiske@cweiske.de>
 
     * generator/doc_templates.php
