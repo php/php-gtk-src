@@ -227,7 +227,7 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC)
 
         case G_TYPE_DOUBLE:
             convert_to_double(value);
-            g_value_set_float(gval, Z_DVAL_P(value));
+            g_value_set_double(gval, Z_DVAL_P(value));
             break;
 
         case G_TYPE_ENUM:
