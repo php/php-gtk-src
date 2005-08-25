@@ -301,17 +301,53 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
      * the rest of event types
      */
     switch (event->type) {
-        case GDK_NOTHING:
-        case GDK_DELETE:
-        case GDK_DESTROY:
-            break;
-
         case GDK_EXPOSE:
             if (!strcmp(name, "area")) {
                 phpg_gboxed_new(&result, GDK_TYPE_RECTANGLE, &event->expose.area, TRUE, TRUE TSRMLS_CC);
             } else if (!strcmp(name, "count")) {
                 ALLOC_ZVAL(result);
                 ZVAL_LONG(result, event->expose.count);
+            }
+            break;
+
+        case GDK_BUTTON_PRESS:
+        case GDK_2BUTTON_PRESS:
+        case GDK_3BUTTON_PRESS:
+        case GDK_BUTTON_RELEASE:
+            if (!strcmp(name, "time")) {
+                ALLOC_ZVAL(result);
+                ZVAL_LONG(result, event->button.time);
+            } else if (!strcmp(name, "x")) {
+                ALLOC_ZVAL(result);
+                ZVAL_DOUBLE(result, event->button.x);
+            } else if (!strcmp(name, "y")) {
+                ALLOC_ZVAL(result);
+                ZVAL_DOUBLE(result, event->button.y);
+            } else if (!strcmp(name, "axes")) {
+                ALLOC_ZVAL(result);
+                if (event->button.axes) {
+                    guint i = 0;
+                    array_init(result);
+                    for (i = 0; i < event->button.device->num_axes; i++) {
+                        add_next_index_double(result, event->button.axes[i]);
+                    }
+                } else {
+                    ZVAL_NULL(result);
+                }
+            } else if (!strcmp(name, "state")) {
+                ALLOC_ZVAL(result);
+                ZVAL_LONG(result, event->button.state);
+            } else if (!strcmp(name, "button")) {
+                ALLOC_ZVAL(result);
+                ZVAL_LONG(result, event->button.button);
+            } else if (!strcmp(name, "device")) {
+                phpg_gobject_new(&result, (GObject*)event->button.device TSRMLS_CC);
+            } else if (!strcmp(name, "x_root")) {
+                ALLOC_ZVAL(result);
+                ZVAL_DOUBLE(result, event->button.x_root);
+            } else if (!strcmp(name, "y_root")) {
+                ALLOC_ZVAL(result);
+                ZVAL_DOUBLE(result, event->button.y_root);
             }
             break;
 
@@ -338,6 +374,28 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
             }
             break;
 
+        case GDK_CONFIGURE:
+            if (!strcmp(name, "x")) {
+                ALLOC_ZVAL(result);
+                ZVAL_LONG(result, event->configure.x);
+            } else if (!strcmp(name, "y")) {
+                ALLOC_ZVAL(result);
+                ZVAL_LONG(result, event->configure.y);
+            } else if (!strcmp(name, "width")) {
+                ALLOC_ZVAL(result);
+                ZVAL_LONG(result, event->configure.width);
+            } else if (!strcmp(name, "height")) {
+                ALLOC_ZVAL(result);
+                ZVAL_LONG(result, event->configure.height);
+            }
+            break;
+
+        case GDK_NOTHING:
+        case GDK_DELETE:
+        case GDK_DESTROY:
+        case GDK_MAP:
+        case GDK_UNMAP:
+        case GDK_NO_EXPOSE:
         default:
             break;
     }
@@ -380,6 +438,21 @@ HashTable* phpg_gdkevent_get_properties_handler(zval *object TSRMLS_DC)
      * the rest of event types
      */
     switch (event->type) {
+        case GDK_EXPOSE:
+            phpg_get_properties_helper(object, poh->zobj.properties TSRMLS_CC,
+                                       STRS(area), STRS(count), NULL);
+            break;
+
+        case GDK_BUTTON_PRESS:
+        case GDK_2BUTTON_PRESS:
+        case GDK_3BUTTON_PRESS:
+        case GDK_BUTTON_RELEASE:
+            phpg_get_properties_helper(object, poh->zobj.properties TSRMLS_CC,
+                                       STRS(time), STRS(x), STRS(y), STRS(axes),
+                                       STRS(state), STRS(button), STRS(device),
+                                       STRS(x_root), STRS(y_root), NULL);
+            break;
+
         case GDK_KEY_PRESS:
         case GDK_KEY_RELEASE:
             phpg_get_properties_helper(object, poh->zobj.properties TSRMLS_CC,
@@ -387,14 +460,17 @@ HashTable* phpg_gdkevent_get_properties_handler(zval *object TSRMLS_DC)
                                        STRS(hardware_keycode), STRS(group), NULL);
             break;
 
-        case GDK_EXPOSE:
+        case GDK_CONFIGURE:
             phpg_get_properties_helper(object, poh->zobj.properties TSRMLS_CC,
-                                       STRS(area), STRS(count), NULL);
+                                       STRS(x), STRS(y), STRS(width), STRS(height), NULL);
             break;
 
         case GDK_NOTHING:
         case GDK_DELETE:
         case GDK_DESTROY:
+        case GDK_MAP:
+        case GDK_UNMAP:
+        case GDK_NO_EXPOSE:
         default:
             break;
     }
