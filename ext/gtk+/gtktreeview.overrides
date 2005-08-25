@@ -500,6 +500,38 @@ PHP_METHOD
     }
 }
 
+%%
+override gtk_tree_selection_get_selected_rows
+PHP_METHOD
+{
+    GtkTreeModel *model = NULL;
+    GList *selected, *tmp;
+    zval *php_selected = NULL, *php_model = NULL;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+    
+    selected = gtk_tree_selection_get_selected_rows(GTK_TREE_SELECTION(PHPG_GOBJECT(this_ptr)), &model);
+    phpg_gobject_new(&php_model, (GObject *)model TSRMLS_CC);
+    if (selected) {
+        MAKE_STD_ZVAL(php_selected);
+        array_init(php_selected);
+        for (tmp = selected; tmp != NULL; tmp = tmp->next) {
+            GtkTreePath *path = tmp->data;
+            zval *item = NULL;
+            
+            phpg_tree_path_to_zval(path, &item TSRMLS_CC);
+            add_next_index_zval(php_selected, item);
+            gtk_tree_path_free(path);
+        }
+        php_gtk_build_value(&return_value, "(NN)", php_model, php_selected);
+        g_list_free(selected);
+    } else {
+        php_gtk_build_value(&return_value, "(Nn)", php_model);
+    }
+}
+
 %% }}}
 
 %% {{{ GtkTreeView
