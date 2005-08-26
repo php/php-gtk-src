@@ -1,3 +1,17 @@
+2005-08-25  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.overrides:
+      Implement property acces for a few more event types.
+
+    * ext/gtk+/gtk.overrides:
+      Implement GtkAdjustment() and GtkProgressBar() constructors.
+
+    * main/phpg_gvalue.c:
+      Fix a case where a G_TYPE_DOUBLE property was set incorrectly.
+
+    * ext/gtk+/gtktreeview.overrides:
+      Implemented GtkTreeSelection::get_selected_rows().
+
 2005-08-21  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/php_gtk+_types.c
