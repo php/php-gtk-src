@@ -44,6 +44,22 @@ class WidgetEditor extends GtkWindow
             case GtkComboBox::gtype:
                 $widget = $this->createComboBox($basewidget, $data[0], $data[2]);
                 break;
+            case GtkToggleButton::gtype:
+                if (!isset($data[2]) || !isset($data[3])) {
+                    $data[2] = 'on';
+                    $data[3] = 'off';
+                }
+                if (!isset($data[4])) {
+                    $data[4] = true;
+                }
+                $widget = $this->createToggleButton($basewidget, $data[0], $data[2], $data[3], $data[4]);
+                break;
+            case GtkButton::gtype:
+                if (!isset($data[2])) {
+                    $data[2] = null;
+                }
+                $widget = $this->createButton($basewidget, $data[0], $data[2]);
+                break;
             default:
                 $widget = new GtkLabel('Unsupported type ' . $data[1]);
                 break;
@@ -82,13 +98,48 @@ class WidgetEditor extends GtkWindow
                 $combo->insert_text($value, $type . '::' . $id);
             }
         }
-        
+
         $function = 'get_' . $basefunction;
         $combo->set_active($basewidget->$function());
         $combo->connect('changed', array($this, 'set_combobox'), $basewidget, 'set_' . $basefunction);
 
         return $combo;
     }//function createComboBox($basewidget, $basefunction, $strConstants)
+
+
+
+    function createToggleButton($basewidget, $basefunction, $text_on, $text_off, $bCallGetter)
+    {
+        $tb = new GtkToggleButton();
+        $tb->set_label($tb->get_active() ? $text_on : $text_off);
+        if ($bCallGetter) {
+            $tb->set_active($basewidget->{'get_' . $basefunction}());
+        }
+        $tb->connect('toggled', array($this, 'set_toggled'), $basewidget, $basefunction, $text_on, $text_off, $bCallGetter);
+
+        return $tb;
+    }//function createToggleButton($basewidget, $basefunction, $text_on, $text_off)
+
+
+
+    function createButton($basewidget, $function, $function2)
+    {
+        //call the function on the base widget
+        $btn = new GtkButton($function);
+        $btn->connect_object('clicked', array($basewidget, $function));
+
+        if ($function2 === null) {
+            return $btn;
+        }
+
+        $btn2 = new GtkButton($function2);
+        $btn2->connect_object('clicked', array($basewidget, $function2));
+
+        $hbox = new GtkHBox();
+        $hbox->pack_start($btn);
+        $hbox->pack_end($btn2);
+        return $hbox;
+    }//function createButton($basewidget, $function, $function2)
 
 
 
@@ -111,6 +162,13 @@ class WidgetEditor extends GtkWindow
     {
         $value = $combo->get_active();
         $widget->$function($value);
+    }//function set_combobox($combo, $widget, $function)
+    
+    
+    
+    function set_toggled($tb, $widget, $function, $text_on, $text_off, $bCallGetter) {
+        $widget->{'set_' . $function}($tb->get_active());
+        $tb->set_label($tb->get_active() ? $text_on : $text_off);
     }
 
 

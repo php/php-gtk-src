@@ -180,10 +180,14 @@ class PHPGtk2Demo extends GtkWindow
     {
         $files = glob(dirname(__FILE__).'/*.php');
         foreach ($files as $id => $file) {
+            $GLOBALS['class'] = null;
             if (basename($file) != basename(__FILE__) 
             && basename($file) != 'stock-browser.php'
             && basename($file) != 'WidgetEditor.php') {
                 if (!@include_once($file)) {
+                    continue;
+                }
+                if ($GLOBALS['class'] === null) {
                     continue;
                 }
                 $this->demos[$file]					= null;
@@ -193,9 +197,9 @@ class PHPGtk2Demo extends GtkWindow
             }
         }
     }//protected function load_demos()
-    
-    
-    
+
+
+
     protected function highlightSource($filename)
     {
         $tokens = token_get_all(file_get_contents($filename));
@@ -217,7 +221,7 @@ class PHPGtk2Demo extends GtkWindow
                 }
             }
         }
-        
+
 //        $this->sourcebuffer->insert_with_tags_by_name();
         $this->sourcebuffer->set_text($highlighted, strlen($highlighted));
 //        var_dump($highlighted);
