@@ -47,16 +47,6 @@ class WindowTest extends GtkWindow
 
         return $vbox;
     }
-
-    /**
-    *   Most window settings require the window to be re-created
-    *   to take effect
-    */
-    function redraw()
-    {
-        $this->hide_all();
-        $this->show_all();
-    }
 }
 
 if (!@$GLOBALS['framework']) {
