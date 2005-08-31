@@ -608,7 +608,7 @@ PHP_METHOD
     cell = GTK_CELL_RENDERER(PHPG_GOBJECT(php_cell));
 
     zval_add_ref(&callback);
-    cb_data = phpg_cb_data_new(callback, extra);
+    cb_data = phpg_cb_data_new(callback, extra TSRMLS_CC);
 
     RETURN_LONG(gtk_tree_view_insert_column_with_data_func(GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)),
                                                            position, title, cell,
@@ -718,7 +718,7 @@ PHP_METHOD
     cell = GTK_CELL_RENDERER(PHPG_GOBJECT(php_cell));
 
     zval_add_ref(&callback);
-    cb_data = phpg_cb_data_new(callback, extra);
+    cb_data = phpg_cb_data_new(callback, extra TSRMLS_CC);
 
     gtk_tree_view_column_set_cell_data_func(GTK_TREE_VIEW_COLUMN(PHPG_GOBJECT(this_ptr)), cell,
                                             (GtkTreeCellDataFunc)phpg_cell_data_func_marshal,
