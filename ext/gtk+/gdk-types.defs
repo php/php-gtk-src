@@ -892,15 +892,6 @@
   )
 )
 
-(define-enum Colorspace
-  (in-module "Gdk")
-  (c-name "GdkColorspace")
-  (gtype-id "GDK_TYPE_COLORSPACE")
-  (values
-    '("b" "GDK_COLORSPACE_RGB")
-  )
-)
-
 (define-enum PixbufError
   (in-module "Gdk")
   (c-name "GdkPixbufError")
