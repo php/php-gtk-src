@@ -690,7 +690,7 @@ PHP_METHOD
         efree(args);
     }
 
-    phpg_gobject_set_wrapper(this_ptr, (GObject *)tvc);
+    phpg_gobject_set_wrapper(this_ptr, (GObject *)tvc TSRMLS_CC);
 }
 
 %%
