@@ -1,3 +1,14 @@
+2005-08-31  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk-types.defs:
+      Fix trimmed defs.
+
+    * ext/gtk+/gdk-types.defs:
+      Don't define GdkColorSpace enum twice.
+
+    * ext/gtk+/gtktreeview.overrides:
+      Fix ZTS.
+
 2005-08-25  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gdk.overrides:
