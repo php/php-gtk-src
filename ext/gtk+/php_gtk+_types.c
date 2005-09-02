@@ -163,7 +163,7 @@ typedef struct {
     HashTable *properties; /* dummy */
 } style_helper;
 
-static const uint STYLE_NUM_STATES = 5;
+static const int STYLE_NUM_STATES = 5;
 
 static zval *style_helper_read_dimension(zval *object, zval *offset, int type TSRMLS_DC)
 {
