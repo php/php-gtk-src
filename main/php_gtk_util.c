@@ -360,7 +360,6 @@ static int parse_arg(int arg_num, zval **arg, va_list *va, char **spec, int as_z
 	char *expected_type;
 	char buf[1024];
 	char errorbuf[1024];
-	TSRMLS_FETCH();
 
 	expected_type = parse_arg_impl(arg, va, spec, errorbuf, as_zval TSRMLS_CC);
 	if (expected_type) {
@@ -518,7 +517,7 @@ PHP_GTK_API int php_gtk_parse_varargs(int argc, int min_args, zval **varargs, ch
 	}
 
 	va_start(va, format);
-	retval = php_gtk_parse_args_impl(min_args, format, &va, 0 TSRMLS_CC);
+	retval = php_gtk_parse_args_impl(min_args, format, &va, 0);
 	va_end(va);
 	*varargs = php_gtk_array_as_hash(args, argc, min_args, argc-min_args);
 	efree(args);
@@ -530,9 +529,10 @@ static int php_gtk_parse_args_hash_impl(zval *hash, char *format, va_list *va, i
 {
 	zval ***args;
 	int retval;
+	TSRMLS_FETCH();
 
 	args = php_gtk_hash_as_array(hash);
-	retval = parse_va_args(zend_hash_num_elements(Z_ARRVAL_P(hash)), args, format, va, quiet);
+	retval = parse_va_args(zend_hash_num_elements(Z_ARRVAL_P(hash)), args, format, va, quiet TSRMLS_CC);
 	efree(args);
 
 	return retval;
@@ -828,10 +828,10 @@ static zend_bool php_gtk_build_single(zval **result, char **format, va_list *va 
 	for (;;) {
 		switch (*(*format)++) {
 			case '(':
-				return php_gtk_build_hash(result, format, va, ')', php_gtk_count_specs(*format, ')') TSRMLS_CC);
+				return php_gtk_build_hash(result, format, va, ')', php_gtk_count_specs(*format, ')' TSRMLS_CC) TSRMLS_CC);
 
 			case '{':
-				return php_gtk_build_hash(result, format, va, '}', php_gtk_count_specs(*format, '}') TSRMLS_CC);
+				return php_gtk_build_hash(result, format, va, '}', php_gtk_count_specs(*format, '}' TSRMLS_CC) TSRMLS_CC);
 
 			case 'b':
 				MAKE_ZVAL_IF_NULL(*result);

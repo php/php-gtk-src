@@ -92,7 +92,6 @@ PHPG_PROP_READER(GType, name)
 PHP_GTK_API void phpg_gtype_new(zval *zobj, GType type TSRMLS_DC)
 {
 	phpg_gtype_t *object;
-	TSRMLS_FETCH();
 
     assert(zobj != NULL);
 	object_init_ex(zobj, gtype_ce);
@@ -116,6 +115,7 @@ PHP_GTK_API GType phpg_gtype_from_class(zend_class_entry *ce)
 PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 {
 	GType type;
+	TSRMLS_FETCH();
 
 	if (!value) {
 		php_error(E_WARNING, "PHP-GTK internal error: could not get typecode from value");

@@ -148,11 +148,14 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
             } else if (G_VALUE_HOLDS(gval, G_TYPE_VALUE_ARRAY)) {
                 int i;
                 zval *item;
+                int value_count;
 
                 GValueArray *array = (GValueArray *) g_value_get_boxed(gval);
                 MAKE_ZVAL_IF_NULL(*value);
                 array_init(*value);
-                for (i = 0; i < array->n_values; i++) {
+                value_count = array->n_values;
+
+                for (i = 0; i < value_count; i++) {
                     MAKE_STD_ZVAL(item);
                     phpg_gvalue_to_zval(array->values + i, &item, copy_boxed TSRMLS_CC);
                     add_next_index_zval(*value, item);
@@ -334,12 +337,15 @@ PHP_GTK_API int phpg_param_gvalue_from_zval(GValue *gval, zval *value, const GPa
 PHP_GTK_API zval *phpg_gvalues_to_array(const GValue *values, uint n_values)
 {
 	zval *hash;
-	zval *item;
+	zval *item = NULL;
 	int i;
+	int value_count;
 
 	MAKE_STD_ZVAL(hash);
 	array_init(hash);
-	for (i = 0; i < n_values; i++) {
+	value_count = n_values;
+
+	for (i = 0; i < value_count; i++) {
 		//item = phpg_gvalue_to_zval(&values[i], FALSE);
 		if (!item) {
 			MAKE_STD_ZVAL(item);

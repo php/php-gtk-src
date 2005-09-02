@@ -342,7 +342,7 @@ static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool use
     if (extra) {
         zval_ptr_dtor(&extra);
     }
-    phpg_gobject_watch_closure(this_ptr, closure);
+    phpg_gobject_watch_closure(this_ptr, closure TSRMLS_CC);
     handler_id = g_signal_connect_closure_by_id(obj, signal_id, detail, closure, after);
     RETURN_LONG(handler_id);
 }
@@ -642,17 +642,17 @@ static PHP_METHOD(GObject, signal_query)
     add_next_index_long(return_value, query.signal_id);
     add_next_index_string(return_value, (char *)query.signal_name, 1);
     MAKE_STD_ZVAL(temp);
-    phpg_gtype_new(temp, query.itype);
+    phpg_gtype_new(temp, query.itype TSRMLS_CC);
     add_next_index_zval(return_value, temp);
     add_next_index_long(return_value, query.signal_flags);
     MAKE_STD_ZVAL(temp);
-    phpg_gtype_new(temp, query.return_type);
+    phpg_gtype_new(temp, query.return_type TSRMLS_CC);
     add_next_index_zval(return_value, temp);
     MAKE_STD_ZVAL(params);
     array_init(params);
     for (i = 0; i < query.n_params; i++) {
         MAKE_STD_ZVAL(temp);
-        phpg_gtype_new(temp, query.param_types[i]);
+        phpg_gtype_new(temp, query.param_types[i] TSRMLS_CC);
         add_next_index_zval(params, temp);
     }
     add_next_index_zval(return_value, params);

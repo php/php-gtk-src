@@ -125,7 +125,7 @@ HashTable* phpg_get_properties(zval *object TSRMLS_DC)
          zend_hash_get_current_data(pi_hash, (void **)&pi) == SUCCESS;
          zend_hash_move_forward(pi_hash)) {
 
-        ret = pi->read(poh, &result);
+        ret = pi->read(poh, &result TSRMLS_CC);
         if (ret == SUCCESS) {
             ALLOC_ZVAL(result_ptr);
             *result_ptr = result;
@@ -310,6 +310,7 @@ PHP_GTK_API void phpg_register_enum(GType gtype, const char *strip_prefix, zend_
     char *enum_name;
     int i, j;
     int prefix_len = 0;
+    int value_count;
 
     phpg_return_if_fail(ce != NULL);
     phpg_return_if_fail(g_type_is_a(gtype, G_TYPE_ENUM));
@@ -319,7 +320,9 @@ PHP_GTK_API void phpg_register_enum(GType gtype, const char *strip_prefix, zend_
     }
 
     eclass = G_ENUM_CLASS(g_type_class_ref(gtype));
-    for (i = 0; i < eclass->n_values; i++) {
+    value_count = eclass->n_values;
+
+    for (i = 0; i < value_count; i++) {
         zval *val;
         
         val = (zval *)malloc(sizeof(zval));
@@ -347,6 +350,7 @@ PHP_GTK_API void phpg_register_flags(GType gtype, const char *strip_prefix, zend
     char *enum_name;
     int i, j;
     int prefix_len = 0;
+	int value_count;
 
     phpg_return_if_fail(ce != NULL);
     phpg_return_if_fail(g_type_is_a(gtype, G_TYPE_FLAGS));
@@ -356,7 +360,9 @@ PHP_GTK_API void phpg_register_flags(GType gtype, const char *strip_prefix, zend
     }
 
     eclass = G_FLAGS_CLASS(g_type_class_ref(gtype));
-    for (i = 0; i < eclass->n_values; i++) {
+    value_count = eclass->n_values;
+
+    for (i = 0; i < value_count; i++) {
         zval *val;
         
         val = (zval *)malloc(sizeof(zval));
@@ -433,7 +439,7 @@ PHP_GTK_API zend_class_entry* phpg_create_class(GType gtype)
         g_free(ifaces);
     }
 
-    phpg_register_int_constant(ce, "gtype", sizeof("gtype")-1, gtype TSRMLS_CC);
+    phpg_register_int_constant(ce, "gtype", sizeof("gtype")-1, gtype);
 
     return ce;
 }

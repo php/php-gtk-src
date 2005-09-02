@@ -138,7 +138,7 @@ static int phpg_gtk_tree_path_from_zval(const zval *value, GValue *gvalue TSRMLS
 {
     GtkTreePath *path = NULL;
 
-    if (phpg_tree_path_from_zval(value, &path) == FAILURE) {
+    if (phpg_tree_path_from_zval(value, &path TSRMLS_CC) == FAILURE) {
         return FAILURE;
     }
 
@@ -248,7 +248,7 @@ static void style_helper_write_dimension(zval *object, zval *offset, zval *value
         case STYLE_GC_ARRAY:
         {
             GdkGC **array = (GdkGC **) sh->array;
-            if (!phpg_object_check(value, gdkgc_ce)) {
+            if (!phpg_object_check(value, gdkgc_ce TSRMLS_CC)) {
                 php_error(E_WARNING, "Can only assign a GdkGC object");
                 return;
             }
@@ -262,7 +262,7 @@ static void style_helper_write_dimension(zval *object, zval *offset, zval *value
         case STYLE_PIXMAP_ARRAY:
         {
             GdkPixmap **array = (GdkPixmap **) sh->array;
-            if (Z_TYPE_P(value) != IS_NULL && !phpg_object_check(value, gdkgc_ce)) {
+            if (Z_TYPE_P(value) != IS_NULL && !phpg_object_check(value, gdkgc_ce TSRMLS_CC)) {
                 php_error(E_WARNING, "Can only assign a GdkPixmap object or null");
                 return;
             }
@@ -390,6 +390,7 @@ int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items)
     GtkTreeModel *child;
     GtkTreeIter child_iter;
     zval **item;
+    TSRMLS_FETCH();
 
     assert(items != NULL);
 
