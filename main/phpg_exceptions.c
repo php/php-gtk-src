@@ -69,7 +69,7 @@ PHP_GTK_API zval* phpg_throw_gerror_exception(const char *domain, long code, con
 		zend_update_property_string(phpg_gerror_exception, exc, "message", sizeof("message")-1, (char *)message TSRMLS_CC);
 	}
 
-	zend_throw_exception_internal(exc TSRMLS_CC);
+	zend_throw_exception_object(exc TSRMLS_CC);
 
 	return exc;
 }
