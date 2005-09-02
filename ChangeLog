@@ -1,3 +1,8 @@
+2005-09-01  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtktreeview.overrides:
+      Fix ZTS.
+
 2005-08-31  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gdk-types.defs:
