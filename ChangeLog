@@ -1,3 +1,51 @@
+2005-09-02  Jani Taskinen  <jani.taskinen@sci.fi>
+
+    * .cvsignore:
+      missing entry
+
+2005-09-02  Steph  <steph.fox@virgin.net>
+
+    * buildconf.bat:
+      Forgot the buildconf.bat :)
+      
+      Please don't correct the DOS endings - earlier versions of Windows need
+      them.
+
+    * win32/php.ini:
+      Get rid of unusable parts of php.ini
+
+    * win32/buildconf.js
+      win32/config.w32.in
+      win32/confutils.js
+      win32/template.rc:
+      Initial commit of new win32 build system
+
+    * win32/.cvsignore:
+      add temp file to .cvsignore
+
+    * ext/gtk+/config.w32:
+      Slightly unconventional config.w32 file, but working.
+
+    * ext/gtk+/php_gtk+_types.c:
+      uint > int
+
+    * .cvsignore:
+      Add generated files/dirs and .lnk to .cvsignore
+
+    * main/phpg_exceptions.c:
+      Use exported exception function
+
+    * main/php_gtk_ext.w32.c:
+      don't register extensions we can't use yet
+
+    * ext/gtk+/php_gtk+_types.c
+      main/php_gtk_util.c
+      main/phpg_gobject.c
+      main/phpg_gtype.c
+      main/phpg_gvalue.c
+      main/phpg_support.c:
+      ZTS fixes
+
 2005-09-01  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtktreeview.overrides:
