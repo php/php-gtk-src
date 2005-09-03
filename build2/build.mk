@@ -12,10 +12,9 @@ all: $(STAMP) $(ALWAYS)
 	@$(MAKE) -s -f build2/build2.mk
 
 build2/generated_lists:
-	@echo config_m4_files = `build2/config-stubs ext ext.m4` > $@
+	@echo config_m4_files = ext/*/config*.m4 > $@
 
 $(STAMP): 
-	touch ext.m4
 	$(PHPIZE)
 	touch $(STAMP)
 

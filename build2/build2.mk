@@ -3,19 +3,18 @@
 
 include build2/generated_lists
 
+PHP_AUTOCONF ?= 'autoconf'
+PHP_AUTOHEADER ?= 'autoheader'
+
 all: configure config.h.in
 
-ext.m4: $(config_m4_files)
+aclocal.m4: configure.in acinclude.m4
 	@echo rebuilding $@
-	@cat $(config_m4_files) > $@
-
-aclocal.m4: configure.in acinclude.m4 ext.m4
-	@echo rebuilding $@
-	@aclocal
+	cat acinclude.m4 ./build/libtool.m4 php_gtk.m4 > $@
 	
-configure: aclocal.m4 config.m4 php_gtk.m4 ext.m4
+configure: aclocal.m4 php_gtk.m4 $(config_m4_files)
 	@echo rebuilding $@
-	@autoconf 
+	$(PHP_AUTOCONF)
 	@chmod 755 $@
 	
 config.h.in: configure
@@ -23,4 +22,4 @@ config.h.in: configure
 # correctly otherwise (timestamps are not updated)
 	@echo rebuilding $@
 	@rm -f $@
-	@autoheader
+	$(PHP_AUTOHEADER)

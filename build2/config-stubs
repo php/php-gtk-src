@@ -2,8 +2,7 @@
 #
 # $Id$
 
-dir=$1
-output=$2; shift
-stubfiles="`find $dir -name config\?.m4 -print` `find $dir -name config.m4 -print`"
-cat $stubfiles > $output
-echo $stubfiles
+dir=$1; shift
+for stubfile in $dir/*/config.m4; do
+  echo "sinclude([$stubfile])"
+done
