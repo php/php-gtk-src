@@ -1,3 +1,0 @@
-SUBDIRS = gtk+ $(PHP_GTK_EXT_SUBDIRS)
-
-include $(top_srcdir)/build/rules.mk
