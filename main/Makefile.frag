@@ -1,7 +1,7 @@
 
-$(srcdir)/php_gtk_ext.c: $(srcdir)/php_gtk_ext.c.in $(builddir)/config.status
+$(builddir)/php_gtk_ext.c: $(srcdir)/php_gtk_ext.c.in
 	@echo "creating main/php_gtk_ext.c"
-	sh $(top_srcdir)/build2/genext.sh $(srcdir)/php_gtk_ext.c.in $(top_srcdir) "" $(AWK) $(PHP_GTK_EXTENSIONS) > $(srcdir)/php_gtk_ext.c
+	sh $(top_srcdir)/build2/genext.sh $(srcdir)/php_gtk_ext.c.in $(top_srcdir) "" $(AWK) $(PHP_GTK_EXTENSIONS) > $@
 
 cvsclean:
 	@for i in `find . -name .cvsignore`; do \

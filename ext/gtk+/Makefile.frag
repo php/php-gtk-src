@@ -1,3 +1,4 @@
+
 COMMONDEFS=$(srcdir)/gtk-types.defs $(srcdir)/gdk-types.defs \
 		   $(srcdir)/atk-types.defs $(srcdir)/pango-types.defs
 
@@ -8,10 +9,10 @@ GTK_OVERRIDES = \
 	$(srcdir)/gtktextview.overrides \
 	$(srcdir)/gtktreeview.overrides
 
-$(srcdir)/gen_gtk.c: $(srcdir)/gtk.defs $(COMMONDEFS) $(srcdir)/gtk-extrafuncs.defs $(GTK_OVERRIDES)
-$(srcdir)/gen_gdk.c: $(srcdir)/gdk.defs $(COMMONDEFS) $(srcdir)/gdk.overrides
-$(srcdir)/gen_atk.c: $(COMMONDEFS) $(srcdir)/atk.overrides
-$(srcdir)/gen_pango.c: $(COMMONDEFS) $(srcdir)/pango.overrides
+$(builddir)/gen_gtk.c: $(srcdir)/gtk.defs $(COMMONDEFS) $(srcdir)/gtk-extrafuncs.defs $(GTK_OVERRIDES)
+$(builddir)/gen_gdk.c: $(srcdir)/gdk.defs $(COMMONDEFS) $(srcdir)/gdk.overrides
+$(builddir)/gen_atk.c: $(COMMONDEFS) $(srcdir)/atk.overrides
+$(builddir)/gen_pango.c: $(COMMONDEFS) $(srcdir)/pango.overrides
 
 gen_%.c : %.defs
 	( \
