@@ -91,7 +91,11 @@ class Generator {
         $format = array_shift($args);
 
         $output = vsprintf($format, $args);
-        echo $output;
+
+        if (!strstr(PHP_OS, 'WIN')) {
+            echo $output;
+        }
+
         fwrite($this->logfile, $output);
     }
 
@@ -460,6 +464,11 @@ class Generator {
         /* GObject's */
         $this->log_print("\n\n" . $this->make_header("Objects", 50, '-'));
         foreach ($this->parser->objects as $object) {
+            /* skip ignored objects */
+            if ($this->overrides->is_ignored($object->c_name)) {
+                $this->log_print("\n%s %s\n", $object->c_name, "is ignored in the overrides file");
+                continue;
+            }
             $reg_info = $this->write_class($object);
             $register_classes .= aprintf(Templates::register_class, $reg_info);
         }
@@ -865,11 +874,15 @@ class Generator {
         }
 
         foreach ($this->parser->objects as $object) {
-            $this->fp->write(sprintf(Templates::class_entry, $object->ce));
+            if (!$this->overrides->is_ignored($object->c_name)) {
+                $this->fp->write(sprintf(Templates::class_entry, $object->ce));
+            }
         }
+
         foreach ($this->parser->boxed as $object) {
             $this->fp->write(sprintf(Templates::class_entry, $object->ce));
         }
+
         if ($this->parser->functions || $this->parser->enums) {
             $this->fp->write(sprintf(Templates::class_entry, $this->lprefix . '_ce'));
         }
@@ -949,7 +962,13 @@ class Generator {
                 $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
 
                 list($line, $filename) = $this->overrides->get_line_info("$class_name.$method_name.arginfo");
-                $arginfo  = sprintf("#line %d \"%s\"\n", $line, $filename);
+
+                if (strstr(PHP_OS, 'WIN')) {
+                    $arginfo  = sprintf("//line %d \"%s\"\n", $line, $filename);
+                } else {
+                    $arginfo  = sprintf("#line %d \"%s\"\n", $line, $filename);
+                }
+
                 $arginfo .= str_replace('ARGINFO_NAME', $reflection_funcname, $this->overrides->get_extra_arginfo($class_name, $method_name));
             } else {
                 //no arginfo

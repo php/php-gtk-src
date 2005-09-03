@@ -346,7 +346,7 @@ PHP_METHOD
 override gtk_tree_model_get_iter
 PHP_METHOD
 {
-    zval *php_path;
+    zval *php_path = NULL;
     GtkTreeIter iter;
     GtkTreePath *path;
 

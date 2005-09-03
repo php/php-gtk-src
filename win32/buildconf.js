@@ -16,17 +16,23 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: buildconf.js,v 1.1 2005-09-02 17:36:23 sfox Exp $ */
+/* $Id: buildconf.js,v 1.2 2005-09-03 19:06:13 sfox Exp $ */
 // This generates a configure script for win32 build
+
+var FSO = WScript.CreateObject("Scripting.FileSystemObject");
+var MODULES = WScript.CreateObject("Scripting.Dictionary");
+var dir = FSO.GetFolder("ext/gtk+");
+
+if (FSO.FileExists('configure.js')) {
+	FSO.DeleteFile('configure.js');
+}
+
+var C = FSO.CreateTextFile("configure.js", true);
+var temp = FSO.CreateTextFile("win32/temp.bat", true);
 
 WScript.StdOut.WriteBlankLines(1);
 WScript.StdOut.WriteLine("Rebuilding configure.js");
 WScript.StdOut.WriteBlankLines(1);
-var FSO = WScript.CreateObject("Scripting.FileSystemObject");
-var dir = FSO.GetFolder("ext/gtk+");
-var C = FSO.CreateTextFile("configure.js", true);
-var temp = FSO.CreateTextFile("win32/temp.bat", true);
-var MODULES = WScript.CreateObject("Scripting.Dictionary");
 
 function file_get_contents(filename) {
 
@@ -41,6 +47,7 @@ function gen_functions() {
 
 	/* generate source and header files for exported PHP-GTK functions */
 	temp.WriteLine("/* usage: php generator.php [-l logfile] [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] [-f savefile] defsfile */");
+	temp.WriteLine("mkdir win32\\logs");
 	temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_atk.log -o ext\\gtk+\\atk.overrides -p atk ext\\gtk+\\atk.defs > ext\\gtk+\\gen_atk.c");
 	temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_pango.log -o ext\\gtk+\\pango.overrides -p pango ext\\gtk+\\pango.defs > ext\\gtk+\\gen_pango.c");
 	temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_gdk.log -o ext\\gtk+\\gdk.overrides -p gdk ext\\gtk+\\gdk.defs > ext\\gtk+\\gen_gdk.c");
@@ -174,11 +181,23 @@ function find_config_w32(dirname) {
 }
 
 /* buildconf should clean up generated files */
+if (FSO.FileExists('configure.bat')) {
+	FSO.DeleteFile('configure.bat');
+}
+
+if (FSO.FolderExists('Release')) {
+	FSO.DeleteFolder('Release');
+}
+
+if (FSO.FileExists('Makefile')) {
+	FSO.DeleteFile('Makefile');
+}
+
 iter = new Enumerator(dir.Files);
 name = "";
 for (; !iter.atEnd(); iter.moveNext()) {
 	name = FSO.GetFileName(iter.item());
-	if (name.match(new RegExp("gen_"))) {
+	if (name.match(new RegExp("gen_")) || name.match(new RegExp(".cache"))) {
 		FSO.DeleteFile(iter.item());
 	}
 }

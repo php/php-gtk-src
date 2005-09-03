@@ -33,7 +33,11 @@ class LineOutput {
 
     function set_line($line, $filename)
     {
-        $this->write(sprintf("#line %d \"%s\"\n", $line, $filename));
+        if (strstr(PHP_OS, 'WIN')) {
+            $this->write(sprintf("//line %d \"%s\"\n", $line, $filename));
+        } else {
+            $this->write(sprintf("#line %d \"%s\"\n", $line, $filename));
+        }
     }
 
     function reset_line()

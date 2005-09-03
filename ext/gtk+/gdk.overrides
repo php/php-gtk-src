@@ -288,7 +288,7 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
     GdkEvent *event = (GdkEvent *) PHPG_GBOXED(object);
     char *name;
 
- 	if (member->type != IS_STRING) {
+	if (member->type != IS_STRING) {
 		tmp_member = *member;
 		zval_copy_ctor(&tmp_member);
 		convert_to_string(&tmp_member);
@@ -579,10 +579,10 @@ PHP_METHOD
 
     NOT_STATIC_METHOD();
 
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_rect))
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_rect TSRMLS_CC))
 		return;
 
-    if (phpg_rectangle_from_zval(php_rect, &rect) == FAILURE) {
+    if (phpg_rectangle_from_zval(php_rect, &rect TSRMLS_CC) == FAILURE) {
         php_error(E_WARNING, "%s::%s() expects area argument to be either a 4-element array or a GdkRectangle object", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
         return;
     }
@@ -613,7 +613,7 @@ PHP_METHOD
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_rect))
 		return;
 
-    if (phpg_rectangle_from_zval(php_rect, &rect) == FAILURE) {
+    if (phpg_rectangle_from_zval(php_rect, &rect TSRMLS_CC) == FAILURE) {
         php_error(E_WARNING, "%s::%s() expects area argument to be either a 4-element array or a GdkRectangle object", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
         return;
     }

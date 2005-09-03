@@ -746,14 +746,14 @@ class GdkRectangle_Arg extends Arg_Type {
 /* {{{ GdkRectanglePtr_Arg */
 class GdkRectanglePtr_Arg extends Arg_Type {
     const check_tpl = "
-    if (phpg_rectangle_from_zval(php_%(name), &%(name)) == FAILURE) {
+    if (phpg_rectangle_from_zval(php_%(name), &%(name) TSRMLS_CC) == FAILURE) {
         php_error(E_WARNING, \"%s::%s() expects %(name) argument to be either a 4-element array or a GdkRectangle object\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
         %(on_error);
     }";
     const check_null_tpl = "
     if (Z_TYPE_P(php_%(name)) == IS_NULL) {
         %(name) = NULL;
-    } else if (phpg_rectangle_from_zval(php_%(name), &%(name)_arg) == SUCCESS) {
+    } else if (phpg_rectangle_from_zval(php_%(name), &%(name)_arg TSRMLS_CC) == SUCCESS) {
         %(name) = &%(name)_arg;
     } else {
         php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a 4-element array, a GdkRectangle object, or null\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));

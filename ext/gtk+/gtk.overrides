@@ -28,6 +28,10 @@ ignore-glob
     gtk_timeout_add_*
     gtk_toggle_button_new_*
 %%
+ignore-win32-glob
+    gtk_plug_*
+    gtk_socket_*
+%%
 ignore
     gtk_button_new_with_label
     gtk_button_new_with_mnemonic
@@ -46,6 +50,10 @@ ignore
     gtk_radio_menu_item_new_with_label
     gtk_radio_menu_item_new_with_mnemonic
     gtk_true
+%%
+ignore-win32
+    GtkPlug
+    GtkSocket
 %% }}}
     
 %% {{{ ignores [tbd]
@@ -1396,7 +1404,7 @@ PHP_METHOD
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_area))
         return;
 
-    if (phpg_rectangle_from_zval(php_area, &area) == FAILURE) {
+    if (phpg_rectangle_from_zval(php_area, &area TSRMLS_CC) == FAILURE) {
         php_error(E_WARNING, "%s::%s() expects area argument to be either a 4-element array or a GdkRectangle object", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
         return;
     }
