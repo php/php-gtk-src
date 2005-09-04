@@ -1,3 +1,54 @@
+2005-09-03  Steph  <steph.fox@virgin.net>
+
+    * ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtktreeview.overrides
+      generator/arg_types.php
+      generator/generator.php
+      generator/lineoutput.php
+      generator/override.php
+      win32/buildconf.js:
+      Generator fixes for win32
+
+    * win32/.cvsignore:
+      ignore the win32 logging directory
+
+2005-09-03  Jani Taskinen  <jani.taskinen@sci.fi>
+
+    * config.m4
+      php_gtk.m4
+      build2/build.mk
+      build2/build2.mk
+      build2/config-stubs
+      ext/gtk+/config.m4
+      ext/gtk+/config0.m4:
+      - Merged ext/gtk+/config0.m4 and php_gtk.m4
+      - Moved all calls of macros and such from php_gtk.m4 to config.m4
+        and ext/gtk+/config.m4 files
+      - Nuked unnecessary creation of ext.m4
+      - Bye bye aclocal: aclocal.m4 is generated "manually" by concatenating
+        acinclude.m4, build/libtool.m4 and php_gtk.m4
+
+    * ext/gtk+/Makefile.frag
+      ext/libglade/Makefile.frag
+      ext/skeleton/Makefile.frag
+      main/Makefile.frag:
+      Generated files must always be referred to via builddir
+
+    * ext/libglade/config.m4:
+      Style cleanup (no operational changes)
+
+    * Makefile.in
+      ext/Makefile.in
+      ext/gtk+/Makefile.in
+      ext/libglade/Makefile.in
+      ext/skeleton/Makefile.in:
+      Nuked unused files
+
+    * .cvsignore
+      main/.cvsignore:
+      missing entry
+
 2005-09-02  Jani Taskinen  <jani.taskinen@sci.fi>
 
     * .cvsignore:
