@@ -1,129 +1,150 @@
-Installing php-gtk on Windows NT/Windows 2000
+The Win32 Build System.
 
-Building PHP-GTK from scratch requires the PHP5 build environment 
-as well as MS Visual Studio.
+===========================================================
+Contents:
 
-Get the latest version of PHP-GTK from the cvs server
+1. How to build PHP-GTK 2 under Windows
 
-cvs -d:cvsreas@cvs.php.net:/repository login
-Password: phpfi
-cvs -d:cvsreas@cvs.php.net:/repository co php-gtk
+  a. Requirements
+  b. Opening a command prompt
+  c. Generating configure.js
+  d. Configuring
+  e. Building
+  f. Cleaning Up
 
-Download the following development files
-ftp://ftp.gnu.org/gnu/gettext/gettext-runtime-0.12.1.bin.woe32.zip
-http://www.gimp.org/~tml/gimp/win32/glib-dev-2.2.3.zip
-http://www.gimp.org/~tml/gimp/win32/gtk+-dev-1.3.0-20030115.zip
-ftp://ftp.gnu.org/gnu/libiconv/libiconv-1.9.1.bin.woe32.zip
+2. How to install and run PHP-GTK 2
 
-Unzip these files to a directory structure like this:
+  a. Requirements
+  b. Installation
+  c. Running a PHP-GTK test script
 
-<path to development>\src\gettext-0.12.1
-<path to development>\src\glib-2.2.3
-<path to development>\src\gtk+1.3.0
-<path to development>\src\libiconv-1.9.1
+===========================================================
+1. How to build PHP-GTK under Windows
 
-Download these runtime environments
-http://www.gimp.org/~tml/gimp/win32/gtk+-1.3.0-20030717.zip
-http://www.gimp.org/~tml/gimp/win32/glib-2.2.3.zip
+a. Requirements
 
-Unzip both viles to 
+ You need:
+  - Everything you already use for building PHP 5 under 'the new build system'
+  - A freshly-built copy of PHP 5 CGI or CLI, and the source you built it from
 
-<path to development>\src\gtk-runtime
+ You also need:
+  - The development packages for GTK+ 2.6.9, from http://www.gimp.org/~tml/gimp/win32/downloads.html
+  - Copies of grep.exe and sed.exe. If you have cygwin installed, they will probably be in there. If
+    you don't have cygwin installed, you can download them easily from http://unxutils.sourceforge.net/
+    - put them either in your root directory or in <dev_dir>\bin.
+  - The latest version of PHP-GTK from the CVS server
 
-Filename might change with new releases.
-Links to the latest files are found on 
-http://www.gimp.org/~tml/gimp/win32/downloads.html
-http://www.zlatkovic.com/projects/libxml/binaries.html
+ Unzip the GTK+ development packages and put the libs and headers into your development environment:
 
-Compile PHP5 as a CLI and/or CGI module and copy at lease these files to c:\php5 (or any directory of your choice).
+    <dev_dir>\include\gdkconfig.h
+    <dev_dir>\include\glibconfig.h
+    <dev_dir>\include\glib.h
+    <dev_dir>\include\glib-object.h
+    <dev_dir>\include\gmodule.h
 
-php.exe
-php4ts.dll
-php.ini
+    <dev_dir>\include\atk\<atk headers>
+    <dev_dir>\include\gdk\<gdk headers>
+    <dev_dir>\include\gdk-pixbuf\<gdkpixbuf headers>
+    <dev_dir>\include\glib\<glib headers>
+    <dev_dir>\include\gobject\<gobject headers>
+    <dev_dir>\include\gtk\<gtk headers>
+    <dev_dir>\lib\<all the libraries can go in the toplevel lib dir>
 
-Add the directory to the list of Executable files in Visual Studio.
-You doo thie by:
-	Select "Options" in the tools menu
-	Select "Directories" tab
-	Select "Ececutable files" in the drop down list
-	Go to the empty line and add the path to php (c:\php5)
-	Close the options window.
+ Check out the php-gtk directory as a sibling directory for <dev_env>\php5:
+    cvs -d:cvsread@cvs.php.net:/repository login
+    Password: phpfi
+    cvs -d:cvsread@cvs.php.net:/repository co php-gtk
 
-include_path in php.ini should contain ".;" in addition to other include paths used
+b. Opening a command prompt
 
-You should also add the folowing include and lib paths to Visual Studio
+ Whatever approach you adopted when you built PHP, you will need to repeat in the php-gtk
+ directory.
 
-Inclide files:
-<path to development>\src\libiconv-1.9.1\include
-<path to development>\src\gtk+1.3.0\include
-<path to development>\src\gtk+1.3.0\lib\gtk+\include
-<path to development>\src\glib-2.2.3\include\glib-2.0
-<path to development>\src\glib-2.2.3\lib\glib-2.0\include
+ You will need to add the paths to your PHP sources (php5\Zend, php5\TSRM, php5\main) to
+ the Include env var in your compiler. You will also need to add the path to the php5ts.lib
+ you are building against to the Library env var, and the path to a PHP executable binary
+ (any PHP binary will be fine for this) to %PATH%.
 
-Library files
-<path to development>\src\libiconv-1.9.1\lib
-<path to development>\src\gtk+1.3.0\lib
-<path to development>\src\glib-2.2.3\lib
-<path to development>\src\gettext-0.12.1\lib
+c. Generating configure
 
-Building php-gtk:
-Open the workspace php-gtk.dsw
-Select "php_gtk" as the active project and compile it.
-It is also possible to build "combobutton", "scrollpane", "spaned" and "sqpane"
+ Change directory to where you have your PHP-GTK sources, i.e. cd \<dev_dir>\php-gtk
+ Run buildconf.bat by typing "buildconf" at the command prompt.
 
-Building the libglade extension requires download and installation of
-http://prdownloads.sourceforge.net/wingtk/libglade-0.17.exe?download
+d. Configuring
 
-Add these paths to Visual Studio:
+    cscript /nologo configure.js --help
 
-Inclide files:
-<path to development>\src\libglade\source\libglade-0.17
+ Will give you a list of configuration options.
 
-Library files:
-<path to development>\src\libglade
+  --with-php-build will tell the configure process (not the compiler) where your headers
+  and libraries are stored. You probably won't need to specify this.
 
-Building the scintilla extension requires download and installation of
-http://prdownloads.sourceforge.net/moleskine/GtkScintilla-0.8.2.tar.gz
+  --with-cygwin will tell the configure process where cygwin lives on your system. You might
+  need this to enable it to find grep and sed, which are used during the process. The
+  default setting is \cygwin.
 
-This file contains source files only.
+  --enable-object-out-dir allows you to choose where your php-gtk2.dll should be created.
+  By default, the path will be either php-gtk\Release or php-gtk\Debug.
 
-For updated versions of GTK libraries, check http://wingtk.sourceforge.net/
-Updated versions of all libraries can also be found at http://kromann.info/php5-gtk
+  --enable-debug will build the debug version. Please use PHP CGI if you're using debug.
 
-Installation:
-Copy all the dll files from <path to development>\php-gtk\win32\Release_TS to c:\php5 (or the directory where you copied the PHP binaries to).
+ There is no 'shared' option because PHP-GTK libraries will always be shared.
 
-Copy these files to c:\php5
-<path to development>\src\gtk-runtime\bin\libglib-2.0-0.dll
-<path to development>\src\gtk-runtime\bin\libgmodule-2.0-0.dll
-<path to development>\src\gtk-runtime\bin\libgobject-2.0-0.dll
-<path to development>\src\gtk-runtime\bin\libgthread-2.0-0.dll
-<path to development>\src\gtk-runtime\lib\libgdk-0.dll
-<path to development>\src\gtk-runtime\lib\libgtk-0.dll
-<path to development>\src\gettext-0.12.1\bin\intl.dll
-<path to development>\src\libiconv-1.9.1\bin\iconv.dll
-<path to development>\src\libglade\libglade.dll
+ The log files generated during configuration are sent to win32\logs.
+
+e. Building
+
+ Once you have successfully configured your build, you can build the code; simply type
+ "nmake" at the command prompt.
+
+f. Cleaning Up
+
+ Cleaning occurs automatically during buildconf.
+
+2. How to install and run PHP-GTK 2
+
+a. Requirements
+
+ You need:
+  - The runtime packages for GTK+ 2.6.9, from http://www.gimp.org/~tml/gimp/win32/downloads.html
+
+b. Installation
+
+ At present the Release version of php-gtk2.dll will only run from C:\php5, so you will
+ need to put php.exe (either CLI or CGI), php5ts.dll and the .dll files for any other
+ PHP extensions you need, into that directory. Also a copy of php.ini.
+
+ Just to be awkward, the Debug version of php-gtk2.dll currently will _only_ run from
+ C:\php5\Debug using a PHP CGI executable. There is a PHP debug symbols pack available
+ from http://snaps.php.net.
+
+ Retrieve the .dll files from the various GTK+ runtime zips. The 'pango\modules', 'pixbufloader'
+ and 'immodules' .dlls can go anywhere you like, but the rest need to be somewhere the
+ php5ts.dll can see them - that is, either in your root directory or in C:\php5.
+
+ Copy the 'etc' directory and everything in it (pango\* and gtk-2.0\*) directly to
+ C:\Windows\System32. You will need to manually alter the paths in pango.modules,
+ gdk-pixbuf.loaders and (possibly) gtk.immodules to reflect the whereabouts of the
+ relevant .dll files. PHP-GTK 2 won't work at all without the first two of these.
+
+ Add the following lines to your php.ini:
+
+    extension=php_gtk.dll
+    php-gtk.codepage = CP1252
+
+ (unless of course you're using some other codepage...)
+
+c. Running a PHP-GTK test script
+
+ Using the command line, navigate to your PHP-GTK directory and type:
+
+    C:\php5\php stock-browser.php
+
+ Or create a shortcut, starting from php-gtk\demos:
+
+    C:\php5\php.exe -q stock-browser.php
 
 
-You can load this extension from php.ini by adding this line
+Enjoy!
 
-	extension=php_gtk.dll
-
-It is not recomended to use this method if php is used for both Gtk and Web.
-The extenstion can't be loaded by php running under a web service.
-The extension can also be loaded with the dl() command.
-
-	dl("php_gtk.dll");
-
-On a command line type:
-	cd \php-gtk\test
-	c:\php5\php -q gtk.php
-	
-Or create a shortcut:
-	C:\php5\php.exe -q c:\php-gtk\test\gtk.php
-
-
-
-Happy hacking
-
-Frank M. Kromann <frank@kromann.info>
+Steph Fox <sfox@php.net>

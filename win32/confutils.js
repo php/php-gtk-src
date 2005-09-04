@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.1 2005-09-02 17:36:23 sfox Exp $
+// $Id: confutils.js,v 1.2 2005-09-04 06:02:28 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -224,22 +224,15 @@ function conf_process_args() {
 			}
 		}
 		if (!found) {
-			STDERR.WriteLine("Unknown option " + argname + "; please try configure.js --help for a list of valid options");
+			STDERR.WriteLine("Unknown option " + argname)
+			STDERR.WriteLine("Please try configure.js --help for a list of valid options");
 			WScript.Quit(2);
 		}
 	}
 
 	if (configure_help_mode) {
 		STDOUT.WriteBlankLines(1);
-		STDOUT.WriteLine(word_wrap_and_indent(0,
-"Options that enable extensions will accept \
-'yes' or 'no' as a parameter.  They also accept 'shared' \
-as a synonym for 'yes' and request a shared build of that \
-module.  Not all modules can be built as shared modules; \
-configure will display [shared] after the module name if \
-can be built that way. \
-"
-			));
+		STDOUT.WriteLine("  There are no PHP-GTK extensions available at present.");
 		STDOUT.WriteBlankLines(1);
 
 		// Measure width to pretty-print the output
@@ -634,7 +627,7 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 
 	if (dllname == null) {
 		if (extname == 'php-gtk') {
-			dllname = extname + ".dll";
+			dllname = extname + "2.dll";
 		} else {
 			dllname = "php_gtk_" + extname + ".dll";
 		}
@@ -1141,6 +1134,24 @@ function probe_msvc_compiler_version(CL) {
 		return RegExp.$1;
 	}
 	return 0;
+}
+
+// Poke around for some headers
+function probe_basic_headers()
+{
+	var p;
+
+	if (PHP_GTK_PHP_BUILD != "no") {
+		php_usual_include_suspects += ";" + PHP_GTK_PHP_BUILD + "\\include";
+		php_usual_lib_suspects += ";" + PHP_GTK_PHP_BUILD + "\\lib";
+	}
+
+	// hack to catch common location of libs
+	if (typeof(p) == "string") {
+		p = p.replace(new RegExp("include$"), "lib");
+		ADD_FLAG("LDFLAGS", '/libpath:"' + p + '" ');
+		php_usual_lib_suspects += ";" + p;
+	}
 }
 
 /* non-functions */

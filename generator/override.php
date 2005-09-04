@@ -110,7 +110,7 @@ class Overrides {
                 break;
 
             case 'ignore-win32':
-                if (strstr(PHP_OS, 'WIN')) {
+                if (WIN_OS) {
                     foreach ($words as $func)
                         $this->ignores[$func] = true;
                     foreach (preg_split('!\s+!', $rest, -1, PREG_SPLIT_NO_EMPTY) as $func)
@@ -126,7 +126,7 @@ class Overrides {
                 break;
 
             case 'ignore-win32-glob':
-                if (strstr(PHP_OS, 'WIN')) {
+                if (WIN_OS) {
                     foreach ($words as $func)
                         $this->glob_ignores[] = $func;
                     foreach (preg_split('!\s+!', $rest, -1, PREG_SPLIT_NO_EMPTY) as $func)

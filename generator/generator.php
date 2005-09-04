@@ -29,9 +29,15 @@
 
 set_time_limit(300);
 
-// override the default PHP 8Mb as this script tends to use alot more
+// override the default PHP 8Mb as this script tends to use a lot more
 // and hopefully reduce the support questions a bit..
 ini_set('memory_limit','64M');
+
+if (strstr(PHP_OS, 'WIN')) {
+	define('WIN_OS', true);
+} else {
+	define('WIN_OS', false);
+}
 
 require "Getopt.php";
 require "override.php";
@@ -92,7 +98,7 @@ class Generator {
 
         $output = vsprintf($format, $args);
 
-        if (!strstr(PHP_OS, 'WIN')) {
+        if (!WIN_OS) {
             echo $output;
         }
 
@@ -963,7 +969,7 @@ class Generator {
 
                 list($line, $filename) = $this->overrides->get_line_info("$class_name.$method_name.arginfo");
 
-                if (strstr(PHP_OS, 'WIN')) {
+                if (WIN_OS) {
                     $arginfo  = sprintf("//line %d \"%s\"\n", $line, $filename);
                 } else {
                     $arginfo  = sprintf("#line %d \"%s\"\n", $line, $filename);
