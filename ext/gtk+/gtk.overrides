@@ -573,6 +573,46 @@ PHP_METHOD
 }
 %% }}}
 
+%% {{{ GtkColorSelection
+%%
+override gtk_color_selection_get_current_color
+PHP_METHOD
+{
+
+    GdkColor color = { 0 , 0 , 0 , 0 };
+
+    if (ZEND_NUM_ARGS() > 0) {
+        php_error(E_WARNING, "%s::%s() requires 0 arguments, %d given",
+                  get_active_class_name(NULL TSRMLS_CC),
+                  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+        return;
+    }
+
+    gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(PHPG_GOBJECT(this_ptr)), &color);
+    phpg_gboxed_new(&return_value, GDK_TYPE_COLOR, &color, TRUE, TRUE TSRMLS_CC);
+
+}
+
+%%
+override gtk_color_selection_get_previous_color
+PHP_METHOD
+{
+
+    GdkColor color = { 0 , 0 , 0 , 0 };
+
+    if (ZEND_NUM_ARGS() > 0) {
+        php_error(E_WARNING, "%s::%s() requires 0 arguments, %d given",
+                  get_active_class_name(NULL TSRMLS_CC),
+                  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+        return;
+    }
+
+    gtk_color_selection_get_previous_color(GTK_COLOR_SELECTION(PHPG_GOBJECT(this_ptr)), &color);
+    phpg_gboxed_new(&return_value, GDK_TYPE_COLOR, &color, TRUE, TRUE TSRMLS_CC);
+
+}
+%% }}}
+
 %% include gtkcontainer.overrides
 
 %% {{{ GtkDialog
