@@ -299,7 +299,7 @@ PHP_METHOD
 }
 
 %%
-add-arginfo GtkTreeStore apend
+add-arginfo GtkTreeStore append
 static
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
     ZEND_ARG_INFO(0, iter)
