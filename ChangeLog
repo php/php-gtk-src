@@ -1,3 +1,21 @@
+2005-09-04  Steph  <steph.fox@virgin.net>
+
+    * ext/gtk+/gtk.overrides:
+      GtkColorSelection::get_current_color(),
+      GtkColorSelection::get_previous_color()
+      
+      Based on a patch by Tom Rogers <trogers@kwikin.com>
+
+    * ext/gtk+/config.w32
+      generator/generator.php
+      generator/lineoutput.php
+      generator/override.php
+      win32/README.win32.txt
+      win32/config.w32.in
+      win32/confutils.js:
+      The win32 build system should now work out of the box.  Instructions
+      attached.
+
 2005-09-03  Steph  <steph.fox@virgin.net>
 
     * ext/gtk+/gdk.overrides
