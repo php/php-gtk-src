@@ -50,7 +50,7 @@ a. Requirements
     <dev_dir>\include\gtk\<gtk headers>
     <dev_dir>\lib\<all the libraries can go in the toplevel lib dir>
 
- Check out the php-gtk directory as a sibling directory for <dev_env>\php5:
+ Check out the php-gtk directory as a sibling directory for <dev_dir>\php5:
     cvs -d:cvsread@cvs.php.net:/repository login
     Password: phpfi
     cvs -d:cvsread@cvs.php.net:/repository co php-gtk
