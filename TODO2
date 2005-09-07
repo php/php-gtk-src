@@ -42,7 +42,7 @@ Classes and Functions
 * GtkCellRenderer
 
 * GtkImageMenuItem
-        should accept a stock-id as first parameter and the accell
+        should accept a stock-id as first parameter and the accel
         group as the second one
 * GtkCombo
         Call to undefined method GtkCombo::set_popdown_strings()
@@ -56,9 +56,6 @@ Classes and Functions
 * GtkEntries can't be var_dumped, probably something missing
 * GtkTextBuffer->set_text's 2nd parameter should be optional
 * GtkTreeModelFilter constructor doesn't take a model / does it have a constructor?? didn't see one in gtk.defs
-* PHP-Gtk2 demo crashes when scrolling buttondemo -> perhaps something in GtkScrolledWindow::add_with_viewport?
-* GtkLabel
-        Has no get_pattern function
 
 Fix
 ~~~
