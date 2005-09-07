@@ -60,10 +60,10 @@ b. Opening a command prompt
  Whatever approach you adopted when you built PHP, you will need to repeat in the php-gtk
  directory.
 
- You will need to add the paths to your PHP sources (php5\Zend, php5\TSRM, php5\main) to
- the Include env var in your compiler. You will also need to add the path to the php5ts.lib
- you are building against to the Library env var, and the path to a PHP executable binary
- (any PHP binary will be fine for this) to %PATH%.
+ You will need to add the path to your PHP source (<dev_dir>\php5) to the Include env var
+ in your compiler. You will also need to add the path to the php5ts.lib you are building
+ against to the Library env var, and the path to a PHP executable binary (any version of
+ php.exe will be fine for this) to %PATH%.
 
 c. Generating configure
 

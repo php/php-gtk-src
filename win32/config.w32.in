@@ -78,10 +78,10 @@ DEFINE("PHP_GTK_LDFLAGS", "$(DLL_LDFLAGS)");
 DEFINE("LIBS", "kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib");
 
 if (PHP_GTK_DEBUG == "yes") {
-	DEFINE("CFLAGS", "/nologo /LDd /MDd /Gm /ZI /GZ /I ..\\php5 /I ..\\php5\\main /I ..\\php5\\regex /I ..\\php5\\Zend /I ..\\php5\\TSRM /D ZEND_WIN32 /D ZTS=1 /D ZEND_DEBUG=0 /D PHP_WIN32 /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
+	DEFINE("CFLAGS", "/nologo /LDd /MDd /Gm /ZI /GZ /I ..\\php5\\main /I ..\\php5\\Zend /I ..\\php5\\TSRM /D ZEND_WIN32 /D ZTS=1 /D ZEND_DEBUG=0 /D PHP_WIN32 /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
 	ADD_FLAG("LDFLAGS", "/debug");
 } else {
-	DEFINE("CFLAGS", "/nologo /MT /W3 /GX /O2 /I ..\\php5 /I ..\\php5\\main /I ..\\php5\\regex /I ..\\php5\\Zend /I ..\\php5\\TSRM /D ZEND_WIN32 /D ZTS=1 /D ZEND_DEBUG=0 /D PHP_WIN32 /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
+	DEFINE("CFLAGS", "/nologo /MT /W3 /GX /O2 /I ..\\php5\\main /I ..\\php5\\Zend /I ..\\php5\\TSRM /D ZEND_WIN32 /D ZTS=1 /D ZEND_DEBUG=0 /D PHP_WIN32 /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
 }
 
 if (VCVERS < 14) {
