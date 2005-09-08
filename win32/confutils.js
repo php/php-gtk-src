@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.2 2005-09-04 06:02:28 sfox Exp $
+// $Id: confutils.js,v 1.3 2005-09-08 01:35:00 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -56,16 +56,23 @@ extension_module_ptrs = "";
 function generate_source() {
 
 	/* create the generated files */
-	/* FIXME - this should be a better test, all the gen_* files need to be validated */
-	if (!FSO.FileExists("ext\\gtk+\\gen_gtk.c")) {
+	if (!FSO.FileExists("ext\\gtk+\\gen_atk.c")) {
 		if (!FSO.FileExists("win32\\temp.bat")) {
-			STDERR.WriteLine("Run buildconf first - some of the generated source files are missing");
+			STDERR.WriteLine("Run buildconf first - the generated source files are missing");
 			WScript.Quit(10);
 		} else {
 			WshShell.Run("win32\\temp", 0);
 			STDOUT.WriteLine("\n*Generating source files - this may take a few seconds*\n");
-			WScript.Sleep(2000); // gen_gtk.c is over 45,000 LOC - allow it to write fully
 		}
+	}
+	return;
+}
+
+function check_generation() {
+	if (!FSO.FileExists("ext\\gtk+\\gen_pango.h")) {
+		WScript.Sleep(3500);
+		STDOUT.WriteLine("Waiting for files to generate...");
+		check_generation();
 	}
 	return;
 }
@@ -906,6 +913,7 @@ function generate_files() {
 	}
 		
 	STDOUT.WriteLine("Generating files...");
+	check_generation();
 	generate_makefile();
 
 	STDOUT.WriteLine("Done.");
