@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.4 2005-09-08 02:47:52 sfox Exp $
+// $Id: confutils.js,v 1.5 2005-09-08 03:19:44 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -53,7 +53,7 @@ extension_module_ptrs = "";
 
 /* functions */
 
-function check_generated_files() {
+function count_generated_files() {
 
 	var dir = FSO.GetFolder("ext/gtk+");
 	var count = 0;
@@ -72,7 +72,7 @@ function check_generated_files() {
 
 function generate_source() {
 
-	var count = check_generated_files();
+	var count = count_generated_files();
 
 	if (count < 8) {
 		if (!FSO.FileExists("win32\\temp.bat")) {
@@ -87,7 +87,7 @@ function generate_source() {
 
 function check_generation() {
 
-	var count = check_generated_files();
+	var count = count_generated_files();
 
 	if (count < 8) {
 		STDOUT.WriteLine("Waiting for source files to generate...");
