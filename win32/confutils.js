@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.3 2005-09-08 01:35:00 sfox Exp $
+// $Id: confutils.js,v 1.4 2005-09-08 02:47:52 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -53,25 +53,45 @@ extension_module_ptrs = "";
 
 /* functions */
 
+function check_generated_files() {
+
+	var dir = FSO.GetFolder("ext/gtk+");
+	var count = 0;
+
+	iter = new Enumerator(dir.Files);
+	name = "";
+
+	for (; !iter.atEnd(); iter.moveNext()) {
+		name = FSO.GetFileName(iter.item());
+		if (name.match(new RegExp("gen_"))) {
+			count++;
+		}
+	}
+	return count;
+}
+
 function generate_source() {
 
-	/* create the generated files */
-	if (!FSO.FileExists("ext\\gtk+\\gen_atk.c")) {
+	var count = check_generated_files();
+
+	if (count < 8) {
 		if (!FSO.FileExists("win32\\temp.bat")) {
-			STDERR.WriteLine("Run buildconf first - the generated source files are missing");
+			STDERR.WriteLine("Run buildconf first - the source file generator is missing");
 			WScript.Quit(10);
 		} else {
 			WshShell.Run("win32\\temp", 0);
-			STDOUT.WriteLine("\n*Generating source files - this may take a few seconds*\n");
 		}
 	}
 	return;
 }
 
 function check_generation() {
-	if (!FSO.FileExists("ext\\gtk+\\gen_pango.h")) {
+
+	var count = check_generated_files();
+
+	if (count < 8) {
+		STDOUT.WriteLine("Waiting for source files to generate...");
 		WScript.Sleep(3500);
-		STDOUT.WriteLine("Waiting for files to generate...");
 		check_generation();
 	}
 	return;
@@ -288,6 +308,7 @@ function conf_process_args() {
 
 	MFO = FSO.CreateTextFile("Makefile.objects", true);
 
+	STDOUT.WriteBlankLines(1);
 	STDOUT.WriteLine("Saving configure options to configure.bat");
 	var nicefile = FSO.CreateTextFile("configure.bat", true);
 	nicefile.WriteLine(nice);
@@ -911,8 +932,9 @@ function generate_files() {
 			FSO.CreateFolder(bd);
 		}
 	}
-		
-	STDOUT.WriteLine("Generating files...");
+
+	STDOUT.WriteLine("Generating source files - this may take a few seconds");
+	WScript.Sleep(3500);
 	check_generation();
 	generate_makefile();
 
