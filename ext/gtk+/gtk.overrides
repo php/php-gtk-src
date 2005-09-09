@@ -442,7 +442,7 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool use_underline = 0;
+    zend_bool use_underline = 1;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sb", &text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton);
@@ -507,7 +507,7 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool use_underline = 0;
+    zend_bool use_underline = 1;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sb", &text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCheckButton);
@@ -543,7 +543,7 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool use_underline = 0;
+    zend_bool use_underline = 1;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sb", &text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMenuItem);
@@ -1005,7 +1005,7 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool use_underline = 0;
+    zend_bool use_underline = 1;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sb", &text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMenuItem);
@@ -1084,7 +1084,7 @@ PHP_METHOD
 {
     zval *php_group = NULL;
     char *label = NULL;
-    zend_bool use_underline = 0;
+    zend_bool use_underline = 1;
     GtkRadioMenuItem *group = NULL;
     GObject *wrapped_obj;
     GType gtype = phpg_gtype_from_zval(this_ptr);
@@ -1190,7 +1190,7 @@ PHP_METHOD
 {
     zval *php_group = NULL;
     char *label = NULL;
-    zend_bool use_underline = 0;
+    zend_bool use_underline = 1;
     GtkRadioButton *group = NULL;
     GObject *wrapped_obj;
     GType gtype = phpg_gtype_from_zval(this_ptr);
@@ -1380,7 +1380,7 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool use_underline = 0;
+    zend_bool use_underline = 1;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sb", &text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkToggleButton);
