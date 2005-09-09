@@ -1,3 +1,21 @@
+2005-09-08  Steph  <steph.fox@virgin.net>
+
+    * win32/confutils.js:
+      More descriptive function name
+      
+      *moral - don't commit at 4am
+
+    * win32/confutils.js:
+      Let's make the gen_ stuff foolproof...
+
+    * win32/confutils.js:
+      buildconf -> configure -> get coffee -> nmake
+      is now
+      buildconf -> configure -> nmake
+
+    * win32/README.win32.txt:
+      Fix cvs checkout line.  Thanks to Tom Rogers for noticing.
+
 2005-09-07  Steph  <steph.fox@virgin.net>
 
     * TODO2:
