@@ -34,6 +34,9 @@ Base Functionality
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
+* GdkGC
+	implement property access (read/write)
+
 * GtkListStore
 * GtkTreeModel
 * GtkTreeStore
