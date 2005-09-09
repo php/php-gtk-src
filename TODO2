@@ -46,7 +46,7 @@ Classes and Functions
         group as the second one
 * GtkCombo
         Call to undefined method GtkCombo::set_popdown_strings()
-* GtkMenu
+- GtkMenu
         Call to undefined method GtkMenu::popup()
 * GtkClipboard
 * GtkNotebook->append_page should allow just a string as second parameter (title for page) instead of only wanting a gtklabel or so
