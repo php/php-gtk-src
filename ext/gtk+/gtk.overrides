@@ -99,8 +99,6 @@ ignore
     gtk_draw_slider
     gtk_draw_tab
     gtk_file_chooser_dialog_new
-    gtk_get_current_event
-    gtk_get_event_widget
     gtk_idle_remove_by_data
     gtk_item_factory_create_item
     gtk_item_factory_create_items_ac
