@@ -326,7 +326,7 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
             } else if (!strcmp(name, "axes")) {
                 ALLOC_ZVAL(result);
                 if (event->button.axes) {
-                    guint i = 0;
+                    gint i = 0;
                     array_init(result);
                     for (i = 0; i < event->button.device->num_axes; i++) {
                         add_next_index_double(result, event->button.axes[i]);
