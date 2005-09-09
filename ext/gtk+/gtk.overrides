@@ -615,16 +615,6 @@ PHP_METHOD
 
 %% {{{ GtkDialog
 %%
-add-arginfo GtkDialog new_with_buttons
-static
-ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
-    ZEND_ARG_INFO(0, title)
-    ZEND_ARG_INFO(0, parent)
-    ZEND_ARG_INFO(0, flags)
-    ZEND_ARG_INFO(0, buttons)
-ZEND_END_ARG_INFO();
-
-%%
 override gtk_dialog_new_with_buttons
 PHP_METHOD
 {
@@ -772,17 +762,6 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkFileChooserDialog
-%%
-add-arginfo GtkFileChooserDialog new_with_backend
-static
-ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
-    ZEND_ARG_INFO(0, title)
-    ZEND_ARG_INFO(0, parent)
-    ZEND_ARG_INFO(0, action)
-    ZEND_ARG_INFO(0, buttons)
-    ZEND_ARG_INFO(0, backend)
-ZEND_END_ARG_INFO();
-
 %%
 override gtk_file_chooser_dialog_new_with_backend
 PHP_METHOD

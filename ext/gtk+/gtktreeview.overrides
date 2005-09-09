@@ -620,14 +620,6 @@ PHP_METHOD
 
 %% {{{ GtkTreeViewColumn
 %%
-add-arginfo GtkTreeViewColumn new_with_attributes
-static
-ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0)
-    ZEND_ARG_INFO(0, title)
-    ZEND_ARG_INFO(0, cellrenderer)
-ZEND_END_ARG_INFO();
-
-%%
 override gtk_tree_view_column_new_with_attributes
 PHP_METHOD
 {
