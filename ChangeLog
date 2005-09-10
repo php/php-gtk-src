@@ -1,3 +1,28 @@
+2005-09-09  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2:
+      -** empty log message ***
+
+    * ext/gtk+/gdk.overrides:
+      Kill warning.
+
+2005-09-09  Steph  <steph.fox@virgin.net>
+
+    * ext/gtk+/gtk.overrides:
+      Make buttons and menu items use_underline by default.
+      GtkLabel should _not_ be updated in the same way.
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/gtktreeview.overrides:
+      Removed unused arg infos
+
+    * TODO2:
+      Note my current obsession.
+
+    * ext/gtk+/gtk.overrides:
+      Expose gtk_get_current_event() and gtk_get_event_widget($event).
+      Both are useful for event/signal checking.
+
 2005-09-08  Steph  <steph.fox@virgin.net>
 
     * win32/confutils.js:
