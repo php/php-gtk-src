@@ -30,7 +30,7 @@ Base Functionality
   advantage of function call cache
 * Construction of arbitrary GObjects() via argument lists
 * Integration with pkg-config
-* Provide access to GTK version number.
+- Provide access to GTK version number.
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
