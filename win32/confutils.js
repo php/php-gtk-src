@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.5 2005-09-08 03:19:44 sfox Exp $
+// $Id: confutils.js,v 1.6 2005-09-11 12:55:58 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -392,7 +392,16 @@ function PATH_PROG(progname, additional_paths, symbol) {
 	if (place == true) {
 		place = exe;
 	} else if (place != false) {
+
+		if (place.lastIndexOf("\\") != place.length - 1) {
+			place += "\\";
+		}
+
 		place = place + exe;
+
+		if (place.indexOf(" ")) {
+			place = '"' + place + '"';
+		}
 	}
 
 	if (place) {
