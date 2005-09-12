@@ -16,6 +16,7 @@ build2/generated_lists:
 
 $(STAMP): 
 	$(PHPIZE)
+	@rm -f aclocal.m4 configure config.h.in
 	touch $(STAMP)
 
 cvsclean-work:
