@@ -35,7 +35,7 @@ function convert_typename($typename)
 
 /*======================================================================*\
     Function: enum_name
-    Purpose:  Creates a GTK_TYPE_* name from the give typename
+    Purpose:  Creates a GTK_TYPE_* name from the given typename
 \*======================================================================*/
 function enum_name($typename)
 {
@@ -300,8 +300,13 @@ class Double_Arg extends Arg_Type {
             $info->var_list->add('double', $name . ' = ' . $default);
         else
             $info->var_list->add('double', $name);
-        $info->arg_list[] = $name;
+
         $info->add_parse_list('d', '&' . $name);
+
+        if($type == 'gfloat')
+          $info->arg_list[] = "(float)$name";
+        else
+          $info->arg_list[] = $name;
     }
     
     function write_return($type, $owns_return, $info)
