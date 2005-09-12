@@ -1,3 +1,12 @@
+2005-09-11  Steph  <steph.fox@virgin.net>
+
+    * win32/confutils.js:
+      Hopefully this will work in every case now (thanks Tom)
+
+    * TODO2:
+      Moving along to gtk::get_version() (assuming this is what Andrei intended?)
+      Patch to follow
+
 2005-09-09  Andrei Zmievski  <andrei@gravitonic.com>
 
     * TODO2:
