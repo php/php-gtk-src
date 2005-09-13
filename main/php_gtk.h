@@ -36,7 +36,7 @@
 #include "zend_objects_API.h"
 #include "zend_exceptions.h"
 
-#define PHP_GTK_VERSION "2.0.0"
+#define PHP_GTK_VERSION "2.0.0-dev"
 
 #ifdef PHP_WIN32
 # ifdef GTK_SHARED
