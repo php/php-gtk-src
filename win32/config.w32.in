@@ -16,6 +16,7 @@ PATH_PROG('nmake');
 
 // we don't want to define LIB, as that will override the default library path set in that env var
 PATH_PROG('lib', null, 'MAKE_LIB');
+PATH_PROG('php');
 
 STDOUT.WriteBlankLines(1);
 
