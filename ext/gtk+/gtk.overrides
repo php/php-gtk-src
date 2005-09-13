@@ -287,6 +287,24 @@ PHP_METHOD
 }
 
 %%
+add Gtk get_version
+PHP_METHOD
+{
+    guint major;
+    guint minor;
+    guint micro;
+    char version[256];
+
+    major = GTK_MAJOR_VERSION;
+    minor = GTK_MINOR_VERSION;
+    micro = GTK_MICRO_VERSION;
+
+    snprintf(version, sizeof(version), "GTK %d.%d.%d", major, minor, micro);
+
+    RETURN_STRING(version, 1);
+}
+
+%%
 add-arginfo Gtk quit_add
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
