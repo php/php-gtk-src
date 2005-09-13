@@ -9681,7 +9681,7 @@
 (define-method get_angle
   (of-object "GtkLabel")
   (c-name "gtk_label_get_angle")
-  (return-type "gint")
+  (return-type "gdouble")
 )
 
 (define-method get_attributes
