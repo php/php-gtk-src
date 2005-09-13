@@ -767,12 +767,12 @@ zval*** php_gtk_hash_as_array_offset(zval *hash, int offset, int *total)
 		argc = zend_hash_num_elements(Z_ARRVAL_P(hash));
 	values = (zval ***)emalloc((argc + offset) * sizeof(zval **));
 	if (hash) {
+		*total = argc + offset;
 		for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(hash));
 			 zend_hash_get_current_data(Z_ARRVAL_P(hash), (void **)&values[offset++]) == SUCCESS;
 			 zend_hash_move_forward(Z_ARRVAL_P(hash)));
 	}
 
-	*total = argc + offset;
 	return values;
 }
 
