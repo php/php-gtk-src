@@ -1,3 +1,17 @@
+2005-09-12  Jani Taskinen  <jani.taskinen@sci.fi>
+
+    * build2/build.mk:
+      - Fixed buildconf. (phpize creates these)
+
+2005-09-12  Steph  <steph.fox@virgin.net>
+
+    * generator/arg_types.php:
+      Kill ~30 compilation errors under MSVC++6.0
+      Patch from Tom Rogers <trogers@kwikin.com>
+
+    * TODO2:
+      Bring TODO up to date.
+
 2005-09-11  Steph  <steph.fox@virgin.net>
 
     * win32/confutils.js:
