@@ -943,6 +943,86 @@ PHP_METHOD
 }
 %% }}}
 
+%% {{{ GtkMenu
+%%
+override gtk_menu_popup
+static void php_gtk_menu_position(GtkMenu *menu, int *x, int *y, int *push_in, gpointer data)
+{
+    phpg_cb_data_t *cbd = (phpg_cb_data_t *) data;
+    char *callback_name;
+    zval *retval = NULL;
+    zval ***args = NULL;
+    int n_args = 0;
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+        php_error(E_WARNING, "unable to call menu position callback '%s' specified in %s on line %d", callback_name, cbd->src_filename, cbd->src_lineno);
+        efree(callback_name);
+        return;
+    }
+
+    if (cbd->user_args) {
+        args = php_gtk_hash_as_array_offset(cbd->user_args, 0, &n_args);
+    }
+
+    call_user_function_ex(EG(function_table), NULL, cbd->callback, &retval, n_args, args, 0, NULL TSRMLS_CC);
+
+    if (retval) {
+        if (Z_TYPE_P(retval) == IS_ARRAY && !php_gtk_parse_args_hash_quiet(retval, "ii|b", x, y, push_in)) {
+            php_error(E_WARNING, "unable to parse result of menu position callback");
+        }
+        zval_ptr_dtor(&retval);
+    }
+
+    if (args) {
+        efree(args);
+    }
+
+    efree(callback_name);
+}
+
+PHP_METHOD
+{
+    GtkWidget *pms = NULL, *pmi = NULL;
+    zval *php_pms = NULL, *php_pmi = NULL;
+    zval *callback = NULL, *user_args = NULL;
+    int button = 0, time = 0;
+    phpg_cb_data_t *data;
+
+    NOT_STATIC_METHOD();
+
+    if (ZEND_NUM_ARGS() > 5) {
+        if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 5, &user_args, "NNVii", &php_pms, gtkwidget_ce, &php_pmi, gtkwidget_ce, &callback, &button, &time)) {
+            return;
+        }
+    } else {
+        if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|NNVii", &php_pms, gtkwidget_ce, &php_pmi, gtkwidget_ce, &callback, &button, &time)) {
+            return;
+        }
+    }
+
+    if (php_pms && Z_TYPE_P(php_pms) != IS_NULL)
+        pms = GTK_WIDGET(PHPG_GOBJECT(php_pms));
+    if (php_pmi && Z_TYPE_P(php_pmi) != IS_NULL)
+        pmi = GTK_WIDGET(PHPG_GOBJECT(php_pmi));
+    if (!time)
+        time = gtk_get_current_event_time();
+
+    if (callback && Z_TYPE_P(callback) != IS_NULL) {
+
+        zval_add_ref(&callback);
+        data = phpg_cb_data_new(callback, user_args TSRMLS_CC);
+
+        gtk_menu_popup(GTK_MENU(PHPG_GOBJECT(this_ptr)), pms, pmi, 
+        (GtkMenuPositionFunc)php_gtk_menu_position, data, button, time);
+
+    } else {
+
+        gtk_menu_popup(GTK_MENU(PHPG_GOBJECT(this_ptr)), pms, pmi, NULL, NULL, button, time);
+    }
+}
+%% }}}
+
 %% {{{ GtkMessageDialog
 %%
 add-arginfo GtkMessageDialog __construct
