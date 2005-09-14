@@ -460,9 +460,9 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool use_underline = 1;
+    zend_bool free_text, use_underline = 1;
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sb", &text, &use_underline)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton);
     }
 
@@ -472,6 +472,8 @@ PHP_METHOD
     } else {
         wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
     }
+
+    if (free_text) g_free(text);
 
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton);
@@ -493,13 +495,16 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *stock_id = NULL;
+    zend_bool free_stock_id;
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &stock_id)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u", &stock_id, &free_stock_id)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton);
     }
 
     wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_class(EG(scope)), "label", stock_id,
                                           "use-stock", TRUE, "use-underline", TRUE, NULL);
+
+    if (free_stock_id) g_free(stock_id);
 
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton);
@@ -525,9 +530,9 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool use_underline = 1;
+    zend_bool free_text, use_underline = 1;
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sb", &text, &use_underline)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCheckButton);
     }
 
@@ -537,6 +542,8 @@ PHP_METHOD
     } else {
         wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
     }
+
+    if (free_text) g_free(text);
 
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCheckButton);
@@ -561,9 +568,9 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool use_underline = 1;
+    zend_bool free_text, use_underline = 1;
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sb", &text, &use_underline)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMenuItem);
     }
 
@@ -580,6 +587,8 @@ PHP_METHOD
         gtk_accel_label_set_accel_widget(GTK_ACCEL_LABEL(accel_label), GTK_WIDGET(wrapped_obj));
         gtk_widget_show(accel_label);
     }
+
+    if (free_text) g_free(text);
 
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMenuItem);
@@ -637,13 +646,14 @@ override gtk_dialog_new_with_buttons
 PHP_METHOD
 {
     char *title = NULL;
+    zend_bool free_title;
     GtkWindow *parent = NULL;
     zval *php_parent = NULL, *php_flags = NULL;
     zval *buttons = NULL;
     GtkDialogFlags flags = 0;
     GObject *wrapped_obj;
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sNVa", &title, &php_parent, gtkwindow_ce, &php_flags, &buttons)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|uNVa", &title, &free_title, &php_parent, gtkwindow_ce, &php_flags, &buttons)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkDialog);
     }
     if (php_parent) {
@@ -658,6 +668,9 @@ PHP_METHOD
     }
 
     wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
+
+    if (free_title) g_free(title);
+
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkDialog);
     }
@@ -785,6 +798,7 @@ override gtk_file_chooser_dialog_new_with_backend
 PHP_METHOD
 {
     char *title = NULL, *backend = NULL;
+    zend_bool free_title, free_backend;
     zval *php_parent = NULL, *php_action = NULL;
     zval *buttons = NULL;
     GtkWindow *parent = NULL;
@@ -792,8 +806,8 @@ PHP_METHOD
     GObject *wrapped_obj;
     int n = 0;
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sNVas", &title, &php_parent,
-                            gtkwindow_ce, &php_action, &buttons, &backend)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|uNVau", &title, &free_title, &php_parent,
+                            gtkwindow_ce, &php_action, &buttons, &backend, &free_backend)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkFileChooserDialog);
     }
 
@@ -821,6 +835,10 @@ PHP_METHOD
                                            "title", title,
                                            "action", action,
                                            "file-system-backend", backend, NULL);
+
+    if (free_title) g_free(title);
+    if (free_backend) g_free(backend);
+
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkFileChooserDialog);
     }
@@ -875,9 +893,9 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool use_underline = 0;
+    zend_bool free_text, use_underline = 0;
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sb", &text, &use_underline)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkLabel);
     }
 
@@ -887,6 +905,8 @@ PHP_METHOD
     } else {
         wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
     }
+
+    if (free_text) g_free(text);
 
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkLabel);
@@ -1045,6 +1065,7 @@ PHP_METHOD
     GtkMessageType type = GTK_MESSAGE_INFO;
     GtkButtonsType buttons = GTK_BUTTONS_NONE;
     char *message = NULL;
+    zend_bool free_message;
     GObject *wrapped_obj;
 
     if (phpg_gtype_from_zval(this_ptr) != GTK_TYPE_MESSAGE_DIALOG) {
@@ -1052,7 +1073,7 @@ PHP_METHOD
         return;
     }
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|NVVVs", &php_parent, gtkwindow_ce, &php_flags, &php_type, &php_buttons, &message)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|NVVVu", &php_parent, gtkwindow_ce, &php_flags, &php_type, &php_buttons, &message, &free_message)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMessageDialog);
     }
 
@@ -1080,6 +1101,9 @@ PHP_METHOD
     }
 
     wrapped_obj = (GObject *) gtk_message_dialog_new(parent, flags, type, buttons, "%s", message);
+
+    if (free_message) g_free(message);
+
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMessageDialog);
     }
@@ -1103,9 +1127,9 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool use_underline = 1;
+    zend_bool free_text, use_underline = 1;
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sb", &text, &use_underline)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMenuItem);
     }
 
@@ -1122,6 +1146,8 @@ PHP_METHOD
         gtk_accel_label_set_accel_widget(GTK_ACCEL_LABEL(accel_label), GTK_WIDGET(wrapped_obj));
         gtk_widget_show(accel_label);
     }
+
+    if (free_text) g_free(text);
 
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMenuItem);
@@ -1182,12 +1208,12 @@ PHP_METHOD
 {
     zval *php_group = NULL;
     char *label = NULL;
-    zend_bool use_underline = 1;
+    zend_bool free_label, use_underline = 1;
     GtkRadioMenuItem *group = NULL;
     GObject *wrapped_obj;
     GType gtype = phpg_gtype_from_zval(this_ptr);
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Nsb", &php_group, gtkradiomenuitem_ce, &label, &use_underline)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Nub", &php_group, gtkradiomenuitem_ce, &label, &free_label, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRadioButton);
     }
 
@@ -1212,6 +1238,8 @@ PHP_METHOD
     if (group) {
         gtk_radio_menu_item_set_group(GTK_RADIO_MENU_ITEM(wrapped_obj), gtk_radio_menu_item_get_group(group));
     }
+
+    if (free_label) g_free(label);
 
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRadioButton);
@@ -1288,12 +1316,12 @@ PHP_METHOD
 {
     zval *php_group = NULL;
     char *label = NULL;
-    zend_bool use_underline = 1;
+    zend_bool free_label, use_underline = 1;
     GtkRadioButton *group = NULL;
     GObject *wrapped_obj;
     GType gtype = phpg_gtype_from_zval(this_ptr);
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Nsb", &php_group, gtkradiobutton_ce, &label, &use_underline)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Nub", &php_group, gtkradiobutton_ce, &label, &free_label, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRadioButton);
     }
 
@@ -1316,6 +1344,8 @@ PHP_METHOD
             wrapped_obj = (GObject *) g_object_new(gtype, NULL);
         }
     }
+
+    if (free_label) g_free(label);
 
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRadioButton);
@@ -1342,10 +1372,11 @@ PHP_METHOD
     zval *php_group = NULL;
     GtkRadioToolButton *group = NULL;
     char *stock_id = NULL;
+    zend_bool free_stock_id;
     GObject *wrapped_obj;
     GType gtype = phpg_gtype_from_zval(this_ptr);
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Ns", &php_group, gtkradiotoolbutton_ce, &stock_id)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Nu", &php_group, gtkradiotoolbutton_ce, &stock_id, &free_stock_id)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRadioToolButton);
     }
 
@@ -1366,6 +1397,8 @@ PHP_METHOD
             wrapped_obj = (GObject *) g_object_new(gtype, NULL);
         }
     }
+
+    if (free_stock_id) g_free(stock_id);
 
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRadioToolButton);
@@ -1478,9 +1511,9 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool use_underline = 1;
+    zend_bool free_text, use_underline = 1;
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|sb", &text, &use_underline)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkToggleButton);
     }
 
@@ -1490,6 +1523,8 @@ PHP_METHOD
     } else {
         wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
     }
+
+    if (free_text) g_free(text);
 
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkToggleButton);
