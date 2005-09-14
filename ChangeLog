@@ -1,3 +1,38 @@
+2005-09-13  Steph  <steph.fox@virgin.net>
+
+    * ext/gtk+/gtk.overrides:
+      GtkMenu::popup()
+
+2005-09-13  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk_util.c:
+      Bonehead.
+
+2005-09-13  Steph  <steph.fox@virgin.net>
+
+    * ext/gtk+/gtk.overrides:
+      say hello to gtk::get_version()
+
+    * ext/gtk+/gtk.defs:
+      say goodbye to the last win32 compile warning
+
+    * main/.cvsignore
+      main/php_gtk.h:
+      tag PHP-GTK version
+      add new generated file to .cvsignore
+
+    * win32/buildconf.js
+      win32/config.w32.in
+      win32/confutils.js
+      win32/template.rc:
+      clean up .dll versioning
+      add a configure check for php.exe
+
+2005-09-13  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk_util.c:
+      Fix memory calculation bug.
+
 2005-09-12  Jani Taskinen  <jani.taskinen@sci.fi>
 
     * build2/build.mk:
