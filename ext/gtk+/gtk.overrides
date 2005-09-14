@@ -484,7 +484,7 @@ PHP_METHOD
 add-arginfo GtkButton new_from_stock
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
-    ZEND_ARG_INFO(0, stock)
+    ZEND_ARG_INFO(0, stock_id)
 ZEND_END_ARG_INFO();
 
 %%
@@ -492,13 +492,13 @@ override gtk_button_new_from_stock new_from_stock ZEND_ACC_PUBLIC|ZEND_ACC_STATI
 PHP_METHOD
 {
     GObject *wrapped_obj;
-    gchar *stock = NULL;
+    gchar *stock_id = NULL;
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &stock)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &stock_id)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton);
     }
 
-    wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_class(EG(scope)), "label", stock,
+    wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_class(EG(scope)), "label", stock_id,
                                           "use-stock", TRUE, "use-underline", TRUE, NULL);
 
     if (!wrapped_obj) {
@@ -695,7 +695,7 @@ PHP_METHOD
             zend_hash_move_forward(Z_ARRVAL_P(buttons));
 
             if (Z_TYPE_PP(text) != IS_STRING || Z_TYPE_PP(response) != IS_LONG) {
-                php_error(E_WARNING, "%s::%s(): each pair in button list has to string/number",
+                php_error(E_WARNING, "%s::%s(): each pair in button list has to be string/number",
                           get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
                 gtk_object_destroy(GTK_OBJECT(wrapped_obj));
                 PHPG_THROW_CONSTRUCT_EXCEPTION(GtkDialog);
