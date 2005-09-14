@@ -30,13 +30,11 @@ Base Functionality
   advantage of function call cache
 * Construction of arbitrary GObjects() via argument lists
 * Integration with pkg-config
-- Provide access to GTK version number.
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
 * GdkGC
 	implement property access (read/write)
-
 * GtkListStore
 * GtkTreeModel
 * GtkTreeStore
@@ -45,8 +43,6 @@ Classes and Functions
 * GtkCellRenderer
 - GtkCombo
         Call to undefined method GtkCombo::set_popdown_strings()
-- GtkMenu
-        Call to undefined method GtkMenu::popup()
 * GtkClipboard
 * GtkNotebook->append_page should allow just a string as second parameter (title for page) instead of only wanting a gtklabel or so
 * GtkNotebook crashes when connecting callback to move-focus-out signal
@@ -83,5 +79,3 @@ Thoughts on reference counting and wrappers
   - in progress
   + done
 ]
-
-
