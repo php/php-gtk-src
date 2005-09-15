@@ -1,3 +1,17 @@
+2005-09-14  Steph  <steph.fox@virgin.net>
+
+    * TODO2:
+      Two more items down (only 30 to go)
+
+    * ext/gtk+/gtk.overrides:
+      utf8 conversion for user input in existing gtk.overrides
+
+    * ext/gtk+/gtk.overrides:
+      Typos.
+
+    * main/php_gtk_util.c:
+      Fix the fix.
+
 2005-09-13  Steph  <steph.fox@virgin.net>
 
     * ext/gtk+/gtk.overrides:
