@@ -1,3 +1,9 @@
+2005-09-15  Steph  <steph.fox@virgin.net>
+
+    * win32/php.ini:
+      Prettifying our .ini file.  It makes sense to distribute a php.ini that
+      people can actually use.
+
 2005-09-14  Steph  <steph.fox@virgin.net>
 
     * TODO2:
