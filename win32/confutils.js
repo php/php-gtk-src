@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.7 2005-09-13 17:02:10 sfox Exp $
+// $Id: confutils.js,v 1.8 2005-09-20 02:17:53 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
