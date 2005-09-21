@@ -126,7 +126,7 @@
   )
 )
 
-(define-function glade_get_widget_name
+(define-function get_widget_name
   (c-name "glade_get_widget_name")
   (return-type "const-char*")
   (parameters
