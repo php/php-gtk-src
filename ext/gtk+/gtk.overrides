@@ -1567,4 +1567,5 @@ PHP_METHOD
 
 %% }}}
 
+%% include gtktextview.overrides
 %% include gtktreeview.overrides
