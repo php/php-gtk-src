@@ -28,20 +28,18 @@
 #if HAVE_LIBGLADE
 
 #include <glade/glade.h>
-#include "gen_ce_libglade.h"
+#include "gen_libglade.h"
 
 extern php_gtk_ext_entry libglade_ext_entry;
-#define libglade_ext_ptr &libglade_ext_entry
+#define php_gtk_ext_libglade_ptr &libglade_ext_entry
 
-void php_libglade_register_constants(int module_number TSRMLS_DC);
-void php_libglade_register_classes();
+void phpg_libglade_register_constants(const char *strip_prefix);
+void phpg_libglade_register_classes(void);
 
 #else
 
-#define libglade_ext_ptr NULL
+#define php_gtk_ext_libglade_ptr NULL
 
-#endif	/* HAVE_LIBGLADE */
+#endif /* HAVE_LIBGLADE */
 
-#define php_gtk_ext_libglade_ptr libglade_ext_ptr
-
-#endif	/* PHP_LIBGLADE_H */
+#endif /* PHP_LIBGLADE_H */

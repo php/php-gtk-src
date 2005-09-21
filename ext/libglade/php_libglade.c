@@ -24,15 +24,14 @@
 
 #if HAVE_LIBGLADE
 
-#ifdef PHP_GTK_COMPILE_DL_LIBGLADE
-PHP_GTK_GET_EXTENSION(libglade)
+#ifdef COMPILE_DL_LIBGLADE2
+PHP_GTK_GET_EXTENSION(libglade);
 #endif
 
 PHP_GTK_XINIT_FUNCTION(libglade)
 {
-	glade_init();
-	php_libglade_register_constants(module_number TSRMLS_CC);
-	php_libglade_register_classes();
+	phpg_libglade_register_classes();
+	phpg_libglade_register_constants("GLADE_");
 
 	return SUCCESS;
 }
@@ -40,7 +39,7 @@ PHP_GTK_XINIT_FUNCTION(libglade)
 php_gtk_ext_entry libglade_ext_entry = {
 	"libglade",
 	PHP_GTK_XINIT(libglade),
-	NULL,
+	NULL
 };
 
-#endif	/* HAVE_LIBGLADE */
+#endif /* HAVE_LIBGLADE */

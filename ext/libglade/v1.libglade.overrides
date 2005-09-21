@@ -1,0 +1,178 @@
+/* vim: set ft=cpp: */
+%%
+headers
+#include <glade/glade.h>
+#include "ext/gtk+/php_gtk+.h"
+%%
+ignore-glob
+  *_get_type
+%%
+ignore
+  glade_xml_new
+  glade_xml_signal_connect_full
+  glade_xml_signal_connect_data
+  glade_xml_signal_autoconnect_full
+%%
+override glade_xml_signal_connect
+static void glade_connect_one(const gchar *handler_name, GtkObject *obj, const
+							  gchar *signal_name, const gchar *signal_data,
+							  GtkObject *connect_object, gboolean after,
+							  zval *callback_data)
+{
+	zval **callback = NULL, **extra = NULL, **pass_object = NULL;
+	zval **callback_filename = NULL, **callback_lineno = NULL;
+	zval *object;
+	TSRMLS_FETCH();
+
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&extra);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&pass_object);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_filename);
+	zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&callback_lineno);
+
+	if (connect_object) {
+		zval *temp;
+
+		Z_LVAL_PP(pass_object) = 0;
+		object = php_gtk_new(connect_object);
+		MAKE_STD_ZVAL(temp);
+		array_init(temp);
+		add_next_index_zval(temp, object);
+		php_array_merge(Z_ARRVAL_P(temp), Z_ARRVAL_PP(extra), 0 TSRMLS_CC);
+		REPLACE_ZVAL_VALUE(extra, temp, 0);
+	}
+
+	gtk_signal_connect_full(obj, signal_name, NULL,
+							(GtkCallbackMarshal)php_gtk_callback_marshal,
+							callback_data, php_gtk_destroy_notify, FALSE, after);
+}
+
+static void glade_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object)
+{
+	char *handler_name = NULL;
+	zval *callback = NULL;
+	zval *extra;
+	zval *data;
+	char *callback_filename;
+	uint callback_lineno;
+
+	NOT_STATIC_METHOD();
+
+	if (ZEND_NUM_ARGS() < 2) {
+		php_error(E_WARNING, "%s() requires at least 2 arguments, %d given",
+				  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+		return;
+	}
+
+	if (!php_gtk_parse_args(2, "sV", &handler_name, &callback))
+		return;
+
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
+	extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
+	data = php_gtk_build_value("(VNisi)", callback, extra, pass_object, callback_filename, callback_lineno);
+	glade_xml_signal_connect_full(GLADE_XML(PHP_GTK_GET(this_ptr)), handler_name,
+								  (GladeXMLConnectFunc)glade_connect_one, data);
+	RETURN_NULL();
+}
+
+PHP_FUNCTION(glade_xml_signal_connect)
+{
+	glade_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
+}
+%%
+override glade_xml_signal_connect_object signal_connect_object GladeXML
+PHP_FUNCTION(glade_xml_signal_connect_object)
+{
+	glade_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
+}
+%%
+override glade_xml_signal_autoconnect
+
+typedef struct _php_gtk_autoconnect_data {
+	zend_bool pass_object;
+	zval *map;
+} php_gtk_autoconnect_data;
+
+static void glade_connect_auto(const gchar *handler_name, GtkObject *obj,
+							   const gchar *signal_name, const gchar *signal_data,
+							   GtkObject *connect_object, gboolean after,
+							   php_gtk_autoconnect_data *ac_data)
+{
+	zval **callback_data = NULL, *map = ac_data->map;
+	zval **callback_ptr = NULL, *extra = NULL, *params = NULL;
+	zval *callback, *data, *object = NULL;
+	int pass_object = ac_data->pass_object;
+	char *callback_filename;
+	uint callback_lineno;
+	TSRMLS_FETCH();
+
+	if (map && zend_hash_find(Z_ARRVAL_P(map), (char *)handler_name, strlen(handler_name) + 1, (void **)&callback_data) == SUCCESS) {
+		if (Z_TYPE_PP(callback_data) != IS_ARRAY ||
+			zend_hash_index_find(Z_ARRVAL_PP(callback_data), 0, (void **)&callback_ptr) == FAILURE) {
+			php_error(E_WARNING, "%s() is supplied with invalid callback structure for handler '%s'", get_active_function_name(TSRMLS_C), handler_name);
+			return; 
+		}
+		zval_add_ref(callback_ptr);
+		callback = *callback_ptr;
+		zend_hash_index_del(Z_ARRVAL_PP(callback_data), 0);
+		extra = *callback_data;
+	} else {
+		MAKE_STD_ZVAL(callback);
+		ZVAL_STRING(callback, (char *)handler_name, 1);
+	}
+
+	if (!zend_is_callable(callback, 0, NULL)) {
+		php_error(E_WARNING, "%s() is unable to autoconnect callback for handler '%s'",
+				  get_active_function_name(TSRMLS_C), handler_name);
+		return;
+	}
+	
+	MAKE_STD_ZVAL(params);
+	array_init(params);
+
+	if (connect_object) {
+		pass_object = 0;
+		object = php_gtk_new(connect_object);
+		add_next_index_zval(params, object);
+	}
+	
+	if (extra)
+		php_array_merge(Z_ARRVAL_P(params), Z_ARRVAL_P(extra), 0 TSRMLS_CC);
+
+	callback_filename = zend_get_executed_filename(TSRMLS_C);
+	callback_lineno = zend_get_executed_lineno(TSRMLS_C);
+	data = php_gtk_build_value("(NNisi)", callback, params, pass_object,
+							   callback_filename, callback_lineno);
+	gtk_signal_connect_full(obj, signal_name, NULL,
+							(GtkCallbackMarshal)php_gtk_callback_marshal,
+							data, php_gtk_destroy_notify, FALSE, after);
+}
+
+static void glade_signal_autoconnect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object)
+{
+	zval *map = NULL;
+	php_gtk_autoconnect_data *ac_data;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|a", &map))
+		return;
+
+	ac_data = (php_gtk_autoconnect_data *)emalloc(sizeof(php_gtk_autoconnect_data));
+	ac_data->map = map;
+	ac_data->pass_object = pass_object;
+	glade_xml_signal_autoconnect_full(GLADE_XML(PHP_GTK_GET(this_ptr)),
+									  (GladeXMLConnectFunc)glade_connect_auto, ac_data);
+}
+
+PHP_FUNCTION(glade_xml_signal_autoconnect)
+{
+	glade_signal_autoconnect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
+}
+%%
+override glade_xml_signal_autoconnect_object signal_autoconnect_object GladeXML
+PHP_FUNCTION(glade_xml_signal_autoconnect_object)
+{
+	glade_signal_autoconnect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
+}

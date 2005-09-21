@@ -1,0 +1,26 @@
+
+ARG_WITH("libglade", "Glade support", "no");
+
+if (PHP_GTK_LIBGLADE != "no") {
+
+	if (CHECK_HEADER("glade\\glade.h") && CHECK_LIB("glade-2.0.lib", "libglade")) {
+
+		ADD_FLAG("CFLAGS_LIBGLADE", "/I ext\\libglade /I ..\\ext\\libglade /D HAVE_LIBGLADE=1");
+		EXTENSION("libglade", "php_libglade.c gen_libglade.c", true); // always shared
+		AC_DEFINE("HAVE_LIBGLADE", 1, "libglade enabled");
+
+		if (FSO.FileExists("win32\\temp.bat")) {
+
+			var temp = FSO.OpenTextFile("win32\\temp.bat", 8);
+
+			temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_glade.log -o ext\\libglade\\libglade.overrides -p GladeXML ext\\libglade\\libglade.defs > ext\\libglade\\gen_libglade.c");
+
+			temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\libglade\\gen_libglade.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\libglade\\gen_libglade.h');
+		}
+
+	} else {
+
+		WARNING("libglade not enabled; libraries and headers not found");
+	}
+
+}
