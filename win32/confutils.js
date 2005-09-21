@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.8 2005-09-20 02:17:53 sfox Exp $
+// $Id: confutils.js,v 1.9 2005-09-21 09:39:41 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -650,10 +650,6 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 	var EXT = extname.toUpperCase().replace(new RegExp("-", "g"), "_");
 	var extname_for_printing;
 
-	if (shared == null) {
-		eval("shared = PHP_GTK_" + EXT + "_SHARED;");
-	}
-
 	if (cflags == null) {
 		cflags = "";
 	}
@@ -683,6 +679,7 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 	if (dllname == null) {
 		if (extname == 'php-gtk') {
 			dllname = extname + "2.dll";
+			resname = generate_version_info_resource(dllname, configure_module_dirname);
 		} else {
 			dllname = "php_gtk_" + extname + ".dll";
 		}
@@ -690,10 +687,10 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 	var libname = dllname.substring(0, dllname.length-4) + ".lib";
 	var ld = "@$(LD)";
 
-	resname = generate_version_info_resource(dllname, configure_module_dirname);
+	ADD_FLAG("EXT_TARGETS", "$(BUILD_DIR)\\"+dllname);
 
-	MFO.WriteLine("$(BUILD_DIR)\\$(PHPGTKDLL): $(" + EXT + "_GLOBAL_OBJS) $(PHPGTKDLL_RES)");
-	MFO.WriteLine("\t" + ld + " /out:$(BUILD_DIR)\\$(PHPGTKDLL) $(" + EXT + "_LDFLAGS) $(LDFLAGS) $(" + EXT + "_GLOBAL_OBJS) $(LIBS_" + EXT + ") $(LIBS) $(PHPGTKDLL_RES)");
+	MFO.WriteLine("$(BUILD_DIR)\\" + dllname + ": $(" + EXT + "_GLOBAL_OBJS) $(PHPGTKDLL_RES)");
+	MFO.WriteLine("\t" + ld + " /out:$(BUILD_DIR)\\" + dllname + " $(" + EXT + "_LDFLAGS) $(LDFLAGS) $(" + EXT + "_GLOBAL_OBJS) $(LIBS_" + EXT + ") $(LIBS) $(PHPGTKDLL_RES)");
 	MFO.WriteBlankLines(1);
 
 	MFO.WriteLine(dllname + ": $(BUILD_DIR)\\" + dllname);
@@ -990,7 +987,7 @@ function generate_makefile() {
 	}
 
 	MF.WriteBlankLines(1);
-	MF.WriteLine("all: $(BUILD_DIR)\\$(PHPGTKDLL)");
+	MF.WriteLine("all: $(EXT_TARGETS)");
 	MF.WriteLine("build_dirs: $(BUILD_DIR) $(BUILD_DIRS_SUB)");
 	MF.WriteBlankLines(1);
 
