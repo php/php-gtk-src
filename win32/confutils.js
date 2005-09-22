@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.9 2005-09-21 09:39:41 sfox Exp $
+// $Id: confutils.js,v 1.10 2005-09-22 03:30:33 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -614,39 +614,10 @@ function CHECK_HEADER_ADD_INCLUDE(header_name, flag_name, path_to_check, use_env
 	return p;
 }
 
-/* Add a dependency, so that PHP-GTK is built before any of its extensions */
-function ADD_EXTENSION_DEP(extname, dependson, optional) {
-
-	var EXT = extname.toUpperCase();
-	var DEP = dependson.toUpperCase();
-	var dep_present = false;
-	var dep_shared = false;
-
-	try {
-		dep_present = eval("PHP_GTK_" + DEP);
-		dep_shared = eval("PHP_GTK_" + DEP + "_SHARED");
-	} catch (e) {
-		dep_present = "no";
-		dep_shared = false;
-	}
-	
-	if (optional) {
-		if (dep_present == "no")
-			return;
-	}
-
-	var ext_shared = eval("PHP_GTK_" + EXT + "_SHARED");
-
-	if (dep_shared) {
-		ADD_FLAG("LDFLAGS_" + EXT, "/libpath:$(BUILD_DIR)");
-		ADD_FLAG("LIBS_" + EXT, "php_" + dependson + ".lib");
-		ADD_FLAG("DEPS_" + EXT, "$(BUILD_DIR)\\php_" + dependson + ".lib");
-	}
-}
-
 function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 
-	var objs = null;
+	var dllflags = "";
+	var dep_libs = "";
 	var EXT = extname.toUpperCase().replace(new RegExp("-", "g"), "_");
 	var extname_for_printing;
 
@@ -664,6 +635,7 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 	}
 
 	STDOUT.WriteLine("Enabling extension " + extname_for_printing + " [shared]");
+
 	cflags = "/D COMPILE_DL_" + EXT + "2 /D " + EXT + "_EXPORTS=1" + cflags;
 
 	MFO.WriteBlankLines(1);
@@ -682,6 +654,8 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 			resname = generate_version_info_resource(dllname, configure_module_dirname);
 		} else {
 			dllname = "php_gtk_" + extname + ".dll";
+			dllflags = " $(DLL_LDFLAGS)";
+			dep_libs = " $(BUILD_DIR)\\$(PHPGTKLIB) $(LIBS_PHP_GTK)";
 		}
 	}
 	var libname = dllname.substring(0, dllname.length-4) + ".lib";
@@ -690,9 +664,9 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 	ADD_FLAG("EXT_TARGETS", "$(BUILD_DIR)\\"+dllname);
 
 	MFO.WriteLine("$(BUILD_DIR)\\" + dllname + ": $(" + EXT + "_GLOBAL_OBJS) $(PHPGTKDLL_RES)");
-	MFO.WriteLine("\t" + ld + " /out:$(BUILD_DIR)\\" + dllname + " $(" + EXT + "_LDFLAGS) $(LDFLAGS) $(" + EXT + "_GLOBAL_OBJS) $(LIBS_" + EXT + ") $(LIBS) $(PHPGTKDLL_RES)");
-	MFO.WriteBlankLines(1);
+	MFO.WriteLine("\t" + ld + " /out:$(BUILD_DIR)\\" + dllname + " $(" + EXT + "_LDFLAGS)" + dllflags + " $(LDFLAGS) $(" + EXT + "_GLOBAL_OBJS) $(LIBS_" + EXT + ")" + dep_libs + " $(LIBS) $(PHPGTKDLL_RES)");
 
+	MFO.WriteBlankLines(1);
 	MFO.WriteLine(dllname + ": $(BUILD_DIR)\\" + dllname);
 	MFO.WriteLine("\t@echo EXT " + extname + " build complete");
 	MFO.WriteBlankLines(1);
@@ -705,10 +679,7 @@ function ADD_SOURCES(dir, file_list, target, obj_dir) {
 	var i;
 	var tv;
 	var src, obj, sym, flags;
-
-	if (target == null) {
-		target = "php";
-	}
+	var core_cflags = "";
 
 	sym = target.toUpperCase().replace(new RegExp("-", "g"), "_") + "_GLOBAL_OBJS";
 	flags = "CFLAGS_" + target.toUpperCase().replace(new RegExp("-", "g"), "_");
@@ -717,6 +688,10 @@ function ADD_SOURCES(dir, file_list, target, obj_dir) {
 		tv = configure_subst.Item(sym);
 	} else {
 		tv = "";
+	}
+
+	if (target != "php-gtk") {
+		core_cflags = "$(CFLAGS_PHP_GTK) ";
 	}
 
 	file_list = file_list.split(new RegExp("\\s+"));
@@ -764,7 +739,7 @@ function ADD_SOURCES(dir, file_list, target, obj_dir) {
 		tv += " " + sub_build + obj;
 
 		MFO.WriteLine(sub_build + obj + ": " + dir + "\\" + src);
-		MFO.WriteLine("\t@$(CC) $(" + flags + ") $(CFLAGS) $(" + bd_flags_name + ") /c " + dir + "\\" + src + " /Fo" + sub_build + obj);
+		MFO.WriteLine("\t@$(CC) $(" + flags + ") " + core_cflags + "$(CFLAGS) $(" + bd_flags_name + ") /c " + dir + "\\" + src + " /Fo" + sub_build + obj);
 	}
 
 	DEFINE(sym, tv);
