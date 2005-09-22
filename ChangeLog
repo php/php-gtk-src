@@ -1,3 +1,30 @@
+2005-09-21  Steph  <steph.fox@virgin.net>
+
+    * ext/gtk+/gtktextview.overrides:
+      Kill C++ compiler warning
+
+    * ext/libglade/config.w32
+      ext/libglade/libglade.defs:
+      oops - this generates nicer files
+
+    * ext/libglade/config.w32
+      ext/libglade/libglade.defs
+      ext/libglade/libglade.overrides
+      ext/libglade/php_libglade.c
+      ext/libglade/php_libglade.h
+      ext/libglade/v1.libglade.overrides:
+      Module isn't registered, so this has no way to work at present.
+      (config.m4 probably needs updating when it does work, there've been some
+      function changes since 2.4)
+
+    * ext/gtk+/gtk.overrides:
+      Include textview overrides
+
+    * win32/config.w32.in
+      win32/confutils.js:
+      Initial extension support.
+      Half this patch came from Tom Rogers.  We're having a race :)
+
 2005-09-20  Steph  <steph.fox@virgin.net>
 
     * win32/config.w32.in
