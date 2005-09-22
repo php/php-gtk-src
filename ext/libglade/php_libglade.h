@@ -33,13 +33,14 @@
 extern php_gtk_ext_entry libglade_ext_entry;
 #define php_gtk_ext_libglade_ptr &libglade_ext_entry
 
-void phpg_libglade_register_constants(const char *strip_prefix);
+//void php_libglade_register_constants(int module_number TSRMLS_DC);
 void phpg_libglade_register_classes(void);
+void phpg_libglade_register_constants(const char *strip_prefix);
 
 #else
 
 #define php_gtk_ext_libglade_ptr NULL
 
-#endif /* HAVE_LIBGLADE */
+#endif	/* HAVE_LIBGLADE */
 
-#endif /* PHP_LIBGLADE_H */
+#endif	/* PHP_LIBGLADE_H */

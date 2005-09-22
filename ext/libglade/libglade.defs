@@ -3,7 +3,7 @@
 
 (define-object XML
   (in-module "Glade")
-  (parent "GtkObject")
+  (parent "GObject")
   (c-name "GladeXML")
   (gtype-id "GLADE_TYPE_XML")
 )
