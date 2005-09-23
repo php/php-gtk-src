@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.10 2005-09-22 03:30:33 sfox Exp $
+// $Id: confutils.js,v 1.11 2005-09-23 10:08:03 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -620,6 +620,7 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 	var dep_libs = "";
 	var EXT = extname.toUpperCase().replace(new RegExp("-", "g"), "_");
 	var extname_for_printing;
+	var res_var = "";
 
 	if (cflags == null) {
 		cflags = "";
@@ -652,8 +653,10 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 		if (extname == 'php-gtk') {
 			dllname = extname + "2.dll";
 			resname = generate_version_info_resource(dllname, configure_module_dirname);
+			res_var = " $(PHPGTKDLL_RES)";
 		} else {
-			dllname = "php_gtk_" + extname + ".dll";
+			cflags = "/D GTK_SHARED=1 " + cflags;
+			dllname = "php_gtk_" + extname + "2.dll";
 			dllflags = " $(DLL_LDFLAGS)";
 			dep_libs = " $(BUILD_DIR)\\$(PHPGTKLIB) $(LIBS_PHP_GTK)";
 		}
@@ -663,8 +666,8 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 
 	ADD_FLAG("EXT_TARGETS", "$(BUILD_DIR)\\"+dllname);
 
-	MFO.WriteLine("$(BUILD_DIR)\\" + dllname + ": $(" + EXT + "_GLOBAL_OBJS) $(PHPGTKDLL_RES)");
-	MFO.WriteLine("\t" + ld + " /out:$(BUILD_DIR)\\" + dllname + " $(" + EXT + "_LDFLAGS)" + dllflags + " $(LDFLAGS) $(" + EXT + "_GLOBAL_OBJS) $(LIBS_" + EXT + ")" + dep_libs + " $(LIBS) $(PHPGTKDLL_RES)");
+	MFO.WriteLine("$(BUILD_DIR)\\" + dllname + ": $(" + EXT + "_GLOBAL_OBJS)" + res_var);
+	MFO.WriteLine("\t" + ld + " /out:$(BUILD_DIR)\\" + dllname + " $(" + EXT + "_LDFLAGS)" + dllflags + " $(LDFLAGS) $(" + EXT + "_GLOBAL_OBJS) $(LIBS_" + EXT + ")" + dep_libs + " $(LIBS)" + res_var);
 
 	MFO.WriteBlankLines(1);
 	MFO.WriteLine(dllname + ": $(BUILD_DIR)\\" + dllname);
