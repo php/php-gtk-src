@@ -139,7 +139,7 @@ HashTable* phpg_get_properties(zval *object TSRMLS_DC)
 /* }}} */
 
 /* {{{ phpg_handle_gerror */
-zend_bool phpg_handle_gerror(GError **error TSRMLS_DC)
+PHP_GTK_API zend_bool phpg_handle_gerror(GError **error TSRMLS_DC)
 {
     if (error == NULL || *error == NULL)
         return FALSE;
