@@ -1,3 +1,16 @@
+2005-09-22  Steph  <steph.fox@virgin.net>
+
+    * win32/confutils.js:
+      More extension support changes.
+      No need for dependency support here...
+
+    * ext/libglade/config.w32
+      ext/libglade/libglade.defs
+      ext/libglade/libglade.overrides
+      ext/libglade/php_libglade.c
+      ext/libglade/php_libglade.h:
+      libglade's _almost_ compiling - some export problems still.
+
 2005-09-21  Steph  <steph.fox@virgin.net>
 
     * ext/gtk+/gtktextview.overrides:
