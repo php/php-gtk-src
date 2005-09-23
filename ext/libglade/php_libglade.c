@@ -30,7 +30,6 @@ PHP_GTK_GET_EXTENSION(libglade);
 
 PHP_GTK_XINIT_FUNCTION(libglade)
 {
-	//php_libglade_register_constants(module_number TSRMLS_CC);
 	phpg_libglade_register_classes();
 	phpg_libglade_register_constants("GLADE_");
 

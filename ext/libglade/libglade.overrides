@@ -3,7 +3,6 @@
 headers
 #include <glade/glade.h>
 #include "ext/gtk+/php_gtk+.h"
-#include "ext/gtk+/gen_gtk.h"
 %%
 ignore-glob
   *_get_type
