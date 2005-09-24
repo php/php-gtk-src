@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.14 2005-09-24 18:31:25 sfox Exp $
+// $Id: confutils.js,v 1.15 2005-09-24 18:37:11 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -964,7 +964,7 @@ function generate_makefile() {
 	MF.WriteLine("all: $(EXT_TARGETS)");
 
 	for (i = 0; i < make_builds.length; i++) {
-		if (i == 1 && make_builds.length > 1) {
+		if (i == 1) {
 			MF.WriteLine("!IF EXIST($(BUILD_DIR)\\$(PHPGTKLIB))");
 		}
 		MF.WriteLine(make_builds[i]);
