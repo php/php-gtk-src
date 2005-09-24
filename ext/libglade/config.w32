@@ -1,7 +1,7 @@
 
 ARG_WITH("libglade", "Glade support", "no");
 
-if (PHP_GTK_LIBGLADE != "no") {
+if (PHP_GTK_LIBGLADE != "no" || PHP_GTK_ALL != "no") {
 
 	if (CHECK_HEADER("glade\\glade.h") && CHECK_LIB("glade-2.0.lib", "libglade")) {
 
