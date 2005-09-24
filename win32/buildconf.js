@@ -16,7 +16,7 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: buildconf.js,v 1.3 2005-09-13 17:02:10 sfox Exp $ */
+/* $Id: buildconf.js,v 1.4 2005-09-24 14:14:45 sfox Exp $ */
 // This generates a configure script for win32 build
 
 var FSO = WScript.CreateObject("Scripting.FileSystemObject");
@@ -59,12 +59,11 @@ function gen_functions() {
 	return;
 }
 
-function Module_Item(module_name, config_path, dir_line, deps, content) {
+function Module_Item(module_name, config_path, dir_line, content) {
 
 	this.module_name = module_name;
 	this.config_path = config_path;
 	this.dir_line = dir_line;
-	this.deps = deps;
 	this.content = content;
 }
 
@@ -75,19 +74,12 @@ function gen_modules() {
 	var item;
 	var output = "";
 
-	// first, look for modules with empty deps; emit those first
 	for (i in module_names) {
 		mod_name = module_names[i];
 		item = MODULES.Item(mod_name);
-		if (item.deps.length == 0) {
-			MODULES.Remove(mod_name);
-			output += emit_module(item);
-		}
+		MODULES.Remove(mod_name);
+		output += emit_module(item);
 	}
-
-	// now we are left with modules that have dependencies on other modules
-	module_names = (new VBArray(MODULES.Keys())).toArray();
-	output += emit_dep_modules(module_names);
 
 	return output;
 }
@@ -95,28 +87,6 @@ function gen_modules() {
 function emit_module(item) {
 
 	return item.dir_line + item.content;
-}
-
-function emit_dep_modules(module_names) {
-
-	var i, mod_name, j;
-	var output = "";
-	var item = null;
-
-	for (i in module_names) {
-		mod_name = module_names[i];
-
-		if (MODULES.Exists(mod_name)) {
-			item = MODULES.Item(mod_name);
-			MODULES.Remove(mod_name);
-			if (item.deps.length) {
-				output += emit_dep_modules(item.deps);
-			}
-			output += emit_module(item);
-		}
-	}
-
-	return output;
 }
 
 function find_config_w32(dirname) {
@@ -129,8 +99,7 @@ function find_config_w32(dirname) {
 	var	fc = new Enumerator(f.SubFolders);
 	var c, i, ok, n;
 	var item = null;
-	var re_dep_line = new RegExp("ADD_EXTENSION_DEP\\([^,]*\\s*,\\s*['\"]([^'\"]+)['\"].*\\);", "gm");
-	
+
 	for (; !fc.atEnd(); fc.moveNext()) {
 		ok = true;
 		/* check if we already picked up a module with the same dirname;
@@ -160,21 +129,8 @@ function find_config_w32(dirname) {
 			var dir_line = "configure_module_dirname = condense_path(FSO.GetParentFolderName('"
 							   	+ c.replace(new RegExp('(["\\\\])', "g"), '\\$1') + "'));\r\n";
 			var contents = file_get_contents(c);
-			var deps = new Array();
 
-			// parse out any deps from the file
-			var calls = contents.match(re_dep_line);
-
-			if (calls != null) {
-				for (i = 0; i < calls.length; i++) {
-					// now we need the extension name out of this thing
-					if (calls[i].match(re_dep_line)) {
-						deps[deps.length] = RegExp.$1;
-					}
-				}
-			}
-
-			item = new Module_Item(n, c, dir_line, deps, contents);
+			item = new Module_Item(n, c, dir_line, contents);
 			MODULES.Add(n, item);
 		}
 	}
@@ -218,12 +174,11 @@ modules = file_get_contents("win32/config.w32.in");
 // Pick up confs from extensions if present
 find_config_w32("ext");
 
-/* Now generate contents of module based on MODULES, chasing dependencies to
-ensure that dependent modules are emitted first */
+/* Now generate contents of module based on MODULES */
 modules += gen_modules();
 
 // Look for ARG_ENABLE or ARG_WITH calls
-re = new RegExp("(ARG_(ENABLE|WITH)\([^;]+\);)", "gm");
+re = new RegExp("(ARG_(ENABLE|WITH|IS)\([^;]+\);)", "gm");
 calls = modules.match(re);
 for (i = 0; i < calls.length; i++) {
 	item = calls[i];

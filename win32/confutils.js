@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.11 2005-09-23 10:08:03 sfox Exp $
+// $Id: confutils.js,v 1.12 2005-09-24 14:14:45 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -43,6 +43,7 @@ configure_subst = WScript.CreateObject("Scripting.Dictionary");
 
 configure_hdr = WScript.CreateObject("Scripting.Dictionary");
 build_dirs = new Array();
+make_builds = new Array();
 
 extension_include_code = "";
 extension_module_ptrs = "";
@@ -166,14 +167,21 @@ function condense_path(path) {
 
 function ConfigureArg(type, optname, helptext, defval) {
 
-	var opptype = type == "enable" ? "disable" : "without";
+	var opptype = "";
+	
+	if (type) {
 
-	if (defval == "yes" || defval == "yes,shared") {
-		this.arg = "--" + opptype + "-" + optname;
-		this.imparg = "--" + type + "-" + optname;
+		opptype = type == "enable" ? "disable" : "without";
+
+		if (defval == "yes" || defval == "yes,shared") {
+			this.arg = "--" + opptype + "-" + optname;
+			this.imparg = "--" + type + "-" + optname;
+		} else {
+			this.arg = "--" + type + "-" + optname;
+			this.imparg = "--" + opptype + "-" + optname;
+		}
 	} else {
-		this.arg = "--" + type + "-" + optname;
-		this.imparg = "--" + opptype + "-" + optname;
+		this.arg = "--" + optname;
 	}
 
 	this.optname = optname;
@@ -187,23 +195,18 @@ function ConfigureArg(type, optname, helptext, defval) {
 function analyze_arg(argval) {
 
 	var ret = new Array();
-	var shared = false;
 
 	if (argval == "shared") {
-		shared = true;
 		argval = "yes";
 	} else if (argval == null) {
 		/* nothing */
 	} else if (arg_match = argval.match(new RegExp("^shared,(.*)"))) {
-		shared = true;
 		argval = arg_match[1];
 	} else if (arg_match = argval.match(new RegExp("^(.*),shared$"))) {
-		shared = true;
 		argval = arg_match[1];
 	}
 
-	ret[0] = shared;
-	ret[1] = argval;
+	ret[0] = argval;
 	return ret;
 }
 
@@ -213,19 +216,15 @@ function conf_process_args() {
 	var configure_help_mode = false;
 	var analyzed = false;
 	var nice = "cscript /nologo configure.js ";
-	var disable_all = false;
 
 	args = WScript.Arguments;
+
 	for (i = 0; i < args.length; i++) {
 		arg = args(i);
 		nice += ' "' + arg + '"';
 		if (arg == "--help") {
 			configure_help_mode = true;
 			break;
-		}
-		if (arg == "--disable-all") {
-			disable_all = true;
-			continue;
 		}
 
 		// If it is --foo=bar, split on the equals sign
@@ -247,8 +246,7 @@ function conf_process_args() {
 				arg.seen = true;
 
 				analyzed = analyze_arg(argval);
-				shared = analyzed[0];
-				argval = analyzed[1];
+				argval = analyzed[0];
 
 				if (argname == arg.imparg) {
 					/* we matched the implicit, or default arg */
@@ -264,20 +262,18 @@ function conf_process_args() {
 				
 				arg.argval = argval;
 				eval("PHP_GTK_" + arg.symval + " = argval;");
-				eval("PHP_GTK_" + arg.symval + "_SHARED = shared;");
 				break;
 			}
 		}
 		if (!found) {
-			STDERR.WriteLine("Unknown option " + argname)
+			STDERR.WriteLine("Unknown option " + argname);
 			STDERR.WriteLine("Please try configure.js --help for a list of valid options");
 			WScript.Quit(2);
 		}
 	}
 
 	if (configure_help_mode) {
-		STDOUT.WriteBlankLines(1);
-		STDOUT.WriteLine("  There are no PHP-GTK extensions available at present.");
+
 		STDOUT.WriteBlankLines(1);
 
 		// Measure width to pretty-print the output
@@ -312,16 +308,9 @@ function conf_process_args() {
 		if (arg.seen)
 			continue;
 		analyzed = analyze_arg(arg.defval);
-		shared = analyzed[0];
-		argval = analyzed[1];
-
-		if (disable_all) {
-			argval = "no";
-			shared = false;
-		}
+		argval = analyzed[0];
 
 		eval("PHP_GTK_" + arg.symval + " = argval;");
-		eval("PHP_GTK_" + arg.symval + "_SHARED = shared;");
 	}
 
 	MFO = FSO.CreateTextFile("Makefile.objects", true);
@@ -352,6 +341,11 @@ function find_pattern_in_path(pattern, path) {
 		}
 	}
 	return false;
+}
+
+function ARG_IS(optname, helptext, defval) {
+
+	configure_args[configure_args.length] = new ConfigureArg("", optname, helptext, defval);
 }
 
 function ARG_WITH(optname, helptext, defval) {
@@ -635,7 +629,7 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 		extname_for_printing = configure_module_dirname + " (via " + obj_dir + ")";
 	}
 
-	STDOUT.WriteLine("Enabling extension " + extname_for_printing + " [shared]");
+	STDOUT.WriteLine("Enabling extension " + extname_for_printing);
 
 	cflags = "/D COMPILE_DL_" + EXT + "2 /D " + EXT + "_EXPORTS=1" + cflags;
 
@@ -664,7 +658,8 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 	var libname = dllname.substring(0, dllname.length-4) + ".lib";
 	var ld = "@$(LD)";
 
-	ADD_FLAG("EXT_TARGETS", "$(BUILD_DIR)\\"+dllname);
+	ADD_FLAG("EXT_TARGETS", "$(BUILD_DIR)\\" + dllname);
+	make_builds[make_builds.length] = extname + ": $(BUILD_DIR)\\" + dllname;
 
 	MFO.WriteLine("$(BUILD_DIR)\\" + dllname + ": $(" + EXT + "_GLOBAL_OBJS)" + res_var);
 	MFO.WriteLine("\t" + ld + " /out:$(BUILD_DIR)\\" + dllname + " $(" + EXT + "_LDFLAGS)" + dllflags + " $(LDFLAGS) $(" + EXT + "_GLOBAL_OBJS) $(LIBS_" + EXT + ")" + dep_libs + " $(LIBS)" + res_var);
@@ -942,7 +937,8 @@ function generate_files() {
 
 	STDOUT.WriteLine("Done.");
 	STDOUT.WriteBlankLines(1);
-	STDOUT.WriteLine("Type 'nmake' to build PHP-GTK");
+	STDOUT.WriteLine("Type 'nmake' to build all targets, or 'nmake php-gtk' to build PHP-GTK alone");
+	STDOUT.WriteLine("* Configured PHP-GTK extensions can be built individually at a later stage *");
 }
 
 function generate_makefile() {
@@ -966,6 +962,11 @@ function generate_makefile() {
 
 	MF.WriteBlankLines(1);
 	MF.WriteLine("all: $(EXT_TARGETS)");
+
+	for (i = 0; i < make_builds.length; i++) {
+		MF.WriteLine(make_builds[i]);
+	}
+
 	MF.WriteLine("build_dirs: $(BUILD_DIR) $(BUILD_DIRS_SUB)");
 	MF.WriteBlankLines(1);
 
