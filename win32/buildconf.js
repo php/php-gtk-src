@@ -16,7 +16,7 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: buildconf.js,v 1.4 2005-09-24 14:14:45 sfox Exp $ */
+/* $Id: buildconf.js,v 1.5 2005-09-24 14:39:51 sfox Exp $ */
 // This generates a configure script for win32 build
 
 var FSO = WScript.CreateObject("Scripting.FileSystemObject");
@@ -96,7 +96,7 @@ function find_config_w32(dirname) {
 	}
 
 	var f = FSO.GetFolder(dirname);
-	var	fc = new Enumerator(f.SubFolders);
+	var fc = new Enumerator(f.SubFolders);
 	var c, i, ok, n;
 	var item = null;
 
@@ -105,17 +105,16 @@ function find_config_w32(dirname) {
 		/* check if we already picked up a module with the same dirname;
 		 * if we have, don't include it here */
 		n = FSO.GetFileName(fc.item());
-		
+
 		if (n == 'CVS' || n == 'tests')
 			continue;
-			
+
 		WScript.StdOut.Write("Checking " + dirname + "/" + n);
 		if (MODULES.Exists(n)) {
 			WScript.StdOut.WriteLine("Skipping " + dirname + "/" + n + " -- already have a module with that name");
 			continue;
 		}
 
-			
 		c = FSO.BuildPath(fc.item(), "config.w32");
 
 		if (!FSO.FileExists(c)) {
@@ -127,7 +126,7 @@ function find_config_w32(dirname) {
 			WScript.StdOut.WriteLine("		Available");
 
 			var dir_line = "configure_module_dirname = condense_path(FSO.GetParentFolderName('"
-							   	+ c.replace(new RegExp('(["\\\\])', "g"), '\\$1') + "'));\r\n";
+							   + c.replace(new RegExp('(["\\\\])', "g"), '\\$1') + "'));\r\n";
 			var contents = file_get_contents(c);
 
 			item = new Module_Item(n, c, dir_line, contents);

@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.12 2005-09-24 14:14:45 sfox Exp $
+// $Id: confutils.js,v 1.13 2005-09-24 14:39:51 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -168,7 +168,7 @@ function condense_path(path) {
 function ConfigureArg(type, optname, helptext, defval) {
 
 	var opptype = "";
-	
+
 	if (type) {
 
 		opptype = type == "enable" ? "disable" : "without";
@@ -259,7 +259,7 @@ function conf_process_args() {
 						argval = arg.defval == "no" ? "yes" : "no";
 					}
 				}
-				
+
 				arg.argval = argval;
 				eval("PHP_GTK_" + arg.symval + " = argval;");
 				break;
@@ -463,7 +463,7 @@ function CHECK_LIB(libnames, target, path_to_check, common_name) {
 	var i, j, k, libname;
 	var location = false;
 	var path = path_to_check.split(';');
-	
+
 	for (i = 0; i < libnames.length; i++) {
 		libname = libnames[i];
 
@@ -580,7 +580,7 @@ function CHECK_HEADER_ADD_INCLUDE(header_name, flag_name, path_to_check, use_env
 	} else {
 		path_to_check += ";" + php_usual_include_suspects;
 	}
-	
+
 	var p = search_paths(header_name, path_to_check, use_env ? "INCLUDE" : null);
 	var have = 0;
 	var sym;
@@ -718,7 +718,7 @@ function ADD_SOURCES(dir, file_list, target, obj_dir) {
 		var mangle_dir = build_dir.replace(new RegExp("[\\\\/.+-]", "g"), "_");
 		var bd_flags_name = "CFLAGS_BD_" + mangle_dir.toUpperCase();
 	}
-	
+
 	var dirs = build_dir.split("\\");
 	var i, d = "";
 	for (i = 0; i < dirs.length; i++) {
@@ -754,7 +754,7 @@ function ADD_FLAG(name, flags, target) {
 		if (curr_flags.indexOf(flags) >= 0) {
 			return;
 		}
-		
+
 		flags = curr_flags + " " + flags;
 		configure_subst.Remove(name);
 	}
@@ -857,7 +857,7 @@ function word_wrap_and_indent(indent, text, line_suffix, indent_char) {
 	for (i = 0; i < indent; i++) {
 		space += indent_char;
 	}
-	
+
 	for (i = 0; i < words.length; i++) {
 		if (this_line.length) {
 			t = this_line + " " + words[i];
@@ -917,7 +917,7 @@ function generate_files() {
 	if (!FSO.FolderExists(dir)) {
 		FSO.CreateFolder(dir);
 	}
-	
+
 	for (i = 0; i < build_dirs.length; i++) {
 		bd = FSO.BuildPath(dir, build_dirs[i]);
 		if (bd == last) {
@@ -1013,14 +1013,14 @@ function glob(path_pattern) {
 	if (FSO.FileExists(path_pattern)) {
 		return new Array(path_pattern);
 	}
-	
+
 	// first, build as much as possible that doesn't have a pattern
 	for (p = 0; p < path_parts.length; p++) {
 		if (path_parts[p].match(is_pat_re))
 			break;
 		if (p)
 			base += "\\";
-		base += path_parts[p];	
+		base += path_parts[p];
 	}
 
 	return _inner_glob(base, p, path_parts);
@@ -1139,11 +1139,11 @@ function generate_version_info_resource(makefiletarget, creditspath) {
 	if (makefiletarget.match(new RegExp("\\.exe$"))) {
 		logo = " /D WANT_LOGO";
 	}
-	
+
 	MFO.WriteLine("$(PHPGTKDLL_RES): win32\\template.rc");
 	MFO.WriteLine("\t$(RC) /fo $(PHPGTKDLL_RES)" + logo + ' /D FILE_DESCRIPTION="\\"' + res_desc + '\\"" /D FILE_NAME="\\"$(PHPGTKDLL)\\"" /D PRODUCT_NAME="\\"' + res_prod_name + '\\"" /D THANKS_GUYS="\\"' + thanks + '\\"" win32\\template.rc');
 	MFO.WriteBlankLines(1);
-	
+
 	return resname;
 }
 
