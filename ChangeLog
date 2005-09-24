@@ -1,3 +1,22 @@
+2005-09-23  Steph  <steph.fox@virgin.net>
+
+    * main/phpg_support.c:
+      Export phpg_handle_gerror() part II
+
+    * main/php_gtk.h:
+      Export phpg_handle_gerror()
+
+    * main/php_gtk_ext.w32.c:
+      Allow extension to register.
+
+    * ext/libglade/libglade.overrides
+      ext/libglade/php_libglade.c
+      ext/libglade/php_libglade.h:
+      Still need two minor changes in the core to make this build work.
+
+    * win32/confutils.js:
+      Missing flag.  Amongst other things.
+
 2005-09-22  Steph  <steph.fox@virgin.net>
 
     * win32/confutils.js:
