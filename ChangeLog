@@ -1,3 +1,37 @@
+2005-09-24  Steph  <steph.fox@virgin.net>
+
+    * win32/confutils.js:
+      - oops, that was a bit OTT
+
+    * win32/confutils.js:
+      There doesn't seem to be a way of picking up commandline arguments within
+      NMAKE.
+      This is the next best thing.
+
+    * win32/config.w32.in:
+      bad wording
+
+    * TODO2:
+      Cleaning up TODO as agreed.
+      - Most of the items marked 'in progress' are sitting around as patches at
+      present...
+
+    * win32/buildconf.js
+      win32/confutils.js:
+      ws fixes
+
+    * ext/libglade/config.w32:
+      Allow ext/libglade to be configured on the --all switch
+
+    * win32/buildconf.js
+      win32/config.w32.in
+      win32/confutils.js:
+      - Tom's patch to allow individual extension builds, plus
+      - general clean-up
+      - new configure switch, --all
+      - extension config.w32 scripts need to check for PHP_GTK_ALL to be
+      included
+
 2005-09-23  Steph  <steph.fox@virgin.net>
 
     * main/phpg_support.c:
