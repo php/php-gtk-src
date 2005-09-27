@@ -325,6 +325,7 @@
     '("scroll" "GDK_SCROLL")
     '("window-state" "GDK_WINDOW_STATE")
     '("setting" "GDK_SETTING")
+    '("owner-change" "GDK_OWNER_CHANGE")
   )
 )
 
