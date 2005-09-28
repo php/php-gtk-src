@@ -1,3 +1,16 @@
+2005-09-27  Steph  <steph.fox@virgin.net>
+
+    * TODO2:
+      Lest we forget.
+
+    * ext/gtk+/gdk-types.defs:
+      We're behind the times.  Adding GDK_OWNER_CHANGE
+
+    * ext/gtk+/gdk.overrides:
+      Handle the rest of the event types.
+      Note: GdkAtom, GdkRegion, GdkNativeWindow and GdkDragContext aren't real
+      types at present.  Marked.
+
 2005-09-24  Steph  <steph.fox@virgin.net>
 
     * win32/confutils.js:
