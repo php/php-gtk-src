@@ -308,7 +308,7 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
                 phpg_gboxed_new(&result, GDK_TYPE_RECTANGLE, &event->expose.area, TRUE, TRUE TSRMLS_CC);
             } else if (!strcmp(name, "region")) { /* GdkRegion is a struct */
                 ALLOC_ZVAL(result);
-                phpg_gobject_new(&result, (GObject*)event->expose.region TSRMLS_CC);
+                ZVAL_NULL(result);
             } else if (!strcmp(name, "count")) {
                 ALLOC_ZVAL(result);
                 ZVAL_LONG(result, event->expose.count);
@@ -488,7 +488,7 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
         case GDK_PROPERTY_NOTIFY:
             if (!strcmp(name, "atom")) { /* GdkAtom is a struct */
                 ALLOC_ZVAL(result);
-                phpg_gobject_new(&result, (GObject *)event->property.atom TSRMLS_CC);
+                ZVAL_NULL(result);
             } else if (!strcmp(name, "time")) {
                 ALLOC_ZVAL(result);
                 ZVAL_LONG(result, event->property.time);
@@ -503,19 +503,19 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
         case GDK_SELECTION_NOTIFY:
             if (!strcmp(name, "selection")) { /* GdkAtom is a struct */
                 ALLOC_ZVAL(result);
-                phpg_gobject_new(&result, (GObject *)event->selection.selection TSRMLS_CC);
+                ZVAL_NULL(result);
             } else if (!strcmp(name, "target")) { /* GdkAtom */
                 ALLOC_ZVAL(result);
-                phpg_gobject_new(&result, (GObject *)event->selection.target TSRMLS_CC);
+                ZVAL_NULL(result);
             } else if (!strcmp(name, "property")) { /* GdkAtom */
                 ALLOC_ZVAL(result);
-                phpg_gobject_new(&result, (GObject *)event->selection.property TSRMLS_CC);
+                ZVAL_NULL(result);
             } else if (!strcmp(name, "time")) {
                 ALLOC_ZVAL(result);
                 ZVAL_LONG(result, event->selection.time);
             } else if (!strcmp(name, "requestor")) { /* GdkNativeWindow can be either pointer or uint */
                 ALLOC_ZVAL(result);
-                ZVAL_LONG(result, event->selection.requestor);
+                ZVAL_NULL(result);
             }
             break;
 
@@ -538,7 +538,7 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
         case GDK_DROP_FINISHED:
             if (!strcmp(name, "context")) { /* GdkDragContext is a struct */
                 ALLOC_ZVAL(result);
-                phpg_gobject_new(&result, (GObject*)event->dnd.context TSRMLS_CC);
+                ZVAL_NULL(result);
             } else if (!strcmp(name, "time")) {
                 ALLOC_ZVAL(result);
                 ZVAL_LONG(result, event->dnd.time);
@@ -554,7 +554,7 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
         case GDK_CLIENT_EVENT:
             if (!strcmp(name, "message_type")) { /* GdkAtom is a struct */
                 ALLOC_ZVAL(result);
-                phpg_gobject_new(&result, (GObject*)event->client.message_type TSRMLS_CC);
+                ZVAL_NULL(result);
             } else if (!strcmp(name, "data_format")) {
                 ALLOC_ZVAL(result);
                 ZVAL_LONG(result, event->client.data_format);
@@ -625,13 +625,13 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
         case GDK_OWNER_CHANGE:
             if (!strcmp(name, "owner")) { /* GdkNativeWindow can be pointer or uint ??! */
                 ALLOC_ZVAL(result);
-                ZVAL_LONG(result, event->owner_change.owner);
+                ZVAL_NULL(result);
             } else if (!strcmp(name, "reason")) {
                 ALLOC_ZVAL(result);
                 ZVAL_LONG(result, event->owner_change.reason);
             } else if (!strcmp(name, "selection")) { /* GdkAtom is a struct */
                 ALLOC_ZVAL(result);
-                phpg_gobject_new(&result, (GObject *)event->owner_change.selection TSRMLS_CC);
+                ZVAL_NULL(result);
             } else if (!strcmp(name, "time")) {
                 ALLOC_ZVAL(result);
                 ZVAL_LONG(result, event->owner_change.time);
