@@ -1,3 +1,9 @@
+2005-09-28  Steph  <steph.fox@virgin.net>
+
+    * ext/gtk+/gdk.overrides:
+      Return NULL in unhandled cases.  It's probably better not to return objects
+      out of thin air...
+
 2005-09-27  Steph  <steph.fox@virgin.net>
 
     * TODO2:
