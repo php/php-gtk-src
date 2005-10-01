@@ -26,19 +26,17 @@ Classes and Functions
 	implement property access (read/write)
 * GtkListStore
 * GtkTreeModel
+	* foreach()
 * GtkTreeStore
 	Some iterator functions as get_iter() are expecting a GBoxed parameter.
 * GtkTreeView
 * GtkCellRenderer
-- GtkCombo
-        Call to undefined method GtkCombo::set_popdown_strings()
 * GtkClipboard
 - GtkNotebook->append_page should allow just a string as second parameter (title for page) instead of only wanting a gtklabel or so
 - GtkNotebook crashes when connecting callback to move-focus-out signal
 - GtkNotebook can't use switch-page signal as GPointer isn't implemented
 - GtkNotebook->get_nth_page() crashes
 * GtkEntries can't be var_dumped, probably something missing
-- GtkTextBuffer->set_text's 2nd parameter should be optional
 * GtkTreeModelFilter constructor doesn't take a model / does it have a constructor?? didn't see one in gtk.defs
 
 Fix
