@@ -29,5 +29,7 @@ if (!($argc > 1 && $argv[1] == 'debug')) {
     error_reporting(E_ERROR);
 }
 new Notebooktest();
-echo 'ok';
+echo "ok\n";
+gtk::main();
+
 ?>

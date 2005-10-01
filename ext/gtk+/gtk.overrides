@@ -637,6 +637,48 @@ PHP_METHOD
 }
 %% }}}
 
+%% {{{ GtkCombo
+%%
+override gtk_combo_set_popdown_strings
+PHP_METHOD
+{
+    zval *php_strings, **item;
+    GList *strings = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_strings)) {
+        return;
+    }
+
+    zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_strings));
+
+    while (zend_hash_get_current_data(Z_ARRVAL_P(php_strings), (void **)&item) == SUCCESS) {
+
+        gchar *utf8 = NULL;
+        gsize utf8_len = 0;
+        zend_bool free_utf8 = 0;
+
+        convert_to_string_ex(item);
+        utf8 = phpg_to_utf8(Z_STRVAL_PP(item), Z_STRLEN_PP(item), &utf8_len, &free_utf8 TSRMLS_CC);
+
+        if (utf8 && free_utf8) {
+            SEPARATE_ZVAL(item);
+            zval_dtor(*item);
+            ZVAL_STRINGL(*item, utf8, utf8_len, 1);
+            g_free(utf8);
+        }
+
+        strings = g_list_append(strings, Z_STRVAL_PP(item));
+        zend_hash_move_forward(Z_ARRVAL_P(php_strings));
+    }
+
+    gtk_combo_set_popdown_strings(GTK_COMBO(PHPG_GOBJECT(this_ptr)), strings);
+
+    g_list_free(strings);
+}
+%% }}}
+
 %% include gtkcontainer.overrides
 
 %% {{{ GtkDialog

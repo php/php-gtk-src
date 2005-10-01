@@ -952,6 +952,26 @@ PHP_METHOD
 
 %% }}}
 
+%% {{{ GdkWindow
+
+%%
+override gdk_window_get_pointer
+PHP_METHOD(GdkWindow, get_pointer)
+{
+    int x, y = 0;
+    GdkModifierType mask = 0;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gdk_window_get_pointer(GDK_WINDOW(PHPG_GOBJECT(this_ptr)), &x, &y, &mask);
+    php_gtk_build_value(&return_value, "(iii)", x, y, mask);
+}
+
+%% }}}
+
 %%
 override gdk_text_extents
 PHP_METHOD
@@ -974,8 +994,6 @@ PHPG_PROP_READER
 {
 #if defined(GDK_WINDOWING_X11)
 	RETVAL_LONG(GDK_DRAWABLE_XID(((GdkDrawable *)((phpg_gobject_t *)object)->obj)));
-#else
-    php_error(E_WARNING, "xid property is not supported");
 #endif
     return SUCCESS;
 }
