@@ -994,6 +994,9 @@ PHPG_PROP_READER
 {
 #if defined(GDK_WINDOWING_X11)
 	RETVAL_LONG(GDK_DRAWABLE_XID(((GdkDrawable *)((phpg_gobject_t *)object)->obj)));
+#else
+    php_error(E_WARNING, "xid property is not supported");
+    RETVAL_LONG(0);
 #endif
     return SUCCESS;
 }
