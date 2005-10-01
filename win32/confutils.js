@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.15 2005-09-24 18:37:11 sfox Exp $
+// $Id: confutils.js,v 1.16 2005-10-01 16:24:42 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -655,7 +655,7 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 			dep_libs = " $(BUILD_DIR)\\$(PHPGTKLIB) $(LIBS_PHP_GTK)";
 		}
 	}
-	var libname = dllname.substring(0, dllname.length-4) + ".lib";
+	var libname = dllname.substring(0, dllname.length - 4) + ".lib";
 	var ld = "@$(LD)";
 
 	ADD_FLAG("EXT_TARGETS", "$(BUILD_DIR)\\" + dllname);
@@ -710,14 +710,18 @@ function ADD_SOURCES(dir, file_list, target, obj_dir) {
 	 * This probably breaks for non-sibling dirs */
 	if (obj_dir == null) {
 		var build_dir = dir.replace(new RegExp("^..\\\\"), "");
-		var mangle_dir = build_dir.replace(new RegExp("[\\\\/.+-]", "g"), "_");
-		var bd_flags_name = "CFLAGS_BD_" + mangle_dir.toUpperCase();
-	}
-	else {
+	} else {
 		var build_dir = obj_dir.replace(new RegExp("^..\\\\"), "");
-		var mangle_dir = build_dir.replace(new RegExp("[\\\\/.+-]", "g"), "_");
-		var bd_flags_name = "CFLAGS_BD_" + mangle_dir.toUpperCase();
 	}
+
+	var mangle_dir = build_dir.replace(new RegExp("[\\\\/.+-]", "g"), "_");
+
+	/* kill trailing underscores */
+	if (mangle_dir.substring(mangle_dir.length - 1) == "_") {
+		mangle_dir = mangle_dir.substring(0, mangle_dir.length - 1);
+	}
+
+	var bd_flags_name = "CFLAGS_BD_" + mangle_dir.toUpperCase();
 
 	var dirs = build_dir.split("\\");
 	var i, d = "";
@@ -727,7 +731,6 @@ function ADD_SOURCES(dir, file_list, target, obj_dir) {
 		d += "\\";
 	}
 	sub_build += d;
-
 
 	DEFINE(bd_flags_name, " /Fd" + sub_build + " /Fp" + sub_build + " /FR" + sub_build);
 
@@ -986,7 +989,6 @@ function generate_makefile() {
 	MF.Close();
 
 	FSO.DeleteFile("Makefile.objects");
-	//FSO.DeleteFile("win32\\temp.bat");
 }
 
 function copy_and_subst(srcname, destname, subst_array) {
