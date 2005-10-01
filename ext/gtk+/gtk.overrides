@@ -160,7 +160,6 @@ ignore
     gtk_signal_n_emissions_by_name
     gtk_signal_query
     gtk_signal_set_funcs
-    gtk_text_view_new_with_buffer
     gtk_tooltips_data_get
     gtk_trace_referencing
     gtk_type_check_class_cast
@@ -976,7 +975,7 @@ static void php_gtk_menu_position(GtkMenu *menu, int *x, int *y, int *push_in, g
     TSRMLS_FETCH();
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
-        php_error(E_WARNING, "unable to call menu position callback '%s' specified in %s on line %d", callback_name, cbd->src_filename, cbd->src_lineno);
+        php_error(E_WARNING, "unable to call menu position callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return;
     }

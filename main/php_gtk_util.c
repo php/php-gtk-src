@@ -205,6 +205,10 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int
 						utf8 = phpg_to_utf8(Z_STRVAL_PP(arg), Z_STRLEN_PP(arg), &utf8_len, &free_utf8 TSRMLS_CC);
 						if (utf8) {
 							*va_arg(*va, char **) = utf8;
+							if (*spec_walk == '#') {
+								*va_arg(*va, int *) = utf8_len;
+								spec_walk++;
+							}
 							*va_arg(*va, zend_bool *) = free_utf8;
 						} else {
 							return "string in supported encoding";

@@ -1,5 +1,11 @@
 /* vim: set ft=cpp fdm=marker et: */
 
+%% {{{ ignores
+%%
+ignore
+    gtk_text_view_new
+%% }}}
+
 %% {{{ GtkTextBuffer
 
 %%
@@ -118,6 +124,32 @@ PHP_METHOD
 
     gtk_text_buffer_get_iter_at_offset(GTK_TEXT_BUFFER(PHPG_GOBJECT(this_ptr)), &iter, char_offset);
     phpg_gboxed_new(&return_value, GTK_TYPE_TEXT_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
+add-arginfo GtkTextBuffer set_text
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, text)
+    ZEND_ARG_INFO(0, length)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_text_buffer_set_text
+PHP_METHOD
+{
+    char *text;
+    int text_len;
+    zend_bool free_text;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u#", &text, &text_len, &free_text))
+        return;
+
+    gtk_text_buffer_set_text(GTK_TEXT_BUFFER(PHPG_GOBJECT(this_ptr)), text, text_len);
+
+    if (free_text) g_free(text);
 }
 
 %% }}}
