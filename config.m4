@@ -51,7 +51,7 @@ PHP_GTK_ARG_ENABLE(debug, whether to include debugging symbols,
 if test "$PHP_GTK_DEBUG" = "yes"; then
   echo " $CFLAGS" | grep ' -g' >/dev/null || DEBUG_CFLAGS="-g"
   if test "$CFLAGS" = "-g -O2"; then
-  	CFLAGS=-g
+    CFLAGS=-g
   fi
   test -n "$GCC" && DEBUG_CFLAGS="$DEBUG_CFLAGS -Wall"
 fi
@@ -68,7 +68,8 @@ PHP_SUBST(PHP_GTK_EXTENSIONS)
 
 PHP_NEW_EXTENSION(php_gtk2, main/php_gtk.c main/phpg_support.c main/phpg_gtype.c \
                             main/phpg_exceptions.c main/php_gtk_util.c main/phpg_gvalue.c \
-                            main/phpg_closure.c main/phpg_gboxed.c main/phpg_gobject.c,
+                            main/phpg_closure.c main/phpg_gboxed.c main/phpg_gpointer.c \
+                            main/phpg_gobject.c,
                             $ext_shared,, -I@ext_srcdir@/main)
 
 PHP_ADD_SOURCES_X(/main, php_gtk_ext.c,, shared_objects_php_gtk2)

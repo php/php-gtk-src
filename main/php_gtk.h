@@ -118,6 +118,12 @@ typedef struct {
 	gboolean free_on_destroy;
 } phpg_gboxed_t;
 
+typedef struct {
+	PHPG_OBJ_HEADER
+	GType gtype;
+	gpointer pointer;
+} phpg_gpointer_t;
+
 typedef int (*boxed_from_zval_t)(const zval *value, GValue *gvalue TSRMLS_DC);
 typedef int (*boxed_to_zval_t)(const GValue *gvalue, zval **value TSRMLS_DC);
 typedef struct {
@@ -440,6 +446,9 @@ static inline phpg_gboxed_t* phpg_gboxed_get(zval *zobj TSRMLS_DC)
     return pobj;
 }
 
+/* GPointer */
+void phpg_gpointer_register_self(TSRMLS_D);
+PHP_GTK_API void phpg_gpointer_new(zval **zobj, GType gtype, gpointer pointer TSRMLS_DC);
 
 /* Closures */
 PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, zend_bool use_signal_object TSRMLS_DC);
@@ -448,6 +457,7 @@ PHP_GTK_API void phpg_watch_closure(zval *obj, GClosure *closure TSRMLS_DC);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtype_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gobject_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gboxed_ce);
+PHP_GTK_API extern PHP_GTK_EXPORT_CE(gpointer_ce);
 
 #endif /* HAVE_PHP_GTK */
 

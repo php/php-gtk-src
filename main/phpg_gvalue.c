@@ -27,7 +27,6 @@
  */
 
 /* TODO
- * G_TYPE_POINTER
  * G_TYPE_PARAM
  */
 
@@ -128,6 +127,10 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
                 ZVAL_NULL(*value);
                 return FAILURE;
             }
+            break;
+
+        case G_TYPE_POINTER:
+            phpg_gpointer_new(value, G_VALUE_TYPE(gval), g_value_get_pointer(gval) TSRMLS_CC);
             break;
 
         case G_TYPE_BOXED:
@@ -256,6 +259,18 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC)
         case G_TYPE_STRING:
             convert_to_string(value);
             g_value_set_string(gval, Z_STRVAL_P(value));
+            break;
+
+        case G_TYPE_POINTER:
+            if (Z_TYPE_P(value) == IS_NULL) {
+                g_value_set_pointer(gval, NULL);
+            } else if (Z_TYPE_P(value) == IS_OBJECT
+                       && instanceof_function(Z_OBJCE_P(value), gpointer_ce TSRMLS_CC)
+                       && G_VALUE_HOLDS(gval, ((phpg_gpointer_t*)PHPG_GET(value))->gtype)) {
+                g_value_set_pointer(gval, ((phpg_gpointer_t*)PHPG_GET(value))->pointer);
+            } else {
+                return FAILURE;
+            }
             break;
 
         case G_TYPE_BOXED:
