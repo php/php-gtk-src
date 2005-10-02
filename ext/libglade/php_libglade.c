@@ -30,8 +30,8 @@ PHP_GTK_GET_EXTENSION(libglade);
 
 PHP_GTK_XINIT_FUNCTION(libglade)
 {
-	phpg_libglade_register_classes();
-	phpg_libglade_register_constants("GLADE_");
+	phpg_glade_register_classes();
+	phpg_glade_register_constants("GLADE_");
 
 	return SUCCESS;
 }
