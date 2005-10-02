@@ -93,7 +93,7 @@ void phpg_gpointer_register_self(TSRMLS_D)
 	if (gpointer_ce) return;
 
 	gpointer_ce = phpg_register_class("GPointer", gpointer_methods, NULL, 0, NULL, phpg_create_gpointer, G_TYPE_POINTER TSRMLS_CC);
-    phpg_register_int_constant(gpointer_ce, "gtype", sizeof("gtype")-1, G_TYPE_BOXED);
+    phpg_register_int_constant(gpointer_ce, "gtype", sizeof("gtype")-1, G_TYPE_POINTER);
 }
 /* }}} */
 
