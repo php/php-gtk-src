@@ -18,10 +18,10 @@ gen_%.c : %.defs
 	( \
      $(PHP) $(top_srcdir)/generator/generator.php \
 	 	-l $(@D)/gen_$(*F).log \
-        -r $(*D)/atk-types.defs \
-        -r $(*D)/pango-types.defs \
-        -r $(*D)/gdk-types.defs \
-        -r $(*D)/gtk-types.defs \
+        -r ext/gtk+/atk-types.defs   \
+        -r ext/gtk+/pango-types.defs \
+        -r ext/gtk+/gdk-types.defs   \
+        -r ext/gtk+/gtk-types.defs   \
         -o $*.overrides \
         -p $(*F) \
         -f $@ $*.defs \
