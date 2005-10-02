@@ -305,6 +305,7 @@ static HashTable* style_helper_get_properties(zval *object TSRMLS_DC)
     zval offset;
     style_helper *sh = (style_helper *) zend_object_store_get_object(object TSRMLS_CC);
 
+    /* 
     offset.type = IS_LONG;
     for (i = 0; i < STYLE_NUM_STATES; i++) {
         offset.value.lval = i;
@@ -312,6 +313,7 @@ static HashTable* style_helper_get_properties(zval *object TSRMLS_DC)
         INIT_PZVAL(result);
         zend_hash_index_update(sh->properties, i, &result, sizeof(zval *), NULL);
     }
+    */
 
     return sh->properties;
 }

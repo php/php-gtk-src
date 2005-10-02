@@ -278,6 +278,8 @@ PHP_METHOD
 
 %% {{{ GdkEvent
 
+%% {{{ read_property handler
+
 %%
 override-handler GdkEvent read_property
 static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int type TSRMLS_DC)
@@ -306,9 +308,6 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
         case GDK_EXPOSE:
             if (!strcmp(name, "area")) {
                 phpg_gboxed_new(&result, GDK_TYPE_RECTANGLE, &event->expose.area, TRUE, TRUE TSRMLS_CC);
-            } else if (!strcmp(name, "region")) { /* GdkRegion is a struct */
-                ALLOC_ZVAL(result);
-                ZVAL_NULL(result);
             } else if (!strcmp(name, "count")) {
                 ALLOC_ZVAL(result);
                 ZVAL_LONG(result, event->expose.count);
@@ -344,7 +343,7 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
                 ZVAL_BOOL(result, event->motion.is_hint);
             } else if (!strcmp(name, "device")) {
                 ALLOC_ZVAL(result);
-                phpg_gobject_new(&result, (GObject*)event->motion.device TSRMLS_CC);
+                phpg_gobject_new(&result, (GObject *)event->motion.device TSRMLS_CC);
             } else if (!strcmp(name, "x_root")) {
                 ALLOC_ZVAL(result);
                 ZVAL_DOUBLE(result, event->motion.x_root);
@@ -386,7 +385,7 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
                 ZVAL_LONG(result, event->button.button);
             } else if (!strcmp(name, "device")) {
                 ALLOC_ZVAL(result);
-                phpg_gobject_new(&result, (GObject*)event->button.device TSRMLS_CC);
+                phpg_gobject_new(&result, (GObject *)event->button.device TSRMLS_CC);
             } else if (!strcmp(name, "x_root")) {
                 ALLOC_ZVAL(result);
                 ZVAL_DOUBLE(result, event->button.x_root);
@@ -423,11 +422,7 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
         case GDK_LEAVE_NOTIFY:
             if (!strcmp(name, "subwindow")) {
                 ALLOC_ZVAL(result);
-                if (event->crossing.subwindow) {
-                    phpg_gobject_new(&result, (GObject *)event->crossing.subwindow TSRMLS_CC);
-                } else {
-                    ZVAL_NULL(result);
-                }
+                phpg_gobject_new(&result, (GObject *)event->crossing.subwindow TSRMLS_CC);
             } else if (!strcmp(name, "time")) {
                 ALLOC_ZVAL(result);
                 ZVAL_LONG(result, event->crossing.time);
@@ -486,7 +481,7 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
             break;
 
         case GDK_PROPERTY_NOTIFY:
-            if (!strcmp(name, "atom")) { /* GdkAtom is a struct */
+            if (!strcmp(name, "atom")) { /* TODO GdkAtom is a struct */
                 ALLOC_ZVAL(result);
                 ZVAL_NULL(result);
             } else if (!strcmp(name, "time")) {
@@ -501,21 +496,21 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
         case GDK_SELECTION_CLEAR:
         case GDK_SELECTION_REQUEST:
         case GDK_SELECTION_NOTIFY:
-            if (!strcmp(name, "selection")) { /* GdkAtom is a struct */
+            if (!strcmp(name, "selection")) { /* TODO GdkAtom is a struct */
                 ALLOC_ZVAL(result);
                 ZVAL_NULL(result);
-            } else if (!strcmp(name, "target")) { /* GdkAtom */
+            } else if (!strcmp(name, "target")) { /* TODO GdkAtom */
                 ALLOC_ZVAL(result);
                 ZVAL_NULL(result);
-            } else if (!strcmp(name, "property")) { /* GdkAtom */
+            } else if (!strcmp(name, "property")) { /* TODO GdkAtom */
                 ALLOC_ZVAL(result);
                 ZVAL_NULL(result);
             } else if (!strcmp(name, "time")) {
                 ALLOC_ZVAL(result);
                 ZVAL_LONG(result, event->selection.time);
-            } else if (!strcmp(name, "requestor")) { /* GdkNativeWindow can be either pointer or uint */
+            } else if (!strcmp(name, "requestor")) {
                 ALLOC_ZVAL(result);
-                ZVAL_NULL(result);
+                ZVAL_LONG(result, event->selection.requestor);
             }
             break;
 
@@ -526,7 +521,7 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
                 ZVAL_LONG(result, event->proximity.time);
             } else if (!strcmp(name, "device")) {
                 ALLOC_ZVAL(result);
-                phpg_gobject_new(&result, (GObject*)event->proximity.device TSRMLS_CC);
+                phpg_gobject_new(&result, (GObject *)event->proximity.device TSRMLS_CC);
             }
             break;
 
@@ -538,7 +533,7 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
         case GDK_DROP_FINISHED:
             if (!strcmp(name, "context")) { /* GdkDragContext is a struct */
                 ALLOC_ZVAL(result);
-                ZVAL_NULL(result);
+                phpg_gobject_new(&result, (GObject *)event->dnd.context TSRMLS_CC);
             } else if (!strcmp(name, "time")) {
                 ALLOC_ZVAL(result);
                 ZVAL_LONG(result, event->dnd.time);
@@ -552,7 +547,7 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
             break;
 
         case GDK_CLIENT_EVENT:
-            if (!strcmp(name, "message_type")) { /* GdkAtom is a struct */
+            if (!strcmp(name, "message_type")) { /* TODO GdkAtom is a struct */
                 ALLOC_ZVAL(result);
                 ZVAL_NULL(result);
             } else if (!strcmp(name, "data_format")) {
@@ -560,7 +555,7 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
                 ZVAL_LONG(result, event->client.data_format);
             } else if (!strcmp(name, "data.b")) {
                 ALLOC_ZVAL(result);
-                ZVAL_STRINGL(result, event->client.data.b, 20, 1);
+                ZVAL_STRINGL(result, event->client.data.b, 20, 1); /* Why 20? */
             }
             break;
 
@@ -623,13 +618,13 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
             break;
 
         case GDK_OWNER_CHANGE:
-            if (!strcmp(name, "owner")) { /* GdkNativeWindow can be pointer or uint ??! */
+            if (!strcmp(name, "owner")) {
                 ALLOC_ZVAL(result);
                 ZVAL_NULL(result);
             } else if (!strcmp(name, "reason")) {
                 ALLOC_ZVAL(result);
                 ZVAL_LONG(result, event->owner_change.reason);
-            } else if (!strcmp(name, "selection")) { /* GdkAtom is a struct */
+            } else if (!strcmp(name, "selection")) { /* TODO GdkAtom is a struct */
                 ALLOC_ZVAL(result);
                 ZVAL_NULL(result);
             } else if (!strcmp(name, "time")) {
@@ -669,6 +664,8 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
 
     return result;
 }
+
+%% }}}
 
 %%
 override-handler GdkEvent get_properties
@@ -843,7 +840,7 @@ PHP_METHOD
     }
 
     if (mask) {
-        phpg_gobject_new(&php_mask, (GObject*)mask TSRMLS_CC);
+        phpg_gobject_new(&php_mask, (GObject *)mask TSRMLS_CC);
         gdk_bitmap_unref(mask);
     } else {
         MAKE_STD_ZVAL(php_mask);
