@@ -4,7 +4,7 @@ dnl config.m4 for gtk+ module
 define(glib_required_version,  2.6.0)
 define(gtk_required_version,   2.6.0)
 define(pango_required_version, 1.8.0)
-define(atk_required_version,   1.8.0)
+define(atk_required_version,   1.9.0)
 
 dnl Check for glib
 AM_PATH_GLIB_2_0(glib_required_version,,[AC_MSG_ERROR(PHP-GTK 2.x requires GLib glib_required_version or higher)],gobject)
