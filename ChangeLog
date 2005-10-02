@@ -1,3 +1,50 @@
+2005-10-01  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.overrides:
+      Restore xid warning.
+
+    * main/phpg_gpointer.c:
+      Forgot to commit phpg_gpointer.c
+
+    * config.m4
+      main/php_gtk.c
+      main/php_gtk.h
+      main/phpg_gboxed.c
+      main/phpg_gvalue.c:
+      Implement basic G_TYPE_POINTER support.
+
+    * TODO2
+      ext/gtk+/gtktreeview.overrides:
+      Implement GtkTreeModel::foreach()
+
+    * TODO2:
+      -** empty log message ***
+
+    * ext/gtk+/gtktreeview.overrides:
+      Implement GtkTreeView::get_path_at_pos(). Untested.
+
+    * ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+.h
+      test/bug_gtknotebook_switchpage.phpw:
+      - Include gen_gtk.h in  php_gtk+.h
+      - Implement GtkCombo::set_popdown_strings() and GdkWindow::get_pointer()
+        (patch by Steph)
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/gtktextview.overrides
+      main/php_gtk_util.c:
+      - Add '#' modifier to 'u' specifier so that the utf8 length can be
+        obtained.
+      - Make GtkTextBuffer::set_text() work. Note that PHP-GTK version has
+        only one parameter: text itself.
+      - Make GtkTextView constructor be generated.
+
+2005-10-01  Steph  <steph.fox@virgin.net>
+
+    * win32/confutils.js:
+      Bit of a tidy-up.
+
 2005-09-28  Steph  <steph.fox@virgin.net>
 
     * ext/gtk+/gdk.overrides:
