@@ -1,3 +1,37 @@
+2005-10-02  Steph  <steph.fox@virgin.net>
+
+    * ext/libglade/config.w32
+      ext/libglade/php_libglade.c
+      ext/libglade/php_libglade.h:
+      libglade:: is now glade:: as per request from Andrei
+
+2005-10-02  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/Makefile.frag:
+      Adjust paths to common defs.
+
+    * ext/gtk+/gdk.overrides
+      ext/gtk+/php_gtk+_types.c:
+      - Silence StyleHelper get_properties handler.
+      - Finalize GdkEvent read_property handler (until GdkAtom support is
+        implemented)
+
+2005-10-02  Steph  <steph.fox@virgin.net>
+
+    * main/phpg_gpointer.c:
+      Revoke my CVS account if I'm wrong here...
+
+    * win32/config.w32.in:
+      Add phpg_gpointer.c to the win32 build
+
+2005-10-02  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      ext/gtk+/atk.defs
+      ext/gtk+/config.m4:
+      - Require ATK 1.9.0.
+      - Add AtkRelationSet::add_relation_by_type().
+
 2005-10-01  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gdk.overrides:
