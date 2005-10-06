@@ -29,7 +29,7 @@
 extern php_gtk_ext_entry gtk_plus_ext_entry;
 #define php_gtk_ext_gtk__ptr &gtk_plus_ext_entry
 
-typedef enum { STYLE_COLOR_ARRAY, STYLE_GC_ARRAY, STYLE_PIXMAP_ARRAY} style_helper_type;
+typedef enum { STYLE_COLOR_ARRAY, STYLE_GC_ARRAY, STYLE_PIXMAP_ARRAY } style_helper_type;
 
 PHP_GTK_API int phpg_rectangle_from_zval(zval *value, GdkRectangle *rectangle TSRMLS_DC);
 PHP_GTK_API void phpg_create_style_helper(zval **zobj, GtkStyle *style, int type, gpointer array TSRMLS_DC);
