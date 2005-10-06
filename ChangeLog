@@ -1,3 +1,8 @@
+2005-10-05  Steph  <steph.fox@virgin.net>
+
+    * TODO2:
+      Make a note about overriding GtkLabel::set_width_chars()
+
 2005-10-04  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/config.m4:
