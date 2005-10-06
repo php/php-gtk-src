@@ -910,7 +910,6 @@ class Generator {
 
         $this->fp = new LineOutput(fopen($savefile, 'w'), $savefile);
         $this->fp->write("#include \"php_gtk.h\"\n");
-        $this->fp->write("#include \"php_gtk_api.h\"\n");
         $this->fp->write("\n#if HAVE_PHP_GTK\n");
         $this->fp->write($this->overrides->get_headers());
         $this->write_class_entries();
