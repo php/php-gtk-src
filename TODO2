@@ -35,8 +35,8 @@ Classes and Functions
 - GtkNotebook->get_nth_page() crashes
 * GtkEntries can't be var_dumped, probably something missing
 * GtkTreeModelFilter constructor doesn't take a model / does it have a constructor?? didn't see one in gtk.defs
-* Look into GtkLabel::set_ellipsize() (fails under win32). Would it be good to call
-  it as part of an override for (left-justifying) GtkLabel::set_width_chars()?
+* Would it be good to call GtkLabel::set_ellipsize(PANGO::ELLIPSIZE_END) as part
+  of an override for (left-justifying) GtkLabel::set_width_chars() (optional param)?
 
 Fix
 ~~~
