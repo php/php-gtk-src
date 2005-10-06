@@ -16,7 +16,7 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: buildconf.js,v 1.5 2005-09-24 14:39:51 sfox Exp $ */
+/* $Id: buildconf.js,v 1.6 2005-10-06 10:04:35 sfox Exp $ */
 // This generates a configure script for win32 build
 
 var FSO = WScript.CreateObject("Scripting.FileSystemObject");
@@ -50,8 +50,8 @@ function gen_functions() {
 	temp.WriteLine("mkdir win32\\logs");
 	temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_atk.log -o ext\\gtk+\\atk.overrides -p atk ext\\gtk+\\atk.defs > ext\\gtk+\\gen_atk.c");
 	temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_pango.log -o ext\\gtk+\\pango.overrides -p pango ext\\gtk+\\pango.defs > ext\\gtk+\\gen_pango.c");
-	temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_gdk.log -o ext\\gtk+\\gdk.overrides -p gdk ext\\gtk+\\gdk.defs > ext\\gtk+\\gen_gdk.c");
-	temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_gtk.log -o ext\\gtk+\\gtk.overrides -p gtk -r ext\\gtk+\\gdk.defs ext\\gtk+\\gtk.defs > ext\\gtk+\\gen_gtk.c");
+	temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_gdk.log -o ext\\gtk+\\gdk.overrides -p gdk -r ext\\gtk+\\atk-types.defs -r ext\\gtk+\\pango-types.defs ext\\gtk+\\gdk.defs > ext\\gtk+\\gen_gdk.c");
+	temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_gtk.log -o ext\\gtk+\\gtk.overrides -p gtk -r ext\\gtk+\\atk-types.defs -r ext\\gtk+\\pango-types.defs -r ext\\gtk+\\gdk-types.defs ext\\gtk+\\gtk.defs > ext\\gtk+\\gen_gtk.c");
 	temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\gtk+\\gen_atk.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\gtk+\\gen_atk.h');
 	temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\gtk+\\gen_pango.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\gtk+\\gen_pango.h');
 	temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\gtk+\\gen_gdk.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\gtk+\\gen_gdk.h');
