@@ -300,9 +300,9 @@ static int style_helper_has_dimension(zval *object, zval *offset, int check_empt
 
 static HashTable* style_helper_get_properties(zval *object TSRMLS_DC)
 {
-    int i;
+ /* int i;
     zval *result;
-    zval offset;
+    zval offset; */
     style_helper *sh = (style_helper *) zend_object_store_get_object(object TSRMLS_CC);
 
     /* 
