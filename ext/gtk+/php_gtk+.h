@@ -49,8 +49,6 @@ void phpg_gtk_register_classes(void);
 
 void php_gtk_plus_register_types();
 
-#include "gen_gtk.h"
-
 #if 0
 PHP_GTK_API extern int le_gtk_object;
 PHP_GTK_API extern int le_php_gtk_wrapper;

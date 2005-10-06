@@ -1,9 +1,14 @@
 
-$(builddir)/php_libglade.lo: $(builddir)/gen_ce_libglade.h
-
 $(builddir)/gen_libglade.c: $(srcdir)/libglade.defs $(srcdir)/libglade.overrides
-	$(PHP) -f $(top_srcdir)/generator/generator.php -- -o $(srcdir)/libglade.overrides -p libglade -r $(top_srcdir)/ext/gtk%2b/gtk.defs $(srcdir)/libglade.defs > $@
-
-$(builddir)/gen_ce_libglade.h: $(builddir)/gen_libglade.c
-	grep -h "^PHP_GTK_EXPORT_CE" $(srcdir)/gen_libglade.c | sed -e "s!^!extern !" > $@
-
+	( \
+     $(PHP) $(top_srcdir)/generator/generator.php \
+	 	-l $(@D)/gen_$(*F).log \
+        -r ext/gtk+/atk-types.defs   \
+        -r ext/gtk+/pango-types.defs \
+        -r ext/gtk+/gdk-types.defs   \
+        -r ext/gtk+/gtk-types.defs   \
+        -o ext/libglade/libglade.overrides \
+        -p Glade \
+        -f $@ ext/libglade/libglade.defs \
+     && grep -h "^PHP_GTK_EXPORT_CE" $@ | sed -e "s!^!extern !" > $(@D)/gen_$(*F).h \
+	)
