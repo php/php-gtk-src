@@ -1,3 +1,37 @@
+2005-10-06  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/libglade/libglade.overrides
+      generator/generator.php:
+      Gah double.
+
+    * ext/gtk+/config.m4
+      ext/gtk+/php_gtk+.h:
+      Gah!
+
+2005-10-06  Steph  <steph.fox@virgin.net>
+
+    * TODO2:
+      set_ellipsize() _does_ work on win32 now...
+
+    * win32/buildconf.js:
+      27 new functions/methods for win32.
+      * next time read what it says on the tin *
+
+    * TODO2:
+      It seems GtkLabel::set_ellipsize() works under *nix.  Oddly.
+
+    * ext/gtk+/php_gtk+_types.c:
+      Kill compiler warnings
+
+2005-10-06  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/config.m4
+      ext/gtk+/php_gtk+.h
+      ext/libglade/Makefile.frag
+      generator/generator.php
+      main/php_gtk_api.h:
+      I believe this should resolve the circular include problem.
+
 2005-10-05  Steph  <steph.fox@virgin.net>
 
     * TODO2:
