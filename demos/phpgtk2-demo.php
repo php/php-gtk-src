@@ -258,8 +258,30 @@ class PHPGtk2Demo extends GtkWindow
 		   			case T_PLUS_EQUAL:
 		   			case T_FOREACH:
 		   			case T_AS:
+		   			case T_FOR:
+		   			case T_DO:
+		   			case T_CONTINUE:
+		   			case T_BREAK:
+		   			case T_SWITCH:
+		   			case T_CASE:
+		   			case T_LIST:
+		   			case T_PRINT:
+		   			case T_ECHO:
+		   			case T_ARRAY_CAST:
+		   			case T_BOOL_CAST:
+		   			case T_DOUBLE_CAST:
+		   			case T_INT_CAST:
+		   			case T_OBJECT_CAST:
+		   			case T_STRING_CAST:
+		   			case T_UNSET_CAST:
+		   			case T_UNSET:
+		   			case T_INCLUDE:
+		   			case T_INCLUDE_ONCE:
+		   			case T_REQUIRE:
+		   			case T_REQUIRE_ONCE:
 		    		case T_ELSE:
 		    		case T_ELSEIF:
+		    		case T_GLOBAL:
 		    		case T_ARRAY:
 		    		case T_BOOLEAN_AND:
 		    		case T_BOOLEAN_OR:
@@ -273,6 +295,7 @@ class PHPGtk2Demo extends GtkWindow
 						break;
 		    		}
 		    		case T_LNUMBER:
+		    		case T_CLONE:
 		    		case T_OPEN_TAG:
 		    		case T_CLOSE_TAG:
 		    		case T_NUM_STRING:
