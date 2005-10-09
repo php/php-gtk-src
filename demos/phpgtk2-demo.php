@@ -14,17 +14,9 @@ class PHPGtk2Demo extends GtkWindow
     protected $description_buffer;
     protected $demobox;
     
+    static protected $colors = array("blue", "red", "orange", "darkgreen", "black");
+    
     protected $cache = array();
-    
-    protected static $highStrings = array(
-        '(' => '<blue>(</blue>',
-        ')' => '<green>)</green>'
-    );
-    
-    protected static $highTypes = array(
-        T_COMMENT => '<green>%s</green>'
-    );
-    
     
     function __construct()
     {
@@ -107,6 +99,14 @@ class PHPGtk2Demo extends GtkWindow
         $text_view->set_buffer($buffer);
         $text_view->set_editable(false);
         $text_view->set_cursor_visible(false);
+
+		$tag_table = $buffer->get_tag_table();	
+	
+		foreach(self::$colors as $color) {
+			$tag = new GtkTextTag($color);
+			$tag->set_property("foreground", $color);
+			$tag_table->add($tag);
+		}
         
 //        $text_view->set_wrap_mode(false);
         
@@ -131,7 +131,11 @@ class PHPGtk2Demo extends GtkWindow
         $info = $model->get_value($iter, 0);
     
         $text = $info->classname . "\r\n\r\n" . $info->description;
-        $this->description_buffer->set_text($text, strlen($text));
+
+	//  [JSJ]: I get a too many arguements error using this form, so changed to the later form
+	//  Seems silly we would require the strlen() anyway as PHP should be storing that in the zval already anyway
+    //	$this->description_buffer->set_text($text, strlen($text));
+        $this->description_buffer->set_text($text);
         
         //source code highlighting
         $this->highlightSource($info->file);
@@ -203,28 +207,109 @@ class PHPGtk2Demo extends GtkWindow
     protected function highlightSource($filename)
     {
         $tokens = token_get_all(file_get_contents($filename));
-        $highlighted = '';
+
+		$highlighted = '';
+		$color_codes = array();
+		
+		// this would be much easier if we had functions which supported varargs (like insert_with_tags_by_name), but improvised solution works in the meantime.
+		
         foreach ($tokens as $token) {
+	    $start = strlen($highlighted);
             if (is_string($token)) {
                 //single string
-                if (isset(self::$highStrings[$token])) {
-                    $highlighted .= self::$highStrings[$token];
-                } else {
-                    $highlighted .= $token;
-                }
+				if($token == "(" || $token == ")" || $token == "{" || $token == "}" || $token == ";" || $token == "@" || $token == "[" || $token == "]" || $token == "!") {
+		    		$color = "darkgreen";
+				}
+				else {
+		    		$color = "black";
+				}
+                $highlighted .= $token;
             } else {
                 list($type, $value) = $token;
-                if (isset(self::$highTypes[$type])) {
-                    $highlighted .= sprintf(self::$highTypes[$type], $value);
-                } else {
-                    $highlighted .= $value;
-                }
+				switch($type) {
+		    		case T_COMMENT:
+		    		case T_DOC_COMMENT: {
+						$color = "orange";
+						break;
+		    		}
+			    	case T_CLASS:
+			    	case T_DOUBLE_ARROW:
+			    	case T_NEW:
+			    	case T_PAAMAYIM_NEKUDOTAYIM:
+		    		case T_IF:
+			    	case T_OBJECT_OPERATOR:
+			    	case T_RETURN:
+			    	case T_EXTENDS:
+		    		case T_CLASS_C:
+		    		case T_FUNC_C:
+		    		case T_WHILE:
+		   			case T_EXIT:
+		   			case T_INC:
+		   			case T_IS_EQUAL:
+		   			case T_IS_EQUAL:
+		   			case T_IS_IDENTICAL:
+		   			case T_IS_NOT_EQUAL:
+		   			case T_IS_NOT_IDENTICAL:
+		   			case T_IS_SMALLER_OR_EQUAL:
+		   			case T_MINUS_EQUAL:
+		   			case T_MOD_EQUAL:
+		   			case T_MUL_EQUAL:
+		   			case T_OR_EQUAL:
+		   			case T_PLUS_EQUAL:
+		   			case T_FOREACH:
+		   			case T_AS:
+		    		case T_ELSE:
+		    		case T_ELSEIF:
+		    		case T_ARRAY:
+		    		case T_BOOLEAN_AND:
+		    		case T_BOOLEAN_OR:
+		    		case T_CONCAT_EQUAL:
+		    		case T_DIV_EQUAL:
+		    		case T_CONST:
+		    		case T_STATIC:
+		    		case T_AND_EQUAL:
+		    		case T_FUNCTION: {
+						$color = "darkgreen";
+						break;
+		    		}
+		    		case T_LNUMBER:
+		    		case T_OPEN_TAG:
+		    		case T_CLOSE_TAG:
+		    		case T_NUM_STRING:
+		   			case T_DNUMBER:
+		    		case T_VARIABLE:
+		    		case T_PRIVATE:
+		    		case T_PUBLIC:
+		    		case T_PROTECTED:
+		    		case T_VAR:
+		    		case T_INSTANCEOF:
+		    		case T_STRING: {
+						$color = "blue";
+						break;
+		    		}
+		    		case T_CONSTANT_ENCAPSED_STRING: {
+						$color = "red";
+						break;
+		    		}
+		    		default: {
+						$color = "black";
+						break;
+		    		}
+				}
+                $highlighted .= $value;
+            }
+	    	$end = strlen($highlighted);
+	    	$color_codes[$color][] = $start . ":" . $end;	    
+        }
+		$this->sourcebuffer->set_text($highlighted);
+        foreach($color_codes as $color_code=>$positions) {
+	    	foreach($positions as $position) {
+                list($start_pos,$end_pos) = explode(":", $position);
+                $start = $this->sourcebuffer->get_iter_at_offset($start_pos);
+		 		$end = $this->sourcebuffer->get_iter_at_offset($end_pos);
+		 		$this->sourcebuffer->apply_tag_by_name($color_code, $start, $end);
             }
         }
-
-//        $this->sourcebuffer->insert_with_tags_by_name();
-        $this->sourcebuffer->set_text($highlighted, strlen($highlighted));
-//        var_dump($highlighted);
     }//protected function highlightSource($filename)
 }//class PHPGtk2Demo extends GtkWindow
 
