@@ -77,3 +77,5 @@ PHP_ADD_MAKEFILE_FRAGMENT($abs_srcdir/main/Makefile.frag, $abs_srcdir/main, main
 
 PHP_HELP_SEPARATOR([Libtool options:])
 
+echo "creating main/php_gtk_ext.c"
+sh $srcdir/build2/genext.sh $srcdir/main/php_gtk_ext.c.in $srcdir "" $AWK $PHP_GTK_EXTENSIONS > main/php_gtk_ext.c
