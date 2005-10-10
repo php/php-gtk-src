@@ -1,3 +1,10 @@
+2005-10-09  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/libglade/Makefile.frag
+      ext/libglade/php_libglade.h:
+      - Don't include gen_libglade.h from php_libglade.h
+      - Adjust make files to remove extra gen_ prefix
+
 2005-10-06  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/libglade/libglade.overrides
