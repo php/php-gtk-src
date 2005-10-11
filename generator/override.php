@@ -60,6 +60,7 @@ class Overrides {
         $block = '';
         $blocklineno = $lineno = 1;
         foreach ($contents as $line) {
+            $line = str_replace("\r\n", "\n", $line);
             if (substr($line, 0, 2) == '%%') {
                 if ($block) {
                     $blocks[] = array($block, $blocklineno);
