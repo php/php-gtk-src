@@ -30,13 +30,17 @@ Classes and Functions
 * GtkTreeView
 * GtkCellRenderer
 * GtkClipboard
-- GtkNotebook->append_page should allow just a string as second parameter (title for page) instead of only wanting a gtklabel or so
-- GtkNotebook crashes when connecting callback to move-focus-out signal
-- GtkNotebook->get_nth_page() crashes
 * GtkEntries can't be var_dumped, probably something missing
 * GtkTreeModelFilter constructor doesn't take a model / does it have a constructor?? didn't see one in gtk.defs
 * Would it be good to call GtkLabel::set_ellipsize(PANGO::ELLIPSIZE_END) as part
   of an override for (left-justifying) GtkLabel::set_width_chars() (optional param)?
+* GtkTextBuffer->create_tag() is not implemented
+* GtkTextBuffer->move_mark_by_name('selection_bound', ...) moves both the the
+  insert and select_bound marks
+* GtkTextTagTable->lookup() is not implemented
+* GtkTextTagTable->foreach() is not implemented
+* GtkTextTag does not do anything. Either the properties must be accessible or
+  a method must be defined to set them (i.e. GtkTextBuffer->create_tag()).
 
 Fix
 ~~~
