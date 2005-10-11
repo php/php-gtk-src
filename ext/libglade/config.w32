@@ -12,6 +12,8 @@ if (PHP_GTK_LIBGLADE != "no" || PHP_GTK_ALL != "no") {
 			temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_glade.log -o ext\\libglade\\libglade.overrides -p glade -r ext\\gtk+\\gtk.defs ext\\libglade\\libglade.defs > ext\\libglade\\gen_libglade.c");
 
 			temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\libglade\\gen_libglade.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\libglade\\gen_libglade.h');
+
+			temp.Close();
 		}
 
 		ADD_FLAG("CFLAGS_LIBGLADE", "/I ext\\libglade /I ..\\ext\\libglade /D HAVE_LIBGLADE=1");
