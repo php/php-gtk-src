@@ -1,7 +1,9 @@
 /* vim: set et ft=cpp fdm=marker: */
 %%
 headers
-#include "php_gtk_api.h"
+#include "gen_atk.h"
+#include "gen_gdk.h"
+#include "gen_pango.h"
 #include "ext/standard/file.h"
 
 /* TODO
