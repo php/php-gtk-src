@@ -1,3 +1,11 @@
+2005-10-10  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * build2/build2.mk:
+      Re-generate configure when config.m4 changes.
+
+    * config.m4:
+      Update php_gtk_ext.c during configuration, not during build.
+
 2005-10-09  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/libglade/Makefile.frag
