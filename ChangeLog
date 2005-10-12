@@ -1,3 +1,32 @@
+2005-10-11  Steph  <steph.fox@virgin.net>
+
+    * ext/gtk+/gtk.overrides:
+      Broke unix builds.  Reverting.
+
+    * ext/gtk+/gtktreeview.overrides:
+      Typo fix
+      get_iter() should work now at least.
+
+    * TODO2:
+      Adding Scott's list to TODO
+
+    * generator/override.php:
+      Minor fix for those pesky line ending tribbles
+
+    * ext/libglade/config.w32:
+      Make it possible to build more than 1 extension
+
+    * ext/gtk+/gtk.overrides:
+      Fix build for extensions.
+      This _shouldn't_ break anything on *nix systems, but I'll revert if it
+      does.
+
+2005-10-11  Scott Mattocks  <scott@crisscott.com>
+
+    * test/bug_gtktextbuffer_move_mark_by_name_selection_bound.php
+      test/bug_gtktexttagtable_lookup_foreach.php:
+      Bugs related to GtkTextBuffer and GtkTextTagTable.
+
 2005-10-10  Andrei Zmievski  <andrei@gravitonic.com>
 
     * build2/build2.mk:
