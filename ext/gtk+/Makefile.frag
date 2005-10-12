@@ -10,10 +10,10 @@ GTK_OVERRIDES = \
 	$(srcdir)/gtktreeview.overrides
 
 gen_sources = \
-	$(builddir)/gen_gtk.c \
-	$(builddir)/gen_gdk.c \
 	$(builddir)/gen_atk.c \
-	$(builddir)/gen_pango.c
+	$(builddir)/gen_pango.c \
+	$(builddir)/gen_gdk.c \
+	$(builddir)/gen_gtk.c
 
 $(gen_sources:.c=.lo): $(gen_sources)
 
