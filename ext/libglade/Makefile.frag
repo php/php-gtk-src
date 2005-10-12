@@ -1,4 +1,6 @@
 
+$(builddir)/gen_libglade.lo: $(builddir)/gen_libglade.c
+
 $(builddir)/gen_libglade.c: $(srcdir)/libglade.defs $(srcdir)/libglade.overrides
 	( \
      $(PHP) $(top_srcdir)/generator/generator.php \

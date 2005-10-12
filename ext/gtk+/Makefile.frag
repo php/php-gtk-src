@@ -9,6 +9,14 @@ GTK_OVERRIDES = \
 	$(srcdir)/gtktextview.overrides \
 	$(srcdir)/gtktreeview.overrides
 
+gen_sources = \
+	$(builddir)/gen_gtk.c \
+	$(builddir)/gen_gdk.c \
+	$(builddir)/gen_atk.c \
+	$(builddir)/gen_pango.c
+
+$(gen_sources:.c=.lo): $(gen_sources)
+
 $(builddir)/gen_gtk.c: $(srcdir)/gtk.defs $(COMMONDEFS) $(srcdir)/gtk-extrafuncs.defs $(GTK_OVERRIDES)
 $(builddir)/gen_gdk.c: $(srcdir)/gdk.defs $(COMMONDEFS) $(srcdir)/gdk.overrides
 $(builddir)/gen_atk.c: $(COMMONDEFS) $(srcdir)/atk.overrides
