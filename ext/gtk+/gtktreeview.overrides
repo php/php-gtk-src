@@ -161,6 +161,74 @@ PHP_METHOD
 }
 
 %%
+override gtk_list_store_insert
+PHP_METHOD
+{
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    gint position;
+    zval *items = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i|a", &position, &items))
+        return;
+
+    if (position < 0) {
+        php_error(E_WARNING, "%s::%s() requires argument 1 to be greater than zero, %d given",
+                  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C), position);
+        return;
+    }
+
+    model = GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr));
+
+    if (items) {
+        gint n_cols, i;
+        gint *columns;
+        GValue *values;
+        zval **item;
+
+        n_cols = gtk_tree_model_get_n_columns(model);
+        if (zend_hash_num_elements(Z_ARRVAL_P(items)) != n_cols) {
+            php_error(E_WARNING, "Cannot set row: number of row elements does not match the model");
+            return;
+        }
+
+        columns = safe_emalloc(n_cols, sizeof(gint), 0);
+        values  = safe_emalloc(n_cols, sizeof(GValue), 0);
+
+        for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(items)), i = 0;
+             zend_hash_get_current_data(Z_ARRVAL_P(items), (void **)&item) == SUCCESS;
+             zend_hash_move_forward(Z_ARRVAL_P(items)), i++) {
+            g_value_init(&values[i], gtk_tree_model_get_column_type(model, i));
+
+            if (phpg_gvalue_from_zval(&values[i], *item TSRMLS_CC) == FAILURE) {
+                php_error(E_WARNING, "Cannot set row: type of element %d does not match the model", i);
+                for ( ; i >= 0; i--) {
+                    g_value_unset(&values[i]);
+                }
+                efree(columns);
+                efree(values);
+                return;
+            }
+            columns[i] = i;
+        }
+
+        gtk_list_store_insert_with_valuesv(GTK_LIST_STORE(model), &iter, position,
+                                           columns, values, n_cols);
+
+        for (i = 0; i < n_cols; i++) {
+            g_value_unset(&values[i]);
+        }
+        efree(columns);
+        efree(values);
+    } else {
+        gtk_list_store_insert(GTK_LIST_STORE(model), &iter, position);
+    }
+
+    phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+%%
 add-arginfo GtkListStore set
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
