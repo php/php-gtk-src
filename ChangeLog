@@ -1,3 +1,15 @@
+2005-10-12  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/Makefile.frag:
+      Re-order gen sources.
+
+2005-10-12  Jani Taskinen  <jani.taskinen@sci.fi>
+
+    * ext/gtk+/Makefile.frag
+      ext/libglade/Makefile.frag
+      ext/skeleton/Makefile.frag:
+      - Make sure generated files are generated before any of them are compiled.
+
 2005-10-11  Steph  <steph.fox@virgin.net>
 
     * ext/gtk+/gtk.overrides:
