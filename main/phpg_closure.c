@@ -30,7 +30,7 @@ struct _phpg_closure_t {
 	GClosure closure;
 	zval *callback;
 	zval *user_args;
-	zend_bool use_signal_object;
+	int connect_type;
 	char *src_filename;
 	uint src_lineno;
 };
@@ -47,7 +47,7 @@ static void phpg_closure_invalidate(gpointer data, GClosure *closure)
 
     phpg_closure->callback = NULL;
     phpg_closure->user_args = NULL;
-    phpg_closure->use_signal_object = 0;
+    phpg_closure->connect_type = PHPG_CONNECT_NORMAL;
     phpg_closure->src_filename = NULL;
     phpg_closure->src_lineno = 0;
 }
@@ -77,12 +77,17 @@ static void phpg_closure_marshal(GClosure *closure,
 		return;
 	}
 
-	if (!phpg_closure->use_signal_object) {
-        /* skip first parameter */
-        n_param_values--;
-        param_values++;
+    if (phpg_closure->connect_type == PHPG_CONNECT_SIMPLE) {
+        /* we don't use any signal params for simple connections */
+        n_param_values = 0;
+    } else {
+        if (phpg_closure->connect_type == PHPG_CONNECT_OBJECT) {
+            /* skip first parameter */
+            n_param_values--;
+            param_values++;
+        }
+        n_params = n_param_values;
     }
-    n_params = n_param_values;
     
     if (phpg_closure->user_args) {
         n_params += zend_hash_num_elements(Z_ARRVAL_P(phpg_closure->user_args));
@@ -127,7 +132,7 @@ err_marshal:
     efree(params);
 }
 
-PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, zend_bool use_signal_object TSRMLS_DC)
+PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, int connect_type TSRMLS_DC)
 {
     GClosure *closure;
     phpg_closure_t *phpg_closure;
@@ -153,7 +158,7 @@ PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, zend_boo
         phpg_closure->user_args = NULL;
     }
 
-    phpg_closure->use_signal_object = use_signal_object;
+    phpg_closure->connect_type = connect_type;
 
     return closure;
 }

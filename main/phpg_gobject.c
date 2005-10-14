@@ -315,7 +315,7 @@ static PHP_METHOD(GObject, __tostring)
 /* }}} */
 
 /* {{{ static phpg_signal_connect_impl() */
-static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool use_signal_object, zend_bool after)
+static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int connect_type, zend_bool after)
 {
     char *signal = NULL;
     zval *callback;
@@ -337,8 +337,7 @@ static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool use
         return;
     }
 
-    //extra = php_gtk_func_args_as_hash(ZEND_NUM_ARGS(), 2, ZEND_NUM_ARGS());
-    closure = phpg_closure_new(callback, extra, use_signal_object TSRMLS_CC);
+    closure = phpg_closure_new(callback, extra, connect_type TSRMLS_CC);
     if (extra) {
         zval_ptr_dtor(&extra);
     }
@@ -350,25 +349,39 @@ static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool use
 /* {{{ GObject::connect */
 static PHP_METHOD(GObject, connect)
 {
-	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, TRUE, FALSE);
+	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_NORMAL, FALSE);
 }
 /* }}} */
 /* {{{ GObject::connect_after */
 static PHP_METHOD(GObject, connect_after)
 {
-	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, TRUE, TRUE);
+	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_NORMAL, TRUE);
+}
+/* }}} */
+/* {{{ GObject::connect_simple */
+static PHP_METHOD(GObject, connect_simple)
+{
+	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_SIMPLE, FALSE);
+}
+/* }}} */
+/* {{{ GObject::connect_simple_after */
+static PHP_METHOD(GObject, connect_simple_after)
+{
+	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_SIMPLE, TRUE);
 }
 /* }}} */
 /* {{{ GObject::connect_object */
 static PHP_METHOD(GObject, connect_object)
 {
-	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, FALSE, FALSE);
+    phpg_warn_deprecated("use connect() or connect_simple()" TSRMLS_CC);
+	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_OBJECT, FALSE);
 }
 /* }}} */
 /* {{{ GObject::connect_object_after */
 static PHP_METHOD(GObject, connect_object_after)
 {
-	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, FALSE, TRUE);
+    phpg_warn_deprecated("use connect_after() or connect_simple_after()" TSRMLS_CC);
+	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_OBJECT, TRUE);
 }
 /* }}} */
 
@@ -683,6 +696,20 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_gobject_connect_after, 0, 0, 2)
 ZEND_END_ARG_INFO();
 
 static
+ZEND_BEGIN_ARG_INFO_EX(arginfo_gobject_connect_simple, 0, 0, 2)
+    ZEND_ARG_INFO(0, signal)
+    ZEND_ARG_INFO(0, callback)
+    ZEND_ARG_INFO(0, userparam)
+ZEND_END_ARG_INFO();
+
+static
+ZEND_BEGIN_ARG_INFO_EX(arginfo_gobject_connect_simple_after, 0, 0, 2)
+    ZEND_ARG_INFO(0, signal)
+    ZEND_ARG_INFO(0, callback)
+    ZEND_ARG_INFO(0, userparam)
+ZEND_END_ARG_INFO();
+
+static
 ZEND_BEGIN_ARG_INFO_EX(arginfo_gobject_connect_object, 0, 0, 2)
     ZEND_ARG_INFO(0, signal)
     ZEND_ARG_INFO(0, callback)
@@ -743,6 +770,8 @@ static zend_function_entry gobject_methods[] = {
     PHP_ME(GObject, connect_after,        arginfo_gobject_connect_after         , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, connect_object,       arginfo_gobject_connect_object        , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, connect_object_after, arginfo_gobject_connect_object_after  , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, connect_simple,       arginfo_gobject_connect_simple        , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, connect_simple_after, arginfo_gobject_connect_simple_after  , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, get_property,         arginfo_gobject_get_property          , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, set_property,         arginfo_gobject_set_property          , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, get_data,             arginfo_gobject_get_data              , ZEND_ACC_PUBLIC)

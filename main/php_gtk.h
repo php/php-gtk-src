@@ -134,6 +134,12 @@ typedef struct {
 /* Private structure */
 typedef struct _phpg_closure_t phpg_closure_t;
 
+enum {
+    PHPG_CONNECT_NORMAL,
+    PHPG_CONNECT_SIMPLE,
+    PHPG_CONNECT_OBJECT,
+};
+
 #define PHPG_GET(zobj) \
 	zend_object_store_get_object((zobj) TSRMLS_CC)
 
@@ -451,7 +457,7 @@ void phpg_gpointer_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gpointer_new(zval **zobj, GType gtype, gpointer pointer TSRMLS_DC);
 
 /* Closures */
-PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, zend_bool use_signal_object TSRMLS_DC);
+PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, int connect_type TSRMLS_DC);
 PHP_GTK_API void phpg_watch_closure(zval *obj, GClosure *closure TSRMLS_DC);
 
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtype_ce);
