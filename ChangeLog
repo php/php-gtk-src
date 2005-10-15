@@ -1,3 +1,11 @@
+2005-10-14  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk.h
+      main/phpg_closure.c
+      main/phpg_gobject.c:
+      - Implement connect_simple()
+      - Deprecate connect_object()
+
 2005-10-13  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtktreeview.overrides:
