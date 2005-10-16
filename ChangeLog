@@ -1,3 +1,8 @@
+2005-10-15  Scott Mattocks  <scott@crisscott.com>
+
+    * test/bug_gtkliststore_insert_with_array.php:
+      Bug with GtkListStore::insert()
+
 2005-10-14  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/php_gtk.h
