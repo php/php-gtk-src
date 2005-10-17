@@ -6,6 +6,9 @@
   (parent "GObject")
   (c-name "GladeXML")
   (gtype-id "GLADE_TYPE_XML")
+  (fields
+    '("gchar*" "filename")
+  )
 )
 
 ;; Functions, constructors, and methods ...
