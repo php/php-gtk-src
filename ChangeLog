@@ -1,3 +1,11 @@
+2005-10-16  Steph  <steph.fox@virgin.net>
+
+    * ext/libglade/libglade.overrides:
+      Make libglade constructor work out of the box in most cases.
+
+    * ext/gtk+/gtk.overrides:
+      win32 extensions are go (again)
+
 2005-10-15  Scott Mattocks  <scott@crisscott.com>
 
     * test/bug_gtkliststore_insert_with_array.php:
