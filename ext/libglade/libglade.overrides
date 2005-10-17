@@ -15,16 +15,13 @@ ignore
 override glade_xml_new
 PHP_METHOD
 {
-    char *fname, *root = NULL, *domain = NULL;
+    char *fname, *root = "window1", *domain = NULL;
     zend_bool free_fname, free_root, free_domain;
     GObject *wrapped_obj;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u|uu", &fname, &free_fname, &root, &free_root, &domain, &free_domain)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GladeXML);
     }
-
-    /* Glade's default name for the toplevel window is hard-coded - but there may be a better way */
-    if (!root) root = (char *)"window1";
 
     wrapped_obj = (GObject *) glade_xml_new(fname, root, domain);
     if (free_fname) g_free(fname);
