@@ -15,7 +15,7 @@ ignore
 override glade_xml_new
 PHP_METHOD
 {
-    char *fname, *root = "window1", *domain = NULL;
+    char *fname, *root = NULL, *domain = NULL;
     zend_bool free_fname, free_root, free_domain;
     GObject *wrapped_obj;
 
@@ -23,7 +23,7 @@ PHP_METHOD
         PHPG_THROW_CONSTRUCT_EXCEPTION(GladeXML);
     }
 
-    wrapped_obj = (GObject *) glade_xml_new(fname, root, domain);
+    wrapped_obj = (GObject *) glade_xml_new(fname, (const char *)root, (const char *)domain);
     if (free_fname) g_free(fname);
     if (free_root) g_free(root);
     if (free_domain) g_free(domain);
