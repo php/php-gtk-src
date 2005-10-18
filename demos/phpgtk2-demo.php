@@ -22,7 +22,7 @@ class PHPGtk2Demo extends GtkWindow
     {
         parent::__construct();
 
-        $this->connect_object('destroy', array('gtk', 'main_quit'));
+        $this->connect_simple('destroy', array('gtk', 'main_quit'));
         
         $this->set_title('PHP-Gtk2 Demos');
         $this->set_default_size(800, 400);
@@ -148,11 +148,11 @@ class PHPGtk2Demo extends GtkWindow
             $this->demobox->remove($this->demobox->get_child());
         }
         
-        if (!isset($this->cache[$info->classname])) {
+//        if (!isset($this->cache[$info->classname])) {
             $subobj = $obj->__create_box();
             $this->cache[$info->classname] = null;
             $this->cache[$info->classname] = $subobj;
-        }
+//        }
         $this->demobox->add_with_viewport($this->cache[$info->classname]);
         $this->demobox->show_all();
         
