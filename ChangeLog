@@ -1,3 +1,17 @@
+2005-10-17  Steph  <steph.fox@virgin.net>
+
+    * ext/libglade/libglade.defs
+      ext/libglade/libglade.overrides:
+      - get_widget_prefix()
+      - expose GladeXML->filename property
+
+    * ext/libglade/libglade.overrides:
+      (char *) NULL != (const char*) NULL
+      Problem solved.
+
+    * ext/libglade/libglade.overrides:
+      Still no answer to the 'root-free' problem, just tidying it up a little.
+
 2005-10-16  Steph  <steph.fox@virgin.net>
 
     * ext/libglade/libglade.overrides:
