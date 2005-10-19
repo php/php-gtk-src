@@ -708,8 +708,6 @@ PHP_METHOD
 
     wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
 
-    if (free_title) g_free(title);
-
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkDialog);
     }
@@ -717,6 +715,8 @@ PHP_METHOD
     if (title) {
         gtk_window_set_title(GTK_WINDOW(wrapped_obj), title);
     }
+    if (free_title) g_free(title);
+
     if (parent) {
         gtk_window_set_transient_for(GTK_WINDOW(wrapped_obj), parent);
     }
