@@ -5,37 +5,15 @@
 */
 function showDialog()
 {
-    $dialog = new GtkDialog('abcdef', null, 0, array( Gtk::STOCK_OK, Gtk::RESPONSE_OK, '_Show again', Gtk::RESPONSE_CANCEL));
+    $dialog = new GtkDialog('aaabcdefgh', null, 0, array( Gtk::STOCK_OK, Gtk::RESPONSE_OK, '_Show again', Gtk::RESPONSE_CANCEL));
 
     $hbox = new GtkHBox(false, 8);
-    $hbox->set_border_width(8);
     $dialog->vbox->pack_start($hbox, false, false, 0);
 
     $stock = GtkImage::new_from_stock(
             Gtk::STOCK_DIALOG_QUESTION,
             Gtk::ICON_SIZE_DIALOG);
     $hbox->pack_start($stock, false, false, 0);
-
-    $table = new GtkTable(2, 2);
-    $table->set_row_spacings(4);
-    $table->set_col_spacings(4);
-    $hbox->pack_start($table, true, true, 0);
-
-    $label = new GtkLabel('Entry _1');
-    $label->set_use_underline(true);
-    $table->attach($label, 0, 1, 0, 1);
-    $local_entry1 = new GtkEntry();
-    //$local_entry1->set_text($this->entry1->get_text());
-    $table->attach($local_entry1, 1, 2, 0, 1);
-    $label->set_mnemonic_widget($local_entry1);
-
-    $label = new GtkLabel('Entry _2');
-    $label->set_use_underline(true);
-    $table->attach($label, 0, 1, 1, 2);
-    $local_entry2 = new GtkEntry();
-    //$local_entry2->set_text($this->entry2->get_text());
-    $table->attach($local_entry2, 1, 2, 1, 2);
-    $label->set_mnemonic_widget($local_entry2);
 
     $dialog->show_all();
 
@@ -44,8 +22,6 @@ function showDialog()
     $dialog->destroy();
     if ($response == Gtk::RESPONSE_CANCEL) {
         showDialog();
-    //    $this->entry1->set_text($local_entry1->get_text());
-    //    $this->entry2->set_text($local_entry2->get_text());
     }
 }
 showDialog();
