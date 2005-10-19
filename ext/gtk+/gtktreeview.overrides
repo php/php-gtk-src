@@ -161,11 +161,32 @@ PHP_METHOD
 }
 
 %%
+override gtk_list_store_prepend
+PHP_METHOD
+{
+    GtkTreeIter iter;
+    zval *items = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|a", &items))
+        return;
+
+    gtk_list_store_prepend(GTK_LIST_STORE(PHPG_GOBJECT(this_ptr)), &iter);
+
+    if (items && phpg_model_set_row(GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr)), &iter, items) == FAILURE)
+        return;
+
+    phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
 override gtk_list_store_insert
 PHP_METHOD
 {
     GtkTreeIter iter;
     GtkTreeModel *model;
+    GObject *obj;
     gint position;
     zval *items = NULL;
 
@@ -194,12 +215,13 @@ PHP_METHOD
             return;
         }
 
-        columns = safe_emalloc(n_cols, sizeof(gint), 0);
-        values  = safe_emalloc(n_cols, sizeof(GValue), 0);
+        columns = ecalloc(n_cols, sizeof(gint));
+        values  = ecalloc(n_cols, sizeof(GValue));
 
         for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(items)), i = 0;
              zend_hash_get_current_data(Z_ARRVAL_P(items), (void **)&item) == SUCCESS;
              zend_hash_move_forward(Z_ARRVAL_P(items)), i++) {
+
             g_value_init(&values[i], gtk_tree_model_get_column_type(model, i));
 
             if (phpg_gvalue_from_zval(&values[i], *item TSRMLS_CC) == FAILURE) {
