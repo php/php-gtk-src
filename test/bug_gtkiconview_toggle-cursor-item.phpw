@@ -4,7 +4,7 @@
 if ($argc > 1 && $argv[1] == 'run')
 {
     $wnd = new GtkWindow();
-    $wnd->connect_object('destroy', array('gtk', 'main_quit'));
+    $wnd->connect_simple('destroy', array('gtk', 'main_quit'));
     $wnd->set_default_size(200, 200);
     
     $iv = new GtkIconView();
@@ -34,7 +34,7 @@ if ($argc > 1 && $argv[1] == 'run')
     {
         //var_dump('toggle-cursor-item');
     }
-    $iv->connect_object('toggle-cursor-item', 'toggle_cursor_item');
+    $iv->connect_simple('toggle-cursor-item', 'toggle_cursor_item');
     
     
     //let it show
@@ -56,7 +56,7 @@ if ($argc > 1 && $argv[1] == 'run')
 
 } else {
     //prepare the test
-    require_once('bugconfig.php');
+    require_once(dirname(__FILE__) . '/bugconfig.php');
     $handle = popen(PHP_EXECUTABLE . ' ' . __FILE__ . ' run 2>&1', 'r');
     $lines = '';
     while (!feof($handle)) {
