@@ -1,6 +1,7 @@
 <?php
 /**
 *   FIXED by Andrei on 2005-10-19 22:38
+*   php-gtk/ext/gtk+/gtktreeview.overrides:1.20
 *   Problem reason: Wrong alloc used
 */
 // Create a list store.
