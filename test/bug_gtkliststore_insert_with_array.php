@@ -1,4 +1,8 @@
 <?php
+/**
+*   FIXED by Andrei on 2005-10-19 22:38
+*   Problem reason: Wrong alloc used
+*/
 // Create a list store.
 $listStore = new GtkListStore(Gtk::TYPE_STRING, Gtk::TYPE_LONG, Gtk::TYPE_DOUBLE);
 
@@ -70,7 +74,7 @@ $column->set_attributes($cell_renderer, 'text', 2);
 $window = new GtkWindow();
 $window->add($view);
 $window->show_all();
-$window->connect_object('destroy', array('gtk', 'main_quit'));
+$window->connect_simple('destroy', array('gtk', 'main_quit'));
 gtk::main();
 
 /*
