@@ -1,5 +1,8 @@
 <?php
 /**
+*   FIXED by Andrei (?) on 2005-10-01
+*   Problem reason: GPointer wasn't implemented
+*
 *   Problem: When the switch-page signal is emitted,
 *   a gpointer is needed - but that's not defined
 */
@@ -21,7 +24,7 @@ class Notebooktest extends GtkWindow
     }
     
     function onSwitchNotebookPage(GtkNotebook $notebook) {
-//        echo 'switch' . "\r\n";
+        echo 'switch' . "\r\n";
     }
 }
 
