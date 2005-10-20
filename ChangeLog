@@ -1,3 +1,22 @@
+2005-10-19  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtktreeview.overrides:
+      - Fix crash in GtkListStore::insert();
+      - Add GtkListStore::prepend() (patch by Scott Mattocks)
+
+2005-10-19  Steph  <steph.fox@virgin.net>
+
+    * ext/gtk+/gtk.overrides:
+      Title was being free'd too early
+
+2005-10-19  Christian Weiske  <cweiske@cweiske.de>
+
+    * test/bug_gtkdialog_title.phpw:
+      Minimized the script
+
+    * test/bug_gtkdialog_title.phpw:
+      Weird title characters bug test script
+
 2005-10-17  Steph  <steph.fox@virgin.net>
 
     * ext/libglade/libglade.defs
