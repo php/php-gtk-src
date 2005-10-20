@@ -62,4 +62,64 @@ PHP_METHOD
     g_list_free(list);
 }
 
+%%
+override glade_xml_signal_connect
+static void glade_signal_marshal(char *handler_name, GObject *object, char *signal_name,
+                char *signal_data, GObject *connect_object, gboolean after, gpointer data)
+{
+    phpg_cb_data_t *cbd = (phpg_cb_data_t *)data;
+    char *callback_name;
+    int connect_type, handler_id;
+    GClosure *closure = NULL;
+    zval *php_object = NULL, *php_connect_object = NULL;
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+        php_error(E_WARNING, "unable to call GladeXML callback '%s' specified in %s on line %ld\n",
+                callback_name, cbd->src_filename, cbd->src_lineno);
+        efree(callback_name);
+        return;
+    }
+
+    if (connect_object) { /* FIXME: this is never reached, needs investigating. 'after' works... */
+        fprintf(stdout, "DEBUG: connect_object was called\n");
+        phpg_gobject_new(&php_connect_object, (GObject*)connect_object TSRMLS_CC);
+        zend_hash_add(Z_ARRVAL_P(cbd->user_args), "object", strlen("object") + 1, &php_connect_object, sizeof(php_connect_object), NULL);
+        connect_type = PHPG_CONNECT_SIMPLE;
+    } else {
+        connect_type = PHPG_CONNECT_NORMAL;
+    }
+
+    closure = phpg_closure_new(cbd->callback, cbd->user_args, connect_type TSRMLS_CC);
+
+    phpg_gobject_new(&php_object, (GObject*)object TSRMLS_CC);
+    phpg_gobject_watch_closure(php_object, closure TSRMLS_CC);
+    handler_id = g_signal_connect_closure(object, signal_name, closure, after);
+
+    efree(callback_name);
+}
+
+PHP_METHOD(glade_xml_signal_connect)
+{
+    char *handlername = NULL;
+    zval *callback = NULL, *extra = NULL;
+    zend_bool free_handlername;
+    phpg_cb_data_t *data;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 2, &extra, "uV", &handlername, &free_handlername, &callback))
+        return;
+
+    zval_add_ref(&callback);
+    data = phpg_cb_data_new(callback, extra TSRMLS_CC);
+
+    glade_xml_signal_connect_full(GLADE_XML(PHPG_GOBJECT(this_ptr)), handlername, 
+                                  (GladeXMLConnectFunc)glade_signal_marshal, data);
+
+    if (free_handlername) g_free(handlername);
+
+    RETURN_NULL();
+}
+
 %% }}}
