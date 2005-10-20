@@ -1,5 +1,8 @@
 <?php
 /**
+*   FIXED by Steph on 2005-10-19 20:45
+*   Problem reason: Title was being free'd too early
+*
 *   Start the program, look at the title: Weird chars
 *   Click on the "Show again" button. Different weird chars.
 */
