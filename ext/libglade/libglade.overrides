@@ -20,7 +20,6 @@ ignore
 %%
 ignore
   glade_set_custom_handler
-  glade_xml_new_from_buffer
 %% }}}
 
 %% {{{ GladeXML
