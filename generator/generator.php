@@ -919,12 +919,14 @@ class Generator {
 
         $this->log("\n\n");
         $this->log($this->make_header("$this->prefix Generated Items"));
-        $this->log("%%%% - overriden\n\n");
+        $this->log("%%%% - overridden\n\n");
         $this->log("%s", $this->diversions["gen"]);
 
         $this->log("\n\n");
         $this->log($this->make_header("$this->prefix Not Generated Items"));
-        $this->log("%s", $this->diversions["notgen"]);
+        if (!empty($this->diversions["notgen"])) {
+            $this->log("%s", $this->diversions["notgen"]);
+        }
 
         $this->write_coverage_info();
         $this->write_unused_info();
