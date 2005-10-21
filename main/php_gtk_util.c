@@ -715,7 +715,7 @@ PHP_GTK_API zval *php_gtk_func_args_as_hash(int argc, int start, int length)
 	return hash;
 }
 
-zval *php_gtk_array_as_hash(zval ***values, int num_values, int start, int length)
+PHP_GTK_API zval *php_gtk_array_as_hash(zval ***values, int num_values, int start, int length)
 {
 	zval *hash;
 	int i;
@@ -762,7 +762,7 @@ zval ***php_gtk_hash_as_array(zval *hash)
 	return values;
 }
 
-zval*** php_gtk_hash_as_array_offset(zval *hash, int offset, int *total)
+PHP_GTK_API zval*** php_gtk_hash_as_array_offset(zval *hash, int offset, int *total)
 {
 	int argc = 0;
 	zval ***values;
