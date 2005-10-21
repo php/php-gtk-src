@@ -1,3 +1,29 @@
+2005-10-20  Steph  <steph.fox@virgin.net>
+
+    * ext/libglade/libglade.overrides:
+      First draft for $glade->signal_connect()
+      Note: passed object (as in 'connect_object' set via Glade) is not
+      honoured.
+
+2005-10-20  Christian Weiske  <cweiske@cweiske.de>
+
+    * test/bug_gtkdialog_title.phpw
+      test/bug_gtkliststore_insert_with_array.php:
+      Added the files and the rev numbers of the fix
+
+    * test/bug_gtknotebook_switchpage.phpw:
+      Bug fixed
+
+    * test/bug_gtkiconview_toggle-cursor-item.phpw:
+      Don't use deprecated things when trying to find bugs
+      Bug still exists
+
+    * test/bug_gtkliststore_insert_with_array.php:
+      Bug has been fixed by Andrei
+
+    * test/bug_gtkdialog_title.phpw:
+      Bug has been fixed by steph
+
 2005-10-19  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtktreeview.overrides:
