@@ -3,15 +3,25 @@
 headers
 #include <glade/glade.h>
 #include "php_gtk_api.h"
+
+%% {{{ ignores [confirmed]
 %%
 ignore-glob
   *_get_type
 %%
 ignore
   glade_xml_construct
+  glade_xml_signal_autoconnect_full
   glade_xml_signal_connect_data
   glade_xml_signal_connect_full
-  glade_xml_signal_autoconnect_full
+%% }}}
+
+%% {{{ ignores [tbd]
+%%
+ignore
+  glade_set_custom_handler
+  glade_xml_new_from_buffer
+%% }}}
 
 %% {{{ GladeXML
 %%
@@ -64,14 +74,17 @@ PHP_METHOD
 
 %%
 override glade_xml_signal_connect
-static void glade_signal_marshal(char *handler_name, GObject *object, char *signal_name,
-                char *signal_data, GObject *connect_object, gboolean after, gpointer data)
+static void glade_signal_marshal(const gchar *handler_name, GObject *object,
+                               const gchar *signal_name, const gchar *signal_data,
+                               GObject *connect_object, gboolean after,
+                               gpointer *data)
 {
     phpg_cb_data_t *cbd = (phpg_cb_data_t *)data;
     char *callback_name;
-    int connect_type, handler_id;
+    int handler_id, n_args = 0;
     GClosure *closure = NULL;
     zval *php_object = NULL, *php_connect_object = NULL;
+    zval *hash = NULL, ***args = NULL;
     TSRMLS_FETCH();
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
@@ -81,16 +94,16 @@ static void glade_signal_marshal(char *handler_name, GObject *object, char *sign
         return;
     }
 
-    if (connect_object) { /* FIXME: this is never reached, needs investigating. 'after' works... */
-        fprintf(stdout, "DEBUG: connect_object was called\n");
+    if (connect_object) {
         phpg_gobject_new(&php_connect_object, (GObject*)connect_object TSRMLS_CC);
-        zend_hash_add(Z_ARRVAL_P(cbd->user_args), "object", strlen("object") + 1, &php_connect_object, sizeof(php_connect_object), NULL);
-        connect_type = PHPG_CONNECT_SIMPLE;
+        args = php_gtk_hash_as_array_offset(cbd->user_args, 1, &n_args);
+        args[0] = &php_connect_object;
+        hash = php_gtk_array_as_hash(args, n_args, 0, n_args);
+        closure = phpg_closure_new(cbd->callback, hash, PHPG_CONNECT_OBJECT TSRMLS_CC);
+        efree(args);
     } else {
-        connect_type = PHPG_CONNECT_NORMAL;
+        closure = phpg_closure_new(cbd->callback, cbd->user_args, PHPG_CONNECT_NORMAL TSRMLS_CC);
     }
-
-    closure = phpg_closure_new(cbd->callback, cbd->user_args, connect_type TSRMLS_CC);
 
     phpg_gobject_new(&php_object, (GObject*)object TSRMLS_CC);
     phpg_gobject_watch_closure(php_object, closure TSRMLS_CC);
@@ -120,6 +133,57 @@ PHP_METHOD(glade_xml_signal_connect)
     if (free_handlername) g_free(handlername);
 
     RETURN_NULL();
+}
+
+%%
+override glade_xml_signal_autoconnect
+static void glade_auto_signal_marshal(const gchar *handler_name, GObject *object,
+                               const gchar *signal_name, const gchar *signal_data,
+                               GObject *connect_object, gboolean after,
+                               zval *data)
+{
+    zval *callback = NULL, *hash = NULL, ***args = NULL;
+    zval *php_object = NULL, *php_connect_object = NULL;
+    GClosure *closure = NULL;
+    int handler_id, n_args = 0;
+    TSRMLS_FETCH();
+
+    MAKE_STD_ZVAL(callback);
+    ZVAL_STRING(callback, (char *)handler_name, 1);
+
+    if (!zend_is_callable(callback, 0, NULL)) {
+        php_error(E_WARNING, "%s() is unable to autoconnect callback for handler '%s'",
+              get_active_function_name(TSRMLS_C), handler_name);
+        return;
+    }
+
+    if (connect_object) {
+        phpg_gobject_new(&php_connect_object, (GObject*)connect_object TSRMLS_CC);
+        args = php_gtk_hash_as_array_offset(data, 1, &n_args);
+        args[0] = &php_connect_object;
+        hash = php_gtk_array_as_hash(args, n_args, 0, n_args);
+        closure = phpg_closure_new(callback, hash, PHPG_CONNECT_OBJECT TSRMLS_CC);
+        efree(args);
+    } else {
+        closure = phpg_closure_new(callback, data, PHPG_CONNECT_NORMAL TSRMLS_CC);
+    }
+
+    phpg_gobject_new(&php_object, (GObject*)object TSRMLS_CC);
+    phpg_gobject_watch_closure(php_object, closure TSRMLS_CC);
+    handler_id = g_signal_connect_closure(object, signal_name, closure, after);
+}
+
+PHP_METHOD(glade_xml_signal_autoconnect)
+{
+    zval *extra = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 0, &extra, ""))
+        return;
+
+    glade_xml_signal_autoconnect_full(GLADE_XML(PHPG_GOBJECT(this_ptr)),
+                             (GladeXMLConnectFunc)glade_auto_signal_marshal, extra);
 }
 
 %% }}}
