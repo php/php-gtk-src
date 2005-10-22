@@ -1,3 +1,21 @@
+2005-10-21  Steph  <steph.fox@virgin.net>
+
+    * ext/libglade/libglade.overrides:
+      Remove new_from_buffer from the 'ignore' list so we can test the raw
+      version
+
+    * generator/generator.php:
+      Guess this was the first time the generator had to cope with having nothing
+      to generate...
+
+    * main/php_gtk.h
+      main/php_gtk_util.c:
+      Export a couple of handy utility functions
+      (Nicer way to shift hash members than php_array_merge)
+
+    * ext/libglade/libglade.overrides:
+      ext/libglade is now as complete as it's likely to get - please test
+
 2005-10-20  Steph  <steph.fox@virgin.net>
 
     * ext/libglade/libglade.overrides:
