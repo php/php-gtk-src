@@ -31,6 +31,8 @@ Classes and Functions
 * GtkCellRenderer
 * GtkClipboard
 * GtkEntries can't be var_dumped, probably something missing
+* GtkIconView
+    get_selected_items is not implemented
 * GtkTreeModelFilter constructor doesn't take a model / does it have a constructor?? didn't see one in gtk.defs
 * Would it be good to call GtkLabel::set_ellipsize(PANGO::ELLIPSIZE_END) as part
   of an override for (left-justifying) GtkLabel::set_width_chars() (optional param)?
