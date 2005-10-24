@@ -21,28 +21,38 @@ Base Functionality
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
+* GtkAboutDialog
+  get_authors/set_authors
+  get_artists/set_artists
+  get_documenters/set_documenters
+  set_url_hook/set_email_hook
+  set_logo_icon_name seems to find no icons at all - could somebody test it on his box?
 * GdkGC
-	implement property access (read/write)
+    implement property access (read/write)
 * GtkListStore
 * GtkTreeModel
 * GtkTreeStore
-	Some iterator functions as get_iter() are expecting a GBoxed parameter.
+    Some iterator functions as get_iter() are expecting a GBoxed parameter.
 * GtkTreeView
 * GtkCellRenderer
 * GtkClipboard
 * GtkEntries can't be var_dumped, probably something missing
 * GtkIconView
     get_selected_items is not implemented
+* GtkIconTheme
+    list_icons() is missing
 * GtkTreeModelFilter constructor doesn't take a model / does it have a constructor?? didn't see one in gtk.defs
 * Would it be good to call GtkLabel::set_ellipsize(PANGO::ELLIPSIZE_END) as part
-  of an override for (left-justifying) GtkLabel::set_width_chars() (optional param)?
+      of an override for (left-justifying) GtkLabel::set_width_chars() (optional param)?
 * GtkTextBuffer->create_tag() is not implemented
 * GtkTextBuffer->move_mark_by_name('selection_bound', ...) moves both the the
-  insert and select_bound marks
+    insert and select_bound marks
 * GtkTextTagTable->lookup() is not implemented
 * GtkTextTagTable->foreach() is not implemented
 * GtkTextTag does not do anything. Either the properties must be accessible or
-  a method must be defined to set them (i.e. GtkTextBuffer->create_tag()).
+      a method must be defined to set them (i.e. GtkTextBuffer->create_tag()).
+* GtkWindow
+    set_default_icon_from_file() is missing
 
 Fix
 ~~~
