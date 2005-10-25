@@ -36,6 +36,7 @@ PHP_METHOD
     }
 
     wrapped_obj = (GObject *) glade_xml_new(fname, (const char *)root, (const char *)domain);
+
     if (free_fname) g_free(fname);
     if (free_root) g_free(root);
     if (free_domain) g_free(domain);
@@ -43,6 +44,7 @@ PHP_METHOD
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GladeXML);
     }
+
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
 
@@ -144,11 +146,22 @@ static void glade_auto_signal_marshal(const gchar *handler_name, GObject *object
     zval *callback = NULL, *hash = NULL, ***args = NULL;
     zval *php_object = NULL, *php_connect_object = NULL;
     GClosure *closure = NULL;
-    int handler_id, n_args = 0;
+    int handler_id, n_args = 0, len = 0;
+    char *php_class = NULL, *php_method = NULL;
     TSRMLS_FETCH();
 
     MAKE_STD_ZVAL(callback);
-    ZVAL_STRING(callback, (char *)handler_name, 1);
+    if (strstr(handler_name, "::")) {
+        len = strcspn(handler_name, ":");
+        php_class = safe_estrndup(handler_name, len);
+        php_method = strstr(handler_name, "::") + 2;
+        array_init(callback);
+        add_next_index_string(callback, php_class, 1);
+        add_next_index_string(callback, php_method, 1);
+        efree(php_class);
+    } else {
+        ZVAL_STRING(callback, (char *)handler_name, 1);
+    }
 
     if (!zend_is_callable(callback, 0, NULL)) {
         php_error(E_WARNING, "%s() is unable to autoconnect callback for handler '%s'",
