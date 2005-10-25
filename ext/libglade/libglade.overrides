@@ -146,11 +146,12 @@ static void glade_auto_signal_marshal(const gchar *handler_name, GObject *object
     zval *callback = NULL, *hash = NULL, ***args = NULL;
     zval *php_object = NULL, *php_connect_object = NULL;
     GClosure *closure = NULL;
-    int handler_id, n_args = 0, len = 0;
+    int handler_id, n_args = 0, len = 0, gtk_flag = 0;
     char *php_class = NULL, *php_method = NULL;
     TSRMLS_FETCH();
 
     MAKE_STD_ZVAL(callback);
+
     if (strstr(handler_name, "::")) {
         len = strcspn(handler_name, ":");
         php_class = safe_estrndup(handler_name, len);
@@ -158,6 +159,11 @@ static void glade_auto_signal_marshal(const gchar *handler_name, GObject *object
         array_init(callback);
         add_next_index_string(callback, php_class, 1);
         add_next_index_string(callback, php_method, 1);
+
+        if (strcmp(php_class, "gtk") == 0 || strcmp(php_class, "gdk") == 0) {
+            gtk_flag = 1;
+        }
+
         efree(php_class);
     } else {
         ZVAL_STRING(callback, (char *)handler_name, 1);
@@ -169,13 +175,15 @@ static void glade_auto_signal_marshal(const gchar *handler_name, GObject *object
         return;
     }
 
-    if (connect_object) {
-        phpg_gobject_new(&php_connect_object, (GObject*)connect_object TSRMLS_CC);
-        args = php_gtk_hash_as_array_offset(data, 1, &n_args);
-        args[0] = &php_connect_object;
-        hash = php_gtk_array_as_hash(args, n_args, 0, n_args);
+    if (connect_object || gtk_flag) {
+        if (connect_object) {
+            phpg_gobject_new(&php_connect_object, (GObject*)connect_object TSRMLS_CC);
+            args = php_gtk_hash_as_array_offset(data, 1, &n_args);
+            args[0] = &php_connect_object;
+            hash = php_gtk_array_as_hash(args, n_args, 0, n_args);
+            efree(args);
+        }
         closure = phpg_closure_new(callback, hash, PHPG_CONNECT_OBJECT TSRMLS_CC);
-        efree(args);
     } else {
         closure = phpg_closure_new(callback, data, PHPG_CONNECT_NORMAL TSRMLS_CC);
     }
