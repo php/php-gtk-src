@@ -19,6 +19,7 @@ ignore
 %% {{{ ignores [tbd]
 %%
 ignore
+  glade_xml_new_from_buffer
   glade_set_custom_handler
 %% }}}
 
