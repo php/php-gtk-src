@@ -1,5 +1,8 @@
 <?php
 /**
+*   FIXED by Steph on 2005-10-25 19:04
+*   php-gtk/ext/libglade/libglade.overrides:1.25
+*
 *   To test if GladeXML's signal_autoconnect($obj) method
 *   works correctly
 */
@@ -74,9 +77,12 @@ class MyApp
     function __construct()
     {
 //        $glade = new GladeXML(dirname(__FILE__) . '/bug_glade_signal_autoconnect.glade');
-        $glade = GladeXML::new_from_buffer($GLOBALS['XML'], 0, null, null);
+        $glade = GladeXML::new_from_buffer($GLOBALS['XML']);
         $glade->signal_autoconnect($this);
         $glade->get_widget('dlgAutoconnectTest')->connect_simple('destroy', array('gtk', 'main_quit'));
+
+        //Note the Gtk::main() *here*, not after the "new MyApp()" (self:: doesn't work otherwise)
+        Gtk::main();
     }
 
     function clickMe($obj)
@@ -89,5 +95,4 @@ class MyApp
     }
 }
 new MyApp();
-Gtk::main();
 ?>
