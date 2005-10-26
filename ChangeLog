@@ -1,3 +1,31 @@
+2005-10-25  Christian Weiske  <cweiske@cweiske.de>
+
+    * test/bug_glade_signal_autoconnect.phpw:
+      Added FIXED notice and fixed the passed parameters
+
+2005-10-25  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/libglade/libglade.overrides:
+      Peace offering for Christian
+      (GladeXML::new_from_buffer())
+
+    * ext/libglade/libglade.overrides:
+      I should never have taken this out of ignore...
+
+2005-10-25  Christian Weiske  <cweiske@cweiske.de>
+
+    * test/bug_glade_signal_autoconnect.phpw:
+      Test script for gladexml::signal_autoconnect($obj)
+
+2005-10-25  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/libglade/libglade.overrides:
+      Rudimentary support for static GTK/GDK calls.
+      This will probably get a hefty rethink after some sleep.
+
+    * ext/libglade/libglade.overrides:
+      Support signal_autoconnect() call from within a PHP class
+
 2005-10-24  Christian Weiske  <cweiske@cweiske.de>
 
     * TODO2:
