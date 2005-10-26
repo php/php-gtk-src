@@ -54,13 +54,14 @@ PHP_METHOD
 {
     char *buf, *root = NULL, *domain = NULL;
     zend_bool free_buf, free_root, free_domain;
+    int buf_len;
     GladeXML *glade_obj;
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u|uu", &buf, &free_buf, &root, &free_root, &domain, &free_domain)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u#|uu", &buf, &buf_len, &free_buf, &root, &free_root, &domain, &free_domain)) {
         return;
     }
 
-    glade_obj = glade_xml_new_from_buffer(buf, strlen(buf), (const char *)root, (const char *)domain);
+    glade_obj = glade_xml_new_from_buffer(buf, buf_len, (const char *)root, (const char *)domain);
 
     if (free_buf) g_free(buf);
     if (free_root) g_free(root);
