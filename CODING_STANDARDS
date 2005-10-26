@@ -84,9 +84,10 @@ Naming conventions:
     MyClass::init()). Structurally we need to divert from PEAR guidelines here,
     as we don't have an equivalent hierarchy to reflect: class 'words' should
     also begin with an uppercase letter, e.g. GtkWindow, TheClassThatDoesStuff.
-  Functions and methods: GTK+ or PHP internal methods should be lower-cased,
-    except in static method calls (see above). Functions and methods written
-    as part of your PHP code should use the studlyCaps() convention.
+  Functions and methods: GTK+ or PHP internal methods should be lowercase,
+    excepting the class name in static method calls (see above). Functions
+    and methods written as part of your PHP code should use the studlyCaps()
+    convention.
   Private class members: single underscore prefix.
   Constants: true, false and null are lowercase.
     This is where we leave PEAR guidelines completely. In PHP-GTK, the
@@ -98,4 +99,4 @@ Naming conventions:
     your PHP code), stay with the PEAR format: MYCLASS_CONSTANT_NAME.
   Global variables: We can't emulate PEAR completely here, but we can stay
     with the idea of prefixing global variable names with an underscore and
-    an uppercased identifier, e.g. $_MYCLASS_global_varname.
+    an uppercase identifier, e.g. $_MYCLASS_global_varname.
