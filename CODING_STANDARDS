@@ -15,6 +15,10 @@ is available online at http://pear.php.net/manual/en/standards.php.
 
 Overview:
 
+File formats:
+  ISO-8859-1, text/ASCII, Unix line endings, single line feed after
+  content.
+
 Indenting and line length:
   No tabs, indent 4 spaces, aim to hard wrap at 78 characters (the PEAR
   CS suggests 75 to 85 is 'safe', but in documentation it may not be).
@@ -95,6 +99,3 @@ Naming conventions:
   Global variables: We can't emulate PEAR completely here, but we can stay
     with the idea of prefixing global variable names with an underscore and
     an uppercased identifier, e.g. $_MYCLASS_global_varname.
-
-File formats:
-  ISO-8859-1, text/ASCII, Unix line endings, single line feed after content.
