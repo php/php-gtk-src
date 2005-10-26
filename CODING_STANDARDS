@@ -1,0 +1,100 @@
+PHP-GTK Coding Standards
+
+For internals work (that is, code written in C), aim to adhere to the
+coding standards distributed with the PHP source:
+http://cvs.php.net/php-src/CODING_STANDARDS.
+
+For code written in PHP (for example, demo or test scripts and manual
+examples), it has been agreed to adhere to the PEAR coding standards,
+for the most part. The only differences are in the naming conventions
+- please read the final section below carefully, even if you know PEAR
+CS inside out.
+
+The full PEAR Coding Standards document, including plentiful examples,
+is available online at http://pear.php.net/manual/en/standards.php.
+
+Overview:
+
+Indenting and line length:
+  No tabs, indent 4 spaces, aim to hard wrap at 78 characters (the PEAR
+  CS suggests 75 to 85 is 'safe', but in documentation it may not be).
+
+Control structures:
+  Single space to follow control keyword, 'else' on a single line, and
+  always use curly braces.
+  e.g.
+    if ((condition1) || (condition2)) {
+        action1;
+    } elseif ((condition3) && (condition4)) {
+        action2;
+    } else {
+        defaultaction;
+    }
+
+Function calls:
+  Single spacing between all elements except the brackets.
+  e.g.
+    $var = foo($bar, $baz, $quux);
+
+  In a block of related assignments this can change.
+  e.g.
+    $short         = foo($bar);
+    $long_variable = foo($baz);
+
+Function definitions:
+  The 'one true brace' convention is used. Arguments with default values
+  should go at the end of the argument list. Meaningful values should be
+  returned where possible.
+  e.g.
+    function fooFunction($arg1, $arg2 = false)
+    {
+        if (!is_array($arg1)) {
+            return $this->raiseError();
+        }
+
+        return true;
+    }
+
+Comments:
+  /* .... */ and/or // ... should be used within code.
+  Docblock comments should be provided. There is an extensive example of
+  docblock commenting at: http://pear.php.net/manual/en/standards.sample.php
+
+Including Code:
+  require_once is used for an unconditional include
+  include_once is used for a conditional include
+  Neither uses brackets.
+
+PHP code tags:
+  <?php
+      // ...
+  ?>
+
+Example URLs and email addresses:
+  Always use example.org, example.com or example.net.
+
+Naming conventions:
+  Always use descriptive names, and avoid abbreviations.
+  Classes: begin with an uppercase letter. This includes Gtk, Gdk et al, and
+    it also includes class names in static method calls (e.g. Gtk::main(),
+    MyClass::init()). Structurally we need to divert from PEAR guidelines here,
+    as we don't have an equivalent hierarchy to reflect: class 'words' should
+    also begin with an uppercase letter, e.g. GtkWindow, TheClassThatDoesStuff.
+  Functions and methods: GTK+ or PHP internal methods should be lower-cased,
+    except in static method calls (see above). Functions and methods written
+    as part of your PHP code should use the studlyCaps() convention.
+  Private class members: single underscore prefix.
+  Constants: true, false and null are lowercase.
+    This is where we leave PEAR guidelines completely. In PHP-GTK, the
+    structure is such that we cannot have 'pure' internal GTK+ class constants.
+    It was therefore agreed to use the format Gtk::INTERNAL_CONSTANT for GTK+
+    constants, enumerated values and flags throughout. PHP's own internal
+    constants (e.g. PHP_OS) are not affected.
+    For other constants in the global namespace (that is, constants in
+    your PHP code), stay with the PEAR format: MYCLASS_CONSTANT_NAME.
+  Global variables: We can't emulate PEAR completely here, but we can stay
+    with the idea of prefixing global variable names with an underscore and
+    an uppercased identifier, e.g. $_MYCLASS_global_varname.
+
+File formats:
+  ISO-8859-1, text/ASCII, Unix line endings, single line feed after content.
