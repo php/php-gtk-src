@@ -1,3 +1,17 @@
+2005-10-26  Steph Fox  <steph.fox@virgin.net>
+
+    * CODING_STANDARDS:
+      Clarification
+
+    * CODING_STANDARDS:
+      'Naming conventions' should be where the intro says.
+
+    * CODING_STANDARDS:
+      Initial commit of coding standards file.
+
+    * ext/libglade/libglade.overrides:
+      i18n is a Good Thing
+
 2005-10-25  Christian Weiske  <cweiske@cweiske.de>
 
     * test/bug_glade_signal_autoconnect.phpw:
