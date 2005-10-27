@@ -50,6 +50,14 @@ Classes and Functions
 	GtkEntry objects can't be var_dumped, probably something missing
 * GdkGC
 	implement property access (read/write)
+* GtkIconTheme
+	method      GtkIconTheme::get_icon_sizes: unknown type 'gint*'
+	method      GtkIconTheme::get_search_path: unknown type 'gchar**[]'
+	method      GtkIconTheme::list_icons: unknown type 'GList*'
+	method      GtkIconTheme::set_search_path: unknown type 'const-gchar*[]'
+* GtkIconView
+	method      GtkIconView::get_selected_items: unknown type 'GList*'
+	method      GtkIconView::selected_foreach: unknown type 'GtkIconViewForeachFunc'
 * GtkLabel
 	Would it be good to call GtkLabel::set_ellipsize(PANGO::ELLIPSIZE_END) as part
 	of an override for (left-justifying) GtkLabel::set_width_chars() (optional param)?
