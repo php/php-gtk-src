@@ -22,37 +22,79 @@ Base Functionality
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
 * GtkAboutDialog
-  get_authors/set_authors
-  get_artists/set_artists
-  get_documenters/set_documenters
-  set_url_hook/set_email_hook
-  set_logo_icon_name seems to find no icons at all - could somebody test it on his box?
-* GdkGC
-    implement property access (read/write)
-* GtkListStore
-* GtkTreeModel
-* GtkTreeStore
-    Some iterator functions as get_iter() are expecting a GBoxed parameter.
-* GtkTreeView
+	method      GtkAboutDialog::get_artists: unknown type 'gchar**'
+	method      GtkAboutDialog::get_authors: unknown type 'gchar**'
+	method      GtkAboutDialog::get_documenters: unknown type 'gchar**'
+	method      GtkAboutDialog::set_artists: unknown type 'gchar**'
+	method      GtkAboutDialog::set_authors: unknown type 'gchar**'
+	method      GtkAboutDialog::set_documenters: unknown type 'gchar**'
+	method      GtkAboutDialog::set_email_hook: unknown type 'GtkAboutDialogActivateLinkFunc'
+	method      GtkAboutDialog::set_url_hook: unknown type 'GtkAboutDialogActivateLinkFunc'
+	GtkAboutDialog->set_logo_icon_name seems to find no icons at all
+		(method is generated, need to test this)
 * GtkCellRenderer
+	method      GtkCellRenderer::get_fixed_size: unknown type 'gint*'
+	method      GtkCellRenderer::get_size: unknown type 'gint*'
 * GtkClipboard
-* GtkEntries can't be var_dumped, probably something missing
-* GtkIconView
-    get_selected_items is not implemented
-* GtkIconTheme
-    list_icons() is missing
-* GtkTreeModelFilter constructor doesn't take a model / does it have a constructor?? didn't see one in gtk.defs
-* Would it be good to call GtkLabel::set_ellipsize(PANGO::ELLIPSIZE_END) as part
-      of an override for (left-justifying) GtkLabel::set_width_chars() (optional param)?
-* GtkTextBuffer->create_tag() is not implemented
-* GtkTextBuffer->move_mark_by_name('selection_bound', ...) moves both the the
-    insert and select_bound marks
-* GtkTextTagTable->lookup() is not implemented
-* GtkTextTagTable->foreach() is not implemented
-* GtkTextTag does not do anything. Either the properties must be accessible or
-      a method must be defined to set them (i.e. GtkTextBuffer->create_tag()).
-* GtkWindow
-    set_default_icon_from_file() is missing
+	constructor GtkClipboard::__construct: unknown type 'GdkAtom'
+	method      GtkClipboard::request_contents: unknown type 'GdkAtom'
+	method      GtkClipboard::request_targets: unknown type 'GtkClipboardTargetsReceivedFunc'
+	method      GtkClipboard::request_text: unknown type 'GtkClipboardTextReceivedFunc'
+	method      GtkClipboard::set_can_store: unknown type 'const-GtkTargetEntry*'
+	method      GtkClipboard::set_with_data: unknown type 'const-GtkTargetEntry*'
+	method      GtkClipboard::set_with_owner: unknown type 'const-GtkTargetEntry*'
+	method      GtkClipboard::wait_for_contents: unknown type 'GdkAtom'
+	method      GtkClipboard::wait_for_targets: unknown type 'GdkAtom**'
+	method      GtkClipboard::wait_is_target_available: unknown type 'GdkAtom'
+* GtkEntry
+	GtkEntry objects can't be var_dumped, probably something missing
+* GdkGC
+	implement property access (read/write)
+* GtkLabel
+	Would it be good to call GtkLabel::set_ellipsize(PANGO::ELLIPSIZE_END) as part
+	of an override for (left-justifying) GtkLabel::set_width_chars() (optional param)?
+* GtkListStore
+	method      GtkListStore::insert_with_values: varargs methods not supported
+	method      GtkListStore::insert_with_valuesv: unknown type 'gint*'
+	method      GtkListStore::reorder: unknown type 'gint*'
+	method      GtkListStore::set_column_types: unknown type 'GType*'
+	method      GtkListStore::set_value: unknown type 'GValue*'
+* GtkTreeModel
+	method      GtkTreeModel::get: varargs methods not supported
+	method      GtkTreeModel::get_valist: unknown type 'va_list'
+	method      GtkTreeModel::rows_reordered: unknown type 'gint*'
+* GtkTreeStore
+	method      GtkTreeStore::reorder: unknown type 'gint*'
+	method      GtkTreeStore::set_column_types: unknown type 'GType*'
+	method      GtkTreeStore::set_value: unknown type 'GValue*'
+* GtkTreeView
+	method      GtkTreeView::enable_model_drag_dest: unknown type 'const-GtkTargetEntry*'
+	method      GtkTreeView::enable_model_drag_source: unknown type 'const-GtkTargetEntry*'
+	method      GtkTreeView::get_columns: unknown type 'GList*'
+	method      GtkTreeView::get_cursor: unknown type 'GtkTreePath**'
+	method      GtkTreeView::get_dest_row_at_pos: unknown type 'GtkTreePath**'
+	method      GtkTreeView::get_drag_dest_row: unknown type 'GtkTreePath**'
+	method      GtkTreeView::get_row_separator_func: unknown type 'GtkTreeViewRowSeparatorFunc'
+	method      GtkTreeView::get_search_equal_func: unknown type 'GtkTreeViewSearchEqualFunc'
+	method      GtkTreeView::insert_column_with_attributes: varargs methods not supported
+	method      GtkTreeView::map_expanded_rows: unknown type 'GtkTreeViewMappingFunc'
+	method      GtkTreeView::set_column_drag_function: unknown type 'GtkTreeViewColumnDropFunc'
+	method      GtkTreeView::set_destroy_count_func: unknown type 'GtkTreeDestroyCountFunc'
+	method      GtkTreeView::set_row_separator_func: unknown type 'GtkTreeViewRowSeparatorFunc'
+	method      GtkTreeView::set_search_equal_func: unknown type 'GtkTreeViewSearchEqualFunc'
+	method      GtkTreeView::tree_to_widget_coords: unknown type 'gint*'
+	method      GtkTreeView::widget_to_tree_coords: unknown type 'gint*'
+* GtkTextBuffer
+	method      GtkTextBuffer::create_tag: varargs methods not supported
+	method      GtkTextBuffer::insert_with_tags: varargs methods not supported
+	method      GtkTextBuffer::insert_with_tags_by_name: varargs methods not supported
+	GtkTextBuffer::move_mark_by_name('selection_bound', ...) moves both the the
+	insert and select_bound marks
+		(method is generated, need to test this)
+* GtkTextTagTable
+	method      GtkTextTagTable::foreach: unknown type 'GtkTextTagTableForeach'
+	GtkTextTagTable->lookup() is not implemented
+		(method is generated, needs overriding - it's coming out as php_lookup()!)
 
 Fix
 ~~~
