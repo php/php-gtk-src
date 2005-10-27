@@ -96,7 +96,8 @@ Naming conventions:
     constants, enumerated values and flags throughout. PHP's own internal
     constants (e.g. PHP_OS) are not affected.
     For other constants in the global namespace (that is, constants in
-    your PHP code), stay with the PEAR format: MYCLASS_CONSTANT_NAME.
+    your PHP code), class constants should follow the MyClass::CONSTANT_NAME
+    format. Global constants should be uppercase throughout.
   Global variables: We can't emulate PEAR completely here, but we can stay
     with the idea of prefixing global variable names with an underscore and
     an uppercase identifier, e.g. $_MYCLASS_global_varname.
