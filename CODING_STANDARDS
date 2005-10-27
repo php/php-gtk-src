@@ -101,3 +101,8 @@ Naming conventions:
   Global variables: We can't emulate PEAR completely here, but we can stay
     with the idea of prefixing global variable names with an underscore and
     an uppercase identifier, e.g. $_MYCLASS_global_varname.
+  PHP-GTK itself should always be referred to as 'PHP-GTK', as both the PHP
+    part and the GTK part are acronyms. If you need to write about a specific
+    version in code commentary, the version number should be separated by a
+    single space, i.e. 'PHP-GTK 2', 'PHP 5', 'GTK 2'. In file or class names,
+    simply omit the space.
