@@ -106,3 +106,5 @@ Naming conventions:
     version in code commentary, the version number should be separated by a
     single space, i.e. 'PHP-GTK 2', 'PHP 5', 'GTK 2'. In file or class names,
     simply omit the space.
+
+# vim: set et ts=4 sts sw=4:
