@@ -1,3 +1,22 @@
+2005-10-27  Steph Fox  <steph.fox@virgin.net>
+
+    * TODO2:
+      Missed a couple of genuine 'missing items'
+
+    * TODO2:
+      Cleaned up the TODO
+      Threw out class/function 'not a bug' items
+      Sorted classes and put log reports for each by them so we can see what
+      _really_ needs doing at a glance
+      *Note* the build log I used for this includes my GtkTreePath-as-boxed
+      patch, which kills a lot of problems.
+
+    * CODING_STANDARDS:
+      Write 'PHP-GTK 2' in stone.
+
+    * CODING_STANDARDS:
+      Hopefully this is the final change.
+
 2005-10-26  Steph Fox  <steph.fox@virgin.net>
 
     * CODING_STANDARDS:
