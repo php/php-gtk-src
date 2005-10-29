@@ -50,6 +50,7 @@ zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 	}
 
 	if (ret == SUCCESS) {
+        memset(&result, 0, sizeof(zval));
         ZVAL_NULL(&result);
 		ret = pi->read(poh, &result TSRMLS_CC);
 		if (ret == SUCCESS) {
@@ -440,6 +441,23 @@ PHP_GTK_API zend_class_entry* phpg_create_class(GType gtype)
     }
 
     phpg_register_int_constant(ce, "gtype", sizeof("gtype")-1, gtype);
+
+    /*
+     * This is required to trick Zend into performing the global class table cleanup in a
+     * different manner. EG(full_table_cleanup) is 0 normally, and is set to 1 if any
+     * module is loaded via dl(), because the module may register internal classes. When
+     * we register an internal class at runtime, it is added to the end of the class list.
+     * shutdown_executor() has to remove user-declared classes from the class list. It
+     * does it by iterating through the list in reverse order and cleaning up all user
+     * classes until it encounters an internal class, but since we have just added an
+     * internal class at the very end, it stops right away and does not clean up the user
+     * ones. We circumvent it by pretending to be a dynamically loaded module so that the
+     * hash cleanup does not stop on the first internal class and proceeds through the
+     * whole table.
+     *
+     * Whether there is a better way to do it is still to be seen.
+     */
+    EG(full_tables_cleanup) = 1;
 
     return ce;
 }
