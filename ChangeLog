@@ -1,3 +1,18 @@
+2005-10-28  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/php_gtk+_types.c:
+      Check for gdkpixmap_ce in STYLE_PIXMAP_ARRAY case
+
+2005-10-28  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/libglade/libglade.overrides:
+      Missed a  NOT_STATIC_METHOD();
+
+2005-10-28  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * CODING_STANDARDS:
+      Might as well enforce the standards on the file itself.
+
 2005-10-27  Steph Fox  <steph.fox@virgin.net>
 
     * TODO2:
