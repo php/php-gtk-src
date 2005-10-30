@@ -71,6 +71,7 @@ Classes and Functions
 	method      GtkTreeModel::get: varargs methods not supported
 	method      GtkTreeModel::get_valist: unknown type 'va_list'
 	method      GtkTreeModel::rows_reordered: unknown type 'gint*'
+	method		iter_next() is returning a boolean instead of a GtkTreeIter.
 * GtkTreeStore
 	method      GtkTreeStore::reorder: unknown type 'gint*'
 	method      GtkTreeStore::set_column_types: unknown type 'GType*'
@@ -105,6 +106,7 @@ Classes and Functions
 		(method is generated, needs overriding - it's coming out as php_lookup()!)
 * GdkPixmap
 	constructor	create_from_xpm_d()
+
 
 Fix
 ~~~
