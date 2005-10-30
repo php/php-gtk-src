@@ -186,7 +186,6 @@ PHP_METHOD
 {
     GtkTreeIter iter;
     GtkTreeModel *model;
-    GObject *obj;
     gint position;
     zval *items = NULL;
 
