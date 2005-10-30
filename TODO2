@@ -103,6 +103,8 @@ Classes and Functions
 	method      GtkTextTagTable::foreach: unknown type 'GtkTextTagTableForeach'
 	GtkTextTagTable->lookup() is not implemented
 		(method is generated, needs overriding - it's coming out as php_lookup()!)
+* GdkPixmap
+	constructor	create_from_xpm_d()
 
 Fix
 ~~~
