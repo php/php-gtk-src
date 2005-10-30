@@ -16,6 +16,24 @@
       A lot of people are going to be confused about what happened to SQLite in
       PHP 5.1...
 
+2005-10-29  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/phpg_support.c:
+      Fix a nasty and convoluted crash bug that occurs when we have to create
+      an internal class for a GType at runtime *and* there are any userspace
+      classes declared.
+
+2005-10-29  Steph Fox  <steph.fox@virgin.net>
+
+    * win32/php.ini:
+      Let's have both versions.  There are going to be so many queries about
+      this...
+
+    * win32/php.ini:
+      Make extension loading more clear.
+      A lot of people are going to be confused about what happened to SQLite in
+      PHP 5.1...
+
 2005-10-28  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/php_gtk+_types.c:
