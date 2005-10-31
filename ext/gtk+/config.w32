@@ -1,5 +1,5 @@
 
-if (CHECK_HEADER("main/php.h") && CHECK_LIB("php5ts.lib", "php-gtk") &&
+if (CHECK_HEADER("main/php.h") && CHECK_LIB(PHP_GTK_DEBUG != "no" ? "php5ts_debug.lib" : "php5ts.lib", "php-gtk") &&
 	CHECK_HEADER("iconv.h") && CHECK_LIB("iconv.lib", "php-gtk") &&
 	CHECK_HEADER("libintl.h") && CHECK_LIB("intl.lib", "php-gtk") &&
 	CHECK_HEADER("atk/atk.h") && CHECK_LIB("atk-1.0.lib", "php-gtk") &&
