@@ -1,3 +1,14 @@
+2005-10-30  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/gtk+/gtktreeview.overrides:
+      Kill unreferenced variable.
+
+2005-10-30  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      TODO2:
+      -** empty log message ***
+
 2005-10-29  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/phpg_support.c:
