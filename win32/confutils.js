@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.16 2005-10-01 16:24:42 sfox Exp $
+// $Id: confutils.js,v 1.17 2005-10-31 11:44:43 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -123,7 +123,11 @@ function get_version_numbers() {
 	vfile.WriteLine("#define PHP_GTK_MAJOR_VERSION " + major);
 	vfile.WriteLine("#define PHP_GTK_MINOR_VERSION " + minor);
 	vfile.WriteLine("#define PHP_GTK_RELEASE_VERSION " + release);
-	vfile.WriteLine("#define PHP_GTK_EXTRA_VERSION \"" + extra + "\"");
+	if (PHP_GTK_DEBUG) {
+		vfile.WriteLine("#define PHP_GTK_EXTRA_VERSION \"" + extra + " (DEBUG)\"");
+	} else {
+		vfile.WriteLine("#define PHP_GTK_EXTRA_VERSION \"" + extra + "\"");
+	}
 
 	DEFINE('PHP_GTK_VERSION_STRING', version);
 }
@@ -509,7 +513,7 @@ function CHECK_LIB(libnames, target, path_to_check, common_name) {
 		}
 	}
 
-	STDOUT.WriteLine("	<not found>");
+	ERROR("	" + libname + " not found - aborting configure process");
 
 	return false;
 }

@@ -16,7 +16,7 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: buildconf.js,v 1.6 2005-10-06 10:04:35 sfox Exp $ */
+/* $Id: buildconf.js,v 1.7 2005-10-31 11:44:42 sfox Exp $ */
 // This generates a configure script for win32 build
 
 var FSO = WScript.CreateObject("Scripting.FileSystemObject");
@@ -142,6 +142,10 @@ if (FSO.FileExists('configure.bat')) {
 
 if (FSO.FolderExists('Release')) {
 	FSO.DeleteFolder('Release');
+}
+
+if (FSO.FolderExists('Debug')) {
+	FSO.DeleteFolder('Debug');
 }
 
 if (FSO.FileExists('main\\php_gtk_version.h')) {
