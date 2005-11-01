@@ -183,7 +183,7 @@ PHP_RINIT_FUNCTION(gtk)
 	php_gtk_handlers.read_property  = phpg_read_property;
 	php_gtk_handlers.write_property = phpg_write_property;
 	php_gtk_handlers.get_properties = phpg_get_properties;
-	php_gtk_handlers.get_property_ptr_ptr = NULL;
+	php_gtk_handlers.get_property_ptr_ptr = phpg_get_property_ptr_ptr;
 
 	phpg_register_exceptions();
 

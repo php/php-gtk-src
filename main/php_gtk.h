@@ -234,6 +234,7 @@ int php_gtk_startup_extensions(php_gtk_ext_entry **ext, int ext_count, int modul
 
 zval *phpg_read_property(zval *object, zval *member, int type TSRMLS_DC);
 void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC);
+zval **phpg_get_property_ptr_ptr(zval *object, zval *member TSRMLS_DC);
 HashTable* phpg_get_properties(zval *object TSRMLS_DC);
 PHP_GTK_API void phpg_get_properties_helper(zval *object, HashTable *ht TSRMLS_DC, ...);
 
