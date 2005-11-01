@@ -1,3 +1,13 @@
+2005-10-31  Steph Fox  <steph.fox@virgin.net>
+
+    * win32/buildconf.js
+      win32/config.w32.in
+      win32/confutils.js:
+      Debug support #2
+
+    * ext/gtk+/config.w32:
+      Debug support #1
+
 2005-10-30  Steph Fox  <steph.fox@virgin.net>
 
     * ext/gtk+/gtktreeview.overrides:
