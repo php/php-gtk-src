@@ -93,7 +93,7 @@ static inline phpg_cb_data_t* phpg_cb_data_new(zval *callback, zval *user_args T
 	cbd->src_lineno = zend_get_executed_lineno(TSRMLS_C);
 	return cbd;
 }
-void phpg_cb_data_destroy(gpointer data);
+PHP_GTK_API void phpg_cb_data_destroy(gpointer data);
 
 #define PHPG_OBJ_HEADER \
 	zend_object zobj;   \

@@ -163,7 +163,7 @@ PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, int conn
     return closure;
 }
 
-void phpg_cb_data_destroy(gpointer data)
+PHP_GTK_API void phpg_cb_data_destroy(gpointer data)
 {
     phpg_cb_data_t *cbd = (phpg_cb_data_t *) data;
 
