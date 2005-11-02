@@ -32,9 +32,6 @@ Classes and Functions
 	method      GtkAboutDialog::set_url_hook: unknown type 'GtkAboutDialogActivateLinkFunc'
 	GtkAboutDialog->set_logo_icon_name seems to find no icons at all
 		(method is generated, need to test this)
-* GtkCellRenderer
-	method      GtkCellRenderer::get_fixed_size: unknown type 'gint*'
-	method      GtkCellRenderer::get_size: unknown type 'gint*'
 * GtkClipboard
 	constructor GtkClipboard::__construct: unknown type 'GdkAtom'
 	method      GtkClipboard::request_contents: unknown type 'GdkAtom'
@@ -71,7 +68,6 @@ Classes and Functions
 	method      GtkTreeModel::get: varargs methods not supported
 	method      GtkTreeModel::get_valist: unknown type 'va_list'
 	method      GtkTreeModel::rows_reordered: unknown type 'gint*'
-	method		iter_next() is returning a boolean instead of a GtkTreeIter.
 * GtkTreeStore
 	method      GtkTreeStore::reorder: unknown type 'gint*'
 	method      GtkTreeStore::set_column_types: unknown type 'GType*'
