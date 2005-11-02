@@ -1,3 +1,11 @@
+2005-11-01  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk.c
+      main/php_gtk.h
+      main/phpg_support.c:
+      Fix a few memory leaks by implementing a get_property_ptr_ptr handler
+      that cleverly fails when necessary.
+
 2005-10-31  Steph Fox  <steph.fox@virgin.net>
 
     * win32/buildconf.js
