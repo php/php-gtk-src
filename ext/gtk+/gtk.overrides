@@ -1038,6 +1038,7 @@ static void php_gtk_menu_position(GtkMenu *menu, int *x, int *y, int *push_in, g
     }
 
     efree(callback_name);
+    phpg_cb_data_destroy(data);
 }
 
 PHP_METHOD
