@@ -135,6 +135,7 @@ static void glade_signal_marshal(const gchar *handler_name, GObject *object,
     handler_id = g_signal_connect_closure(object, signal_name, closure, after);
 
     efree(callback_name);
+    efree(php_object);
 }
 
 PHP_METHOD(glade_xml_signal_connect)
@@ -156,6 +157,7 @@ PHP_METHOD(glade_xml_signal_connect)
                                   (GladeXMLConnectFunc)glade_signal_marshal, data);
 
     if (free_handlername) g_free(handlername);
+    phpg_cb_data_destroy(data);
 
     RETURN_NULL();
 }
@@ -190,7 +192,7 @@ static void glade_auto_signal_marshal(const gchar *handler_name, GObject *object
 
         efree(php_class);
     } else {
-        ZVAL_STRING(callback, (char *)handler_name, 1);
+        ZVAL_STRING(callback, (char *)handler_name, 0);
     }
 
     if (!zend_is_callable(callback, 0, NULL)) {
@@ -215,6 +217,8 @@ static void glade_auto_signal_marshal(const gchar *handler_name, GObject *object
     phpg_gobject_new(&php_object, (GObject*)object TSRMLS_CC);
     phpg_gobject_watch_closure(php_object, closure TSRMLS_CC);
     handler_id = g_signal_connect_closure(object, signal_name, closure, after);
+
+    efree(php_object);
 }
 
 PHP_METHOD(glade_xml_signal_autoconnect)
