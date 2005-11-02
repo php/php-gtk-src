@@ -13,6 +13,7 @@ ignore-glob
     gtk_tree_path_*
 %%
 ignore
+    gtk_cell_renderer_get_size
     gtk_list_store_newv
     gtk_list_store_set_valist
     gtk_tree_row_reference_new_proxy
@@ -84,6 +85,24 @@ PHP_METHOD
     }
     efree(args);
 }
+%% }}}
+
+%% {{{ GtkCellRenderer
+%%
+override gtk_cell_renderer_get_fixed_size
+PHP_METHOD
+{
+    int width, height = 0;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_cell_renderer_get_fixed_size(GTK_CELL_RENDERER(PHPG_GOBJECT(this_ptr)), &width, &height);
+    php_gtk_build_value(&return_value, "(ii)", width, height);
+}
+
 %% }}}
 
 %% {{{ GtkListStore
@@ -492,6 +511,7 @@ PHP_METHOD
 
     phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }
+
 %%
 override gtk_tree_model_get_value
 PHP_METHOD
@@ -551,6 +571,34 @@ PHP_METHOD
     } else {
         RETURN_NULL();
     }
+}
+
+%%
+add-arginfo GtkTreeModel iter_next
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, iter)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_model_iter_next
+PHP_METHOD
+{
+    GtkTreeIter *iter;
+    zval *php_iter;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &php_iter, gtktreeiter_ce))
+        return;
+
+    iter = (GtkTreeIter *) PHPG_GBOXED(php_iter);
+
+    if (!gtk_tree_model_iter_next(GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr)), iter)) {
+        RETURN_FALSE;
+    }
+
+    phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }
 
 %%
