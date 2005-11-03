@@ -1,3 +1,21 @@
+2005-11-02  Steph Fox  <steph.fox@virgin.net>
+
+    * TODO2:
+      Bring TODO up to date
+
+    * ext/gtk+/gtktreeview.overrides:
+      GtkCellRenderer::get_fixed_size() and GtkTreeModel::iter_next()
+
+    * ext/libglade/libglade.overrides:
+      Kill a few leaks.
+
+    * ext/gtk+/gtk.overrides:
+      Stem leaks in GtkMenu::popup()
+
+    * main/php_gtk.h
+      main/phpg_closure.c:
+      Export the means of destroying callback data structures.
+
 2005-11-01  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/php_gtk.c
