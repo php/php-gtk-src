@@ -173,7 +173,10 @@ PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, int conn
     if (replace_object) {
         zval_add_ref(&replace_object);
         phpg_closure->replace_object = replace_object;
+    } else {
+        phpg_closure->replace_object = NULL;
     }
+
     phpg_closure->connect_type = connect_type;
 
     return closure;
