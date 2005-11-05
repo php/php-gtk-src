@@ -30,6 +30,7 @@ struct _phpg_closure_t {
 	GClosure closure;
 	zval *callback;
 	zval *user_args;
+    zval *replace_object;
 	int connect_type;
 	char *src_filename;
 	uint src_lineno;
@@ -43,10 +44,14 @@ static void phpg_closure_invalidate(gpointer data, GClosure *closure)
     if (phpg_closure->user_args) {
         zval_ptr_dtor(&phpg_closure->user_args);
     }
+    if (phpg_closure->replace_object) {
+        zval_ptr_dtor(&phpg_closure->replace_object);
+    }
     efree(phpg_closure->src_filename);
 
     phpg_closure->callback = NULL;
     phpg_closure->user_args = NULL;
+    phpg_closure->replace_object = NULL;
     phpg_closure->connect_type = PHPG_CONNECT_NORMAL;
     phpg_closure->src_filename = NULL;
     phpg_closure->src_lineno = 0;
@@ -94,12 +99,18 @@ static void phpg_closure_marshal(GClosure *closure,
     }
 
 	params = (zval ***)emalloc(n_params * sizeof(zval **));
-    for (i = 0; i < n_param_values; i++) {
+    i = 0;
+
+    if (phpg_closure->connect_type == PHPG_CONNECT_REPLACE) {
+        params[i++] = &phpg_closure->replace_object;
+    }
+
+    for ( ; i < n_param_values; i++) {
         params[i] = (zval **) emalloc(sizeof(zval *));
         *(params[i]) = NULL;
         if (phpg_gvalue_to_zval(&param_values[i], params[i], FALSE TSRMLS_CC) != SUCCESS) {
             goto err_marshal;
-		}
+        }
     }
 
     if (phpg_closure->user_args) {
@@ -125,14 +136,15 @@ static void phpg_closure_marshal(GClosure *closure,
 
 err_marshal:
     efree(callback_name);
-    for (i = 0; i < n_param_values; i++) {
+    i = (phpg_closure->connect_type == PHPG_CONNECT_REPLACE) ? 1 : 0;
+    for ( ; i < n_param_values; i++) {
         zval_ptr_dtor(params[i]);
         efree(params[i]);
     }
     efree(params);
 }
 
-PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, int connect_type TSRMLS_DC)
+PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, int connect_type, zval *replace_object TSRMLS_DC)
 {
     GClosure *closure;
     phpg_closure_t *phpg_closure;
@@ -158,6 +170,10 @@ PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, int conn
         phpg_closure->user_args = NULL;
     }
 
+    if (replace_object) {
+        zval_add_ref(&replace_object);
+        phpg_closure->replace_object = replace_object;
+    }
     phpg_closure->connect_type = connect_type;
 
     return closure;

@@ -337,7 +337,7 @@ static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int connect_t
         return;
     }
 
-    closure = phpg_closure_new(callback, extra, connect_type TSRMLS_CC);
+    closure = phpg_closure_new(callback, extra, connect_type, NULL TSRMLS_CC);
     if (extra) {
         zval_ptr_dtor(&extra);
     }
