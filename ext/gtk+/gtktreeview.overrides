@@ -584,7 +584,7 @@ ZEND_END_ARG_INFO();
 override gtk_tree_model_iter_next
 PHP_METHOD
 {
-    GtkTreeIter *iter;
+    GtkTreeIter iter;
     zval *php_iter;
 
     NOT_STATIC_METHOD();
@@ -592,13 +592,13 @@ PHP_METHOD
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &php_iter, gtktreeiter_ce))
         return;
 
-    iter = (GtkTreeIter *) PHPG_GBOXED(php_iter);
+    iter = *(GtkTreeIter *) PHPG_GBOXED(php_iter);
 
-    if (!gtk_tree_model_iter_next(GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr)), iter)) {
-        RETURN_FALSE;
+    if (gtk_tree_model_iter_next(GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr)), &iter)) {
+        phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+    } else {
+        RETURN_NULL();
     }
-
-    phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }
 
 %%
