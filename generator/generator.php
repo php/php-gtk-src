@@ -326,6 +326,27 @@ class Generator {
             }
         }
 
+        if ($this->overrides->have_extra_methods($object->c_name)) {
+            foreach ($this->overrides->get_extra_methods($object->c_name) as $method_name => $method_body) {
+                list($arginfo, $reflection_func) = $this->genReflectionArgInfo(null, $object, $method_name);
+
+                $method_body = preg_replace('!^.*(PHP_METHOD).*$!m', "static $1($object->c_name, $method_name)", $method_body);
+                $this->write_override($method_body, $object->c_name, $method_name);
+                $method_entries[$method_name] = array($object->c_name, $method_name,
+                                                      $reflection_func, 'ZEND_ACC_PUBLIC');
+                $this->divert("gen", "%s  %-11s %s::%s\n", "%%", "method", $object->c_name, $method_name);
+                $num_written++;
+                $this->cover["methods"]->written();
+
+                if ($arginfo === null) {
+                    $object->methods[$method_name] = 1;
+                } else {
+                    $methodarginfos .= $arginfo;
+                    $object->methods[$method_name] = 2;
+                }
+            }
+        }
+
         $this->log_print("(%d written, %d skipped)\n", $num_written, $num_skipped);
 
         return array($method_entries, $methodarginfos);
