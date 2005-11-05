@@ -114,7 +114,6 @@ static void phpg_glade_signal_connect_one(const gchar *handler_name, GObject *ob
                                           gpointer *data)
 {
     phpg_cb_data_t *cbd = (phpg_cb_data_t *)data;
-    char *callback_name;
     int handler_id;
     GClosure *closure = NULL;
     zval *php_object = NULL, *php_connect_object = NULL;
@@ -132,7 +131,6 @@ static void phpg_glade_signal_connect_one(const gchar *handler_name, GObject *ob
     phpg_gobject_watch_closure(php_object, closure TSRMLS_CC);
     handler_id = g_signal_connect_closure(object, signal_name, closure, after);
 
-    efree(callback_name);
     zval_ptr_dtor(&php_object);
 }
 
