@@ -169,6 +169,7 @@ static void phpg_glade_signal_connect_auto(const gchar *handler_name, GObject *o
     GClosure *closure = NULL;
     int handler_id, len = 0, connect_normal = 1;
     char *php_class = NULL, *php_method = NULL;
+    zend_class_entry *ce = NULL, **pce;
     TSRMLS_FETCH();
 
     /*
@@ -177,14 +178,15 @@ static void phpg_glade_signal_connect_auto(const gchar *handler_name, GObject *o
      * course, but those connections are much less useful.
      */
     if (strstr(handler_name, "::")) {
-        /* If the handler is prefixed by '-', use simple signal connection. */
-        if (handler_name[0] == '-') {
-            connect_normal = 0;
-            handler_name++;
-        }
         len = strcspn(handler_name, ":");
         php_class = safe_estrndup(handler_name, len);
         php_method = strstr(handler_name, "::") + 2;
+        if (zend_lookup_class(php_class, strlen(php_class), &pce TSRMLS_CC) == SUCCESS) {
+            ce = *pce;
+            if (ce->type == ZEND_INTERNAL_CLASS) {
+                connect_normal = 0;
+            }
+        }
         MAKE_STD_ZVAL(callback);
         array_init(callback);
         add_next_index_string(callback, php_class, 1);
