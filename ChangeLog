@@ -1,3 +1,36 @@
+2005-11-05  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/libglade/libglade.overrides:
+      Eliminate need for tag
+
+    * ext/libglade/libglade.overrides:
+      Fix crash.
+
+2005-11-05  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/libglade/libglade.overrides:
+      - Re-implement GladeXML::signal_autoconnect() (too many changes)
+      * Add GladeXML::signal_autoconnect_instance()
+      * Adjust GladeXML::signal_connect() to use 'replace' type connection
+        when appropriate
+
+    * main/phpg_closure.c:
+      Initialize structure member to NULL if no replacement object is provided.
+
+    * main/php_gtk.h
+      main/phpg_closure.c
+      main/phpg_gobject.c:
+      Extend closures with 'replace' type of connection that allows one to
+      substitute a different object (any PHP value really) in place of the one
+      that emitted the signal.
+
+    * generator/generator.php:
+      Generate extra class methods added in overrides.
+
+    * ext/gtk+/gtktreeview.overrides:
+      Make GtkTreeModel::iter_next() return the next iterator _without_
+      changing the input one.
+
 2005-11-02  Steph Fox  <steph.fox@virgin.net>
 
     * TODO2:
