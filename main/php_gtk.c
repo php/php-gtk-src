@@ -195,6 +195,7 @@ PHP_RINIT_FUNCTION(gtk)
 	phpg_gobject_register_self(TSRMLS_C);
 	phpg_gboxed_register_self(TSRMLS_C);
 	phpg_gpointer_register_self(TSRMLS_C);
+	phpg_gdkatom_register_self(TSRMLS_C);
 
 	G_TYPE_PHP_VALUE = g_boxed_type_register_static("PhpValue", php_object_copy, php_object_release);
 
