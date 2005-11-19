@@ -27,6 +27,8 @@
  */
 PHP_GTK_EXPORT_CE(gdkatom_ce) = NULL;
 
+static zend_object_handlers phpg_gdkatom_handlers;
+
 static function_entry gdkatom_methods[] = {
     PHP_ME_MAPPING(__construct, no_direct_constructor, NULL)
     { NULL, NULL, NULL }
@@ -42,6 +44,47 @@ static void phpg_free_gdkatom_storage(phpg_gdkatom_t *object TSRMLS_DC)
 }
 /* }}} */
 
+/* {{{ static phpg_gdkatom_compare_objects() */
+static int phpg_gdkatom_compare_objects(zval *zobj1, zval *zobj2 TSRMLS_DC)
+{
+    phpg_gdkatom_t *pobj1, *pobj2;
+
+    pobj1 = zend_object_store_get_object(zobj1 TSRMLS_CC);
+    pobj2 = zend_object_store_get_object(zobj2 TSRMLS_CC);
+
+    return (pobj1->atom > pobj2->atom) ? 1 : (pobj1->atom < pobj2->atom ? -1 : 0);
+}
+/* }}} */
+
+/* {{{ static phpg_gdkatom_cast_object() */
+static int phpg_gdkatom_cast_object(zval *readobj, zval *writeobj, int type, int should_free TSRMLS_DC)
+{
+    phpg_gdkatom_t *pobj;
+    zval free_obj;
+
+    if (type == IS_STRING) {
+        pobj = zend_object_store_get_object(readobj TSRMLS_CC);
+        if (should_free) {
+            free_obj = *writeobj;
+        }
+        if (!pobj->name) {
+            pobj->name = estrdup(gdk_atom_name(pobj->atom));
+        }
+        if (!pobj->name) {
+            /* TODO obtain representation from __toString() perhaps */
+        }
+        ZVAL_STRING(writeobj, pobj->name, 1);
+        if (should_free) {
+            zval_dtor(&free_obj);
+        }
+
+        return SUCCESS;
+    }
+
+    return FAILURE;
+}
+/* }}} */
+
 /* {{{ PHP_GTK_API phpg_create_gdkatom() */
 PHP_GTK_API zend_object_value phpg_create_gdkatom(zend_class_entry *ce TSRMLS_DC)
 {
@@ -54,7 +97,7 @@ PHP_GTK_API zend_object_value phpg_create_gdkatom(zend_class_entry *ce TSRMLS_DC
 	object->atom = GDK_NONE;
 	object->name = NULL;
 
-	zov.handlers = &php_gtk_handlers;
+	zov.handlers = &phpg_gdkatom_handlers;
 	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_free_gdkatom_storage, NULL TSRMLS_CC);
 
 	return zov;
@@ -102,6 +145,10 @@ PHP_GTK_API GdkAtom phpg_gdkatom_from_zval(zval *value TSRMLS_DC)
 void phpg_gdkatom_register_self(TSRMLS_D)
 {
 	if (gdkatom_ce) return;
+
+    phpg_gdkatom_handlers = php_gtk_handlers;
+    phpg_gdkatom_handlers.compare_objects = phpg_gdkatom_compare_objects;
+    phpg_gdkatom_handlers.cast_object = phpg_gdkatom_cast_object;
 
 	gdkatom_ce = phpg_register_class("GdkAtom", gdkatom_methods, NULL, 0, NULL, phpg_create_gdkatom, G_TYPE_POINTER TSRMLS_CC);
     phpg_register_int_constant(gdkatom_ce, "gtype", sizeof("gtype")-1, G_TYPE_POINTER);

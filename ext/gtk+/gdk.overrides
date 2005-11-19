@@ -998,3 +998,22 @@ PHPG_PROP_READER
     return SUCCESS;
 }
 
+%%
+override gdk_atom_intern
+PHP_METHOD
+{
+    char *atom_name;
+	zend_bool free_atom_name, only_if_exists = FALSE;
+	GdkAtom php_atom;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u|b", &atom_name, &free_atom_name, &only_if_exists))
+		return;
+
+    php_atom = gdk_atom_intern(atom_name, (gboolean)only_if_exists);
+	if (free_atom_name) g_free(atom_name);
+    if (php_atom == GDK_NONE) {
+        RETURN_NULL();
+    }
+    phpg_gdkatom_new(&return_value, php_atom TSRMLS_CC);
+}
+
