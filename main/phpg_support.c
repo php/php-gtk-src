@@ -243,8 +243,7 @@ PHP_GTK_API void phpg_init_object(void *object, zend_class_entry *ce)
 	phpg_head_t *poh = (phpg_head_t *) object;
 
 	poh->zobj.ce = ce;
-	poh->zobj.in_get = 0;
-	poh->zobj.in_set = 0;
+	poh->zobj.guards = NULL;
 	poh->pi_hash = NULL;
 
 	ALLOC_HASHTABLE(poh->zobj.properties);
