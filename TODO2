@@ -10,7 +10,6 @@ Base Functionality
 ~~~~~~~~~~~~~~~~~~
 * Some classes need to be coded in C entirely, see gtk-types.c
 * Interfaces
-* Atoms
 * Implement __gtype, __doc, and other special properties, if possible
 * Deal with clone() handler in Zend
 * Maybe use zend_call_function() instead of call_user_function_ex() to take

@@ -42,7 +42,7 @@ PHP_GTK_API int phpg_rectangle_from_zval(zval *value, GdkRectangle *rectangle TS
 		return SUCCESS;
 	}
 
-	php_error(E_WARNING, "could not convert to type GdkRectangle");
+	php_error(E_WARNING, "unable to convert to type GdkRectangle");
 
 	return FAILURE;
 }

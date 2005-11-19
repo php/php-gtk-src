@@ -640,10 +640,45 @@ class Boxed_Arg extends Arg_Type {
 
 /* {{{ Atom_Arg */
 class Atom_Arg extends Int_Arg {
-    function write_return($type, &$var_list, $separate)
+    const atom_tpl = "
+    %(name) = phpg_gdkatom_from_zval(php_%(name) TSRMLS_CC);
+    if (%(name) == NULL) {
+        php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a valid GdkAtom object\",
+                  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        %(on_error);
+    }\n";
+
+    const atom_default_tpl = "
+    if (php_%(name)) {
+        %(name) = phpg_gdkatom_from_zval(php_%(name) TSRMLS_CC);
+        if (%(name) == NULL) {
+            php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a valid GdkAtom object\",
+                      get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+            %(on_error);
+        }
+    }\n";
+
+    function write_param($type, $name, $default, $null_ok, $info)
     {
-        return "    *return_value = *php_gdk_atom_new(%s);\n" .
-               "    return;";
+        if (isset($default)) {
+            $info->var_list->add('GdkAtom', $name . ' = ' . $default);
+            $info->var_list->add('zval', '*php_' . $name . ' = NULL');
+            $info->pre_code[] = aprintf(self::atom_default_tpl, array('name' => $name,
+                                                                      'on_error' => $info->error_action));
+        } else {
+            $info->var_list->add('GdkAtom', $name);
+            $info->var_list->add('zval', '*php_' . $name . ' = NULL');
+            $info->pre_code[] = aprintf(self::atom_tpl, array('name' => $name,
+                                                              'on_error' => $info->error_action));
+        }
+        $info->arg_list[] = $name;
+        $info->add_parse_list('O', array('&php_' . $name, 'gdkatom_ce'));
+    }
+
+    function write_return($type, $owns_return, $info)
+    {
+        $info->var_list->add('GdkAtom', 'php_retval');
+        $info->post_code[] = "\tRETVAL_STRING(gdk_atom_name(php_retval), 1);";
     }
 }
 /* }}} */
@@ -1007,9 +1042,8 @@ $matcher->register('GdkRectangle', new GdkRectangle_Arg);
  * GdkRectangle(Ptr) args and others
  */
 
-#$arg = new Atom_Arg();
-#$matcher->register('GdkAtom', $arg);
-#
+$matcher->register('GdkAtom', new Atom_Arg());
+
 #$arg = new Drawable_Arg();
 #$matcher->register('GdkDrawable*', $arg);
 #

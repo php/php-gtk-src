@@ -4,6 +4,9 @@ headers
 #include "php_gtk_api.h"
 #include "ext/standard/file.h"
 
+#undef GDK_DISPLAY
+#define GDK_DISPLAY(object) (GDK_DISPLAY_OBJECT(object))
+
 /* TODO
  * implement gtk_adjustment_set_all
  */

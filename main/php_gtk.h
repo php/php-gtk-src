@@ -124,6 +124,12 @@ typedef struct {
 	gpointer pointer;
 } phpg_gpointer_t;
 
+typedef struct {
+	PHPG_OBJ_HEADER;
+	gchar *name;
+	GdkAtom atom;
+} phpg_gdkatom_t;
+
 typedef int (*boxed_from_zval_t)(const zval *value, GValue *gvalue TSRMLS_DC);
 typedef int (*boxed_to_zval_t)(const GValue *gvalue, zval **value TSRMLS_DC);
 typedef struct {
@@ -147,6 +153,9 @@ enum {
 #define PHPG_GOBJECT(zobj) (GObject *)phpg_gobject_get(zobj TSRMLS_CC)->obj
 
 #define PHPG_GBOXED(zobj) phpg_gboxed_get(zobj TSRMLS_CC)->boxed
+
+#define PHPG_GDKATOM(zobj) ((phpg_gdkatom_t*)PHPG_GET(zobj))->atom
+
 
 /*
  * Property read/write function types
@@ -458,6 +467,11 @@ static inline phpg_gboxed_t* phpg_gboxed_get(zval *zobj TSRMLS_DC)
 void phpg_gpointer_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gpointer_new(zval **zobj, GType gtype, gpointer pointer TSRMLS_DC);
 
+/* GdkAtom */
+void phpg_gdkatom_register_self(TSRMLS_D);
+PHP_GTK_API void phpg_gdkatom_new(zval **zobj, GdkAtom atom TSRMLS_DC);
+PHP_GTK_API GdkAtom phpg_gdkatom_from_zval(zval *value TSRMLS_DC);
+
 /* Closures */
 PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, int connect_type, zval *replace_object TSRMLS_DC);
 PHP_GTK_API void phpg_watch_closure(zval *obj, GClosure *closure TSRMLS_DC);
@@ -466,6 +480,7 @@ PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtype_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gobject_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gboxed_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gpointer_ce);
+PHP_GTK_API extern PHP_GTK_EXPORT_CE(gdkatom_ce);
 
 #endif /* HAVE_PHP_GTK */
 
