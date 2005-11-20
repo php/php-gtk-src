@@ -1,3 +1,31 @@
+2005-11-19  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.overrides
+      main/phpg_atom.c:
+      - Implement atom object comparison and string casting.
+      - Override Gdk::atom_intern() to return objects
+
+    * main/php_gtk.c:
+      register GdkAtom class entry
+
+    * TODO2
+      config.m4
+      ext/gtk+/gtk.overrides
+      ext/gtk+/php_gtk+_types.c
+      generator/arg_types.php
+      main/php_gtk.h
+      main/phpg_atom.c:
+      Implement GdkAtom support.
+
+    * ext/gtk+/Makefile.frag
+      ext/libglade/Makefile.frag:
+      Remove the build requirement that all generated files should be
+      generated before compilation (since it requres regenerating all of them
+      even if only one changes).
+
+    * main/phpg_support.c:
+      Adjust for the latest changes in PHP regarding __get/__set handlers.
+
 2005-11-05  Steph Fox  <steph.fox@virgin.net>
 
     * ext/libglade/libglade.overrides:
