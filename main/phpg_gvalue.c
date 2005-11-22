@@ -279,7 +279,11 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC)
 
             if (Z_TYPE_P(value) == IS_NULL) {
                 g_value_set_boxed(gval, NULL);
-            } else if (G_VALUE_HOLDS(gval, G_TYPE_PHP_VALUE) && phpg_gtype_from_zval(value) == G_TYPE_PHP_VALUE) {
+            /*
+             * We should be safe just setting the zval here, since G_TYPE_PHP_VALUE is
+             * supposed to take any zval type.
+             */
+            } else if (G_VALUE_HOLDS(gval, G_TYPE_PHP_VALUE)) {
                 g_value_set_boxed(gval, value);
             } else if (Z_TYPE_P(value) == IS_OBJECT
                        && instanceof_function(Z_OBJCE_P(value), gboxed_ce TSRMLS_CC)
