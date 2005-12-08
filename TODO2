@@ -31,6 +31,8 @@ Classes and Functions
 	method      GtkAboutDialog::set_url_hook: unknown type 'GtkAboutDialogActivateLinkFunc'
 	GtkAboutDialog->set_logo_icon_name seems to find no icons at all
 		(method is generated, need to test this)
+* GtkCalendar
+	method      GtkCalendar::get_date: unknown type 'guint*'
 * GtkClipboard
 	constructor GtkClipboard::__construct: unknown type 'GdkAtom'
 	method      GtkClipboard::request_contents: unknown type 'GdkAtom'
@@ -99,6 +101,8 @@ Classes and Functions
 	method      GtkTextTagTable::foreach: unknown type 'GtkTextTagTableForeach'
 	GtkTextTagTable->lookup() is not implemented
 		(method is generated, needs overriding - it's coming out as php_lookup()!)
+* GdkPixbuf
+	pixbuf_new_from_array() has PyArrayObject as a parameter
 * GdkPixmap
 	constructor	create_from_xpm_d()
 
