@@ -150,8 +150,7 @@ void phpg_gdkatom_register_self(TSRMLS_D)
     phpg_gdkatom_handlers.compare_objects = phpg_gdkatom_compare_objects;
     phpg_gdkatom_handlers.cast_object = phpg_gdkatom_cast_object;
 
-	gdkatom_ce = phpg_register_class("GdkAtom", gdkatom_methods, NULL, 0, NULL, phpg_create_gdkatom, G_TYPE_POINTER TSRMLS_CC);
-    phpg_register_int_constant(gdkatom_ce, "gtype", sizeof("gtype")-1, G_TYPE_POINTER);
+	gdkatom_ce = phpg_register_class("GdkAtom", gdkatom_methods, NULL, 0, NULL, phpg_create_gdkatom, 0 TSRMLS_CC);
 }
 /* }}} */
 
