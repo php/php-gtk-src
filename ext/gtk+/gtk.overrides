@@ -287,6 +287,55 @@ PHP_METHOD
 }
 
 %%
+override gtk_idle_add
+
+static void phpg_gtk_idle_add_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool with_priority)
+{
+    gint priority = G_PRIORITY_DEFAULT;
+    zval *callback = NULL;
+    zval *extra = NULL;
+    zval *data = NULL;
+    char *callback_filename;
+    uint callback_lineno;
+    guint handler_id;
+    int req_args = with_priority ? 2 : 1;
+
+    if (ZEND_NUM_ARGS() < req_args) {
+        php_error(E_WARNING, "%s::%s() requires at least %d arguments, %d given",
+                  get_active_class_name(NULL TSRMLS_CC),
+                  get_active_function_name(TSRMLS_C), req_args, ZEND_NUM_ARGS());
+        return;
+    }
+
+    if (with_priority) {
+        if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), req_args, &extra, "iV", &priority, &callback))
+            return;
+    } else {
+        if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), req_args, &extra, "V", &callback))
+            return;
+    }
+
+    callback_filename = zend_get_executed_filename(TSRMLS_C);
+    callback_lineno = zend_get_executed_lineno(TSRMLS_C);
+    php_gtk_build_value(&data, "(VNsi)", callback, extra, callback_filename, callback_lineno);
+
+    handler_id = g_idle_add_full(priority, phpg_handler_marshal, data, phpg_destroy_notify);
+    RETURN_LONG(handler_id);
+}
+
+PHP_METHOD
+{
+    phpg_gtk_idle_add_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
+}
+
+%%          
+override gtk_idle_add_priority
+PHP_METHOD 
+{           
+    phpg_gtk_idle_add_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
+}
+
+%%
 add Gtk get_version
 PHP_METHOD
 {
