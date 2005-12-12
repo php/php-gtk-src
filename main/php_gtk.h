@@ -125,7 +125,7 @@ typedef struct {
 } phpg_gpointer_t;
 
 typedef struct {
-	PHPG_OBJ_HEADER;
+	PHPG_OBJ_HEADER
 	gchar *name;
 	GdkAtom atom;
 } phpg_gdkatom_t;
