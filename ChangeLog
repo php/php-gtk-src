@@ -1,3 +1,9 @@
+2005-12-12  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk.h
+      win32/config.w32.in:
+      Fix Win32 compilation errors.
+
 2005-12-08  Steph Fox  <steph.fox@virgin.net>
 
     * TODO2:
