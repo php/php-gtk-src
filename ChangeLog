@@ -1,3 +1,8 @@
+2005-12-16  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.overrides:
+      Expose "xid" property on Win32.
+
 2005-12-12  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/php_gtk.h
