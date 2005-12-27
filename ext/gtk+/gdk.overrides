@@ -86,7 +86,7 @@ PHP_METHOD
 add-arginfo GdkColor parse
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
-    ZEND_ARG_OBJ_INFO(0, color, GdkColor, 1)
+    ZEND_ARG_INFO(0, color)
 ZEND_END_ARG_INFO();
 
 
