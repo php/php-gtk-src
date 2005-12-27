@@ -180,6 +180,13 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkListStore prepend
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, items)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_list_store_prepend
 PHP_METHOD
 {
@@ -198,6 +205,15 @@ PHP_METHOD
 
     phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }
+
+%%
+add-arginfo GtkListStore insert
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+    ZEND_ARG_INFO(0, position)
+    ZEND_ARG_INFO(0, items)
+ZEND_END_ARG_INFO();
+
 
 %%
 override gtk_list_store_insert
@@ -271,8 +287,10 @@ PHP_METHOD
 %%
 add-arginfo GtkListStore set
 static
-ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
-    ZEND_ARG_INFO(0, iter)
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 3)
+    ZEND_ARG_OBJ_INFO(0, iter, GtkTreeIter, 1)
+    ZEND_ARG_INFO(0, column)
+    ZEND_ARG_INFO(0, value)
     ZEND_ARG_INFO(0, column)
     ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO();
@@ -410,7 +428,7 @@ PHP_METHOD
 add-arginfo GtkTreeStore append
 static
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
-    ZEND_ARG_INFO(0, iter)
+    ZEND_ARG_OBJ_INFO(0, iter, GtkTreeIter, 1)
     ZEND_ARG_INFO(0, items)
 ZEND_END_ARG_INFO();
 
@@ -439,6 +457,17 @@ PHP_METHOD
 
     phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }
+
+%%
+add-arginfo GtkTreeStore set
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 3)
+    ZEND_ARG_OBJ_INFO(0, iter, GtkTreeIter, 1)
+    ZEND_ARG_INFO(0, column)
+    ZEND_ARG_INFO(0, value)
+    ZEND_ARG_INFO(0, column)
+    ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_tree_store_set
@@ -494,6 +523,13 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkTreeModel get_iter_from_string
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, path)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_tree_model_get_iter_from_string
 PHP_METHOD
 {
@@ -511,6 +547,14 @@ PHP_METHOD
 
     phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }
+
+%%
+add-arginfo GtkTreeModel get_value
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, iter, GtkTreeIter, 1)
+    ZEND_ARG_INFO(0, column)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_tree_model_get_value
@@ -546,7 +590,7 @@ PHP_METHOD
 add-arginfo GtkTreeModel iter_children
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
-    ZEND_ARG_INFO(0, parent_iter)
+    ZEND_ARG_OBJ_INFO(0, parent_iter, GtkTreeIter, 1)
 ZEND_END_ARG_INFO();
 
 %%
@@ -577,7 +621,7 @@ PHP_METHOD
 add-arginfo GtkTreeModel iter_next
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
-    ZEND_ARG_INFO(0, iter)
+    ZEND_ARG_OBJ_INFO(0, iter, GtkTreeIter, 1)
 ZEND_END_ARG_INFO();
 
 %%
@@ -600,6 +644,13 @@ PHP_METHOD
         RETURN_NULL();
     }
 }
+
+%%
+add-arginfo GtkTreeModel foreach
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_tree_model_foreach
@@ -749,7 +800,7 @@ static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, position)
     ZEND_ARG_INFO(0, title)
-    ZEND_ARG_INFO(0, cellrenderer)
+    ZEND_ARG_OBJ_INFO(0, cellrenderer, GtkCellRenderer, 1)
     ZEND_ARG_INFO(0, callback)
 ZEND_END_ARG_INFO();
 
@@ -824,6 +875,14 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkTreeView get_path_at_pos
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, x)
+    ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_tree_view_get_path_at_pos
 
 PHP_METHOD
@@ -863,6 +922,15 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkTreeViewColumn
+
+%%
+add-arginfo GtkTreeViewColumn __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, title)
+    ZEND_ARG_OBJ_INFO(0, cellrenderer, GtkCellRenderer, 1)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_tree_view_column_new_with_attributes
 PHP_METHOD
@@ -933,7 +1001,7 @@ PHP_METHOD
 add-arginfo GtkTreeViewColumn set_cell_data_func
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
-    ZEND_ARG_INFO(0, cellrenderer)
+    ZEND_ARG_OBJ_INFO(0, cellrenderer, GtkCellRenderer, 1)
     ZEND_ARG_INFO(0, callback)
 ZEND_END_ARG_INFO();
 

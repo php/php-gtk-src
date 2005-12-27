@@ -402,6 +402,13 @@ PHP_METHOD
 %% {{{ functions
 
 %%
+add-arginfo Gtk icon_size_lookup
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, size)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_icon_size_lookup
 PHP_METHOD
 {
@@ -462,6 +469,18 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkAdjustment
+
+%%
+add-arginfo GtkAdjustment __construct
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, value)
+    ZEND_ARG_INFO(0, lower)
+    ZEND_ARG_INFO(0, upper)
+    ZEND_ARG_INFO(0, step_incr)
+    ZEND_ARG_INFO(0, page_incr)
+    ZEND_ARG_INFO(0, page_size)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_adjustment_new
@@ -688,6 +707,14 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkCombo
+
+%%
+add-arginfo GtkCombo set_popdown_strings
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, strings)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_combo_set_popdown_strings
 PHP_METHOD
@@ -732,6 +759,17 @@ PHP_METHOD
 %% include gtkcontainer.overrides
 
 %% {{{ GtkDialog
+
+%%
+add-arginfo GtkDialog __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, title)
+    ZEND_ARG_OBJ_INFO(0, parent, GtkWindow, 1)
+    ZEND_ARG_INFO(0, flags)
+    ZEND_ARG_INFO(0, buttons)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_dialog_new_with_buttons
 PHP_METHOD
@@ -843,7 +881,7 @@ add-arginfo GtkImageMenuItem __construct
 static
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
     ZEND_ARG_INFO(0, stock_id)
-    ZEND_ARG_INFO(0, accel_group)
+    ZEND_ARG_OBJ_INFO(0, accel_group, GtkAccelGroup, 1)
 ZEND_END_ARG_INFO();
 
 %%
@@ -884,6 +922,17 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkFileChooserDialog
+
+%%
+add-arginfo GtkFileChooserDialog __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, title)
+    ZEND_ARG_OBJ_INFO(0, parent, GtkWindow, 1)
+    ZEND_ARG_INFO(0, buttons)
+    ZEND_ARG_INFO(0, backend)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_file_chooser_dialog_new_with_backend
 PHP_METHOD
@@ -1056,6 +1105,15 @@ PHP_METHOD
 
 %% {{{ GtkMenu
 %%
+add-arginfo GtkMenu popup
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 2)
+    ZEND_ARG_INFO(0, x)
+    ZEND_ARG_INFO(0, y)
+    ZEND_ARG_INFO(0, data)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_menu_popup
 static void php_gtk_menu_position(GtkMenu *menu, int *x, int *y, int *push_in, gpointer data)
 {
@@ -1140,7 +1198,7 @@ PHP_METHOD
 add-arginfo GtkMessageDialog __construct
 static
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
-    ZEND_ARG_INFO(0, parent)
+    ZEND_ARG_OBJ_INFO(0, parent, GtkWindow, 1)
     ZEND_ARG_INFO(0, flags)
     ZEND_ARG_INFO(0, type)
     ZEND_ARG_INFO(0, buttons)
@@ -1253,6 +1311,13 @@ PHP_METHOD
 %% {{{ GtkProgressBar
 
 %%
+add-arginfo GtkProgressBar __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_OBJ_INFO(0, adjustment, GtkAdjustment, 1)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_progress_bar_new_with_adjustment
 PHP_METHOD
 {
@@ -1289,7 +1354,7 @@ PHP_METHOD
 add-arginfo GtkRadioMenuItem __construct
 static
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
-    ZEND_ARG_INFO(0, group)
+    ZEND_ARG_OBJ_INFO(0, group, GtkRadioMenuItem, 1)
     ZEND_ARG_INFO(0, text)
     ZEND_ARG_INFO(0, use_underline)
 ZEND_END_ARG_INFO();
@@ -1344,7 +1409,7 @@ PHP_METHOD
 add-arginfo GtkRadioMenuItem set_group
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
-    ZEND_ARG_INFO(0, group)
+    ZEND_ARG_OBJ_INFO(0, group, GtkRadioMenuItem, 1)
 ZEND_END_ARG_INFO();
 
 %%
@@ -1397,7 +1462,7 @@ PHP_METHOD
 add-arginfo GtkRadioButton __construct
 static
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
-    ZEND_ARG_INFO(0, group)
+    ZEND_ARG_OBJ_INFO(0, group, GtkRadioButton, 1)
     ZEND_ARG_INFO(0, text)
     ZEND_ARG_INFO(0, use_underline)
 ZEND_END_ARG_INFO();
@@ -1452,7 +1517,7 @@ PHP_METHOD
 add-arginfo GtkRadioToolButton __construct
 static
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
-    ZEND_ARG_INFO(0, group)
+    ZEND_ARG_OBJ_INFO(0, group, GtkRadioToolButton, 1)
     ZEND_ARG_INFO(0, stock_id)
 ZEND_END_ARG_INFO();
 
@@ -1631,7 +1696,7 @@ PHP_METHOD
 add-arginfo GtkWidget intersect
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
-    ZEND_ARG_INFO(0, area)
+    ZEND_ARG_OBJ_INFO(0, area, GdkRectangle, 1)
 ZEND_END_ARG_INFO();
 
 %%
