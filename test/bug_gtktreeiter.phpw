@@ -1,0 +1,50 @@
+<?php
+/**
+Description:
+-------------
+When trying to compare two GtkTreeIter, I always get true when using
+"==", and a false when using "===" for comparison - equal if they point
+to the same path or not.
+Is that a bug, or are TreeIters not meant to be compared?
+*/
+
+$store = new GtkListStore(Gtk::TYPE_STRING);
+$iter = $store->append(array('test'));
+$iter2 = $store->append(array('test2'));
+
+echo "Value of iter: " . $store->get_value($iter, 0) . "\r\n";
+echo "Value of iter2: " . $store->get_value($iter2, 0) . "\r\n";
+
+//should be false
+if ($iter == $iter2) {
+    echo "wrong: different iters equal ==\r\n";
+} else {
+    echo "ok\r\n";
+}
+
+//should be false
+if ($iter === $iter2) {
+    echo "wrong: different iters equal ===\r\n";
+} else {
+    echo "ok\r\n";
+}
+
+
+$iter3 = $store->iter_children();
+echo "Value of iter3: " . $store->get_value($iter3, 0) . "\r\n";
+
+//should be true
+if ($iter == $iter3) {
+    echo "ok\r\n";
+} else {
+    echo "wrong: iters pointing to the same row don't equal ==\r\n";
+}
+
+//should be true again
+if ($iter === $iter3) {
+    echo "ok\r\n";
+} else {
+    echo "wrong: iters pointing to the same row don't equal ===\r\n";
+}
+
+?>

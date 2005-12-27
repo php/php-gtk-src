@@ -1,0 +1,50 @@
+<?php
+/**
+Description:
+-------------
+When writing the docs for GtkListStore, I noted the too C-ish style of
+insert_before and insert_after.
+
+> insert_before($iter, $sibling)
+inserts a *new* row before $sibling, and changes the $iter to the new
+iterator. That pointer change is c-ish and not php-like.
+
+IMO it should be that way:
+> $iter = $store->insert_before($sibling);
+or, with an optional parameter as insert() has:
+> $iter = $store->insert_before($sibling, array('value0', 'value1'));
+
+So that one doesn't have to create an GtkTreeIter before one can insert
+a row before another one. (And we can't even create that on our own!)
+
+The same applies to insert_after.
+*/
+
+$store = new GtkListStore(Gtk::TYPE_STRING);
+$iter = $store->append(array('test'));
+
+//OLD
+/*
+//current C-ish behavior:
+//create new iter
+$newiter = $iter->copy();
+//let the function fill it
+$store->insert_before($newiter, $iter);
+
+//should be NULL
+var_dump($store->get_value($newiter, 0));
+//should still be "test"
+var_dump($store->get_value($iter, 0));
+//should be 2
+var_dump($store->iter_n_children(null));
+/**/
+
+//NEW
+/**/
+$newiter = $store->insert_before($iter);
+//should be NULL now
+var_dump($store->get_value($newiter, 0));
+//should be 2
+var_dump($store->iter_n_children(null));
+/**/
+?>

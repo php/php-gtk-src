@@ -1,0 +1,30 @@
+<?php
+/**
+Description:
+-------------
+Another c-ish method:
+> $store->iter_nth_child($iter, $parent, 0);
+sets $iter to the first child of $parent instead of returning it.
+
+It should be that way:
+> $iter = $store->iter_nth_child($parent, 0);
+*/
+
+$store = new GtkTreeStore(Gtk::TYPE_STRING);
+$root  = $store->append(null, array('root'));
+$child = $store->append($root, array('child'));
+$child2 = $store->append($root, array('child2'));
+//OLD
+/*
+$store->iter_nth_child($child2, $root, 0);
+//should be "child"
+var_dump($store->get_value($child2, 0));
+/**/
+
+//NEW should be:
+/**/
+$child2 = $store->iter_nth_child($root, 0);
+//should be "child"
+var_dump($store->get_value($child2, 0));
+/**/
+?>

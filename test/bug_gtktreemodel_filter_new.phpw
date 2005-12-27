@@ -1,0 +1,12 @@
+<?php
+/**
+GtkTreeModel::filte_new segfaults if no parameter is given
+*/
+
+$store = new GtkListStore(Gtk::TYPE_STRING);
+$store->append(array('tset'));
+//shouldn't crash
+echo "waiting for crash\r\n";
+$store2 = $store->filter_new();
+echo "good - no crash";
+?>
