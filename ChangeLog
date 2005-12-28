@@ -1,3 +1,19 @@
+2005-12-27  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gdk.overrides:
+      Was a bit too strict
+
+    * ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtktreeview.overrides:
+      Added and fixed some reflection information
+
+    * test/bug_gtkliststore_insert_before.phpw
+      test/bug_gtktreeiter.phpw
+      test/bug_gtktreemodel_filter_new.phpw
+      test/bug_gtktreemodel_iter_nth_child.phpw:
+      The bug tests requested by Steph
+
 2005-12-16  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gdk.overrides:
