@@ -189,10 +189,19 @@ constants
     /* register non-enum constants */
 
     phpg_register_int_constant(gtk_ce, "PRIORITY_HIGH", sizeof("PRIORITY_HIGH")-1, G_PRIORITY_HIGH);
-    phpg_register_int_constant(gtk_ce, "PRIORITY_DEFAULT", sizeof("PRIORITY_HIGH")-1, G_PRIORITY_HIGH);
+    phpg_register_int_constant(gtk_ce, "PRIORITY_DEFAULT", sizeof("PRIORITY_DEFAULT")-1, G_PRIORITY_DEFAULT);
     phpg_register_int_constant(gtk_ce, "PRIORITY_HIGH_IDLE", sizeof("PRIORITY_HIGH_IDLE")-1, G_PRIORITY_HIGH_IDLE);
     phpg_register_int_constant(gtk_ce, "PRIORITY_DEFAULT_IDLE", sizeof("PRIORITY_DEFAULT_IDLE")-1, G_PRIORITY_DEFAULT_IDLE);
     phpg_register_int_constant(gtk_ce, "PRIORITY_LOW", sizeof("PRIORITY_LOW")-1, G_PRIORITY_LOW);
+
+
+    phpg_register_int_constant(gtk_ce, "IO_IN", sizeof("IO_IN")-1, G_IO_IN);
+    phpg_register_int_constant(gtk_ce, "IO_OUT", sizeof("IO_OUT")-1, G_IO_OUT);
+    phpg_register_int_constant(gtk_ce, "IO_PRI", sizeof("IO_PRI")-1, G_IO_PRI);
+    phpg_register_int_constant(gtk_ce, "IO_ERR", sizeof("IO_ERR")-1, G_IO_ERR);
+    phpg_register_int_constant(gtk_ce, "IO_HUP", sizeof("IO_HUP")-1, G_IO_HUP);
+    phpg_register_int_constant(gtk_ce, "IO_NVAL", sizeof("IO_NVAL")-1, G_IO_NVAL);
+
 
     /* Fundamental GTypes */
     phpg_register_int_constant(gtk_ce, "TYPE_INVALID", sizeof("TYPE_INVALID")-1, G_TYPE_INVALID);
@@ -395,6 +404,126 @@ PHP_METHOD
 
     handler_id = gtk_quit_add_full(main_level, phpg_handler_marshal, NULL, data, phpg_destroy_notify);
     RETURN_LONG(handler_id);
+}
+
+%%
+add Gtk io_add_watch
+
+static gboolean phpg_iowatch_marshal(GIOChannel *source, GIOCondition condition, gpointer user_data)
+{
+    zval *callback_data = (zval *) user_data;
+    zval **callback, **extra = NULL, **stream_rsrc;
+    zval **callback_filename = NULL, **callback_lineno = NULL;
+    zval ***args = NULL, *z_condition = NULL;
+    int n_args = 0;
+    zval *retval = NULL;
+    char *callback_name;
+    gboolean result;
+    TSRMLS_FETCH();
+
+    /* Callback is always passed as the first element. */
+    zend_hash_index_find(Z_ARRVAL_P(callback_data), 0, (void **)&callback);
+    zend_hash_index_find(Z_ARRVAL_P(callback_data), 1, (void **)&stream_rsrc);
+    zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&extra);
+    zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_filename);
+    zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&callback_lineno);
+
+    if (!zend_is_callable(*callback, 0, &callback_name)) {
+        php_error(E_WARNING, "Unable to invoke handler callback '%s' specified in %s on line %ld", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
+        efree(callback_name);
+        return 0;
+    }
+
+    args = php_gtk_hash_as_array_offset(*extra, 2, &n_args);
+    args[0] = stream_rsrc;
+    MAKE_STD_ZVAL(z_condition);
+    ZVAL_LONG(z_condition, condition);
+    args[1] = &z_condition;
+
+    call_user_function_ex(EG(function_table), NULL, *callback, &retval, n_args, args, 0, NULL TSRMLS_CC);
+
+    zval_ptr_dtor(&z_condition);
+
+    result = FALSE;
+    if (retval) {
+        result = zval_is_true(retval);
+        zval_ptr_dtor(&retval);
+    }
+
+    efree(callback_name);
+    if (args)
+        efree(args);
+
+    return result;
+}
+
+static void phpg_io_add_watch_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool with_priority)
+{
+    gint priority = G_PRIORITY_DEFAULT;
+    GIOCondition condition;
+    zval *stream_rsrc = NULL;
+    zval *callback = NULL;
+    zval *extra = NULL;
+    zval *data = NULL;
+    char *callback_filename;
+    uint callback_lineno;
+    guint handler_id;
+    GIOChannel *channel = NULL;
+    php_stream *stream = NULL;
+    int fd;
+    int req_args = with_priority ? 4 : 3;
+
+    if (ZEND_NUM_ARGS() < req_args) {
+        php_error(E_WARNING, "%s::%s() requires at least %d arguments, %d given",
+                  get_active_class_name(NULL TSRMLS_CC),
+                  get_active_function_name(TSRMLS_C), req_args, ZEND_NUM_ARGS());
+        return;
+    }
+
+    if (with_priority) {
+        if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), req_args, &extra, "riVi", &stream_rsrc, &condition, &callback, &priority))
+            return;
+    } else {
+        if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), req_args, &extra, "riV", &stream_rsrc, &condition, &callback))
+            return;
+    }
+
+    php_stream_from_zval(stream, &stream_rsrc);
+    if (php_stream_can_cast(stream, PHP_STREAM_AS_FD_FOR_SELECT) == SUCCESS) {
+        php_stream_cast(stream, PHP_STREAM_AS_FD_FOR_SELECT, (void*)&fd, 0);
+    } else {
+        php_error(E_WARNING, "%s::%s() could not use stream of type '%s'",
+                  get_active_class_name(NULL TSRMLS_CC),
+                  get_active_function_name(TSRMLS_C), stream->ops->label);
+        return;
+    }
+
+    if (!extra) {
+        MAKE_STD_ZVAL(extra);
+        array_init(extra);
+    }
+
+    channel = g_io_channel_unix_new(fd);
+    callback_filename = zend_get_executed_filename(TSRMLS_C);
+    callback_lineno = zend_get_executed_lineno(TSRMLS_C);
+    php_gtk_build_value(&data, "(VVNsi)", callback, stream_rsrc, extra, callback_filename, callback_lineno);
+    handler_id = g_io_add_watch_full(channel, priority, condition, phpg_iowatch_marshal, data, phpg_destroy_notify);
+    g_io_channel_unref(channel);
+
+    RETURN_LONG(handler_id);
+}
+
+PHP_METHOD
+{
+    phpg_io_add_watch_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
+}
+
+%%
+add Gtk io_add_watch_priority
+
+PHP_METHOD
+{
+    phpg_io_add_watch_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
 }
 
 %% }}}
