@@ -1,3 +1,11 @@
+2006-01-05  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      Implement Gtk::io_add_watch() and Gtk::io_add_watch_priority(). These
+      should work with any stream that can be cast to a file descriptor
+      (files, pipes, sockets, and maybe something else).
+      
+
 2005-12-27  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gdk.overrides:
