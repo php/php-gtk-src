@@ -1853,5 +1853,39 @@ PHP_METHOD
 
 %% }}}
 
+%% {{{ GtkWindow
+%%
+override gtk_window_get_position
+PHP_METHOD
+{
+    gint root_x, root_y;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_window_get_position(GTK_WINDOW(PHPG_GOBJECT(this_ptr)), &root_x, &root_y);
+    php_gtk_build_value(&return_value, "(ii)", root_x, root_y);
+
+}
+
+%%
+override gtk_window_get_size
+PHP_METHOD
+{
+    gint width, height;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_window_get_size(GTK_WINDOW(PHPG_GOBJECT(this_ptr)), &width, &height);
+    php_gtk_build_value(&return_value, "(ii)", width, height);
+
+}
+%% }}}
+
 %% include gtktextview.overrides
 %% include gtktreeview.overrides
