@@ -1,3 +1,9 @@
+2006-01-08  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/gtk+/gtk.overrides:
+      Implement GtkWindow::get_size() and GtkWindow::get_position().
+      Both take 0 arguments and return an array.
+
 2006-01-05  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides:
