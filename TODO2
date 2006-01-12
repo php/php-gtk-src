@@ -105,6 +105,7 @@ Classes and Functions
 	pixbuf_new_from_array() has PyArrayObject as a parameter
 * GdkPixmap
 	constructor	create_from_xpm_d()
+* GtkPlug/GtkSocket
 
 
 Fix
