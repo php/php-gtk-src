@@ -355,6 +355,11 @@ static zend_object_handlers style_helper_handlers = {
 	style_helper_count_elements, /* count_elements */
 };
 
+void style_helper_destroy_object(zend_object *object, zend_object_handle handle TSRMLS_DC)
+{
+    /* dummy dtor to avoid crashes in ZE2 */
+}
+
 static void style_helper_free_storage(style_helper *sh TSRMLS_DC)
 {
     zend_hash_destroy(sh->properties);
@@ -379,7 +384,7 @@ PHP_GTK_API void phpg_create_style_helper(zval **zobj, GtkStyle *style, int type
     }
 	Z_TYPE_PP(zobj) = IS_OBJECT;
 
-	Z_OBJ_HANDLE_PP(zobj) = zend_objects_store_put(sh, NULL, (zend_objects_free_object_storage_t) style_helper_free_storage, NULL TSRMLS_CC);
+	Z_OBJ_HANDLE_PP(zobj) = zend_objects_store_put(sh, (zend_objects_store_dtor_t) style_helper_destroy_object, (zend_objects_free_object_storage_t) style_helper_free_storage, NULL TSRMLS_CC);
 	Z_OBJ_HT_PP(zobj) = &style_helper_handlers;
 }
 
