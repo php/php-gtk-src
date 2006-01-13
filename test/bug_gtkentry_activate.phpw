@@ -1,0 +1,13 @@
+<?php
+//Start it and press return. Warning will come
+$wnd = new GtkWindow();
+$wnd->connect_simple('destroy', array('gtk', 'main_quit'));
+
+$entry = new GtkEntry();
+function echoit($value) { echo $value . "\r\n";}
+$entry->connect_simple('activate', 'echoit', 'test');
+
+$wnd->add($entry);
+$wnd->show_all();
+Gtk::main();
+?>
