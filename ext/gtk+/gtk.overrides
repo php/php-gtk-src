@@ -641,6 +641,28 @@ PHP_METHOD
 
 %% }}}
 
+%% {{{ GtkAdjustment
+
+%%
+override gtk_alignment_get_padding
+PHP_METHOD
+{
+    gint padding_top, padding_bottom, padding_left, padding_right;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    gtk_alignment_get_padding(GTK_ALIGNMENT(PHPG_GOBJECT(this_ptr)), &padding_top, &padding_bottom, &padding_left, &padding_right);
+
+    php_gtk_build_value(&return_value, "(iiii)", padding_top, padding_bottom, padding_left, padding_right);
+}
+
+%% }}}
+
+
 %% {{{ GtkButton
 
 %%
@@ -710,6 +732,44 @@ PHP_METHOD
     phpg_gobject_new(&return_value, wrapped_obj TSRMLS_CC);
     g_object_unref(wrapped_obj); /* phpg_gobject_new() increments reference count */
 }
+%% }}}
+
+%% {{{ GtkButtonBox
+
+%%
+override gtk_button_box_get_child_size
+PHP_METHOD
+{
+    gint min_width, min_height;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    phpg_warn_deprecated("use style properties \"child-min-width/-height\" instead" TSRMLS_CC);
+
+    gtk_button_box_get_child_size(GTK_BUTTON_BOX(PHPG_GOBJECT(this_ptr)), &min_width, &min_height);
+    php_gtk_build_value(&return_value, "(ii)", min_width, min_height);
+}
+
+%%
+override gtk_button_box_get_child_ipadding
+PHP_METHOD
+{
+    gint ipad_x, ipad_y;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    phpg_warn_deprecated("use style properties \"child-internal-pad-x/-y\" instead" TSRMLS_CC);
+
+    gtk_button_box_get_child_size(GTK_BUTTON_BOX(PHPG_GOBJECT(this_ptr)), &ipad_x, &ipad_y);
+    php_gtk_build_value(&return_value, "(ii)", ipad_x, ipad_y);
+}
+
 %% }}}
 
 %% {{{ GtkCheckButton
@@ -794,6 +854,47 @@ PHP_METHOD
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
 %% }}}
+
+
+%% {{{ GtkCList
+
+%%
+add-arginfo GtkCList get_selection_info
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, x)
+    ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_clist_get_selection_info
+PHP_METHOD
+{
+    gint x, y, row, column, retval;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &x, &y)) {
+        php_error(E_WARNING, "%s::%s() requires 2 arguments, %d given",
+                  get_active_class_name(NULL TSRMLS_CC),
+                  get_active_function_name(TSRMLS_C), ZEND_NUM_ARGS());
+        return;
+    }
+
+    phpg_warn_deprecated(NULL TSRMLS_CC);
+
+    retval = gtk_clist_get_selection_info(GTK_CLIST(PHPG_GOBJECT(this_ptr)), x, y, &row, &column);
+
+    if (retval == 0) {
+        row = -1;
+        column = -1;
+    }
+
+    php_gtk_build_value(&return_value, "(ii)", row, column);
+}
+
+%% }}}
+
 
 %% {{{ GtkColorSelection
 %%
@@ -1820,6 +1921,7 @@ PHP_METHOD
 }
 %% }}}
 
+
 %% {{{ GtkWidget
 %%
 add-arginfo GtkWidget intersect
@@ -1827,6 +1929,21 @@ static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_OBJ_INFO(0, area, GdkRectangle, 1)
 ZEND_END_ARG_INFO();
+
+%%
+override gtk_widget_get_pointer
+PHP_METHOD
+{
+    gint x, y;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_widget_get_pointer(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), &x, &y);
+    php_gtk_build_value(&return_value, "(ii)", x, y);
+}
 
 %%
 override gtk_widget_intersect
@@ -1883,6 +2000,22 @@ PHP_METHOD
 
     gtk_window_get_default_size(GTK_WINDOW(PHPG_GOBJECT(this_ptr)), &width, &height);
     php_gtk_build_value(&return_value, "(ii)", width, height);
+
+}
+
+%%
+override gtk_window_get_frame_dimensions
+PHP_METHOD
+{
+    gint left, top, right, bottom;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_window_get_frame_dimensions(GTK_WINDOW(PHPG_GOBJECT(this_ptr)), &left, &top, &right, &bottom);
+    php_gtk_build_value(&return_value, "(iiii)", left, top, right, bottom);
 
 }
 
