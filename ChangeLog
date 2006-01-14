@@ -1,3 +1,20 @@
+2006-01-13  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.overrides:
+      Overrides for methods:
+      GtkWindow::get_frame_dimensions
+      GtkWidget::get_pointer
+      GtkButtonBox::get_child_size
+      GtkButtonBox::get_child_ipadding
+      GtkCList::get_selection_info
+      GtkAlignment::get_padding
+
+    * ext/gtk+/gtk.overrides:
+      Implement GtkWindow::get_default_size
+
+    * test/bug_gtkentry_activate.phpw:
+      Bug script I sent to php-gtk-dev
+
 2006-01-12  Andrei Zmievski  <andrei@gravitonic.com>
 
     * TODO2:
