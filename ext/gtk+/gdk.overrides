@@ -42,8 +42,10 @@ ignore
 %%
 ignore
     gdk_gc_new2
+    gdk_string_extents
 
 /* }}} */
+
 
 %% {{{ GdkColor
 
@@ -275,6 +277,55 @@ PHP_METHOD
 }
 
 %% }}}
+
+
+%% {{{ GdkDisplay
+
+%%
+override gdk_display_get_window_at_pointer
+PHP_METHOD
+{
+    gint x, y;
+    GdkWindow *window;
+    zval *php_window = NULL;
+
+    NO_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    window = gdk_display_get_window_at_pointer(GDK_DISPLAY(PHPG_GOBJECT(this_ptr)), &x, &y);
+
+    if (window != NULL) {
+        phpg_gboxed_new(&php_window, GDK_TYPE_WINDOW, &window, TRUE, TRUE TSRMLS_CC);
+        php_gtk_build_value(&return_value, "(Nii)", php_window, x, y);
+    } else {
+        RETURN_FALSE;
+    }
+}
+
+%% }}}
+
+
+%% {{{ GdkDrawable
+
+%%
+override gdk_drawable_get_size
+PHP_METHOD
+{
+    gint width, height;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gdk_drawable_get_size(GDK_DRAWABLE(PHPG_GOBJECT(this_ptr)), &width, &height);
+    php_gtk_build_value(&return_value, "(ii)", width, height);
+}
+
+%% }}}
+
 
 %% {{{ GdkEvent
 
@@ -952,6 +1003,60 @@ PHP_METHOD
 %% {{{ GdkWindow
 
 %%
+override gdk_window_at_pointer
+PHP_METHOD
+{
+    gint x, y;
+    GdkWindow *window;
+    zval *php_window = NULL;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    window = gdk_window_at_pointer(&x, &y);
+
+    if (window != NULL) {
+        phpg_gboxed_new(&php_window, GDK_TYPE_WINDOW, &window, TRUE, TRUE TSRMLS_CC);
+        php_gtk_build_value(&return_value, "(Nii)", php_window, x, y);
+    } else {
+        RETURN_FALSE;
+    }
+}
+
+
+%%
+override gdk_window_get_geometry
+PHP_METHOD
+{
+    gint x, y, width, height, depth;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gdk_window_get_geometry(GDK_WINDOW(PHPG_GOBJECT(this_ptr)), &x, &y, &width, &height, &depth);
+    php_gtk_build_value(&return_value, "(iiiii)", x, y, width, height, depth);
+}
+
+
+%%
+override gdk_window_get_origin
+PHP_METHOD
+{
+    gint x, y;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gdk_window_get_origin(GDK_WINDOW(PHPG_GOBJECT(this_ptr)), &x, &y);
+    php_gtk_build_value(&return_value, "(ii)", x, y);
+}
+
+
+%%
 override gdk_window_get_pointer
 PHP_METHOD(GdkWindow, get_pointer)
 {
@@ -965,6 +1070,38 @@ PHP_METHOD(GdkWindow, get_pointer)
 
     gdk_window_get_pointer(GDK_WINDOW(PHPG_GOBJECT(this_ptr)), &x, &y, &mask);
     php_gtk_build_value(&return_value, "(iii)", x, y, mask);
+}
+
+
+%%
+override gdk_window_get_position
+PHP_METHOD
+{
+    gint x, y;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gdk_window_get_position(GDK_WINDOW(PHPG_GOBJECT(this_ptr)), &x, &y);
+    php_gtk_build_value(&return_value, "(ii)", x, y);
+}
+
+
+%%
+override gdk_window_get_root_origin
+PHP_METHOD
+{
+    gint x, y;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gdk_window_get_root_origin(GDK_WINDOW(PHPG_GOBJECT(this_ptr)), &x, &y);
+    php_gtk_build_value(&return_value, "(ii)", x, y);
 }
 
 %% }}}

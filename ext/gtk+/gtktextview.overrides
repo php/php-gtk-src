@@ -188,6 +188,92 @@ PHP_METHOD
 
 
 %%
+add-arginfo GtkTextView get_iter_at_position
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, x)
+    ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_text_view_get_iter_at_position
+PHP_METHOD
+{
+    gint x, y, trailing;
+    zval *php_iter = NULL;
+    GtkTextIter iter;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &x, &y))
+        return;
+
+    gtk_text_view_get_iter_at_position(GTK_TEXT_VIEW(PHPG_GOBJECT(this_ptr)), &iter, &trailing, x, y);
+
+    phpg_gboxed_new(&php_iter, GTK_TYPE_TEXT_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+
+    php_gtk_build_value(&return_value, "(Ni)", php_iter, trailing);
+}
+
+
+%%
+add-arginfo GtkTextView get_line_at_y
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_text_view_get_line_at_y
+PHP_METHOD
+{
+    gint y, line_top;
+    zval *php_iter = NULL;
+    GtkTextIter iter;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &y))
+        return;
+
+    gtk_text_view_get_line_at_y(GTK_TEXT_VIEW(PHPG_GOBJECT(this_ptr)), &iter, y, &line_top);
+
+    phpg_gboxed_new(&php_iter, GTK_TYPE_TEXT_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+
+    php_gtk_build_value(&return_value, "(Ni)", php_iter, line_top);
+}
+
+
+%%
+add-arginfo GtkTextView get_line_yrange
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, iter, GtkTextIter, 0)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_text_view_get_line_yrange
+PHP_METHOD
+{
+    zval *php_iter = NULL;
+    GtkTextIter *iter = NULL;
+    gint y, height;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &php_iter, gtktextiter_ce))
+        return;
+
+    if (php_iter && IS_OBJECT == Z_TYPE_P(php_iter)) {
+        iter = (GtkTextIter *) PHPG_GBOXED(php_iter);
+    }
+
+    gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(PHPG_GOBJECT(this_ptr)), iter, &y, &height);
+    php_gtk_build_value(&return_value, "(ii)", y, height);
+}
+
+
+%%
 add-arginfo GtkTextView window_to_buffer_coords
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)

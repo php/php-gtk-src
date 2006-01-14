@@ -558,6 +558,40 @@ PHP_METHOD
     php_gtk_build_value(&return_value, "(ii)", width, height);
 }
 
+
+%%
+add-arginfo Gtk icon_size_lookup_for_settings
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, settings, GtkSettings, 0)
+    ZEND_ARG_INFO(0, size)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_icon_size_lookup_for_settings
+PHP_METHOD
+{
+    gint width, height;
+    zval *php_settings;
+    zval *php_size = NULL;
+    GtkSettings settings;
+    GtkIconSize size;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OV", &php_settings, gtksettings_ce, &php_size))
+        return;
+
+    if (php_size && phpg_gvalue_get_enum(GTK_TYPE_ICON_SIZE, php_size, (gint *)&size) == FAILURE)
+        return;
+
+
+    if (gtk_icon_size_lookup_for_settings(GTK_SETTINGS(PHPG_GOBJECT(php_settings)), size, &width, &height)) {
+        php_gtk_build_value(&return_value, "(ii)", width, height);
+    } else {
+        RETURN_FALSE;
+    }
+}
+
+
 %%
 override gtk_stock_list_ids
 PHP_METHOD
@@ -1057,6 +1091,8 @@ PHP_METHOD
             PHPG_THROW_CONSTRUCT_EXCEPTION(GtkDialog);
         }
 
+        GtkDialog *dialog = GTK_DIALOG(wrapped_obj);
+
         zend_hash_internal_pointer_reset(Z_ARRVAL_P(buttons));
         while (zend_hash_get_current_data(Z_ARRVAL_P(buttons), (void **)&text) == SUCCESS) {
             zend_hash_move_forward(Z_ARRVAL_P(buttons));
@@ -1070,12 +1106,58 @@ PHP_METHOD
                 PHPG_THROW_CONSTRUCT_EXCEPTION(GtkDialog);
             }
 
-            gtk_dialog_add_button(GTK_DIALOG(wrapped_obj), Z_STRVAL_PP(text), Z_LVAL_PP(response));
+            gtk_dialog_add_button(dialog, Z_STRVAL_PP(text), Z_LVAL_PP(response));
         }
     }
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
+
+
+%%
+add-arginfo GtkDialog add_buttons
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, buttons)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_dialog_add_buttons
+PHP_METHOD
+{
+    zval *buttons = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &buttons))
+        return;
+
+    zval **text, **response;
+
+    if (zend_hash_num_elements(Z_ARRVAL_P(buttons)) % 2) {
+        php_error(E_WARNING, "%s::%s(): button list has to contain pairs of items",
+                    get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    GtkDialog *dialog = GTK_DIALOG(PHPG_GOBJECT(this_ptr));
+
+    zend_hash_internal_pointer_reset(Z_ARRVAL_P(buttons));
+    while (zend_hash_get_current_data(Z_ARRVAL_P(buttons), (void **)&text) == SUCCESS) {
+        zend_hash_move_forward(Z_ARRVAL_P(buttons));
+        zend_hash_get_current_data(Z_ARRVAL_P(buttons), (void **)&response); /* safe */
+        zend_hash_move_forward(Z_ARRVAL_P(buttons));
+
+        if (Z_TYPE_PP(text) != IS_STRING || Z_TYPE_PP(response) != IS_LONG) {
+            php_error(E_WARNING, "%s::%s(): each pair in button list has to be string/number",
+                        get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+            return;
+        }
+
+        gtk_dialog_add_button(dialog, Z_STRVAL_PP(text), Z_LVAL_PP(response));
+    }
+}
+
 %% }}}
 
 
@@ -1097,6 +1179,36 @@ PHP_METHOD
     } else {
         php_gtk_build_value(&return_value, "(ii)", start, end);
     }
+}
+
+
+%%
+add-arginfo GtkEditable insert_text
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, text)
+    ZEND_ARG_INFO(0, position)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_editable_insert_text
+PHP_METHOD
+{
+    char *text;
+    gint pos;
+    int text_len;
+    zend_bool free_text;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iu#", &pos, &text, &text_len, &free_text))
+        return;
+
+    gtk_editable_insert_text(GTK_EDITABLE(PHPG_GOBJECT(this_ptr)), text, text_len, &pos);
+
+    if (free_text) g_free(text);
+
+    RETURN_LONG(pos);
 }
 
 %% }}}
