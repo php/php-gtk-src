@@ -191,6 +191,14 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
 PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC)
 {
     switch (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(gval))) {
+        /*
+         * For whatever reason, we should apparently respect that the gval may be of these
+         * types and they do not need a value.
+         */
+        case G_TYPE_INVALID:
+        case G_TYPE_NONE:
+            break;
+
         case G_TYPE_BOOLEAN:
             convert_to_boolean(value);
             g_value_set_boolean(gval, (gboolean)Z_BVAL_P(value));
