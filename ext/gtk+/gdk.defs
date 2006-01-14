@@ -464,6 +464,7 @@
   (of-object "GdkDisplay")
   (c-name "gdk_display_get_window_at_pointer")
   (return-type "GdkWindow*")
+  (static #t)
   (parameters
     '("gint*" "win_x")
     '("gint*" "win_y")
