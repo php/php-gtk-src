@@ -1126,7 +1126,7 @@ PHP_METHOD
     }
 
     wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr),
-                                          "max-length", max, "text", text);
+                                          "max-length", max, "text", text, NULL);
 
     if (free_text) g_free(text);
 
