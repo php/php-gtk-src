@@ -919,7 +919,56 @@ PHP_METHOD
     add_next_index_long(return_value, cell_y);
 }
 
+
+%%
+add-arginfo GtkTreeView tree_to_widget_coords
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, tx)
+    ZEND_ARG_INFO(0, ty)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_tree_to_widget_coords
+PHP_METHOD
+{
+    gint tx, ty, wx, wy;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &tx, &ty))
+        return;
+
+    gtk_tree_view_tree_to_widget_coords(GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), tx, ty, &wx, &wy);
+    php_gtk_build_value(&return_value, "(ii)", wx, wy);
+}
+
+
+%%
+add-arginfo GtkTreeView widget_to_tree_coords
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, wx)
+    ZEND_ARG_INFO(0, wy)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_widget_to_tree_coords
+PHP_METHOD
+{
+    gint wx, wy, tx, ty;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &wx, &wy))
+        return;
+
+    gtk_tree_view_widget_to_tree_coords(GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), wx, wy, &tx, &ty);
+    php_gtk_build_value(&return_value, "(ii)", tx, ty);
+}
+
 %% }}}
+
 
 %% {{{ GtkTreeViewColumn
 
@@ -996,6 +1045,35 @@ PHP_METHOD
 
     phpg_gobject_set_wrapper(this_ptr, (GObject *)tvc TSRMLS_CC);
 }
+
+
+
+%%
+add-arginfo GtkTreeViewColumn cell_get_position
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, cellrenderer, GtkCellRenderer, 1)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_column_cell_get_position
+PHP_METHOD
+{
+    gint start_pos, width;
+    zval *cellrenderer;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &cellrenderer, gtkcellrenderer_ce))
+        return;
+
+    if (gtk_tree_view_column_cell_get_position(GTK_TREE_VIEW_COLUMN(PHPG_GOBJECT(this_ptr)), GTK_CELL_RENDERER(PHPG_GOBJECT(cellrenderer)), &start_pos, &width)) {
+        php_gtk_build_value(&return_value, "(ii)", start_pos, width);
+    } else {
+        RETURN_FALSE;
+    }
+}
+
 
 %%
 add-arginfo GtkTreeViewColumn set_cell_data_func

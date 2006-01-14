@@ -652,9 +652,8 @@ PHP_METHOD
 
     NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
         return;
-    }
 
     gtk_alignment_get_padding(GTK_ALIGNMENT(PHPG_GOBJECT(this_ptr)), &padding_top, &padding_bottom, &padding_left, &padding_right);
 
@@ -871,7 +870,7 @@ ZEND_END_ARG_INFO();
 override gtk_clist_get_selection_info
 PHP_METHOD
 {
-    gint x, y, row, column, retval;
+    gint x, y, row, column;
 
     NOT_STATIC_METHOD();
 
@@ -884,14 +883,11 @@ PHP_METHOD
 
     phpg_warn_deprecated(NULL TSRMLS_CC);
 
-    retval = gtk_clist_get_selection_info(GTK_CLIST(PHPG_GOBJECT(this_ptr)), x, y, &row, &column);
-
-    if (retval == 0) {
-        row = -1;
-        column = -1;
+    if (gtk_clist_get_selection_info(GTK_CLIST(PHPG_GOBJECT(this_ptr)), x, y, &row, &column) == 0) {
+        RETURN_FALSE;
+    } else {
+        php_gtk_build_value(&return_value, "(ii)", row, column);
     }
-
-    php_gtk_build_value(&return_value, "(ii)", row, column);
 }
 
 %% }}}
@@ -1082,6 +1078,52 @@ PHP_METHOD
 }
 %% }}}
 
+<<<<<<< gtk.overrides
+
+%% {{{ GtkEditable
+
+%%
+override gtk_editable_get_selection_bounds
+PHP_METHOD
+{
+    gint start, end;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    if (!gtk_editable_get_selection_bounds(GTK_EDITABLE(PHPG_GOBJECT(this_ptr)), &start, &end)) {
+        RETURN_FALSE;
+    } else {
+        php_gtk_build_value(&return_value, "(ii)", start, end);
+    }
+}
+
+%% }}}
+
+
+%% {{{ GtkEntry
+
+%%
+override gtk_entry_get_layout_offsets
+PHP_METHOD
+{
+    gint x, y;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_entry_get_layout_offsets(GTK_ENTRY(PHPG_GOBJECT(this_ptr)), &x, &y);
+    php_gtk_build_value(&return_value, "(ii)", x, y);
+}
+
+%% }}}
+
+
+=======
 %% {{{ GtkEntry
 
 %%
@@ -1110,6 +1152,7 @@ PHP_METHOD
     
 %% }}}
 
+>>>>>>> 1.139
 %% {{{ GtkIconSet
 %%
 override gtk_icon_set_get_sizes
@@ -1362,6 +1405,27 @@ PHP_METHOD
 }
 %% }}}
 
+
+%% {{{ GtkLayout
+
+%%
+override gtk_layout_get_size
+PHP_METHOD
+{
+    gint width, height;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_layout_get_size(GTK_LAYOUT(PHPG_GOBJECT(this_ptr)), &width, &height);
+    php_gtk_build_value(&return_value, "(ii)", width, height);
+}
+
+%% }}}
+
+
 %% {{{ GtkMenu
 %%
 add-arginfo GtkMenu popup
@@ -1566,6 +1630,27 @@ PHP_METHOD
 
 }
 %% }}}
+
+
+%% {{{ GtkMisc
+
+%%
+override gtk_misc_get_padding
+PHP_METHOD
+{
+    gint xpad, ypad;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_misc_get_padding(GTK_MISC(PHPG_GOBJECT(this_ptr)), &xpad, &ypad);
+    php_gtk_build_value(&return_value, "(ii)", xpad, ypad);
+}
+
+%% }}}
+
 
 %% {{{ GtkProgressBar
 
@@ -1823,6 +1908,27 @@ PHP_METHOD
 }
 %% }}}
 
+
+%% {{{ GtkScale
+
+%%
+override gtk_scale_get_layout_offsets
+PHP_METHOD
+{
+    gint x, y;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_scale_get_layout_offsets(GTK_SCALE(PHPG_GOBJECT(this_ptr)), &x, &y);
+    php_gtk_build_value(&return_value, "(ii)", x, y);
+}
+
+%% }}}
+
+
 %% include gtkstyle.overrides
 
 %% {{{ GtkTextAttributes
@@ -1952,12 +2058,6 @@ PHP_METHOD
 
 
 %% {{{ GtkWidget
-%%
-add-arginfo GtkWidget intersect
-static
-ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
-    ZEND_ARG_OBJ_INFO(0, area, GdkRectangle, 1)
-ZEND_END_ARG_INFO();
 
 %%
 override gtk_widget_get_pointer
@@ -1975,12 +2075,35 @@ PHP_METHOD
 }
 
 %%
+override gtk_widget_get_size_request
+PHP_METHOD
+{
+    gint width, height;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_widget_get_size_request(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), &width, &height);
+    php_gtk_build_value(&return_value, "(ii)", width, height);
+}
+
+
+%%
+add-arginfo GtkWidget intersect
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, area, GdkRectangle, 1)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_widget_intersect
 PHP_METHOD
 {
     zval *php_area;
     GdkRectangle area, intersection;
-    
+
     NOT_STATIC_METHOD();
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_area))
@@ -1997,7 +2120,37 @@ PHP_METHOD
     }
 }
 
+
+%%
+add-arginfo GtkWidget translate_coordinates
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, dest_widget, GtkWidget, 0)
+    ZEND_ARG_INFO(0, src_x)
+    ZEND_ARG_INFO(0, src_y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_widget_translate_coordinates
+PHP_METHOD
+{
+    gint src_x, src_y, dest_x, dest_y;
+    zval *dest_widget;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oii", &dest_widget, gtkwidget_ce, &src_x, &src_y))
+        return;
+
+    if (gtk_widget_translate_coordinates(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), GTK_WIDGET(PHPG_GOBJECT(dest_widget)), src_x, src_y, &dest_x, &dest_y)) {
+        php_gtk_build_value(&return_value, "(ii)", dest_x, dest_y);
+    } else {
+        RETURN_FALSE;
+    }
+}
+
 %% }}}
+
 
 %% {{{ GtkWindow
 %%

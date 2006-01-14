@@ -153,3 +153,67 @@ PHP_METHOD
 }
 
 %% }}}
+
+
+%% {{{ GtkTextView
+
+%%
+add-arginfo GtkTextView buffer_to_window_coords
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, window_type)
+    ZEND_ARG_INFO(0, buffer_x)
+    ZEND_ARG_INFO(0, buffer_y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_text_view_buffer_to_window_coords
+PHP_METHOD
+{
+    gint buffer_x, buffer_y, window_x, window_y;
+    GtkTextWindowType win_type;
+    zval *php_win_type = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Vii", &php_win_type, &buffer_x, &buffer_y))
+        return;
+
+    if (php_win_type && phpg_gvalue_get_enum(GTK_TYPE_TEXT_WINDOW_TYPE, php_win_type, (gint *)&win_type) == FAILURE)
+        return;
+
+    gtk_text_view_buffer_to_window_coords(GTK_TEXT_VIEW(PHPG_GOBJECT(this_ptr)), win_type, buffer_x, buffer_y, &window_x, &window_y);
+    php_gtk_build_value(&return_value, "(ii)", window_x, window_y);
+}
+
+
+%%
+add-arginfo GtkTextView window_to_buffer_coords
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, window_type)
+    ZEND_ARG_INFO(0, window_x)
+    ZEND_ARG_INFO(0, window_y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_text_view_window_to_buffer_coords
+PHP_METHOD
+{
+    gint window_x, window_y, buffer_x, buffer_y;
+    GtkTextWindowType win_type;
+    zval *php_win_type = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Vii", &php_win_type, &window_x, &window_y))
+        return;
+
+    if (php_win_type && phpg_gvalue_get_enum(GTK_TYPE_TEXT_WINDOW_TYPE, php_win_type, (gint *)&win_type) == FAILURE)
+        return;
+
+    gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(PHPG_GOBJECT(this_ptr)), win_type, window_x, window_y, &buffer_x, &buffer_y);
+    php_gtk_build_value(&return_value, "(ii)", buffer_x, buffer_y);
+}
+
+%% }}}
