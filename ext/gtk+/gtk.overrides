@@ -39,6 +39,7 @@ ignore
     gtk_color_button_new
     gtk_dialog_new
     gtk_exit
+    gtk_entry_new_with_max_length
     gtk_false
     gtk_icon_view_new_with_model
     gtk_image_menu_item_new_from_stock
@@ -679,7 +680,7 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool free_text, use_underline = 1;
+    zend_bool free_text = FALSE, use_underline = 1;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton);
@@ -787,7 +788,7 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool free_text, use_underline = 1;
+    zend_bool free_text = FALSE, use_underline = 1;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCheckButton);
@@ -825,7 +826,7 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool free_text, use_underline = 1;
+    zend_bool free_text = FALSE, use_underline = 1;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMenuItem);
@@ -1081,6 +1082,34 @@ PHP_METHOD
 }
 %% }}}
 
+%% {{{ GtkEntry
+
+%%
+override gtk_entry_new
+PHP_METHOD
+{
+    gchararray text = "";
+    int max = 0;
+    zend_bool free_text = FALSE;
+	GObject *wrapped_obj;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ui", &text, &free_text, &max)) {
+        return;
+    }
+
+    wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr),
+                                          "max-length", max, "text", text);
+
+    if (free_text) g_free(text);
+
+	if (!wrapped_obj) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkEntry);
+	}
+    phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+}
+    
+%% }}}
+
 %% {{{ GtkIconSet
 %%
 override gtk_icon_set_get_sizes
@@ -1263,7 +1292,7 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool free_text, use_underline = 0;
+    zend_bool free_text = FALSE, use_underline = 0;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkLabel);
@@ -1507,7 +1536,7 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool free_text, use_underline = 1;
+    zend_bool free_text = FALSE, use_underline = 1;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMenuItem);
@@ -1898,7 +1927,7 @@ PHP_METHOD
 {
     GObject *wrapped_obj;
     gchar *text = NULL;
-    zend_bool free_text, use_underline = 1;
+    zend_bool free_text = FALSE, use_underline = 1;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkToggleButton);
