@@ -1,3 +1,67 @@
+2006-01-14  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtktextview.overrides
+      ext/gtk+/gtktreeview.overrides:
+      GtkDialog::__construct()
+      GtkDialog::add_buttons()
+      Gtk::icon_size_lookup_for_settings()
+      GtkEditable::insert_text()
+      GtkTextView::get_line_yrange()
+      GtkTextView::get_iter_at_position()
+      GtkTextView::get_line_at_y()
+      GtkTreeViewColumn::cell_get_size()
+      GdkWindow::get_geometry()
+      GdkWindow::get_position()
+      GdkWindow::get_origin()
+      GdkWindow::get_root_origin()
+      GdkWindow::at_pointer() (previously Gdk::window_at_pointer())
+      GdkDisplay::window_at_pointer()
+
+2006-01-14  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.defs:
+      Adjust gdk_window_at_pointer() defs.
+
+    * ext/gtk+/gdk.defs:
+      GdkWindow::at_pointer() is a static method.
+
+    * ext/gtk+/gtk.overrides:
+      NULL at the end
+
+2006-01-14  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.overrides:
+      Reflection information for Andrei's GtkEntry constructor
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/gtktextview.overrides
+      ext/gtk+/gtktreeview.overrides:
+      GtkEditable::get_selection_bounds()
+      GtkWidget::get_size_request()
+      GtkMisc::get_padding()
+      GtkEntry::get_layout_offsets()
+      GtkTreeView::tree_to_widget_coords()
+      GtkTreeView::widget_to_tree_coords()
+      GtkTextView::window_to_buffer_coords()
+      GtkTextView::buffer_to_window_coords()
+      GtkLayout::get_size()
+      GtkScale::get_layout_offsets()
+      GtkWidget::translate_coordinates()
+      GtkTreeViewColumn::cell_get_position()
+
+2006-01-14  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/phpg_gvalue.c:
+      Respect G_TYPE_INVALID/G_TYPE_NONE in phpg_gvalue_from_zval().
+
+    * ext/gtk+/gtk.overrides:
+      - Implement GtkEntry() constructor that allows setting initial text and
+        max length
+      - Fix potential bugs where free_text was not initialized for optional
+        text parameters
+
 2006-01-13  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gtk.overrides:
