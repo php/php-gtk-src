@@ -294,7 +294,7 @@ class Generator {
                     $method_override = preg_replace('!^.*(PHP_METHOD).*$!m', "static $1($object->in_module$object->name, $method_name)", $method_override);
                     $this->write_override($method_override, $method->c_name);
                     $method_entries[$method_name] = array($object->in_module . $object->name,
-                                                          $method_name, $reflection_func, $flags ?  $flags : 'ZEND_ACC_PUBLIC');
+                                                          $method_name, $reflection_func, $flags ?  $flags : ($method->static ? 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC' : 'ZEND_ACC_PUBLIC'));
                 } else {
                     if ($method->static) {
                         $code = $this->write_callable($method, Templates::function_body, true, false, $dict);
