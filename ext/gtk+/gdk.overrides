@@ -857,7 +857,94 @@ HashTable* phpg_gdkevent_get_properties_handler(zval *object TSRMLS_DC)
 	return poh->zobj.properties;
 }
 
+
+%%
+add-arginfo GdkEvent get_axis
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, axis_type)
+ZEND_END_ARG_INFO();
+
+%%
+override gdk_event_get_axis
+PHP_METHOD
+{
+    zval *php_axis_use;
+    GdkAxisUse axis_use;
+    gdouble value;
+
+    NO_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_axis_use))
+        return;
+
+    if (phpg_gvalue_get_enum(GDK_TYPE_AXIS_USE, php_axis_use, (gint *) &axis_use) == FAILURE)
+        return;
+
+    if (gdk_event_get_axis((GdkEvent *) PHPG_GBOXED(this_ptr), axis_use, &value)) {
+        RETURN_DOUBLE(value);
+    } else {
+        RETURN_FALSE;
+    }
+}
+
+
+%%
+override gdk_event_get_coords
+PHP_METHOD
+{
+    gdouble x_win, y_win;
+
+    NO_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    if (gdk_event_get_coords((GdkEvent *) PHPG_GBOXED(this_ptr), &x_win, &y_win)) {
+        php_gtk_build_value(&return_value, "(dd)", x_win, y_win);
+    } else {
+        RETURN_FALSE;
+    }
+}
+
+
+%%
+override gdk_event_get_root_coords
+PHP_METHOD
+{
+    gdouble x_win, y_win;
+
+    NO_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    if (gdk_event_get_root_coords((GdkEvent *) PHPG_GBOXED(this_ptr), &x_win, &y_win)) {
+        php_gtk_build_value(&return_value, "(dd)", x_win, y_win);
+    } else {
+        RETURN_FALSE;
+    }
+}
+
+
+%%
+override gdk_event_get_state
+PHP_METHOD
+{
+    GdkModifierType state = 0;
+
+    NO_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gdk_event_get_state((GdkEvent *) PHPG_GBOXED(this_ptr), &state);
+
+    RETURN_LONG((long)state);
+}
+
 %% }}}
+
 
 %% {{{ GdkPixbuf
 
