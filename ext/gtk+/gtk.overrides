@@ -1091,8 +1091,6 @@ PHP_METHOD
             PHPG_THROW_CONSTRUCT_EXCEPTION(GtkDialog);
         }
 
-        GtkDialog *dialog = GTK_DIALOG(wrapped_obj);
-
         zend_hash_internal_pointer_reset(Z_ARRVAL_P(buttons));
         while (zend_hash_get_current_data(Z_ARRVAL_P(buttons), (void **)&text) == SUCCESS) {
             zend_hash_move_forward(Z_ARRVAL_P(buttons));
@@ -1106,7 +1104,7 @@ PHP_METHOD
                 PHPG_THROW_CONSTRUCT_EXCEPTION(GtkDialog);
             }
 
-            gtk_dialog_add_button(dialog, Z_STRVAL_PP(text), Z_LVAL_PP(response));
+            gtk_dialog_add_button(GTK_DIALOG(wrapped_obj), Z_STRVAL_PP(text), Z_LVAL_PP(response));
         }
     }
 
@@ -1140,8 +1138,6 @@ PHP_METHOD
         return;
     }
 
-    GtkDialog *dialog = GTK_DIALOG(PHPG_GOBJECT(this_ptr));
-
     zend_hash_internal_pointer_reset(Z_ARRVAL_P(buttons));
     while (zend_hash_get_current_data(Z_ARRVAL_P(buttons), (void **)&text) == SUCCESS) {
         zend_hash_move_forward(Z_ARRVAL_P(buttons));
@@ -1154,7 +1150,7 @@ PHP_METHOD
             return;
         }
 
-        gtk_dialog_add_button(dialog, Z_STRVAL_PP(text), Z_LVAL_PP(response));
+        gtk_dialog_add_button(GTK_DIALOG(PHPG_GOBJECT(this_ptr)), Z_STRVAL_PP(text), Z_LVAL_PP(response));
     }
 }
 
