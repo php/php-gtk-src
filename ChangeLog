@@ -1,3 +1,23 @@
+2006-01-15  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gdk.overrides:
+      Some simple event overrides:
+      GdkEvent::get_state
+      GdkEvent::get_root_coords
+      GdkEvent::get_coords
+      GdkEvent::get_axis
+
+    * ext/gtk+/gtk.overrides:
+      Taking back the performance enhancements of GtkDialog constructor
+      and GtkDialog::add_buttons, because that doesn't work on Steph's
+      windows box
+
+2006-01-15  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * generator/generator.php:
+      If override does not specify flags, base the flags on whether the method
+      is static or not.
+
 2006-01-14  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gdk.overrides
