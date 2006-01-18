@@ -593,6 +593,28 @@ PHP_METHOD
 
 
 %%
+override gtk_rc_get_default_files
+PHP_METHOD(gtk_rc_get_default_files)
+{
+    gchar **ret;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    ret = gtk_rc_get_default_files();
+    if (ret) {
+        array_init(return_value);
+        while (*ret) {
+            add_next_index_string(return_value, *ret, 1);
+            *ret++;
+        }
+    } else {
+        RETURN_NULL();
+    }
+}
+
+
+%%
 override gtk_stock_list_ids
 PHP_METHOD
 {
@@ -766,7 +788,26 @@ PHP_METHOD
     phpg_gobject_new(&return_value, wrapped_obj TSRMLS_CC);
     g_object_unref(wrapped_obj); /* phpg_gobject_new() increments reference count */
 }
+
+
+%%
+override gtk_button_get_alignment
+PHP_METHOD
+{
+    gfloat xalign, yalign;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_button_get_alignment(GTK_BUTTON(PHPG_GOBJECT(this_ptr)), &xalign, &yalign);
+    //FIXME: bad precision (set 0.1 -> get 0.10000000149012)
+    php_gtk_build_value(&return_value, "(ff)", xalign, yalign);
+}
+
 %% }}}
+
 
 %% {{{ GtkButtonBox
 
@@ -1262,6 +1303,27 @@ PHP_METHOD
 %% }}}
 
 
+%% {{{ GtkFrame
+
+%%
+override gtk_frame_get_label_align
+PHP_METHOD
+{
+    gfloat xalign, yalign;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_frame_get_label_align(GTK_FRAME(PHPG_GOBJECT(this_ptr)), &xalign, &yalign);
+
+    php_gtk_build_value(&return_value, "(ff)", xalign, yalign);
+}
+
+%% }}}
+
+
 %% {{{ GtkIconSet
 %%
 override gtk_icon_set_get_sizes
@@ -1340,6 +1402,7 @@ static
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
     ZEND_ARG_INFO(0, title)
     ZEND_ARG_OBJ_INFO(0, parent, GtkWindow, 1)
+    ZEND_ARG_INFO(0, action)
     ZEND_ARG_INFO(0, buttons)
     ZEND_ARG_INFO(0, backend)
 ZEND_END_ARG_INFO();
@@ -1744,6 +1807,22 @@ PHP_METHOD
 %% {{{ GtkMisc
 
 %%
+override gtk_misc_get_alignment
+PHP_METHOD
+{
+    gfloat xalign, yalign;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_misc_get_alignment(GTK_MISC(PHPG_GOBJECT(this_ptr)), &xalign, &yalign);
+    php_gtk_build_value(&return_value, "(ff)", xalign, yalign);
+}
+
+
+%%
 override gtk_misc_get_padding
 PHP_METHOD
 {
@@ -2018,6 +2097,26 @@ PHP_METHOD
 %% }}}
 
 
+%% {{{ GtkRuler
+
+%%
+override gtk_ruler_get_range
+PHP_METHOD
+{
+    gdouble lower, upper, position, max_size;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_ruler_get_range(GTK_RULER(PHPG_GOBJECT(this_ptr)), &lower, &upper, &position, &max_size);
+    php_gtk_build_value(&return_value, "(dddd)", lower, upper, position, max_size);
+}
+
+%% }}}
+
+
 %% {{{ GtkScale
 
 %%
@@ -2036,6 +2135,63 @@ PHP_METHOD
 }
 
 %% }}}
+
+
+%% {{{ GtkScrolledWindow
+
+%%
+override gtk_scrolled_window_get_policy
+PHP_METHOD
+{
+    GtkPolicyType hscrollbar_policy, vscrollbar_policy;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(PHPG_GOBJECT(this_ptr)), &hscrollbar_policy, &vscrollbar_policy);
+
+    php_gtk_build_value(&return_value, "(ii)", (int)hscrollbar_policy, (int)vscrollbar_policy);
+}
+
+%% }}}
+
+
+%% {{{ GtkSpinButton
+
+%%
+override gtk_spin_button_get_increments
+PHP_METHOD
+{
+    gdouble step, page;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_spin_button_get_increments(GTK_SPIN_BUTTON(PHPG_GOBJECT(this_ptr)), &step, &page);
+    php_gtk_build_value(&return_value, "(dd)", step, page);
+}
+
+%%
+override gtk_spin_button_get_range
+PHP_METHOD
+{
+    gdouble min, max;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_spin_button_get_range(GTK_SPIN_BUTTON(PHPG_GOBJECT(this_ptr)), &min, &max);
+    php_gtk_build_value(&return_value, "(dd)", min, max);
+}
+
+%% }}}
+
 
 
 %% include gtkstyle.overrides
@@ -2167,6 +2323,21 @@ PHP_METHOD
 
 
 %% {{{ GtkWidget
+
+%%
+override gtk_widget_get_child_requisition
+PHP_METHOD
+{
+    GtkRequisition requisition;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_widget_get_child_requisition(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), &requisition);
+    phpg_gboxed_new(&return_value, GTK_TYPE_REQUISITION, &requisition, TRUE, TRUE TSRMLS_CC);
+}
 
 %%
 override gtk_widget_get_pointer
