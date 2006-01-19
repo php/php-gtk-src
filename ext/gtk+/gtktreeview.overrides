@@ -458,6 +458,16 @@ PHP_METHOD
     phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }
 
+
+%%
+add-arginfo GtkTreeStore insert
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+    ZEND_ARG_INFO(0, position)
+    ZEND_ARG_OBJ_INFO(0, parent, GtkTreeIter, 1)
+    ZEND_ARG_INFO(0, items)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_tree_store_insert
 PHP_METHOD
@@ -484,6 +494,16 @@ PHP_METHOD
 
     phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }
+
+
+%%
+add-arginfo GtkTreeStore insert_before
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_OBJ_INFO(0, parent, GtkTreeIter, 1)
+    ZEND_ARG_OBJ_INFO(0, sibling, GtkTreeIter, 1)
+    ZEND_ARG_INFO(0, items)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_tree_store_insert_before
@@ -514,6 +534,16 @@ PHP_METHOD
     phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }
 
+
+%%
+add-arginfo GtkTreeStore insert_after
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_OBJ_INFO(0, parent, GtkTreeIter, 1)
+    ZEND_ARG_OBJ_INFO(0, sibling, GtkTreeIter, 1)
+    ZEND_ARG_INFO(0, items)
+ZEND_END_ARG_INFO();
+
 %%
 override gtk_tree_store_insert_after
 PHP_METHOD
@@ -542,6 +572,7 @@ PHP_METHOD
 
     phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }
+
 
 %%
 add-arginfo GtkTreeStore set
