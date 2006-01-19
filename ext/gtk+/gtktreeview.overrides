@@ -459,6 +459,91 @@ PHP_METHOD
 }
 
 %%
+override gtk_tree_store_insert
+PHP_METHOD
+{
+    GtkTreeIter iter;
+    gint position;
+    zval *items = NULL;
+    zval *php_parent_iter = NULL;
+    GtkTreeIter *parent_iter = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i|Na", &position, &php_parent_iter, gtktreeiter_ce, &items))
+        return;
+
+    if (php_parent_iter && IS_OBJECT == Z_TYPE_P(php_parent_iter)) {
+        parent_iter = (GtkTreeIter *) PHPG_GBOXED(php_parent_iter);
+    }
+
+    gtk_tree_store_insert(GTK_TREE_STORE(PHPG_GOBJECT(this_ptr)), &iter, parent_iter, position);
+
+    if (items && phpg_model_set_row(GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr)), &iter, items) == FAILURE)
+        return;
+
+    phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
+override gtk_tree_store_insert_before
+PHP_METHOD
+{
+    GtkTreeIter iter;
+    zval *items = NULL;
+    zval *php_parent_iter = NULL, *php_sibling_iter = NULL;
+    GtkTreeIter *parent_iter = NULL, *sibling_iter = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|NNa", &php_sibling_iter, gtktreeiter_ce, &php_parent_iter, gtktreeiter_ce, &items))
+        return;
+
+    if (php_parent_iter && IS_OBJECT == Z_TYPE_P(php_parent_iter)) {
+        parent_iter = (GtkTreeIter *) PHPG_GBOXED(php_parent_iter);
+    }
+    if (php_sibling_iter && IS_OBJECT == Z_TYPE_P(php_sibling_iter)) {
+        sibling_iter = (GtkTreeIter *) PHPG_GBOXED(php_sibling_iter);
+    }
+
+    gtk_tree_store_insert_before(GTK_TREE_STORE(PHPG_GOBJECT(this_ptr)), &iter, parent_iter, sibling_iter);
+
+    if (items && phpg_model_set_row(GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr)), &iter, items) == FAILURE)
+        return;
+
+    phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
+override gtk_tree_store_insert_after
+PHP_METHOD
+{
+    GtkTreeIter iter;
+    zval *items = NULL;
+    zval *php_parent_iter = NULL, *php_sibling_iter = NULL;
+    GtkTreeIter *parent_iter = NULL, *sibling_iter = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|NNa", &php_sibling_iter, gtktreeiter_ce, &php_parent_iter, gtktreeiter_ce, &items))
+        return;
+
+    if (php_parent_iter && IS_OBJECT == Z_TYPE_P(php_parent_iter)) {
+        parent_iter = (GtkTreeIter *) PHPG_GBOXED(php_parent_iter);
+    }
+    if (php_sibling_iter && IS_OBJECT == Z_TYPE_P(php_sibling_iter)) {
+        sibling_iter = (GtkTreeIter *) PHPG_GBOXED(php_sibling_iter);
+    }
+
+    gtk_tree_store_insert_after(GTK_TREE_STORE(PHPG_GOBJECT(this_ptr)), &iter, parent_iter, sibling_iter);
+
+    if (items && phpg_model_set_row(GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr)), &iter, items) == FAILURE)
+        return;
+
+    phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
 add-arginfo GtkTreeStore set
 static
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 3)

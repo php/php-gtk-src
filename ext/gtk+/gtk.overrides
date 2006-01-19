@@ -574,7 +574,6 @@ PHP_METHOD
     gint width, height;
     zval *php_settings;
     zval *php_size = NULL;
-    GtkSettings settings;
     GtkIconSize size;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OV", &php_settings, gtksettings_ce, &php_size))
