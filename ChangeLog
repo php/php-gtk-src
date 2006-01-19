@@ -1,3 +1,19 @@
+2006-01-18  Christian Weiske  <cweiske@cweiske.de>
+
+    * (RELEASE_1_0_4)
+      ext/gtk+/gtk.overrides:
+      GtkButton::get_alignment()
+      GtkFrame::get_label_align()
+      GtkScrolledWindow::get_policy()
+      GtkSpinButton::get_range()
+      GtkSpinButton::get_increments()
+      GtkMisc::get_alignment()
+      Gtk::rc_get_default_files()
+      GtkRuler::get_range()
+      GtkWidget::get_child_requisition()
+      
+      Reflection parameter info fix for GtkFileChooserDialog __construct
+
 2006-01-15  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gdk.overrides:
