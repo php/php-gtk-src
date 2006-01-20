@@ -1,3 +1,15 @@
+2006-01-19  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtktreeview.overrides:
+      Parameter reflection for insert/insert_before/insert_after
+
+2006-01-19  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/gtktreeview.overrides:
+      overrides for GtkTreeStore insert()/insert_before()/insert_after().
+      (Christian, Andrei)
+
 2006-01-18  Christian Weiske  <cweiske@cweiske.de>
 
     * (RELEASE_1_0_4)
