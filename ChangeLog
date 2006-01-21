@@ -1,3 +1,9 @@
+2006-01-20  Steph Fox  <steph.fox@virgin.net>
+
+    * (PHP_GTK_1)
+      ext/spaned/config.m4:
+      fix spaned build on *nix-based systems
+
 2006-01-19  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gtktreeview.overrides:
