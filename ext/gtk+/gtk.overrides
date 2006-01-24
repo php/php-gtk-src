@@ -596,6 +596,9 @@ override gtk_rc_get_default_files
 PHP_METHOD(gtk_rc_get_default_files)
 {
     gchar **ret;
+    gchar *cp_str;
+    gsize cp_len;
+    zend_bool free_cp_str;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
         return;
@@ -604,7 +607,13 @@ PHP_METHOD(gtk_rc_get_default_files)
     if (ret) {
         array_init(return_value);
         while (*ret) {
-            add_next_index_string(return_value, *ret, 1);
+            cp_str = phpg_from_utf8(*ret, strlen(*ret), &cp_len, &free_cp_str TSRMLS_CC);
+            if (cp_str) {
+                add_next_index_stringl(return_value, cp_str, cp_len, !free_cp_str);
+            } else {
+                zval_dtor(return_value);
+                RETURN_NULL();
+            }
             *ret++;
         }
     } else {
