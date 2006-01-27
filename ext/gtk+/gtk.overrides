@@ -1091,6 +1091,7 @@ PHP_METHOD
     zval *buttons = NULL;
     GtkDialogFlags flags = 0;
     GObject *wrapped_obj;
+    zval **text, **response;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|uNVa", &title, &free_title, &php_parent, gtkwindow_ce, &php_flags, &buttons)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkDialog);
@@ -1131,7 +1132,6 @@ PHP_METHOD
     }
 
     if (buttons) {
-        zval **text, **response;
 
         if (zend_hash_num_elements(Z_ARRVAL_P(buttons)) % 2) {
             php_error(E_WARNING, "%s::%s(): button list has to contain pairs of items",
@@ -1173,13 +1173,13 @@ override gtk_dialog_add_buttons
 PHP_METHOD
 {
     zval *buttons = NULL;
+    zval **text, **response;
 
     NOT_STATIC_METHOD();
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &buttons))
         return;
 
-    zval **text, **response;
 
     if (zend_hash_num_elements(Z_ARRVAL_P(buttons)) % 2) {
         php_error(E_WARNING, "%s::%s(): button list has to contain pairs of items",
@@ -1427,6 +1427,7 @@ PHP_METHOD
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
     GObject *wrapped_obj;
     int n = 0;
+    zval **text, **response;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|uNVau", &title, &free_title, &php_parent,
                             gtkwindow_ce, &php_action, &buttons, &backend, &free_backend)) {
@@ -1470,7 +1471,6 @@ PHP_METHOD
     }
 
     if (buttons) {
-        zval **text, **response;
 
         if (zend_hash_num_elements(Z_ARRVAL_P(buttons)) % 2) {
             php_error(E_WARNING, "%s::%s(): button list has to contain pairs of items",
