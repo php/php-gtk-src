@@ -1,3 +1,9 @@
+2006-01-27  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides:
+      Fixing the things Tom Rogers found
+
 2006-01-24  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides:
