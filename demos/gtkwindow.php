@@ -9,7 +9,7 @@ class WindowTest extends GtkWindow
 
         $this->set_default_size(200,200);
         $this->set_title('GtkWindow demo');
-        $this->connect_object('destroy', array('gtk', 'main_quit'));
+        $this->connect_simple('destroy', array('gtk', 'main_quit'));
         $this->add($this->__create_box());
         $this->show_all();
     }

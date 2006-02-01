@@ -20,7 +20,7 @@ class SizeGroup extends GtkWindow
         if ($parent)
             $this->set_screen($parent->get_screen());
         else
-            $this->connect_object('destroy', array('gtk', 'main_quit'));
+            $this->connect_simple('destroy', array('gtk', 'main_quit'));
 
         $this->set_title(__CLASS__);
         $this->set_position(Gtk::WIN_POS_CENTER);

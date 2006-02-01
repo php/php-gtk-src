@@ -13,7 +13,7 @@ class IconView extends GtkWindow
 
         $this->set_default_size(700,300);
         $this->set_title('GtkIconView');
-        $this->connect_object('destroy', array('gtk', 'main_quit'));
+        $this->connect_simple('destroy', array('gtk', 'main_quit'));
         
         $this->add($this->__create_box());
         
