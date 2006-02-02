@@ -1,3 +1,9 @@
+2006-02-01  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.overrides:
+      Fixing bug #36238:
+      GtkColorButton wasn't phpish
+
 2006-01-27  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gdk.overrides
