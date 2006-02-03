@@ -32,7 +32,7 @@ PHP_GTK_API zend_class_entry *php_gtk_exception_ce;
 extern zend_class_entry *gtk_ce;
 
 /* defined in php_gdk.c */
-void php_gdk_register_keysyms(int module_number TSRMLS_DC);
+void php_gdk_register_keysyms();
 
 /* TODO check pygtk version */
 static void init_gtk(void)
@@ -197,6 +197,8 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 	phpg_gdk_register_constants("GDK_");
 	phpg_gtk_register_constants("GTK_");
 	register_stock_constants();
+
+	php_gdk_register_keysyms();
 
 	php_gtk_plus_register_types();
 
