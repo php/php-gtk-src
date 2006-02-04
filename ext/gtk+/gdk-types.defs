@@ -232,7 +232,7 @@
   (c-name "GdkColorSpace")
   (gtype-id "GDK_TYPE_COLORSPACE")
   (values
-    '("rgb" "GDK_COLOR_SPACE_RGB")
+    '("rgb" "GDK_COLORSPACE_RGB")
   )
 )
 (define-enum CursorType
