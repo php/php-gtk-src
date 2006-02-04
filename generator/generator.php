@@ -990,14 +990,6 @@ class Generator {
                 $reflection_funcname = Generator::getReflectionFuncName($method, $class, $det_method_name);
                 $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
 
-                list($line, $filename) = $this->overrides->get_line_info("$class_name.$method_name.arginfo");
-
-                if (WIN_OS) {
-                    $arginfo  = sprintf("//line %d \"%s\"\n", $line, $filename);
-                } else {
-                    $arginfo  = sprintf("#line %d \"%s\"\n", $line, $filename);
-                }
-
                 $arginfo .= str_replace('ARGINFO_NAME', $reflection_funcname, $this->overrides->get_extra_arginfo($class_name, $method_name));
             } else {
                 //no arginfo
