@@ -2528,3 +2528,4 @@ PHP_METHOD
 
 %% include gtktextview.overrides
 %% include gtktreeview.overrides
+%% include gtkdrag.overrides

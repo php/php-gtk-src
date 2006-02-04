@@ -1,0 +1,259 @@
+/* vim: set ft=cpp fdm=marker et: */
+
+%%
+headers
+extern PHP_GTK_EXPORT_CE(gdkdragcontext_ce);
+static GtkTargetEntry* phpg_parse_target_entries(zval *php_targets, int *n_targets);
+
+%%
+override gtk_drag_dest_set
+
+static GtkTargetEntry* phpg_parse_target_entries(zval *php_targets, int *n_targets)
+{
+    GtkTargetEntry *tents;
+    zval **item;
+    int n;
+
+    *n_targets = 0;
+	tents = emalloc(sizeof(GtkTargetEntry) * zend_hash_num_elements(Z_ARRVAL_P(php_targets)));
+
+	for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_targets)), n = 0;
+		 zend_hash_get_current_data(Z_ARRVAL_P(php_targets), (void **)&item) == SUCCESS;
+		 zend_hash_move_forward(Z_ARRVAL_P(php_targets)), n++) {
+		if (Z_TYPE_PP(item) != IS_ARRAY ||
+			!php_gtk_parse_args_hash_quiet(*item, "sii", &tents[n].target,
+										   &tents[n].flags, &tents[n].info)) {
+			php_error(E_WARNING, "%s::%s() was unable to parse target #%d in the list of targets", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C), n+1);
+			efree(tents);
+			return NULL;
+		}
+	}
+
+    *n_targets = n;
+    return tents;
+}
+
+PHP_METHOD
+{
+	zval *php_flags, *php_targets, *php_actions;
+	GtkDestDefaults flags;
+	GdkDragAction actions;
+	GtkTargetEntry *entries;
+	int n;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "VaV", &php_flags, &php_targets, &php_actions)) {
+		return;
+	}
+
+	if (phpg_gvalue_get_flags(GTK_TYPE_DEST_DEFAULTS, php_flags, (gint *)&flags) == FAILURE) {
+		return;
+	}
+
+	if (phpg_gvalue_get_flags(GDK_TYPE_DRAG_ACTION, php_actions, (gint *)&actions) == FAILURE) {
+		return;
+	}
+
+	entries = phpg_parse_target_entries(php_targets, &n);
+	gtk_drag_dest_set(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), flags, entries, n, actions);
+	efree(entries);
+}
+
+%%
+override gtk_drag_begin
+PHP_METHOD
+{
+	zval *php_targets, *php_actions, *event;
+	GdkDragAction actions;
+	GtkTargetEntry *entries;
+	GtkTargetList *tlist;
+	GdkDragContext *context;
+	gint button, n;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "aViO", &php_targets, &php_actions,
+							&button, &event, gdkevent_ce)) {
+		return;
+    }
+
+	if (phpg_gvalue_get_flags(GDK_TYPE_DRAG_ACTION, php_actions, (gint *)&actions) == FAILURE) {
+		return;
+    }
+
+	entries = phpg_parse_target_entries(php_targets, &n);
+	tlist = gtk_target_list_new(entries, n);
+	efree(entries);
+	context = gtk_drag_begin(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), tlist, actions, button, (GdkEvent *)PHPG_GBOXED(event));
+	gtk_target_list_unref(tlist);
+
+    phpg_gobject_new(&return_value, (GObject *)context TSRMLS_CC);
+}
+
+%%
+override gtk_drag_dest_get_target_list
+PHP_METHOD
+{
+    GtkTargetList *tlist;
+    GtkTargetPair *pair;
+    GList *tmp;
+    gchar *name;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    tlist = gtk_drag_dest_get_target_list(GTK_WIDGET(PHPG_GOBJECT(this_ptr)));
+    if (!tlist) {
+        return;
+    }
+
+    array_init(return_value);
+    for (tmp = tlist->list; tmp != NULL; tmp = tmp->next) {
+        zval *item = NULL;
+
+        pair = tmp->data;
+        name = gdk_atom_name(pair->target);
+        php_gtk_build_value(&item, "(sii)", name, pair->flags, pair->info);
+        g_free(name);
+        add_next_index_zval(return_value, item);
+    }
+}
+
+%%
+override gtk_drag_dest_set_target_list
+PHP_METHOD
+{
+    zval *php_targets;
+    GtkTargetEntry *entries;
+	GtkTargetList *tlist;
+    int n;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_targets)) {
+        return;
+    }
+
+	entries = phpg_parse_target_entries(php_targets, &n);
+	tlist = gtk_target_list_new(entries, n);
+	efree(entries);
+
+    gtk_drag_dest_set_target_list(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), tlist);
+    gtk_target_list_unref(tlist);
+}
+
+%%
+override gtk_drag_dest_find_target
+PHP_METHOD
+{
+    zval *php_targets, *php_context;
+    GtkTargetEntry *entries;
+    GtkTargetList *tlist;
+    GdkAtom atom;
+    int n;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oa", &php_context, gdkdragcontext_ce, &php_targets)) {
+        return;
+    }
+
+    entries = phpg_parse_target_entries(php_targets, &n);
+	tlist = gtk_target_list_new(entries, n);
+	efree(entries);
+
+    atom = gtk_drag_dest_find_target(GTK_WIDGET(PHPG_GOBJECT(this_ptr)),
+                                     GDK_DRAG_CONTEXT(PHPG_GOBJECT(php_context)), tlist);
+    gtk_target_list_unref(tlist);
+
+    RETURN_STRING(gdk_atom_name(atom), 0);
+}
+
+%%
+override gtk_drag_source_set
+PHP_METHOD
+{
+	zval *php_sbmask, *php_targets, *php_actions;
+	GdkModifierType sbmask;
+	GdkDragAction actions;
+	GtkTargetEntry *entries;
+	int n;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "VaV", &php_sbmask, &php_targets, &php_actions)) {
+		return;
+    }
+
+	if (phpg_gvalue_get_flags(GDK_TYPE_MODIFIER_TYPE, php_sbmask, (gint *)&sbmask) == FAILURE) {
+		return;
+    }
+
+	if (phpg_gvalue_get_flags(GDK_TYPE_DRAG_ACTION, php_actions, (gint *)&actions) == FAILURE) {
+        return;
+    }
+
+	entries = phpg_parse_target_entries(php_targets, &n);
+	gtk_drag_source_set(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), sbmask, entries, n, actions);
+	efree(entries);
+}
+
+%%
+override gtk_drag_source_get_target_list
+PHP_METHOD
+{
+    GtkTargetList *tlist;
+    GtkTargetPair *pair;
+    GList *tmp;
+    gchar *name;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    tlist = gtk_drag_source_get_target_list(GTK_WIDGET(PHPG_GOBJECT(this_ptr)));
+    if (!tlist) {
+        return;
+    }
+
+    array_init(return_value);
+    for (tmp = tlist->list; tmp != NULL; tmp = tmp->next) {
+        zval *item = NULL;
+
+        pair = tmp->data;
+        name = gdk_atom_name(pair->target);
+        php_gtk_build_value(&item, "(sii)", name, pair->flags, pair->info);
+        g_free(name);
+        add_next_index_zval(return_value, item);
+    }
+}
+
+%%
+override gtk_drag_source_set_target_list
+PHP_METHOD
+{
+    zval *php_targets;
+    GtkTargetEntry *entries;
+	GtkTargetList *tlist;
+    int n;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_targets)) {
+        return;
+    }
+
+	entries = phpg_parse_target_entries(php_targets, &n);
+	tlist = gtk_target_list_new(entries, n);
+	efree(entries);
+
+    gtk_drag_source_set_target_list(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), tlist);
+    gtk_target_list_unref(tlist);
+}
+
