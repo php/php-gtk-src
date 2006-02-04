@@ -1,3 +1,12 @@
+2006-02-03  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/config.m4
+      ext/gtk+/php_gdk.c
+      ext/gtk+/php_gtk+.c:
+      Register keysyms under Gdk:: class. Having them as class constants also
+      means that they are case-sensitive and that we don't need the stupid
+      doubule underscore trick anymore.
+
 2006-02-01  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gtk.overrides:
