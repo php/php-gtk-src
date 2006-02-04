@@ -990,7 +990,7 @@ class Generator {
                 $reflection_funcname = Generator::getReflectionFuncName($method, $class, $det_method_name);
                 $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
 
-                $arginfo .= str_replace('ARGINFO_NAME', $reflection_funcname, $this->overrides->get_extra_arginfo($class_name, $method_name));
+                $arginfo = str_replace('ARGINFO_NAME', $reflection_funcname, $this->overrides->get_extra_arginfo($class_name, $method_name));
             } else {
                 //no arginfo
                 $reflection_func = str_repeat(' ', $len) . 'NULL';
