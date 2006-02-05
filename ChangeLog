@@ -1,3 +1,23 @@
+2006-02-04  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/Makefile.frag
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtkdrag.overrides:
+      Implement a bunch of drag-n-drop methods.
+
+    * generator/generator.php:
+      Kill warning.
+
+    * generator/generator.php:
+      Gah, this was very, very nasty and took me an hour to figure out why
+      breakpoints set for phpg_gdk_register_constant() were ending up in
+      gdk.overrides. There needs to be a lot more work/thinking done if we
+      want arginfo to have proper #line's.
+
+    * ext/gtk+/gdk-types.defs
+      ext/gtk+/php_gtk+.h:
+      Supposed to be COLORSPACE_RGB not COLOR_SPACE_RGB.
+
 2006-02-03  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/config.m4
