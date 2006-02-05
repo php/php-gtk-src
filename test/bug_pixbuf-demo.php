@@ -1,6 +1,6 @@
 <?php
 define('FRAME_DELAY', 50);
-define('BACKGROUND_NAME', "background.jpg");
+define('BACKGROUND_NAME', "../demos/background.jpg");
 
 $image_names = array(
 "apple-red.png",
@@ -50,7 +50,7 @@ function load_pixbufs()
     $back_height = $background->get_height();
 
     for ($i = 0; $i < N_IMAGES; $i++) {
-        $images[$i] = GdkPixbuf::new_from_file($image_names[$i]);
+        $images[$i] = GdkPixbuf::new_from_file('../demos/' . $image_names[$i]);
         if (!$images[$i])
             return false;
     }
