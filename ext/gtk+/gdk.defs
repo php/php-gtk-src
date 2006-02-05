@@ -3683,9 +3683,11 @@
   (return-type "GdkWindow*")
 )
 
-(define-function window_get_toplevels
+(define-method get_toplevels
+  (of-object "GdkWindow")
   (c-name "gdk_window_get_toplevels")
   (return-type "GList*")
+  (static #t)
 )
 
 (define-method get_update_area

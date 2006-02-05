@@ -105,6 +105,35 @@ PHP_METHOD
 
 %% }}}
 
+
+%% {{{ GtkCellView
+
+%%
+override gtk_cell_view_get_cell_renderers
+PHP_METHOD
+{
+    GList *list, *item;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    list = gtk_cell_view_get_cell_renderers(GTK_CELL_VIEW(PHPG_GOBJECT(this_ptr)));
+
+    array_init(return_value);
+    for (item = list; item; item = item->next) {
+        zval *php_item = NULL;
+        phpg_gobject_new(&php_item, G_OBJECT(item->data) TSRMLS_CC);
+        add_next_index_zval(return_value, php_item);
+    }
+
+    g_list_free(list);
+}
+
+%% }}}
+
+
 %% {{{ GtkListStore
 %%
 add-arginfo GtkListStore __construct
@@ -1210,6 +1239,30 @@ PHP_METHOD
     phpg_gboxed_new(&php_cell_area, GDK_TYPE_RECTANGLE, &cell_area, TRUE, TRUE TSRMLS_CC);
 
     php_gtk_build_value(&return_value, "(Niiii)", php_cell_area, x_offset, y_offset, width, height);
+}
+
+
+%%
+override gtk_tree_view_column_get_cell_renderers
+PHP_METHOD
+{
+    GList *list, *item;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    list = gtk_tree_view_column_get_cell_renderers(GTK_TREE_VIEW_COLUMN(PHPG_GOBJECT(this_ptr)));
+
+    array_init(return_value);
+    for (item = list; item; item = item->next) {
+        zval *php_item = NULL;
+        phpg_gobject_new(&php_item, G_OBJECT(item->data) TSRMLS_CC);
+        add_next_index_zval(return_value, php_item);
+    }
+
+    g_list_free(list);
 }
 
 
