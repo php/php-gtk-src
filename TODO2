@@ -69,6 +69,7 @@ Classes and Functions
 	method      GtkTreeModel::get: varargs methods not supported
 	method      GtkTreeModel::get_valist: unknown type 'va_list'
 	method      GtkTreeModel::rows_reordered: unknown type 'gint*'
+	maybe implement some SPL interfaces?
 * GtkTreeStore
 	method      GtkTreeStore::reorder: unknown type 'gint*'
 	method      GtkTreeStore::set_column_types: unknown type 'GType*'
