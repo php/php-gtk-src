@@ -47,6 +47,7 @@ ignore
     gtk_image_menu_item_new_with_mnemonic
     gtk_init
     gtk_init_check
+    gtk_list_item_new_with_label
     gtk_menu_item_new_with_label
     gtk_menu_item_new_with_mnemonic
     gtk_radio_menu_item_new_with_label
@@ -1621,6 +1622,48 @@ PHP_METHOD
 
     gtk_layout_get_size(GTK_LAYOUT(PHPG_GOBJECT(this_ptr)), &width, &height);
     php_gtk_build_value(&return_value, "(ii)", width, height);
+}
+
+%% }}}
+
+
+%% {{{ GtkListItem
+
+%%
+add-arginfo GtkListItem __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, label)
+ZEND_END_ARG_INFO();
+
+%% override gtk_list_item_new
+PHP_METHOD(GtkListItem, __construct)
+{
+    char *label;
+    zend_bool free_label;
+    GObject *wrapped_obj;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|u", &label, &free_label)) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkListItem);
+    }
+
+    phpg_warn_deprecated("use GtkTreeView" TSRMLS_CC);
+
+    if (ZEND_NUM_ARGS() == 1) {
+        wrapped_obj = (GObject *) gtk_list_item_new_with_label(label);
+        if (free_label) g_free(label);
+    } else {
+        wrapped_obj = (GObject *) g_object_newv(phpg_gtype_from_zval(this_ptr), 0, NULL);
+    }
+
+    if (!wrapped_obj) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkListItem);
+    }
+
+    phpg_gobject_new(&return_value, wrapped_obj TSRMLS_CC);
+    if (ZEND_NUM_ARGS() == 1) {
+        g_object_unref(wrapped_obj); /* phpg_gobject_new() increments reference count */
+    }
 }
 
 %% }}}
