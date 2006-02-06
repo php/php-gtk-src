@@ -1,3 +1,32 @@
+2006-02-05  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2:
+      -** empty log message ***
+
+2006-02-05  Christian Weiske  <cweiske@cweiske.de>
+
+    * test/bug_pixbuf-demo.php:
+      Moved pixbufsegfaultdemo to test/ dir
+
+    * ext/gtk+/gdk.defs
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtktreeview.overrides:
+      Committing my GList overrides I sent on 2006-01-27 to the list
+
+    * ext/gtk+/gtk.overrides:
+      Merged GtkListItem() and GtkListItem::new_with_label()
+
+    * ext/gtk+/gdk.overrides:
+      Ported pixbufdemo from c sources to php-gtk.
+      Unfortunately, php segfaults when trying to execute it.
+      It does not segfault when disabling the draw_rgb_image_dithalign
+      method in line #72, e.g. by adding a (false &&) to line #71
+      
+      Andrei, could you have a look into it or tell me how to debug correctly
+      - I compiled php and php-gtk2 with debugging support, but a
+      "gdb php pixbuf-demo.php" gives me the message that it's not a core dump
+      and can't be read (file format not recognized)
+
 2006-02-04  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/Makefile.frag
