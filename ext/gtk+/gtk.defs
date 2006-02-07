@@ -17679,6 +17679,7 @@
   (of-object "GtkTreeModel")
   (c-name "gtk_tree_model_filter_new")
   (return-type "GtkTreeModel*")
+  (caller-owns-return #t)
   (parameters
     '("GtkTreePath*" "root" (default "NULL") (null-ok))
   )
