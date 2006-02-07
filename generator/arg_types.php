@@ -863,7 +863,7 @@ class GtkTreePath_Arg extends Arg_Type {
         %(on_error);
     }\n";
     const null_tpl = "
-    if (Z_TYPE_P(php_%(name)) != IS_NULL) {
+    if (php_%(name) && Z_TYPE_P(php_%(name)) != IS_NULL) {
         if (phpg_tree_path_from_zval(php_%(name), &%(name) TSRMLS_CC) == FAILURE) {
             php_error(E_WARNING, \"%s::%s() expects %(name) to be a valid tree path specification\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
             %(on_error);
@@ -877,7 +877,7 @@ class GtkTreePath_Arg extends Arg_Type {
     {
         if ($null_ok) {
             $info->var_list->add('GtkTreePath', '*' . $name . ' = NULL');
-            $info->var_list->add('zval', '*php_' . $name);
+            $info->var_list->add('zval', '*php_' . $name . ' = NULL');
             $info->arg_list[] = $name;
             $info->add_parse_list('V', '&php_' . $name);
             $info->pre_code[] = aprintf(self::null_tpl, array('name' => $name,
