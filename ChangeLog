@@ -1,3 +1,13 @@
+2006-02-07  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * generator/arg_types.php:
+      Fix null value support for GtkTreePath.
+
+    * ext/gtk+/gtk.defs:
+      Since this is a constructor for all intents and purposes, the caller
+      should own the return value.
+      Gah, took me a while to find this one. I'm getting old.
+
 2006-02-06  Andrei Zmievski  <andrei@gravitonic.com>
 
     * config.m4:
