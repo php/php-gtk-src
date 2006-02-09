@@ -8,7 +8,7 @@ static GtkTargetEntry* phpg_parse_target_entries(zval *php_targets, int *n_targe
 %%
 override gtk_drag_dest_set
 
-static GtkTargetEntry* phpg_parse_target_entries(zval *php_targets, int *n_targets)
+static GtkTargetEntry* phpg_parse_target_entries(zval *php_targets, int *n_targets TSRMLS_DC)
 {
     GtkTargetEntry *tents;
     zval **item;
@@ -55,7 +55,7 @@ PHP_METHOD
 		return;
 	}
 
-	entries = phpg_parse_target_entries(php_targets, &n);
+	entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
 	gtk_drag_dest_set(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), flags, entries, n, actions);
 	efree(entries);
 }
@@ -82,7 +82,7 @@ PHP_METHOD
 		return;
     }
 
-	entries = phpg_parse_target_entries(php_targets, &n);
+	entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
 	tlist = gtk_target_list_new(entries, n);
 	efree(entries);
 	context = gtk_drag_begin(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), tlist, actions, button, (GdkEvent *)PHPG_GBOXED(event));
@@ -138,7 +138,7 @@ PHP_METHOD
         return;
     }
 
-	entries = phpg_parse_target_entries(php_targets, &n);
+	entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
 	tlist = gtk_target_list_new(entries, n);
 	efree(entries);
 
@@ -162,7 +162,7 @@ PHP_METHOD
         return;
     }
 
-    entries = phpg_parse_target_entries(php_targets, &n);
+    entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
 	tlist = gtk_target_list_new(entries, n);
 	efree(entries);
 
@@ -197,7 +197,7 @@ PHP_METHOD
         return;
     }
 
-	entries = phpg_parse_target_entries(php_targets, &n);
+	entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
 	gtk_drag_source_set(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), sbmask, entries, n, actions);
 	efree(entries);
 }
@@ -249,7 +249,7 @@ PHP_METHOD
         return;
     }
 
-	entries = phpg_parse_target_entries(php_targets, &n);
+	entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
 	tlist = gtk_target_list_new(entries, n);
 	efree(entries);
 
