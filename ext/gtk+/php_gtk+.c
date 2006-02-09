@@ -45,14 +45,6 @@ static void init_gtk(void)
 	zend_bool no_argc = 0;
 	TSRMLS_FETCH();
 
-	/* We check request_method to see if we've been called from command line or
-	   Web server. Running GUI apps through a Web module can be dangerous to
-	   your health. */
-	if (SG(request_info).request_method != NULL) {
-		php_error(E_ERROR, "php-gtk: PHP GTK+ support is not available under Web servers");
-		return;
-	}
- 
 	/*
 	 * Grab the argc/argv values from $_SERVER array.
 	 */
