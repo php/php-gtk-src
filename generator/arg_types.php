@@ -179,7 +179,11 @@ class String_Arg extends Arg_Type {
             $info->post_code[] = 
                    "    if (php_retval) {\n"                        .
                    "        cp_ret = phpg_from_utf8(php_retval, strlen(php_retval), &cp_len, &free_result TSRMLS_CC);\n" .
-                   "        RETVAL_STRINGL((char *)cp_ret, cp_len, 1);\n"    .
+                   "        if (cp_ret) {\n"                        .
+                   "            RETVAL_STRINGL((char *)cp_ret, cp_len, 1);\n"    .
+                   "        } else {\n"                             .
+                   "            php_error(E_WARNING, \"%s::%s(): could not convert return value from UTF-8\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));\n" .
+                   "        }\n"                                    .
                    "        g_free(php_retval);\n"                  .
                    "        if (free_result)\n"                     .
                    "            g_free(cp_ret);\n"                  .
@@ -193,7 +197,11 @@ class String_Arg extends Arg_Type {
             $info->post_code[] = 
                    "    if (php_retval) {\n"                           .
                    "        cp_ret = phpg_from_utf8(php_retval, strlen(php_retval), &cp_len, &free_result TSRMLS_CC);\n" .
-                   "        RETVAL_STRINGL((char *)cp_ret, cp_len, 1);\n"       .
+                   "        if (cp_ret) {\n"                        .
+                   "            RETVAL_STRINGL((char *)cp_ret, cp_len, 1);\n"    .
+                   "        } else {\n"                             .
+                   "            php_error(E_WARNING, \"%s::%s(): could not convert return value from UTF-8\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));\n" .
+                   "        }\n"                                    .
                    "        if (free_result)\n"                        .
                    "            g_free(cp_ret);\n"                     .
                    "    } else {\n"                                    .
