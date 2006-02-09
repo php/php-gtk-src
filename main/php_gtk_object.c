@@ -156,6 +156,7 @@ PHP_GTK_API int php_gtk_get_simple_enum_value(zval *enum_val, int *result)
 	return 0;
 }
 
+#if 0
 PHP_GTK_API int php_gtk_get_enum_value(GType enum_type, zval *enum_val, int *result)
 {
 	if (!enum_val)
@@ -221,6 +222,7 @@ int php_gtk_get_flag_value(GType flag_type, zval *flag_val, int *result)
 	php_error(E_WARNING, "flag values must be integers or strings");
 	return 0;
 }
+#endif
 
 /* Generic callback marshal. */
 PHP_GTK_API void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nargs, GtkArg *args)

@@ -419,8 +419,8 @@ PHP_GTK_API GType phpg_gtype_from_class(zend_class_entry *ce);
 
 
 /* GValue */
-PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool copy_boxed TSRMLS_DC);
-PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC);
+PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool copy_boxed, zend_bool do_utf8 TSRMLS_DC);
+PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value, zend_bool do_utf8 TSRMLS_DC);
 PHP_GTK_API int phpg_param_gvalue_to_zval(const GValue *gval, zval **value, zend_bool copy_boxed, const GParamSpec *pspec TSRMLS_DC);
 PHP_GTK_API int phpg_param_gvalue_from_zval(GValue *gval, zval *value, const GParamSpec *pspec TSRMLS_DC);
 PHP_GTK_API zval *phpg_gvalues_to_array(const GValue *values, uint n_values);

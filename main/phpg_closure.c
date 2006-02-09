@@ -108,7 +108,7 @@ static void phpg_closure_marshal(GClosure *closure,
     for ( ; i < n_param_values; i++) {
         params[i] = (zval **) emalloc(sizeof(zval *));
         *(params[i]) = NULL;
-        if (phpg_gvalue_to_zval(&param_values[i], params[i], FALSE TSRMLS_CC) != SUCCESS) {
+        if (phpg_gvalue_to_zval(&param_values[i], params[i], FALSE, TRUE TSRMLS_CC) != SUCCESS) {
             goto err_marshal;
         }
     }
@@ -126,7 +126,7 @@ static void phpg_closure_marshal(GClosure *closure,
 
 	if (retval) {
 		if (return_value) {
-			if (phpg_gvalue_from_zval(return_value, retval TSRMLS_CC) == FAILURE) {
+			if (phpg_gvalue_from_zval(return_value, retval, TRUE TSRMLS_CC) == FAILURE) {
                 php_error(E_WARNING, "Could not convert return value of signal callback '%s' to '%s'",
                           callback_name, g_type_name(G_VALUE_TYPE(return_value)));
             }

@@ -32,7 +32,7 @@
 
 
 /* {{{ PHP_GTK_API phpg_gvalue_to_zval() */
-PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool copy_boxed TSRMLS_DC)
+PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool copy_boxed, zend_bool do_utf8 TSRMLS_DC)
 {
     assert(value != NULL);
 
@@ -104,11 +104,25 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
 
         case G_TYPE_STRING:
             {
+                gchar *cp = NULL;
+                gsize cp_len = 0;
+                zend_bool free_cp = 0;
                 const gchar *str = g_value_get_string(gval);
 
                 MAKE_ZVAL_IF_NULL(*value);
                 if (str != NULL) {
+                    if (do_utf8) {
+                        cp = phpg_from_utf8(str, strlen(str), &cp_len, &free_cp TSRMLS_CC);
+                        if (cp) {
+                            str = cp;
+                        } else {
+                            php_error(E_WARNING, "Could not convert string from UTF-8");
+                        }
+                    }
                     ZVAL_STRING(*value, (char *)str, 1);
+                    if (free_cp) {
+                        g_free(cp);
+                    }
                 } else
                     ZVAL_NULL(*value);
             }
@@ -160,7 +174,7 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
 
                 for (i = 0; i < value_count; i++) {
                     MAKE_STD_ZVAL(item);
-                    phpg_gvalue_to_zval(array->values + i, &item, copy_boxed TSRMLS_CC);
+                    phpg_gvalue_to_zval(array->values + i, &item, copy_boxed, TRUE TSRMLS_CC);
                     add_next_index_zval(*value, item);
                 }
             } else if ((gbm = phpg_gboxed_lookup_custom(G_VALUE_TYPE(gval)))) {
@@ -188,7 +202,7 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
 /* }}} */
 
 /* {{{ PHP_GTK_API phpg_gvalue_from_zval() */
-PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC)
+PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value, zend_bool do_utf8 TSRMLS_DC)
 {
     switch (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(gval))) {
         /*
@@ -265,9 +279,28 @@ PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value TSRMLS_DC)
         }
 
         case G_TYPE_STRING:
+        {
+            gchar *utf8 = NULL;
+            gsize utf8_len = 0;
+            zend_bool free_utf8 = 0;
+            gchar *str;
+
             convert_to_string(value);
-            g_value_set_string(gval, Z_STRVAL_P(value));
+            str = Z_STRVAL_P(value);
+            if (do_utf8) {
+                utf8 = phpg_to_utf8(Z_STRVAL_P(value), Z_STRLEN_P(value), &utf8_len, &free_utf8 TSRMLS_CC);
+                if (utf8) {
+                    str = utf8;
+                } else {
+                    php_error(E_WARNING, "Could not convert string to UTF-8");
+                }
+            }
+            g_value_set_string(gval, str);
+            if (free_utf8) {
+                g_free(utf8);
+            }
             break;
+        }
 
         case G_TYPE_POINTER:
             if (Z_TYPE_P(value) == IS_NULL) {
@@ -343,7 +376,7 @@ PHP_GTK_API int phpg_param_gvalue_to_zval(const GValue *gval, zval **value, zend
         /* TODO */
         return FAILURE;
     } else {
-        return phpg_gvalue_to_zval(gval, value, copy_boxed TSRMLS_CC);
+        return phpg_gvalue_to_zval(gval, value, copy_boxed, TRUE TSRMLS_CC);
     }
 }
 /* }}} */
@@ -355,7 +388,7 @@ PHP_GTK_API int phpg_param_gvalue_from_zval(GValue *gval, zval *value, const GPa
         /* TODO */
         return FAILURE;
     } else {
-        return phpg_gvalue_from_zval(gval, value TSRMLS_CC);
+        return phpg_gvalue_from_zval(gval, value, TRUE TSRMLS_CC);
     }
 }
 /* }}} */
