@@ -1,3 +1,31 @@
+2006-02-09  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtkdrag.overrides:
+      Fix TSRM stuff.
+
+    * generator/arg_types.php:
+      Check for successful conversion from UTF-8 for return values.
+
+    * ext/gtk+/gtktreeview.overrides
+      ext/gtk+/php_gtk+_types.c:
+      Adjust to the modified API.
+
+    * main/php_gtk.h
+      main/php_gtk_object.c
+      main/phpg_closure.c
+      main/phpg_gvalue.c
+      main/phpg_support.c:
+      UTF-8 conversions should now be handled automatically whenever we
+      convert between GValue and zval.
+
+    * ext/gtk+/gtktreeview.overrides:
+      Revert accidental commit. set_visible_func() is not ready yet.
+
+    * ext/gtk+/gtktreeview.overrides
+      ext/gtk+/php_gtk+.c:
+      Not really needed I guess. Plus, someone complained that this prevented
+      debugging in Zend Studio.
+
 2006-02-07  Andrei Zmievski  <andrei@gravitonic.com>
 
     * generator/arg_types.php:
