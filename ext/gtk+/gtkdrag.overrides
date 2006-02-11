@@ -3,7 +3,7 @@
 %%
 headers
 extern PHP_GTK_EXPORT_CE(gdkdragcontext_ce);
-static GtkTargetEntry* phpg_parse_target_entries(zval *php_targets, int *n_targets);
+static GtkTargetEntry* phpg_parse_target_entries(zval *php_targets, int *n_targets TSRMLS_DC);
 
 %%
 override gtk_drag_dest_set
