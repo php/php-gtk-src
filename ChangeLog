@@ -1,3 +1,11 @@
+2006-02-14  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * generator/arg_types.php:
+      Initialize free_* variable to FALSE.
+
+    * ext/gtk+/gtktreeview.overrides:
+      Fix UTF-8 in GtkTreeViewColumn constructor.
+
 2006-02-12  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides:
