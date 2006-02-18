@@ -68,7 +68,9 @@ class Generator {
                                                       'prop' => Templates::boxed_prop_access),
                                     'interface' => array('method' => Templates::method_body),
                                    );
-    var $handlers           = array('read_property', 'write_property', 'get_properties');
+    var $handlers           = array('read_property', 'write_property', 'get_properties',
+                                    'read_dimension', 'write_dimension', 'has_dimension',
+                                    'unset_dimension', 'count_elements');
     var $cover              = array();
 
     function Generator(&$parser, &$overrides, $prefix, $function_class)
@@ -483,6 +485,9 @@ class Generator {
         foreach ($this->parser->interfaces as $interface) {
             $reg_info = $this->write_class($interface);
             $register_classes .= aprintf(Templates::register_interface, $reg_info);
+            if ($this->overrides->have_post_registration($interface->c_name)) {
+                $register_classes .= $this->overrides->get_post_registration($interface->c_name);
+            }
         }
         if (!$this->parser->interfaces) {
             $this->log_print("  -- none --  ");
@@ -498,6 +503,9 @@ class Generator {
             }
             $reg_info = $this->write_class($object);
             $register_classes .= aprintf(Templates::register_class, $reg_info);
+            if ($this->overrides->have_post_registration($object->c_name)) {
+                $register_classes .= $this->overrides->get_post_registration($object->c_name);
+            }
         }
         if (!$this->parser->objects) {
             $this->log_print("  -- none --  ");
@@ -508,6 +516,9 @@ class Generator {
         foreach ($this->parser->boxed as $object) {
             $reg_info = $this->write_class($object);
             $register_classes .= aprintf(Templates::register_boxed, $reg_info);
+            if ($this->overrides->have_post_registration($object->c_name)) {
+                $register_classes .= $this->overrides->get_post_registration($object->c_name);
+            }
         }
         if (!$this->parser->boxed) {
             $this->log_print("  -- none --  ");
@@ -516,6 +527,7 @@ class Generator {
         $this->fp->write(sprintf(Templates::register_classes,
                                   $this->lprefix,
                                   $register_classes));
+
     }
     
     function write_prop_handlers($object)

@@ -34,6 +34,7 @@ class Overrides {
     var $register_classes     = array();
     var $headers              = '';
     var $constants            = '';
+    var $post_registration    = array();
     var $lineinfo             = array();
     var $top_dir              = '';
 
@@ -167,6 +168,12 @@ class Overrides {
                 $this->lineinfo["$class.$handler"] = array($blocklineno + 1, $file_name);
                 break;
 
+            case 'post-registration':
+                $class = $words[0];
+                $this->post_registration[$class] = $rest;
+                $this->lineinfo['post-registration'] = array($blocklineno + 1, $file_name);
+                break;
+
             case 'include':
                 $file_name = $words[0];
                 $this->read_file($file_name);
@@ -265,6 +272,17 @@ class Overrides {
     {
         return $this->getprops[$class_name][$prop_name];
     }
+
+    function have_post_registration($class)
+    {
+        return isset($this->post_registration[$class]);
+    }
+
+    function get_post_registration($class)
+    {
+        return $this->post_registration[$class];
+    }
+
 
     function get_headers()
     {
