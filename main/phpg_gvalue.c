@@ -37,6 +37,7 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
     assert(value != NULL);
 
     switch (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(gval))) {
+        case G_TYPE_INVALID:
         case G_TYPE_NONE:
             MAKE_ZVAL_IF_NULL(*value);
             ZVAL_NULL(*value);
