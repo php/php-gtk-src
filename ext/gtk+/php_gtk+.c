@@ -192,7 +192,7 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 
 	php_gdk_register_keysyms();
 
-	php_gtk_plus_register_types();
+	php_gtk_plus_register_types(TSRMLS_C);
 
 	return SUCCESS;
 }

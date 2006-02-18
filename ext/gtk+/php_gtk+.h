@@ -29,6 +29,9 @@
 extern php_gtk_ext_entry gtk_plus_ext_entry;
 #define php_gtk_ext_gtk__ptr &gtk_plus_ext_entry
 
+PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtktreemodelrow_ce);
+PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtktreemodelrowiter_ce);
+
 typedef enum { STYLE_COLOR_ARRAY, STYLE_GC_ARRAY, STYLE_PIXMAP_ARRAY } style_helper_type;
 
 PHP_GTK_API int phpg_rectangle_from_zval(zval *value, GdkRectangle *rectangle TSRMLS_DC);
@@ -36,7 +39,10 @@ PHP_GTK_API void phpg_create_style_helper(zval **zobj, GtkStyle *style, int type
 PHP_GTK_API int phpg_tree_path_from_zval(const zval *value, GtkTreePath **path TSRMLS_DC);
 PHP_GTK_API int phpg_tree_path_to_zval(GtkTreePath *path, zval **value TSRMLS_DC);
 
-int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items);
+int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items TSRMLS_DC);
+int phpg_model_remove_row(GtkTreeModel *model, GtkTreeIter *iter TSRMLS_DC);
+zend_object_iterator* phpg_treemodel_get_iterator(zend_class_entry *ce, zval *object TSRMLS_DC);
+void phpg_modelrow_new(zval **zobj, GtkTreeModel *model, GtkTreeIter *iter TSRMLS_DC);
 
 void phpg_atk_register_constants(const char *strip_prefix);
 void phpg_pango_register_constants(const char *strip_prefix);
@@ -47,6 +53,6 @@ void phpg_pango_register_classes(void);
 void phpg_gdk_register_classes(void);
 void phpg_gtk_register_classes(void);
 
-void php_gtk_plus_register_types();
+void php_gtk_plus_register_types(TSRMLS_D);
 
 #endif	/* _PHP_GTK_PLUS_H */

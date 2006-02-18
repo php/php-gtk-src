@@ -24,6 +24,7 @@
 
 #if HAVE_PHP_GTK
 
+#include "zend_interfaces.h"
 #include "gen_gdk.h"
 
 /* {{{ phpg_rectangle_from_zval */
@@ -74,6 +75,8 @@ static int phpg_gdk_rectangle_to_zval(const GValue *gvalue, zval **value TSRMLS_
 /* {{{ phpg_tree_path_from_zval */
 PHP_GTK_API int phpg_tree_path_from_zval(const zval *value, GtkTreePath **path TSRMLS_DC)
 {
+    assert(path != NULL);
+
     switch (Z_TYPE_P(value)) {
         case IS_STRING:
             *path = gtk_tree_path_new_from_string(Z_STRVAL_P(value));
@@ -149,8 +152,8 @@ static int phpg_gtk_tree_path_from_zval(const zval *value, GValue *gvalue TSRMLS
 
 static int phpg_gtk_tree_path_to_zval(const GValue *gvalue, zval **value TSRMLS_DC)
 {
-    GtkTreePath *path = (GtkTreePath *)g_value_get_boxed(gvalue);;
-    return phpg_tree_path_to_zval(path, value TSRMLS_CC);;
+    GtkTreePath *path = (GtkTreePath *)g_value_get_boxed(gvalue);
+    return phpg_tree_path_to_zval(path, value TSRMLS_CC);
 }
 /* }}} */
 
@@ -165,16 +168,11 @@ typedef struct {
 
 static const int STYLE_NUM_STATES = 5;
 
-static zval *style_helper_read_dimension(zval *object, zval *offset, int type TSRMLS_DC)
+static zval* style_helper_read_dimension(zval *object, zval *offset, int type TSRMLS_DC)
 {
     zval *result = NULL;
     long index;
     style_helper *sh = (style_helper *) zend_object_store_get_object(object TSRMLS_CC);
-
-	MAKE_STD_ZVAL(result);
-	ZVAL_NULL(result);
-	result->refcount = 0;
-	result->is_ref = 0;
 
     if (Z_TYPE_P(offset) != IS_LONG) {
         php_error(E_WARNING, "Illegal index type");
@@ -186,6 +184,11 @@ static zval *style_helper_read_dimension(zval *object, zval *offset, int type TS
         php_error(E_WARNING, "Index out of range");
 		return EG(uninitialized_zval_ptr);
     }
+
+	MAKE_STD_ZVAL(result);
+	ZVAL_NULL(result);
+	result->refcount = 0;
+	result->is_ref = 0;
 
     switch (sh->type) {
         case STYLE_COLOR_ARRAY:
@@ -290,7 +293,7 @@ static int style_helper_has_dimension(zval *object, zval *offset, int check_empt
 		return 0;
     }
 
-    if (Z_LVAL_P(offset) < 0 && Z_LVAL_P(offset) >= STYLE_NUM_STATES) {
+    if (Z_LVAL_P(offset) < 0 || Z_LVAL_P(offset) >= STYLE_NUM_STATES) {
         php_error(E_WARNING, "Index out of range");
         return 0;
     }
@@ -391,7 +394,8 @@ PHP_GTK_API void phpg_create_style_helper(zval **zobj, GtkStyle *style, int type
 /* }}} */
 
 /* {{{ GtkTreeModel */
-int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items)
+
+int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items TSRMLS_DC)
 {
     gint n_cols, i;
     GtkTreeModel *child;
@@ -410,13 +414,13 @@ int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items)
     if (GTK_IS_TREE_MODEL_SORT(model)) {
         child = gtk_tree_model_sort_get_model(GTK_TREE_MODEL_SORT(model));
         gtk_tree_model_sort_convert_iter_to_child_iter(GTK_TREE_MODEL_SORT(model), &child_iter, iter);
-        return phpg_model_set_row(child, &child_iter, items);
+        return phpg_model_set_row(child, &child_iter, items TSRMLS_CC);
     }
 
     if (GTK_IS_TREE_MODEL_FILTER(model)) {
         child = gtk_tree_model_filter_get_model(GTK_TREE_MODEL_FILTER(model));
         gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(model), &child_iter, iter);
-        return phpg_model_set_row(child, &child_iter, items);
+        return phpg_model_set_row(child, &child_iter, items TSRMLS_CC);
     }
     
     n_cols = gtk_tree_model_get_n_columns(model);
@@ -446,10 +450,482 @@ int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items)
 
     return SUCCESS;
 }
+
+int phpg_model_remove_row(GtkTreeModel *model, GtkTreeIter *iter TSRMLS_DC)
+{
+    GtkTreeModel *child;
+    GtkTreeIter child_iter;
+
+    if (GTK_IS_LIST_STORE(model)) {
+        gtk_list_store_remove(GTK_LIST_STORE(model), iter);
+        return SUCCESS;
+    }
+
+    if (GTK_IS_TREE_STORE(model)) {
+        gtk_tree_store_remove(GTK_TREE_STORE(model), iter);
+        return SUCCESS;
+    }
+
+    if (GTK_IS_TREE_MODEL_SORT(model)) {
+        child = gtk_tree_model_sort_get_model(GTK_TREE_MODEL_SORT(model));
+        gtk_tree_model_sort_convert_iter_to_child_iter(GTK_TREE_MODEL_SORT(model), &child_iter, iter);
+        return phpg_model_remove_row(child, &child_iter TSRMLS_CC);
+    }
+
+    if (GTK_IS_TREE_MODEL_FILTER(model)) {
+        child = gtk_tree_model_filter_get_model(GTK_TREE_MODEL_FILTER(model));
+        gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(model), &child_iter, iter);
+        return phpg_model_remove_row(child, &child_iter TSRMLS_CC);
+    }
+
+    php_error(E_WARNING, "Cannot remove row: unknown model type");
+    return FAILURE;
+}
+
 /* }}} */
 
-void php_gtk_plus_register_types()
+/* {{{ GtkTreeModelRow and GtkTreeModelRowIter */
+
+typedef struct {
+    PHPG_OBJ_HEADER
+    GtkTreeModel *model;
+    GtkTreeIter iter;
+} phpg_modelrow_t;
+
+typedef struct {
+    PHPG_OBJ_HEADER
+    GtkTreeModel *model;
+    GtkTreeIter iter;
+    GtkTreeIter *parent_iter;
+    gboolean is_valid;
+    int32_t index;
+    zval *current;
+    zend_object_iterator ziter;
+} phpg_modelrowiter_t;
+
+PHP_GTK_API PHP_GTK_EXPORT_CE(gtktreemodelrow_ce) = NULL;
+PHP_GTK_API PHP_GTK_EXPORT_CE(gtktreemodelrowiter_ce) = NULL;
+
+static zend_object_handlers gtktreemodelrow_handlers;
+
+static void phpg_modelrowiter_new(zval **zobj, GtkTreeModel *model, GtkTreeIter *parent_iter TSRMLS_DC);
+
+static PHP_METHOD(GtkTreeModelRow, children)
 {
+    NOT_STATIC_METHOD();
+    phpg_modelrow_t *row;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    row = zend_object_store_get_object(this_ptr TSRMLS_CC);
+    phpg_modelrowiter_new(&return_value, row->model, &row->iter TSRMLS_CC);
+}
+
+static zend_function_entry gtktreemodelrow_methods[] = {
+    PHP_ME_MAPPING(__construct, no_direct_constructor, NULL)
+    PHP_ME(GtkTreeModelRow, children, NULL, ZEND_ACC_PUBLIC)
+    { NULL, NULL, NULL }
+};
+
+
+PHPG_PROP_READER(GtkTreeModelRow, model)
+{
+	GtkTreeModel *model = ((phpg_modelrow_t *)object)->model;
+    phpg_gobject_new(&return_value, (GObject *)model TSRMLS_CC);
+    return SUCCESS;
+}
+
+PHPG_PROP_READER(GtkTreeModelRow, next)
+{
+    phpg_modelrow_t *row = (phpg_modelrow_t *) object;
+	GtkTreeIter iter = row->iter;
+
+    if (gtk_tree_model_iter_next(row->model, &iter)) {
+        phpg_modelrow_new(&return_value, row->model, &iter TSRMLS_CC);
+    } else {
+        ZVAL_NULL(return_value);
+    }
+    return SUCCESS;
+}
+
+PHPG_PROP_READER(GtkTreeModelRow, parent)
+{
+    phpg_modelrow_t *row = (phpg_modelrow_t *) object;
+	GtkTreeIter parent;
+
+    if (gtk_tree_model_iter_parent(row->model, &parent, &row->iter)) {
+        phpg_modelrow_new(&return_value, row->model, &parent TSRMLS_CC);
+    } else {
+        ZVAL_NULL(return_value);
+    }
+    return SUCCESS;
+}
+
+PHPG_PROP_READER(GtkTreeModelRow, iter)
+{
+	GtkTreeIter *iter = &((phpg_modelrow_t *)object)->iter;
+    phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, iter, TRUE, TRUE TSRMLS_CC);
+    return SUCCESS;
+}
+
+PHPG_PROP_READER(GtkTreeModelRow, path)
+{
+    GtkTreePath *path;
+    phpg_modelrow_t *row = (phpg_modelrow_t *) object;
+
+    path = gtk_tree_model_get_path(row->model, &row->iter);
+    if (path) {
+        phpg_tree_path_to_zval(path, &return_value TSRMLS_CC);
+        gtk_tree_path_free(path);
+        return SUCCESS;
+    } else {
+        php_error(E_WARNING, "Could not get tree path");
+        return FAILURE;
+    }
+}
+
+static prop_info_t gtktreemodelrow_prop_info[] = {
+    { "model",  PHPG_PROP_READ_FN(GtkTreeModelRow, model),  NULL },
+    { "next",   PHPG_PROP_READ_FN(GtkTreeModelRow, next),   NULL },
+    { "parent", PHPG_PROP_READ_FN(GtkTreeModelRow, parent), NULL },
+    { "iter",   PHPG_PROP_READ_FN(GtkTreeModelRow, iter),   NULL },
+    { "path",   PHPG_PROP_READ_FN(GtkTreeModelRow, path),   NULL },
+    { NULL, NULL, NULL }
+};
+
+static void phpg_modelrow_free_object_storage(phpg_modelrow_t *object TSRMLS_DC)
+{
+	zend_hash_destroy(object->zobj.properties);
+	FREE_HASHTABLE(object->zobj.properties);
+    g_object_unref(object->model);
+	efree(object);
+}
+
+static zend_object_value phpg_modelrow_create_object(zend_class_entry *ce TSRMLS_DC)
+{
+	zend_object_value zov;
+	phpg_modelrow_t *object;
+
+	object = emalloc(sizeof(phpg_modelrow_t));
+    memset(object, 0, sizeof(phpg_modelrow_t));
+	phpg_init_object(object, ce);
+
+	zov.handlers = &gtktreemodelrow_handlers;
+	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_modelrow_free_object_storage, NULL TSRMLS_CC);
+
+	return zov;
+}
+
+void phpg_modelrow_new(zval **zobj, GtkTreeModel *model, GtkTreeIter *iter TSRMLS_DC)
+{
+    phpg_modelrow_t *pobj = NULL;
+
+    assert(zobj != NULL);
+    if (*zobj == NULL) {
+        MAKE_STD_ZVAL(*zobj);
+    }
+	ZVAL_NULL(*zobj);
+
+    phpg_return_if_fail(model != NULL);
+    object_init_ex(*zobj, gtktreemodelrow_ce);
+    pobj = zend_object_store_get_object(*zobj TSRMLS_CC);
+    pobj->model = g_object_ref(model);
+    pobj->iter = *iter;
+}
+
+static void phpg_modelrowiter_new(zval **zobj, GtkTreeModel *model, GtkTreeIter *parent_iter TSRMLS_DC)
+{
+    phpg_modelrowiter_t *pobj = NULL;
+
+    assert(zobj != NULL);
+    if (*zobj == NULL) {
+        MAKE_STD_ZVAL(*zobj);
+    }
+	ZVAL_NULL(*zobj);
+
+    phpg_return_if_fail(model != NULL);
+    object_init_ex(*zobj, gtktreemodelrowiter_ce);
+    pobj = zend_object_store_get_object(*zobj TSRMLS_CC);
+    pobj->model = g_object_ref(model);
+    pobj->parent_iter = parent_iter;
+    pobj->is_valid = gtk_tree_model_iter_children(pobj->model, &pobj->iter, pobj->parent_iter);
+}
+
+static void phpg_modelrowiter_free_object_storage(phpg_modelrowiter_t *object TSRMLS_DC)
+{
+	zend_hash_destroy(object->zobj.properties);
+	FREE_HASHTABLE(object->zobj.properties);
+    if (object->current) {
+        zval_ptr_dtor(&object->current);
+    }
+    g_object_unref(object->model);
+	efree(object);
+}
+
+static zend_object_value phpg_modelrowiter_create_object(zend_class_entry *ce TSRMLS_DC)
+{
+	zend_object_value zov;
+	phpg_modelrowiter_t *object;
+
+	object = emalloc(sizeof(phpg_modelrowiter_t));
+    memset(object, 0, sizeof(phpg_modelrowiter_t));
+	phpg_init_object(object, ce);
+
+	zov.handlers = &php_gtk_handlers;
+	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_modelrowiter_free_object_storage, NULL TSRMLS_CC);
+
+	return zov;
+}
+
+static inline phpg_modelrowiter_t* modelrowiter_to_obj(zend_object_iterator *iter)
+{
+    return (phpg_modelrowiter_t *)((char*)iter - offsetof(phpg_modelrowiter_t, ziter));
+}
+
+static void treemodelrow_iter_dtor(zend_object_iterator* iter TSRMLS_DC)
+{
+    phpg_modelrowiter_t *object = modelrowiter_to_obj(iter);
+    zval *zobj = (zval *) object->ziter.data;
+
+    zval_ptr_dtor(&zobj);
+}
+
+static int treemodelrow_iter_valid(zend_object_iterator* iter TSRMLS_DC)
+{
+    phpg_modelrowiter_t *object = modelrowiter_to_obj(iter);
+
+    if (object->is_valid)
+        return SUCCESS;
+    else
+        return FAILURE;
+}
+
+static void treemodelrow_iter_get_current_data(zend_object_iterator* iter, zval*** data TSRMLS_DC)
+{
+    phpg_modelrowiter_t *object = modelrowiter_to_obj(iter);
+
+    if (!object->current) {
+        MAKE_STD_ZVAL(object->current);
+        phpg_modelrow_new(&object->current, object->model, &object->iter TSRMLS_CC);
+    }
+
+	*data = &object->current;
+}
+
+static int treemodelrow_iter_get_current_key(zend_object_iterator* iter, char **str_key, uint *str_key_len, ulong *int_key TSRMLS_DC)
+{
+    phpg_modelrowiter_t *object = modelrowiter_to_obj(iter);
+
+	*int_key = object->index;
+	return HASH_KEY_IS_LONG;
+}
+
+static void treemodelrow_iter_move_forward(zend_object_iterator* iter TSRMLS_DC)
+{
+    phpg_modelrowiter_t *object = modelrowiter_to_obj(iter);
+
+    object->is_valid = gtk_tree_model_iter_next(object->model, &object->iter);
+    object->index++;
+    if (object->current) {
+        zval_ptr_dtor(&object->current);
+        object->current = NULL;
+    }
+}
+
+static void treemodelrow_iter_rewind(zend_object_iterator* iter TSRMLS_DC)
+{
+    phpg_modelrowiter_t *object = modelrowiter_to_obj(iter);
+
+    object->is_valid = gtk_tree_model_iter_children(object->model, &object->iter,
+                                                    object->parent_iter);
+    object->index = 0;
+    if (object->current) {
+        zval_ptr_dtor(&object->current);
+        object->current = NULL;
+    }
+}
+
+
+static zend_object_iterator_funcs treemodelrow_iter_funcs = {
+	treemodelrow_iter_dtor,
+	treemodelrow_iter_valid,
+	treemodelrow_iter_get_current_data,
+	treemodelrow_iter_get_current_key,
+	treemodelrow_iter_move_forward,
+	treemodelrow_iter_rewind,
+};
+
+zend_object_iterator* phpg_modelrowiter_get_iterator(zend_class_entry *ce, zval *object TSRMLS_DC)
+{
+    phpg_modelrowiter_t *iter_obj;
+
+    /* TODO see if Marcus can do the by_ref stuff for PHP 5
+	if (by_ref) {
+		zend_error(E_ERROR, "An iterator cannot be used with foreach by reference");
+	}
+    */
+
+    iter_obj = (phpg_modelrowiter_t *) zend_object_store_get_object(object TSRMLS_CC);
+
+    ZVAL_ADDREF(object);
+	iter_obj->ziter.data  = (void *) object;
+	iter_obj->ziter.funcs = &treemodelrow_iter_funcs;
+
+    return (zend_object_iterator *) &iter_obj->ziter;
+}
+
+zend_object_iterator* phpg_treemodel_get_iterator(zend_class_entry *ce, zval *object TSRMLS_DC)
+{
+    phpg_modelrowiter_t *iter_obj;
+    zval *zobj = NULL;
+
+    /* TODO see if Marcus can do the by_ref stuff for PHP 5
+	if (by_ref) {
+		zend_error(E_ERROR, "An iterator cannot be used with foreach by reference");
+	}
+    */
+
+    phpg_modelrowiter_new(&zobj, GTK_TREE_MODEL(PHPG_GOBJECT(object)), NULL TSRMLS_CC);
+    iter_obj = (phpg_modelrowiter_t *) zend_object_store_get_object(zobj TSRMLS_CC);
+
+	iter_obj->ziter.data  = (void *) zobj;
+	iter_obj->ziter.funcs = &treemodelrow_iter_funcs;
+
+    return (zend_object_iterator *) &iter_obj->ziter;
+}
+
+
+static zval* treemodelrow_read_dimension(zval *object, zval *offset, int type TSRMLS_DC)
+{
+    phpg_modelrow_t *row;
+    GValue gvalue = { 0, };
+    zval *value = NULL;
+    int n_columns;
+    int column;
+
+    if (Z_TYPE_P(offset) != IS_LONG) {
+        php_error(E_WARNING, "Illegal index type");
+		return 0;
+    }
+
+    row = zend_object_store_get_object(object TSRMLS_CC);
+    n_columns = gtk_tree_model_get_n_columns(row->model);
+    column = Z_LVAL_P(offset);
+
+    if (column < 0) {
+        column += n_columns;
+    }
+
+    if (column < 0 || column >= n_columns) {
+        php_error(E_WARNING, "Index out of range");
+        return 0;
+    }
+
+	MAKE_STD_ZVAL(value);
+	ZVAL_NULL(value);
+	value->refcount = 0;
+	value->is_ref = 0;
+
+    gtk_tree_model_get_value(row->model, &row->iter, column, &gvalue);
+    phpg_gvalue_to_zval(&gvalue, &value, TRUE, TRUE TSRMLS_CC);
+    g_value_unset(&gvalue);
+
+    return value;
+}
+
+static void treemodelrow_write_dimension(zval *object, zval *offset, zval *value TSRMLS_DC)
+{
+    phpg_modelrow_t *row;
+    GValue gvalue = { 0, };
+    int n_columns;
+    int column;
+
+    if (Z_TYPE_P(offset) != IS_LONG) {
+        php_error(E_WARNING, "Illegal index type");
+        return;
+    }
+
+    row = zend_object_store_get_object(object TSRMLS_CC);
+    if (!GTK_IS_LIST_STORE(row->model) && !GTK_IS_TREE_STORE(row->model)) {
+        php_error(E_WARNING, "Unknown tree model");
+        return;
+    }
+
+    n_columns = gtk_tree_model_get_n_columns(row->model);
+    column = Z_LVAL_P(offset);
+
+    if (column < 0) {
+        column += n_columns;
+    }
+
+    if (column < 0 || column >= n_columns) {
+        php_error(E_WARNING, "Index out of range");
+        return;
+    }
+
+    g_value_init(&gvalue, gtk_tree_model_get_column_type(row->model, column));
+    if (phpg_gvalue_from_zval(&gvalue, value, TRUE TSRMLS_CC) == FAILURE) {
+        php_error(E_WARNING, "Cannot set cell: the type of value does not match the model column");
+        return;
+    }
+    
+    if (GTK_IS_LIST_STORE(row->model)) {
+        gtk_list_store_set_value(GTK_LIST_STORE(row->model), &row->iter, column, &gvalue);
+    } else {
+        gtk_tree_store_set_value(GTK_TREE_STORE(row->model), &row->iter, column, &gvalue);
+    }
+
+    g_value_unset(&gvalue);
+}
+
+static int treemodelrow_has_dimension(zval *object, zval *offset, int check_empty TSRMLS_DC)
+{
+    phpg_modelrow_t *row;
+    int n_columns;
+    int column;
+
+    if (Z_TYPE_P(offset) != IS_LONG) {
+        php_error(E_WARNING, "Illegal index type");
+		return 0;
+    }
+
+    row = zend_object_store_get_object(object TSRMLS_CC);
+    n_columns = gtk_tree_model_get_n_columns(row->model);
+    column = Z_LVAL_P(offset);
+
+    if (column + n_columns < 0 || column >= n_columns) {
+        php_error(E_WARNING, "Index out of range");
+        return 0;
+    }
+
+    return 1;
+}
+
+static int treemodelrow_count_elements(zval *object, long *count TSRMLS_DC)
+{
+    phpg_modelrow_t *row = zend_object_store_get_object(object TSRMLS_CC);
+    *count = gtk_tree_model_get_n_columns(row->model);
+    return SUCCESS;
+}
+
+/* }}} */
+
+void php_gtk_plus_register_types(TSRMLS_D)
+{
+	gtktreemodelrow_ce = phpg_register_class("GtkTreeModelRow", gtktreemodelrow_methods, NULL, ZEND_ACC_FINAL_CLASS, gtktreemodelrow_prop_info, phpg_modelrow_create_object, 0 TSRMLS_CC);
+    gtktreemodelrow_handlers = php_gtk_handlers;
+    gtktreemodelrow_handlers.read_dimension  = treemodelrow_read_dimension;
+    gtktreemodelrow_handlers.write_dimension = treemodelrow_write_dimension;
+    gtktreemodelrow_handlers.has_dimension   = treemodelrow_has_dimension;
+    gtktreemodelrow_handlers.count_elements  = treemodelrow_count_elements;
+
+	gtktreemodelrowiter_ce = phpg_register_class("GtkTreeModelRowIterator", NULL, NULL, ZEND_ACC_FINAL_CLASS, NULL, phpg_modelrowiter_create_object, 0 TSRMLS_CC);
+    gtktreemodelrowiter_ce->get_iterator = phpg_modelrowiter_get_iterator;
+    zend_class_implements(gtktreemodelrowiter_ce TSRMLS_CC, 1, zend_ce_traversable);
+
+
     phpg_gboxed_register_custom(GDK_TYPE_RECTANGLE,
                                 phpg_gdk_rectangle_from_zval,
                                 phpg_gdk_rectangle_to_zval);
