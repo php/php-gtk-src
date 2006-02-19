@@ -236,6 +236,7 @@ extern PHP_GTK_API zend_class_entry *phpg_type_exception;
 extern PHP_GTK_API zend_class_entry *phpg_gerror_exception;
 
 extern PHP_GTK_API zend_object_handlers php_gtk_handlers;
+extern PHP_GTK_API zend_object_handlers phpg_gobject_handlers;
 
 /* Function declarations. */
 

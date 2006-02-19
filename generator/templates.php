@@ -199,7 +199,7 @@ static function_entry %s_methods[] = {
 ";
 const functions_decl_end = "\t{ NULL, NULL, NULL }\n};\n";
 
-const custom_handlers_init = "\t%(class)_object_handlers = php_gtk_handlers;\n";
+const custom_handlers_init = "\t%(class)_object_handlers = %(orig_handlers);\n";
 const custom_handler_set = "\t%(class)_object_handlers.%(handler) = phpg_%(class)_%(handler)_handler;\n";
 
 const custom_create_func = "

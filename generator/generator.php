@@ -639,10 +639,12 @@ class Generator {
         switch ($object->def_type) {
             case 'object':
                 $dict['create_func'] = 'phpg_create_gobject';
+                $dict['orig_handlers'] = 'phpg_gobject_handlers';
                 break;
 
             case 'boxed':
                 $dict['create_func'] = 'phpg_create_gboxed';
+                $dict['orig_handlers'] = 'php_gtk_handlers';
                 break;
 
             default:

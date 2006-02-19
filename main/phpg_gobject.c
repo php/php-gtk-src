@@ -30,7 +30,7 @@ static GQuark gobject_wrapper_handle_key    = 0;
 static GQuark gobject_wrapper_handlers_key  = 0;
 static GQuark gobject_wrapper_owned_key     = 0;
 
-static zend_object_handlers phpg_gobject_handlers;
+PHP_GTK_API zend_object_handlers phpg_gobject_handlers;
 
 HashTable phpg_prop_info;
 
