@@ -1,0 +1,32 @@
+<?php
+function onClassSelected($selection)
+{
+    list($model, $iter) = $selection->get_selected();
+}
+
+$wnd = new GtkWindow();
+
+/**
+The program segfaults when using the function to
+ connect. When moving the function content outside, it works.
+ Very strange.
+*/
+function buildGui($wnd)
+{
+    $model = new GtkListStore(Gtk::TYPE_STRING);
+    $treeviewClasses = new GtkTreeView($model);
+    $iter = $model->append();
+    $model->set($iter, 0, 'test');
+    $treeviewClasses->append_column(new GtkTreeViewColumn('Classes', new GtkCellRendererText(), 'text', 0));
+
+    $wnd->add($treeviewClasses);
+
+    $selection = $treeviewClasses->get_selection();
+    $selection->set_mode(Gtk::SELECTION_SINGLE);
+    $selection->connect('changed', 'onClassSelected');
+}//protected function buildGui()
+buildGui($wnd);
+
+$wnd->show_all();
+Gtk::main();
+?>
