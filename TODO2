@@ -111,7 +111,7 @@ Classes and Functions
 * GdkPixmap
 	constructor	create_from_xpm_d()
 * GtkPlug/GtkSocket
-
+* Support (array) cast for GtkTreeModelRow and possibly unset()
 
 Fix
 ~~~
