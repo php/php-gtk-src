@@ -1,3 +1,25 @@
+2006-02-18  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtktreeview.overrides
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c:
+      Make GtkTreeStore and GtkListStore work like iterators (with some
+      supporting classes). This allows for some cool tricks.
+
+    * generator/generator.php
+      generator/override.php:
+      - Allow overriding additional object handlers.
+      - Implement a way to add custom post-registration hooks.
+
+    * main/phpg_gvalue.c:
+      Support G_TYPE_INVALID in phpg_gvalue_to_zval().
+
+2006-02-18  Christian Weiske  <cweiske@cweiske.de>
+
+    * TODO2:
+      GtkNotebook todo
+
 2006-02-14  Andrei Zmievski  <andrei@gravitonic.com>
 
     * generator/arg_types.php:
