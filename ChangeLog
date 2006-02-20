@@ -1,3 +1,19 @@
+2006-02-19  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2:
+      -** empty log message ***
+
+    * generator/generator.php
+      generator/templates.php
+      main/php_gtk.h
+      main/phpg_gobject.c:
+      Use proper original handlers when creating custom ones.
+
+2006-02-19  Christian Weiske  <cweiske@cweiske.de>
+
+    * test/bug_inspector.phpw:
+      Bug test script for the strange segfault
+
 2006-02-18  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtktreeview.overrides
