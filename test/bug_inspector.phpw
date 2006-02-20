@@ -1,4 +1,8 @@
 <?php
+/**
+*   FIXED by Andrei on 2006-02-19
+*	Reason: Use proper original handlers when creating custom ones.
+*/
 function onClassSelected($selection)
 {
     list($model, $iter) = $selection->get_selected();
