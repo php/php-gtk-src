@@ -401,7 +401,6 @@ int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items TSRML
     GtkTreeModel *child;
     GtkTreeIter child_iter;
     zval **item;
-    TSRMLS_FETCH();
 
     assert(items != NULL);
 
