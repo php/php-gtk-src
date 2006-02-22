@@ -1,3 +1,8 @@
+2006-02-21  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/php_gtk+_types.c:
+      Fix TSRM.
+
 2006-02-20  Christian Weiske  <cweiske@cweiske.de>
 
     * test/bug_inspector.phpw:
