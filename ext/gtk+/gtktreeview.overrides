@@ -1252,6 +1252,39 @@ ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
 ZEND_END_ARG_INFO();
 
 %%
+override gtk_tree_view_get_cursor
+PHP_METHOD
+{
+    GtkTreePath *path = NULL;
+    GtkTreeViewColumn *column = NULL;
+    zval *php_path = NULL, *php_column = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    gtk_tree_view_get_cursor(GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), &path, &column);
+
+    array_init(return_value);
+
+    if (path) {
+        phpg_tree_path_to_zval(path, &php_path TSRMLS_CC);
+    } else {
+        MAKE_STD_ZVAL(php_path);
+    }
+
+    if (column) {
+        phpg_gobject_new(&php_column, (GObject*)column TSRMLS_CC);
+    } else {
+        MAKE_STD_ZVAL(php_column);
+    }
+
+    php_gtk_build_value(&return_value, "(NN)", php_path, php_column);
+}
+
+%%
 override gtk_tree_view_get_path_at_pos
 
 PHP_METHOD
