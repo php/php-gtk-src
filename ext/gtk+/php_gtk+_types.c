@@ -497,7 +497,7 @@ typedef struct {
     GtkTreeIter iter;
     GtkTreeIter *parent_iter;
     gboolean is_valid;
-    int32_t index;
+    int index;
     zval *current;
     zend_object_iterator ziter;
 } phpg_modelrowiter_t;
