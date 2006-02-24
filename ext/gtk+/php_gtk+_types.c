@@ -511,8 +511,9 @@ static void phpg_modelrowiter_new(zval **zobj, GtkTreeModel *model, GtkTreeIter 
 
 static PHP_METHOD(GtkTreeModelRow, children)
 {
-    NOT_STATIC_METHOD();
     phpg_modelrow_t *row;
+
+    NOT_STATIC_METHOD();
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
         return;
