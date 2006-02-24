@@ -66,7 +66,7 @@ PHP_METHOD
     zval *mark;
 
     NOT_STATIC_METHOD();
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &php_mark, gtktextmark_ce))
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &mark, gtktextmark_ce))
         return;
 
     gtk_text_buffer_get_iter_at_mark(GTK_TEXT_BUFFER(PHPG_GOBJECT(this_ptr)), &iter,
