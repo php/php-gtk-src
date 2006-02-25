@@ -1,3 +1,22 @@
+2006-02-24  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/gtk+/php_gtk+_types.c:
+      fix win32 build
+
+2006-02-24  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/php_gtk+_types.c:
+      Don't use int32_t.
+
+    * ext/gtk+/gtktreeview.overrides:
+      Override GtkTreeView::get_cursor() (patch by Adam Lebsack)
+
+    * ext/gtk+/gtktextview.overrides:
+      -** empty log message ***
+
+    * ext/gtk+/gtktextview.overrides:
+      Fix GtkTextBuffer::get_iter_at_mark().
+
 2006-02-21  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/php_gtk+_types.c:
