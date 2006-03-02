@@ -44,6 +44,8 @@ Classes and Functions
 	method      GtkClipboard::wait_for_contents: unknown type 'GdkAtom'
 	method      GtkClipboard::wait_for_targets: unknown type 'GdkAtom**'
 	method      GtkClipboard::wait_is_target_available: unknown type 'GdkAtom'
+* GtkComboBox
+    get_active_iter shouldn't need a parameter but return one
 * GtkEntry
 	GtkEntry objects can't be var_dumped, probably something missing
 * GdkGC
