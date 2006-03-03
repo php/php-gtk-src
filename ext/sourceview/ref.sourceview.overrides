@@ -1,0 +1,391 @@
+/* -*- C -*- */
+%%
+headers
+#define NO_IMPORT_PYGOBJECT
+#include "pygobject.h"
+#include <gtksourceview/gtksourcebuffer.h>
+#include <gtksourceview/gtksourceiter.h>
+#include <gtksourceview/gtksourcelanguage.h>
+#include <gtksourceview/gtksourcelanguagesmanager.h>
+#include <gtksourceview/gtksourcemarker.h>
+#include <gtksourceview/gtksourceprintjob.h>
+#include <gtksourceview/gtksourcestylescheme.h>
+#include <gtksourceview/gtksourcetag.h>
+#include <gtksourceview/gtksourcetagstyle.h>
+#include <gtksourceview/gtksourcetagtable.h>
+#include <gtksourceview/gtksourceview.h>
+#include <gtksourceview/gtksourceview-typebuiltins.h>
+
+static PyObject *
+_gslist_to_pylist_objs (const GSList *source)
+{
+    const GSList *iter;
+    PyObject *dest = PyList_New (0);
+    for (iter = source; iter != NULL; iter = iter->next)
+    {
+        PyObject *item = pygobject_new ((GObject *)iter->data);
+        PyList_Append (dest, item);
+        Py_DECREF (item);
+    }
+    return dest;
+}
+
+static PyObject *
+_gslist_to_pylist_strs (const GSList *source)
+{
+    const GSList *iter;
+    PyObject *dest = PyList_New (0);
+    for (iter = source; iter != NULL; iter = iter->next)
+    {
+        PyObject *item = PyString_FromString ((char *)iter->data);
+        PyList_Append (dest, item);
+        Py_DECREF (item);
+    }
+    return dest;
+}
+%%
+modulename gtksourceview
+%%
+import gobject.GObject as PyGObject_Type
+import gtk.gdk.Pixbuf as PyGdkPixbuf_Type
+import gtk.TextView as PyGtkTextView_Type
+import gtk.TextBuffer as PyGtkTextBuffer_Type
+import gtk.TextIter as PyGtkTextIter_Type
+import gtk.TextTag as PyGtkTextTag_Type
+import gtk.TextMark as PyGtkTextMark_Type
+import gtk.TextTagTable as PyGtkTextTagTable_Type
+import gnomeprint.Config as PyGnomePrintConfig_Type
+import pango.FontDescription as PyPangoFontDescription_Type
+%%
+ignore
+    gtk_source_view_new_with_buffer
+    gtk_source_buffer_new_with_language
+    gtk_source_print_job_new_with_buffer
+%%
+ignore-glob	
+    *_get_type
+    _*
+%%
+override gtk_source_view_new
+
+static int
+_wrap_gtk_source_view_new (PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "buffer", NULL };
+    PyGObject *buffer = NULL;
+    if (!PyArg_ParseTupleAndKeywords (args, kwargs, "|O!:GtkSourceView.__init__", kwlist,
+            &PyGtkSourceBuffer_Type, &buffer))
+        return -1;
+    
+    if (buffer)
+        self->obj = (GObject *)gtk_source_view_new_with_buffer (GTK_SOURCE_BUFFER(buffer->obj));
+    else
+        self->obj = (GObject *)gtk_source_view_new ();
+    
+    if (!self->obj) {
+        PyErr_SetString (PyExc_RuntimeError, "could not create GtkSourceView object");
+        return -1;
+    }
+    pygobject_register_wrapper ((PyObject *)self);
+    return 0;
+}
+%%
+override gtk_source_buffer_new
+
+static int
+_wrap_gtk_source_buffer_new (PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "table", "lang", NULL };
+    PyGObject *table = NULL, *lang = NULL;
+    if (!PyArg_ParseTupleAndKeywords (args, kwargs, "|O!O!:GtkSourceBuffer.__init__", kwlist,
+            &PyGtkSourceTagTable_Type, &table, &PyGtkSourceLanguage_Type, &lang))
+        return -1;
+    
+    if (lang)
+        self->obj = (GObject *)gtk_source_buffer_new_with_language (GTK_SOURCE_LANGUAGE(lang->obj));
+    else if (table)
+    	self->obj = (GObject *)gtk_source_buffer_new (GTK_SOURCE_TAG_TABLE(table->obj));
+    else
+    	self->obj = (GObject *)gtk_source_buffer_new (NULL);
+    if (!self->obj) {
+        PyErr_SetString (PyExc_RuntimeError, "could not create GtkSourceBuffer object");
+        return -1;
+    }
+    pygobject_register_wrapper ((PyObject *)self);
+    return 0;
+}
+%%
+override gtk_source_print_job_new
+
+static int
+_wrap_gtk_source_print_job_new (PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "config", "buffer", NULL };
+    PyGObject *config = NULL, *buffer = NULL;
+    if (!PyArg_ParseTupleAndKeywords (args, kwargs, "|O!O!:GtkSourcePrintJob.__init__", kwlist,
+            &PyGnomePrintConfig_Type, &config, &PyGtkSourceBuffer_Type, &buffer))
+        return -1;
+    
+    if (config && buffer)
+        self->obj = (GObject *)gtk_source_print_job_new_with_buffer (
+            GNOME_PRINT_CONFIG(config->obj), GTK_SOURCE_BUFFER(buffer->obj));
+    else if (buffer)
+        self->obj = (GObject *)gtk_source_print_job_new_with_buffer (NULL,
+            GTK_SOURCE_BUFFER(buffer->obj));
+    else if (config)
+        self->obj = (GObject *)gtk_source_print_job_new (GNOME_PRINT_CONFIG(config->obj));
+    else
+        self->obj = (GObject *)gtk_source_print_job_new (NULL);
+    
+    if (!self->obj) {
+        PyErr_SetString (PyExc_RuntimeError, "could not create GtkSourcePrintJob object");
+        return -1;
+    }
+    pygobject_register_wrapper ((PyObject *)self);
+    return 0;
+}
+%%
+override gtk_source_buffer_get_markers_in_region
+
+static PyObject *
+_wrap_gtk_source_buffer_get_markers_in_region (PyGObject *self, PyObject *args)
+{
+    GSList *source;
+    PyObject *dest, *py_start, *py_end;
+    GtkTextIter *start, *end;
+    if (!PyArg_ParseTuple (args, "OO:GtkSourceLanguage.get_tags", &py_start, &py_end))
+        return NULL;
+    if (pyg_boxed_check (py_start, GTK_TYPE_TEXT_ITER) && 
+        pyg_boxed_check (py_end, GTK_TYPE_TEXT_ITER))
+    {
+        start = pyg_boxed_get (py_start, GtkTextIter);
+        end = pyg_boxed_get (py_end, GtkTextIter);
+    } else {
+        PyErr_SetString (PyExc_TypeError, "start and end must be gtk.TextIters");
+        return NULL;
+    }
+    
+    source = gtk_source_buffer_get_markers_in_region (GTK_SOURCE_BUFFER(self->obj), start, end);
+    dest = _gslist_to_pylist_objs(source);
+    g_slist_free(source);
+    return dest;
+}
+%%
+override gtk_source_language_get_tags
+
+static PyObject *
+_wrap_gtk_source_language_get_tags (PyGObject *self)
+{
+    GSList *source;
+    PyObject *dest;
+    source = gtk_source_language_get_tags (GTK_SOURCE_LANGUAGE(self->obj));
+    dest = _gslist_to_pylist_objs(source);
+    g_slist_free(source);
+    return dest;
+}
+%%
+override gtk_source_language_get_mime_types
+
+static PyObject *
+_wrap_gtk_source_language_get_mime_types (PyGObject *self)
+{
+    GSList *source;
+    PyObject *dest;
+    source = gtk_source_language_get_tags (GTK_SOURCE_LANGUAGE(self->obj));
+    dest = _gslist_to_pylist_strs(source);
+    g_slist_free(source);
+    return dest;
+}
+%%
+override gtk_source_language_set_mime_types
+
+static PyObject *
+_wrap_gtk_source_language_set_mime_types (PyGObject *self, PyObject *args)
+{
+    PyObject *source;
+    GSList *dest = NULL;
+    int len, i;
+    if (!PyArg_ParseTuple (args, "O:GtkSourceTagTable.add_tags", &source))
+        return NULL;
+    if (!PySequence_Check (source))
+    {
+        PyErr_SetString (PyExc_TypeError, "argument must be a sequence");
+        return NULL;
+    }
+    
+    len = PySequence_Length (source);
+    for (i = 0; i < len; i++)
+    {
+        PyObject *item = PySequence_GetItem (source, i);
+        Py_DECREF (item);
+        if (!PyString_Check (item) && !PyUnicode_Check (item))
+        {
+            PyErr_SetString (PyExc_TypeError, "sequence item not a string or unicode object");
+            g_slist_free (dest);
+            return NULL;
+        }
+        dest = g_slist_append(dest, PyString_AsString(item));
+    }
+    gtk_source_tag_table_add_tags(GTK_SOURCE_TAG_TABLE(self->obj), dest);
+    g_slist_free(dest);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override gtk_source_languages_manager_get_available_languages
+
+static PyObject *
+_wrap_gtk_source_languages_manager_get_available_languages (PyGObject *self)
+{
+    const GSList *source;
+    PyObject *dest;
+    source = gtk_source_languages_manager_get_available_languages (
+        GTK_SOURCE_LANGUAGES_MANAGER(self->obj));
+    dest = _gslist_to_pylist_objs(source);
+    return dest;
+}
+%%
+override gtk_source_languages_manager_get_lang_files_dirs
+
+static PyObject *
+_wrap_gtk_source_languages_manager_get_lang_files_dirs (PyGObject *self)
+{
+    const GSList *source;
+    PyObject *dest;
+    source = gtk_source_languages_manager_get_lang_files_dirs (
+        GTK_SOURCE_LANGUAGES_MANAGER(self->obj));
+    dest = _gslist_to_pylist_strs(source);
+    return dest;
+}
+%%
+override gtk_source_style_scheme_get_style_names
+
+static PyObject *
+_wrap_gtk_source_style_scheme_get_style_names (PyGObject *self)
+{
+    GSList *source;
+    PyObject *dest;
+    source = gtk_source_style_scheme_get_style_names (GTK_SOURCE_STYLE_SCHEME(self->obj));
+    dest = _gslist_to_pylist_strs(source);
+    g_slist_free(source);
+    return dest;
+}
+%%
+override-attr GtkSourceTagStyle.bold
+
+static int
+_wrap_gtk_source_tag_style__set_bold(PyGObject *self, PyObject *value, void *closure)
+{
+    pyg_boxed_get (self, GtkSourceTagStyle)->bold = PyObject_IsTrue(value);
+    return 0;
+}
+%%
+override-attr GtkSourceTagStyle.italic
+
+static int
+_wrap_gtk_source_tag_style__set_italic(PyGObject *self, PyObject *value, void *closure)
+{
+    pyg_boxed_get (self, GtkSourceTagStyle)->italic = PyObject_IsTrue(value);
+    return 0;
+}
+%%
+override-attr GtkSourceTagStyle.underline
+
+static int
+_wrap_gtk_source_tag_style__set_underline(PyGObject *self, PyObject *value, void *closure)
+{
+    pyg_boxed_get (self, GtkSourceTagStyle)->underline = PyObject_IsTrue(value);
+    return 0;
+}
+%%
+override-attr GtkSourceTagStyle.strikethrough
+
+static int
+_wrap_gtk_source_tag_style__set_strikethrough(PyGObject *self, PyObject *value, void *closure)
+{
+    pyg_boxed_get (self, GtkSourceTagStyle)->strikethrough = PyObject_IsTrue(value);
+    return 0;
+}
+%%
+override-attr GtkSourceTagStyle.foreground
+
+static int
+_wrap_gtk_source_tag_style__set_foreground(PyGObject *self, PyObject *value, void *closure)
+{
+    if (value == Py_None)
+        pyg_boxed_get (self, GtkSourceTagStyle)->mask &= ~GTK_SOURCE_TAG_STYLE_USE_FOREGROUND;
+    else {
+        if (!pyg_boxed_check (value, GDK_TYPE_COLOR)) {
+            PyErr_SetString(PyExc_TypeError, "a gtk.gdk.Color object or None is required");
+            return -1;
+        }
+        pyg_boxed_get (self, GtkSourceTagStyle)->foreground = *(pyg_boxed_get (value, GdkColor));
+        pyg_boxed_get (self, GtkSourceTagStyle)->mask |= GTK_SOURCE_TAG_STYLE_USE_FOREGROUND;
+    }
+    return 0;
+}
+%%
+override-attr GtkSourceTagStyle.background
+
+static int
+_wrap_gtk_source_tag_style__set_background(PyGObject *self, PyObject *value, void *closure)
+{
+    if (value == Py_None)
+        pyg_boxed_get (self, GtkSourceTagStyle)->mask &= ~GTK_SOURCE_TAG_STYLE_USE_BACKGROUND;
+    else {
+        if (!pyg_boxed_check (value, GDK_TYPE_COLOR)) {
+            PyErr_SetString(PyExc_TypeError, "a gtk.gdk.Color object or None is required");
+            return -1;
+        }
+        pyg_boxed_get (self, GtkSourceTagStyle)->background = *(pyg_boxed_get (value, GdkColor));
+        pyg_boxed_get (self, GtkSourceTagStyle)->mask |= GTK_SOURCE_TAG_STYLE_USE_BACKGROUND;
+    }    
+    return 0;
+}
+%%
+override gtk_source_tag_table_add_tags
+
+static PyObject *
+_wrap_gtk_source_tag_table_add_tags (PyGObject *self, PyObject *args)
+{
+    PyObject *source;
+    GSList *dest = NULL;
+    int len, i;
+    if (!PyArg_ParseTuple (args, "O:GtkSourceTagTable.add_tags", &source))
+        return NULL;
+    if (!PySequence_Check (source))
+    {
+        PyErr_SetString (PyExc_TypeError, "argument must be a sequence");
+        return NULL;
+    }
+    
+    len = PySequence_Length (source);
+    for (i = 0; i < len; i++)
+    {
+        PyObject *item = PySequence_GetItem (source, i);
+        Py_DECREF (item);
+        if (!PyObject_TypeCheck (item, &PyGtkTextTag_Type))
+        {
+            PyErr_SetString (PyExc_TypeError, "sequence item not a gtk.TextTag");
+            g_slist_free (dest);
+            return NULL;
+        }
+        dest = g_slist_append(dest, GTK_TEXT_TAG(((PyGObject *)item)->obj));
+    }
+    gtk_source_tag_table_add_tags(GTK_SOURCE_TAG_TABLE(self->obj), dest);
+    g_slist_free(dest);
+    Py_INCREF (Py_None);
+    return Py_None;
+}
+%%
+override gtk_source_print_job_get_text_margins
+
+static PyObject *
+_wrap_gtk_source_print_job_get_text_margins (PyGObject *self)
+{
+    gdouble top, bottom, left, right;
+    gtk_source_print_job_get_text_margins (GTK_SOURCE_PRINT_JOB(self->obj),
+        &top, &bottom, &left, &right);
+    return Py_BuildValue("(dddd)", top, bottom, left, right);
+}
+%%

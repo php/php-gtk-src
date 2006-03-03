@@ -1,0 +1,545 @@
+; object definitions ...
+(define-object SourceBuffer
+  (in-module "Gtk")
+  (parent "GtkTextBuffer")
+  (c-name "GtkSourceBuffer")
+  (gtype-id "GTK_TYPE_SOURCE_BUFFER")
+)
+
+(define-object SourceLanguage
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkSourceLanguage")
+  (gtype-id "GTK_TYPE_SOURCE_LANGUAGE")
+)
+
+(define-object SourceTagTable
+  (in-module "Gtk")
+  (parent "GtkTextTagTable")
+  (c-name "GtkSourceTagTable")
+  (gtype-id "GTK_TYPE_SOURCE_TAG_TABLE")
+)
+
+(define-object SourceView
+  (in-module "Gtk")
+  (parent "GtkTextView")
+  (c-name "GtkSourceView")
+  (gtype-id "GTK_TYPE_SOURCE_VIEW")
+)
+
+;; Interfaces
+
+(define-interface SourceStyleScheme
+  (in-module "Gtk")
+  (c-name "GtkSourceStyleScheme")
+  (gtype-id "GTK_TYPE_SOURCE_STYLE_SCHEME")
+)
+
+;; Boxed types
+
+(define-boxed SourceTagStyle
+  (in-module "Gtk")
+  (c-name "GtkSourceTagStyle")
+  (gtype-id "GTK_TYPE_SOURCE_TAG_STYLE")
+  (copy-func "gtk_source_tag_style_copy")
+  (release-func "gtk_source_tag_style_free")
+  (fields
+    '("gboolean" "is_default")
+    '("guint" "mask")
+    '("GdkColor" "foreground")
+    '("GdkColor" "background")
+    '("gboolean" "italic")
+    '("gboolean" "bold")
+    '("gboolean" "underline")
+    '("gboolean" "strikethrough")
+  )
+)
+
+;; Typedefs
+
+(define-object SourceMarker
+  (in-module "Gtk")
+  (parent "GtkTextMark")
+  (c-name "GtkSourceMarker")
+  (gtype-id "GTK_TYPE_SOURCE_MARKER")
+)
+
+;; From /usr/include/gtksourceview-1.0/gtksourceview/gtksourcebuffer.h
+
+(define-function gtk_source_buffer_get_type
+  (c-name "gtk_source_buffer_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_source_buffer_new
+  (c-name "gtk_source_buffer_new")
+  (is-constructor-of "GtkSourceBuffer")
+  (return-type "GtkSourceBuffer*")
+  (parameters
+    '("GtkSourceTagTable*" "table" (null-ok) (default "NULL"))
+  )
+)
+
+(define-function gtk_source_buffer_new_with_language
+  (c-name "gtk_source_buffer_new_with_language")
+  (is-constructor-of "GtkSourceBuffer")
+  (return-type "GtkSourceBuffer*")
+  (parameters
+    '("GtkSourceLanguage*" "language")
+  )
+)
+
+(define-method get_check_brackets
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_check_brackets")
+  (return-type "gboolean")
+)
+
+(define-method set_check_brackets
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_set_check_brackets")
+  (return-type "none")
+  (parameters
+    '("gboolean" "check_brackets")
+  )
+)
+
+(define-method set_bracket_match_style
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_set_bracket_match_style")
+  (return-type "none")
+  (parameters
+    '("const-GtkSourceTagStyle*" "style")
+  )
+)
+
+(define-method get_highlight
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_highlight")
+  (return-type "gboolean")
+)
+
+(define-method set_highlight
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_set_highlight")
+  (return-type "none")
+  (parameters
+    '("gboolean" "highlight")
+  )
+)
+
+(define-method get_max_undo_levels
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_max_undo_levels")
+  (return-type "gint")
+)
+
+(define-method set_max_undo_levels
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_set_max_undo_levels")
+  (return-type "none")
+  (parameters
+    '("gint" "max_undo_levels")
+  )
+)
+
+(define-method get_language
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_language")
+  (return-type "GtkSourceLanguage*")
+)
+
+(define-method set_language
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_set_language")
+  (return-type "none")
+  (parameters
+    '("GtkSourceLanguage*" "language" (null-ok))
+  )
+)
+
+(define-method get_escape_char
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_escape_char")
+  (return-type "gunichar")
+)
+
+(define-method set_escape_char
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_set_escape_char")
+  (return-type "none")
+  (parameters
+    '("gunichar" "escape_char")
+  )
+)
+
+(define-method can_undo
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_can_undo")
+  (return-type "gboolean")
+)
+
+(define-method can_redo
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_can_redo")
+  (return-type "gboolean")
+)
+
+(define-method undo
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_undo")
+  (return-type "none")
+)
+
+(define-method redo
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_redo")
+  (return-type "none")
+)
+
+(define-method begin_not_undoable_action
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_begin_not_undoable_action")
+  (return-type "none")
+)
+
+(define-method end_not_undoable_action
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_end_not_undoable_action")
+  (return-type "none")
+)
+
+(define-method create_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_create_marker")
+  (return-type "GtkSourceMarker*")
+  (parameters
+    '("const-gchar*" "name" (null-ok))
+    '("const-gchar*" "type" (null-ok))
+    '("const-GtkTextIter*" "where")
+  )
+)
+
+(define-method move_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_move_marker")
+  (return-type "none")
+  (parameters
+    '("GtkSourceMarker*" "marker")
+    '("const-GtkTextIter*" "where")
+  )
+)
+
+(define-method delete_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_delete_marker")
+  (return-type "none")
+  (parameters
+    '("GtkSourceMarker*" "marker")
+  )
+)
+
+(define-method get_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_marker")
+  (return-type "GtkSourceMarker*")
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method get_markers_in_region
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_markers_in_region")
+  (return-type "GSList*")
+  (parameters
+    '("const-GtkTextIter*" "begin")
+    '("const-GtkTextIter*" "end")
+  )
+)
+
+(define-method get_first_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_first_marker")
+  (return-type "GtkSourceMarker*")
+)
+
+(define-method get_last_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_last_marker")
+  (return-type "GtkSourceMarker*")
+)
+
+(define-method get_iter_at_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_iter_at_marker")
+  (return-type "none")
+  (parameters
+    '("GtkTextIter*" "iter")
+    '("GtkSourceMarker*" "marker")
+  )
+)
+
+(define-method get_next_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_next_marker")
+  (return-type "GtkSourceMarker*")
+  (parameters
+    '("GtkTextIter*" "iter")
+  )
+)
+
+(define-method get_prev_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_prev_marker")
+  (return-type "GtkSourceMarker*")
+  (parameters
+    '("GtkTextIter*" "iter")
+  )
+)
+
+;; From /usr/include/gtksourceview-1.0/gtksourceview/gtksourceiter.h
+
+;; From /usr/include/gtksourceview-1.0/gtksourceview/gtksourcelanguage.h
+
+;; From /usr/include/gtksourceview-1.0/gtksourceview/gtksourcelanguagesmanager.h
+
+;; From /usr/include/gtksourceview-1.0/gtksourceview/gtksourcemarker.h
+
+;; From /usr/include/gtksourceview-1.0/gtksourceview/gtksourceprintjob.h
+
+;; From /usr/include/gtksourceview-1.0/gtksourceview/gtksourcestylescheme.h
+
+;; From /usr/include/gtksourceview-1.0/gtksourceview/gtksourcetag.h
+
+;; From /usr/include/gtksourceview-1.0/gtksourceview/gtksourcetagstyle.h
+
+;; From /usr/include/gtksourceview-1.0/gtksourceview/gtksourceview.h
+
+(define-function gtk_source_view_get_type
+  (c-name "gtk_source_view_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_source_view_new
+  (c-name "gtk_source_view_new")
+  (is-constructor-of "GtkSourceView")
+  (return-type "GtkWidget*")
+)
+
+(define-function gtk_source_view_new_with_buffer
+  (c-name "gtk_source_view_new_with_buffer")
+  (is-constructor-of "GtkSourceView")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GtkSourceBuffer*" "buffer")
+  )
+)
+
+(define-method set_show_line_numbers
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_show_line_numbers")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show")
+  )
+)
+
+(define-method get_show_line_numbers
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_show_line_numbers")
+  (return-type "gboolean")
+)
+
+(define-method set_show_line_markers
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_show_line_markers")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show")
+  )
+)
+
+(define-method get_show_line_markers
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_show_line_markers")
+  (return-type "gboolean")
+)
+
+(define-method set_tabs_width
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_tabs_width")
+  (return-type "none")
+  (parameters
+    '("guint" "width")
+  )
+)
+
+(define-method get_tabs_width
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_tabs_width")
+  (return-type "guint")
+)
+
+(define-method set_auto_indent
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_auto_indent")
+  (return-type "none")
+  (parameters
+    '("gboolean" "enable")
+  )
+)
+
+(define-method get_auto_indent
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_auto_indent")
+  (return-type "gboolean")
+)
+
+(define-method set_insert_spaces_instead_of_tabs
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_insert_spaces_instead_of_tabs")
+  (return-type "none")
+  (parameters
+    '("gboolean" "enable")
+  )
+)
+
+(define-method get_insert_spaces_instead_of_tabs
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_insert_spaces_instead_of_tabs")
+  (return-type "gboolean")
+)
+
+(define-method set_show_margin
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_show_margin")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show")
+  )
+)
+
+(define-method get_show_margin
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_show_margin")
+  (return-type "gboolean")
+)
+
+(define-method set_highlight_current_line
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_highlight_current_line")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show")
+  )
+)
+
+(define-method get_highlight_current_line
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_highlight_current_line")
+  (return-type "gboolean")
+)
+
+(define-method set_margin
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_margin")
+  (return-type "none")
+  (parameters
+    '("guint" "margin")
+  )
+)
+
+(define-method get_margin
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_margin")
+  (return-type "guint")
+)
+
+(define-method set_smart_home_end
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_smart_home_end")
+  (return-type "none")
+  (parameters
+    '("gboolean" "enable")
+  )
+)
+
+(define-method get_smart_home_end
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_smart_home_end")
+  (return-type "gboolean")
+)
+
+;; From /usr/include/gtksourceview-1.0/gtksourceview/gtksourceview-typebuiltins.h
+
+;; Added  from gtk-types.defs to resolve undeclared errors.
+
+(define-object TextBuffer
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkTextBuffer")
+  (gtype-id "GTK_TYPE_TEXT_BUFFER")
+  (fields
+    '("GtkTextTagTable*" "tag_table")
+  )
+)
+
+(define-object TextTagTable
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkTextTagTable")
+  (gtype-id "GTK_TYPE_TEXT_TAG_TABLE")
+)
+
+(define-object TextView
+  (in-module "Gtk")
+  (parent "GtkContainer")
+  (c-name "GtkTextView")
+  (gtype-id "GTK_TYPE_TEXT_VIEW")
+)
+
+(define-object TextMark
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkTextMark")
+  (gtype-id "GTK_TYPE_TEXT_MARK")
+)
+
+(define-object Container
+  (in-module "Gtk")
+  (parent "GtkWidget")
+  (c-name "GtkContainer")
+  (gtype-id "GTK_TYPE_CONTAINER")
+  (fields
+    '("GtkWidget*" "focus_child")
+    '("guint" "border_width")
+    '("guint" "need_resize")
+    '("guint" "resize_mode")
+    '("guint" "reallocate_redraws")
+    '("guint" "has_focus_chain")
+  )
+)
+
+(define-object Widget
+  (in-module "Gtk")
+  (parent "GtkObject")
+  (c-name "GtkWidget")
+  (gtype-id "GTK_TYPE_WIDGET")
+  (fields
+    '("guint8" "state")
+    '("guint8" "saved_state")
+    '("gchar*" "name")
+    '("GtkStyle*" "style")
+    '("GdkRectangle" "allocation")
+    '("GdkWindow*" "window")
+    '("GtkWidget*" "parent")
+  )
+)
+
+(define-object Object
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkObject")
+  (gtype-id "GTK_TYPE_OBJECT")
+)

@@ -1,0 +1,78 @@
+;; -*- scheme -*-
+; object definitions ...
+(define-object Scintilla
+  (in-module "Gtk")
+  (parent "GtkFrame")
+  (c-name "GtkScintilla")
+  (gtype-id "GTK_TYPE_SCINTILLA")
+)
+
+;; Enumerations and flags ...
+
+;; From /usr/include/gtkscintilla.h
+
+(define-function gtk_scintilla_get_type
+  (c-name "gtk_scintilla_get_type")
+  (return-type "guint")
+)
+
+(define-function gtk_scintilla_new
+  (c-name "gtk_scintilla_new")
+  (is-constructor-of "GtkScintilla")
+  (return-type "GtkWidget*")
+)
+
+(define-object Frame
+  (in-module "Gtk")
+  (parent "GtkBin")
+  (c-name "GtkFrame")
+  (gtype-id "GTK_TYPE_FRAME")
+)
+
+(define-object Bin
+  (in-module "Gtk")
+  (parent "GtkContainer")
+  (c-name "GtkBin")
+  (gtype-id "GTK_TYPE_BIN")
+  (fields
+    '("GtkWidget*" "child")
+  )
+)
+
+(define-object Container
+  (in-module "Gtk")
+  (parent "GtkWidget")
+  (c-name "GtkContainer")
+  (gtype-id "GTK_TYPE_CONTAINER")
+  (fields
+    '("GtkWidget*" "focus_child")
+    '("guint" "border_width")
+    '("guint" "need_resize")
+    '("guint" "resize_mode")
+    '("guint" "reallocate_redraws")
+    '("guint" "has_focus_chain")
+  )
+)
+
+(define-object Widget
+  (in-module "Gtk")
+  (parent "GtkObject")
+  (c-name "GtkWidget")
+  (gtype-id "GTK_TYPE_WIDGET")
+  (fields
+    '("guint8" "state")
+    '("guint8" "saved_state")
+    '("gchar*" "name")
+    '("GtkStyle*" "style")
+    '("GdkRectangle" "allocation")
+    '("GdkWindow*" "window")
+    '("GtkWidget*" "parent")
+  )
+)
+
+(define-object Object
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkObject")
+  (gtype-id "GTK_TYPE_OBJECT")
+)

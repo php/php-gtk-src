@@ -1,0 +1,1301 @@
+;; -*- scheme -*-
+; object definitions ...
+(define-object SourceBuffer
+  (in-module "Gtk")
+  (parent "GtkTextBuffer")
+  (c-name "GtkSourceBuffer")
+  (gtype-id "GTK_TYPE_SOURCE_BUFFER")
+)
+
+(define-object SourceLanguage
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkSourceLanguage")
+  (gtype-id "GTK_TYPE_SOURCE_LANGUAGE")
+)
+
+(define-object SourceLanguagesManager
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkSourceLanguagesManager")
+  (gtype-id "GTK_TYPE_SOURCE_LANGUAGES_MANAGER")
+)
+
+(define-object SourcePrintJob
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkSourcePrintJob")
+  (gtype-id "GTK_TYPE_SOURCE_PRINT_JOB")
+)
+
+(define-object SourceTagTable
+  (in-module "Gtk")
+  (parent "GtkTextTagTable")
+  (c-name "GtkSourceTagTable")
+  (gtype-id "GTK_TYPE_SOURCE_TAG_TABLE")
+)
+
+(define-object SourceView
+  (in-module "Gtk")
+  (parent "GtkTextView")
+  (c-name "GtkSourceView")
+  (gtype-id "GTK_TYPE_SOURCE_VIEW")
+)
+
+;; Interfaces
+
+(define-interface SourceStyleScheme
+  (in-module "Gtk")
+  (c-name "GtkSourceStyleScheme")
+  (gtype-id "GTK_TYPE_SOURCE_STYLE_SCHEME")
+)
+
+;; Boxed types
+
+(define-boxed SourceTagStyle
+  (in-module "Gtk")
+  (c-name "GtkSourceTagStyle")
+  (gtype-id "GTK_TYPE_SOURCE_TAG_STYLE")
+  (copy-func "gtk_source_tag_style_copy")
+  (release-func "gtk_source_tag_style_free")
+  (fields
+    '("gboolean" "is_default")
+    '("guint" "mask")
+    '("GdkColor" "foreground")
+    '("GdkColor" "background")
+    '("gboolean" "italic")
+    '("gboolean" "bold")
+    '("gboolean" "underline")
+    '("gboolean" "strikethrough")
+  )
+)
+
+;; Typedefs
+
+(define-object SourceMarker
+  (in-module "Gtk")
+  (parent "GtkTextMark")
+  (c-name "GtkSourceMarker")
+  (gtype-id "GTK_TYPE_SOURCE_MARKER")
+)
+
+;; Enumerations and flags ...
+
+(define-flags SourceSearchFlags
+  (in-module "Gtk")
+  (c-name "GtkSourceSearchFlags")
+  (gtype-id "GTK_TYPE_SOURCE_SEARCH_FLAGS")
+  (values
+    '("visible-only" "GTK_SOURCE_SEARCH_VISIBLE_ONLY")
+    '("text-only" "GTK_SOURCE_SEARCH_TEXT_ONLY")
+    '("case-insensitive" "GTK_SOURCE_SEARCH_CASE_INSENSITIVE")
+  )
+)
+
+(define-flags SourceTagStyleMask
+  (in-module "Gtk")
+  (c-name "GtkSourceTagStyleMask")
+  (gtype-id "GTK_TYPE_SOURCE_TAG_STYLE_MASK")
+  (values
+    '("background" "GTK_SOURCE_TAG_STYLE_USE_BACKGROUND")
+    '("foreground" "GTK_SOURCE_TAG_STYLE_USE_FOREGROUND")
+  )
+)
+
+
+;; From /opt/gnome2/include/gtksourceview-1.0/gtksourceview/gtksourcebuffer.h
+
+(define-function gtk_source_buffer_get_type
+  (c-name "gtk_source_buffer_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_source_buffer_new
+  (c-name "gtk_source_buffer_new")
+  (is-constructor-of "GtkSourceBuffer")
+  (return-type "GtkSourceBuffer*")
+  (parameters
+    '("GtkSourceTagTable*" "table" (null-ok) (default "NULL"))
+  )
+)
+
+(define-function gtk_source_buffer_new_with_language
+  (c-name "gtk_source_buffer_new_with_language")
+  (is-constructor-of "GtkSourceBuffer")
+  (return-type "GtkSourceBuffer*")
+  (parameters
+    '("GtkSourceLanguage*" "language")
+  )
+)
+
+(define-method get_check_brackets
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_check_brackets")
+  (return-type "gboolean")
+)
+
+(define-method set_check_brackets
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_set_check_brackets")
+  (return-type "none")
+  (parameters
+    '("gboolean" "check_brackets")
+  )
+)
+
+(define-method set_bracket_match_style
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_set_bracket_match_style")
+  (return-type "none")
+  (parameters
+    '("const-GtkSourceTagStyle*" "style")
+  )
+)
+
+(define-method get_highlight
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_highlight")
+  (return-type "gboolean")
+)
+
+(define-method set_highlight
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_set_highlight")
+  (return-type "none")
+  (parameters
+    '("gboolean" "highlight")
+  )
+)
+
+(define-method get_max_undo_levels
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_max_undo_levels")
+  (return-type "gint")
+)
+
+(define-method set_max_undo_levels
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_set_max_undo_levels")
+  (return-type "none")
+  (parameters
+    '("gint" "max_undo_levels")
+  )
+)
+
+(define-method get_language
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_language")
+  (return-type "GtkSourceLanguage*")
+)
+
+(define-method set_language
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_set_language")
+  (return-type "none")
+  (parameters
+    '("GtkSourceLanguage*" "language" (null-ok))
+  )
+)
+
+(define-method get_escape_char
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_escape_char")
+  (return-type "gunichar")
+)
+
+(define-method set_escape_char
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_set_escape_char")
+  (return-type "none")
+  (parameters
+    '("gunichar" "escape_char")
+  )
+)
+
+(define-method can_undo
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_can_undo")
+  (return-type "gboolean")
+)
+
+(define-method can_redo
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_can_redo")
+  (return-type "gboolean")
+)
+
+(define-method undo
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_undo")
+  (return-type "none")
+)
+
+(define-method redo
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_redo")
+  (return-type "none")
+)
+
+(define-method begin_not_undoable_action
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_begin_not_undoable_action")
+  (return-type "none")
+)
+
+(define-method end_not_undoable_action
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_end_not_undoable_action")
+  (return-type "none")
+)
+
+(define-method create_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_create_marker")
+  (return-type "GtkSourceMarker*")
+  (parameters
+    '("const-gchar*" "name" (null-ok))
+    '("const-gchar*" "type" (null-ok))
+    '("const-GtkTextIter*" "where")
+  )
+)
+
+(define-method move_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_move_marker")
+  (return-type "none")
+  (parameters
+    '("GtkSourceMarker*" "marker")
+    '("const-GtkTextIter*" "where")
+  )
+)
+
+(define-method delete_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_delete_marker")
+  (return-type "none")
+  (parameters
+    '("GtkSourceMarker*" "marker")
+  )
+)
+
+(define-method get_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_marker")
+  (return-type "GtkSourceMarker*")
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method get_markers_in_region
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_markers_in_region")
+  (return-type "GSList*")
+  (parameters
+    '("const-GtkTextIter*" "begin")
+    '("const-GtkTextIter*" "end")
+  )
+)
+
+(define-method get_first_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_first_marker")
+  (return-type "GtkSourceMarker*")
+)
+
+(define-method get_last_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_last_marker")
+  (return-type "GtkSourceMarker*")
+)
+
+(define-method get_iter_at_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_iter_at_marker")
+  (return-type "none")
+  (parameters
+    '("GtkTextIter*" "iter")
+    '("GtkSourceMarker*" "marker")
+  )
+)
+
+(define-method get_next_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_next_marker")
+  (return-type "GtkSourceMarker*")
+  (parameters
+    '("GtkTextIter*" "iter")
+  )
+)
+
+(define-method get_prev_marker
+  (of-object "GtkSourceBuffer")
+  (c-name "gtk_source_buffer_get_prev_marker")
+  (return-type "GtkSourceMarker*")
+  (parameters
+    '("GtkTextIter*" "iter")
+  )
+)
+
+
+
+;; From /opt/gnome2/include/gtksourceview-1.0/gtksourceview/gtksourceiter.h
+
+(define-function gtk_source_iter_forward_search
+  (c-name "gtk_source_iter_forward_search")
+  (return-type "gboolean")
+  (parameters
+    '("const-GtkTextIter*" "iter")
+    '("const-gchar*" "str")
+    '("GtkSourceSearchFlags" "flags")
+    '("GtkTextIter*" "match_start")
+    '("GtkTextIter*" "match_end")
+    '("const-GtkTextIter*" "limit")
+  )
+)
+
+(define-function gtk_source_iter_backward_search
+  (c-name "gtk_source_iter_backward_search")
+  (return-type "gboolean")
+  (parameters
+    '("const-GtkTextIter*" "iter")
+    '("const-gchar*" "str")
+    '("GtkSourceSearchFlags" "flags")
+    '("GtkTextIter*" "match_start")
+    '("GtkTextIter*" "match_end")
+    '("const-GtkTextIter*" "limit")
+  )
+)
+
+(define-function gtk_source_iter_find_matching_bracket
+  (c-name "gtk_source_iter_find_matching_bracket")
+  (return-type "gboolean")
+  (parameters
+    '("GtkTextIter*" "iter")
+  )
+)
+
+
+
+;; From /opt/gnome2/include/gtksourceview-1.0/gtksourceview/gtksourcelanguage.h
+
+(define-function gtk_source_language_get_type
+  (c-name "gtk_source_language_get_type")
+  (return-type "GType")
+)
+
+(define-method get_id
+  (of-object "GtkSourceLanguage")
+  (c-name "gtk_source_language_get_id")
+  (return-type "gchar*")
+)
+
+(define-method get_name
+  (of-object "GtkSourceLanguage")
+  (c-name "gtk_source_language_get_name")
+  (return-type "gchar*")
+)
+
+(define-method get_section
+  (of-object "GtkSourceLanguage")
+  (c-name "gtk_source_language_get_section")
+  (return-type "gchar*")
+)
+
+(define-method get_tags
+  (of-object "GtkSourceLanguage")
+  (c-name "gtk_source_language_get_tags")
+  (return-type "GSList*")
+)
+
+(define-method get_escape_char
+  (of-object "GtkSourceLanguage")
+  (c-name "gtk_source_language_get_escape_char")
+  (return-type "gunichar")
+)
+
+(define-method get_mime_types
+  (of-object "GtkSourceLanguage")
+  (c-name "gtk_source_language_get_mime_types")
+  (return-type "GSList*")
+)
+
+(define-method set_mime_types
+  (of-object "GtkSourceLanguage")
+  (c-name "gtk_source_language_set_mime_types")
+  (return-type "none")
+  (parameters
+    '("const-GSList*" "mime_types")
+  )
+)
+
+(define-method get_style_scheme
+  (of-object "GtkSourceLanguage")
+  (c-name "gtk_source_language_get_style_scheme")
+  (return-type "GtkSourceStyleScheme*")
+)
+
+(define-method set_style_scheme
+  (of-object "GtkSourceLanguage")
+  (c-name "gtk_source_language_set_style_scheme")
+  (return-type "none")
+  (parameters
+    '("GtkSourceStyleScheme*" "scheme")
+  )
+)
+
+(define-method get_tag_style
+  (of-object "GtkSourceLanguage")
+  (c-name "gtk_source_language_get_tag_style")
+  (return-type "GtkSourceTagStyle*")
+  (parameters
+    '("const-gchar*" "tag_id")
+  )
+)
+
+(define-method set_tag_style
+  (of-object "GtkSourceLanguage")
+  (c-name "gtk_source_language_set_tag_style")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "tag_id")
+    '("const-GtkSourceTagStyle*" "style" (null-ok))
+  )
+)
+
+(define-method get_tag_default_style
+  (of-object "GtkSourceLanguage")
+  (c-name "gtk_source_language_get_tag_default_style")
+  (return-type "GtkSourceTagStyle*")
+  (parameters
+    '("const-gchar*" "tag_id")
+  )
+)
+
+
+
+;; From /opt/gnome2/include/gtksourceview-1.0/gtksourceview/gtksourcelanguagesmanager.h
+
+(define-function gtk_source_languages_manager_get_type
+  (c-name "gtk_source_languages_manager_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_source_languages_manager_new
+  (c-name "gtk_source_languages_manager_new")
+  (is-constructor-of "GtkSourceLanguagesManager")
+  (return-type "GtkSourceLanguagesManager*")
+)
+
+(define-method get_available_languages
+  (of-object "GtkSourceLanguagesManager")
+  (c-name "gtk_source_languages_manager_get_available_languages")
+  (return-type "const-GSList*")
+)
+
+(define-method get_language_from_mime_type
+  (of-object "GtkSourceLanguagesManager")
+  (c-name "gtk_source_languages_manager_get_language_from_mime_type")
+  (return-type "GtkSourceLanguage*")
+  (parameters
+    '("const-gchar*" "mime_type")
+  )
+)
+
+(define-method get_lang_files_dirs
+  (of-object "GtkSourceLanguagesManager")
+  (c-name "gtk_source_languages_manager_get_lang_files_dirs")
+  (return-type "const-GSList*")
+)
+
+
+
+;; From /opt/gnome2/include/gtksourceview-1.0/gtksourceview/gtksourcemarker.h
+
+(define-function gtk_source_marker_get_type
+  (c-name "gtk_source_marker_get_type")
+  (return-type "GType")
+)
+
+(define-method set_marker_type
+  (of-object "GtkSourceMarker")
+  (c-name "gtk_source_marker_set_marker_type")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "type")
+  )
+)
+
+(define-method get_marker_type
+  (of-object "GtkSourceMarker")
+  (c-name "gtk_source_marker_get_marker_type")
+  (return-type "gchar*")
+)
+
+(define-method get_line
+  (of-object "GtkSourceMarker")
+  (c-name "gtk_source_marker_get_line")
+  (return-type "gint")
+)
+
+(define-method get_name
+  (of-object "GtkSourceMarker")
+  (c-name "gtk_source_marker_get_name")
+  (return-type "const-gchar*")
+)
+
+(define-method get_buffer
+  (of-object "GtkSourceMarker")
+  (c-name "gtk_source_marker_get_buffer")
+  (return-type "GtkSourceBuffer*")
+)
+
+(define-method next
+  (of-object "GtkSourceMarker")
+  (c-name "gtk_source_marker_next")
+  (return-type "GtkSourceMarker*")
+)
+
+(define-method prev
+  (of-object "GtkSourceMarker")
+  (c-name "gtk_source_marker_prev")
+  (return-type "GtkSourceMarker*")
+)
+
+
+
+;; From /opt/gnome2/include/gtksourceview-1.0/gtksourceview/gtksourceprintjob.h
+
+(define-function gtk_source_print_job_get_type
+  (c-name "gtk_source_print_job_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_source_print_job_new
+  (c-name "gtk_source_print_job_new")
+  (is-constructor-of "GtkSourcePrintJob")
+  (return-type "GtkSourcePrintJob*")
+  (parameters
+    '("GnomePrintConfig*" "config" (null-ok) (default "NULL"))
+  )
+)
+
+(define-function gtk_source_print_job_new_with_buffer
+  (c-name "gtk_source_print_job_new_with_buffer")
+  (is-constructor-of "GtkSourcePrintJob")
+  (return-type "GtkSourcePrintJob*")
+  (parameters
+    '("GnomePrintConfig*" "config" (null-ok) (default "NULL"))
+    '("GtkSourceBuffer*" "buffer")
+  )
+)
+
+(define-method set_config
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_config")
+  (return-type "none")
+  (parameters
+    '("GnomePrintConfig*" "config")
+  )
+)
+
+(define-method get_config
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_config")
+  (return-type "GnomePrintConfig*")
+)
+
+(define-method set_buffer
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_buffer")
+  (return-type "none")
+  (parameters
+    '("GtkSourceBuffer*" "buffer")
+  )
+)
+
+(define-method get_buffer
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_buffer")
+  (return-type "GtkSourceBuffer*")
+)
+
+(define-method setup_from_view
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_setup_from_view")
+  (return-type "none")
+  (parameters
+    '("GtkSourceView*" "view")
+  )
+)
+
+(define-method set_tabs_width
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_tabs_width")
+  (return-type "none")
+  (parameters
+    '("guint" "tabs_width")
+  )
+)
+
+(define-method get_tabs_width
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_tabs_width")
+  (return-type "guint")
+)
+
+(define-method set_wrap_mode
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_wrap_mode")
+  (return-type "none")
+  (parameters
+    '("GtkWrapMode" "wrap")
+  )
+)
+
+(define-method get_wrap_mode
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_wrap_mode")
+  (return-type "GtkWrapMode")
+)
+
+(define-method set_highlight
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_highlight")
+  (return-type "none")
+  (parameters
+    '("gboolean" "highlight")
+  )
+)
+
+(define-method get_highlight
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_highlight")
+  (return-type "gboolean")
+)
+
+(define-method set_font
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_font")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "font_name")
+  )
+)
+
+(define-method get_font
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_font")
+  (return-type "gchar*")
+)
+
+(define-method set_numbers_font
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_numbers_font")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "font_name" (null-ok))
+  )
+)
+
+(define-method get_numbers_font
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_numbers_font")
+  (return-type "gchar*")
+)
+
+(define-method set_print_numbers
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_print_numbers")
+  (return-type "none")
+  (parameters
+    '("guint" "interval")
+  )
+)
+
+(define-method get_print_numbers
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_print_numbers")
+  (return-type "guint")
+)
+
+(define-method set_text_margins
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_text_margins")
+  (return-type "none")
+  (parameters
+    '("gdouble" "top")
+    '("gdouble" "bottom")
+    '("gdouble" "left")
+    '("gdouble" "right")
+  )
+)
+
+(define-method get_text_margins
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_text_margins")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "top")
+    '("gdouble*" "bottom")
+    '("gdouble*" "left")
+    '("gdouble*" "right")
+  )
+)
+
+(define-method set_font_desc
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_font_desc")
+  (return-type "none")
+  (parameters
+    '("PangoFontDescription*" "desc")
+  )
+)
+
+(define-method get_font_desc
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_font_desc")
+  (return-type "PangoFontDescription*")
+)
+
+(define-method set_numbers_font_desc
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_numbers_font_desc")
+  (return-type "none")
+  (parameters
+    '("PangoFontDescription*" "desc" (null-ok))
+  )
+)
+
+(define-method get_numbers_font_desc
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_numbers_font_desc")
+  (return-type "PangoFontDescription*")
+)
+
+(define-method set_header_footer_font_desc
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_header_footer_font_desc")
+  (return-type "none")
+  (parameters
+    '("PangoFontDescription*" "desc" (null-ok))
+  )
+)
+
+(define-method get_header_footer_font_desc
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_header_footer_font_desc")
+  (return-type "PangoFontDescription*")
+)
+
+(define-method print
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_print")
+  (return-type "GnomePrintJob*")
+)
+
+(define-method print_range
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_print_range")
+  (return-type "GnomePrintJob*")
+  (parameters
+    '("const-GtkTextIter*" "start")
+    '("const-GtkTextIter*" "end")
+  )
+)
+
+(define-method print_range_async
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_print_range_async")
+  (return-type "gboolean")
+  (parameters
+    '("const-GtkTextIter*" "start")
+    '("const-GtkTextIter*" "end")
+  )
+)
+
+(define-method cancel
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_cancel")
+  (return-type "none")
+)
+
+(define-method get_print_job
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_print_job")
+  (return-type "GnomePrintJob*")
+)
+
+(define-method get_page
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_page")
+  (return-type "guint")
+)
+
+(define-method get_page_count
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_page_count")
+  (return-type "guint")
+)
+
+(define-method get_print_context
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_print_context")
+  (return-type "GnomePrintContext*")
+)
+
+(define-method set_print_header
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_print_header")
+  (return-type "none")
+  (parameters
+    '("gboolean" "setting")
+  )
+)
+
+(define-method get_print_header
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_print_header")
+  (return-type "gboolean")
+)
+
+(define-method set_print_footer
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_print_footer")
+  (return-type "none")
+  (parameters
+    '("gboolean" "setting")
+  )
+)
+
+(define-method get_print_footer
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_print_footer")
+  (return-type "gboolean")
+)
+
+(define-method set_header_footer_font
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_header_footer_font")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "font_name" (null-ok))
+  )
+)
+
+(define-method get_header_footer_font
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_get_header_footer_font")
+  (return-type "gchar*")
+)
+
+(define-method set_header_format
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_header_format")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "left" (null-ok))
+    '("const-gchar*" "center" (null-ok))
+    '("const-gchar*" "right" (null-ok))
+    '("gboolean" "separator")
+  )
+)
+
+(define-method set_footer_format
+  (of-object "GtkSourcePrintJob")
+  (c-name "gtk_source_print_job_set_footer_format")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "left" (null-ok))
+    '("const-gchar*" "center" (null-ok))
+    '("const-gchar*" "right" (null-ok))
+    '("gboolean" "separator")
+  )
+)
+
+
+
+;; From /opt/gnome2/include/gtksourceview-1.0/gtksourceview/gtksourcestylescheme.h
+
+(define-function gtk_source_style_scheme_get_type
+  (c-name "gtk_source_style_scheme_get_type")
+  (return-type "GType")
+)
+
+(define-method get_tag_style
+  (of-object "GtkSourceStyleScheme")
+  (c-name "gtk_source_style_scheme_get_tag_style")
+  (return-type "GtkSourceTagStyle*")
+  (parameters
+    '("const-gchar*" "style_name")
+  )
+)
+
+(define-method get_name
+  (of-object "GtkSourceStyleScheme")
+  (c-name "gtk_source_style_scheme_get_name")
+  (return-type "const-gchar*")
+)
+
+(define-method get_style_names
+  (of-object "GtkSourceStyleScheme")
+  (c-name "gtk_source_style_scheme_get_style_names")
+  (return-type "GSList*")
+)
+
+(define-function gtk_source_style_scheme_get_default
+  (c-name "gtk_source_style_scheme_get_default")
+  (return-type "GtkSourceStyleScheme*")
+)
+
+
+
+;; From /opt/gnome2/include/gtksourceview-1.0/gtksourceview/gtksourcetag.h
+
+(define-function gtk_source_tag_get_type
+  (c-name "gtk_source_tag_get_type")
+  (return-type "GType")
+)
+
+(define-method get_id
+  (of-object "GtkSourceTag")
+  (c-name "gtk_source_tag_get_id")
+  (return-type "gchar*")
+)
+
+(define-method get_style
+  (of-object "GtkSourceTag")
+  (c-name "gtk_source_tag_get_style")
+  (return-type "GtkSourceTagStyle*")
+)
+
+(define-method set_style
+  (of-object "GtkSourceTag")
+  (c-name "gtk_source_tag_set_style")
+  (return-type "none")
+  (parameters
+    '("const-GtkSourceTagStyle*" "style")
+  )
+)
+
+(define-function gtk_syntax_tag_get_type
+  (c-name "gtk_syntax_tag_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_syntax_tag_new
+  (c-name "gtk_syntax_tag_new")
+  (is-constructor-of "GtkSyntaxTag")
+  (return-type "GtkTextTag*")
+  (parameters
+    '("const-gchar*" "id")
+    '("const-gchar*" "name")
+    '("const-gchar*" "pattern_start")
+    '("const-gchar*" "pattern_end")
+  )
+)
+
+(define-function gtk_pattern_tag_get_type
+  (c-name "gtk_pattern_tag_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_pattern_tag_new
+  (c-name "gtk_pattern_tag_new")
+  (is-constructor-of "GtkPatternTag")
+  (return-type "GtkTextTag*")
+  (parameters
+    '("const-gchar*" "id")
+    '("const-gchar*" "name")
+    '("const-gchar*" "pattern")
+  )
+)
+
+(define-function gtk_keyword_list_tag_new
+  (c-name "gtk_keyword_list_tag_new")
+  (is-constructor-of "GtkKeywordListTag")
+  (return-type "GtkTextTag*")
+  (parameters
+    '("const-gchar*" "id")
+    '("const-gchar*" "name")
+    '("const-GSList*" "keywords")
+    '("gboolean" "case_sensitive")
+    '("gboolean" "match_empty_string_at_beginning")
+    '("gboolean" "match_empty_string_at_end")
+    '("const-gchar*" "beginning_regex")
+    '("const-gchar*" "end_regex")
+  )
+)
+
+(define-function gtk_line_comment_tag_new
+  (c-name "gtk_line_comment_tag_new")
+  (is-constructor-of "GtkLineCommentTag")
+  (return-type "GtkTextTag*")
+  (parameters
+    '("const-gchar*" "id")
+    '("const-gchar*" "name")
+    '("const-gchar*" "pattern_start")
+  )
+)
+
+(define-function gtk_string_tag_new
+  (c-name "gtk_string_tag_new")
+  (is-constructor-of "GtkStringTag")
+  (return-type "GtkTextTag*")
+  (parameters
+    '("const-gchar*" "id")
+    '("const-gchar*" "name")
+    '("const-gchar*" "pattern_start")
+    '("const-gchar*" "pattern_end")
+    '("gboolean" "end_at_line_end")
+  )
+)
+
+
+
+;; From /opt/gnome2/include/gtksourceview-1.0/gtksourceview/gtksourcetagstyle.h
+
+(define-function gtk_source_tag_style_get_type
+  (c-name "gtk_source_tag_style_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_source_tag_style_new
+  (c-name "gtk_source_tag_style_new")
+  (is-constructor-of "GtkSourceTagStyle")
+  (return-type "GtkSourceTagStyle*")
+)
+
+(define-method copy
+  (of-object "GtkSourceTagStyle")
+  (c-name "gtk_source_tag_style_copy")
+  (return-type "GtkSourceTagStyle*")
+)
+
+(define-method free
+  (of-object "GtkSourceTagStyle")
+  (c-name "gtk_source_tag_style_free")
+  (return-type "none")
+)
+
+
+
+;; From /opt/gnome2/include/gtksourceview-1.0/gtksourceview/gtksourcetagtable.h
+
+(define-function gtk_source_tag_table_get_type
+  (c-name "gtk_source_tag_table_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_source_tag_table_new
+  (c-name "gtk_source_tag_table_new")
+  (is-constructor-of "GtkSourceTagTable")
+  (return-type "GtkSourceTagTable*")
+)
+
+(define-method add_tags
+  (of-object "GtkSourceTagTable")
+  (c-name "gtk_source_tag_table_add_tags")
+  (return-type "none")
+  (parameters
+    '("const-GSList*" "tags")
+  )
+)
+
+(define-method remove_source_tags
+  (of-object "GtkSourceTagTable")
+  (c-name "gtk_source_tag_table_remove_source_tags")
+  (return-type "none")
+)
+
+
+
+;; From /opt/gnome2/include/gtksourceview-1.0/gtksourceview/gtksourceview.h
+
+(define-function gtk_source_view_get_type
+  (c-name "gtk_source_view_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_source_view_new
+  (c-name "gtk_source_view_new")
+  (is-constructor-of "GtkSourceView")
+  (return-type "GtkWidget*")
+)
+
+(define-function gtk_source_view_new_with_buffer
+  (c-name "gtk_source_view_new_with_buffer")
+  (is-constructor-of "GtkSourceView")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GtkSourceBuffer*" "buffer")
+  )
+)
+
+(define-method set_show_line_numbers
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_show_line_numbers")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show")
+  )
+)
+
+(define-method get_show_line_numbers
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_show_line_numbers")
+  (return-type "gboolean")
+)
+
+(define-method set_show_line_markers
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_show_line_markers")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show")
+  )
+)
+
+(define-method get_show_line_markers
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_show_line_markers")
+  (return-type "gboolean")
+)
+
+(define-method set_tabs_width
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_tabs_width")
+  (return-type "none")
+  (parameters
+    '("guint" "width")
+  )
+)
+
+(define-method get_tabs_width
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_tabs_width")
+  (return-type "guint")
+)
+
+(define-method set_auto_indent
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_auto_indent")
+  (return-type "none")
+  (parameters
+    '("gboolean" "enable")
+  )
+)
+
+(define-method get_auto_indent
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_auto_indent")
+  (return-type "gboolean")
+)
+
+(define-method set_insert_spaces_instead_of_tabs
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_insert_spaces_instead_of_tabs")
+  (return-type "none")
+  (parameters
+    '("gboolean" "enable")
+  )
+)
+
+(define-method get_insert_spaces_instead_of_tabs
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_insert_spaces_instead_of_tabs")
+  (return-type "gboolean")
+)
+
+(define-method set_show_margin
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_show_margin")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show")
+  )
+)
+
+(define-method get_show_margin
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_show_margin")
+  (return-type "gboolean")
+)
+
+(define-method set_highlight_current_line
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_highlight_current_line")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show")
+  )
+)
+
+(define-method get_highlight_current_line
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_highlight_current_line")
+  (return-type "gboolean")
+)
+
+(define-method set_margin
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_margin")
+  (return-type "none")
+  (parameters
+    '("guint" "margin")
+  )
+)
+
+(define-method get_margin
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_margin")
+  (return-type "guint")
+)
+
+(define-method set_marker_pixbuf
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_marker_pixbuf")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "marker_type")
+    '("GdkPixbuf*" "pixbuf" (null-ok))
+  )
+)
+
+(define-method get_marker_pixbuf
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_marker_pixbuf")
+  (return-type "GdkPixbuf*")
+  (parameters
+    '("const-gchar*" "marker_type")
+  )
+)
+
+(define-method set_smart_home_end
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_set_smart_home_end")
+  (return-type "none")
+  (parameters
+    '("gboolean" "enable")
+  )
+)
+
+(define-method get_smart_home_end
+  (of-object "GtkSourceView")
+  (c-name "gtk_source_view_get_smart_home_end")
+  (return-type "gboolean")
+)
+
+
+
+;; From /opt/gnome2/include/gtksourceview-1.0/gtksourceview/gtksourceview-typebuiltins.h
+
+(define-function gtk_source_search_flags_get_type
+  (c-name "gtk_source_search_flags_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_source_tag_style_mask_get_type
+  (c-name "gtk_source_tag_style_mask_get_type")
+  (return-type "GType")
+)
