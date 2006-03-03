@@ -1,3 +1,9 @@
+2006-03-03	Anant Narayanan  <anant@kix.in>
+    * ext/scintilla/*: Base files for the GtkScintilla
+      extension
+    * ext/sourceview/*: Base files for the GtkSourceView
+      extension.
+	  
 2006-03-02  Christian Weiske  <cweiske@cweiske.de>
 
     * TODO2:
