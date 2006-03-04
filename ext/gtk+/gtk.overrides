@@ -740,7 +740,6 @@ PHP_METHOD
 
 %% }}}
 
-
 %% {{{ GtkButton
 
 %%
@@ -829,7 +828,6 @@ PHP_METHOD
 }
 
 %% }}}
-
 
 %% {{{ GtkButtonBox
 
@@ -952,7 +950,6 @@ PHP_METHOD
 }
 %% }}}
 
-
 %% {{{ GtkCList
 
 %%
@@ -989,7 +986,6 @@ PHP_METHOD
 
 %% }}}
 
-
 %% {{{ GtkColorButton
 
 %%
@@ -1011,7 +1007,6 @@ PHP_METHOD
 }
 
 %% }}}
-
 
 %% {{{ GtkColorSelection
 %%
@@ -1099,8 +1094,6 @@ PHP_METHOD
     g_list_free(strings);
 }
 %% }}}
-
-%% include gtkcontainer.overrides
 
 %% {{{ GtkDialog
 
@@ -1239,7 +1232,6 @@ PHP_METHOD
 
 %% }}}
 
-
 %% {{{ GtkEditable
 
 %%
@@ -1292,7 +1284,6 @@ PHP_METHOD
 
 %% }}}
 
-
 %% {{{ GtkEntry
 
 %%
@@ -1343,28 +1334,6 @@ PHP_METHOD
 }
 
 %% }}}
-
-
-%% {{{ GtkFrame
-
-%%
-override gtk_frame_get_label_align
-PHP_METHOD
-{
-    gfloat xalign, yalign;
-
-    NOT_STATIC_METHOD();
-
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
-        return;
-
-    gtk_frame_get_label_align(GTK_FRAME(PHPG_GOBJECT(this_ptr)), &xalign, &yalign);
-
-    php_gtk_build_value(&return_value, "(ff)", xalign, yalign);
-}
-
-%% }}}
-
 
 %% {{{ GtkIconSet
 %%
@@ -1434,6 +1403,35 @@ PHP_METHOD
 	}
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
+%% }}}
+
+%% {{{ GtkFileSelection
+
+%%
+override gtk_file_selection_get_selections
+PHP_METHOD
+{
+    gchar **selections;
+    int i = 0;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    selections = gtk_file_selection_get_selections(GTK_FILE_SELECTION(PHPG_GOBJECT(this_ptr))); 
+
+    if (selections) {
+        array_init(return_value);
+
+        for (i = 0; selections[i]; i++) {
+            add_next_index_string(return_value, selections[i], 1);
+        }
+
+        g_strfreev(selections);
+    }
+}
+
 %% }}}
 
 %% {{{ GtkFileChooserDialog
@@ -1534,6 +1532,26 @@ PHP_METHOD
 }
 %% }}}
 
+%% {{{ GtkFrame
+
+%%
+override gtk_frame_get_label_align
+PHP_METHOD
+{
+    gfloat xalign, yalign;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_frame_get_label_align(GTK_FRAME(PHPG_GOBJECT(this_ptr)), &xalign, &yalign);
+
+    php_gtk_build_value(&return_value, "(ff)", xalign, yalign);
+}
+
+%% }}}
+
 %% {{{ GtkLabel
 %%
 add-arginfo GtkLabel __construct
@@ -1619,7 +1637,6 @@ PHP_METHOD
 }
 %% }}}
 
-
 %% {{{ GtkLayout
 
 %%
@@ -1638,7 +1655,6 @@ PHP_METHOD
 }
 
 %% }}}
-
 
 %% {{{ GtkListItem
 
@@ -1680,7 +1696,6 @@ PHP_METHOD(GtkListItem, __construct)
 }
 
 %% }}}
-
 
 %% {{{ GtkMenu
 %%
@@ -1887,7 +1902,6 @@ PHP_METHOD
 }
 %% }}}
 
-
 %% {{{ GtkMisc
 
 %%
@@ -1922,7 +1936,6 @@ PHP_METHOD
 }
 
 %% }}}
-
 
 %% {{{ GtkProgressBar
 
@@ -2180,7 +2193,6 @@ PHP_METHOD
 }
 %% }}}
 
-
 %% {{{ GtkRuler
 
 %%
@@ -2199,7 +2211,6 @@ PHP_METHOD
 }
 
 %% }}}
-
 
 %% {{{ GtkScale
 
@@ -2220,7 +2231,6 @@ PHP_METHOD
 
 %% }}}
 
-
 %% {{{ GtkScrolledWindow
 
 %%
@@ -2240,7 +2250,6 @@ PHP_METHOD
 }
 
 %% }}}
-
 
 %% {{{ GtkSpinButton
 
@@ -2275,10 +2284,6 @@ PHP_METHOD
 }
 
 %% }}}
-
-
-
-%% include gtkstyle.overrides
 
 %% {{{ GtkTextAttributes
 
@@ -2405,7 +2410,6 @@ PHP_METHOD
 }
 %% }}}
 
-
 %% {{{ GtkWidget
 
 %%
@@ -2515,7 +2519,6 @@ PHP_METHOD
 
 %% }}}
 
-
 %% {{{ GtkWindow
 %%
 override gtk_window_get_position
@@ -2582,6 +2585,8 @@ PHP_METHOD
 }
 %% }}}
 
+%% include gtkcontainer.overrides
+%% include gtkdrag.overrides
+%% include gtkstyle.overrides
 %% include gtktextview.overrides
 %% include gtktreeview.overrides
-%% include gtkdrag.overrides
