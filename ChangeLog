@@ -1,3 +1,24 @@
+2006-03-03  Anant Narayanan  <anant@kix.in>
+
+    * ChangeLog:
+      Um, I think I supposed to update the ChangeLog. Hope I'm not doing anything
+      wrong!
+
+    * ext/scintilla/Makefile.frag
+      ext/scintilla/config.m4
+      ext/scintilla/php_scintilla.c
+      ext/scintilla/php_scintilla.h
+      ext/scintilla/scintilla.defs
+      ext/scintilla/scintilla.overrides
+      ext/scintilla/v1.scintilla.defs
+      ext/scintilla/v1.scintilla.overrides:
+      GtkScintilla and GtkSourceView base extension files.
+
+2006-03-03  Christian Weiske  <cweiske@cweiske.de>
+
+    * TODO2:
+      note
+
 2006-03-03	Anant Narayanan  <anant@kix.in>
     * ext/scintilla/*: Base files for the GtkScintilla
       extension
