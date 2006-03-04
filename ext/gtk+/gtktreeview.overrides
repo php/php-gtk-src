@@ -1272,13 +1272,13 @@ PHP_METHOD
     if (path) {
         phpg_tree_path_to_zval(path, &php_path TSRMLS_CC);
     } else {
-        MAKE_STD_ZVAL(php_path);
+        ALLOC_INIT_ZVAL(php_path);
     }
 
     if (column) {
         phpg_gobject_new(&php_column, (GObject*)column TSRMLS_CC);
     } else {
-        MAKE_STD_ZVAL(php_column);
+        ALLOC_INIT_ZVAL(php_column);
     }
 
     php_gtk_build_value(&return_value, "(NN)", php_path, php_column);
