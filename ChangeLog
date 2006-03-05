@@ -1,3 +1,11 @@
+2006-03-04  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtktreeview.overrides:
+      Hmm, I guess ALLOC_INIT_ZVAL should be used here..
+
+    * ext/gtk+/gtk.overrides:
+      Override GtkFileSelection::get_selections()
+
 2006-03-03  Anant Narayanan  <anant@kix.in>
 
     * ChangeLog:
