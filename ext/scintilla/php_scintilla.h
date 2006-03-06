@@ -32,8 +32,8 @@
 extern php_gtk_ext_entry scintilla_ext_entry;
 #define php_gtk_ext_scintilla_ptr &scintilla_ext_entry
 
-void phpg_scintilla_register_classes(void);
-void phpg_scintilla_register_constants(const char *strip_prefix);
+void phpg_gtkscintilla_register_classes(void);
+void phpg_gtkscintilla_register_constants(const char *strip_prefix);
 
 #else
 

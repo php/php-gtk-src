@@ -13,7 +13,7 @@
 
 (define-function gtk_scintilla_get_type
   (c-name "gtk_scintilla_get_type")
-  (return-type "guint")
+  (return-type "GType")
 )
 
 (define-function gtk_scintilla_new
@@ -22,6 +22,26 @@
   (return-type "GtkWidget*")
 )
 
+(define-method add_text
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_add_text")
+  (return-type "none")
+  (parameters
+    '("gint" "length")
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method insert_text
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_insert_text")
+  (return-type "none")
+  (parameters
+    '("glong" "pos")
+    '("const-gchar*" "text"))
+)
+
+;; Added to stop errors
 (define-object Frame
   (in-module "Gtk")
   (parent "GtkBin")

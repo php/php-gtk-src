@@ -30,8 +30,8 @@ PHP_GTK_GET_EXTENSION(scintilla)
 
 PHP_GTK_XINIT_FUNCTION(scintilla)
 {
-	php_scintilla_register_classes();
-    php_scintilla_register_constants("SCINTILLA_");
+	phpg_gtkscintilla_register_classes();
+    phpg_gtkscintilla_register_constants("SCINTILLA_");
 	
 	return SUCCESS;
 }
