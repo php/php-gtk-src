@@ -32,8 +32,8 @@
 extern php_gtk_ext_entry sourceview_ext_entry;
 #define php_gtk_ext_sourceview_ptr &sourceview_ext_entry
 
-void phpg_sourceview_register_classes(void);
-void phpg_sourceview_register_constants(const char *strip_prefix);
+void phpg_gtksourceview_register_classes(void);
+void phpg_gtksourceview_register_constants(const char *strip_prefix);
 
 #else
 

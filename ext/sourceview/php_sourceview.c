@@ -30,8 +30,8 @@ PHP_GTK_GET_EXTENSION(sourceview)
 
 PHP_GTK_XINIT_FUNCTION(sourceview)
 {
-	phpg_sourceview_register_classes();
-    phpg_sourceview_register_constants("SOURCEVIEW_");
+	phpg_gtksourceview_register_classes();
+    phpg_gtksourceview_register_constants("SOURCEVIEW_");
 
 	return SUCCESS;
 }
