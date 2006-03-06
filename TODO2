@@ -33,6 +33,8 @@ Classes and Functions
 		(method is generated, need to test this)
 * GtkCalendar
 	method      GtkCalendar::get_date: unknown type 'guint*'
+* GtkCellView
+    get_size_of_row NTRVNRP
 * GtkClipboard
 	constructor GtkClipboard::__construct: unknown type 'GdkAtom'
 	method      GtkClipboard::request_contents: unknown type 'GdkAtom'
@@ -50,6 +52,8 @@ Classes and Functions
 	GtkEntry objects can't be var_dumped, probably something missing
 * GdkGC
 	implement property access (read/write)
+* GtkIconInfo
+    get_embedded_rect NTRVNRP
 * GtkIconTheme
 	method      GtkIconTheme::get_icon_sizes: unknown type 'gint*'
 	method      GtkIconTheme::get_search_path: unknown type 'gchar**[]'
@@ -71,6 +75,14 @@ Classes and Functions
   methods append_page, insert_page and prepend_page have to be merged
    with their _menu counterparts (so that append_page accepts a third
    parameter from append_page_menu)
+* GtkTextBuffer
+    get_bounds NTRVNRP
+    get_iter_at_child_anchor NTRVNRP
+    get_selection_bounds NTRVNRP
+* GtkTextView
+    get_iter_at_location NTRVNRP
+    get_iter_location NTRVNRP
+    get_visible_rect NTRVNRP
 * GtkTreeModel
 	method      GtkTreeModel::get: varargs methods not supported
 	method      GtkTreeModel::get_valist: unknown type 'va_list'
@@ -97,6 +109,7 @@ Classes and Functions
 	method      GtkTreeView::set_search_equal_func: unknown type 'GtkTreeViewSearchEqualFunc'
 	method      GtkTreeView::tree_to_widget_coords: unknown type 'gint*'
 	method      GtkTreeView::widget_to_tree_coords: unknown type 'gint*'
+    get_visible_rect NTRVNRP
 * GtkTextBuffer
 	method      GtkTextBuffer::create_tag: varargs methods not supported
 	method      GtkTextBuffer::insert_with_tags: varargs methods not supported
@@ -112,6 +125,8 @@ Classes and Functions
 	pixbuf_new_from_array() has PyArrayObject as a parameter
 * GdkPixmap
 	constructor	create_from_xpm_d()
+* GdkWindow
+    get_frame_extends needs to return a parameter not requiring one
 * GtkPlug/GtkSocket
 * Support (array) cast for GtkTreeModelRow and possibly unset()
 
@@ -141,3 +156,4 @@ Thoughts on reference counting and wrappers
   * todo
   - in progress
 ]
+NTRVNRP - needs to return value not require parameter
