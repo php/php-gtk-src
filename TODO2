@@ -46,7 +46,6 @@ Classes and Functions
 	method      GtkClipboard::wait_is_target_available: unknown type 'GdkAtom'
 * GtkComboBox
     Default constructor should get optional parameter, and new_with_model() be removed
-    get_active_iter shouldn't need a parameter but return one
 * GtkEntry
 	GtkEntry objects can't be var_dumped, probably something missing
 * GdkGC
