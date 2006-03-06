@@ -22,6 +22,20 @@
   (return-type "GtkWidget*")
 )
 
+(define-method find_text
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_find_text")
+  (return-type "glong")
+  (parameters
+    '("gint" "flags")
+    '("gchar*" "text")
+    '("glong" "chrg_min")
+    '("glong" "chrg_max")
+    '("glong*" "text_min")
+    '("glong*" "text_max")
+  )
+)
+
 (define-method add_text
   (of-object "GtkScintilla")
   (c-name "gtk_scintilla_add_text")
@@ -38,7 +52,107 @@
   (return-type "none")
   (parameters
     '("glong" "pos")
-    '("const-gchar*" "text"))
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method clear_all
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_clear_all")
+  (return-type "none")
+)
+
+(define-method clear_document_style
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_clear_document_style")
+  (return-type "none")
+)
+
+(define-method get_length
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_length")
+  (return-type "gint")
+)
+
+(define-method get_char_at
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_char_at")
+  (return-type "gint")
+  (parameters
+    '("glong" "pos")
+  )
+)
+
+(define-method get_current_pos
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_current_pos")
+  (return-type "glong")
+)
+
+(define-method get_anchor
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_anchor")
+  (return-type "glong")
+)
+
+(define-method get_style_at
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_style_at")
+  (return-type "gint")
+  (parameters
+    '("glong" "pos")
+  )
+)
+
+(define-method redo
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_redo")
+  (return-type "none")
+)
+
+(define-method set_undo_collection
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_undo_collection")
+  (return-type "none")
+  (parameters 
+    '("gint" "collect_undo")
+  )
+)
+
+(define-method select_all
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_select_all")
+  (return-type "none")
+)
+
+(define-method set_save_point
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_save_point")
+  (return-type "none")
+)
+
+(define-method can_redo
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_can_redo")
+  (return-type "gint")
+)
+
+(define-method marker_line_from_handle
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_marker_line_from_handle")
+  (return-type "gint")
+  (parameters
+    '("gint" "handle")
+  )
+)
+
+(define-method marker_delete_handle
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_marker_delete_handle")
+  (return-type "none")
+  (parameters
+    '("gint" "handle")
+  )
 )
 
 ;; Added to stop errors
