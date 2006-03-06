@@ -1,0 +1,13 @@
+These were the extension directories that were removed either because they were
+empty or are not applicable to PHP-Gtk2:
+
+canvas
+combobutton
+extra
+gdkpixbuf
+gtkhtml
+imlib
+piemenu
+scrollpane
+spaned
+sqpane
