@@ -1095,8 +1095,6 @@ PHP_METHOD
 }
 %% }}}
 
-<<<<<<< gtk.overrides
-
 %% {{{ GtkComboBox
 
 %%
@@ -1117,10 +1115,6 @@ PHP_METHOD
 
 %% }}}
 
-%% include gtkcontainer.overrides
-
-=======
->>>>>>> 1.153
 %% {{{ GtkDialog
 
 %%
