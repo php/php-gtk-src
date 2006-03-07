@@ -1,0 +1,18 @@
+/* -*- Mode: C; c-basic-offset: 4 -*- */
+%%
+headers
+#include <Python.h>
+
+#include "pygobject.h"
+#include <gtkmozembed.h>
+
+%%
+modulename gtkmozembed
+%%
+import gobject.GObject as PyGObject_Type
+import gtk.Object as PyGtkObject_Type
+import gtk.Bin as PyGtkBin_Type
+%%
+ignore-glob
+  *_get_type
+  _*
