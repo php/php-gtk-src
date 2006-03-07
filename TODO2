@@ -76,13 +76,7 @@ Classes and Functions
    with their _menu counterparts (so that append_page accepts a third
    parameter from append_page_menu)
 * GtkTextBuffer
-    get_bounds NTRVNRP
     get_iter_at_child_anchor NTRVNRP
-    get_selection_bounds NTRVNRP
-* GtkTextView
-    get_iter_at_location NTRVNRP
-    get_iter_location NTRVNRP
-    get_visible_rect NTRVNRP
 * GtkTreeModel
 	method      GtkTreeModel::get: varargs methods not supported
 	method      GtkTreeModel::get_valist: unknown type 'va_list'
@@ -109,7 +103,6 @@ Classes and Functions
 	method      GtkTreeView::set_search_equal_func: unknown type 'GtkTreeViewSearchEqualFunc'
 	method      GtkTreeView::tree_to_widget_coords: unknown type 'gint*'
 	method      GtkTreeView::widget_to_tree_coords: unknown type 'gint*'
-    get_visible_rect NTRVNRP
 * GtkTextBuffer
 	method      GtkTextBuffer::create_tag: varargs methods not supported
 	method      GtkTextBuffer::insert_with_tags: varargs methods not supported

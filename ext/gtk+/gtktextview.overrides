@@ -9,6 +9,48 @@ ignore
 %% {{{ GtkTextBuffer
 
 %%
+override gtk_text_buffer_get_bounds
+PHP_METHOD
+{
+    GtkTextIter start, end;
+    zval *php_start = NULL;
+    zval *php_end = NULL;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_text_buffer_get_bounds(GTK_TEXT_BUFFER(PHPG_GOBJECT(this_ptr)), &start, &end);
+
+    phpg_gboxed_new(&php_start, GTK_TYPE_TEXT_ITER, &start, TRUE, TRUE TSRMLS_CC);
+    phpg_gboxed_new(&php_end, GTK_TYPE_TEXT_ITER, &end, TRUE, TRUE TSRMLS_CC);
+
+    php_gtk_build_value(&return_value, "(NN)", php_start, php_end);
+}
+
+%%
+override gtk_text_buffer_get_selection_bounds
+PHP_METHOD
+{
+    GtkTextIter start, end;
+    zval *php_start = NULL;
+    zval *php_end = NULL;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    if (gtk_text_buffer_get_selection_bounds(GTK_TEXT_BUFFER(PHPG_GOBJECT(this_ptr)), &start, &end)) {
+        phpg_gboxed_new(&php_start, GTK_TYPE_TEXT_ITER, &start, TRUE, TRUE TSRMLS_CC);
+        phpg_gboxed_new(&php_end, GTK_TYPE_TEXT_ITER, &end, TRUE, TRUE TSRMLS_CC);
+
+        php_gtk_build_value(&return_value, "(NN)", php_start, php_end);
+    } else {
+        RETURN_FALSE;
+    }
+}
+
+%%
 override gtk_text_buffer_get_start_iter
 PHP_METHOD
 {
@@ -203,6 +245,32 @@ PHP_METHOD
 
 
 %%
+add-arginfo GtkTextView get_iter_at_location
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, x)
+    ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_text_view_get_iter_at_location
+PHP_METHOD
+{
+    gint x, y;
+    GtkTextIter iter;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &x, &y))
+        return;
+
+    gtk_text_view_get_iter_at_location(GTK_TEXT_VIEW(PHPG_GOBJECT(this_ptr)), &iter, x, y);
+
+    phpg_gboxed_new(&return_value, GTK_TYPE_TEXT_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+
+
+%%
 add-arginfo GtkTextView get_iter_at_position
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
@@ -228,6 +296,35 @@ PHP_METHOD
     phpg_gboxed_new(&php_iter, GTK_TYPE_TEXT_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 
     php_gtk_build_value(&return_value, "(Ni)", php_iter, trailing);
+}
+
+
+%%
+add-arginfo GtkTextView get_iter_location
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, iter, GtkTextIter, 0)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_text_view_get_iter_location
+PHP_METHOD
+{
+    zval *php_iter = NULL;
+    GtkTextIter *iter = NULL;
+    GdkRectangle rect;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &php_iter, gtktextiter_ce))
+        return;
+
+    if (php_iter && IS_OBJECT == Z_TYPE_P(php_iter)) {
+        iter = (GtkTextIter *) PHPG_GBOXED(php_iter);
+    }
+
+    gtk_text_view_get_iter_location(GTK_TEXT_VIEW(PHPG_GOBJECT(this_ptr)), iter, &rect);
+    phpg_gboxed_new(&return_value, GDK_TYPE_RECTANGLE, &rect, TRUE, TRUE TSRMLS_CC);
 }
 
 
@@ -287,6 +384,20 @@ PHP_METHOD
     php_gtk_build_value(&return_value, "(ii)", y, height);
 }
 
+%%
+override gtk_text_view_get_visible_rect
+PHP_METHOD
+{
+    GdkRectangle rect;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(PHPG_GOBJECT(this_ptr)), &rect);
+    phpg_gboxed_new(&return_value, GDK_TYPE_RECTANGLE, &rect, TRUE, TRUE TSRMLS_CC);
+}
 
 %%
 add-arginfo GtkTextView window_to_buffer_coords
