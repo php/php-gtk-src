@@ -118,8 +118,6 @@ Classes and Functions
 	pixbuf_new_from_array() has PyArrayObject as a parameter
 * GdkPixmap
 	constructor	create_from_xpm_d()
-* GdkWindow
-    get_frame_extends needs to return a parameter not requiring one
 * GtkPlug/GtkSocket
 * Support (array) cast for GtkTreeModelRow and possibly unset()
 

@@ -37,6 +37,9 @@ class GdkWindowTest extends PHPUnit2_Framework_TestCase {
      * @access protected
      */
     protected function setUp() {
+        $wnd = new GtkWindow();
+        $wnd->realize();
+        $this->wnd = $wnd->window;
     }
 
     /**
@@ -185,11 +188,12 @@ class GdkWindowTest extends PHPUnit2_Framework_TestCase {
     }
 
     /**
-     * @todo Implement testGet_frame_extents().
+     *
      */
     public function testGet_frame_extents() {
-        // Remove the following line when you implement this test.
-        throw new PHPUnit2_Framework_IncompleteTestError;
+        $rect = $this->wnd->get_frame_extents();
+        $this->assertEquals('GdkRectangle', get_class($rect));
+        $this->assertNotNull($rect);
     }
 
     /**
