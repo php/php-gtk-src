@@ -1,3 +1,14 @@
+2006-03-07  Christian Weiske  <cweiske@cweiske.de>
+
+    * TODO2
+      ext/gtk+/gdk.overrides:
+      Fixing NTRVNRP method: GdkWindow::get_frame_extends and unit test
+
+    * TODO2
+      ext/gtk+/gtktextview.overrides
+      ext/gtk+/gtktreeview.overrides:
+      Fixed some NTRVNRP methods and added unit tests for them
+
 2006-03-06  Anant Narayanan  <anant@kix.in>
 
     * ext/scintilla/scintilla.defs:
