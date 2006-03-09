@@ -1355,74 +1355,24 @@ PHP_METHOD
 
 %% }}}
 
-%% {{{ GtkIconSet
+%% {{{ GtkFrame
+
 %%
-override gtk_icon_set_get_sizes
+override gtk_frame_get_label_align
 PHP_METHOD
 {
-    GtkIconSize *sizes;
-    gint n_sizes, i;
+    gfloat xalign, yalign;
 
     NOT_STATIC_METHOD();
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
         return;
 
-    gtk_icon_set_get_sizes((GtkIconSet *)PHPG_GBOXED(this_ptr), &sizes, &n_sizes);
-    array_init(return_value);
+    gtk_frame_get_label_align(GTK_FRAME(PHPG_GOBJECT(this_ptr)), &xalign, &yalign);
 
-    for (i = 0; i < n_sizes; i++) {
-        add_next_index_long(return_value, sizes[i]);
-    }
-
-    g_free(sizes);
+    php_gtk_build_value(&return_value, "(ff)", xalign, yalign);
 }
-%% }}}
 
-%% {{{ GtkImageMenuItem
-%%
-add-arginfo GtkImageMenuItem __construct
-static
-ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
-    ZEND_ARG_INFO(0, stock_id)
-    ZEND_ARG_OBJ_INFO(0, accel_group, GtkAccelGroup, 1)
-ZEND_END_ARG_INFO();
-
-%%
-override gtk_image_menu_item_new
-PHP_METHOD
-{
-	char *stock_id = NULL;
-	zend_bool free_stock_id;
-	zval *php_accel_group = NULL;
-    GtkAccelGroup *accel_group = NULL;
-	GObject *wrapped_obj;
-
-    if (phpg_gtype_from_zval(this_ptr) != GTK_TYPE_IMAGE_MENU_ITEM) {
-        PHPG_THROW_EXCEPTION(phpg_construct_exception, "Subclassing GtkImageMenuItem requires more than you know");
-        return;
-    }
-
-	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|uO", &stock_id, &free_stock_id, &php_accel_group, gtkaccelgroup_ce)) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkImageMenuItem);
-	}
-    
-    if (php_accel_group) {
-        accel_group = GTK_ACCEL_GROUP(PHPG_GOBJECT(php_accel_group));
-    }
-
-    if (stock_id) {
-        wrapped_obj = (GObject *) gtk_image_menu_item_new_from_stock(stock_id, accel_group);
-    } else {
-        wrapped_obj = (GObject *) gtk_image_menu_item_new();
-    }
-	if (free_stock_id) g_free(stock_id);
-
-	if (!wrapped_obj) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkImageMenuItem);
-	}
-    phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
-}
 %% }}}
 
 %% {{{ GtkFileSelection
@@ -1550,26 +1500,6 @@ PHP_METHOD
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
-%% }}}
-
-%% {{{ GtkFrame
-
-%%
-override gtk_frame_get_label_align
-PHP_METHOD
-{
-    gfloat xalign, yalign;
-
-    NOT_STATIC_METHOD();
-
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
-        return;
-
-    gtk_frame_get_label_align(GTK_FRAME(PHPG_GOBJECT(this_ptr)), &xalign, &yalign);
-
-    php_gtk_build_value(&return_value, "(ff)", xalign, yalign);
-}
-
 %% }}}
 
 %% {{{ GtkLabel
