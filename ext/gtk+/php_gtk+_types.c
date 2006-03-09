@@ -251,7 +251,7 @@ static void style_helper_write_dimension(zval *object, zval *offset, zval *value
         case STYLE_GC_ARRAY:
         {
             GdkGC **array = (GdkGC **) sh->array;
-            if (!phpg_object_check(value, gdkgc_ce TSRMLS_CC)) {
+            if (!phpg_object_isa(value, gdkgc_ce TSRMLS_CC)) {
                 php_error(E_WARNING, "Can only assign a GdkGC object");
                 return;
             }
@@ -265,7 +265,7 @@ static void style_helper_write_dimension(zval *object, zval *offset, zval *value
         case STYLE_PIXMAP_ARRAY:
         {
             GdkPixmap **array = (GdkPixmap **) sh->array;
-            if (Z_TYPE_P(value) != IS_NULL && !phpg_object_check(value, gdkpixmap_ce TSRMLS_CC)) {
+            if (Z_TYPE_P(value) != IS_NULL && !phpg_object_isa(value, gdkpixmap_ce TSRMLS_CC)) {
                 php_error(E_WARNING, "Can only assign a GdkPixmap object or null");
                 return;
             }

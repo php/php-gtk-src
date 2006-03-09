@@ -303,7 +303,7 @@ PHP_GTK_API void phpg_warn_deprecated(char *msg TSRMLS_DC);
 PHP_GTK_API  void php_gtk_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass_object, int after);
 PHP_GTK_API zval* php_gtk_simple_signal_callback(GtkObject *o, gpointer data, zval *gtk_args );
 
-static inline zend_bool phpg_object_check(zval *zobj, zend_class_entry *ce TSRMLS_DC)
+static inline zend_bool phpg_object_isa(zval *zobj, zend_class_entry *ce TSRMLS_DC)
 {
     phpg_return_val_if_fail(zobj != NULL, FALSE);
     phpg_return_val_if_fail(ce != NULL, FALSE);

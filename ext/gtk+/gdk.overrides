@@ -47,7 +47,6 @@ ignore
 
 /* }}} */
 
-
 %% {{{ Gdk
 
 %%
@@ -90,7 +89,6 @@ PHP_METHOD
 }
 
 %% }}}
-
 
 %% {{{ GdkColor
 
@@ -323,7 +321,6 @@ PHP_METHOD
 
 %% }}}
 
-
 %% {{{ GdkDisplay
 
 %%
@@ -373,8 +370,19 @@ PHP_METHOD
 
 %% }}}
 
-
 %% {{{ GdkDrawable
+
+%%
+override-prop GdkDrawable xid
+PHPG_PROP_READER
+{
+#if defined(GDK_WINDOWING_X11)
+	RETVAL_LONG(GDK_DRAWABLE_XID(((GdkDrawable *)((phpg_gobject_t *)object)->obj)));
+#else
+    RETVAL_LONG((long) GDK_WINDOW_HWND((GdkDrawable *)((phpg_gobject_t *)object)->obj));
+#endif
+    return SUCCESS;
+}
 
 %%
 override gdk_drawable_get_size
@@ -392,7 +400,6 @@ PHP_METHOD
 }
 
 %% }}}
-
 
 %% {{{ GdkEvent
 
@@ -1012,6 +1019,217 @@ PHP_METHOD
 
 %% }}}
 
+%% {{{ GdkGC
+
+%%
+override gdk_gc_set_dashes
+PHP_METHOD
+{
+    int dash_offset, n, i;
+    zval *dash_array, **item;
+    guchar *dash_list;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ia", &dash_offset, &dash_array)) {
+        return;
+    }
+
+    n = zend_hash_num_elements(Z_ARRVAL_P(dash_array));
+    dash_list = emalloc(n * sizeof(char));
+    for (i = 0, zend_hash_internal_pointer_reset(Z_ARRVAL_P(dash_array));
+         zend_hash_get_current_data(Z_ARRVAL_P(dash_array), (void **) &item) == SUCCESS;
+         zend_hash_move_forward(Z_ARRVAL_P(dash_array)), i++) {
+
+        if (Z_TYPE_PP(item) != IS_LONG) {
+            php_error(E_WARNING, "%s::%s(): dash list elements have to be integers",
+                      get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+            efree(dash_list);
+            return;
+        }
+        dash_list[i] = (guchar)clamp_int(Z_LVAL_PP(item), 0, 255);
+        if (dash_list[i] == 0) {
+            php_error(E_WARNING, "%s::%s(): dash list element cannot be 0",
+                      get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+            efree(dash_list);
+            return;
+        }
+    }
+
+    gdk_gc_set_dashes(GDK_GC(PHPG_GOBJECT(this_ptr)), dash_offset, dash_list, n);
+    efree(dash_list);
+}
+
+%%
+override gdk_gc_set_values
+PHP_METHOD
+{
+    zval *php_values, **value;
+	char *key;
+	uint key_len;
+	ulong num_key;
+	HashTable *hash;
+	GdkGCValues values;
+	GdkGCValuesMask mask = 0;
+
+    NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_values)) {
+		return;
+    }
+
+    hash = HASH_OF(php_values);
+    zend_hash_internal_pointer_reset(hash);
+    while (zend_hash_get_current_data(hash, (void**)&value) == SUCCESS) {
+        if (zend_hash_get_current_key_ex(hash, &key, &key_len, &num_key, 0, NULL) == HASH_KEY_IS_STRING) {
+            if (!strcmp(key, "foreground")) {
+                GdkColor *c;
+
+                if (!phpg_object_isa(*value, gdkcolor_ce)) {
+                    php_error(E_WARNING, "foreground value has to be a GdkColor");
+                    return;
+                }
+                c = (GdkColor *) PHPG_GBOXED(*value);
+                mask |= GDK_GC_FOREGROUND;
+                values.foreground.red 	= c->red;
+                values.foreground.green = c->green;
+                values.foreground.blue 	= c->blue;
+                values.foreground.pixel = c->pixel;
+            } else if (!strcmp(key, "background")) {
+                GdkColor *c;
+
+                if (!phpg_object_isa(*value, gdkcolor_ce)) {
+                    php_error(E_WARNING, "background value has to be a GdkColor");
+                    return;
+                }
+                c = (GdkColor *) PHPG_GBOXED(*value);
+                mask |= GDK_GC_BACKGROUND;
+                values.background.red 	= c->red;
+                values.background.green = c->green;
+                values.background.blue 	= c->blue;
+                values.background.pixel = c->pixel;
+            } else if (!strcmp(key, "font")) {
+                if (!phpg_object_isa(*value, gdkfont_ce)) {
+                    php_error(E_WARNING, "font value has to be a GdkFont");
+                    return;
+                }
+                mask |= GDK_GC_FONT;
+                values.font = (GdkFont *) PHPG_GBOXED(*value);
+            } else if (!strcmp(key, "function")) {
+                if (Z_TYPE_PP(value) != IS_LONG) {
+                    php_error(E_WARNING, "function value has to be an integer");
+                    return;
+                }
+                mask |= GDK_GC_FUNCTION;
+                values.function = Z_LVAL_PP(value);
+            } else if (!strcmp(key, "fill")) {
+                if (Z_TYPE_PP(value) != IS_LONG) {
+                    php_error(E_WARNING, "fill value has to be an integer");
+                    return;
+                }
+                mask |= GDK_GC_FILL;
+                values.fill = Z_LVAL_PP(value);
+            } else if (!strcmp(key, "tile")) {
+                if (!phpg_object_isa(*value, gdkpixmap_ce)) {
+                    php_error(E_WARNING, "tile value has to be a GdkPixmap");
+                    return;
+                }
+                mask |= GDK_GC_TILE;
+                values.tile = GDK_PIXMAP(PHPG_GOBJECT(*value));
+            } else if (!strcmp(key, "stipple")) {
+                if (!phpg_object_isa(*value, gdkpixmap_ce)) {
+                    php_error(E_WARNING, "stipple value has to be a GdkPixmap");
+                    return;
+                }
+                mask |= GDK_GC_STIPPLE;
+                values.stipple = GDK_PIXMAP(PHPG_GOBJECT(*value));
+            } else if (!strcmp(key, "clip_mask")) {
+                if (!phpg_object_isa(*value, gdkpixmap_ce)) {
+                    php_error(E_WARNING, "clip_mask value has to be a GdkPixmap");
+                    return;
+                }
+                mask |= GDK_GC_CLIP_MASK;
+                values.clip_mask = GDK_PIXMAP(PHPG_GOBJECT(*value));
+            } else if (!strcmp(key, "subwindow_mode")) {
+                if (Z_TYPE_PP(value) != IS_LONG) {
+                    php_error(E_WARNING, "subwindow_mode value has to be an integer");
+                    return;
+                }
+                mask |= GDK_GC_SUBWINDOW;
+                values.subwindow_mode = Z_LVAL_PP(value);
+            } else if (!strcmp(key, "ts_x_origin")) {
+                if (Z_TYPE_PP(value) != IS_LONG) {
+                    php_error(E_WARNING, "ts_x_origin value has to be an integer");
+                    return;
+                }
+                mask |= GDK_GC_TS_X_ORIGIN;
+                values.ts_x_origin = Z_LVAL_PP(value);
+            } else if (!strcmp(key, "ts_y_origin")) {
+                if (Z_TYPE_PP(value) != IS_LONG) {
+                    php_error(E_WARNING, "ts_y_origin value has to be an integer");
+                    return;
+                }
+                mask |= GDK_GC_TS_Y_ORIGIN;
+                values.ts_y_origin = Z_LVAL_PP(value);
+            } else if (!strcmp(key, "clip_x_origin")) {
+                if (Z_TYPE_PP(value) != IS_LONG) {
+                    php_error(E_WARNING, "clip_x_origin value has to be an integer");
+                    return;
+                }
+                mask |= GDK_GC_CLIP_X_ORIGIN;
+                values.clip_x_origin = Z_LVAL_PP(value);
+            } else if (!strcmp(key, "clip_y_origin")) {
+                if (Z_TYPE_PP(value) != IS_LONG) {
+                    php_error(E_WARNING, "clip_y_origin value has to be an integer");
+                    return;
+                }
+                mask |= GDK_GC_CLIP_Y_ORIGIN;
+                values.clip_y_origin = Z_LVAL_PP(value);
+            } else if (!strcmp(key, "graphics_exposures")) {
+                if (Z_TYPE_PP(value) != IS_LONG) {
+                    php_error(E_WARNING, "graphics_exposures value has to be an integer");
+                    return;
+                }
+                mask |= GDK_GC_EXPOSURES;
+                values.graphics_exposures = Z_LVAL_PP(value);
+            } else if (!strcmp(key, "line_width")) {
+                if (Z_TYPE_PP(value) != IS_LONG) {
+                    php_error(E_WARNING, "line_width value has to be an integer");
+                    return;
+                }
+                mask |= GDK_GC_LINE_WIDTH;
+                values.line_width = Z_LVAL_PP(value);
+            } else if (!strcmp(key, "line_style")) {
+                if (Z_TYPE_PP(value) != IS_LONG) {
+                    php_error(E_WARNING, "line_style value has to be an integer");
+                    return;
+                }
+                mask |= GDK_GC_LINE_STYLE;
+                values.line_style = Z_LVAL_PP(value);
+            } else if (!strcmp(key, "cap_style")) {
+                if (Z_TYPE_PP(value) != IS_LONG) {
+                    php_error(E_WARNING, "cap_style value has to be an integer");
+                    return;
+                }
+                mask |= GDK_GC_CAP_STYLE;
+                values.cap_style = Z_LVAL_PP(value);
+            } else if (!strcmp(key, "join_style")) {
+                if (Z_TYPE_PP(value) != IS_LONG) {
+                    php_error(E_WARNING, "join_style value has to be an integer");
+                    return;
+                }
+                mask |= GDK_GC_JOIN_STYLE;
+                values.join_style = Z_LVAL_PP(value);
+            }
+        }
+        zend_hash_move_forward(hash);
+    }
+
+    gdk_gc_set_values(GDK_GC(PHPG_GOBJECT(this_ptr)), &values, mask);
+    RETURN_TRUE;
+}
+
+%% }}}
 
 %% {{{ GdkPixbuf
 
@@ -1191,7 +1409,6 @@ PHP_METHOD
 
 %% }}}
 
-
 %% {{{ GdkScreen
 
 %%
@@ -1241,7 +1458,6 @@ PHP_METHOD
 }
 
 %% }}}
-
 
 %% {{{ GdkWindow
 
@@ -1426,18 +1642,6 @@ PHP_METHOD
 
     gdk_text_extents((GdkFont *)PHPG_GBOXED(this_ptr), text, length, &lbearing, &rbearing, &width, &ascent, &descent);
     php_gtk_build_value(&return_value, "(iiiii)", lbearing, rbearing, width, ascent, descent);
-}
-
-%%
-override-prop GdkDrawable xid
-PHPG_PROP_READER
-{
-#if defined(GDK_WINDOWING_X11)
-	RETVAL_LONG(GDK_DRAWABLE_XID(((GdkDrawable *)((phpg_gobject_t *)object)->obj)));
-#else
-    RETVAL_LONG((long) GDK_WINDOW_HWND((GdkDrawable *)((phpg_gobject_t *)object)->obj));
-#endif
-    return SUCCESS;
 }
 
 %%
