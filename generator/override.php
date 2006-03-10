@@ -28,9 +28,9 @@ class Overrides {
     var $prop_overrides       = array();
     var $handler_overrides    = array();
     var $extra_methods        = array();
+    var $extra_props          = array();
     var $extra_arginfo        = array();//reflection information
     var $unused_extra_arginfo = array();//which reflection information has not been used
-    var $getprops             = array();
     var $register_classes     = array();
     var $headers              = '';
     var $constants            = '';
@@ -190,6 +190,17 @@ class Overrides {
                 $this->lineinfo["$class.$method"] = array($blocklineno + 1, $file_name);
                 break;
 
+            case 'add-prop':
+                $class = $words[0];
+                $prop = $words[1];
+                if (isset($words[2]))
+                    $type = $words[2];
+                else
+                    $type = 'read';
+                $this->extra_props[$class][$prop][$type] = $rest;
+                $this->lineinfo["$class.$prop.$type.extra"] = array($blocklineno + 1, $file_name);
+                break;
+
             case 'add-arginfo':
                 $class  = $words[0];
                 $method = $words[1];
@@ -263,14 +274,14 @@ class Overrides {
         return $this->extra_methods[$class];
     }
 
-    function have_get_prop($class_name, $prop_name)
+    function have_extra_props($class)
     {
-        return isset($this->getprops[$class_name][$prop_name]);
+        return isset($this->extra_props[$class]);
     }
 
-    function get_prop($class_name, $prop_name)
+    function get_extra_props($class)
     {
-        return $this->getprops[$class_name][$prop_name];
+        return $this->extra_props[$class];
     }
 
     function have_post_registration($class)

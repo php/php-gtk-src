@@ -534,7 +534,7 @@ class Generator {
     {
         global $matcher;
 
-        if (!$object->fields) {
+        if (!$object->fields && !$this->overrides->have_extra_props($object->c_name)) {
             return 'NULL';
         }
 
@@ -578,7 +578,7 @@ class Generator {
                     }
                     if (isset($overrides['write'])) {
                         $write_override = preg_replace('!^.*(PHPG_PROP_WRITER).*$!m', "static $1($object->c_name, $field_name)", $overrides['write']);
-                        $this->write_override($overrides['read'], $object->c_name, $field_name, 'write');
+                        $this->write_override($overrides['write'], $object->c_name, $field_name, 'write');
                         $this->divert("gen ", "%%%%  %-11s %s->%s\n", "writer for", $object->c_name, $field_name);
                     }
                 } else {
@@ -604,6 +604,35 @@ class Generator {
             } catch (Exception $e) {
                 $this->divert("notgen", "  %-11s %s->%s: %s\n", "reader for", $object->c_name, $field_name, $e->getMessage());
                 $num_skipped++;
+                $this->cover["props"]->skipped();
+            }
+        }
+
+        if ($this->overrides->have_extra_props($object->c_name)) {
+            foreach ($this->overrides->get_extra_props($object->c_name) as $prop_name => $overrides) {
+
+                $read_func = "PHPG_PROP_READ_FN($object->c_name, $prop_name)";
+                $write_func = 'NULL';
+                $info = new Wrapper_Info();
+
+                if (isset($overrides['read'])) {
+                    $read_override = preg_replace('!^.*(PHPG_PROP_READER).*$!m', "$1($object->c_name, $prop_name)", $overrides['read']);
+                    $this->write_override($read_override, $object->c_name, $prop_name, 'read', 'extra');
+                    $this->divert("gen", "%%%%  %-11s %s->%s\n", "reader for", $object->c_name, $prop_name);
+                    $this->cover["props"]->written();
+                } else {
+                    $read_func = 'NULL';
+                }
+
+                if (isset($overrides['write'])) {
+                    $write_override = preg_replace('!^.*(PHPG_PROP_WRITER).*$!m', "static $1($object->c_name, $prop_name)", $overrides['write']);
+                    $this->write_override($overrides['write'], $object->c_name, $prop_name, 'write', 'extra');
+                    $this->divert("gen ", "%%%%  %-11s %s->%s\n", "writer for", $object->c_name, $prop_name);
+                }
+
+                $prop_defs[] = sprintf(Templates::prop_info_entry, 
+                                       $prop_name, $read_func, $write_func);
+                $num_written++;
                 $this->cover["props"]->written();
             }
         }
