@@ -1,3 +1,19 @@
+2006-03-09  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.overrides
+      ext/gtk+/php_gtk+_types.c
+      main/php_gtk.h:
+      Implement GdkGC::set_dashes() and ::set_values().
+      
+
+2006-03-09  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.overrides:
+      I meant to move GtkI*, not GtkFrame. Fscking clipboard
+
+    * ext/gtk+/gtk.overrides:
+      Moving GtkFrame to alphabetical order
+
 2006-03-07  Christian Weiske  <cweiske@cweiske.de>
 
     * TODO2
