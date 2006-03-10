@@ -1022,6 +1022,186 @@ PHP_METHOD
 %% {{{ GdkGC
 
 %%
+add-prop GdkGC foreground read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    phpg_gboxed_new(&return_value, GDK_TYPE_COLOR, &(gc.foreground), TRUE, TRUE TSRMLS_CC);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC background read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    phpg_gboxed_new(&return_value, GDK_TYPE_COLOR, &(gc.background), TRUE, TRUE TSRMLS_CC);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC font read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    phpg_gboxed_new(&return_value, GDK_TYPE_FONT, gc.font, TRUE, TRUE TSRMLS_CC);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC function read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    RETVAL_LONG(gc.function);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC fill read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    RETVAL_LONG(gc.fill);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC tile read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    phpg_gobject_new(&return_value, (GObject *)gc.tile TSRMLS_CC);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC stipple read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    phpg_gobject_new(&return_value, (GObject *)gc.stipple TSRMLS_CC);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC clip_mask read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    phpg_gobject_new(&return_value, (GObject *)gc.clip_mask TSRMLS_CC);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC subwindow_mode read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    RETVAL_LONG(gc.subwindow_mode);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC ts_x_origin read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    RETVAL_LONG(gc.ts_x_origin);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC ts_y_origin read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    RETVAL_LONG(gc.ts_y_origin);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC clip_x_origin read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    RETVAL_LONG(gc.clip_x_origin);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC clip_y_origin read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    RETVAL_LONG(gc.clip_y_origin);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC graphics_exposures read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    RETVAL_LONG(gc.graphics_exposures);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC line_width read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    RETVAL_LONG(gc.line_width);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC line_style read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    RETVAL_LONG(gc.line_style);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC cap_style read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    RETVAL_LONG(gc.cap_style);
+    return SUCCESS;
+}
+
+%%
+add-prop GdkGC join_style read
+PHPG_PROP_READER
+{
+    GdkGCValues gc;
+    gdk_gc_get_values(GDK_GC(((phpg_gobject_t *)object)->obj), &gc);
+    RETVAL_LONG(gc.join_style);
+    return SUCCESS;
+}
+
+%%
 override gdk_gc_set_dashes
 PHP_METHOD
 {
