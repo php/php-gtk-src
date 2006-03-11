@@ -1,3 +1,12 @@
+2006-03-10  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.overrides:
+      Expose GdkGC fields
+
+    * generator/generator.php
+      generator/override.php:
+      Allowing adding extra programmatic fields (properties).
+
 2006-03-09  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gdk.overrides
