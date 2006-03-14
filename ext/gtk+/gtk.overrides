@@ -1357,16 +1357,59 @@ PHP_METHOD
 
 %% {{{ GtkFileSelection
 
+
+
+%%
+override gtk_file_selection_get_filename
+PHP_METHOD
+{
+    const gchar *php_retval;
+    gchar *cp_ret;
+    gchar *fn = NULL;
+    gsize cp_len;
+    zend_bool free_result;
+    zend_bool convert = 1;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert))
+        return;
+
+    php_retval = gtk_file_selection_get_filename(GTK_FILE_SELECTION(PHPG_GOBJECT(this_ptr)));
+    if (php_retval) {
+        if (convert) {
+            fn = g_filename_to_utf8(php_retval, strlen(php_retval), NULL, NULL, NULL);
+            cp_ret = phpg_from_utf8(fn, strlen(fn), &cp_len, &free_result TSRMLS_CC);
+            if (cp_ret) {
+                RETVAL_STRINGL((char *)cp_ret, cp_len, 1);
+            } else {
+                php_error(E_WARNING, "%s::%s(): could not convert return value from UTF-8", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+            }
+            if (free_result)
+                g_free(cp_ret);
+        } else {
+            RETVAL_STRINGL((char *)php_retval, strlen(php_retval), 1);
+        }
+    } else {
+        RETVAL_NULL();
+    }
+}
+
 %%
 override gtk_file_selection_get_selections
 PHP_METHOD
 {
     gchar **selections;
     int i = 0;
+    gchar *cp = NULL;
+    gchar *fn = NULL;
+    gsize cp_len = 0;
+    zend_bool free_cp = FALSE;
+    zend_bool convert = 1;
 
     NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert)) 
         return;
 
     selections = gtk_file_selection_get_selections(GTK_FILE_SELECTION(PHPG_GOBJECT(this_ptr))); 
@@ -1375,7 +1418,19 @@ PHP_METHOD
         array_init(return_value);
 
         for (i = 0; selections[i]; i++) {
-            add_next_index_string(return_value, selections[i], 1);
+            if (convert) {
+                fn = g_filename_to_utf8(selections[i], strlen(selections[i]), NULL, NULL, NULL);
+                cp = phpg_from_utf8(fn, strlen(fn), &cp_len, &free_cp TSRMLS_CC);
+                if (cp) {
+                    add_next_index_string(return_value, (char *)cp, 1);
+                } else {
+                    php_error(E_WARNING, "%s::%s(): could not convert return value from UTF-8", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+                }
+                if (free_cp)
+                    g_free(cp);
+            } else {
+                add_next_index_string(return_value, selections[i], 1);
+            }
         }
 
         g_strfreev(selections);
