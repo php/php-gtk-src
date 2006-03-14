@@ -1357,7 +1357,12 @@ PHP_METHOD
 
 %% {{{ GtkFileSelection
 
-
+%%
+add-arginfo GtkFileSelection get_filename
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, convert)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_file_selection_get_filename
@@ -1394,6 +1399,13 @@ PHP_METHOD
         RETVAL_NULL();
     }
 }
+
+%%
+add-arginfo GtkFileSelection get_selections
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, convert)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_file_selection_get_selections
