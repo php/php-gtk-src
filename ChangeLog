@@ -1,3 +1,19 @@
+2006-03-14  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.overrides:
+      Somebody forgot the arginfo
+
+    * ext/gtk+/gtk.overrides:
+      GtkFileSelection:
+      - get_filename([convert])
+      - get_filenames([convert])
+
+    * ext/gtk+/gtk.overrides:
+      GtkFileChooser:
+      - get_filename([convert])
+      - get_filenames([convert])
+      - get_uris
+
 2006-03-10  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gdk.overrides:
