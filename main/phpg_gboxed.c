@@ -125,7 +125,7 @@ PHP_GTK_API void phpg_gboxed_new(zval **zobj, GType gtype, gpointer boxed, gbool
     ZVAL_NULL(*zobj);
 
     phpg_return_if_fail(gtype != 0);
-    phpg_return_if_fail(boxed != NULL);
+    phpg_return_if_fail_quiet(boxed != NULL);
     phpg_return_if_fail(!copy || (copy && own_ref));
 
     ce = g_type_get_qdata(gtype, phpg_class_key);
