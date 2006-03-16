@@ -328,6 +328,10 @@ static void phpg_gtk_idle_add_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool with_
 
     callback_filename = zend_get_executed_filename(TSRMLS_C);
     callback_lineno = zend_get_executed_lineno(TSRMLS_C);
+    if (!extra) {
+        MAKE_STD_ZVAL(extra);
+        array_init(extra);
+    }
     php_gtk_build_value(&data, "(VNsi)", callback, extra, callback_filename, callback_lineno);
 
     handler_id = g_idle_add_full(priority, phpg_handler_marshal, data, phpg_destroy_notify);
