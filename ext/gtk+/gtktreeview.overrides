@@ -134,7 +134,7 @@ PHP_METHOD
     zval_add_ref(&callback);
     cb_data = phpg_cb_data_new(callback, extra TSRMLS_CC);
 
-    gtk_cell_layout_set_cell_data_func(layout, cell, (GtkTreeCellDataFunc)phpg_cell_data_func_marshal,
+    gtk_cell_layout_set_cell_data_func(layout, cell, (GtkCellLayoutDataFunc)phpg_cell_data_func_marshal,
                                        cb_data, phpg_cb_data_destroy);
 }
 %% }}}

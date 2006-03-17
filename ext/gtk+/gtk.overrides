@@ -2685,6 +2685,103 @@ PHP_METHOD
 }
 %% }}}
 
+%% {{{ GtkUIManager
+
+%%
+add-arginfo GtkUIManager add_ui_from_string
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, text)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_ui_manager_add_ui_from_string
+PHP_METHOD
+{
+    char *text;
+    long text_len;
+    guint ret;
+    GError *error = NULL;
+    zend_bool free_text;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u#", &text, &text_len, &free_text))
+        return;
+
+    ret = gtk_ui_manager_add_ui_from_string(GTK_UI_MANAGER(PHPG_GOBJECT(this_ptr)), text, text_len, &error);
+
+    if (free_text) g_free(text);
+    if (phpg_handle_gerror(&error TSRMLS_CC)) {
+        return;
+    }
+    RETURN_LONG(ret);
+}
+
+%%
+add-arginfo GtkUIManager get_toplevels
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, types)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_ui_manager_get_toplevels
+PHP_METHOD
+{
+    GtkUIManagerItemType types;
+    zval *php_types = NULL;
+    GSList *toplevels = 0, *tmp;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &types))
+        return;
+
+	if (php_types && phpg_gvalue_get_flags(GTK_TYPE_UI_MANAGER_ITEM_TYPE, php_types, (gint *)&types) == FAILURE) {
+		return;
+	}
+    array_init(return_value);
+
+    toplevels = gtk_ui_manager_get_toplevels(GTK_UI_MANAGER(PHPG_GOBJECT(this_ptr)), types);
+    for (tmp = toplevels; tmp; tmp = tmp->next) {
+        zval *item = NULL;
+        const char *name = NULL;
+
+        name = gtk_widget_get_name(tmp->data);
+        phpg_gobject_new(&item, G_OBJECT(tmp->data) TSRMLS_CC);
+        add_assoc_zval(return_value, (char *)name, item);
+    }
+    g_slist_free(toplevels);
+}
+
+
+%%
+override gtk_ui_manager_get_action_groups 
+
+PHP_METHOD
+{
+    GList *action_groups = 0;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    array_init(return_value);
+
+    for (action_groups = gtk_ui_manager_get_action_groups(GTK_UI_MANAGER(PHPG_GOBJECT(this_ptr)));
+         action_groups;
+         action_groups = action_groups->next) {
+
+        zval *item = NULL;
+        const char *name = NULL;
+
+        name = gtk_action_group_get_name(action_groups->data);
+        phpg_gobject_new(&item, G_OBJECT(action_groups->data) TSRMLS_CC);
+        add_assoc_zval(return_value, (char *)name, item);
+    }
+}
+
+%% }}}
+
 %% {{{ GtkWidget
 
 %%
