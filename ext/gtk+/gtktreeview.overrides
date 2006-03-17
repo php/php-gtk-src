@@ -43,6 +43,7 @@ ignore
     gtk_tree_view_new
     gtk_tree_view_column_new
     gtk_tree_view_column_set_attributes
+    gtk_tree_view_column_set_cell_data_func
 %% }}}
 
 %% {{{ GtkCellLayout
@@ -102,6 +103,39 @@ PHP_METHOD
         gtk_cell_layout_add_attribute(layout, cell, Z_STRVAL_P(attr), Z_LVAL_P(column));
     }
     efree(args);
+}
+
+%%
+add-arginfo GtkCellLayout set_cell_data_func
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, cellrenderer, GtkCellRenderer, 1)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_cell_layout_set_cell_data_func
+PHP_METHOD
+{
+    zval *php_cell;
+    GtkCellRenderer *cell;
+    GtkCellLayout *layout = NULL;
+    zval *callback, *extra;
+    phpg_cb_data_t *cb_data;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 2, &extra, "OV", &php_cell, gtkcellrenderer_ce, &callback))
+        return;
+
+    layout = GTK_CELL_LAYOUT(PHPG_GOBJECT(this_ptr));
+    cell = GTK_CELL_RENDERER(PHPG_GOBJECT(php_cell));
+
+    zval_add_ref(&callback);
+    cb_data = phpg_cb_data_new(callback, extra TSRMLS_CC);
+
+    gtk_cell_layout_set_cell_data_func(layout, cell, (GtkTreeCellDataFunc)phpg_cell_data_func_marshal,
+                                       cb_data, phpg_cb_data_destroy);
 }
 %% }}}
 
@@ -1540,35 +1574,4 @@ PHP_METHOD
 }
 
 
-%%
-add-arginfo GtkTreeViewColumn set_cell_data_func
-static
-ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
-    ZEND_ARG_OBJ_INFO(0, cellrenderer, GtkCellRenderer, 1)
-    ZEND_ARG_INFO(0, callback)
-ZEND_END_ARG_INFO();
-
-%%
-override gtk_tree_view_column_set_cell_data_func
-PHP_METHOD
-{
-    zval *php_cell;
-    GtkCellRenderer *cell;
-    zval *callback, *extra;
-    phpg_cb_data_t *cb_data;
-
-    NOT_STATIC_METHOD();
-
-    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 2, &extra, "OV", &php_cell, gtkcellrenderer_ce, &callback))
-        return;
-
-    cell = GTK_CELL_RENDERER(PHPG_GOBJECT(php_cell));
-
-    zval_add_ref(&callback);
-    cb_data = phpg_cb_data_new(callback, extra TSRMLS_CC);
-
-    gtk_tree_view_column_set_cell_data_func(GTK_TREE_VIEW_COLUMN(PHPG_GOBJECT(this_ptr)), cell,
-                                            (GtkTreeCellDataFunc)phpg_cell_data_func_marshal,
-                                            cb_data, phpg_cb_data_destroy);
-}
 %% }}}
