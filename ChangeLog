@@ -1,3 +1,19 @@
+2006-03-16  Christian Weiske  <cweiske@cweiske.de>
+
+    * test/bug_idle_add.php:
+      Bug is fixed
+
+2006-03-16  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      Fix segfault in idle_add().
+
+    * main/phpg_gboxed.c:
+      Don't complain if boxed is NULL.
+
+    * ext/gtk+/gtk.overrides:
+      Add GtkCalendar::get_date().
+
 2006-03-15  Christian Weiske  <cweiske@cweiske.de>
 
     * test/bug_idle_add.php:
