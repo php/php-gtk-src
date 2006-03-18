@@ -1449,6 +1449,41 @@ PHP_METHOD
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
 
+%%
+override gdk_pixbuf_new_from_xpm_data
+PHP_METHOD
+{
+    zval *php_data;
+    int size, i;
+    gchar **data;
+    zval **line;
+    GdkPixbuf *pixbuf;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a/", &php_data)) {
+        return;
+    }
+
+    size = zend_hash_num_elements(Z_ARRVAL_P(php_data));
+    data = safe_emalloc(size, sizeof(gchar *), 0);
+
+	for (i = 0, zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_data));
+		 zend_hash_get_current_data(Z_ARRVAL_P(php_data), (void **)&line) == SUCCESS;
+		 zend_hash_move_forward(Z_ARRVAL_P(php_data))) {
+
+		convert_to_string_ex(line);
+		data[i++] = Z_STRVAL_PP(line);
+	}
+
+    pixbuf = gdk_pixbuf_new_from_xpm_data((const char **)data);
+    efree(data);
+
+    if (pixbuf == NULL) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GdkPixbuf);
+    }
+
+    phpg_gobject_new(&return_value, (GObject *)pixbuf TSRMLS_CC);
+    g_object_unref(pixbuf); /* phpg_gobject_new() increments reference count */
+}
 
 %%
 add-arginfo GdkPixbuf render_pixmap_and_mask
