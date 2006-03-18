@@ -1265,7 +1265,7 @@ PHP_METHOD
             if (!strcmp(key, "foreground")) {
                 GdkColor *c;
 
-                if (!phpg_object_isa(*value, gdkcolor_ce)) {
+                if (!phpg_object_isa(*value, gdkcolor_ce TSRMLS_CC)) {
                     php_error(E_WARNING, "foreground value has to be a GdkColor");
                     return;
                 }
@@ -1278,7 +1278,7 @@ PHP_METHOD
             } else if (!strcmp(key, "background")) {
                 GdkColor *c;
 
-                if (!phpg_object_isa(*value, gdkcolor_ce)) {
+                if (!phpg_object_isa(*value, gdkcolor_ce TSRMLS_CC)) {
                     php_error(E_WARNING, "background value has to be a GdkColor");
                     return;
                 }
@@ -1289,7 +1289,7 @@ PHP_METHOD
                 values.background.blue 	= c->blue;
                 values.background.pixel = c->pixel;
             } else if (!strcmp(key, "font")) {
-                if (!phpg_object_isa(*value, gdkfont_ce)) {
+                if (!phpg_object_isa(*value, gdkfont_ce TSRMLS_CC)) {
                     php_error(E_WARNING, "font value has to be a GdkFont");
                     return;
                 }
@@ -1310,21 +1310,21 @@ PHP_METHOD
                 mask |= GDK_GC_FILL;
                 values.fill = Z_LVAL_PP(value);
             } else if (!strcmp(key, "tile")) {
-                if (!phpg_object_isa(*value, gdkpixmap_ce)) {
+                if (!phpg_object_isa(*value, gdkpixmap_ce TSRMLS_CC)) {
                     php_error(E_WARNING, "tile value has to be a GdkPixmap");
                     return;
                 }
                 mask |= GDK_GC_TILE;
                 values.tile = GDK_PIXMAP(PHPG_GOBJECT(*value));
             } else if (!strcmp(key, "stipple")) {
-                if (!phpg_object_isa(*value, gdkpixmap_ce)) {
+                if (!phpg_object_isa(*value, gdkpixmap_ce TSRMLS_CC)) {
                     php_error(E_WARNING, "stipple value has to be a GdkPixmap");
                     return;
                 }
                 mask |= GDK_GC_STIPPLE;
                 values.stipple = GDK_PIXMAP(PHPG_GOBJECT(*value));
             } else if (!strcmp(key, "clip_mask")) {
-                if (!phpg_object_isa(*value, gdkpixmap_ce)) {
+                if (!phpg_object_isa(*value, gdkpixmap_ce TSRMLS_CC)) {
                     php_error(E_WARNING, "clip_mask value has to be a GdkPixmap");
                     return;
                 }
