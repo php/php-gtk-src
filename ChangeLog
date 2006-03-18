@@ -1,3 +1,17 @@
+2006-03-17  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/gtktreeview.overrides:
+      - Fix compile warning in set_cell_data_func().
+      - Add some GtkUIManager overrides (patch by Tom Rogers, modified by
+      Andrei)
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/gtktreeview.overrides:
+      - GtkComboBox() constructor, GtkIconView constructor.
+      * Move set_cell_data_func() into GtkCellLayout interface implementation
+        so that all implementing classes get it.
+
 2006-03-16  Christian Weiske  <cweiske@cweiske.de>
 
     * test/bug_idle_add.php:
