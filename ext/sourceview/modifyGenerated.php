@@ -9,6 +9,11 @@ for($i=0; $i<5; $i++) {
 }
 
 fwrite($tmpFile, "\nPHP_GTK_EXPORT_CE(gtkcontainer_ce);\n");
+fwrite($tmpFile, "PHP_GTK_EXPORT_CE(gdkpixbuf_ce);\n");
+fwrite($tmpFile, "PHP_GTK_EXPORT_CE(gtktextbuffer_ce);\n");
+fwrite($tmpFile, "PHP_GTK_EXPORT_CE(gtktexttagtable_ce);\n");
+fwrite($tmpFile, "PHP_GTK_EXPORT_CE(gtktextview_ce);\n");
+fwrite($tmpFile, "PHP_GTK_EXPORT_CE(gtktextmark_ce);\n");
 
 for($i=5; $i<=count($contents); $i++) {
     fwrite($tmpFile, $contents[$i]);
