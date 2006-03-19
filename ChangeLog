@@ -1,3 +1,11 @@
+2006-03-18  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.overrides:
+      Add GdkPixbuf::new_from_xpm_data();
+
+    * ext/gtk+/gdk.overrides:
+      Fix TSRM stuff.
+
 2006-03-17  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides
