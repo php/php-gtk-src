@@ -107,10 +107,6 @@
   (parent "GObject")
   (c-name "GdkPixbuf")
   (gtype-id "GDK_TYPE_PIXBUF")
-  (fields
-; XXXX this next one isn't a real field.  added for Python bindings
-   '("guchar*" "pixel_array")
-  )
 )
 
 (define-object PixbufAnimation
