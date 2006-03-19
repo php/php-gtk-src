@@ -42,6 +42,7 @@ ignore
 %%
 ignore
     gdk_gc_new2
+    gdk_pixbuf_new_from_inline
     gdk_string_extents
     gdk_window_peek_children
 
@@ -1483,6 +1484,89 @@ PHP_METHOD
 
     phpg_gobject_new(&return_value, (GObject *)pixbuf TSRMLS_CC);
     g_object_unref(pixbuf); /* phpg_gobject_new() increments reference count */
+}
+
+%%
+add GdkPixbuf new_from_gd ZEND_ACC_PUBLIC|ZEND_ACC_STATIC
+
+#if HAVE_GD_BUNDLED
+#include "ext/gd/php_gd.h"
+#include "ext/gd/libgd/gd.h"
+#endif
+
+void phpg_free_pixbuf_data(guchar *pixels, gpointer data)
+{
+    efree(pixels);
+}
+
+PHP_METHOD
+{
+#if HAVE_GD_BUNDLED
+    zval *php_gd;
+    gdImagePtr gd;
+    guint *data;
+    guint pixel;
+    GdkPixbuf *pixbuf;
+    int x, y, c, alpha;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "r", &php_gd)) {
+        return;
+    }
+
+    if (!zend_hash_exists(&module_registry, "gd", sizeof("gd")) ||
+        !zend_hash_exists(EG(function_table), "imagesavealpha", sizeof("imagesavealpha"))) {
+        php_error(E_ERROR, "Extension 'gd' not available or uses GD library version below 2.0");
+        return;
+    }
+
+    ZEND_FETCH_RESOURCE(gd, gdImagePtr, &php_gd, -1, "Image", phpi_get_le_gd());
+
+    data = safe_emalloc(gd->sx * gd->sy, sizeof(guint), 0);
+    c = 0;
+
+    if (gd->trueColor) {
+        for (y = 0; y < gd->sy; y++) {
+            for (x = 0; x < gd->sx; x++) {
+                pixel = gd->tpixels[y][x];
+                if (pixel == gd->transparent) {
+                    alpha = 0;
+                } else {
+                    alpha = 127 - gdTrueColorGetAlpha(pixel);
+                }
+                data[c++] = (pixel << 8) | ((alpha << 1) + (alpha >> 6));
+            }
+        }
+    } else {
+        for (y = 0; y < gd->sy; y++) {
+            for (x = 0; x < gd->sx; x++) {
+                pixel = gd->pixels[y][x];
+                if (pixel == gd->transparent) {
+                    alpha = 0;
+                } else {
+                    alpha = 127 - gd->alpha[pixel];
+                }
+                data[c++] = (gd->red[pixel]   << 24) + 
+                            (gd->blue[pixel]  << 16) + 
+                            (gd->green[pixel] << 8)  +
+                            ((alpha << 1) + (alpha >> 6));
+            }
+        }
+    }
+
+    pixbuf = gdk_pixbuf_new_from_data((const guchar*)data, GDK_COLORSPACE_RGB, 1, 8,
+                                      gd->sx, gd->sy, gd->sx * sizeof(guint),
+                                      (GdkPixbufDestroyNotify)phpg_free_pixbuf_data, NULL);
+
+    if (pixbuf == NULL) {
+        efree(data);
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GdkPixbuf);
+    }
+
+    phpg_gobject_new(&return_value, (GObject *)pixbuf TSRMLS_CC);
+    g_object_unref(pixbuf); /* phpg_gobject_new() increments reference count */
+#else
+    php_error(E_ERROR, "PHP-GTK was not compiled against PHP with bundled GD library");
+#endif
 }
 
 %%
