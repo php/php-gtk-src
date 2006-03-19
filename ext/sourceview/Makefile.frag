@@ -10,5 +10,6 @@ $(builddir)/gen_sourceview.c: $(srcdir)/sourceview.defs $(srcdir)/sourceview.ove
 		-o ext/sourceview/sourceview.overrides \
         -p GtkSourceView \
 		-f $@ ext/sourceview/sourceview.defs \
+	 && $(PHP) $(srcdir)/modifyGenerated.php \
      && grep -h "^PHP_GTK_EXPORT_CE" $@ | sed -e "s!^!extern !" > $(@D)/$(*F).h \
 	)
