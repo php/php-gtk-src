@@ -1,3 +1,18 @@
+2006-03-19  Anant Narayanan  <anant@kix.in>
+
+    * ext/scintilla/scintilla.defs:
+      Remove the extra scintilla defs before they hurt anyone!
+
+2006-03-19  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk-types.defs
+      ext/gtk+/gdk.overrides:
+      Add GdkPixbuf::get_pixels().
+
+    * ext/gtk+/gdk.overrides:
+      Implement GdkPixbuf::new_from_gd() that evidently allows creating
+      pixbufs from GD images.
+
 2006-03-18  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gdk.overrides:
