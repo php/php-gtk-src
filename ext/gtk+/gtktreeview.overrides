@@ -883,6 +883,13 @@ static void phpg_gtktreestore_unset_dimension_handler(zval *object, zval *offset
 %% {{{ GtkTreeModel
 
 %%
+add-arginfo GtkTreeModel get_iter
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, treepath)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_tree_model_get_iter
 PHP_METHOD
 {
