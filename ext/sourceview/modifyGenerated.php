@@ -4,7 +4,7 @@
 $contents = file("ext/sourceview/gen_sourceview.c");
 $tmpFile = fopen("ext/sourceview/gen_temp.c", "w+");
 
-for($i=0; $i<5; $i++) {
+for($i=0; $i<16; $i++) {
     fwrite($tmpFile, $contents[$i]);
 }
 
@@ -13,9 +13,9 @@ fwrite($tmpFile, "PHP_GTK_EXPORT_CE(gdkpixbuf_ce);\n");
 fwrite($tmpFile, "PHP_GTK_EXPORT_CE(gtktextbuffer_ce);\n");
 fwrite($tmpFile, "PHP_GTK_EXPORT_CE(gtktexttagtable_ce);\n");
 fwrite($tmpFile, "PHP_GTK_EXPORT_CE(gtktextview_ce);\n");
-fwrite($tmpFile, "PHP_GTK_EXPORT_CE(gtktextmark_ce);\n");
+fwrite($tmpFile, "PHP_GTK_EXPORT_CE(gtktextmark_ce);");
 
-for($i=5; $i<=count($contents); $i++) {
+for($i=16; $i<=count($contents); $i++) {
     fwrite($tmpFile, $contents[$i]);
 }
 

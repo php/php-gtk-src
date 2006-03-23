@@ -13,6 +13,20 @@
   (gtype-id "GTK_TYPE_SOURCE_LANGUAGE")
 )
 
+(define-object SourceLanguagesManager
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkSourceLanguagesManager")
+  (gtype-id "GTK_TYPE_SOURCE_LANGUAGES_MANAGER")
+)
+
+(define-object SourcePrintJob
+  (in-module "Gtk")
+  (parent "GObject")
+  (c-name "GtkSourcePrintJob")
+  (gtype-id "GTK_TYPE_SOURCE_PRINT_JOB")
+)
+
 (define-object SourceTagTable
   (in-module "Gtk")
   (parent "GtkTextTagTable")
@@ -63,6 +77,8 @@
   (c-name "GtkSourceMarker")
   (gtype-id "GTK_TYPE_SOURCE_MARKER")
 )
+
+;; Enumerations and flags ...
 
 ;; From /usr/include/gtksourceview-1.0/gtksourceview/gtksourcebuffer.h
 
