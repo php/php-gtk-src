@@ -326,6 +326,7 @@ static inline zend_class_entry* phpg_class_from_gtype(GType gtype)
 }
 
 PHP_GTK_API zend_bool phpg_handle_gerror(GError **error TSRMLS_DC);
+PHP_GTK_API void phpg_handle_marshaller_exception(TSRMLS_D);
 
 static inline gchar* phpg_to_utf8(const gchar *str, zend_uint str_len, gsize *utf8_len, zend_bool *free_orig TSRMLS_DC)
 {

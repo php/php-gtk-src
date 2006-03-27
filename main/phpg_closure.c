@@ -142,6 +142,8 @@ err_marshal:
         efree(params[i]);
     }
     efree(params);
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
 }
 
 PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, int connect_type, zval *replace_object TSRMLS_DC)

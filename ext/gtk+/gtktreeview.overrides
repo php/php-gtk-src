@@ -1110,6 +1110,8 @@ gboolean phpg_tree_model_foreach_marshal(GtkTreeModel *model,
     efree(callback_name);
     efree(args);
 
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
     return ret;
 }
 
@@ -1254,6 +1256,8 @@ static void phpg_cell_data_func_marshal(GtkCellLayout *cell_layout, GtkCellRende
     if (retval) {
         zval_ptr_dtor(&retval);
     }
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
 
     efree(callback_name);
     efree(args);

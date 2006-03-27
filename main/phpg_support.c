@@ -198,6 +198,19 @@ PHP_GTK_API zend_bool phpg_handle_gerror(GError **error TSRMLS_DC)
 }
 /* }}} */
 
+
+PHP_GTK_API void phpg_handle_marshaller_exception(TSRMLS_D)
+{
+    /*
+     * Quit current main loop on exception. This will not help with GtkDialog::run()
+     * though, since it has its own main loop.
+     */
+    if (EG(exception)) {
+        gtk_main_quit();
+    }
+}
+
+
 /* {{{ phpg_get_properties_helper */
 PHP_GTK_API void phpg_get_properties_helper(zval *object, HashTable *ht TSRMLS_DC, ...)
 {
@@ -545,6 +558,8 @@ gboolean phpg_handler_marshal(gpointer user_data)
     efree(callback_name);
     if (handler_args)
         efree(handler_args);
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
 
     return result;
 }
