@@ -329,13 +329,14 @@ class Generator {
         }
 
         if ($this->overrides->have_extra_methods($object->c_name)) {
-            foreach ($this->overrides->get_extra_methods($object->c_name) as $method_name => $method_body) {
+            foreach ($this->overrides->get_extra_methods($object->c_name) as $method_name => $override) {
+                list($method_body, $flags) = $override;
                 list($arginfo, $reflection_func) = $this->genReflectionArgInfo(null, $object, $method_name);
 
                 $method_body = preg_replace('!^.*(PHP_METHOD).*$!m', "static $1($object->c_name, $method_name)", $method_body);
                 $this->write_override($method_body, $object->c_name, $method_name);
                 $method_entries[$method_name] = array($object->c_name, $method_name,
-                                                      $reflection_func, 'ZEND_ACC_PUBLIC');
+                                                      $reflection_func, $flags ? $flags : 'ZEND_ACC_PUBLIC');
                 $this->divert("gen", "%s  %-11s %s::%s\n", "%%", "method", $object->c_name, $method_name);
                 $num_written++;
                 $this->cover["methods"]->written();
@@ -871,7 +872,8 @@ class Generator {
         }
 
         if ($this->overrides->have_extra_methods($this->prefix)) {
-            foreach ($this->overrides->get_extra_methods($this->prefix) as $func_name => $func_body) {
+            foreach ($this->overrides->get_extra_methods($this->prefix) as $func_name => $override) {
+                list($func_body, $flags) = $override;
                 list($arginfo, $reflection_func) = $this->genReflectionArgInfo(null, $object, $func_name);
 
                 $func_body = preg_replace('!^.*(PHP_METHOD).*$!m', "static $1($this->prefix, $func_name)", $func_body);

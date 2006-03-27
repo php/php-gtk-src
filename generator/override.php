@@ -186,7 +186,11 @@ class Overrides {
                 if (count($words) < 2) break;
                 $class = $words[0];
                 $method = $words[1];
-                $this->extra_methods[$class][$method] = $rest;
+                if (isset($words[2]))
+                    $flags = $words[2];
+                else
+                    $flags = null;
+                $this->extra_methods[$class][$method] = array($rest, $flags);
                 $this->lineinfo["$class.$method"] = array($blocklineno + 1, $file_name);
                 break;
 
