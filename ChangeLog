@@ -1,3 +1,17 @@
+2006-03-27  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/gtktreeview.overrides
+      main/php_gtk.h
+      main/phpg_closure.c
+      main/phpg_support.c:
+      Add rudimentary support for exceptions thrown inside callbacks. We just
+      quit the current main loop and let PHP take it from there
+
+    * generator/generator.php
+      generator/override.php:
+      -** empty log message ***
+
 2006-03-22  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gtktreeview.overrides:
