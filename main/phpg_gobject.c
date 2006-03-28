@@ -787,6 +787,18 @@ static zend_function_entry gobject_methods[] = {
 };
 
 
+PHPG_PROP_READER(GObject, gtype)
+{
+	ZVAL_LONG(return_value, G_OBJECT_TYPE(((phpg_gobject_t *)object)->obj));
+	return SUCCESS;
+}
+
+static prop_info_t gobject_props_info[] = {
+	{ "gtype", PHPG_PROP_READ_FN(GObject, gtype), NULL },
+	{ NULL, NULL, NULL },
+};
+
+
 void phpg_gobject_register_self(TSRMLS_D)
 {
 	if (gobject_ce) return;
@@ -798,7 +810,7 @@ void phpg_gobject_register_self(TSRMLS_D)
     phpg_gobject_handlers = php_gtk_handlers;
     phpg_gobject_handlers.del_ref = phpg_gobject_del_ref;
 
-	gobject_ce = phpg_register_class("GObject", gobject_methods, NULL, 0, NULL, NULL, G_TYPE_OBJECT TSRMLS_CC);
+	gobject_ce = phpg_register_class("GObject", gobject_methods, NULL, 0, gobject_props_info, NULL, G_TYPE_OBJECT TSRMLS_CC);
     phpg_register_int_constant(gobject_ce, "gtype", sizeof("gtype")-1, G_TYPE_OBJECT);
 }
 
