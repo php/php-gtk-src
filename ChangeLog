@@ -1,3 +1,9 @@
+2006-03-28  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/phpg_gobject.c:
+      Add $obj->gtype property.. I think we've been missing a way to get at
+      the actual GType of an object.
+
 2006-03-27  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides
