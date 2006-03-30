@@ -41,6 +41,8 @@ ignore
     GdkColorInfoFlags
 %%
 ignore
+    gdk_draw_rgb_image_dithalign
+    gdk_draw_rgb_32_image_dithalign
     gdk_gc_new2
     gdk_pixbuf_new_from_inline
     gdk_string_extents
@@ -398,6 +400,76 @@ PHP_METHOD
 
     gdk_drawable_get_size(GDK_DRAWABLE(PHPG_GOBJECT(this_ptr)), &width, &height);
     php_gtk_build_value(&return_value, "(ii)", width, height);
+}
+
+%%
+override gdk_draw_rgb_image
+PHP_METHOD
+{
+	zval *gc, *php_dith = NULL;
+	long x, y, width, height, rowstride = -1, xdith = 0, ydith = 0;
+	GdkRgbDither dith;
+	char *rgb_buf;
+    int rgb_buf_len;
+
+    NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OiiiiVs#|iii", &gc, gdkgc_ce, &x, &y, &width, &height, &php_dith, &rgb_buf, &rgb_buf_len, &rowstride, &xdith, &ydith))
+		return;
+
+	if (php_dith && phpg_gvalue_get_enum(GDK_TYPE_RGB_DITHER, php_dith, (gint *)&dith) == FAILURE) {
+		return;
+	}
+
+    if (width <= 0 || height <= 0) {
+        php_error(E_WARNING, "width and height must be greater than 0");
+        return;
+    }
+
+    if (rowstride == -1) {
+        rowstride = width * 3;
+    }
+    if (rgb_buf_len < rowstride * (height-1) + width * 3) {
+        php_error(E_WARNING, "RGB buffer is not large enough");
+        return;
+    }
+
+    gdk_draw_rgb_image_dithalign(GDK_DRAWABLE(PHPG_GOBJECT(this_ptr)), GDK_GC(PHPG_GOBJECT(gc)), (gint)x, (gint)y, (gint)width, (gint)height, dith, rgb_buf, (gint)rowstride, (gint)xdith, (gint)ydith);
+}
+
+%%
+override gdk_draw_rgb_32_image
+PHP_METHOD
+{
+	zval *gc, *php_dith = NULL;
+	long x, y, width, height, rowstride = -1, xdith = 0, ydith = 0;
+	GdkRgbDither dith;
+	char *rgb_buf;
+    int rgb_buf_len;
+
+    NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OiiiiVs#|iii", &gc, gdkgc_ce, &x, &y, &width, &height, &php_dith, &rgb_buf, &rgb_buf_len, &rowstride, &xdith, &ydith))
+		return;
+
+	if (php_dith && phpg_gvalue_get_enum(GDK_TYPE_RGB_DITHER, php_dith, (gint *)&dith) == FAILURE) {
+		return;
+	}
+
+    if (width <= 0 || height <= 0) {
+        php_error(E_WARNING, "width and height must be greater than 0");
+        return;
+    }
+
+    if (rowstride == -1) {
+        rowstride = width << 2;
+    }
+    if (rgb_buf_len < rowstride * (height-1) + (width << 2)) {
+        php_error(E_WARNING, "RGB buffer is not large enough");
+        return;
+    }
+
+    gdk_draw_rgb_32_image_dithalign(GDK_DRAWABLE(PHPG_GOBJECT(this_ptr)), GDK_GC(PHPG_GOBJECT(gc)), (gint)x, (gint)y, (gint)width, (gint)height, dith, rgb_buf, (gint)rowstride, (gint)xdith, (gint)ydith);
 }
 
 %% }}}
