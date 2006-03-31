@@ -150,8 +150,6 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int
 					case IS_DOUBLE:
 					case IS_BOOL:
 						convert_to_string_ex(arg);
-						if ((int)strlen(Z_STRVAL_PP(arg)) != Z_STRLEN_PP(arg))
-							return "string without null bytes";
 						if (as_zval) goto ret_zval;
 						*va_arg(*va, char **) = Z_STRVAL_PP(arg);;
 						if (*spec_walk == '#') {

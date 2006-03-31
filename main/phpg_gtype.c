@@ -53,6 +53,10 @@ static void gtype_free_object_storage(phpg_gtype_t *object TSRMLS_DC)
 {
 	zend_hash_destroy(object->zobj.properties);
 	FREE_HASHTABLE(object->zobj.properties);
+    if (object->zobj.guards) {
+        zend_hash_destroy(object->zobj.guards);
+        FREE_HASHTABLE(object->zobj.guards);     
+    }
 	efree(object);
 }
 

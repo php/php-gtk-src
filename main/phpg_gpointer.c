@@ -37,6 +37,10 @@ static void phpg_free_gpointer_storage(phpg_gpointer_t *object TSRMLS_DC)
 {
 	zend_hash_destroy(object->zobj.properties);
 	FREE_HASHTABLE(object->zobj.properties);
+    if (object->zobj.guards) {
+        zend_hash_destroy(object->zobj.guards);
+        FREE_HASHTABLE(object->zobj.guards);     
+    }
 	efree(object);
 }
 /* }}} */

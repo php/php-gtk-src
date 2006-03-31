@@ -599,6 +599,10 @@ static void phpg_modelrow_free_object_storage(phpg_modelrow_t *object TSRMLS_DC)
 {
 	zend_hash_destroy(object->zobj.properties);
 	FREE_HASHTABLE(object->zobj.properties);
+    if (object->zobj.guards) {
+        zend_hash_destroy(object->zobj.guards);
+        FREE_HASHTABLE(object->zobj.guards);     
+    }
     g_object_unref(object->model);
 	efree(object);
 }
@@ -657,6 +661,10 @@ static void phpg_modelrowiter_free_object_storage(phpg_modelrowiter_t *object TS
 {
 	zend_hash_destroy(object->zobj.properties);
 	FREE_HASHTABLE(object->zobj.properties);
+    if (object->zobj.guards) {
+        zend_hash_destroy(object->zobj.guards);
+        FREE_HASHTABLE(object->zobj.guards);     
+    }
     if (object->current) {
         zval_ptr_dtor(&object->current);
     }
