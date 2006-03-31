@@ -1,0 +1,29 @@
+<?php
+// Create a window.
+$window = new GtkWindow();
+// Set it up to close cleanly.
+$window->connect_simple('destroy', array('Gtk', 'main_quit'));
+
+// Create a GtkFileChooserButton. Errors occur here.
+/*
+(bug_gtkfilechooserbutton_actionselectfolder.phpw:5679): Gtk-CRITICAL **: gtk_file_system_get_volume_for_path: assertion `path != NULL' failed
+
+(bug_gtkfilechooserbutton_actionselectfolder.phpw:5679): Gtk-CRITICAL **: gtk_file_system_render_icon: assertion `path != NULL' failed
+
+(bug_gtkfilechooserbutton_actionselectfolder.phpw:5679): Gtk-CRITICAL **: gtk_file_system_get_parent: assertion `path != NULL' failed
+
+(bug_gtkfilechooserbutton_actionselectfolder.phpw:5679): Gtk-CRITICAL **: gtk_file_system_get_folder: assertion `path != NULL' failed
+
+// Repeated a few times.
+*/
+$file = new GtkFileChooserButton('Test',
+                                 Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER
+                                 );
+
+// Add the button to the window.
+$window->add($file);
+
+// Show everything and start the loop.
+$window->show_all();
+Gtk::main();
+?>
