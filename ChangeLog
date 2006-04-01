@@ -1,3 +1,20 @@
+2006-03-31  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/php_gtk+_types.c
+      main/php_gtk_util.c
+      main/phpg_atom.c
+      main/phpg_gboxed.c
+      main/phpg_gobject.c
+      main/phpg_gpointer.c
+      main/phpg_gtype.c:
+      Destroy guards.
+
+2006-03-31  Scott Mattocks  <scott@crisscott.com>
+
+    * test/bug_gtkfilechooserbutton_actionselectfolder.phpw:
+      Gtk+ errors on GtkFileChooserButton construction with
+      Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER action.
+
 2006-03-30  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gdk.overrides:
