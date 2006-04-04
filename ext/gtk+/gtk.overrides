@@ -1780,6 +1780,31 @@ PHP_METHOD
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
 
+%%
+override gtk_icon_view_get_selected_items
+PHP_METHOD
+{
+    GList *selected, *tmp;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    selected = gtk_icon_view_get_selected_items(GTK_ICON_VIEW(PHPG_GOBJECT(this_ptr)));
+    array_init(return_value);
+    if (selected) {
+        for (tmp = selected; tmp != NULL; tmp = tmp->next) {
+            GtkTreePath *path = tmp->data;
+            zval *item = NULL;
+
+            phpg_tree_path_to_zval(path, &item TSRMLS_CC);
+            add_next_index_zval(return_value, item);
+            gtk_tree_path_free(path);
+        }
+        g_list_free(selected);
+    }
+}
+
 %% }}}
 
 %% {{{ GtkImageMenuItem
