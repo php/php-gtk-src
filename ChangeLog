@@ -1,3 +1,8 @@
+2006-04-04  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      Add GtkIconView::get_selected_items() override. (patch by Christian)
+
 2006-03-31  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/php_gtk+_types.c
