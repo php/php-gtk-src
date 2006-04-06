@@ -118,8 +118,8 @@ class ImgBrowser extends GtkWindow
 }
 
 $GLOBALS['class']       = 'ImgBrowser';
-$GLOBALS['description'] = 'Uses GdkPixbuf and GtkIconView to show the list of images in folders
-of your hard disk.';
+$GLOBALS['description'] = 'Uses GdkPixbuf and GtkTreeView to show images
+from your hard disk.';
 
 if (!@$GLOBALS['framework']) {
     new ImgBrowser();
