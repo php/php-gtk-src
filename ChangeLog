@@ -1,3 +1,12 @@
+2006-04-06  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      Override some GtkAboutDialog functions. (patch by Anant N)
+
+    * ext/gtk+/gtk.overrides:
+      Add GtkWidget::set_visible() method, which is not in Gtk+. (patch by
+      ScottM, fixed by Andrei)
+
 2006-04-04  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides:
