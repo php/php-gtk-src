@@ -203,15 +203,11 @@ PHP_METHOD
     GObject *wrapped_obj;
     int i, argc = ZEND_NUM_ARGS();
 
-    if (argc == 0) {
-        php_error(E_WARNING, "%s::%s() requires at least 1 argument",
-                  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkListStore);
+    if (argc > 0) {
+        args = php_gtk_func_args(argc);
+        column_types = emalloc(argc * sizeof(GType));
     }
 
-    args = php_gtk_func_args(argc);
-
-    column_types = emalloc(argc * sizeof(GType));
     for (i = 0; i < argc; i++) {
         column_types[i] = phpg_gtype_from_zval(*args[i]);
         if (column_types[i] == 0) {
@@ -222,13 +218,50 @@ PHP_METHOD
     
     wrapped_obj = g_object_newv(phpg_gtype_from_zval(this_ptr), 0, NULL);
     gtk_list_store_set_column_types(GTK_LIST_STORE(wrapped_obj), argc, column_types);
-    efree(column_types);
-    efree(args);
+
+    if (argc > 0) {
+        efree(column_types);
+        efree(args);
+    }
+
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkListStore);
     }
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+}
+
+%%
+override gtk_list_store_set_column_types
+PHP_METHOD
+{
+    zval *php_types, **item;
+    GType *column_types;
+    int i, n;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_types)) {
+        return;
+    }
+    
+    n = zend_hash_num_elements(Z_ARRVAL_P(php_types));
+    column_types = safe_emalloc(n, sizeof(GType), 0);
+    for (i = 0, zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_types));
+         zend_hash_get_current_data(Z_ARRVAL_P(php_types), (void**)&item) == SUCCESS;
+         zend_hash_move_forward(Z_ARRVAL_P(php_types)), i++) {
+
+        column_types[i] = phpg_gtype_from_zval(*item);
+        if (column_types[i] == 0) {
+            efree(column_types);
+            php_error(E_WARNING, "could not set column types for GtkListStore");
+            return;
+        }
+    }
+
+    gtk_list_store_set_column_types(GTK_LIST_STORE(PHPG_GOBJECT(this_ptr)), i, column_types);
+
+    efree(column_types);
 }
 
 %%
@@ -511,15 +544,11 @@ PHP_METHOD
     GObject *wrapped_obj;
     int i, argc = ZEND_NUM_ARGS();
 
-    if (argc == 0) {
-        php_error(E_WARNING, "%s::%s() requires at least 1 argument",
-                  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkTreeStore);
+    if (argc > 0) {
+        args = php_gtk_func_args(argc);
+        column_types = emalloc(argc * sizeof(GType));
     }
 
-    args = php_gtk_func_args(argc);
-
-    column_types = emalloc(argc * sizeof(GType));
     for (i = 0; i < argc; i++) {
         column_types[i] = phpg_gtype_from_zval(*args[i]);
         if (column_types[i] == 0) {
@@ -530,13 +559,50 @@ PHP_METHOD
     
     wrapped_obj = g_object_newv(phpg_gtype_from_zval(this_ptr), 0, NULL);
     gtk_tree_store_set_column_types(GTK_TREE_STORE(wrapped_obj), argc, column_types);
-    efree(column_types);
-    efree(args);
+
+    if (argc > 0) {
+        efree(column_types);
+        efree(args);
+    }
+
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkTreeStore);
     }
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+}
+
+%%
+override gtk_tree_store_set_column_types
+PHP_METHOD
+{
+    zval *php_types, **item;
+    GType *column_types;
+    int i, n;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_types)) {
+        return;
+    }
+    
+    n = zend_hash_num_elements(Z_ARRVAL_P(php_types));
+    column_types = safe_emalloc(n, sizeof(GType), 0);
+    for (i = 0, zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_types));
+         zend_hash_get_current_data(Z_ARRVAL_P(php_types), (void**)&item) == SUCCESS;
+         zend_hash_move_forward(Z_ARRVAL_P(php_types)), i++) {
+
+        column_types[i] = phpg_gtype_from_zval(*item);
+        if (column_types[i] == 0) {
+            efree(column_types);
+            php_error(E_WARNING, "could not set column types for GtkTreeStore");
+            return;
+        }
+    }
+
+    gtk_tree_store_set_column_types(GTK_TREE_STORE(PHPG_GOBJECT(this_ptr)), i, column_types);
+
+    efree(column_types);
 }
 
 %%
