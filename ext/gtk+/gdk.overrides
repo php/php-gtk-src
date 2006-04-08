@@ -1486,7 +1486,6 @@ PHP_METHOD
 
 %% {{{ GdkPixbuf
 
-
 %%
 add-arginfo GdkPixbuf __construct
 static
@@ -1941,6 +1940,67 @@ PHP_METHOD
             }
         }
         pixels += rowstride;
+    }
+}
+
+%%
+override gdk_pixbuf_save
+PHP_METHOD
+{
+    char *filename;
+    char *type;
+    char **option_keys   = NULL;
+    char **option_values = NULL;
+    zval *php_options = NULL;
+    GError *error = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ss|a", &filename, &type, &php_options)) {
+        return;
+    }
+
+    if (php_options) {
+        zval **item;
+        char *key;
+        ulong index;
+        int i = 0, n;
+
+        n = zend_hash_num_elements(Z_ARRVAL_P(php_options));
+        option_keys   = safe_emalloc(n + 1, sizeof(char*), 0);
+        option_values = safe_emalloc(n + 1, sizeof(char*), 0);
+
+        for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_options));
+             zend_hash_get_current_data(Z_ARRVAL_P(php_options), (void**)&item) == SUCCESS;
+             zend_hash_move_forward(Z_ARRVAL_P(php_options))) {
+
+            if (zend_hash_get_current_key(Z_ARRVAL_P(php_options), &key, &index, 0) == HASH_KEY_IS_STRING) {
+                convert_to_string_ex(item);
+                option_keys[i]   = key;
+                option_values[i] = Z_STRVAL_PP(item);
+                i++;
+            } else {
+                php_error(E_WARNING, "%s::%s(): option array keys have to be strings", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+                efree(option_keys);
+                efree(option_values);
+                return;
+            }
+        }
+
+        option_keys[i]   = NULL;
+        option_values[i] = NULL;
+    }
+
+    gdk_pixbuf_savev(GDK_PIXBUF(PHPG_GOBJECT(this_ptr)), filename,
+                     type, option_keys, option_values, &error);
+
+    if (option_keys) {
+        efree(option_keys);
+        efree(option_values);
+    }
+
+    if (phpg_handle_gerror(&error TSRMLS_CC)) {
+        return;
     }
 }
 
