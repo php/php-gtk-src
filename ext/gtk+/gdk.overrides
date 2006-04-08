@@ -1707,6 +1707,243 @@ PHP_METHOD
     RETURN_STRINGL(pixels, rowstride*height, 1);
 }
 
+%%
+add GdkPixbuf get_pixel
+PHP_METHOD
+{
+    gint x, y;
+    long pixel;
+    GdkPixbuf *pixbuf;
+
+    guchar *pixels;
+    guint r = 0, g = 0, b = 0, a = 0;
+    gint w, h;
+    int n_channels, rowstride;
+
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &x, &y))
+        return;
+
+    pixbuf = GDK_PIXBUF(PHPG_GOBJECT(this_ptr));
+
+    if ((w = gdk_pixbuf_get_width(pixbuf)) == 0 || (h = gdk_pixbuf_get_height(pixbuf)) == 0) {
+        php_error(E_WARNING, "%s::%s() empty GdkPixbuf",
+                  get_active_class_name(NULL TSRMLS_CC),
+                  get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    if (x < 0 || y < 0 || x >= w || y >= h) {
+        php_error(E_WARNING, "%s::%s() x or y coordinates (%d, %d) out of range (0 - %d, 0 - %d)",
+                  get_active_class_name(NULL TSRMLS_CC),
+                  get_active_function_name(TSRMLS_C), x, y, w, h);
+        return;
+    }
+
+    pixels     = gdk_pixbuf_get_pixels(pixbuf);
+    n_channels = gdk_pixbuf_get_n_channels(pixbuf);
+    rowstride  = gdk_pixbuf_get_rowstride(pixbuf);
+
+    pixels += rowstride * y;
+    if (n_channels == 3) {
+        pixels += 3 * x;
+        r = pixels[0];
+        g = pixels[1];
+        b = pixels[2];
+    } else if (n_channels == 4) {
+        pixels += 4 * x;
+        r = pixels[0];
+        g = pixels[1];
+        b = pixels[2];
+        a = pixels[3];
+    }
+
+    pixel = 0;
+    pixel += r << 24;
+    pixel += g << 16;
+    pixel += b << 8;
+    pixel += a;
+
+    RETVAL_LONG(pixel);
+}
+
+%%
+add GdkPixbuf put_pixel
+PHP_METHOD
+{
+    gint x, y;
+    long pixel;
+    GdkPixbuf *pixbuf;
+
+    guchar *pixels;
+    guint r, g, b, a;
+    gint w, h;
+    int n_channels, rowstride;
+
+
+    NOT_STATIC_METHOD();
+
+    if (ZEND_NUM_ARGS() == 6) {
+        if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iiiiii", &x, &y, &r, &g, &b, &a))
+            return;
+    } else {
+        if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iii", &x, &y, &pixel))
+            return;
+    }
+
+    pixbuf = GDK_PIXBUF(PHPG_GOBJECT(this_ptr));
+
+    if ((w = gdk_pixbuf_get_width(pixbuf)) == 0 || (h = gdk_pixbuf_get_height(pixbuf)) == 0) {
+        php_error(E_WARNING, "%s::%s() empty GdkPixbuf",
+                  get_active_class_name(NULL TSRMLS_CC),
+                  get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    if (x < 0 || y < 0 || x >= w || y >= h) {
+        php_error(E_WARNING, "%s::%s() x or y coordinates (%d, %d) out of range (0 - %d, 0 - %d)",
+                  get_active_class_name(NULL TSRMLS_CC),
+                  get_active_function_name(TSRMLS_C), x, y, w, h);
+        return;
+    }
+
+    pixels     = gdk_pixbuf_get_pixels(pixbuf);
+    n_channels = gdk_pixbuf_get_n_channels(pixbuf);
+    rowstride  = gdk_pixbuf_get_rowstride(pixbuf);
+
+    if (ZEND_NUM_ARGS() != 6) {
+        r = (pixel & 0xff000000) >> 24;
+        g = (pixel & 0x00ff0000) >> 16;
+        b = (pixel & 0x0000ff00) >> 8;
+        a = (pixel & 0x000000ff);
+    }
+
+    pixels += rowstride * y;
+    if (n_channels == 3) {
+        pixels += 3 * x;
+        pixels[0] = r;
+        pixels[1] = g;
+        pixels[2] = b;
+    } else if (n_channels == 4) {
+        pixels += 4 * x;
+        pixels[0] = r;
+        pixels[1] = g;
+        pixels[2] = b;
+        pixels[3] = a;
+    }
+}
+
+%%
+add GdkPixbuf fill_area
+PHP_METHOD
+{
+    gint x, y, width, height;
+    long pixel;
+    GdkPixbuf *pixbuf;
+
+    guchar *pixels;
+    guint r, g, b, a;
+    guchar *p;
+    gint w, h;
+    gint ix;
+    int n_channels, rowstride;
+
+
+    NOT_STATIC_METHOD();
+
+    if (ZEND_NUM_ARGS() == 8) {
+        if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iiiiiiii", &x, &y,
+                                &width, &height, &r, &g, &b, &a))
+            return;
+    }
+    else {
+        if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iiiii", &x, &y,
+                                &width, &height, &pixel))
+            return;
+    }
+
+    pixbuf = GDK_PIXBUF(PHPG_GOBJECT(this_ptr));
+
+    /* TODO
+     * not sure whether this is correct or not. Christian?
+     */
+    if (x < 0) {
+        width = width - x;
+        x = 0;
+    }
+    if (y < 0) {
+        height = height - y;
+        y = 0;
+    }
+
+
+    if ((w = gdk_pixbuf_get_width(pixbuf)) == 0 || (h = gdk_pixbuf_get_height(pixbuf)) == 0) {
+        php_error(E_WARNING, "%s::%s() empty GdkPixbuf",
+                  get_active_class_name(NULL TSRMLS_CC),
+                  get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    if (width < 0 || height < 0) {
+        php_error(E_WARNING, "%s::%s() supplied width or height are < 0",
+                  get_active_class_name(NULL TSRMLS_CC),
+                  get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    if (x >= w || y >= h) {
+        php_error(E_WARNING, "%s::%s() x or y coordinates exceed GdkPixbuf width / height",
+                  get_active_class_name(NULL TSRMLS_CC),
+                  get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    pixels     = gdk_pixbuf_get_pixels(pixbuf);
+    n_channels = gdk_pixbuf_get_n_channels(pixbuf);
+    rowstride  = gdk_pixbuf_get_rowstride(pixbuf);
+
+    if (ZEND_NUM_ARGS() != 8) {
+        r = (pixel & 0xff000000) >> 24;
+        g = (pixel & 0x00ff0000) >> 16;
+        b = (pixel & 0x0000ff00) >> 8;
+        a = (pixel & 0x000000ff);
+    }
+
+    /* TODO
+     * check this too
+     */
+    if (x + width < w)
+        w = x + width;
+    if (y + height < h)
+        h = y + height;
+
+    pixels += rowstride * y;
+    for ( ; y < h; y++) {
+        p = pixels;
+        if (n_channels == 3) {
+            p += 3 * x;
+            for (ix = x; ix < w; ix++) {
+                p[0] = r;
+                p[1] = g;
+                p[2] = b;
+                p += 3;
+            }
+        } else if (n_channels == 4) {
+            p += 4 * x;
+            for(ix = x; ix < w; ix++) {
+                p[0] = r;
+                p[1] = g;
+                p[2] = b;
+                p[3] = a;
+                p += 4;
+            }
+        }
+        pixels += rowstride;
+    }
+}
+
 %% }}}
 
 %% {{{ GdkRectangle
