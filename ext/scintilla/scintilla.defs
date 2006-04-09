@@ -1,4 +1,3 @@
-;; -*- scheme -*-
 ; object definitions ...
 (define-object Scintilla
   (in-module "Gtk")
@@ -6,8 +5,6 @@
   (c-name "GtkScintilla")
   (gtype-id "GTK_TYPE_SCINTILLA")
 )
-
-;; Enumerations and flags ...
 
 ;; From /usr/include/gtkscintilla.h
 
@@ -99,7 +96,7 @@
   (of-object "GtkScintilla")
   (c-name "gtk_scintilla_get_style_at")
   (return-type "gint")
-  (parameters
+  (parameters 
     '("glong" "pos")
   )
 )
@@ -141,7 +138,7 @@
   (of-object "GtkScintilla")
   (c-name "gtk_scintilla_marker_line_from_handle")
   (return-type "gint")
-  (parameters
+  (parameters 
     '("gint" "handle")
   )
 )
@@ -150,7 +147,2242 @@
   (of-object "GtkScintilla")
   (c-name "gtk_scintilla_marker_delete_handle")
   (return-type "none")
-  (parameters
+  (parameters 
     '("gint" "handle")
   )
+)
+
+(define-method get_undo_collection
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_undo_collection")
+  (return-type "gint")
+)
+
+(define-method get_view_ws
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_view_ws")
+  (return-type "gint")
+)
+
+(define-method set_view_ws
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_view_ws")
+  (return-type "none")
+  (parameters 
+    '("gint" "view_ws")
+  )
+)
+
+(define-method position_from_point
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_position_from_point")
+  (return-type "gint")
+  (parameters 
+    '("gint" "x")
+    '("gint" "y")
+  )
+)
+
+(define-method goto_line
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_goto_line")
+  (return-type "none")
+  (parameters
+    '("gint" "line")
+  )
+)
+
+(define-method goto_pos
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_goto_pos")
+  (return-type "none")
+  (parameters 
+    '("glong" "pos")
+  )
+)
+
+(define-method set_anchor
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_anchor")
+  (return-type "none")
+  (parameters 
+    '("glong" "pos_anchor")
+  )
+)
+
+(define-method get_cur_line
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_cur_line")
+  (return-type "gint")
+  (parameters 
+    '("gint" "length")
+    '("gchar*" "text")
+  )
+)
+
+(define-method get_end_styled
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_end_styled")
+  (return-type "glong")
+)
+
+(define-method convert_eols
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_convert_eols")
+  (return-type "none")
+  (parameters 
+    '("gint" "eol_mode")
+  )
+)
+
+(define-method get_eol_mode
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_eol_mode")
+  (return-type "gint")
+)
+
+(define-method set_eol_mode
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_eol_mode")
+  (return-type "none")
+  (parameters 
+    '("gint" "eol_mode")
+  )
+)
+
+(define-method start_styling
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_start_styling")
+  (return-type "none")
+  (parameters 
+    '("glong" "pos")
+    '("gint" "mask")
+  )
+)
+
+(define-method set_styling
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_styling")
+  (return-type "none")
+  (parameters 
+    '("gint" "length")
+    '("gint" "style")
+  )
+)
+
+(define-method get_buffered_draw
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_buffered_draw")
+  (return-type "gint")
+)
+
+(define-method set_buffered_draw
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_buffered_draw")
+  (return-type "none")
+  (parameters 
+    '("gint" "buffered")
+  )
+)
+
+(define-method set_tab_width
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_tab_width")
+  (return-type "none")
+  (parameters 
+    '("gint" "tab_width")
+  )
+)
+
+(define-method get_tab_width
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_tab_width")
+  (return-type "gint")
+)
+
+(define-method set_code_page
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_code_page")
+  (return-type "none")
+  (parameters 
+    '("gint" "code_page")
+  )
+)
+
+(define-method set_use_palette
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_use_palette")
+  (return-type "none")
+  (parameters 
+    '("gint" "use_palette")
+  )
+)
+
+(define-method marker_define
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_marker_define")
+  (return-type "none")
+  (parameters 
+    '("gint" "marker_number")
+    '("gint" "marker_symbol")
+  )
+)
+
+(define-method marker_set_fore
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_marker_set_fore")
+  (return-type "none")
+  (parameters 
+    '("gint" "marker_number")
+    '("glong" "fore")
+  )
+)
+
+(define-method marker_set_back
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_marker_set_back")
+  (return-type "none")
+  (parameters 
+    '("gint" "marker_number")
+    '("glong" "back")
+  )
+)
+
+(define-method marker_add
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_marker_add")
+  (return-type "gint")
+  (parameters 
+    '("gint" "line")
+    '("gint" "marker_number")
+  )
+)
+
+(define-method marker_delete
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_marker_delete")
+  (return-type "none")
+  (parameters 
+    '("gint" "line")
+    '("gint" "marker_number")
+  )
+)
+
+(define-method marker_delete_all
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_marker_delete_all")
+  (return-type "none")
+  (parameters 
+    '("gint" "marker_number")
+  )
+)
+
+(define-method marker_get
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_marker_get")
+  (return-type "gint")
+  (parameters 
+    '("gint" "line")
+  )
+)
+
+(define-method marker_next
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_marker_next")
+  (return-type "gint")
+  (parameters 
+    '("gint" "line_start")
+    '("gint" "marker_mask")
+  )
+)
+
+(define-method marker_previous
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_marker_previous")
+  (return-type "gint")
+  (parameters 
+    '("gint" "line_start")
+    '("gint" "marker_mask")
+  )
+)
+
+(define-method set_margin_type_n
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_margin_type_n")
+  (return-type "none")
+  (parameters
+    '("gint" "margin")
+    '("gint" "margin_type")
+  )
+)
+
+(define-method get_margin_type_n
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_margin_type_n")
+  (return-type "gint")
+  (parameters 
+    '("gint" "margin")
+  )
+)
+
+(define-method set_margin_width_n
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_margin_width_n")
+  (return-type "none")
+  (parameters 
+    '("gint" "margin")
+    '("gint" "pixel_width")
+  )
+)
+
+(define-method get_margin_width_n
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_margin_width_n")
+  (return-type "gint")
+  (parameters 
+    '("gint" "margin")
+  )
+)
+
+(define-method set_margin_mask_n
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_margin_mask_n")
+  (return-type "none")
+  (parameters 
+    '("gint" "margin")
+    '("gint" "mask")
+  )
+)
+
+(define-method get_margin_mask_n
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_margin_mask_n")
+  (return-type "gint")
+  (parameters 
+    '("gint" "margin")
+  )
+)
+
+(define-method set_margin_sensitive_n
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_margin_sensitive_n")
+  (return-type "none")
+  (parameters 
+    '("gint" "margin")
+    '("gint" "sensitive")
+  )
+)
+
+(define-method get_margin_sensitive_n
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_margin_sensitive_n")
+  (return-type "gint")
+  (parameters 
+    '("gint" "margin")
+  )
+)
+
+(define-method style_clear_all
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_style_clear_all")
+  (return-type "none")
+)
+
+(define-method style_set_fore
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_style_set_fore")
+  (return-type "none")
+  (parameters 
+    '("gint" "style")
+    '("glong" "fore")
+  )
+)
+
+(define-method style_set_back
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_style_set_back")
+  (return-type "none")
+  (parameters 
+    '("gint" "style")
+    '("glong" "back")
+  )
+)
+
+(define-method style_set_bold
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_style_set_bold")
+  (return-type "none")
+  (parameters 
+    '("gint" "style")
+    '("gint" "bold")
+  )
+)
+
+(define-method style_set_italic
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_style_set_italic")
+  (return-type "none")
+  (parameters 
+    '("gint" "style")
+    '("gint" "italic")
+  )
+)
+
+(define-method style_set_size
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_style_set_size")
+  (return-type "none")
+  (parameters 
+    '("gint" "style")
+    '("gint" "size_points")
+  )
+)
+
+(define-method style_set_font
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_style_set_font")
+  (return-type "none")
+  (parameters 
+    '("gint" "style")
+    '("const-gchar*" "font_name")
+  )
+)
+
+(define-method style_set_eol_filled
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_style_set_eol_filled")
+  (return-type "none")
+  (parameters 
+    '("gint" "style")
+    '("gint" "filled")
+  )
+)
+
+(define-method style_reset_default
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_style_reset_default")
+  (return-type "none")
+)
+
+(define-method style_set_underline
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_style_set_underline")
+  (return-type "none")
+  (parameters 
+    '("gint" "style")
+    '("gint" "underline")
+  )
+)
+
+(define-method style_set_case
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_style_set_case")
+  (return-type "none")
+  (parameters
+    '("gint" "style")
+    '("gint" "case_force")
+  )
+)
+
+(define-method style_set_character_set
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_style_set_character_set")
+  (return-type "none")
+  (parameters 
+    '("gint" "style")
+    '("gint" "character_set")
+  )
+)
+
+(define-method set_sel_fore
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_sel_fore")
+  (return-type "none")
+  (parameters 
+    '("gint" "use_setting")
+    '("glong" "fore")
+  )
+)
+
+(define-method set_sel_back
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_sel_back")
+  (return-type "none")
+  (parameters 
+    '("gint" "use_setting")
+    '("glong" "back")
+  )
+)
+
+(define-method set_caret_fore
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_caret_fore")
+  (return-type "none")
+  (parameters 
+    '("glong" "fore")
+  )
+)
+
+(define-method clear_all_cmd_keys
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_clear_all_cmd_keys")
+  (return-type "none")
+)
+
+(define-method set_styling_ex
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_styling_ex")
+  (return-type "none")
+  (parameters 
+    '("gint" "length")
+    '("const-gchar*" "styles")
+  )
+)
+
+(define-method style_set_visible
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_style_set_visible")
+  (return-type "none")
+  (parameters
+    '("gint" "style")
+    '("gint" "visible")
+  )
+)
+
+(define-method get_caret_period
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_caret_period")
+  (return-type "gint")
+)
+
+(define-method set_caret_period
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_caret_period")
+  (return-type "none")
+  (parameters 
+    '("gint" "period_milliseconds")
+  )
+)
+
+(define-method set_word_chars
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_word_chars")
+  (return-type "none")
+  (parameters 
+    '("const-gchar*" "characters")
+  )
+)
+
+(define-method begin_undo_action
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_begin_undo_action")
+  (return-type "none")
+)
+
+(define-method end_undo_action
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_end_undo_action")
+  (return-type "none")
+)
+
+(define-method indic_set_style
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_indic_set_style")
+  (return-type "none")
+  (parameters
+    '("gint" "indic")
+    '("gint" "style")
+  )
+)
+
+(define-method indic_get_style
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_indic_get_style")
+  (return-type "gint")
+  (parameters 
+    '("gint" "indic")
+  )
+)
+
+(define-method indic_set_fore
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_indic_set_fore")
+  (return-type "none")
+  (parameters 
+    '("gint" "indic")
+    '("glong" "fore")
+  )
+)
+
+(define-method indic_get_fore
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_indic_get_fore")
+  (return-type "glong")
+  (parameters 
+    '("gint" "indic")
+  )
+)
+
+(define-method set_style_bits
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_style_bits")
+  (return-type "none")
+  (parameters 
+    '("gint" "bits")
+  )
+)
+
+(define-method get_style_bits
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_style_bits")
+  (return-type "gint")
+)
+
+(define-method set_line_state
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_line_state")
+  (return-type "none")
+  (parameters 
+    '("gint" "line")
+    '("gint" "state")
+  )
+)
+
+(define-method get_line_state
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_line_state")
+  (return-type "gint")
+  (parameters 
+    '("gint" "line")
+  )
+)
+
+(define-method get_max_line_state
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_max_line_state")
+  (return-type "gint")
+)
+
+(define-method get_caret_line_visible
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_caret_line_visible")
+  (return-type "gint")
+)
+
+(define-method set_caret_line_visible
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_caret_line_visible")
+  (return-type "none")
+  (parameters 
+    '("gint" "show")
+  )
+)
+
+(define-method get_caret_line_back
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_caret_line_back")
+  (return-type "glong")
+)
+
+(define-method set_caret_line_back
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_caret_line_back")
+  (return-type "none")
+  (parameters
+    '("glong" "back")
+  )
+)
+
+(define-method autoc_show
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_show")
+  (return-type "none")
+  (parameters
+    '("gint" "len_entered")
+    '("const-gchar*" "item_list")
+  )
+)
+
+(define-method autoc_cancel
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_cancel")
+  (return-type "none")
+)
+
+(define-method autoc_active
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_active")
+  (return-type "gint")
+)
+
+(define-method autoc_pos_start
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_pos_start")
+  (return-type "glong")
+)
+
+(define-method autoc_complete
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_complete")
+  (return-type "none")
+)
+
+(define-method autoc_stops
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_stops")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "character_set")
+  )
+)
+
+(define-method autoc_set_separator
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_set_separator")
+  (return-type "none")
+  (parameters 
+    '("gint" "separator_character")
+  )
+)
+
+(define-method autoc_get_separator
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_get_separator")
+  (return-type "gint")
+)
+
+(define-method autoc_select
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_select")
+  (return-type "none")
+  (parameters 
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method autoc_set_cancel_at_start
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_set_cancel_at_start")
+  (return-type "none")
+  (parameters
+    '("gint" "cancel")
+  )
+)
+
+(define-method autoc_get_cancel_at_start
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_get_cancel_at_start")
+  (return-type "gint")
+)
+
+(define-method autoc_set_fill_ups
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_set_fill_ups")
+  (return-type "none")
+  (parameters 
+    '("const-gchar*" "character_set")
+  )
+)
+
+(define-method autoc_set_choose_single
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_set_choose_single")
+  (return-type "none")
+  (parameters 
+    '("gint" "choose_single")
+  )
+)
+
+(define-method autoc_get_choose_single
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_get_choose_single")
+  (return-type "gint")
+)
+
+(define-method autoc_set_ignore_case
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_set_ignore_case")
+  (return-type "none")
+  (parameters 
+    '("gint" "ignore_case")
+  )
+)
+
+(define-method autoc_get_ignore_case
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_get_ignore_case")
+  (return-type "gint")
+)
+
+(define-method user_list_show
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_user_list_show")
+  (return-type "none")
+  (parameters 
+    '("gint" "list_type")
+    '("const-gchar*" "item_list")
+  )
+)
+
+(define-method autoc_set_auto_hide
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_set_auto_hide")
+  (return-type "none")
+  (parameters 
+    '("gint" "auto_hide")
+  )
+)
+
+(define-method autoc_get_auto_hide
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_autoc_get_auto_hide")
+  (return-type "gint")
+)
+
+(define-method set_indent
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_indent")
+  (return-type "none")
+  (parameters 
+    '("gint" "indent_size")
+  )
+)
+
+(define-method get_indent
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_indent")
+  (return-type "gint")
+)
+
+(define-method set_use_tabs
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_use_tabs")
+  (return-type "none")
+  (parameters 
+    '("gint" "use_tabs")
+  )
+)
+
+(define-method get_use_tabs
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_use_tabs")
+  (return-type "gint")
+)
+
+(define-method set_line_indentation
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_line_indentation")
+  (return-type "none")
+  (parameters 
+    '("gint" "line")
+    '("gint" "indent_size")
+  )
+)
+
+(define-method get_line_indentation
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_line_indentation")
+  (return-type "gint")
+  (parameters '("gint" "line"))
+)
+
+(define-method get_line_indent_position
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_line_indent_position")
+  (return-type "glong")
+  (parameters 
+    '("gint" "line")
+  )
+)
+
+(define-method get_column
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_column")
+  (return-type "gint")
+  (parameters 
+    '("glong" "pos")
+  )
+)
+
+(define-method set_h_scroll_bar
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_h_scroll_bar")
+  (return-type "none")
+  (parameters 
+    '("gint" "show")
+  )
+)
+
+(define-method get_h_scroll_bar
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_h_scroll_bar")
+  (return-type "gint")
+)
+
+(define-method set_indentation_guides
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_indentation_guides")
+  (return-type "none")
+  (parameters 
+    '("gint" "show")
+  )
+)
+
+(define-method get_indentation_guides
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_indentation_guides")
+  (return-type "gint")
+)
+
+(define-method set_highlight_guide
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_highlight_guide")
+  (return-type "none")
+  (parameters 
+    '("gint" "column")
+  )
+)
+
+(define-method get_highlight_guide
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_highlight_guide")
+  (return-type "gint")
+)
+
+(define-method get_line_end_position
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_line_end_position")
+  (return-type "gint")
+  (parameters 
+    '("gint" "line")
+  )
+)
+
+(define-method get_code_page
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_code_page")
+  (return-type "gint")
+)
+
+(define-method get_caret_fore
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_caret_fore")
+  (return-type "glong")
+)
+
+(define-method get_use_palette
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_use_palette")
+  (return-type "gint")
+)
+
+(define-method get_read_only
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_read_only")
+  (return-type "gint")
+)
+
+(define-method set_current_pos
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_current_pos")
+  (return-type "none")
+  (parameters
+    '("glong" "pos")
+  )
+)
+
+(define-method set_selection_start
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_selection_start")
+  (return-type "none")
+  (parameters 
+    '("glong" "pos")
+  )
+)
+
+(define-method get_selection_start
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_selection_start")
+  (return-type "glong")
+)
+
+(define-method set_selection_end
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_selection_end")
+  (return-type "none")
+  (parameters 
+    '("glong" "pos")
+  )
+)
+
+(define-method get_selection_end
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_selection_end")
+  (return-type "glong")
+)
+
+(define-method set_print_magnification
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_print_magnification")
+  (return-type "none")
+  (parameters 
+    '("gint" "magnification")
+  )
+)
+
+(define-method get_print_magnification
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_print_magnification")
+  (return-type "gint")
+)
+
+(define-method set_print_colour_mode
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_print_colour_mode")
+  (return-type "none")
+  (parameters 
+    '("gint" "mode")
+  )
+)
+
+(define-method get_print_colour_mode
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_print_colour_mode")
+  (return-type "gint")
+)
+
+(define-method get_first_visible_line
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_first_visible_line")
+  (return-type "gint")
+)
+
+(define-method get_line
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_line")
+  (return-type "gint")
+  (parameters 
+    '("gint" "line")
+    '("gchar*" "text")
+  )
+)
+
+(define-method get_line_count
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_line_count")
+  (return-type "gint")
+)
+
+(define-method set_margin_left
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_margin_left")
+  (return-type "none")
+  (parameters 
+    '("gint" "pixel_width")
+  )
+)
+
+(define-method get_margin_left
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_margin_left")
+  (return-type "gint")
+)
+
+(define-method set_margin_right
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_margin_right")
+  (return-type "none")
+  (parameters 
+    '("gint" "pixel_width")
+  )
+)
+
+(define-method get_margin_right
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_margin_right")
+  (return-type "gint")
+)
+
+(define-method get_modify
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_modify")
+  (return-type "gint")
+)
+
+(define-method set_sel
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_sel")
+  (return-type "none")
+  (parameters 
+    '("glong" "start")
+    '("glong" "end")
+  )
+)
+
+(define-method get_sel_text
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_sel_text")
+  (return-type "gint")
+  (parameters 
+    '("gchar*" "text")
+  )
+)
+
+(define-method hide_selection
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_hide_selection")
+  (return-type "none")
+  (parameters
+    '("gint" "normal")
+  )
+)
+
+(define-method point_x_from_position
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_point_x_from_position")
+  (return-type "gint")
+  (parameters
+    '("glong" "pos")
+  )
+)
+
+(define-method point_y_from_position
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_point_y_from_position")
+  (return-type "gint")
+  (parameters 
+    '("glong" "pos")
+  ) 
+)
+
+(define-method line_from_position
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_line_from_position")
+  (return-type "gint")
+  (parameters 
+    '("glong" "pos")
+  )
+)
+
+(define-method position_from_line
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_position_from_line")
+  (return-type "gint")
+  (parameters 
+    '("gint" "line")
+  )
+)
+
+(define-method line_scroll
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_line_scroll")
+  (return-type "none")
+  (parameters
+    '("gint" "columns")
+    '("gint" "lines")
+  )
+)
+
+(define-method scroll_caret
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_scroll_caret")
+  (return-type "none")
+)
+
+(define-method replace_sel
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_replace_sel")
+  (return-type "none")
+  (parameters 
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method set_read_only
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_read_only")
+  (return-type "none")
+  (parameters 
+    '("gint" "read_only")
+  )
+)
+
+(define-method null
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_null")
+  (return-type "none")
+)
+
+(define-method can_paste
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_can_paste")
+  (return-type "gint")
+)
+
+(define-method can_undo
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_can_undo")
+  (return-type "gint")
+)
+
+(define-method empty_undo_buffer
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_empty_undo_buffer")
+  (return-type "none")
+)
+
+(define-method undo
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_undo")
+  (return-type "none")
+)
+
+(define-method cut
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_cut")
+  (return-type "none")
+)
+
+(define-method copy
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_copy")
+  (return-type "none")
+)
+
+(define-method paste
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_paste")
+  (return-type "none")
+)
+
+(define-method clear
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_clear")
+  (return-type "none")
+)
+
+(define-method set_text
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_text")
+  (return-type "none")
+  (parameters 
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method get_text
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_text")
+  (return-type "gint")
+  (parameters
+    '("gint" "length")
+    '("gchar*" "text")
+  )
+)
+
+(define-method get_text_length
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_text_length")
+  (return-type "gint")
+)
+
+(define-method get_direct_function
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_direct_function")
+  (return-type "gint")
+)
+
+(define-method get_direct_pointer
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_direct_pointer")
+  (return-type "gint")
+)
+
+(define-method set_overtype
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_overtype")
+  (return-type "none")
+  (parameters 
+    '("gint" "overtype")
+  )
+)
+
+(define-method get_overtype
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_overtype")
+  (return-type "gint")
+)
+
+(define-method set_caret_width
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_caret_width")
+  (return-type "none")
+  (parameters 
+    '("gint" "pixel_width")
+  )
+)
+
+(define-method get_caret_width
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_caret_width")
+  (return-type "gint")
+)
+
+(define-method set_target_start
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_target_start")
+  (return-type "none")
+  (parameters 
+    '("glong" "pos")
+  )
+)
+
+(define-method get_target_start
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_target_start")
+  (return-type "glong")
+)
+
+(define-method set_target_end
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_target_end")
+  (return-type "none")
+  (parameters 
+    '("glong" "pos")
+  )
+)
+
+(define-method get_target_end
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_target_end")
+  (return-type "glong")
+)
+
+(define-method replace_target
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_replace_target")
+  (return-type "gint")
+  (parameters 
+    '("gint" "length")
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method replace_target_re
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_replace_target_re")
+  (return-type "gint")
+  (parameters
+    '("gint" "length")
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method search_in_target
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_search_in_target")
+  (return-type "gint")
+  (parameters 
+    '("gint" "length")
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method set_search_flags
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_search_flags")
+  (return-type "none")
+  (parameters 
+    '("gint" "flags")
+  )
+)
+
+(define-method get_search_flags
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_search_flags")
+  (return-type "gint")
+)
+
+(define-method call_tip_show
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_call_tip_show")
+  (return-type "none")
+  (parameters 
+    '("glong" "pos")
+    '("const-gchar*" "definition")
+  )
+)
+
+(define-method call_tip_cancel
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_call_tip_cancel")
+  (return-type "none")
+)
+
+(define-method call_tip_active
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_call_tip_active")
+  (return-type "gint")
+)
+
+(define-method call_tip_pos_start
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_call_tip_pos_start")
+  (return-type "glong")
+)
+
+(define-method call_tip_set_hlt
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_call_tip_set_hlt")
+  (return-type "none")
+  (parameters 
+    '("gint" "start")
+    '("gint" "end")
+  )
+)
+
+(define-method call_tip_set_back
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_call_tip_set_back")
+  (return-type "none")
+  (parameters 
+    '("glong" "back")
+  )
+)
+
+(define-method visible_from_doc_line
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_visible_from_doc_line")
+  (return-type "gint")
+  (parameters 
+    '("gint" "line")
+  )
+)
+
+(define-method doc_line_from_visible
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_doc_line_from_visible")
+  (return-type "gint")
+  (parameters
+    '("gint" "line_display")
+  )
+)
+
+(define-method set_fold_level
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_fold_level")
+  (return-type "none")
+  (parameters
+    '("gint" "line")
+    '("gint" "level")
+  )
+)
+
+(define-method get_fold_level
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_fold_level")
+  (return-type "gint")
+  (parameters 
+    '("gint" "line")
+  )
+)
+
+(define-method get_last_child
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_last_child")
+  (return-type "gint")
+  (parameters
+    '("gint" "line")
+    '("gint" "level")
+  )
+)
+
+(define-method get_fold_parent
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_fold_parent")
+  (return-type "gint")
+  (parameters
+    '("gint" "line")
+  )
+)
+
+(define-method show_lines
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_show_lines")
+  (return-type "none")
+  (parameters
+    '("gint" "line_start")
+    '("gint" "line_end")
+  )
+)
+
+(define-method hide_lines
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_hide_lines")
+  (return-type "none")
+  (parameters
+    '("gint" "line_start")
+    '("gint" "line_end")
+  )
+)
+
+(define-method get_line_visible
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_line_visible")
+  (return-type "gint")
+  (parameters
+    '("gint" "line")
+  )
+)
+
+(define-method set_fold_expanded
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_fold_expanded")
+  (return-type "none")
+  (parameters 
+    '("gint" "line")
+    '("gint" "expanded")
+  )
+)
+
+(define-method get_fold_expanded
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_fold_expanded")
+  (return-type "gint")
+  (parameters
+    '("gint" "line")
+  )
+)
+
+(define-method toggle_fold
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_toggle_fold")
+  (return-type "none")
+  (parameters 
+    '("gint" "line")
+  )
+)
+
+(define-method ensure_visible
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_ensure_visible")
+  (return-type "none")
+  (parameters 
+    '("gint" "line")
+  )
+)
+
+(define-method set_fold_flags
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_fold_flags")
+  (return-type "none")
+  (parameters 
+    '("gint" "flags")
+  )
+)
+
+(define-method set_tab_indents
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_tab_indents")
+  (return-type "none")
+  (parameters 
+    '("gint" "tab_indents")
+  )
+)
+
+(define-method get_tab_indents
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_tab_indents")
+  (return-type "gint")
+)
+
+(define-method set_backspace_unindents
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_backspace_unindents")
+  (return-type "none")
+  (parameters 
+    '("gint" "bs_unindents")
+  )
+)
+
+(define-method get_backspace_unindents
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_backspace_unindents")
+  (return-type "gint")
+)
+
+(define-method line_down
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_line_down")
+  (return-type "none")
+)
+
+(define-method line_down_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_line_down_extend")
+  (return-type "none")
+)
+
+(define-method line_up
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_line_up")
+  (return-type "none")
+)
+
+(define-method line_up_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_line_up_extend")
+  (return-type "none")
+)
+
+(define-method char_left
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_char_left")
+  (return-type "none")
+)
+
+(define-method char_left_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_char_left_extend")
+  (return-type "none")
+)
+
+(define-method char_right
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_char_right")
+  (return-type "none")
+)
+
+(define-method char_right_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_char_right_extend")
+  (return-type "none")
+)
+
+(define-method word_left
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_word_left")
+  (return-type "none")
+)
+
+(define-method word_left_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_word_left_extend")
+  (return-type "none")
+)
+
+(define-method word_right
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_word_right")
+  (return-type "none")
+)
+
+(define-method word_right_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_word_right_extend")
+  (return-type "none")
+)
+
+(define-method home
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_home")
+  (return-type "none")
+)
+
+(define-method home_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_home_extend")
+  (return-type "none")
+)
+
+(define-method line_end
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_line_end")
+  (return-type "none")
+)
+
+(define-method line_end_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_line_end_extend")
+  (return-type "none")
+)
+
+(define-method document_start
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_document_start")
+  (return-type "none")
+)
+
+(define-method document_start_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_document_start_extend")
+  (return-type "none")
+)
+
+(define-method document_end
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_document_end")
+  (return-type "none")
+)
+
+(define-method document_end_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_document_end_extend")
+  (return-type "none")
+)
+
+(define-method page_up
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_page_up")
+  (return-type "none")
+)
+
+(define-method page_up_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_page_up_extend")
+  (return-type "none")
+)
+
+(define-method page_down
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_page_down")
+  (return-type "none")
+)
+
+(define-method page_down_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_page_down_extend")
+  (return-type "none")
+)
+
+(define-method edit_toggle_overtype
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_edit_toggle_overtype")
+  (return-type "none")
+)
+
+(define-method cancel
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_cancel")
+  (return-type "none")
+)
+
+(define-method delete_back
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_delete_back")
+  (return-type "none")
+)
+
+(define-method tab
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_tab")
+  (return-type "none")
+)
+
+(define-method back_tab
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_back_tab")
+  (return-type "none")
+)
+
+(define-method new_line
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_new_line")
+  (return-type "none")
+)
+
+(define-method form_feed
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_form_feed")
+  (return-type "none")
+)
+
+(define-method v_c_home
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_v_c_home")
+  (return-type "none")
+)
+
+(define-method v_c_home_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_v_c_home_extend")
+  (return-type "none")
+)
+
+(define-method zoom_in
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_zoom_in")
+  (return-type "none")
+)
+
+(define-method zoom_out
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_zoom_out")
+  (return-type "none")
+)
+
+(define-method del_word_left
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_del_word_left")
+  (return-type "none")
+)
+
+(define-method del_word_right
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_del_word_right")
+  (return-type "none")
+)
+
+(define-method line_cut
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_line_cut")
+  (return-type "none")
+)
+
+(define-method line_delete
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_line_delete")
+  (return-type "none")
+)
+
+(define-method line_transpose
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_line_transpose")
+  (return-type "none")
+)
+
+(define-method lower_case
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_lower_case")
+  (return-type "none")
+)
+
+(define-method upper_case
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_upper_case")
+  (return-type "none")
+)
+
+(define-method line_scroll_down
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_line_scroll_down")
+  (return-type "none")
+)
+
+(define-method line_scroll_up
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_line_scroll_up")
+  (return-type "none")
+)
+
+(define-method move_caret_inside_view
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_move_caret_inside_view")
+  (return-type "none")
+)
+
+(define-method line_length
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_line_length")
+  (return-type "gint")
+  (parameters 
+    '("gint" "line")
+  )
+)
+
+(define-method brace_highlight
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_brace_highlight")
+  (return-type "none")
+  (parameters 
+    '("glong" "pos1")
+    '("glong" "pos2")
+  )
+)
+
+(define-method brace_bad_light
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_brace_bad_light")
+  (return-type "none")
+  (parameters
+    '("glong" "pos")
+  )
+)
+
+(define-method brace_match
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_brace_match")
+  (return-type "glong")
+  (parameters
+    '("glong" "pos")
+  )
+)
+
+(define-method get_view_eol
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_view_eol")
+  (return-type "gint")
+)
+
+(define-method set_view_eol
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_view_eol")
+  (return-type "none")
+  (parameters
+    '("gint" "visible")
+  )
+)
+
+(define-method get_doc_pointer
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_doc_pointer")
+  (return-type "gint")
+)
+
+(define-method set_doc_pointer
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_doc_pointer")
+  (return-type "none")
+  (parameters 
+    '("gint" "pointer")
+  )
+)
+
+(define-method set_mod_event_mask
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_mod_event_mask")
+  (return-type "none")
+  (parameters 
+    '("gint" "mask")
+  )
+)
+
+(define-method get_edge_column
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_edge_column")
+  (return-type "gint")
+)
+
+(define-method set_edge_column
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_edge_column")
+  (return-type "none")
+  (parameters
+    '("gint" "column")
+  )
+)
+
+(define-method get_edge_mode
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_edge_mode")
+  (return-type "gint")
+)
+
+(define-method set_edge_mode
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_edge_mode")
+  (return-type "none")
+  (parameters
+    '("gint" "mode")
+  )
+)
+
+(define-method get_edge_colour
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_edge_colour")
+  (return-type "glong")
+)
+
+(define-method set_edge_colour
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_edge_colour")
+  (return-type "none")
+  (parameters 
+    '("glong" "edge_colour")
+  )
+)
+
+(define-method search_anchor
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_search_anchor")
+  (return-type "none")
+)
+
+(define-method search_next
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_search_next")
+  (return-type "gint")
+  (parameters
+    '("gint" "flags")
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method search_prev
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_search_prev")
+  (return-type "gint")
+  (parameters 
+    '("gint" "flags")
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method lines_on_screen
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_lines_on_screen")
+  (return-type "gint")
+)
+
+(define-method use_pop_up
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_use_pop_up")
+  (return-type "none")
+  (parameters 
+    '("gint" "allow_pop_up")
+  )
+)
+
+(define-method selection_is_rectangle
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_selection_is_rectangle")
+  (return-type "gint")
+)
+
+(define-method set_zoom
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_zoom")
+  (return-type "none")
+  (parameters
+    '("gint" "zoom")
+  )
+)
+
+(define-method get_zoom
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_zoom")
+  (return-type "gint")
+)
+
+(define-method create_document
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_create_document")
+  (return-type "gint")
+)
+
+(define-method add_ref_document
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_add_ref_document")
+  (return-type "none")
+  (parameters
+    '("gint" "doc")
+  )
+)
+
+(define-method release_document
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_release_document")
+  (return-type "none")
+  (parameters
+    '("gint" "doc")
+  )
+)
+
+(define-method get_mod_event_mask
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_mod_event_mask")
+  (return-type "gint")
+)
+
+(define-method set_focus
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_focus")
+  (return-type "none")
+  (parameters
+    '("gint" "focus")
+  )
+)
+
+(define-method get_focus
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_focus")
+  (return-type "gint")
+)
+
+(define-method set_status
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_status")
+  (return-type "none")
+  (parameters
+    '("gint" "status_code")
+  )
+)
+
+(define-method get_status
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_status")
+  (return-type "gint")
+)
+
+(define-method set_mouse_down_captures
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_mouse_down_captures")
+  (return-type "none")
+  (parameters
+    '("gint" "captures")
+  )
+)
+
+(define-method get_mouse_down_captures
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_mouse_down_captures")
+  (return-type "gint")
+)
+
+(define-method set_cursor
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_cursor")
+  (return-type "none")
+  (parameters 
+    '("gint" "cursor_type")
+  )
+)
+
+(define-method get_cursor
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_cursor")
+  (return-type "gint")
+)
+
+(define-method word_part_left
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_word_part_left")
+  (return-type "none")
+)
+
+(define-method word_part_left_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_word_part_left_extend")
+  (return-type "none")
+)
+
+(define-method word_part_right
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_word_part_right")
+  (return-type "none")
+)
+
+(define-method word_part_right_extend
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_word_part_right_extend")
+  (return-type "none")
+)
+
+(define-method set_visible_policy
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_visible_policy")
+  (return-type "none")
+  (parameters 
+    '("gint" "visible_policy")
+    '("gint" "visible_slop")
+  )
+)
+
+(define-method del_line_left
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_del_line_left")
+  (return-type "none")
+)
+
+(define-method del_line_right
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_del_line_right")
+  (return-type "none")
+)
+
+(define-method grab_focus
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_grab_focus")
+  (return-type "none")
+)
+
+(define-method start_record
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_start_record")
+  (return-type "none")
+)
+
+(define-method stop_record
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_stop_record")
+  (return-type "none")
+)
+
+(define-method set_lexer
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_lexer")
+  (return-type "none")
+  (parameters
+    '("gint" "lexer")
+  )
+)
+
+(define-method get_lexer
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_lexer")
+  (return-type "gint")
+)
+
+(define-method colourise
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_colourise")
+  (return-type "none")
+  (parameters
+    '("glong" "start")
+    '("glong" "end")
+  )
+)
+
+(define-method set_property
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_property")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "key")
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method set_keywords
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_keywords")
+  (return-type "none")
+  (parameters 
+    '("gint" "keyword_set")
+    '("const-gchar*" "key_words")
+  )
+)
+
+(define-method set_lexer_language
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_lexer_language")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "language")
+  )
+)
+
+(define-method set_wrap_mode
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_set_wrap_mode")
+  (return-type "none")
+  (parameters 
+    '("gint" "wrap_mode")
+  )
+)
+
+(define-method get_wrap_mode
+  (of-object "GtkScintilla")
+  (c-name "gtk_scintilla_get_wrap_mode")
+  (return-type "gint")
 )
