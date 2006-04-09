@@ -1,3 +1,17 @@
+2006-04-08  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.overrides:
+      Add patch for GdkPixbuf::save() from Christian, with some modifications.
+
+    * ext/gtk+/gtktreeview.overrides:
+      Fix construction of GtkListStore() with 0 columns.
+
+    * ext/gtk+/gdk.overrides:
+      Add Christian's patches for new GdkPixbuf methods: get_pixel(),
+      put_pixel(), and fill_area(). The last one may need some checking of
+      area calculations.
+      
+
 2006-04-07  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtktreeview.overrides:
