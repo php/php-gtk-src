@@ -7,3 +7,33 @@ headers
 %%
 ignore-glob
   *_get_type
+
+%%
+override gtk_scintilla_get_text
+PHP_METHOD
+{
+    int length, result;
+    char *text;
+    length = 0;
+
+    NOT_STATIC_METHOD();
+
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(), "|i", length)) {
+        return;
+    }
+
+    if(length==0) {
+        length = gtk_scintilla_get_length(GTK_SCINTILLA(PHPG_GOBJECT(this_ptr)));
+        length++;
+    }
+
+    text = safe_emalloc(length, sizeof(char), 0);
+
+    result = gtk_scintilla_get_text(GTK_SCINTILLA(PHPG_GOBJECT(this_ptr)), length, text);
+    
+    if(result) {
+        RETURN_STRING(text, 1);
+    } else {
+        RETURN_EMPTY_STRING();
+    }
+}
