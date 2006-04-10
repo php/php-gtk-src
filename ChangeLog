@@ -1,3 +1,13 @@
+2006-04-09  Anant Narayanan  <anant@kix.in>
+
+    * ext/scintilla/scintilla.defs:
+      Updated defs for GtkScintilla.
+      Amazingly, this extension is now 99.7% complete :)
+
+    * ext/scintilla/Makefile.frag
+      ext/scintilla/modifyGenerated.php:
+      Make the scintilla extension work again.
+
 2006-04-08  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gdk.overrides:
