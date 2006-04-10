@@ -1,0 +1,11 @@
+LICENSE: GPL
+AUTHORS: Gustavo Giráldez <gustavo.giraldez@gmx.net> and others
+URL: ftp://ftp.gnome.org/pub/GNOME/sources/gtksourceview
+
+GtkSourceView is a text editing widget that extends the standard Gtk2.x text
+widget. It has features syntax highlighting for a number of languages in
+addition to those found in many standard source editors. Check the demos/
+directory for sample script(s).
+
+You must add the --enable-sourceview switch to your ./configure statement when
+you build PHP-GTK 2 in order to enable the extension.
