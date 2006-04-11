@@ -1,3 +1,12 @@
+2006-04-10  Anant Narayanan  <anant@kix.in>
+
+    * ext/scintilla/scintilla.overrides:
+      Fix memory leak.
+
+    * ext/scintilla/scintilla.overrides:
+      Override for GtkScintilla::get_text(). This makes basic code completion
+      possible.
+
 2006-04-09  Anant Narayanan  <anant@kix.in>
 
     * ext/scintilla/scintilla.defs:
