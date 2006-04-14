@@ -14,6 +14,7 @@ headers
 #include <gtksourceview/gtksourcetagtable.h>
 #include <gtksourceview/gtksourceview-typebuiltins.h>
 #include "ext/gtk+/php_gtk+.h"
+#include "php_gtk_api.h"
 %%
 constants
 %%

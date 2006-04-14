@@ -10,6 +10,5 @@ $(builddir)/gen_scintilla.c: $(srcdir)/scintilla.defs $(srcdir)/scintilla.overri
 		-o ext/scintilla/scintilla.overrides \
         -p GtkScintilla \
 		-f $@ ext/scintilla/scintilla.defs \
-	 && $(PHP) $(srcdir)/modifyGenerated.php \
      && grep -h "^PHP_GTK_EXPORT_CE" $@ | sed -e "s!^!extern !" > $(@D)/$(*F).h \
 	)

@@ -10,6 +10,5 @@ $(builddir)/gen_mozembed.c: $(srcdir)/mozembed.defs $(srcdir)/mozembed.overrides
 		-o ext/mozembed/mozembed.overrides \
         -p GtkMozembed \
 		-f $@ ext/mozembed/mozembed.defs \
-	 && $(PHP) $(srcdir)/modifyGenerated.php \
      && grep -h "^PHP_GTK_EXPORT_CE" $@ | sed -e "s!^!extern !" > $(@D)/$(*F).h \
 	)
