@@ -61,6 +61,16 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int
 {
 	char *spec_walk = *spec;
 	char c = *spec_walk++;
+	int return_null = 0;
+
+	while (*spec_walk == '/' || *spec_walk == '!') {
+		if (*spec_walk == '/') {
+			SEPARATE_ZVAL_IF_NOT_REF(arg);
+		} else if (*spec_walk == '!' && Z_TYPE_PP(arg) == IS_NULL) {
+			return_null = 1;
+		}
+		spec_walk++;
+	}
 
 	switch (c) {
 
@@ -299,14 +309,14 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int
 			{
 				zval **p = va_arg(*va, zval **);
 				zend_class_entry *ce = va_arg(*va, zend_class_entry *);
-				if (Z_TYPE_PP(arg) != IS_OBJECT || !instanceof_function(Z_OBJCE_PP(arg), ce TSRMLS_CC))
-					return ce->name;
-				else {
-					if (*spec_walk == '/') {
-						SEPARATE_ZVAL(arg);
-						spec_walk++;
-					}
+				if (Z_TYPE_PP(arg) == IS_OBJECT && (!ce || instanceof_function(Z_OBJCE_PP(arg), ce TSRMLS_CC))) {
 					*p = *arg;
+				} else {
+					if (return_null) {
+						*p = NULL;
+					} else {
+						return ce ? ce->name : "object";
+					}
 				}
 			}
 			break;
@@ -319,10 +329,6 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int
 					sprintf(buf, "%s or null", ce->name);
 					return buf;
 				} else {
-					if (*spec_walk == '/') {
-						SEPARATE_ZVAL(arg);
-						spec_walk++;
-					}
 					*p = *arg;
 				}
 			}
@@ -340,10 +346,6 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int
 ret_zval:
 			{
 				zval **p = va_arg(*va, zval **);
-				if (*spec_walk == '/') {
-					SEPARATE_ZVAL(arg);
-					spec_walk++;
-				}
 				*p = *arg;
 			}
 			break;
@@ -408,6 +410,7 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 			case '#':
 			case '/':
 			case '^':
+			case '!':
 				/* Pass */
 				break;
 
