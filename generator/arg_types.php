@@ -1021,6 +1021,7 @@ $matcher->register('gushort', $arg);
 $matcher->register('long', $arg);
 $matcher->register('glong', $arg);
 $matcher->register('gulong', $arg);
+$matcher->register('GdkNativeWindow', $arg);
 
 $matcher->register('guint8', $arg);
 $matcher->register('gint8', $arg);
