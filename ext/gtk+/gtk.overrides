@@ -29,10 +29,6 @@ ignore-glob
     gtk_timeout_add_*
     gtk_toggle_button_new_*
 %%
-ignore-win32-glob
-    gtk_plug_*
-    gtk_socket_*
-%%
 ignore
     gtk_button_new_with_label
     gtk_button_new_with_mnemonic
@@ -51,6 +47,9 @@ ignore
     gtk_list_item_new_with_label
     gtk_menu_item_new_with_label
     gtk_menu_item_new_with_mnemonic
+    gtk_plug_construct
+    gtk_plug_construct_for_display
+    gtk_plug_new_for_display
     gtk_radio_menu_item_new_with_label
     gtk_radio_menu_item_new_with_mnemonic
     gtk_true
@@ -2395,6 +2394,35 @@ PHP_METHOD
 
     gtk_misc_get_padding(GTK_MISC(PHPG_GOBJECT(this_ptr)), &xpad, &ypad);
     php_gtk_build_value(&return_value, "(ii)", xpad, ypad);
+}
+
+%% }}}
+
+%% {{{ GtkPlug
+
+%%
+override gtk_plug_new
+PHP_METHOD
+{
+    gulong socket_id;
+    zval *display = NULL;
+    GObject *wrapped_obj = NULL;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i|O", &socket_id, &display))
+        return;
+
+    wrapped_obj = g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
+
+    if (display) {
+        gtk_plug_construct_for_display(GTK_PLUG(PHPG_GOBJECT(this_ptr)),
+                                       GDK_DISPLAY(PHPG_GOBJECT(display)), socket_id);
+    } else {
+        gtk_plug_construct(GTK_PLUG(PHPG_GOBJECT(this_ptr)), socket_id);
+    }
+
+    if (!wrapped_obj) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkPlug);
+    }
 }
 
 %% }}}
