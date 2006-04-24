@@ -21,12 +21,6 @@ Base Functionality
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
 * GtkAboutDialog
-	method      GtkAboutDialog::get_artists: unknown type 'gchar**'
-	method      GtkAboutDialog::get_authors: unknown type 'gchar**'
-	method      GtkAboutDialog::get_documenters: unknown type 'gchar**'
-	method      GtkAboutDialog::set_artists: unknown type 'gchar**'
-	method      GtkAboutDialog::set_authors: unknown type 'gchar**'
-	method      GtkAboutDialog::set_documenters: unknown type 'gchar**'
 	method      GtkAboutDialog::set_email_hook: unknown type 'GtkAboutDialogActivateLinkFunc'
 	method      GtkAboutDialog::set_url_hook: unknown type 'GtkAboutDialogActivateLinkFunc'
 	GtkAboutDialog->set_logo_icon_name seems to find no icons at all
@@ -125,6 +119,7 @@ Fix
 ~~~
 * StyleHelper does not implement handlers that ZE2 _requires_ right now. Need
   to change either ZE2 or StyleHelper.
+* Use phpg_gboxed_check() after receiving boxed parameters.
 
 
 Thoughts on reference counting and wrappers
