@@ -1,3 +1,20 @@
+2006-04-24  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      GtkSocket/GtkPlug stuff.
+
+    * generator/arg_types.php:
+      Register GdkNativeWindow as a long.
+
+    * TODO2:
+      -** empty log message ***
+
+    * main/php_gtk_util.c:
+      Allow passing PHP NULL for objects which will result in C NULL.
+
+    * ext/gtk+/gtk.overrides:
+      Implement a bunch of get_group() and set_group() methods.
+
 2006-04-14  Anant Narayanan  <anant@kix.in>
 
     * ext/scintilla/Makefile.frag
