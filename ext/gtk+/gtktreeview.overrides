@@ -34,6 +34,7 @@ ignore
     gtk_cell_renderer_get_size
     gtk_list_store_newv
     gtk_list_store_set_valist
+    gtk_tree_model_get_valist
     gtk_tree_row_reference_new_proxy
     gtk_tree_row_reference_inserted
     gtk_tree_row_reference_deleted
@@ -1106,6 +1107,55 @@ PHP_METHOD
 }
 
 %%
+override gtk_tree_model_iter_nth_child
+PHP_METHOD
+{
+    GtkTreeIter iter;
+    zval *php_parent_iter = NULL;
+    GtkTreeIter *parent_iter = NULL;
+    int n;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Ni", &php_parent_iter, gtktreeiter_ce, &n))
+        return;
+
+    if (php_parent_iter && IS_OBJECT == Z_TYPE_P(php_parent_iter)) {
+        parent_iter = (GtkTreeIter *) PHPG_GBOXED(php_parent_iter);
+    }
+
+    if (gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr)), &iter, parent_iter, n)) {
+        phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+    } else {
+        RETURN_NULL();
+    }
+}
+
+%%
+override gtk_tree_model_iter_parent
+PHP_METHOD
+{
+    GtkTreeIter iter;
+    zval *php_child_iter = NULL;
+    GtkTreeIter *child_iter = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|N", &php_child_iter, gtktreeiter_ce))
+        return;
+
+    if (php_child_iter && IS_OBJECT == Z_TYPE_P(php_child_iter)) {
+        child_iter = (GtkTreeIter *) PHPG_GBOXED(php_child_iter);
+    }
+
+    if (gtk_tree_model_iter_parent(GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr)), &iter, child_iter)) {
+        phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+    } else {
+        RETURN_NULL();
+    }
+}
+
+%%
 add-arginfo GtkTreeModel iter_next
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
@@ -1210,6 +1260,64 @@ PHP_METHOD
     gtk_tree_model_foreach(GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr)),
                            phpg_tree_model_foreach_marshal, cb_data);
     phpg_cb_data_destroy(cb_data);
+}
+
+%%
+override gtk_tree_model_get
+PHP_METHOD
+{
+    GtkTreeModel *model;
+    GtkTreeIter *iter;
+    zval *columns = NULL, *php_iter, **item;
+    int n_columns;
+    zend_bool varargs = false;
+
+    NOT_STATIC_METHOD();
+
+    if (php_gtk_parse_args_quiet(ZEND_NUM_ARGS(), "Oa", &php_iter, gtktreeiter_ce, &columns)) {
+        varargs = false;
+    } else if (php_gtk_parse_varargs(ZEND_NUM_ARGS(), 1, &columns, "O", &php_iter, gtktreeiter_ce)) {
+        varargs = true;
+    }  else {
+        return;
+    }
+
+    model = GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr));
+    iter = (GtkTreeIter *) PHPG_GBOXED(php_iter);
+
+    array_init(return_value);
+    n_columns = gtk_tree_model_get_n_columns(model);
+
+    if (columns) {
+        for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(columns));
+             zend_hash_get_current_data(Z_ARRVAL_P(columns), (void**)&item) == SUCCESS;
+             zend_hash_move_forward(Z_ARRVAL_P(columns))) {
+
+            GValue value = { 0, };
+            zval *zv = NULL;
+            int column;
+
+            convert_to_long_ex(item);
+            if (Z_LVAL_PP(item) < 0 || Z_LVAL_PP(item) >= n_columns) {
+                php_error(E_WARNING, "%s::%s(): column number is out of range - model has %d columns", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C), n_columns);
+                if (varargs) zval_ptr_dtor(&columns);
+                zval_dtor(return_value);
+                RETURN_NULL();
+            }
+
+            gtk_tree_model_get_value(model, iter, Z_LVAL_PP(item), &value);
+            if (phpg_gvalue_to_zval(&value, &zv, TRUE, TRUE TSRMLS_CC) == FAILURE) {
+                g_value_unset(&value);
+                if (varargs) zval_ptr_dtor(&columns);
+                zval_dtor(return_value);
+                RETURN_NULL();
+            }
+            add_next_index_zval(return_value, zv);
+            g_value_unset(&value);
+        }
+
+        if (varargs) zval_ptr_dtor(&columns);
+    }
 }
 
 %% }}}
