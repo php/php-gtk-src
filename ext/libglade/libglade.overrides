@@ -32,6 +32,16 @@ ignore
 %% }}}
 
 %% {{{ GladeXML
+
+%%
+add-arginfo GladeXML __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+    ZEND_ARG_INFO(0, filename)
+    ZEND_ARG_INFO(0, root)
+    ZEND_ARG_INFO(0, domain)
+ZEND_END_ARG_INFO();
+
 %%
 override glade_xml_new
 PHP_METHOD
@@ -58,6 +68,15 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GladeXML new_from_buffer
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+    ZEND_ARG_INFO(0, buffer)
+    ZEND_ARG_INFO(0, root)
+    ZEND_ARG_INFO(0, domain)
+ZEND_END_ARG_INFO();
+
+%%
 override glade_xml_new_from_buffer
 PHP_METHOD
 {
@@ -78,6 +97,13 @@ PHP_METHOD
 
     phpg_gobject_new(&return_value, (GObject *)glade_obj TSRMLS_CC);
 }
+
+%%
+add-arginfo GladeXML get_widget_prefix
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, prefix)
+ZEND_END_ARG_INFO();
 
 %%
 override glade_xml_get_widget_prefix
@@ -306,6 +332,13 @@ PHP_METHOD
     glade_xml_signal_autoconnect_full(GLADE_XML(PHPG_GOBJECT(this_ptr)),
                                       (GladeXMLConnectFunc)phpg_glade_signal_connect_auto, &data);
 }
+
+%%
+add-arginfo GladeXML signal_autoconnect_instance
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, object)
+ZEND_END_ARG_INFO();
 
 %%
 add GladeXML signal_autoconnect_instance
