@@ -1295,7 +1295,6 @@ PHP_METHOD
 
             GValue value = { 0, };
             zval *zv = NULL;
-            int column;
 
             convert_to_long_ex(item);
             if (Z_LVAL_PP(item) < 0 || Z_LVAL_PP(item) >= n_columns) {
