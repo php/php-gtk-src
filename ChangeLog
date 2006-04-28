@@ -1,3 +1,8 @@
+2006-04-27  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/libglade/libglade.overrides:
+      Added reflection information
+
 2006-04-26  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtktreeview.overrides:
