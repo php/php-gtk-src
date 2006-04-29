@@ -3243,6 +3243,14 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkWidget set_visible
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+    ZEND_ARG_INFO(0, visible)
+    ZEND_ARG_INFO(0, all)
+ZEND_END_ARG_INFO();
+
+%%
 add GtkWidget set_visible
 PHP_METHOD
 {
