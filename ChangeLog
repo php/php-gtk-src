@@ -1,3 +1,11 @@
+2006-04-28  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtktreeview.overrides:
+      -** empty log message ***
+
+    * ext/gtk+/gtktreeview.overrides:
+      Fix compile error.
+
 2006-04-27  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/libglade/libglade.overrides:
