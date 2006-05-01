@@ -1265,6 +1265,7 @@ class Generator {
                                  'GdkJoinStyle'         => 'int',
                                  'GdkLineStyle'         => 'int',
                                  'GdkModifierType'      => 'int',
+                                 'GdkNativeWindow'      => 'int',
                                  'GdkNotifyType'        => 'int',
                                  'GdkOverlapType'       => 'int',
                                  'GdkOwnerChange'       => 'int',
