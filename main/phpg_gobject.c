@@ -389,6 +389,29 @@ static PHP_METHOD(GObject, connect_object_after)
 }
 /* }}} */
 
+/* {{{ GObject::notify */
+static PHP_METHOD(GObject, notify)
+{
+    char *property;
+    GParamSpec *pspec;
+    GObject *obj;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &property))
+        return;
+
+    obj = PHPG_GOBJECT(this_ptr);
+    pspec = g_object_class_find_property(G_OBJECT_GET_CLASS(obj), property);
+    if (pspec == NULL) {
+        php_error(E_WARNING, "Class '%s' does not support property '%s'",
+                  g_type_name(G_TYPE_FROM_INSTANCE(obj)), property);
+        return;
+    }
+
+    g_object_notify(obj, property);
+}
+
 /* {{{ GObject::get/set_property */
 static PHP_METHOD(GObject, get_property)
 {
@@ -728,6 +751,11 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_gobject_connect_object_after, 0, 0, 2)
 ZEND_END_ARG_INFO();
 
 static
+ZEND_BEGIN_ARG_INFO(arginfo_gobject_notify, 0)
+    ZEND_ARG_INFO(0, property_name)
+ZEND_END_ARG_INFO();
+
+static
 ZEND_BEGIN_ARG_INFO(arginfo_gobject_get_property, 0)
     ZEND_ARG_INFO(0, property_name)
 ZEND_END_ARG_INFO();
@@ -776,6 +804,7 @@ static zend_function_entry gobject_methods[] = {
     PHP_ME(GObject, connect_object_after, arginfo_gobject_connect_object_after  , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, connect_simple,       arginfo_gobject_connect_simple        , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, connect_simple_after, arginfo_gobject_connect_simple_after  , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, notify,               arginfo_gobject_notify                , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, get_property,         arginfo_gobject_get_property          , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, set_property,         arginfo_gobject_set_property          , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, get_data,             arginfo_gobject_get_data              , ZEND_ACC_PUBLIC)
