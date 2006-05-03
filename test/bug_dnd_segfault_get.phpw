@@ -1,0 +1,119 @@
+<?php
+/**
+*   Bug in drag'n'drop:
+*   Drag from "from" button to "to" button several (3) times.
+*   You will get a segfault.
+*   The segfault appears only if the drag-data-get signal is connected
+*
+-------------------------
+Program received signal SIGSEGV, Segmentation fault.
+[Switching to Thread 16384 (LWP 20610)]
+0xb7b793f5 in mallopt () from /lib/libc.so.6
+(gdb) bt
+#0  0xb7b793f5 in mallopt () from /lib/libc.so.6
+#1  0xb7b78a91 in mallopt () from /lib/libc.so.6
+#2  0xb7b77b33 in malloc () from /lib/libc.so.6
+#3  0xb6f9177e in cairo_matrix_invert () from /usr/lib/libcairo.so.2
+#4  0x0000020c in ?? ()
+#5  0x3fecfcfc in ?? ()
+#6  0xb6fc39f4 in ?? () from /usr/lib/libcairo.so.2
+#7  0xb6f9161e in cairo_matrix_invert () from /usr/lib/libcairo.so.2
+#8  0x08eb96b8 in ?? ()
+#9  0x00000000 in ?? ()
+#10 0xbf917fc8 in ?? ()
+#11 0xb700ddb9 in gdk_cairo_set_source_color ()
+   from /usr/lib/libgdk-x11-2.0.so.0
+#12 0x00917fc0 in ?? ()
+#13 0x08eb2ea8 in ?? ()
+#14 0x08eb2ea0 in ?? ()
+#15 0xb6f9131a in cairo_matrix_invert () from /usr/lib/libcairo.so.2
+#16 0x08eb2ea8 in ?? ()
+#17 0x00000000 in ?? ()
+#18 0xbf917fa0 in ?? ()
+#19 0x00000001 in ?? ()
+#20 0x00000000 in ?? ()
+#21 0x00000000 in ?? ()
+#22 0x00000000 in ?? ()
+#23 0xb6f85d8a in cairo_move_to () from /usr/lib/libcairo.so.2
+#24 0x08eb2ea8 in ?? ()
+#25 0x00000000 in ?? ()
+#26 0x00000000 in ?? ()
+#27 0x00000000 in ?? ()
+#28 0x00000000 in ?? ()
+#29 0x00000000 in ?? ()
+#30 0x00000000 in ?? ()
+#31 0x00000000 in ?? ()
+#32 0xb6fc39f4 in ?? () from /usr/lib/libcairo.so.2
+#33 0x08eb2ea0 in ?? ()
+#34 0x08e96d28 in ?? ()
+#35 0xb6f864f0 in cairo_rectangle () from /usr/lib/libcairo.so.2
+#36 0x08eb2ea0 in ?? ()
+#37 0x00000000 in ?? ()
+#38 0x3ff00000 in ?? ()
+#39 0x00000000 in ?? ()
+#40 0x00000000 in ?? ()
+#41 0xb6fc39f4 in ?? () from /usr/lib/libcairo.so.2
+#42 0x08eb2ea0 in ?? ()
+#43 0xb6f8523a in cairo_create () from /usr/lib/libcairo.so.2
+#44 0x00000000 in ?? ()
+#45 0x403f0000 in ?? ()
+#46 0x00000000 in ?? ()
+#47 0x405c8000 in ?? ()
+#48 0x08eb2ea0 in ?? ()
+#49 0xb707b0a8 in ?? () from /usr/lib/libgdk-x11-2.0.so.0
+#50 0x08eb2ea0 in ?? ()
+#51 0xb702803e in gdk_window_get_internal_paint_info ()
+   from /usr/lib/libgdk-x11-2.0.so.0
+#52 0x00000000 in ?? ()
+-------------------------
+
+*/
+$wnd = new GtkWindow();
+$wnd->connect_simple('destroy', array('Gtk', 'main_quit'));
+$hbox = new GtkHBox();
+$wnd->add($hbox);
+
+$btnFrom = new GtkButton('From');
+$btnTo   = new GtkButton('To');
+
+$hbox->pack_start($btnFrom);
+$hbox->pack_start($btnTo);
+
+$btnFrom->drag_source_set(
+    Gdk::BUTTON1_MASK,
+    //change to text/plain, and it works
+    array(array('text/xml', 0, 1)),
+    Gdk::ACTION_COPY | Gdk::ACTION_MOVE
+);
+$btnFrom->connect('drag-data-get', 'onGetDragData');
+
+
+$btnTo->drag_dest_set(
+    Gtk::DEST_DEFAULT_ALL,
+    //change to text/plain, and it works
+    array(array('text/xml', 0, 1)),
+    Gdk::ACTION_COPY | Gdk::ACTION_MOVE
+);
+
+$btnTo->connect('drag-drop', 'onDragDrop');
+
+
+function onGetDragData($widget, $context, $selection, $info, $time) {
+    echo $widget->get_name() . " drag-data-get\r\n";
+    $selection->set_text('ThisIsTheContent');
+}
+
+function onDragDrop($widget, $context, $x, $y, $time) {
+    global $strMimeType, $strTypeNumber;
+
+    echo "drag-drop\r\n";
+    var_dump(
+        $widget->drag_dest_find_target(
+            $context, array(array('text/xml', 0, 1))
+        )
+    );
+}
+
+$wnd->show_all();
+Gtk::main();
+?>
