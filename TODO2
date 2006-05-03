@@ -69,6 +69,11 @@ Classes and Functions
   methods append_page, insert_page and prepend_page have to be merged
    with their _menu counterparts (so that append_page accepts a third
    parameter from append_page_menu)
+* GtkSelectionData
+    method      GtkSelectionData::get_targets: unknown type 'GdkAtom**'
+    method      GtkSelectionData::get_uris: unknown type 'gchar**'
+    method      GtkSelectionData::set_uris: unknown type 'gchar**'
+    method      GtkSelectionData::tree_get_row_drag_data: unknown type 'GtkTreeModel**'
 * GtkTextBuffer
     get_iter_at_child_anchor NTRVNRP
 * GtkTreeModel
