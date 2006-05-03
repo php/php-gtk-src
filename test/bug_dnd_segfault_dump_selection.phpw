@@ -1,0 +1,72 @@
+<?php
+/**
+*   Bug in drag'n'drop:
+*   Drag from "from" button to "to" button.
+*   You will get a segfault.
+*
+*   Backtrace for the segfault:
+-------------------------
+Program received signal SIGSEGV, Segmentation fault.
+[Switching to Thread 16384 (LWP 20870)]
+0xb7c5b203 in strlen () from /lib/libc.so.6
+(gdb) bt
+#0  0xb7c5b203 in strlen () from /lib/libc.so.6
+#1  0xb75dbcbd in phpg_GtkSelectionData_read_type (object=0x8eb03ec,
+    return_value=0xbf8f3cf0) at gen_gtk.c:45552
+#2  0xb75ff86b in phpg_get_properties (object=0x8d9bb74)
+    at /data/cvs/phpgtk2/php-gtk/main/phpg_support.c:173
+#3  0x082c852b in php_var_dump (struc=0x87d1e64, level=1)
+    at /data/cvs/php/php-5.1.2/ext/standard/var.c:139
+#4  0x082c8736 in zif_var_dump (ht=1, return_value=0x8da9a74,
+    return_value_ptr=0x0, this_ptr=0x0, return_value_used=0)
+    at /data/cvs/php/php-5.1.2/ext/standard/var.c:192
+#5  0x0834a906 in zend_do_fcall_common_helper_SPEC (execute_data=0xbf8f3e20)
+    at zend_vm_execute.h:192
+#6  0x0834a218 in execute (op_array=0x8d95078) at zend_vm_execute.h:92
+#7  0x08328339 in zend_call_function (fci=0xbf8f3f50, fci_cache=0x0)
+    at /data/cvs/php/php-5.1.2/Zend/zend_execute_API.c:907
+#8  0x08327bae in call_user_function_ex (function_table=0x0, object_pp=0x0,
+    function_name=0x0, retval_ptr_ptr=0x0, param_count=0, params=0x0,
+    no_separation=0, symbol_table=0x0)
+    at /data/cvs/php/php-5.1.2/Zend/zend_execute_API.c:571
+#9  0xb7605a8a in phpg_closure_marshal (closure=0x8da9b50, return_value=0x0,
+    n_param_values=5, param_values=0xbf8f4210, invocation_hint=0xbf8f40f8,
+    marshal_data=0x0) at /data/cvs/phpgtk2/php-gtk/main/phpg_closure.c:124
+#10 0xb6fe330e in g_closure_invoke () from /usr/lib/libgobject-2.0.so.0
+-------------------------
+*/
+$wnd = new GtkWindow();
+$wnd->connect_simple('destroy', array('Gtk', 'main_quit'));
+$hbox = new GtkHBox();
+$wnd->add($hbox);
+
+$btnFrom = new GtkButton('From');
+$btnTo   = new GtkButton('To');
+
+$hbox->pack_start($btnFrom);
+$hbox->pack_start($btnTo);
+
+$btnFrom->drag_source_set(
+    Gdk::BUTTON1_MASK,
+    //change to text/plain, and it works
+    array(array('text/xml', 0, 1)),
+    Gdk::ACTION_COPY | Gdk::ACTION_MOVE
+);
+$btnFrom->connect('drag-data-get', 'onGetDragData');
+
+
+$btnTo->drag_dest_set(
+    Gtk::DEST_DEFAULT_ALL,
+    //change to text/plain, and it works
+    array(array('text/xml', 0, 1)),
+    Gdk::ACTION_COPY | Gdk::ACTION_MOVE
+);
+
+function onGetDragData($widget, $context, $selection, $info, $time) {
+    var_dump($selection);
+}
+
+
+$wnd->show_all();
+Gtk::main();
+?>
