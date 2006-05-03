@@ -6,6 +6,15 @@ extern PHP_GTK_EXPORT_CE(gdkdragcontext_ce);
 static GtkTargetEntry* phpg_parse_target_entries(zval *php_targets, int *n_targets TSRMLS_DC);
 
 %%
+add-arginfo GtkWidget drag_dest_set
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, flags)
+    ZEND_ARG_INFO(0, targets)
+    ZEND_ARG_INFO(0, actions)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_drag_dest_set
 
 static GtkTargetEntry* phpg_parse_target_entries(zval *php_targets, int *n_targets TSRMLS_DC)
@@ -59,6 +68,16 @@ PHP_METHOD
 	gtk_drag_dest_set(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), flags, entries, n, actions);
 	efree(entries);
 }
+
+%%
+add-arginfo GtkWidget drag_begin
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, targets)
+    ZEND_ARG_INFO(0, actions)
+    ZEND_ARG_INFO(0, button)
+    ZEND_ARG_OBJ_INFO(0, event, GdkEvent, 1)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_drag_begin
@@ -124,6 +143,13 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkWidget drag_dest_set_target_list
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, targets)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_drag_dest_set_target_list
 PHP_METHOD
 {
@@ -145,6 +171,14 @@ PHP_METHOD
     gtk_drag_dest_set_target_list(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), tlist);
     gtk_target_list_unref(tlist);
 }
+
+%%
+add-arginfo GtkWidget drag_dest_find_target
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, context, GdkDragContext, 1)
+    ZEND_ARG_INFO(0, targets)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_drag_dest_find_target
@@ -172,6 +206,15 @@ PHP_METHOD
 
     RETURN_STRING(gdk_atom_name(atom), 0);
 }
+
+%%
+add-arginfo GtkWidget drag_source_set
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, sbmask)
+    ZEND_ARG_INFO(0, targets)
+    ZEND_ARG_INFO(0, actions)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_drag_source_set
@@ -233,6 +276,13 @@ PHP_METHOD
         add_next_index_zval(return_value, item);
     }
 }
+
+%%
+add-arginfo GtkWidget drag_source_set_target_list
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, targets)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_drag_source_set_target_list
