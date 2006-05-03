@@ -115,9 +115,6 @@ Classes and Functions
 	constructor	create_from_xpm_d()
 * GtkPlug/GtkSocket
 * Support (array) cast for GtkTreeModelRow and possibly unset()
-* GtkWindow
-    drag_dest_find_target should accept NULL as second parameter, and even omitting the second one
-     (as the gtk docs state)
 
 Fix
 ~~~

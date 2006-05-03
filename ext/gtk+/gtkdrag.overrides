@@ -175,7 +175,7 @@ PHP_METHOD
 %%
 add-arginfo GtkWidget drag_dest_find_target
 static
-ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
     ZEND_ARG_OBJ_INFO(0, context, GdkDragContext, 1)
     ZEND_ARG_INFO(0, targets)
 ZEND_END_ARG_INFO();
@@ -184,25 +184,30 @@ ZEND_END_ARG_INFO();
 override gtk_drag_dest_find_target
 PHP_METHOD
 {
-    zval *php_targets, *php_context;
+    zval *php_targets = NULL, *php_context;
     GtkTargetEntry *entries;
-    GtkTargetList *tlist;
+    GtkTargetList *tlist = NULL;
     GdkAtom atom;
     int n;
 
     NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Oa", &php_context, gdkdragcontext_ce, &php_targets)) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O|a", &php_context, gdkdragcontext_ce, &php_targets)) {
         return;
     }
 
-    entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
-	tlist = gtk_target_list_new(entries, n);
-	efree(entries);
+    if (php_targets) {
+        entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
+        tlist = gtk_target_list_new(entries, n);
+        efree(entries);
+    }
 
     atom = gtk_drag_dest_find_target(GTK_WIDGET(PHPG_GOBJECT(this_ptr)),
-                                     GDK_DRAG_CONTEXT(PHPG_GOBJECT(php_context)), tlist);
-    gtk_target_list_unref(tlist);
+                                    GDK_DRAG_CONTEXT(PHPG_GOBJECT(php_context)), tlist);
+
+    if (php_targets) {
+        gtk_target_list_unref(tlist);
+    }
 
     RETURN_STRING(gdk_atom_name(atom), 0);
 }
