@@ -5161,6 +5161,18 @@
   (return-type "none")
 )
 
+(define-method drag_source_add_image_targets
+  (of-object "GtkWidget")
+  (c-name "gtk_drag_source_add_image_targets")
+  (return-type "none")
+)
+
+(define-method drag_source_add_uri_targets
+  (of-object "GtkWidget")
+  (c-name "gtk_drag_source_add_uri_targets")
+  (return-type "none")
+)
+
 (define-method drag_source_get_target_list
   (of-object "GtkWidget")
   (c-name "gtk_drag_source_get_target_list")
