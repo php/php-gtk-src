@@ -65,10 +65,6 @@ Classes and Functions
 	method      GtkListStore::reorder: unknown type 'gint*'
 	method      GtkListStore::set_column_types: unknown type 'GType*'
 	method      GtkListStore::set_value: unknown type 'GValue*'
-* GtkNotebook
-  methods append_page, insert_page and prepend_page have to be merged
-   with their _menu counterparts (so that append_page accepts a third
-   parameter from append_page_menu)
 * GtkSelectionData
     method      GtkSelectionData::get_targets: unknown type 'GdkAtom**'
     method      GtkSelectionData::get_uris: unknown type 'gchar**'
