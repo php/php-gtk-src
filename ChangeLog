@@ -1,3 +1,37 @@
+2006-05-03  Christian Weiske  <cweiske@cweiske.de>
+
+    * main/phpg_gobject.c:
+      Adding missing GObject::notify(property) method
+
+    * TODO2
+      ext/gtk+/gtkdrag.overrides:
+      Allowing GtkWidget::drag_dest_find_target to omit the second parameter
+
+    * ext/gtk+/gtk.defs:
+      added drag_source_add_uri_targets drag_source_add_image_targets
+
+    * ext/gtk+/gtkdrag.overrides:
+      Reflection for drag methods
+
+    * TODO2:
+      Removing *_menu methods removes functionality as supplying NULL as menu
+      widget automatically creates one. This is not done when using
+      append_page()
+      or such.
+
+    * TODO2:
+      GtkSelectionData is missing some important methods
+
+    * TODO2:
+      drag_dest_find_target note
+
+    * test/bug_dnd_segfault_dump_selection.phpw:
+      Another segfault, this time when var_dumping a selection
+
+    * test/bug_dnd_segfault_end.phpw
+      test/bug_dnd_segfault_get.phpw:
+      Two drag and drop segfault bugs
+
 2006-05-02  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides:
