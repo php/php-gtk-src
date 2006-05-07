@@ -1633,6 +1633,8 @@ static
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
     ZEND_ARG_INFO(0, title)
     ZEND_ARG_OBJ_INFO(0, cellrenderer, GtkCellRenderer, 1)
+    ZEND_ARG_INFO(0, attribute)
+    ZEND_ARG_INFO(0, column)
 ZEND_END_ARG_INFO();
 
 %%
