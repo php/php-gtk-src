@@ -1,3 +1,8 @@
+2006-05-07  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtktreeview.overrides:
+      Fixed reflection info for GtkTreeViewColumn constructor
+
 2006-05-05  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gtktreeview.overrides:
