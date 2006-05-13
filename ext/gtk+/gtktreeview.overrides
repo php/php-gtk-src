@@ -1140,6 +1140,14 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkTreeModel iter_parent
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_OBJ_INFO(0, iter, GtkTreeIter, 1)
+ZEND_END_ARG_INFO();
+
+
+%%
 override gtk_tree_model_iter_parent
 PHP_METHOD
 {
