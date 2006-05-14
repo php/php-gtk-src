@@ -1,3 +1,8 @@
+2006-05-13  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtktreeview.overrides:
+      iter_parent reflection info
+
 2006-05-07  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gtktreeview.overrides:
