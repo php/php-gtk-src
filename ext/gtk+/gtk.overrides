@@ -2161,10 +2161,12 @@ PHP_METHOD(GtkListItem, __construct)
 %%
 add-arginfo GtkMenu popup
 static
-ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 2)
-    ZEND_ARG_INFO(0, x)
-    ZEND_ARG_INFO(0, y)
-    ZEND_ARG_INFO(0, data)
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_OBJ_INFO(0, parent_menu_shell, GtkWidget, 1)
+    ZEND_ARG_OBJ_INFO(0, parent_menu_item, GtkWidget, 1)
+    ZEND_ARG_INFO(0, position_callback)
+    ZEND_ARG_INFO(0, button)
+    ZEND_ARG_INFO(0, time)
 ZEND_END_ARG_INFO();
 
 %%
