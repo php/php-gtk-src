@@ -1408,6 +1408,28 @@ PHP_METHOD
 %% {{{ GtkTreeView
 
 %%
+override gtk_tree_view_get_columns
+PHP_METHOD
+{
+    GList *columns, *item;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    columns = gtk_tree_view_get_columns(GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)));
+
+    array_init(return_value);
+    for (item = columns; item; item = item->next) {
+        zval *php_column = NULL;
+        phpg_gobject_new(&php_column, G_OBJECT(item->data) TSRMLS_CC);
+        add_next_index_zval(return_value, php_column);
+    }
+    g_list_free(columns);
+}
+
+%%
 add-arginfo GtkTreeView insert_column_with_data_func
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
@@ -1490,14 +1512,6 @@ PHP_METHOD
 }
 
 %%
-add-arginfo GtkTreeView get_path_at_pos
-static
-ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
-    ZEND_ARG_INFO(0, x)
-    ZEND_ARG_INFO(0, y)
-ZEND_END_ARG_INFO();
-
-%%
 override gtk_tree_view_get_cursor
 PHP_METHOD
 {
@@ -1529,6 +1543,14 @@ PHP_METHOD
 
     php_gtk_build_value(&return_value, "(NN)", php_path, php_column);
 }
+
+%%
+add-arginfo GtkTreeView get_path_at_pos
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, x)
+    ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_tree_view_get_path_at_pos
