@@ -37,6 +37,7 @@ class GtkListStoreTest extends PHPUnit2_Framework_TestCase {
      * @access protected
      */
     protected function setUp() {
+        $this->ls = new GtkListStore(Gtk::TYPE_STRING);
     }
 
     /**
@@ -153,11 +154,16 @@ class GtkListStoreTest extends PHPUnit2_Framework_TestCase {
     }
 
     /**
-     * @todo Implement testForeach().
+     * foreach() lets you specify a callback that is called for
+     * every row
      */
     public function testForeach() {
-        // Remove the following line when you implement this test.
-        throw new PHPUnit2_Framework_IncompleteTestError;
+        $this->ls->append(array('test'));
+        $this->ls->foreach(array($this, 'foreachCallback'));
+    }
+
+    public function foreachCallback($ls, $path, $iter) {
+        $ls->remove($iter);
     }
 
     /**
