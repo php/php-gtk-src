@@ -1522,6 +1522,13 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GdkPixbuf new_from_xpm_data
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, data)
+ZEND_END_ARG_INFO();
+
+%%
 override gdk_pixbuf_new_from_xpm_data
 PHP_METHOD
 {
@@ -1556,6 +1563,13 @@ PHP_METHOD
     phpg_gobject_new(&return_value, (GObject *)pixbuf TSRMLS_CC);
     g_object_unref(pixbuf); /* phpg_gobject_new() increments reference count */
 }
+
+%%
+add-arginfo GdkPixbuf new_from_gd
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, gd)
+ZEND_END_ARG_INFO();
 
 %%
 add GdkPixbuf new_from_gd ZEND_ACC_PUBLIC|ZEND_ACC_STATIC
@@ -1692,7 +1706,7 @@ PHP_METHOD
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
         return;
     }
-    
+
     pixbuf = GDK_PIXBUF(PHPG_GOBJECT(this_ptr));
     pixels = gdk_pixbuf_get_pixels(pixbuf);
     rowstride = gdk_pixbuf_get_rowstride(pixbuf);
@@ -1705,6 +1719,14 @@ PHP_METHOD
 
     RETURN_STRINGL(pixels, rowstride*height, 1);
 }
+
+%%
+add-arginfo GdkPixbuf get_pixel
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, x)
+    ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
 
 %%
 add GdkPixbuf get_pixel
@@ -1767,6 +1789,18 @@ PHP_METHOD
 
     RETVAL_LONG(pixel);
 }
+
+%%
+add-arginfo GdkPixbuf put_pixel
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 3)
+    ZEND_ARG_INFO(0, x)
+    ZEND_ARG_INFO(0, y)
+    ZEND_ARG_INFO(0, pixel_or_red)
+    ZEND_ARG_INFO(0, green)
+    ZEND_ARG_INFO(0, blue)
+    ZEND_ARG_INFO(0, alpha)
+ZEND_END_ARG_INFO();
 
 %%
 add GdkPixbuf put_pixel
@@ -1833,6 +1867,55 @@ PHP_METHOD
         pixels[3] = a;
     }
 }
+
+%%
+add-arginfo GdkPixbuf fill
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+    ZEND_ARG_INFO(0, pixel_or_red)
+    ZEND_ARG_INFO(0, green)
+    ZEND_ARG_INFO(0, blue)
+    ZEND_ARG_INFO(0, alpha)
+ZEND_END_ARG_INFO();
+
+%%
+override gdk_pixbuf_fill
+PHP_METHOD
+{
+    long pixel, r, g, b, a;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i|iii", &r, &g, &b, &a)) {
+        return;
+    }
+
+    if (ZEND_NUM_ARGS() == 4) {
+        pixel = 0;
+        pixel += r << 24;
+        pixel += g << 16;
+        pixel += b << 8;
+        pixel += a;
+    } else {
+        pixel = r;
+    }
+
+    gdk_pixbuf_fill(GDK_PIXBUF(PHPG_GOBJECT(this_ptr)), (guint32)pixel);
+}
+
+%%
+add-arginfo GdkPixbuf fill_area
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 5)
+    ZEND_ARG_INFO(0, x)
+    ZEND_ARG_INFO(0, y)
+    ZEND_ARG_INFO(0, width)
+    ZEND_ARG_INFO(0, height)
+    ZEND_ARG_INFO(0, pixel_or_red)
+    ZEND_ARG_INFO(0, green)
+    ZEND_ARG_INFO(0, blue)
+    ZEND_ARG_INFO(0, alpha)
+ZEND_END_ARG_INFO();
 
 %%
 add GdkPixbuf fill_area
@@ -1942,6 +2025,15 @@ PHP_METHOD
         pixels += rowstride;
     }
 }
+
+%%
+add-arginfo GdkPixbuf save
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 2)
+    ZEND_ARG_INFO(0, filename)
+    ZEND_ARG_INFO(0, type)
+    ZEND_ARG_INFO(0, options)
+ZEND_END_ARG_INFO();
 
 %%
 override gdk_pixbuf_save
