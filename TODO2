@@ -42,6 +42,8 @@ Classes and Functions
 	method      GtkClipboard::wait_is_target_available: unknown type 'GdkAtom'
 * GtkComboBox
     Default constructor should get optional parameter, and new_with_model() be removed
+    method    GtkComboBox::set_row_separator_func: unknown type 'GtkTreeViewRowSeparatorFunc'
+    method    GtkComboBox::get_row_separator_func: unknown type 'GtkTreeViewRowSeparatorFunc'
 * GtkEntry
 	GtkEntry objects can't be var_dumped, probably something missing
 * GdkGC
