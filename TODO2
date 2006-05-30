@@ -111,6 +111,9 @@ Classes and Functions
 		(method is generated, needs overriding - it's coming out as php_lookup()!)
 * GdkPixbuf
 	pixbuf_new_from_array() has PyArrayObject as a parameter
+	add_alpha() needs to accept intergers as parameters instead of chars, and
+	 make the three last parameters optional. If they are set, the first is automatically
+	 set to true, so that the first parameter can be removed from the php method.
 * GdkPixmap
 	constructor	create_from_xpm_d()
 * GtkPlug/GtkSocket
