@@ -1,3 +1,16 @@
+2006-05-30  Christian Weiske  <cweiske@cweiske.de>
+
+    * TODO2:
+      Added scott's text
+
+    * ext/gtk+/gdk.overrides:
+      - Reflection info for a number of GdkPixbuf methods
+      - Make fill() accept both pixel specification *and*
+        rgba values
+
+    * TODO2:
+      GdkPixbuf::add_alpha note
+
 2006-05-18  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gtktreeview.overrides:
