@@ -97,6 +97,33 @@ class GtkBoxTest extends PHPUnit2_Framework_TestCase {
     }
 
     /**
+     *
+    */
+    public function testQuery_child_packing() {
+        $vb = new GtkVBox();
+        $vb->pack_start($c1 = new GtkLabel('Page 1'), true, true, 0);
+        list($expand, $fill, $padding, $pack_type) = $vb->query_child_packing($c1);
+        $this->assertTrue($expand);
+        $this->assertTrue($fill);
+        $this->assertEquals(0, $padding);
+        $this->assertEquals(Gtk::PACK_START, $pack_type);
+
+        $vb->pack_start($c2 = new GtkLabel('Page 2'), true, false, 10);
+        list($expand, $fill, $padding, $pack_type) = $vb->query_child_packing($c2);
+        $this->assertTrue($expand);
+        $this->assertFalse($fill);
+        $this->assertEquals(10, $padding);
+        $this->assertEquals(Gtk::PACK_START, $pack_type);
+
+        $vb->pack_end($c3 = new GtkLabel('Page 3'), false, false, 1000);
+        list($expand, $fill, $padding, $pack_type) = $vb->query_child_packing($c3);
+        $this->assertFalse($expand);
+        $this->assertFalse($fill);
+        $this->assertEquals(1000, $padding);
+        $this->assertEquals(Gtk::PACK_END, $pack_type);
+    }
+
+    /**
      * @todo Implement testReorder_child().
      */
     public function testReorder_child() {

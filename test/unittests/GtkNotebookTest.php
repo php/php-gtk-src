@@ -233,6 +233,38 @@ class GtkNotebookTest extends PHPUnit2_Framework_TestCase {
     }
 
     /**
+     *
+    */
+    public function testQuery_tab_label_packing() {
+        $nb = new GtkNotebook();
+        $nb->append_page($c1 = new GtkLabel('Page 1'), new GtkLabel('Tab 1'));
+        $nb->set_tab_label_packing($c1, true, true, Gtk::PACK_START);
+        list($expand, $fill, $pack_type) = $nb->query_tab_label_packing($c1);
+
+        $this->assertTrue($expand);
+        $this->assertTrue($fill);
+        $this->assertEquals(Gtk::PACK_START, $pack_type);
+
+
+        $nb->append_page($c2 = new GtkLabel('Page 2'), new GtkLabel('Tab 2'));
+        $nb->set_tab_label_packing($c2, true, false, Gtk::PACK_START);
+        list($expand, $fill, $pack_type) = $nb->query_tab_label_packing($c2);
+
+        $this->assertTrue($expand);
+        $this->assertFalse($fill);
+        $this->assertEquals(Gtk::PACK_START, $pack_type);
+
+
+        $nb->prepend_page($c3 = new GtkLabel('Page 3'), new GtkLabel('Tab 3'));
+        $nb->set_tab_label_packing($c3, false, false, Gtk::PACK_END);
+        list($expand, $fill, $pack_type) = $nb->query_tab_label_packing($c3);
+
+        $this->assertFalse($expand);
+        $this->assertFalse($fill);
+        $this->assertEquals(Gtk::PACK_END, $pack_type);
+    }
+
+    /**
      * @todo Implement testRemove_page().
      */
     public function testRemove_page() {
