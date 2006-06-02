@@ -1,3 +1,13 @@
+2006-06-01  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.overrides:
+      Adding last missing GtkBox method: query_child_packing
+      and unit tests for GtkBox::query_child_packing and
+      GtkNotebook::query_tab_label_packing
+
+    * ext/gtk+/gtk.overrides:
+      Implementing last missing GtkNotebook method: query_tab_label_packing
+
 2006-05-30  Christian Weiske  <cweiske@cweiske.de>
 
     * TODO2:
