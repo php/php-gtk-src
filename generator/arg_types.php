@@ -1042,7 +1042,7 @@ $matcher->register('gfloat', $arg);
 
 $arg = new GdkRectanglePtr_Arg();
 $matcher->register('GdkRectangle*', $arg);
-$matcher->register('GdkAllocation*', $arg);
+$matcher->register('GtkAllocation*', $arg);
 
 $matcher->register('GdkRectangle', new GdkRectangle_Arg);
 
