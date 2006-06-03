@@ -17,6 +17,7 @@ Base Functionality
 * Construction of arbitrary GObjects() via argument lists
 * Integration with pkg-config
 * Fix GdkEventType property handlers to cope with GdkAtom, GdkRegion, GdkNativeWindow and GdkDragContext
+* Go through TBD ignores
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
