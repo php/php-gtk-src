@@ -8,7 +8,6 @@ Generator
 
 Base Functionality
 ~~~~~~~~~~~~~~~~~~
-* Some classes need to be coded in C entirely, see gtk-types.c
 * Interfaces
 * Implement __gtype, __doc, and other special properties, if possible
 * Deal with clone() handler in Zend
@@ -18,6 +17,9 @@ Base Functionality
 * Integration with pkg-config
 * Fix GdkEventType property handlers to cope with GdkAtom, GdkRegion, GdkNativeWindow and GdkDragContext
 * Go through TBD ignores
+* See whether we want to speed up callbacks by doing zend_is_callable() up
+  front. This means that the callback has to be defined and accessible when you
+  register it.
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
