@@ -569,18 +569,13 @@ PHP_GTK_API int php_gtk_parse_args_hash_quiet(zval *hash, char *format, ...)
 
 PHP_GTK_API int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce)
 {
-	zend_class_entry *ce;
-	TSRMLS_FETCH();
-
 	if (Z_TYPE_P(wrapper) != IS_OBJECT)
 		return 0;
 
-	for (ce = Z_OBJCE_P(wrapper); ce != NULL; ce = ce->parent) {
-		if (ce == expected_ce)
-			return 1;
-	}
-
-	return 0;
+	if (instanceof_function(Z_OBJCE_P(wrapper), expected_ce))
+		return 1;
+	else
+		return 0;
 }
 
 PHP_GTK_API void php_gtk_invalidate(zval *wrapper)
