@@ -524,7 +524,11 @@ static PHP_METHOD(GtkTreeModelRow, children)
 }
 
 static zend_function_entry gtktreemodelrow_methods[] = {
+#if ZEND_EXTENSION_API_NO > 220051025
+    PHP_ME_MAPPING(__construct, no_direct_constructor, NULL, 0)
+#else
     PHP_ME_MAPPING(__construct, no_direct_constructor, NULL)
+#endif
     PHP_ME(GtkTreeModelRow, children, NULL, ZEND_ACC_PUBLIC)
     { NULL, NULL, NULL }
 };
@@ -764,16 +768,21 @@ static zend_object_iterator_funcs treemodelrow_iter_funcs = {
 	treemodelrow_iter_move_forward,
 	treemodelrow_iter_rewind,
 };
-
+#if ZEND_EXTENSION_API_NO > 220051025
+zend_object_iterator* phpg_modelrowiter_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC)
+#else
 zend_object_iterator* phpg_modelrowiter_get_iterator(zend_class_entry *ce, zval *object TSRMLS_DC)
+#endif
 {
     phpg_modelrowiter_t *iter_obj;
 
-    /* TODO see if Marcus can do the by_ref stuff for PHP 5
+	/* TODO: Marcus believes it will be safer to use the SPL API here from 5_2 up */
+
+#if ZEND_EXTENSION_API_NO > 220051025
 	if (by_ref) {
 		zend_error(E_ERROR, "An iterator cannot be used with foreach by reference");
 	}
-    */
+#endif
 
     iter_obj = (phpg_modelrowiter_t *) zend_object_store_get_object(object TSRMLS_CC);
 
@@ -784,16 +793,20 @@ zend_object_iterator* phpg_modelrowiter_get_iterator(zend_class_entry *ce, zval 
     return (zend_object_iterator *) &iter_obj->ziter;
 }
 
+#if ZEND_EXTENSION_API_NO > 220051025
+zend_object_iterator* phpg_treemodel_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC)
+#else
 zend_object_iterator* phpg_treemodel_get_iterator(zend_class_entry *ce, zval *object TSRMLS_DC)
+#endif
 {
     phpg_modelrowiter_t *iter_obj;
     zval *zobj = NULL;
 
-    /* TODO see if Marcus can do the by_ref stuff for PHP 5
+#if ZEND_EXTENSION_API_NO > 220051025
 	if (by_ref) {
 		zend_error(E_ERROR, "An iterator cannot be used with foreach by reference");
 	}
-    */
+#endif
 
     phpg_modelrowiter_new(&zobj, GTK_TREE_MODEL(PHPG_GOBJECT(object)), NULL TSRMLS_CC);
     iter_obj = (phpg_modelrowiter_t *) zend_object_store_get_object(zobj TSRMLS_CC);
@@ -803,7 +816,6 @@ zend_object_iterator* phpg_treemodel_get_iterator(zend_class_entry *ce, zval *ob
 
     return (zend_object_iterator *) &iter_obj->ziter;
 }
-
 
 static zval* treemodelrow_read_dimension(zval *object, zval *offset, int type TSRMLS_DC)
 {

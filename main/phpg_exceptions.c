@@ -33,7 +33,11 @@ void phpg_register_exceptions()
 	TSRMLS_FETCH();
 
 	INIT_CLASS_ENTRY(ce, "PhpGtkException", NULL);
+#if ZEND_EXTENSION_API_NO > 220051025
+	phpg_generic_exception = zend_register_internal_class_ex(&ce, zend_exception_get_default(TSRMLS_C), NULL TSRMLS_CC);
+#else
 	phpg_generic_exception = zend_register_internal_class_ex(&ce, zend_exception_get_default(), NULL TSRMLS_CC);
+#endif
 	phpg_generic_exception->ce_flags |= ZEND_ACC_FINAL;
 	phpg_generic_exception->constructor->common.fn_flags |= ZEND_ACC_PROTECTED;
 

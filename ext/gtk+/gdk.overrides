@@ -247,7 +247,11 @@ override gdk_color_alloc
 PHP_METHOD
 {
 	phpg_warn_deprecated("use GdkColormap::alloc_color()" TSRMLS_CC);
+#if ZEND_EXTENSION_API_NO > 220051025
+    PHP_MN(GdkColormap_alloc_color)(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+#else
     PHP_FN(GdkColormap_alloc_color)(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+#endif
 }
 %% }}}
 

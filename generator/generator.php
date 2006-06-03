@@ -429,7 +429,7 @@ class Generator {
                     // mark class as non-instantiable directly if we were trying
                     // to generate default constructor
                     if ($ctor_fe_name == '__construct') {
-                        $ctor_defs[] = sprintf(Templates::function_entry, $ctor_fe_name, 'no_direct_constructor');
+                        $ctor_defs[] = sprintf(Templates::function_entry, $ctor_fe_name, 'no_direct_constructor', $ctor_fe_name, 'no_direct_constructor');
                     }
                 }
                 $first = 0;
@@ -453,7 +453,7 @@ class Generator {
                 // GObject. For GObject's we let it chain up to GObject
                 // constructor
                 if ($object->def_type != 'object') {
-                    $ctor_defs[] = sprintf(Templates::function_entry, '__construct', 'no_direct_constructor');
+                    $ctor_defs[] = sprintf(Templates::function_entry, '__construct', 'no_direct_constructor', '__construct', 'no_direct_constructor');
                 }
             }
         }

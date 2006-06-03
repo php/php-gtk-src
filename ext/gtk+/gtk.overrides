@@ -2672,7 +2672,11 @@ override gtk_radio_button_group
 PHP_METHOD
 {
     phpg_warn_deprecated("use GtkRadioButton::get_group()" TSRMLS_CC);
+#if ZEND_EXTENSION_API_NO > 220051025
+    PHP_MN(GtkRadioButton_get_group)(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+#else
     PHP_FN(GtkRadioButton_get_group)(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+#endif
 }
 
 %% }}}

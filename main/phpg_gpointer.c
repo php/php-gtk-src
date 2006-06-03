@@ -28,7 +28,11 @@
 PHP_GTK_EXPORT_CE(gpointer_ce) = NULL;
 
 static function_entry gpointer_methods[] = {
+#if ZEND_EXTENSION_API_NO > 220051025
+    PHP_ME_MAPPING(__construct, no_direct_constructor, NULL, 0)
+#else
     PHP_ME_MAPPING(__construct, no_direct_constructor, NULL)
+#endif
     { NULL, NULL, NULL }
 };
 

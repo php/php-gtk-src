@@ -30,7 +30,11 @@ PHP_GTK_EXPORT_CE(gdkatom_ce) = NULL;
 static zend_object_handlers phpg_gdkatom_handlers;
 
 static function_entry gdkatom_methods[] = {
+#if ZEND_EXTENSION_API_NO > 220051025
+    PHP_ME_MAPPING(__construct, no_direct_constructor, NULL, 0)
+#else
     PHP_ME_MAPPING(__construct, no_direct_constructor, NULL)
+#endif
     { NULL, NULL, NULL }
 };
 
@@ -61,6 +65,26 @@ static int phpg_gdkatom_compare_objects(zval *zobj1, zval *zobj2 TSRMLS_DC)
 /* }}} */
 
 /* {{{ static phpg_gdkatom_cast_object() */
+#if ZEND_EXTENSION_API_NO > 220051025
+static int phpg_gdkatom_cast_object(zval *readobj, zval *writeobj, int type TSRMLS_DC)
+{
+    phpg_gdkatom_t *pobj;
+
+    if (type == IS_STRING) {
+        pobj = zend_object_store_get_object(readobj TSRMLS_CC);
+        if (!pobj->name) {
+            pobj->name = estrdup(gdk_atom_name(pobj->atom));
+        }
+        if (!pobj->name) {
+            /* TODO obtain representation from __toString() perhaps */
+        }
+        ZVAL_STRING(writeobj, pobj->name, 1);
+        return SUCCESS;
+    }
+
+    return FAILURE;
+}
+#else
 static int phpg_gdkatom_cast_object(zval *readobj, zval *writeobj, int type, int should_free TSRMLS_DC)
 {
     phpg_gdkatom_t *pobj;
@@ -81,12 +105,12 @@ static int phpg_gdkatom_cast_object(zval *readobj, zval *writeobj, int type, int
         if (should_free) {
             zval_dtor(&free_obj);
         }
-
         return SUCCESS;
     }
 
     return FAILURE;
 }
+#endif
 /* }}} */
 
 /* {{{ PHP_GTK_API phpg_create_gdkatom() */

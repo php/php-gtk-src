@@ -192,7 +192,7 @@ const non_gtk_object_init = "
 
 const method_entry = "\tPHP_ME(%s, %s, %s, %s)\n";
 const abs_method_entry = "\tZEND_ABSTRACT_ME(%s, %s, %s)\n";
-const function_entry = "\tPHP_ME_MAPPING(%s, %s, NULL)\n";
+const function_entry = "#if ZEND_EXTENSION_API_NO > 220051025\n\tPHP_ME_MAPPING(%s, %s, NULL, 0)\n#else\n\tPHP_ME_MAPPING(%s, %s, NULL)\n#endif\n";
 const alias_entry = "\tPHP_MALIAS(%s, %s, %s, %s, %s)\n";
 const functions_decl = "
 static function_entry %s_methods[] = {

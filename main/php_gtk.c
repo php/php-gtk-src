@@ -62,14 +62,13 @@ zend_module_entry gtk_module_entry = {
 	STANDARD_MODULE_PROPERTIES
 };
 
-ZEND_DECLARE_MODULE_GLOBALS(gtk)
+ZEND_DECLARE_MODULE_GLOBALS(gtk);
 
 #ifdef COMPILE_DL_PHP_GTK2
 ZEND_GET_MODULE(gtk)
 #endif
 
 static void php_gtk_startup_shared_extensions(int module_number);
-
 
 static ZEND_INI_MH(OnUpdateCodepage)
 {
