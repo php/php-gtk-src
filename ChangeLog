@@ -1,3 +1,29 @@
+2006-06-03  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk_util.c:
+      Improve php_gtk_check_class() function.
+
+    * TODO2
+      TODO2:
+      -** empty log message ***
+
+    * generator/arg_types.php:
+      Fix type registration for GtkAllocation*
+
+    * ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtkcontainer.overrides
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      generator/generator.php
+      generator/templates.php
+      main/php_gtk.c
+      main/php_gtk.h
+      main/phpg_atom.c
+      main/phpg_exceptions.c
+      main/phpg_gpointer.c:
+      Commit Steph's PHP_5_2 compat patch.
+
 2006-06-01  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gtk.overrides:
