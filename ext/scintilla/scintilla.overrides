@@ -37,3 +37,31 @@ PHP_METHOD
 
     efree(text);
 }
+
+%%
+override gtk_scintilla_set_text
+PHP_METHOD
+{
+    char *utf8;
+    gchar *text;
+
+    zend_bool free_utf8 = FALSE;
+    zend_bool free_text = FALSE;
+
+    gsize *len = 0;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &utf8, &free_utf8))
+        return;
+    
+    text = phpg_from_utf8(utf8, strlen(utf8), &len, &free_text TSRMLS_CC);
+
+    if (text && free_text) {
+        gtk_scintilla_set_text(GTK_SCINTILLA(PHPG_GOBJECT(this_ptr)), text);
+        g_free(text);
+    }
+
+    if (free_utf8)
+        g_free(text);
+}
