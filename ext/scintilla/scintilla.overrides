@@ -48,7 +48,7 @@ PHP_METHOD
     zend_bool free_utf8 = FALSE;
     zend_bool free_text = FALSE;
 
-    gsize *len = 0;
+    gsize len = 0;
 
     NOT_STATIC_METHOD();
 
@@ -62,6 +62,6 @@ PHP_METHOD
         g_free(text);
     }
 
-    if (free_utf8)
-        g_free(text);
+    if (free_utf8) 
+        g_free(utf8);
 }
