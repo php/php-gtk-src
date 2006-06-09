@@ -228,7 +228,7 @@ def define_func(buf,fp):
         ret = m.group('ret')
         ret = string.replace(ret, 'const ', 'const-')
         args=m.group('args')
-        args=arg_split_pat.split(args,', ')
+        args=arg_split_pat.split(args)
 
         for i in range(len(args)):
             args[i] = string.replace(args[i], 'const ', 'const-')
