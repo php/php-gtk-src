@@ -2094,6 +2094,35 @@ PHP_METHOD
 }
 %% }}}
 
+%% {{{ GtkIconTheme
+
+%%
+override gtk_icon_theme_list_icons
+PHP_METHOD
+{
+    GList *icons, *item;
+    gchar *context = NULL;
+    zend_bool free_context = FALSE;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|u", &context, &free_context))
+        return;
+
+    icons = gtk_icon_theme_list_icons(GTK_ICON_THEME(PHPG_GOBJECT(this_ptr)), context);
+
+    array_init(return_value);
+    for (item = icons; item; item = item->next) {
+          add_next_index_string(return_value, item->data, 1);
+          g_free(item->data);
+    }
+    g_list_free(icons);
+
+    if (free_context) g_free(context);
+}
+
+%% }}}
+
 %% {{{ GtkIconView
 
 %%
@@ -3546,6 +3575,26 @@ PHP_METHOD
 }
 
 %%
+override gtk_window_get_default_icon_list
+PHP_METHOD
+{
+    GList *icons, *item;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    icons = gtk_window_get_default_icon_list();
+
+    array_init(return_value);
+    for (item = icons; item; item = item->next) {
+        zval *php_icon = NULL;
+        phpg_gobject_new(&php_icon, G_OBJECT(item->data) TSRMLS_CC);
+        add_next_index_zval(return_value, php_icon);
+    }
+    g_list_free(icons);
+}
+
+%%
 override gtk_window_get_default_size
 PHP_METHOD
 {
@@ -3578,6 +3627,28 @@ PHP_METHOD
 }
 
 %%
+override gtk_window_get_icon_list
+PHP_METHOD
+{
+    GList *icons, *item;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    icons = gtk_window_get_icon_list(GTK_WINDOW(PHPG_GOBJECT(this_ptr)));
+
+    array_init(return_value);
+    for (item = icons; item; item = item->next) {
+        zval *php_icon = NULL;
+        phpg_gobject_new(&php_icon, G_OBJECT(item->data) TSRMLS_CC);
+        add_next_index_zval(return_value, php_icon);
+    }
+    g_list_free(icons);
+}
+
+%%
 override gtk_window_get_size
 PHP_METHOD
 {
@@ -3592,6 +3663,86 @@ PHP_METHOD
     php_gtk_build_value(&return_value, "(ii)", width, height);
 
 }
+
+%%
+add-arginfo GtkWindow set_default_icon_list
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, pixbufs)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_window_set_default_icon_list
+PHP_METHOD
+{
+    zval *php_icons, **php_item;
+    GList *icons = NULL;
+    int n, size;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_icons)) {
+        return;
+    }
+
+    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_icons)), n = 0;
+        zend_hash_get_current_data(Z_ARRVAL_P(php_icons), (void **)&php_item) == SUCCESS;
+        zend_hash_move_forward(Z_ARRVAL_P(php_icons)), n++) {
+
+        if (php_gtk_check_class(*php_item, gdkpixbuf_ce)) {
+            GdkPixbuf *pixbuf = GDK_PIXBUF(PHPG_GOBJECT(*php_item));
+            //prepend is faster than append
+            icons = g_list_prepend(icons, pixbuf);
+        } else {
+            php_error(E_WARNING, "%s::%s() requires the array elements to be objects of class GdkPixbuf", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        }
+    }
+
+    icons = g_list_reverse(icons);
+    size = g_list_length(icons);
+    gtk_window_set_default_icon_list(icons);
+
+    g_list_free(icons);
+}
+
+%%
+add-arginfo GtkWindow set_icon_list
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, pixbufs)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_window_set_icon_list
+PHP_METHOD
+{
+    zval *php_icons, **php_item;
+    GList *icons = NULL;
+    int n, size;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_icons)) {
+        return;
+    }
+
+    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_icons)), n = 0;
+        zend_hash_get_current_data(Z_ARRVAL_P(php_icons), (void **)&php_item) == SUCCESS;
+        zend_hash_move_forward(Z_ARRVAL_P(php_icons)), n++) {
+
+        if (php_gtk_check_class(*php_item, gdkpixbuf_ce)) {
+            GdkPixbuf *pixbuf = GDK_PIXBUF(PHPG_GOBJECT(*php_item));
+            icons = g_list_prepend(icons, pixbuf);
+        } else {
+            php_error(E_WARNING, "%s::%s() requires the array elements to be objects of class GdkPixbuf", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        }
+    }
+
+    icons = g_list_reverse(icons);
+    size = g_list_length(icons);
+    gtk_window_set_icon_list(GTK_WINDOW(PHPG_GOBJECT(this_ptr)), icons);
+
+    g_list_free(icons);
+}
+
 %% }}}
 
 %% include gtkcontainer.overrides

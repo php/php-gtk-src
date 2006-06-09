@@ -10,6 +10,70 @@ ignore
 	gtk_container_foreach_full
 
 %%
+override gtk_container_get_focus_chain
+PHP_METHOD
+{
+    GList *widgets, *widget;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+   if (!gtk_container_get_focus_chain(GTK_CONTAINER(PHPG_GOBJECT(this_ptr)), &widgets)) {
+        RETURN_FALSE;
+    }
+
+    array_init(return_value);
+    for (widget = widgets; widget; widget = widget->next) {
+        zval *php_widget = NULL;
+        phpg_gobject_new(&php_widget, G_OBJECT(widget->data) TSRMLS_CC);
+        add_next_index_zval(return_value, php_widget);
+    }
+    g_list_free(widgets);
+}
+
+%%
+add-arginfo GtkContainer set_focus_chain
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, widgets)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_container_set_focus_chain
+PHP_METHOD
+{
+    zval *php_widgets, **php_widget;
+    GList *widgets= NULL;
+    int n;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_widgets)) {
+        return;
+    }
+
+    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_widgets)), n = 0;
+        zend_hash_get_current_data(Z_ARRVAL_P(php_widgets), (void **)&php_widget) == SUCCESS;
+        zend_hash_move_forward(Z_ARRVAL_P(php_widgets)), n++) {
+
+        if (php_gtk_check_class(*php_widget, gtkwidget_ce)) {
+            GtkWidget *widget = GTK_WIDGET(PHPG_GOBJECT(*php_widget));
+            //prepend is faster than append
+            widgets = g_list_prepend(widgets, widget);
+        } else {
+            php_error(E_WARNING, "%s::%s() requires the focus chain elements to be objects of class GtkWidget", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        }
+    }
+
+    widgets = g_list_reverse(widgets);
+    gtk_container_set_focus_chain(GTK_CONTAINER(PHPG_GOBJECT(this_ptr)), widgets);
+
+    g_list_free(widgets);
+}
+
+%%
 override gtk_container_get_children
 PHP_METHOD
 {

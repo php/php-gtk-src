@@ -21270,9 +21270,11 @@
   (return-type "gboolean")
 )
 
-(define-function window_get_default_icon_list
+(define-method get_default_icon_list
+  (of-object "GtkWindow")
   (c-name "gtk_window_get_default_icon_list")
   (return-type "GList*")
+  (static #t)
 )
 
 (define-method get_default_size
@@ -21637,29 +21639,35 @@
   (static #t)
 )
 
-(define-function window_set_default_icon_from_file
+(define-method set_default_icon_from_file
+  (of-object "GtkWindow")
   (c-name "gtk_window_set_default_icon_from_file")
   (return-type "none")
   (parameters
     '("const-gchar*" "filename")
     '("GError**" "error")
   )
+  (static #t)
 )
 
-(define-function window_set_default_icon_list
+(define-method set_default_icon_list
+  (of-object "GtkWindow")
   (c-name "gtk_window_set_default_icon_list")
   (return-type "none")
   (parameters
     '("GList*" "list")
   )
+  (static #t)
 )
 
-(define-function window_set_default_icon_name
+(define-method set_default_icon_name
+  (of-object "GtkWindow")
   (c-name "gtk_window_set_default_icon_name")
   (return-type "none")
   (parameters
     '("const-gchar*" "name")
   )
+  (static #t)
 )
 
 (define-method set_default_size
