@@ -17632,6 +17632,21 @@
   (return-type "GType")
 )
 
+(define-function gtk_tree_model_filter_new
+  (is-constructor-of "GtkTreeModelFilter")
+  (c-name "gtk_tree_model_filter_new")
+  (caller-owns-return #t)
+  (return-type "GtkTreeModel*")
+  (parameters
+    '("GtkTreeModel*" "child-model")
+    '("GtkTreePath*" "virtual-root")
+  )
+  (properties
+    '("child-model")
+    '("virtual-root")
+  )
+)
+
 (define-method clear_cache
   (of-object "GtkTreeModelFilter")
   (c-name "gtk_tree_model_filter_clear_cache")
