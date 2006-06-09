@@ -3,7 +3,8 @@
 headers
 #include "php_gtk_api.h"
 #include "ext/standard/file.h"
-static void phpg_about_dialog_activate_link_func_marshal (GtkAboutDialog *about, const gchar *link, gpointer data); 
+static void phpg_about_dialog_activate_link_func_marshal (GtkAboutDialog *about, const gchar *link, gpointer data);
+static gboolean phpg_tree_view_row_separator_func_marshal (GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
 
 #undef GDK_DISPLAY
 #define GDK_DISPLAY(object) (GDK_DISPLAY_OBJECT(object))
@@ -1464,6 +1465,42 @@ PHP_METHOD
     if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(PHPG_GOBJECT(this_ptr)), &iter)) {
         phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
     }
+}
+
+%%
+add-arginfo GtkComboBox set_row_separator_func
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_combo_box_set_row_separator_func
+PHP_METHOD
+{
+    zval *php_callback, *extra;
+    phpg_cb_data_t *cb_data;
+    GtkTreeViewRowSeparatorFunc callback;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 1, &extra, "V", &php_callback))
+        return;
+
+    if (php_callback) {
+        if (Z_TYPE_P(php_callback) == IS_NULL) {
+            cb_data  = NULL;
+            callback = NULL;
+        } else {
+            zval_add_ref(&php_callback);
+            cb_data  = phpg_cb_data_new(php_callback, extra TSRMLS_CC);
+            callback = (GtkTreeViewRowSeparatorFunc)phpg_tree_view_row_separator_func_marshal;
+        }
+    }
+
+    gtk_combo_box_set_row_separator_func(GTK_COMBO_BOX(PHPG_GOBJECT(this_ptr)),
+                                                           callback,
+                                                           cb_data, phpg_cb_data_destroy);
 }
 
 %% }}}

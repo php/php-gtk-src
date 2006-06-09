@@ -11,6 +11,7 @@ static zval* phpg_gtktreemodel_read_dimension_handler(zval *object, zval *offset
 static int phpg_gtktreemodel_has_dimension_handler(zval *object, zval *offset, int check_empty TSRMLS_DC);
 static void phpg_gtktreemodel_write_dimension_handler(zval *object, zval *offset, zval *value TSRMLS_DC);
 static int phpg_gtktreemodel_count_elements_handler(zval *object, long *count TSRMLS_DC);
+static gboolean phpg_tree_view_row_separator_func_marshal (GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
 
 %%
 post-registration GtkListStore
@@ -1430,7 +1431,89 @@ PHP_METHOD
 }
 
 %%
-add-arginfo GtkTreeView insert_column_with_data_func
+add-arginfo GtkTreeView set_row_separator_func
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_set_row_separator_func
+
+static gboolean phpg_tree_view_row_separator_func_marshal(GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
+{
+    phpg_cb_data_t *cbd = (phpg_cb_data_t *) data;
+    zval *retval = NULL;
+    zval ***args = NULL;
+    int n_args = 0;
+    char *callback_name;
+    zval *php_model = NULL, *php_iter = NULL;
+    gboolean is_separator = FALSE;
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+        php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
+        efree(callback_name);
+        return 0;
+    }
+
+    phpg_gobject_new(&php_model,       (GObject*)model       TSRMLS_CC);
+    phpg_gboxed_new(&php_iter, GTK_TYPE_TREE_ITER, iter, TRUE, TRUE TSRMLS_CC);
+
+    args = php_gtk_hash_as_array_offset(cbd->user_args, 2, &n_args);
+    args[0] = &php_model;
+    args[1] = &php_iter;
+
+    call_user_function_ex(EG(function_table), NULL, cbd->callback, &retval, n_args, args, 0, NULL TSRMLS_CC);
+
+    zval_ptr_dtor(&php_model);
+    zval_ptr_dtor(&php_iter);
+
+    if (retval) {
+        is_separator = zend_is_true(retval);
+        zval_ptr_dtor(&retval);
+    } else {
+        is_separator = FALSE;
+    }
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
+    efree(callback_name);
+    efree(args);
+
+    return is_separator;
+}
+
+PHP_METHOD
+{
+    zval *php_callback, *extra;
+    phpg_cb_data_t *cb_data;
+    GtkTreeViewRowSeparatorFunc callback;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 1, &extra, "V", &php_callback))
+        return;
+
+    if (php_callback) {
+        if (Z_TYPE_P(php_callback) == IS_NULL) {
+            cb_data  = NULL;
+            callback = NULL;
+        } else {
+            zval_add_ref(&php_callback);
+            cb_data  = phpg_cb_data_new(php_callback, extra TSRMLS_CC);
+            callback = (GtkTreeViewRowSeparatorFunc)phpg_tree_view_row_separator_func_marshal;
+        }
+    }
+
+    gtk_tree_view_set_row_separator_func(GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)),
+                                                           callback,
+                                                           cb_data, phpg_cb_data_destroy);
+}
+
+%% }}}
+
+%%add-arginfo GtkTreeView insert_column_with_data_func
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, position)
