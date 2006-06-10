@@ -223,9 +223,9 @@
 
 ;; Enumerations and flags ...
 
-(define-enum ColorSpace
+(define-enum Colorspace
   (in-module "Gdk")
-  (c-name "GdkColorSpace")
+  (c-name "GdkColorspace")
   (gtype-id "GDK_TYPE_COLORSPACE")
   (values
     '("rgb" "GDK_COLORSPACE_RGB")
