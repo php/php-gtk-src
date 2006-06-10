@@ -1527,6 +1527,22 @@ PHP_METHOD
 %% {{{ GtkTreeSortable
 
 %%
+override gtk_tree_sortable_get_sort_column_id
+PHP_METHOD
+{
+    gint sort_column_id;
+    GtkSortType order;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(PHPG_GOBJECT(this_ptr)), &sort_column_id, &order);
+
+    php_gtk_build_value(&return_value, "(ii)", sort_column_id, (int)order);
+}
+
+%%
 add-arginfo GtkTreeSortable set_default_sort_func
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
@@ -1535,7 +1551,6 @@ ZEND_END_ARG_INFO();
 
 %%
 override gtk_tree_sortable_set_default_sort_func
-
 PHP_METHOD
 {
     zval *callback, *extra;
