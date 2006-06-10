@@ -55,6 +55,7 @@ ARCHIVE=$MY_OLDPWD/$PKG-$VER.tar
 
 # temporary directory used to check out files from CVS
 DIR=$PKG-$VER
+DIRBUILD=$PKG-$VER-build
 DIRPATH=$MY_OLDPWD/$DIR
 
 if test -d "$DIRPATH"; then
@@ -79,6 +80,21 @@ $ECHO_N "makedist: exporting tag '$CVSTAG' from '$PHPGTKMOD'...$ECHO_C"
 cvs -z 9 -d $PHPROOT -Q export -d $DIR -r $CVSTAG $PHPGTKMOD || exit 4
 echo ""
 
+cp -r $DIR $DIRBUILD
+cd $DIRBUILD || exit 3
+
+./buildconf
+./configure
+make gen-sources
+for x in `find ext -name gen\*.\[ch\]`; do
+	extpath=`dirname $x`
+	echo "Copying $x to dist dir"
+	cp $x $DIRPATH/$extpath
+done
+
+cd $MY_OLDPWD
+#rm -rf $DIRBUILD
+
 cd $DIR || exit 3
 
 # remove CVS stuff...
@@ -91,7 +107,7 @@ gzip -9 $ARCHIVE || exit 5
 echo ""
 
 $ECHO_N "makedist: cleaning up...$ECHO_C"
-rm -rf $DIRPATH || exit 6
+#rm -rf $DIRPATH || exit 6
 echo ""
 
 exit 0
