@@ -489,9 +489,11 @@
   (return-type "GList*")
 )
 
-(define-function display_manager_get
+(define-method get
+  (of-object "GdkDisplayManager")
   (c-name "gdk_display_manager_get")
   (return-type "GdkDisplayManager*")
+  (static #t)
 )
 
 (define-method get_default_display
@@ -530,9 +532,11 @@
   )
 )
 
-(define-function display_open_default_libgtk_only
+(define-method open_default_libgtk_only
+  (of-object "GdkDisplay")
   (c-name "gdk_display_open_default_libgtk_only")
   (return-type "GdkDisplay*")
+  (static #t)
 )
 
 (define-method peek_event
@@ -1814,9 +1818,11 @@
   )
 )
 
-(define-function keymap_get_default
+(define-method get_default
+  (of-object "GdkKeymap")
   (c-name "gdk_keymap_get_default")
   (return-type "GdkKeymap*")
+  (static #t)
 )
 
 (define-method get_direction
@@ -1848,9 +1854,11 @@
   )
 )
 
-(define-function keymap_get_for_display
+(define-method get_for_display
+  (of-object "GdkKeymap")
   (c-name "gdk_keymap_get_for_display")
   (return-type "GdkKeymap*")
+  (static #t)
   (parameters
     '("GdkDisplay*" "display")
   )
@@ -2891,9 +2899,11 @@
   )
 )
 
-(define-function screen_get_default
+(define-method get_default
+  (of-object "GdkScreen")
   (c-name "gdk_screen_get_default")
   (return-type "GdkScreen*")
+  (static #t)
 )
 
 (define-method get_default_colormap
@@ -3336,43 +3346,55 @@
   )
 )
 
-(define-function visual_get_best
+(define-method get_best
+  (of-object "GdkVisual")
   (c-name "gdk_visual_get_best")
   (return-type "GdkVisual*")
+  (static #t)
 )
 
-(define-function visual_get_best_depth
+(define-method get_best_depth
+  (of-object "GdkVisual")
   (c-name "gdk_visual_get_best_depth")
   (return-type "gint")
+  (static #t)
 )
 
-(define-function visual_get_best_type
+(define-method get_best_type
+  (of-object "GdkVisual")
   (c-name "gdk_visual_get_best_type")
   (return-type "GdkVisualType")
+  (static #t)
 )
 
-(define-function visual_get_best_with_both
+(define-method get_best_with_both
+  (of-object "GdkVisual")
   (is-constructor-of "GdkVisual")
   (c-name "gdk_visual_get_best_with_both")
   (caller-owns-return #t)
   (return-type "GdkVisual*")
+  (static #t)
   (parameters
     '("gint" "depth")
     '("GdkVisualType" "visual_type")
   )
 )
 
-(define-function visual_get_best_with_depth
+(define-method get_best_with_depth
+  (of-object "GdkVisual")
   (c-name "gdk_visual_get_best_with_depth")
   (return-type "GdkVisual*")
+  (static #t)
   (parameters
     '("gint" "depth")
   )
 )
 
-(define-function visual_get_best_with_type
+(define-method get_best_with_type
+  (of-object "GdkVisual")
   (c-name "gdk_visual_get_best_with_type")
   (return-type "GdkVisual*")
+  (static #t)
   (parameters
     '("GdkVisualType" "visual_type")
   )
@@ -3384,9 +3406,11 @@
   (return-type "GdkScreen*")
 )
 
-(define-function visual_get_system
+(define-method get_system
+  (of-object "GdkVisual")
   (c-name "gdk_visual_get_system")
   (return-type "GdkVisual*")
+  (static #t)
 )
 
 (define-method add_filter
@@ -3535,19 +3559,23 @@
   )
 )
 
-(define-function window_foreign_new
+(define-method foreign_new
+  (of-object "GdkWindow")
   (c-name "gdk_window_foreign_new")
   (caller-owns-return #t)
   (return-type "GdkWindow*")
+  (static #t)
   (parameters
     '("GdkNativeWindow" "anid")
   )
 )
 
-(define-function window_foreign_new_for_display
+(define-method foreign_new_for_display
+  (of-object "GdkWindow")
   (c-name "gdk_window_foreign_new_for_display")
   (caller-owns-return #t)
   (return-type "GdkWindow*")
+  (static #t)
   (parameters
     '("GdkDisplay*" "display")
     '("GdkNativeWindow" "anid")
@@ -3777,17 +3805,21 @@
   (return-type "gboolean")
 )
 
-(define-function window_lookup
+(define-method lookup
+  (of-object "GdkWindow")
   (c-name "gdk_window_lookup")
   (return-type "GdkWindow*")
+  (static #t)
   (parameters
     '("GdkNativeWindow" "anid")
   )
 )
 
-(define-function window_lookup_for_display
+(define-method lookup_for_display
+  (of-object "GdkWindow")
   (c-name "gdk_window_lookup_for_display")
   (return-type "GdkWindow*")
+  (static #t)
   (parameters
     '("GdkDisplay*" "display")
     '("GdkNativeWindow" "anid")
@@ -3857,9 +3889,11 @@
   (return-type "GList*")
 )
 
-(define-function window_process_all_updates
+(define-method process_all_updates
+  (of-object "GdkWindow")
   (c-name "gdk_window_process_all_updates")
   (return-type "none")
+  (static #t)
 )
 
 (define-method process_updates
@@ -3967,9 +4001,11 @@
   )
 )
 
-(define-function gdk_window_set_debug_updates
+(define-method set_debug_updates
+  (of-object "GdkWindow")
   (c-name "gdk_window_set_debug_updates")
   (return-type "none")
+  (static #t)
   (parameters
     '("gboolean" "setting")
   )
