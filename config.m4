@@ -65,6 +65,7 @@ dnl reading config stubs
 esyscmd(./build2/config-stubs ext)
 
 PHP_SUBST(PHP_GTK_EXTENSIONS)
+PHP_SUBST(PHP_GTK_GEN_SOURCES)
 
 PHP_NEW_EXTENSION(php_gtk2, main/php_gtk.c main/phpg_support.c main/phpg_gtype.c \
                             main/phpg_exceptions.c main/php_gtk_util.c main/phpg_gvalue.c \

@@ -498,6 +498,9 @@ dnl ---------------------------------------------- Shared module
 	AC_DEFINE_UNQUOTED([PHP_GTK_COMPILE_DL_]translit($1,a-z-+,A-Z__), 1, Whether to build $1 as dynamic module)
   fi
 
+  for f in $4; do
+    PHP_GTK_GEN_SOURCES="$PHP_GTK_GEN_SOURCES ext/$1/$f"
+  done
   PHP_ADD_MAKEFILE_FRAGMENT($abs_srcdir/ext/$1/Makefile.frag, $abs_srcdir/ext/$1, ext/$1)
   PHP_ADD_BUILD_DIR($ext_builddir/ext/$1)
 ])
