@@ -270,9 +270,11 @@
   )
 )
 
-(define-function device_get_core_pointer
+(define-method get_core_pointer
+  (of-object "GdkDevice")
   (c-name "gdk_device_get_core_pointer")
   (return-type "GdkDevice*")
+  (static #t)
 )
 
 (define-method get_history
@@ -383,9 +385,11 @@
   (return-type "GdkDevice*")
 )
 
-(define-function display_get_default
+(define-method get_default
+  (of-object "GdkDisplay")
   (c-name "gdk_display_get_default")
   (return-type "GdkDisplay*")
+  (static #t)
 )
 
 (define-method get_default_cursor_size
@@ -3020,14 +3024,18 @@
   (return-type "gint")
 )
 
-(define-function screen_height
+(define-method height
+  (of-object "GdkScreen")
   (c-name "gdk_screen_height")
   (return-type "gint")
+  (static #t)
 )
 
-(define-function screen_height_mm
+(define-method height_mm
+  (of-object "GdkScreen")
   (c-name "gdk_screen_height_mm")
   (return-type "gint")
+  (static #t)
 )
 
 (define-method list_visuals
@@ -3052,14 +3060,18 @@
   )
 )
 
-(define-function screen_width
+(define-method width
+  (of-object "GdkScreen")
   (c-name "gdk_screen_width")
   (return-type "gint")
+  (static #t)
 )
 
-(define-function screen_width_mm
+(define-method width_mm
+  (of-object "GdkScreen")
   (c-name "gdk_screen_width_mm")
   (return-type "gint")
+  (static #t)
 )
 
 (define-method selection_convert
@@ -4219,12 +4231,6 @@
   (of-object "GdkWindow")
   (c-name "gdk_window_withdraw")
   (return-type "none")
-)
-
-(define-method alternative_dialog_button_order
-  (of-object "GdkScreen")
-  (c-name "gtk_alternative_dialog_button_order")
-  (return-type "gboolean")
 )
 
 (define-method finish
