@@ -858,7 +858,6 @@ static void phpg_about_dialog_activate_link_func_marshal(GtkAboutDialog *about, 
     int n_args = 0;
     char *callback_name;
     zval *php_about = NULL, *php_link = NULL;
-    gboolean show = TRUE;
     gchar *cp_link;
     gsize cp_len;
     zend_bool free_result;
