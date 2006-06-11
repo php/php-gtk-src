@@ -335,6 +335,57 @@ PHP_METHOD
 add-arginfo GdkDevice get_state
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, values)
+    ZEND_ARG_INFO(0, axis)
+ZEND_END_ARG_INFO();
+
+%%
+override gdk_device_get_axis
+PHP_METHOD
+{
+    zval *php_axes, *php_axis_to_use = NULL;
+    GdkDevice *device;
+    GdkAxisUse axis_to_use;
+    gdouble *axes, value;
+    int arr_count, i;
+    zval **php_item;
+    gboolean ret;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "aV", &php_axes, &php_axis_to_use))
+        return;
+
+    if (php_axis_to_use && phpg_gvalue_get_enum(GDK_TYPE_AXIS_USE, php_axis_to_use, (gint *)&axis_to_use) == FAILURE) {
+        return;
+    }
+
+    device = GDK_DEVICE(PHPG_GOBJECT(this_ptr));
+
+    arr_count = zend_hash_num_elements(Z_ARRVAL_P(php_axes));
+    axes = g_new(gdouble, arr_count);
+
+    for (i=0, zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_axes));
+         zend_hash_get_current_data(Z_ARRVAL_P(php_axes), (void **)&php_item) == SUCCESS;
+         zend_hash_move_forward(Z_ARRVAL_P(php_axes))) {
+
+        axes[i++] = Z_DVAL_PP(php_item);
+    }
+
+    ret = gdk_device_get_axis(device, axes, axis_to_use, &value);
+    g_free(axes);
+
+    if (ret) {
+        RETURN_DOUBLE(value);
+    } else {
+        RETURN_NULL();
+    }
+}
+
+%%
+add-arginfo GdkDevice get_state
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_OBJ_INFO(0, window, GdkWindow, 0)
 ZEND_END_ARG_INFO();
 
