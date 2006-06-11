@@ -345,9 +345,11 @@
   )
 )
 
-(define-function devices_list
+(define-method list_devices
+  (of-object "GdkDevice")
   (c-name "gdk_devices_list")
   (return-type "GList*")
+  (static #t)
 )
 
 (define-method add_client_message_filter
@@ -1959,9 +1961,11 @@
   )
 )
 
-(define-function list_visuals
+(define-method list_visuals
+  (of-object "GdkVisual")
   (c-name "gdk_list_visuals")
   (return-type "GList*")
+  (static #t)
 )
 
 (define-method add_alpha
