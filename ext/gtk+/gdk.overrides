@@ -423,6 +423,55 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GdkDevice get_history
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, window, GdkWindow, 0)
+    ZEND_ARG_INFO(0, start)
+    ZEND_ARG_INFO(0, stop)
+ZEND_END_ARG_INFO();
+
+%%
+override gdk_device_get_history
+PHP_METHOD
+{
+    zval *php_window;
+    guint start, stop;
+    GdkDevice *device;
+    GdkTimeCoord **events;
+    gint n_events, j;
+    guint i;
+    zval *php_axes = NULL, *value, *php_event;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Nii", &php_window, gdkwindow_ce, &start, &stop))
+        return;
+
+    device = GDK_DEVICE(PHPG_GOBJECT(this_ptr));
+
+    gdk_device_get_history(device, GDK_WINDOW(PHPG_GOBJECT(php_window)),
+                           start, stop, &events, &n_events);
+
+    array_init(return_value);
+    for (i = 0; i < n_events; i++) {
+        MAKE_STD_ZVAL(php_axes);
+        array_init(php_axes);
+        for (j = 0; j < device->num_axes; j++) {
+            MAKE_STD_ZVAL(value);
+            ZVAL_DOUBLE(value, events[i]->axes[j]);
+            add_next_index_zval(php_axes, value);
+        }
+
+        MAKE_STD_ZVAL(php_event);
+        php_gtk_build_value(&php_event, "(iN)", events[i]->time, php_axes);
+
+        add_next_index_zval(return_value, php_event);
+    }
+    gdk_device_free_history(events, n_events);
+}
+
+%%
 add-arginfo GdkDevice get_state
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
