@@ -755,6 +755,13 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkAboutDialog set_artists
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, artists)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_about_dialog_set_artists
 PHP_METHOD
 {
@@ -785,6 +792,13 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkAboutDialog set_authors
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, authors)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_about_dialog_set_authors
 PHP_METHOD
 {
@@ -813,6 +827,13 @@ PHP_METHOD
     gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(PHPG_GOBJECT(this_ptr)), (const gchar **)authors);
     efree(authors);
 }
+
+%%
+add-arginfo GtkAboutDialog set_documenters
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, documenters)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_about_dialog_set_documenters
