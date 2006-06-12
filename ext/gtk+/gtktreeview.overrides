@@ -1204,47 +1204,6 @@ PHP_METHOD
 }
 
 %%
-add-arginfo GtkTreeModel filter_new
-static
-ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
-    ZEND_ARG_OBJ_INFO(0, model, GtkTreeModel, 1)
-    ZEND_ARG_INFO(0, root)
-ZEND_END_ARG_INFO();
-
-%%
-override gtk_tree_model_filter_new
-PHP_METHOD
-{
-    GObject *wrapped_obj;
-    GtkTreePath *path = NULL;
-    zval *php_model = NULL, *php_path = NULL;
-
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V|s", &php_model, gtktreemodel_ce, &php_path))
-        return;
-
-    if (php_path && phpg_tree_path_from_zval(php_path, &path TSRMLS_CC) == FAILURE) {
-        php_error(E_WARNING, "%s::%s() expects path argument to be a valid tree path specification", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-        return;
-    }
-
-
-    wrapped_obj = g_object_new(phpg_gtype_from_zval(this_ptr),
-                               "child-model", GTK_TREE_MODEL(PHPG_GOBJECT(php_model)),
-                               "virtual-root", path,
-                               NULL);
-
-    if (path) {
-        gtk_tree_path_free(path);
-    }
-
-    if (!wrapped_obj) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkTreeModelFilter);
-    }
-
-    phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
-}
-
-%%
 add-arginfo GtkTreeModel foreach
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
@@ -1383,6 +1342,47 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkTreeModelFilter
+
+%%
+add-arginfo GtkTreeModelFilter __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+    ZEND_ARG_OBJ_INFO(0, model, GtkTreeModel, 1)
+    ZEND_ARG_INFO(0, root)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_model_filter_new
+PHP_METHOD
+{
+    GObject *wrapped_obj;
+    GtkTreePath *path = NULL;
+    zval *php_model = NULL, *php_path = NULL;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V|s", &php_model, gtktreemodel_ce, &php_path))
+        return;
+
+    if (php_path && phpg_tree_path_from_zval(php_path, &path TSRMLS_CC) == FAILURE) {
+        php_error(E_WARNING, "%s::%s() expects path argument to be a valid tree path specification", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+
+    wrapped_obj = g_object_new(phpg_gtype_from_zval(this_ptr),
+                               "child-model", GTK_TREE_MODEL(PHPG_GOBJECT(php_model)),
+                               "virtual-root", path,
+                               NULL);
+
+    if (path) {
+        gtk_tree_path_free(path);
+    }
+
+    if (!wrapped_obj) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkTreeModelFilter);
+    }
+
+    phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+}
 
 %%
 add-arginfo GtkTreeModelFilter set_visible_func
