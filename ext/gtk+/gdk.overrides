@@ -332,6 +332,46 @@ PHP_METHOD
 %% {{{ GdkDevice
 
 %%
+override-prop GdkDevice axes
+PHPG_PROP_READER
+{
+    GdkDevice *device;
+    zval *value;
+    guint i;
+
+    device = GDK_DEVICE(((phpg_gobject_t *)object)->obj);
+
+    array_init(return_value);
+    for (i = 0; i < device->num_axes; i++) {
+        MAKE_STD_ZVAL(value);
+        php_gtk_build_value(&value, "(idd)", device->axes[i].use, device->axes[i].min, device->axes[i].max);
+        add_next_index_zval(return_value, value);
+    }
+
+    return SUCCESS;
+}
+
+%%
+override-prop GdkDevice keys
+PHPG_PROP_READER
+{
+    GdkDevice *device;
+    zval *value;
+    guint i;
+
+    device = GDK_DEVICE(((phpg_gobject_t *)object)->obj);
+
+    array_init(return_value);
+    for (i = 0; i < device->num_keys; i++) {
+        MAKE_STD_ZVAL(value);
+        php_gtk_build_value(&value, "(ii)", device->keys[i].keyval, device->keys[i].modifiers);
+        add_next_index_zval(return_value, value);
+    }
+
+    return SUCCESS;
+}
+
+%%
 add-arginfo GdkDevice get_state
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
