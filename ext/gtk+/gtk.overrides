@@ -3382,6 +3382,39 @@ PHP_METHOD
 %% {{{ GtkWidget
 
 %%
+override gtk_widget_class_path
+PHP_METHOD
+{
+    guint length;
+    gchar *path;
+    gchar *path_reversed;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_widget_class_path(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), &length, &path,
+                          &path_reversed);
+    RETURN_STRING(path, 1);
+    g_free(path);
+    g_free(path_reversed);
+}
+
+%%
+override gtk_widget_get_allocation
+PHP_METHOD
+{
+    GtkAllocation allocation;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    allocation = GTK_WIDGET(PHPG_GOBJECT(this_ptr))->allocation;
+    phpg_gboxed_new(&return_value, GDK_TYPE_RECTANGLE, &allocation, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
 override gtk_widget_get_child_requisition
 PHP_METHOD
 {
@@ -3455,6 +3488,25 @@ PHP_METHOD
     } else {
         RETURN_FALSE;
     }
+}
+
+%%
+override gtk_widget_path
+PHP_METHOD
+{
+    guint length;
+    gchar *path;
+    gchar *path_reversed;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_widget_path(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), &length, &path,
+                          &path_reversed);
+    RETURN_STRING(path, 1);
+    g_free(path);
+    g_free(path_reversed);
 }
 
 %%
