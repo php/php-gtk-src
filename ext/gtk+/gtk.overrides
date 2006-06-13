@@ -3806,6 +3806,97 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkWindow set_geometry_hints
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, widget, GtkWidget, 0)
+    ZEND_ARG_INFO(0, min_width)
+    ZEND_ARG_INFO(0, min_height)
+    ZEND_ARG_INFO(0, max_width)
+    ZEND_ARG_INFO(0, max_height)
+    ZEND_ARG_INFO(0, base_width)
+    ZEND_ARG_INFO(0, base_height)
+    ZEND_ARG_INFO(0, width_inc)
+    ZEND_ARG_INFO(0, height_inc)
+    ZEND_ARG_INFO(0, min_aspect)
+    ZEND_ARG_INFO(0, max_aspect)
+    ZEND_ARG_INFO(0, win_gravity)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_window_set_geometry_hints
+PHP_METHOD
+{
+    gint min_width;
+    gint min_height;
+    gint max_width;
+    gint max_height;
+    gint base_width;
+    gint base_height;
+    gint width_inc;
+    gint height_inc;
+    gdouble min_aspect;
+    gdouble max_aspect;
+    GdkGravity win_gravity;
+
+    zval *php_gravity = NULL;
+    zval *php_widget;
+    GdkGeometry geometry = { 0 };
+    GdkWindowHints geom_mask = 0;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OiiiiiiiiddV",
+                    &php_widget, gtkwidget_ce,
+                    &min_width, &min_height, &max_width, &max_height,
+                    &base_width, &base_height, &width_inc, &height_inc,
+                    &min_aspect, &max_aspect, &php_gravity)) {
+        return;
+    }
+
+    if (php_gravity && phpg_gvalue_get_enum(GDK_TYPE_GRAVITY, php_gravity, (gint *)&win_gravity) == FAILURE) {
+        return;
+    }
+
+    if (min_width >= 0 || min_height >= 0) {
+        geometry.min_width = MAX(min_width, 0);
+        geometry.min_height = MAX(min_height, 0);
+        geom_mask |= GDK_HINT_MIN_SIZE;
+    }
+    if (max_width >= 0 || max_height >= 0) {
+        geometry.max_width = MAX(max_width, 0);
+        geometry.max_height = MAX(max_height, 0);
+        geom_mask |= GDK_HINT_MAX_SIZE;
+    }
+    if (base_width >= 0 || base_height >= 0) {
+        geometry.base_width = MAX(base_width, 0);
+        geometry.base_height = MAX(base_height, 0);
+        geom_mask |= GDK_HINT_BASE_SIZE;
+    }
+    if (width_inc >= 0 || height_inc >= 0) {
+        geometry.width_inc = MAX(width_inc, 0);
+        geometry.height_inc = MAX(height_inc, 0);
+        geom_mask |= GDK_HINT_RESIZE_INC;
+    }
+    if (min_aspect >= 0.0 || max_aspect >= 0.0) {
+        if (min_aspect <= 0.0 || max_aspect <= 0.0) {
+            php_error(E_WARNING, "%s::%s() aspect ratios must be positive",
+                    get_active_class_name(NULL TSRMLS_CC),
+                    get_active_function_name(TSRMLS_C));
+            return;
+        }
+        geometry.min_aspect = min_aspect;
+        geometry.max_aspect = max_aspect;
+        geom_mask |= GDK_HINT_ASPECT;
+    }
+    gtk_window_set_geometry_hints(
+            GTK_WINDOW(PHPG_GOBJECT(this_ptr)),
+            GTK_WIDGET(PHPG_GOBJECT(php_widget)),
+            &geometry, geom_mask);
+
+}
+
+%%
 add-arginfo GtkWindow set_icon_list
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
