@@ -277,6 +277,31 @@ PHP_METHOD
 
 %% }}}
 
+%% {{{ GtkTextChildAnchor
+
+%%
+override gtk_text_child_anchor_get_widgets
+PHP_METHOD
+{
+    GList *widgets;
+    gint i, len;
+    zval *php_item = NULL;
+
+    widgets = gtk_text_child_anchor_get_widgets(GTK_TEXT_CHILD_ANCHOR(PHPG_GOBJECT(this_ptr)));
+    len = g_list_length(widgets);
+
+    array_init(return_value);
+    for (i = 0; i < len; i++) {
+        MAKE_STD_ZVAL(php_item);
+        phpg_gobject_new(&php_item, (GObject *)g_list_nth_data(widgets, i) TSRMLS_CC);
+        add_next_index_zval(return_value, php_item);
+    }
+
+    g_list_free(widgets);
+}
+
+%% }}}
+
 %% {{{ GtkTextView
 
 %%
