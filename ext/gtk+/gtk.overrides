@@ -3521,6 +3521,27 @@ PHP_METHOD
 }
 
 %%
+override gtk_widget_list_mnemonic_labels
+PHP_METHOD
+{
+    GList *labels;
+    gint i, len;
+    zval *php_item = NULL;
+
+    labels = gtk_widget_list_mnemonic_labels(GTK_WIDGET(PHPG_GOBJECT(this_ptr)));
+    len = g_list_length(labels);
+
+    array_init(return_value);
+    for (i = 0; i < len; i++) {
+        MAKE_STD_ZVAL(php_item);
+        phpg_gobject_new(&php_item, (GObject *)g_list_nth_data(labels, i) TSRMLS_CC);
+        add_next_index_zval(return_value, php_item);
+    }
+
+    g_list_free(labels);
+}
+
+%%
 override gtk_widget_path
 PHP_METHOD
 {
@@ -3750,12 +3771,13 @@ override gtk_window_list_toplevels
 PHP_METHOD
 {
     GList *list, *tmp;
+    zval *php_item = NULL;
 
     list = gtk_window_list_toplevels();
 
     array_init(return_value);
     for (tmp = list; tmp != NULL; tmp = tmp->next) {
-        zval *php_item = NULL;
+        MAKE_STD_ZVAL(php_item);
         phpg_gobject_new(&php_item, G_OBJECT(tmp->data) TSRMLS_CC);
         if (php_item == NULL) {
             g_list_free(list);
