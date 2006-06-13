@@ -3746,6 +3746,27 @@ PHP_METHOD
 }
 
 %%
+override gtk_window_list_toplevels
+PHP_METHOD
+{
+    GList *list, *tmp;
+
+    list = gtk_window_list_toplevels();
+
+    array_init(return_value);
+    for (tmp = list; tmp != NULL; tmp = tmp->next) {
+        zval *php_item = NULL;
+        phpg_gobject_new(&php_item, G_OBJECT(tmp->data) TSRMLS_CC);
+        if (php_item == NULL) {
+            g_list_free(list);
+            RETURN_NULL();
+        }
+        add_next_index_zval(return_value, php_item);
+    }
+    g_list_free(list);
+}
+
+%%
 add-arginfo GtkWindow set_default_icon_list
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
