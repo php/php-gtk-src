@@ -542,7 +542,6 @@ PHP_METHOD
     }
 }
 
-
 %%
 override gdk_display_list_devices
 PHP_METHOD
@@ -562,6 +561,26 @@ PHP_METHOD
         phpg_gobject_new(&php_item, G_OBJECT(item->data) TSRMLS_CC);
         add_next_index_zval(return_value, php_item);
     }
+}
+
+%% }}}
+
+%% {{{ GdkDisplayManager
+
+%%
+override gdk_display_manager_list_displays
+PHP_METHOD
+{
+    GSList *list, *tmp;
+
+    list = gdk_display_manager_list_displays(GDK_DISPLAY_MANAGER(PHPG_GOBJECT(this_ptr)));
+    array_init(return_value);
+    for (tmp = list; tmp != NULL; tmp = tmp->next) {
+        zval *php_item = NULL;
+        phpg_gobject_new(&php_item, G_OBJECT(tmp->data) TSRMLS_CC);
+        add_next_index_zval(return_value, php_item);
+    }
+    g_slist_free(list);
 }
 
 %% }}}
