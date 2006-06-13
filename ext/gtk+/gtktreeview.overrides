@@ -38,7 +38,6 @@ ignore
     gtk_list_store_newv
     gtk_list_store_set_valist
     gtk_tree_model_get_valist
-    gtk_tree_model_filter_set_visible_func
     gtk_tree_row_reference_new_proxy
     gtk_tree_row_reference_inserted
     gtk_tree_row_reference_deleted
