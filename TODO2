@@ -23,9 +23,9 @@ Base Functionality
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
+* GdkWindow
+    lookup() is implemented but comes out as php_lookup() - same as in GtkTextTagTable
 * GtkAboutDialog
-	method      GtkAboutDialog::set_email_hook: unknown type 'GtkAboutDialogActivateLinkFunc'
-	method      GtkAboutDialog::set_url_hook: unknown type 'GtkAboutDialogActivateLinkFunc'
 	GtkAboutDialog->set_logo_icon_name seems to find no icons at all
 		(method is generated, need to test this)
 * GtkCalendar
@@ -45,7 +45,6 @@ Classes and Functions
 	method      GtkClipboard::wait_is_target_available: unknown type 'GdkAtom'
 * GtkComboBox
     Default constructor should get optional parameter, and new_with_model() be removed
-    method    GtkComboBox::set_row_separator_func: unknown type 'GtkTreeViewRowSeparatorFunc'
     method    GtkComboBox::get_row_separator_func: unknown type 'GtkTreeViewRowSeparatorFunc'
 * GtkEntry
 	GtkEntry objects can't be var_dumped, probably something missing
@@ -56,11 +55,7 @@ Classes and Functions
 * GtkIconTheme
 	method      GtkIconTheme::get_icon_sizes: unknown type 'gint*'
 	method      GtkIconTheme::get_search_path: unknown type 'gchar**[]'
-	method      GtkIconTheme::list_icons: unknown type 'GList*'
 	method      GtkIconTheme::set_search_path: unknown type 'const-gchar*[]'
-* GtkIconView
-	method      GtkIconView::get_selected_items: unknown type 'GList*'
-	method      GtkIconView::selected_foreach: unknown type 'GtkIconViewForeachFunc'
 * GtkLabel
 	Would it be good to call GtkLabel::set_ellipsize(PANGO::ELLIPSIZE_END) as part
 	of an override for (left-justifying) GtkLabel::set_width_chars() (optional param)?
@@ -109,7 +104,6 @@ Classes and Functions
 	method      GtkTreeView::map_expanded_rows: unknown type 'GtkTreeViewMappingFunc'
 	method      GtkTreeView::set_column_drag_function: unknown type 'GtkTreeViewColumnDropFunc'
 	method      GtkTreeView::set_destroy_count_func: unknown type 'GtkTreeDestroyCountFunc'
-	method      GtkTreeView::set_row_separator_func: unknown type 'GtkTreeViewRowSeparatorFunc'
 	method      GtkTreeView::set_search_equal_func: unknown type 'GtkTreeViewSearchEqualFunc'
 	method      GtkTreeView::tree_to_widget_coords: unknown type 'gint*'
 	method      GtkTreeView::widget_to_tree_coords: unknown type 'gint*'
