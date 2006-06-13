@@ -2697,6 +2697,33 @@ PHP_METHOD
 
 %% }}}
 
+%% {{{ GtkPixmap
+
+%%
+override gtk_pixmap_get
+PHP_METHOD
+{
+    GdkPixmap *pixmap;
+    GdkBitmap *mask;
+    zval *php_pixmap = NULL, *php_mask = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    phpg_warn_deprecated("use GtkImage class instead" TSRMLS_CC);
+
+    gtk_pixmap_get(GTK_PIXMAP(PHPG_GOBJECT(this_ptr)), &pixmap, &mask);
+
+    phpg_gobject_new(&php_pixmap, (GObject *)pixmap TSRMLS_CC);
+    phpg_gobject_new(&php_mask  , (GObject *)mask TSRMLS_CC);
+
+    php_gtk_build_value(&return_value, "(NN)", php_pixmap, php_mask);
+}
+
+%% }}}
+
 %% {{{ GtkProgressBar
 
 %%
@@ -3528,6 +3555,10 @@ PHP_METHOD
     gint i, len;
     zval *php_item = NULL;
 
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
     labels = gtk_widget_list_mnemonic_labels(GTK_WIDGET(PHPG_GOBJECT(this_ptr)));
     len = g_list_length(labels);
 
@@ -3772,6 +3803,9 @@ PHP_METHOD
 {
     GList *list, *tmp;
     zval *php_item = NULL;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
 
     list = gtk_window_list_toplevels();
 
