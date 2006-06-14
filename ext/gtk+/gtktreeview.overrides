@@ -14,6 +14,7 @@ static int phpg_gtktreemodel_count_elements_handler(zval *object, long *count TS
 static gint phpg_tree_iter_compare_func_marshal(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer data);
 static gboolean phpg_tree_model_filter_visible_func_marshal(GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
 static gboolean phpg_tree_view_row_separator_func_marshal (GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
+static gboolean phpg_tree_view_column_drop_func_marshal (GtkTreeView *tree_view, GtkTreeViewColumn *column, GtkTreeViewColumn *prev_column, GtkTreeViewColumn *next_column, gpointer data);
 
 %%
 post-registration GtkListStore
@@ -1672,6 +1673,92 @@ PHP_METHOD
         add_next_index_zval(return_value, php_column);
     }
     g_list_free(columns);
+}
+
+%%
+add-arginfo GtkTreeView set_column_drag_function
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_set_column_drag_function
+static gboolean phpg_tree_view_column_drop_func_marshal (GtkTreeView *tree_view, GtkTreeViewColumn *column, GtkTreeViewColumn *prev_column, GtkTreeViewColumn *next_column, gpointer data)
+{
+    phpg_cb_data_t *cbd = (phpg_cb_data_t *) data;
+    zval *retval = NULL;
+    zval ***args = NULL;
+    int n_args = 0;
+    char *callback_name;
+    zval *php_view = NULL, *php_column = NULL, *php_prev_column = NULL, *php_next_column = NULL;
+    gboolean may_drop = FALSE;
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+        php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
+        efree(callback_name);
+        return 0;
+    }
+
+    phpg_gobject_new(&php_view,        (GObject*)tree_view       TSRMLS_CC);
+    phpg_gobject_new(&php_column,      (GObject*)column          TSRMLS_CC);
+    phpg_gobject_new(&php_prev_column, (GObject*)prev_column     TSRMLS_CC);
+    phpg_gobject_new(&php_next_column, (GObject*)next_column     TSRMLS_CC);
+
+    args = php_gtk_hash_as_array_offset(cbd->user_args, 4, &n_args);
+    args[0] = &php_view;
+    args[1] = &php_column;
+    args[2] = &php_prev_column;
+    args[3] = &php_next_column;
+
+    call_user_function_ex(EG(function_table), NULL, cbd->callback, &retval, n_args, args, 0, NULL TSRMLS_CC);
+
+    zval_ptr_dtor(&php_view);
+    zval_ptr_dtor(&php_column);
+    zval_ptr_dtor(&php_prev_column);
+    zval_ptr_dtor(&php_next_column);
+
+    if (retval) {
+        may_drop = zend_is_true(retval);
+        zval_ptr_dtor(&retval);
+    } else {
+        may_drop = FALSE;
+    }
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
+    efree(callback_name);
+    efree(args);
+
+    return may_drop;
+}
+
+PHP_METHOD
+{
+    zval *php_callback, *extra;
+    phpg_cb_data_t *cb_data;
+    GtkTreeViewColumnDropFunc callback;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 1, &extra, "V", &php_callback))
+        return;
+
+    if (php_callback) {
+        if (Z_TYPE_P(php_callback) == IS_NULL) {
+            cb_data  = NULL;
+            callback = NULL;
+        } else {
+            zval_add_ref(&php_callback);
+            cb_data  = phpg_cb_data_new(php_callback, extra TSRMLS_CC);
+            callback = (GtkTreeViewColumnDropFunc)phpg_tree_view_column_drop_func_marshal;
+        }
+    }
+
+    gtk_tree_view_set_column_drag_function(GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)),
+                                                           callback,
+                                                           cb_data, phpg_cb_data_destroy);
 }
 
 %%
