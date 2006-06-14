@@ -296,9 +296,11 @@
   )
 )
 
-(define-function accel_group_from_accel_closure
+(define-method from_accel_closure
+  (of-object "GtkAccelGroup")
   (c-name "gtk_accel_group_from_accel_closure")
   (return-type "GtkAccelGroup*")
+  (static #t)
   (parameters
     '("GClosure*" "closure")
   )
@@ -3363,9 +3365,11 @@
   (return-type "GtkWidget*")
 )
 
-(define-function color_selection_palette_from_string
+(define-method palette_from_string
+  (of-object "GtkColorSelection")
   (c-name "gtk_color_selection_palette_from_string")
   (return-type "gboolean")
+  (static #t)
   (parameters
     '("const-gchar*" "str")
     '("GdkColor**" "colors")
@@ -3373,27 +3377,33 @@
   )
 )
 
-(define-function color_selection_palette_to_string
+(define-method palette_to_string
+  (of-object "GtkColorSelection")
   (c-name "gtk_color_selection_palette_to_string")
   (caller-owns-return #t)
   (return-type "gchar*")
+  (static #t)
   (parameters
     '("const-GdkColor*" "colors")
     '("gint" "n_colors")
   )
 )
 
-(define-function color_selection_set_change_palette_hook
+(define-method set_change_palette_hook
+  (of-object "GtkColorSelection")
   (c-name "gtk_color_selection_set_change_palette_hook")
   (return-type "GtkColorSelectionChangePaletteFunc")
+  (static #t)
   (parameters
     '("GtkColorSelectionChangePaletteFunc" "func")
   )
 )
 
-(define-function color_selection_set_change_palette_with_screen_hook
+(define-method set_change_palette_with_screen_hook
+  (of-object "GtkColorSelection")
   (c-name "gtk_color_selection_set_change_palette_with_screen_hook")
   (return-type "GtkColorSelectionChangePaletteWithScreenFunc")
+  (static #t)
   (parameters
     '("GtkColorSelectionChangePaletteWithScreenFunc" "func")
   )
@@ -3922,18 +3932,22 @@
   (deprecated "use GtkContainer::get_children()")
 )
 
-(define-function container_class_find_child_property
+(define-method class_find_child_property
+  (of-object "GtkContainer")
   (c-name "gtk_container_class_find_child_property")
   (return-type "GParamSpec*")
+  (static #t)
   (parameters
     '("GObjectClass*" "cclass")
     '("const-gchar*" "property_name")
   )
 )
 
-(define-function container_class_install_child_property
+(define-method class_install_child_property
+  (of-object "GtkContainer")
   (c-name "gtk_container_class_install_child_property")
   (return-type "none")
+  (static #t)
   (parameters
     '("GtkContainerClass*" "cclass")
     '("guint" "property_id")
@@ -3941,9 +3955,11 @@
   )
 )
 
-(define-function container_class_list_child_properties
+(define-method class_list_child_properties
+  (of-object "GtkContainer")
   (c-name "gtk_container_class_list_child_properties")
   (return-type "GParamSpec**")
+  (static #t)
   (parameters
     '("GObjectClass*" "cclass")
     '("guint*" "n_properties")
@@ -9613,9 +9629,11 @@
   (return-type "gpointer")
 )
 
-(define-function item_factory_popup_data_from_widget
+(define-method popup_data_from_widget
+  (of-object "GtkItemFactory")
   (c-name "gtk_item_factory_popup_data_from_widget")
   (return-type "gpointer")
+  (static #t)
   (parameters
     '("GtkWidget*" "widget")
   )
@@ -13813,17 +13831,21 @@
   (return-type "GType")
 )
 
-(define-function settings_install_property
+(define-method install_property
+  (of-object "GtkSettings")
   (c-name "gtk_settings_install_property")
   (return-type "none")
+  (static #t)
   (parameters
     '("GParamSpec*" "pspec")
   )
 )
 
-(define-function settings_install_property_parser
+(define-function install_property_parser
+  (of-object "GtkSettings")
   (c-name "gtk_settings_install_property_parser")
   (return-type "none")
+  (static #t)
   (parameters
     '("GParamSpec*" "pspec")
     '("GtkRcPropertyParser" "parser")
@@ -20199,27 +20221,33 @@
   )
 )
 
-(define-function widget_class_find_style_property
+(define-method class_find_style_property
+  (of-object "GtkWidget")
   (c-name "gtk_widget_class_find_style_property")
   (return-type "GParamSpec*")
+  (static #t)
   (parameters
     '("GtkWidgetClass*" "klass")
     '("const-gchar*" "property_name")
   )
 )
 
-(define-function widget_class_install_style_property
+(define-method class_install_style_property
+  (of-object "GtkWidget")
   (c-name "gtk_widget_class_install_style_property")
   (return-type "none")
+  (static #t)
   (parameters
     '("GtkWidgetClass*" "klass")
     '("GParamSpec*" "pspec")
   )
 )
 
-(define-function widget_class_install_style_property_parser
+(define-method class_install_style_property_parser
+  (of-object "GtkWidget")
   (c-name "gtk_widget_class_install_style_property_parser")
   (return-type "none")
+  (static #t)
   (parameters
     '("GtkWidgetClass*" "klass")
     '("GParamSpec*" "pspec")
@@ -20227,9 +20255,11 @@
   )
 )
 
-(define-function widget_class_list_style_properties
+(define-method class_list_style_properties
+  (of-object "GtkWidget")
   (c-name "gtk_widget_class_list_style_properties")
   (return-type "GParamSpec**")
+  (static #t)
   (parameters
     '("guint*" "n_properties")
   )
