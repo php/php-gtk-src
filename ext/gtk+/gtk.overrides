@@ -1351,8 +1351,9 @@ PHP_METHOD
 override gtk_color_button_get_color
 PHP_METHOD
 {
-
     GdkColor color = { 0 , 0 , 0 , 0 };
+
+    NOT_STATIC_METHOD();
 
     if (ZEND_NUM_ARGS() > 0) {
         php_error(E_WARNING, "%s::%s() requires 0 arguments, %d given",
@@ -2947,7 +2948,7 @@ PHP_METHOD
     zval *item;
 
     NOT_STATIC_METHOD();
-    
+
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
         return;
 
@@ -3162,7 +3163,7 @@ PHP_METHOD
     zval *item;
 
     NOT_STATIC_METHOD();
-    
+
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
         return;
 
@@ -3878,6 +3879,8 @@ PHP_METHOD
 {
     GList *list, *tmp;
     zval *php_item = NULL;
+
+    NOT_STATIC_METHOD();
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
         return;

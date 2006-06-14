@@ -220,6 +220,7 @@ PHP_METHOD
 {
     GSList *tags, *tag;
 
+    NOT_STATIC_METHOD();
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
         return;
 
@@ -240,6 +241,7 @@ PHP_METHOD
 {
     GSList *marks, *mark;
 
+    NOT_STATIC_METHOD();
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
         return;
 
@@ -261,6 +263,7 @@ PHP_METHOD
     GSList *tags, *tag;
     zend_bool toggled_on = 1;
 
+    NOT_STATIC_METHOD();
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "b", &toggled_on))
         return;
 
@@ -286,6 +289,10 @@ PHP_METHOD
     GList *widgets;
     gint i, len;
     zval *php_item = NULL;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
 
     widgets = gtk_text_child_anchor_get_widgets(GTK_TEXT_CHILD_ANCHOR(PHPG_GOBJECT(this_ptr)));
     len = g_list_length(widgets);
