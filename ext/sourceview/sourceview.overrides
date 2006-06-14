@@ -25,7 +25,7 @@ ignore-glob
 override gtk_source_languages_manager_get_available_languages
 PHP_METHOD
 {
-    const GSList *list, *tmp;
+    const GSList *list;
     zval *item;
 
     NOT_STATIC_METHOD();
@@ -34,12 +34,52 @@ PHP_METHOD
         return;
     }
 
-    list = gtk_source_languages_manager_get_available_languages(GTK_SOURCE_LANGUAGES_MANAGER(PHPG_GOBJECT(this_ptr)));
+    array_init(return_value);
+    for (list = gtk_source_languages_manager_get_available_languages(GTK_SOURCE_LANGUAGES_MANAGER(PHPG_GOBJECT(this_ptr))); list; list = list->next) {
+        MAKE_STD_ZVAL(item);
+        phpg_gobject_new(&item, G_OBJECT(list->data) TSRMLS_CC);
+        add_next_index_zval(return_value, item);
+    }
+}
+
+%%
+override gtk_source_language_get_mime_types
+PHP_METHOD
+{
+    GSList *list; 
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
 
     array_init(return_value);
-    for (tmp = list; tmp; tmp = tmp->next) {
+    for (list = gtk_source_language_get_mime_types(GTK_SOURCE_LANGUAGE(PHPG_GOBJECT(this_ptr))); list; list = list->next) {
+        add_next_index_string(return_value, (char *)list->data, 1);
+        g_free(list->data);
+    }
+
+    g_slist_free(list);
+}
+
+%%
+override gtk_source_language_get_tags
+PHP_METHOD
+{
+    GSList *tags;
+    zval *item;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    array_init(return_value);
+    for (tags = gtk_source_language_get_tags(GTK_SOURCE_LANGUAGE(PHPG_GOBJECT(this_ptr))); tags; tags = tags->next) {
         MAKE_STD_ZVAL(item);
-        phpg_gobject_new(&item, G_OBJECT(tmp->data) TSRMLS_CC);
+        phpg_gobject_new(&item, G_OBJECT(tags->data) TSRMLS_CC);
         add_next_index_zval(return_value, item);
     }
 }
