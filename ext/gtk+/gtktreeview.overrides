@@ -15,6 +15,7 @@ static gint phpg_tree_iter_compare_func_marshal(GtkTreeModel *model, GtkTreeIter
 static gboolean phpg_tree_model_filter_visible_func_marshal(GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
 static gboolean phpg_tree_view_row_separator_func_marshal (GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
 static gboolean phpg_tree_view_column_drop_func_marshal (GtkTreeView *tree_view, GtkTreeViewColumn *column, GtkTreeViewColumn *prev_column, GtkTreeViewColumn *next_column, gpointer data);
+static void phpg_tree_selection_foreach_func_marshal (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
 
 %%
 post-registration GtkListStore
@@ -1521,6 +1522,76 @@ PHP_METHOD
     } else {
         php_gtk_build_value(&return_value, "(Nn)", php_model);
     }
+}
+
+%%
+add-arginfo GtkTreeSelection selected_foreach
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_selection_selected_foreach
+static void phpg_tree_selection_foreach_func_marshal (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
+{
+    phpg_cb_data_t *cbd = (phpg_cb_data_t *) data;
+    zval *retval = NULL;
+    zval ***args = NULL;
+    int n_args = 0;
+    char *callback_name;
+    zval *php_model = NULL, *php_path = NULL, *php_iter = NULL;
+
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+        php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
+        efree(callback_name);
+        return;
+    }
+
+    phpg_gobject_new(&php_model,       (GObject*)model       TSRMLS_CC);
+    phpg_tree_path_to_zval(path, &php_path TSRMLS_CC);
+    phpg_gboxed_new(&php_iter, GTK_TYPE_TREE_ITER, iter, TRUE, TRUE TSRMLS_CC);
+
+    args = php_gtk_hash_as_array_offset(cbd->user_args, 3, &n_args);
+    args[0] = &php_model;
+    args[1] = &php_path;
+    args[2] = &php_iter;
+
+    call_user_function_ex(EG(function_table), NULL, cbd->callback, &retval, n_args, args, 0, NULL TSRMLS_CC);
+
+    zval_ptr_dtor(&php_model);
+    zval_ptr_dtor(&php_path);
+    zval_ptr_dtor(&php_iter);
+
+    if (retval) {
+        zval_ptr_dtor(&retval);
+    }
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
+    efree(callback_name);
+    efree(args);
+}
+
+PHP_METHOD
+{
+    zval *php_callback, *extra;
+    phpg_cb_data_t *cb_data;
+    GtkTreeSelectionForeachFunc callback;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 1, &extra, "V", &php_callback))
+        return;
+
+    zval_add_ref(&php_callback);
+    cb_data  = phpg_cb_data_new(php_callback, extra TSRMLS_CC);
+    callback = (GtkTreeSelectionForeachFunc)phpg_tree_selection_foreach_func_marshal;
+
+    gtk_tree_selection_selected_foreach(GTK_TREE_SELECTION(PHPG_GOBJECT(this_ptr)), callback, cb_data);
+    phpg_cb_data_destroy(cb_data);
 }
 
 %% }}}
