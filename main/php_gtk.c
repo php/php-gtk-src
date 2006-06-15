@@ -211,6 +211,15 @@ PHP_RINIT_FUNCTION(gtk)
 /* Remove if there's nothing to do at request end */
 PHP_RSHUTDOWN_FUNCTION(gtk)
 {
+	GMainContext *context;
+
+	/*
+	 * Looks like we have to free up the default main context ourselves, in case
+	 * gtk::main() was never called by a script.
+	 */
+	context = g_main_context_default();
+	g_main_context_unref(context);
+
 	return SUCCESS;
 }
 
