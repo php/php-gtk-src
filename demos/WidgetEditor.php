@@ -126,14 +126,14 @@ class WidgetEditor extends GtkWindow
     {
         //call the function on the base widget
         $btn = new GtkButton($function);
-        $btn->connect_object('clicked', array($basewidget, $function));
+        $btn->connect_simple('clicked', array($basewidget, $function));
 
         if ($function2 === null) {
             return $btn;
         }
 
         $btn2 = new GtkButton($function2);
-        $btn2->connect_object('clicked', array($basewidget, $function2));
+        $btn2->connect_simple('clicked', array($basewidget, $function2));
 
         $hbox = new GtkHBox();
         $hbox->pack_start($btn);
