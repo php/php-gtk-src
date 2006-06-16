@@ -1976,7 +1976,6 @@ PHP_METHOD
     }
 }
 
-
 %%
 add-arginfo GtkFileChooser get_filenames
 static
@@ -2036,6 +2035,119 @@ PHP_METHOD
     array_init(return_value);
     for (files = gtk_file_chooser_get_uris(GTK_FILE_CHOOSER(PHPG_GOBJECT(this_ptr))); files; files = files->next) {
         add_next_index_string(return_value, (char *) files->data, 1);
+        g_free(files->data);
+    }
+    g_slist_free(files);
+}
+
+%%
+override gtk_file_chooser_list_filters
+PHP_METHOD
+{
+    GSList *filters, *current;
+    zval *item;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    filters = gtk_file_chooser_list_filters(GTK_FILE_CHOOSER(PHPG_GOBJECT(this_ptr)));
+
+    array_init(return_value);
+    for (current = filters; current; current = current->next) {
+        MAKE_STD_ZVAL(item);
+        phpg_gobject_new(&item, G_OBJECT(current->data) TSRMLS_CC);
+        add_next_index_zval(return_value, item);
+    }
+    g_slist_free(filters);
+}
+
+%%
+add-arginfo GtkFileChooser list_shortcut_folders
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, convert)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_file_chooser_list_shortcut_folders
+PHP_METHOD
+{
+    GSList *files;
+    gchar *cp = NULL;
+    gchar *fn = NULL;
+    gsize cp_len = 0;
+    zend_bool free_cp = FALSE;
+    zend_bool convert = 1;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert)) 
+        return;
+
+    array_init(return_value);
+    for (files = gtk_file_chooser_list_shortcut_folders(GTK_FILE_CHOOSER(PHPG_GOBJECT(this_ptr))); files; files = files->next) {
+        if (convert) {
+            if (files->data) {
+                fn = g_filename_to_utf8(files->data, strlen(files->data), NULL, NULL, NULL);
+                cp = phpg_from_utf8(fn, strlen(fn), &cp_len, &free_cp TSRMLS_CC);
+                if (cp) {
+                    add_next_index_string(return_value, (char *)cp, 1);
+                } else {
+                    php_error(E_WARNING, "%s::%s(): could not convert return value from UTF-8", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+                }
+                if (free_cp)
+                    g_free(cp);
+            }
+        } else {
+            add_next_index_string(return_value, (char *)files->data, 1);
+        }
+        g_free(files->data);
+    }
+    g_slist_free(files);
+}
+
+%%
+add-arginfo GtkFileChooser list_shortcut_folder_uris
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, convert)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_file_chooser_list_shortcut_folder_uris
+PHP_METHOD
+{
+    GSList *files;
+    gchar *cp = NULL;
+    gchar *fn = NULL;
+    gsize cp_len = 0;
+    zend_bool free_cp = FALSE;
+    zend_bool convert = 1;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert)) 
+        return;
+
+    array_init(return_value);
+    for (files = gtk_file_chooser_list_shortcut_folder_uris(GTK_FILE_CHOOSER(PHPG_GOBJECT(this_ptr))); files; files = files->next) {
+        if (convert) {
+            if (files->data) {
+                fn = g_filename_to_utf8(files->data, strlen(files->data), NULL, NULL, NULL);
+                cp = phpg_from_utf8(fn, strlen(fn), &cp_len, &free_cp TSRMLS_CC);
+                if (cp) {
+                    add_next_index_string(return_value, (char *)cp, 1);
+                } else {
+                    php_error(E_WARNING, "%s::%s(): could not convert return value from UTF-8", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+                }
+                if (free_cp)
+                    g_free(cp);
+            }
+        } else {
+            add_next_index_string(return_value, (char *)files->data, 1);
+        }
         g_free(files->data);
     }
     g_slist_free(files);
