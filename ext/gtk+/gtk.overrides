@@ -152,6 +152,7 @@ ignore
     gtk_progress_bar_update
     gtk_propagate_event
     gtk_quit_remove_by_data
+    gtk_radio_menu_item_group
     gtk_range_default_htrough_click
     gtk_range_default_vtrough_click
     gtk_range_trough_click
