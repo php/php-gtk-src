@@ -28,8 +28,6 @@ Classes and Functions
 * GtkAboutDialog
 	GtkAboutDialog->set_logo_icon_name seems to find no icons at all
 		(method is generated, need to test this)
-* GtkCalendar
-	method      GtkCalendar::get_date: unknown type 'guint*'
 * GtkCellView
     get_size_of_row NTRVNRP
 * GtkClipboard
@@ -94,19 +92,13 @@ Classes and Functions
 * GtkTreeView
 	method      GtkTreeView::enable_model_drag_dest: unknown type 'const-GtkTargetEntry*'
 	method      GtkTreeView::enable_model_drag_source: unknown type 'const-GtkTargetEntry*'
-	method      GtkTreeView::get_columns: unknown type 'GList*'
-	method      GtkTreeView::get_cursor: unknown type 'GtkTreePath**'
 	method      GtkTreeView::get_dest_row_at_pos: unknown type 'GtkTreePath**'
 	method      GtkTreeView::get_drag_dest_row: unknown type 'GtkTreePath**'
 	method      GtkTreeView::get_row_separator_func: unknown type 'GtkTreeViewRowSeparatorFunc'
 	method      GtkTreeView::get_search_equal_func: unknown type 'GtkTreeViewSearchEqualFunc'
 	method      GtkTreeView::insert_column_with_attributes: varargs methods not supported
 	method      GtkTreeView::map_expanded_rows: unknown type 'GtkTreeViewMappingFunc'
-	method      GtkTreeView::set_column_drag_function: unknown type 'GtkTreeViewColumnDropFunc'
 	method      GtkTreeView::set_destroy_count_func: unknown type 'GtkTreeDestroyCountFunc'
-	method      GtkTreeView::set_search_equal_func: unknown type 'GtkTreeViewSearchEqualFunc'
-	method      GtkTreeView::tree_to_widget_coords: unknown type 'gint*'
-	method      GtkTreeView::widget_to_tree_coords: unknown type 'gint*'
 * GtkTextBuffer
 	method      GtkTextBuffer::create_tag: varargs methods not supported
 	method      GtkTextBuffer::insert_with_tags: varargs methods not supported
@@ -115,7 +107,6 @@ Classes and Functions
 	insert and select_bound marks
 		(method is generated, need to test this)
 * GtkTextTagTable
-	method      GtkTextTagTable::foreach: unknown type 'GtkTextTagTableForeach'
 	GtkTextTagTable->lookup() is not implemented
 		(method is generated, needs overriding - it's coming out as php_lookup()!)
 * GdkPixbuf
