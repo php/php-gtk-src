@@ -5774,6 +5774,12 @@
   (return-type "gboolean")
 )
 
+(define-method get_text_column
+  (of-object "GtkEntryCompletion")
+  (c-name "gtk_entry_completion_get_text_column")
+  (return-type "gint")
+)
+
 (define-function gtk_entry_completion_get_type
   (c-name "gtk_entry_completion_get_type")
   (return-type "GType")
