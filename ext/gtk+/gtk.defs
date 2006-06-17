@@ -11067,7 +11067,9 @@
 )
 
 (define-function gtk_menu_tool_button_new_from_stock
+  (is-constructor-of "GtkMenuToolButton")
   (c-name "gtk_menu_tool_button_new_from_stock")
+  (caller-owns-return #t)
   (return-type "GtkToolItem*")
   (parameters
     '("const-gchar*" "stock_id")
