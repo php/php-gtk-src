@@ -85,7 +85,7 @@ if (PHP_GTK_DEBUG == "yes") {
 	ADD_FLAG("LDFLAGS", "/debug");
 
 } else {
-	DEFINE("CFLAGS", "/nologo /MT /W3 /GX /O2 /I . /I ..\\ /I ..\\.. /I main /I ..\\main /I ext /I ..\\ext /I ..\\php5\\main /I ..\\php5\\Zend /I ..\\php5\\TSRM /D ZEND_WIN32 /D ZTS=1 /D ZEND_DEBUG=0 /D PHP_WIN32 /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
+	DEFINE("CFLAGS", "/nologo /MD /W3 /GX /O2 /I . /I ..\\ /I ..\\.. /I main /I ..\\main /I ext /I ..\\ext /I ..\\php5\\main /I ..\\php5\\Zend /I ..\\php5\\TSRM /D ZEND_WIN32 /D ZTS=1 /D ZEND_DEBUG=0 /D PHP_WIN32 /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
 }
 
 if (VCVERS < 14) {
