@@ -23,9 +23,6 @@ Base Functionality
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
-* GtkAboutDialog
-	GtkAboutDialog->set_logo_icon_name seems to find no icons at all
-		(method is generated, need to test this)
 * GtkCellView
     get_size_of_row NTRVNRP
 * GtkClipboard
@@ -37,7 +34,6 @@ Classes and Functions
 	method      GtkClipboard::set_with_owner: unknown type 'const-GtkTargetEntry*'
 	method      GtkClipboard::wait_for_targets: unknown type 'GdkAtom**'
 * GtkComboBox
-    Default constructor should get optional parameter, and new_with_model() be removed
     method    GtkComboBox::get_row_separator_func: unknown type 'GtkTreeViewRowSeparatorFunc'
 * GdkGC
 	implement property access (read/write)
@@ -63,8 +59,6 @@ Classes and Functions
     method      GtkSelectionData::get_uris: unknown type 'gchar**'
     method      GtkSelectionData::set_uris: unknown type 'gchar**'
     method      GtkSelectionData::tree_get_row_drag_data: unknown type 'GtkTreeModel**'
-* GtkTextBuffer
-    get_iter_at_child_anchor NTRVNRP
 * GtkTreeModel
 	method      GtkTreeModel::rows_reordered: unknown type 'gint*'
 	maybe implement some SPL interfaces?
@@ -96,7 +90,7 @@ Classes and Functions
 	insert and select_bound marks
 		(method is generated, need to test this)
 * GdkPixbuf
-	add_alpha() needs to accept intergers as parameters instead of chars, and
+	add_alpha() needs to accept integers as parameters instead of chars, and
 	 make the three last parameters optional. If they are set, the first is automatically
 	 set to true, so that the first parameter can be removed from the php method.
 * GdkPixmap
