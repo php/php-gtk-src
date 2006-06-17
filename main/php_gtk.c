@@ -45,24 +45,28 @@ const gchar *phpg_class_id = "phpg_class";
 GQuark phpg_class_key = 0;
 GType G_TYPE_PHP_VALUE = 0;
 
+ZEND_DECLARE_MODULE_GLOBALS(gtk);
+
 zend_module_entry gtk_module_entry = {
-#if ZEND_MODULE_API_NO >= 20010901
 	STANDARD_MODULE_HEADER,
-#endif
 	"php-gtk",
 	NULL,
 	PHP_MINIT(gtk),
 	PHP_MSHUTDOWN(gtk),
-	PHP_RINIT(gtk),		/* Replace with NULL if there's nothing to do at request start */
-	PHP_RSHUTDOWN(gtk),	/* Replace with NULL if there's nothing to do at request end */
+	PHP_RINIT(gtk),
+	PHP_RSHUTDOWN(gtk),
 	PHP_MINFO(gtk),
-#if ZEND_MODULE_API_NO >= 20010901
 	PHP_GTK_VERSION,
-#endif
+#if ZEND_MODULE_API_NO < 20060613
 	STANDARD_MODULE_PROPERTIES
+#else
+	PHP_MODULE_GLOBALS(gtk),
+	NULL,
+	NULL,
+	NULL,
+	STANDARD_MODULE_PROPERTIES_EX
+#endif
 };
-
-ZEND_DECLARE_MODULE_GLOBALS(gtk);
 
 #ifdef COMPILE_DL_PHP_GTK2
 ZEND_GET_MODULE(gtk)
@@ -134,21 +138,13 @@ static void php_object_release(gpointer boxed)
 
 PHP_MINIT_FUNCTION(gtk)
 {
-#ifdef ZTS
+#if defined(ZTS) && ZEND_MODULE_API_NO < 20060613
 	ZEND_INIT_MODULE_GLOBALS(gtk, NULL, NULL);
 #endif
 
 	REGISTER_INI_ENTRIES();
 
 	php_gtk_class_hash = g_hash_table_new(g_str_hash, g_str_equal);
-	/*
-	zend_hash_init_ex(&php_gtk_prop_getters, 20, NULL, NULL, 1, 0);
-	zend_hash_init_ex(&php_gtk_prop_setters, 20, NULL, NULL, 1, 0);
-	zend_hash_init_ex(&php_gtk_rsrc_hash, 50, NULL, NULL, 1, 0);
-	zend_hash_init_ex(&php_gtk_type_hash, 50, NULL, NULL, 1, 0);
-	zend_hash_init_ex(&php_gtk_callback_hash, 50, NULL, NULL, 1, 0);
-	zend_hash_init_ex(&php_gtk_prop_desc, 50, NULL, NULL, 1, 0);
-	*/
 	zend_hash_init_ex(&phpg_prop_info, 50, NULL, (dtor_func_t) php_gtk_prop_info_destroy, 1, 0);
 	zend_llist_init(&php_gtk_ext_registry, sizeof(php_gtk_ext_entry), (llist_dtor_func_t)php_gtk_ext_destructor, 1);
 
@@ -159,20 +155,16 @@ PHP_MSHUTDOWN_FUNCTION(gtk)
 {
 	UNREGISTER_INI_ENTRIES();
 
-	/*
-	zend_hash_destroy(&php_gtk_prop_getters);
-	zend_hash_destroy(&php_gtk_prop_setters);
-	zend_hash_destroy(&php_gtk_rsrc_hash);
-	zend_hash_destroy(&php_gtk_type_hash);
-	*/
-
 	zend_llist_destroy(&php_gtk_ext_registry);
 	zend_hash_destroy(&phpg_prop_info);
+
+#if defined(ZTS) && ZEND_MODULE_API_NO < 20060613
+	ts_free_id(gtk_globals_id);
+#endif
 
 	return SUCCESS;
 }
 
-/* Remove if there's nothing to do at request start */
 PHP_RINIT_FUNCTION(gtk)
 {
 	zend_unset_timeout(TSRMLS_C);
@@ -208,7 +200,6 @@ PHP_RINIT_FUNCTION(gtk)
 	return SUCCESS;
 }
 
-/* Remove if there's nothing to do at request end */
 PHP_RSHUTDOWN_FUNCTION(gtk)
 {
 	GMainContext *context;
