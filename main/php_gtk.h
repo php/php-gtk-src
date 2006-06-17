@@ -31,6 +31,11 @@
 #include "config.h"
 #endif
 
+/* workaround for expat-related declaration in PHP compat file */
+#ifdef lookup
+#undef lookup
+#endif
+
 #if HAVE_PHP_GTK
 
 #include "zend_objects_API.h"
