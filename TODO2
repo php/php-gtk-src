@@ -23,29 +23,22 @@ Base Functionality
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
-* GdkWindow
-    lookup() is implemented but comes out as php_lookup() - same as in GtkTextTagTable
 * GtkAboutDialog
 	GtkAboutDialog->set_logo_icon_name seems to find no icons at all
 		(method is generated, need to test this)
 * GtkCellView
     get_size_of_row NTRVNRP
 * GtkClipboard
-	constructor GtkClipboard::__construct: unknown type 'GdkAtom'
-	method      GtkClipboard::request_contents: unknown type 'GdkAtom'
+	method      GtkClipboard::request_contents: unknown type 'GtkClipboardReceivedFunc'
 	method      GtkClipboard::request_targets: unknown type 'GtkClipboardTargetsReceivedFunc'
 	method      GtkClipboard::request_text: unknown type 'GtkClipboardTextReceivedFunc'
 	method      GtkClipboard::set_can_store: unknown type 'const-GtkTargetEntry*'
 	method      GtkClipboard::set_with_data: unknown type 'const-GtkTargetEntry*'
 	method      GtkClipboard::set_with_owner: unknown type 'const-GtkTargetEntry*'
-	method      GtkClipboard::wait_for_contents: unknown type 'GdkAtom'
 	method      GtkClipboard::wait_for_targets: unknown type 'GdkAtom**'
-	method      GtkClipboard::wait_is_target_available: unknown type 'GdkAtom'
 * GtkComboBox
     Default constructor should get optional parameter, and new_with_model() be removed
     method    GtkComboBox::get_row_separator_func: unknown type 'GtkTreeViewRowSeparatorFunc'
-* GtkEntry
-	GtkEntry objects can't be var_dumped, probably something missing
 * GdkGC
 	implement property access (read/write)
 * GtkIconInfo
@@ -63,8 +56,6 @@ Classes and Functions
 	method      GtkListStore::reorder: unknown type 'gint*'
 	method      GtkListStore::set_column_types: unknown type 'GType*'
 	method      GtkListStore::set_value: unknown type 'GValue*'
-* GtkMenuToolButton
-    new_from_stock isn't generated and not in in the not-generated list
 * GtkRadioToolButton
     3 new_* methods are missing
 * GtkSelectionData
@@ -75,8 +66,6 @@ Classes and Functions
 * GtkTextBuffer
     get_iter_at_child_anchor NTRVNRP
 * GtkTreeModel
-	method      GtkTreeModel::get: varargs methods not supported
-	method      GtkTreeModel::get_valist: unknown type 'va_list'
 	method      GtkTreeModel::rows_reordered: unknown type 'gint*'
 	maybe implement some SPL interfaces?
 * GtkTreeModelFilter
@@ -106,16 +95,13 @@ Classes and Functions
 	GtkTextBuffer::move_mark_by_name('selection_bound', ...) moves both the the
 	insert and select_bound marks
 		(method is generated, need to test this)
-* GtkTextTagTable
-	GtkTextTagTable->lookup() is not implemented
-		(method is generated, needs overriding - it's coming out as php_lookup()!)
 * GdkPixbuf
-	pixbuf_new_from_array() has PyArrayObject as a parameter
 	add_alpha() needs to accept intergers as parameters instead of chars, and
 	 make the three last parameters optional. If they are set, the first is automatically
 	 set to true, so that the first parameter can be removed from the php method.
 * GdkPixmap
-	constructor	create_from_xpm_d()
+	function    Gdk::pixmap_create_from_xpm: unknown type 'GdkBitmap**'
+	function    Gdk::pixmap_create_from_xpm_d: unknown type 'GdkBitmap**'
 * GtkPlug/GtkSocket
 * Support (array) cast for GtkTreeModelRow and possibly unset()
 
