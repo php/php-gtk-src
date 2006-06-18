@@ -180,12 +180,10 @@ class PHPGtk2Demo extends GtkWindow
 
     protected function load_demos()
     {
-        $files = glob(dirname(__FILE__).'/*.php');
+        $files = glob(dirname(__FILE__).'/components/*.php');
         foreach ($files as $id => $file) {
             $GLOBALS['class'] = null;
-            if (basename($file) != basename(__FILE__) 
-            && basename($file) != 'stock-browser.php'
-            && basename($file) != 'WidgetEditor.php') {
+            if (basename($file) != basename(__FILE__)) {
                 if (!@include_once($file)) {
                     continue;
                 }
