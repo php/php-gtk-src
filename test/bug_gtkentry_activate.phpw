@@ -1,4 +1,5 @@
 <?php
+//WORKS as of 2006-06-19 with php 5.1.4
 //Start it and press return. Warning will come
 $wnd = new GtkWindow();
 $wnd->connect_simple('destroy', array('gtk', 'main_quit'));
