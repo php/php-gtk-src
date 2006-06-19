@@ -1,5 +1,8 @@
 <?php
 /**
+*   WORKS as of 2006-06-19 with php 5.1.4
+*   Seems it has been fixed either in Zend or php-gtk2
+*
 *   Bug in drag'n'drop:
 *   Drag from "from" button to "to" button and close the window.
 *   You will get a segfault.
