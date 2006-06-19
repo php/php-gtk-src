@@ -196,7 +196,7 @@ PHP_METHOD
 %%
 add-arginfo GtkListStore __construct
 static
-ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
     ZEND_ARG_INFO(0, type_col_0)
     ZEND_ARG_INFO(0, type_col_1)
     ZEND_ARG_INFO(0, ...)
