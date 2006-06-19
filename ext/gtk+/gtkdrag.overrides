@@ -188,6 +188,7 @@ PHP_METHOD
     GtkTargetEntry *entries;
     GtkTargetList *tlist = NULL;
     GdkAtom atom;
+    gchar *name;
     int n;
 
     NOT_STATIC_METHOD();
@@ -209,7 +210,9 @@ PHP_METHOD
         gtk_target_list_unref(tlist);
     }
 
-    RETURN_STRING(gdk_atom_name(atom), 1);
+    name = gdk_atom_name(atom);
+    RETVAL_STRING(name, 1);
+    g_free(name);
 }
 
 %%
