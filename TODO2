@@ -86,16 +86,9 @@ Classes and Functions
 	method      GtkTextBuffer::create_tag: varargs methods not supported
 	method      GtkTextBuffer::insert_with_tags: varargs methods not supported
 	method      GtkTextBuffer::insert_with_tags_by_name: varargs methods not supported
-	GtkTextBuffer::move_mark_by_name('selection_bound', ...) moves both the the
+	GtkTextBuffer::move_mark_by_name('selection_bound', ...) moves both the
 	insert and select_bound marks
 		(method is generated, need to test this)
-* GdkPixbuf
-	add_alpha() needs to accept integers as parameters instead of chars, and
-	 make the three last parameters optional. If they are set, the first is automatically
-	 set to true, so that the first parameter can be removed from the php method.
-* GdkPixmap
-	function    Gdk::pixmap_create_from_xpm: unknown type 'GdkBitmap**'
-	function    Gdk::pixmap_create_from_xpm_d: unknown type 'GdkBitmap**'
 * GtkPlug/GtkSocket
 * Support (array) cast for GtkTreeModelRow and possibly unset()
 
