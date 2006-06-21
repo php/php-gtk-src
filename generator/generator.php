@@ -514,17 +514,18 @@ class Generator {
 
         /* GBoxed */
         $this->log_print("\n\n" . $this->make_header("Boxed Types", 50, '-'));
-        foreach ($this->parser->boxed as $object) {
-            $reg_info = $this->write_class($object);
+        foreach ($this->parser->boxed as $boxed) {
+            $reg_info = $this->write_class($boxed);
             $register_classes .= aprintf(Templates::register_boxed, $reg_info);
-            if ($this->overrides->have_post_registration($object->c_name)) {
-                $register_classes .= $this->overrides->get_post_registration($object->c_name);
+            if ($this->overrides->have_post_registration($boxed->c_name)) {
+                $register_classes .= $this->overrides->get_post_registration($boxed->c_name);
             }
         }
         if (!$this->parser->boxed) {
             $this->log_print("  -- none --  ");
         }
 
+        /* register all classes */
         $this->fp->write(sprintf(Templates::register_classes,
                                   $this->lprefix,
                                   $register_classes));
@@ -951,8 +952,8 @@ class Generator {
             }
         }
 
-        foreach ($this->parser->boxed as $object) {
-            $this->fp->write(sprintf(Templates::class_entry, $object->ce));
+        foreach ($this->parser->boxed as $boxed) {
+            $this->fp->write(sprintf(Templates::class_entry, $boxed->ce));
         }
 
         if ($this->parser->functions || $this->parser->enums) {
@@ -1161,6 +1162,8 @@ class Generator {
                                  'gint16'         => 'int',
                                  'guint32'        => 'int',
                                  'gint32'         => 'int',
+                                 
+                                 'gsize'          => 'int',
                                  
                                  //all enumeration classes here
                                  //gtk enums
