@@ -1807,7 +1807,7 @@ PHP_METHOD
 	GObject *wrapped_obj;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ui", &text, &free_text, &max)) {
-        return;
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkEntry);
     }
 
     wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr),
@@ -3030,7 +3030,7 @@ PHP_METHOD
     GObject *wrapped_obj = NULL;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i|O", &socket_id, &display))
-        return;
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkPlug);
 
     wrapped_obj = g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
 
