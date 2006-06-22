@@ -1,3 +1,353 @@
+2006-06-21  Steph Fox  <steph.fox@virgin.net>
+
+    * generator/generator.php:
+      pure code cleanups - nothing to see here, move along
+
+    * ext/gtk+/gtk.overrides:
+      s/return/construct exception
+
+    * TODO2:
+      A few more items gone from the TODO
+
+2006-06-19  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtkdrag.overrides:
+      Don't leak result of gdk_atom_name() into PHP land directly.
+
+2006-06-19  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/v1.gdk.overrides
+      ext/gtk+/v1.gtk.overrides:
+      Removing old overrides
+
+    * ext/gtk+/gtktreeview.overrides:
+      GtkListStore constructor doesn't need any parameters
+
+    * test/bug_gtkentry_activate.phpw:
+      Works here, too
+
+    * test/bug_dnd_segfault_end.phpw:
+      Seems to be fixed
+
+2006-06-17  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/gtk+/gtkdrag.overrides:
+      GtkWidget::drag_dest_find_target() needs to return a duplicate to avoid a
+      buffer overflow in zend_variables (under doze, anyway).
+      Let me know if any other platforms suffer as a result of this fix. There
+      are relevant tests scripts for DND in the test directory.
+
+    * TODO2:
+      Found more stuff that's already done...
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/gtktextview.overrides:
+      - Override for GtkTextBuffer::get_iter_at_child_anchor()
+      - If we're going to throw construct exceptions, it'd be good to have the
+      right widget names :\\
+      
+      ** Andrei - Should we be throwing construct exceptions on parse_arg
+      failure anyway? It feels wrong...
+
+    * TODO2:
+      Make the TODO a little shorter
+
+    * ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.defs:
+      - Adding GtkMenuToolButton::new_from_stock() to the defs (it doesn't need
+      an override)
+      - GdkPixbuf::new_from_array() is a PyGTK invention. Adding it to the
+      ignore list rather than deleting it in case Andrei has other ideas about
+      its future.
+
+    * main/php_gtk.h:
+      - Workaround for the 'lookup' issue.
+      - The only place 'lookup' was used by the end of the PHP 4.3 series was in
+      ext/expat.
+      - It isn't used anywhere in PHP 5 or its core extensions.
+
+    * win32/config.w32.in:
+      Fix bad flag (thanks Dmitry for finding this)
+
+    * main/php_gtk.c:
+      - Allow PHP-GTK to build against the new module API in PHP_5_2 branch
+      - BC wasn't too bad thanks to our lack of module init routine
+      - Cleaned out the 2001 module API checks and out-commented lines hanging
+      over from PHP-GTK 1
+
+2006-06-16  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/gtk+/gdk.overrides:
+      Kill a smattering of MSVC warnings
+
+    * main/php_gtk_util.c:
+      ZTS fixes
+
+2006-06-16  Christian Weiske  <cweiske@cweiske.de>
+
+    * TODO2:
+      Updating todo.
+      
+      You better see what's missing by looking at
+      http://xml.cweiske.de/classcoverage.htm
+
+    * ext/gtk+/gtktreeview.overrides:
+      GtkTreeView::set_search_equal_func()
+      This one doesn't leak :)
+
+    * ext/gtk+/gtk.overrides:
+      GtkEntryCompletion::set_match_func()
+      When using it, it leaks memory the same way we had for set_visible_func.
+      I already reported a bug: http://bugzilla.gnome.org/show_bug.cgi?id=345107
+      and expect it to be fixed in the near future.
+
+    * ext/gtk+/gtk.defs:
+      GtkEntryCompletion::get_text_column() was missing
+
+    * ext/gtk+/gtk.overrides:
+      They shall user get_group()
+
+    * ext/gtk+/gtk.overrides:
+      GtkFileFilter::list_filters()
+      GtkFileFilter::list_shortcut_folders()
+      GtkFileFilter::list_shortcut_folder_uris()
+
+2006-06-15  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtktreeview.overrides:
+      GtkTreeSelection::set_select_function
+
+2006-06-15  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk.c:
+      Fix for bug #37787 (Memleak when using timeout in a class)
+
+2006-06-14  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtktreeview.overrides:
+      GtkTreeSelection::selected_foreach()
+
+    * ext/gtk+/gtk.defs:
+      Moved Gtk:: methods to the class they belong to
+
+    * ext/gtk+/gtk.overrides:
+      PHP-Gtk users don't need *_quark methods
+
+    * ext/gtk+/gtktreeview.overrides:
+      GtkTreeView::set_column_drag_function
+
+    * ext/gtk+/gtktextview.overrides:
+      GtkTextTagTable::foreach
+
+    * ext/gtk+/gtk.overrides:
+      GtkColorSelection::get_color
+      GtkColorSelection::set_color
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/gtktextview.overrides:
+      Adding NOT_STATIC_METHOD() where missing
+
+2006-06-13  Christian Weiske  <cweiske@cweiske.de>
+
+    * TODO2:
+      Updating TODO2
+
+    * ext/gtk+/gtk.overrides:
+      GtkIconView constructor reflection info
+      GtkIconView::selected_foreach(callback), even without any leaks :)
+
+    * ext/gtk+/gtk.overrides:
+      GtkPixmap::get()
+
+    * ext/gtk+/gtktextview.overrides:
+      GtkTextChildAnchor::get_widgets
+
+    * ext/gtk+/gtk.overrides:
+      GtkWidget::list_mnemonic_labels()
+      and a (probably) win32 fix for list_toplevels()
+
+    * ext/gtk+/gtk.overrides:
+      Last missing GtkWindow method, GtkWindow::set_geometry_hints
+
+    * ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides:
+      - Moving get_from_tip_window to the right class
+      - GtkWindow::list_toplevels()
+
+    * ext/gtk+/gdk.overrides:
+      GdkDisplayManager::list_displays()
+
+    * ext/gtk+/gtktreeview.overrides:
+      Re-enabling GtkTreeModelFilter::set_visible_func since
+      all users will have a Gtk version with the mem leak fixed
+       - sooner or later.
+
+2006-06-12  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.overrides:
+      GtkAboutDialog::set_* methods aren't static.
+
+    * ext/gtk+/gtk.overrides:
+      Reflection info for some GtkAboutDialog setters
+
+    * ext/gtk+/gtk.overrides:
+      Ignore the GtkActionGroup::*actions_full methods.
+      PHP-Gtk users don't need destroynotify
+
+    * ext/gtk+/gtk.overrides:
+      GtkWidget::get_allocation()
+      GtkWidget::class_path()
+      GtkWidget::path()
+
+    * ext/gtk+/gdk.overrides:
+      Last missing GdkDevice method: GdkDevice::get_history
+
+    * ext/gtk+/gtktreeview.overrides:
+      gtk_tree_model_filter_new == new GtkTreeModelFilter()
+      We have a problem:
+      - gtk_tree_model_filter_new is the constructor of GtkTreeModelFilter
+      - we used to have a GtkTreeModel::filter_new([path]) method
+        that was an instance method for GtkTreeModel, constructing a filter
+        with the object as childmodel. Both use gtk_tree_model_filter_new
+        as base C function...
+      
+      So do we want to have both?
+
+    * ext/gtk+/gtktreeview.overrides:
+      gtk_tree_model_filter_new != GtkTreeModelFilter::new
+
+    * ext/gtk+/gdk.overrides:
+      Prop readers for GdkDevice::axes/keys
+
+    * ext/gtk+/gtktreeview.overrides:
+      Disabling gtk_tree_model_filter_set_visible_func until
+      the Gtk people fix their mem error (as Andrei wanted)
+
+2006-06-11  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gdk.overrides:
+      Adding GdkDevice::get_axis
+      With that, you can do funny things, e.g.
+      http://xml.cweiske.de/Magnifier.phps
+
+    * ext/gtk+/gdk.overrides:
+      Adding GdkDevice::get_state(window)
+      this allows us to track the location of the mouse pointers
+      in the system, e.g.
+      <?php
+      $wnd = new GtkWindow();
+      $wnd->show();
+      $mouse = GdkDevice::get_core_pointer();
+      $val = $mouse->get_state($wnd->window);
+      var_dump($val[0]);
+      ?>
+
+    * ext/gtk+/gdk.defs:
+      Moving devices_list to GdkDevice::list_devices and
+      list_visuals to GdkVisual::list_visuals
+
+    * ext/gtk+/gtk.overrides:
+      Removing unused variable
+
+2006-06-10  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * makedist:
+      Changes for bundling generated sources.
+
+    * (php_gtk_2_0_0zeta)
+      config.m4
+      php_gtk.m4
+      main/Makefile.frag:
+      Add gen-sources target.
+
+2006-06-10  Christian Weiske  <cweiske@cweiske.de>
+
+    * (php_gtk_2_0_0zeta)
+      ext/gtk+/gtktreeview.overrides:
+      Added last missing GtkTreeSortable method: get_sort_column_id()
+
+    * (php_gtk_2_0_0zeta)
+      ext/gtk+/gdk.defs:
+      Some more renamings/movings to a class
+
+    * ext/gtk+/gdk.defs:
+      Moving some functions to classes and let them be methods
+
+    * (php_gtk_2_0_0zeta)
+      ext/gtk+/gdk.overrides:
+      Ignoring gdk_pixbuf_savev as its already implemented in gdk_pixbuf_save
+
+    * (php_gtk_2_0_0zeta)
+      ext/gtk+/gdk-types.defs:
+      Fixing GdkColorspace type (had an uppercase S)
+
+2006-06-09  Christian Weiske  <cweiske@cweiske.de>
+
+    * (php_gtk_2_0_0zeta)
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtktreeview.overrides:
+      Committing
+      GtkTreeSortable::set_sort_func
+      GtkTreeSortable::set_default_sort_func
+      GtkTreeFilterModel constructor
+      GtkTreeFilterModel::set_visible_func
+      after applying Andrei's suggestions
+
+    * ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtkcontainer.overrides:
+      Committing
+      GtkContainer::get_focus_chain
+      GtkContainer::set_focus_chain
+      GtkWindow::get_icon_list
+      GtkWindow::set_icon_list
+      GtkWindow::get_default_icon_list
+      GtkWindow::set_default_icon_list
+      GtkIconTheme::list_icons
+      after applying Andrei's suggestions.
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/gtktreeview.overrides:
+      Adding the patch for GtkComboBox/GtkTreeView::set_row_separator_func
+      after changing it according to Andrei's suggestions.
+      Also added the ability to unset the callbacks by passing
+      NULL
+
+    * ext/gtk+/gtk.overrides:
+      Adding
+      GtkAboutDialog::set_email_hook(callback);
+      GtkAboutDialog::set_url_hook(callback);
+      after changing the code according to Andrei's suggestions:
+      - allow unsetting the hook by passing NULL as callback
+      - add marshaller declaration in headers section
+
+    * (php_gtk_2_0_0zeta)
+      ext/gtk+/gtktextview.overrides:
+      Committing
+      - GtkTextIter::get_tags
+      - GtkTextIter::get_marks
+      - GtkTextIter::get_toggled_tags
+      after Andrei said I should commit
+
+    * (php_gtk_2_0_0zeta)
+      generator/h2def.py:
+      Committing the fixed generator as suggested by Andrei
+
+2006-06-08  Christian Weiske  <cweiske@cweiske.de>
+
+    * (php_gtk_2_0_0zeta)
+      TODO2:
+      I found some missing things while doccing
+
+2006-06-07  Anant Narayanan  <anant@kix.in>
+
+    * (php_gtk_2_0_0zeta)
+      ext/scintilla/scintilla.overrides:
+      Small Oops.
+
+    * ext/scintilla/scintilla.overrides:
+      Override for set_text() to fix UTF8 issue
+
 2006-06-03  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/php_gtk_util.c:
