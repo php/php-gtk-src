@@ -21,7 +21,7 @@ Specifying `phpize'
 ~~~~~~~~~~~~~~~~~~~
 
 The standard location for the `phpize' file is /usr/bin/phpize and
-`buildconf' will look for it in the enviroment variable $PHPZE and then
+`buildconf' will look for it in the enviroment variable $PHPIZE and then
 the PATH. If `buildconf' fails to find it, you may specify its
 location:
 
