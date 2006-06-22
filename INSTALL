@@ -1,0 +1,74 @@
+Basic Installation
+~~~~~~~~~~~~~~~~~~
+
+PHP-GTK 2 uses configure to ease installation. The majority of people
+will be able to install PHP-GTK by running:
+
+./buildconf
+./configure
+make
+make install
+
+after extracting the source tarball and cd'ing to that directory.
+Please note that you need root priveleges to execute the last step.
+The steps given above should work if you have PHP and Gtk+ installed
+in their standard directories. If your installation is non-standard,
+please read on.
+
+
+
+Specifying `phpize'
+~~~~~~~~~~~~~~~~~~~
+
+The standard location for the `phpize' file is /usr/bin/phpize and
+`buildconf' will look for it in the enviroment variable $PHPZE and then
+the PATH. If `buildconf' fails to find it, you may specify its
+location:
+
+./buildconf --with-phpize=/path/to/phpize
+
+
+
+Specifying the location of PHP
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+PHP-GTK 2 requires PHP CLI versions 5.1.1 upwards. Many systems have dual
+installations for versions 4 and 5. If the configure script is unable
+to find the correct version of PHP, and you recieve errors like:
+
+configure: error: PHP CLI version is required,  found <>
+(or)
+configure: error: Could not locate PHP 5.1.1 or higher version executable.
+
+then you may specify the location of the corresponding php-config:
+
+./configure --with-php-config=/path/to/php-config
+
+
+
+Other `configure' options
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`configure' offers a wide variety of options to customise your
+installation. You may type:
+
+./configure --help
+
+for a list of options and their short description. Options that are of
+special interest are the --enable-* options. These will build PHP-GTK
+2 with support for libraries that offer added functionality or
+new widgets, as extensions.
+
+The libglade extension is enabled by default, while the others have to
+enabled manually. As an example, if you wish to build PHP-GTK 2
+without support for libglade but wish to use the GtkSourceView
+extension, your configure statement will be:
+
+./configure --disable-libglade --enable-sourceview
+
+Please note that most extensions require some external library to be
+present for successful installation, and that all extensions are not
+available on all platforms. Details of the libraries required and
+platforms supported are present in the README files of the corresponding
+extension in the ext/ directory.
+

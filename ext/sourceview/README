@@ -9,3 +9,5 @@ directory for sample script(s).
 
 You must add the --enable-sourceview switch to your ./configure statement when
 you build PHP-GTK 2 in order to enable the extension.
+
+NOTE: This extension is currently supported only on the *nix platform.

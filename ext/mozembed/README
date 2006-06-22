@@ -7,3 +7,5 @@ applications. Check the demos/ directory for sample script(s).
 
 You need to add the --enable-mozembed switch to your ./configure statement when
 you build PHP-GTK 2 in order to enable this extension.
+
+NOTE: This extension is currently supported only on the *nix platform.
