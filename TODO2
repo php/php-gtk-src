@@ -20,6 +20,7 @@ Base Functionality
 * See whether we want to speed up callbacks by doing zend_is_callable() up
   front. This means that the callback has to be defined and accessible when you
   register it.
+* Add a generic function to allow i18n support for strings in arrays.
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
