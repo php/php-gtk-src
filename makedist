@@ -93,7 +93,7 @@ for x in `find ext -name gen\*.\[ch\]`; do
 done
 
 cd $MY_OLDPWD
-#rm -rf $DIRBUILD
+rm -rf $DIRBUILD
 
 cd $DIR || exit 3
 
@@ -107,7 +107,7 @@ gzip -9 $ARCHIVE || exit 5
 echo ""
 
 $ECHO_N "makedist: cleaning up...$ECHO_C"
-#rm -rf $DIRPATH || exit 6
+rm -rf $DIRPATH || exit 6
 echo ""
 
 exit 0
