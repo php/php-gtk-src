@@ -433,9 +433,9 @@
 )
 
 (define-function atk_no_op_object_factory_new
+  (is-constructor-of AtkNoOpObjectFactory)
   (c-name "atk_no_op_object_factory_new")
   (return-type "AtkObjectFactory*")
-  (is-constructor-of AtkNoOpObjectFactory)
   (parameters
   )
 )
@@ -450,9 +450,9 @@
 )
 
 (define-function atk_no_op_object_new
+  (is-constructor-of AtkNoOpObject)
   (c-name "atk_no_op_object_new")
   (return-type "AtkNoOpObject*")
-  (is-constructor-of AtkNoOpObject)
   (parameters
     '("GObject*" "obj")
   )
@@ -713,9 +713,9 @@
 )
 
 (define-function relation_new
+  (is-constructor-of AtkRelation)
   (c-name "atk_relation_new")
   (return-type "AtkRelation*")
-  (is-constructor-of AtkRelation)
   (parameters
     '("AtkObject**" "targets")
     '("gint" "n_targets")
@@ -745,8 +745,8 @@
 )
 
 (define-function relation_set_new
-  (c-name "atk_relation_set_new")
   (is-constructor-of AtkRelationSet)
+  (c-name "atk_relation_set_new")
   (return-type "AtkRelationSet*")
 )
 
@@ -903,9 +903,9 @@
 )
 
 (define-function atk_state_set_new
+  (is-constructor-of AtkStateSet)
   (c-name "atk_state_set_new")
   (return-type "AtkStateSet*")
-  (is-constructor-of AtkSetSet)
 )
 
 (define-method is_empty
