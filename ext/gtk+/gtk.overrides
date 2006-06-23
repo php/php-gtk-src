@@ -39,8 +39,10 @@ ignore
     gtk_action_group_add_radio_actions_full
     gtk_button_new_with_label
     gtk_button_new_with_mnemonic
+    gtk_clist_new_with_titles
     gtk_color_button_new
     gtk_combo_box_new_with_model
+    gtk_ctree_new_with_titles
     gtk_dialog_new
     gtk_exit
     gtk_entry_new_with_max_length
@@ -97,7 +99,6 @@ ignore
     gtk_accel_group_unlock_entry
     gtk_accel_group_unref
     gtk_adjustment_set_all
-    gtk_clist_construct
     gtk_clist_set_row_data_full
     gtk_draw_box_gap
     gtk_draw_check
@@ -1317,6 +1318,82 @@ PHP_METHOD
 %% {{{ GtkCList
 
 %%
+add-arginfo GtkCList __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, columns)
+    ZEND_ARG_INFO(0, titles)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_clist_new
+PHP_METHOD
+{
+	GObject *wrapped_obj;
+	gint columns, i = 0;
+	gchar **titles;
+	zval *php_titles = NULL, **temp_title;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i|a", &columns, &php_titles)) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCList);
+	}
+
+	phpg_warn_deprecated("use GtkListStore/GtkTreeView" TSRMLS_CC);
+
+	if (columns <= 0) {
+		PHPG_THROW_EXCEPTION(phpg_construct_exception, "The number of columns is <= 0");
+	}
+
+	if (php_titles) {
+		if (zend_hash_num_elements(Z_ARRVAL_P(php_titles)) < columns) {
+			PHPG_THROW_EXCEPTION(phpg_construct_exception, "The size of the title array does not match the number of columns");
+		}
+
+		titles = safe_emalloc(sizeof(gchar *), columns, 0);
+		zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_titles));
+		while (zend_hash_get_current_data(Z_ARRVAL_P(php_titles), (void **)&temp_title) == SUCCESS) {
+
+			gchar *utf8 = NULL;
+			gsize utf8_len = 0;
+			zend_bool free_utf8 = 0;
+
+			convert_to_string_ex(temp_title);
+			utf8 = phpg_to_utf8(Z_STRVAL_PP(temp_title), Z_STRLEN_PP(temp_title), &utf8_len, &free_utf8 TSRMLS_CC);
+
+			if (!utf8) {
+                efree(titles);
+                PHPG_THROW_EXCEPTION(phpg_construct_exception, "Could not convert title string to UTF-8");
+            }
+
+            if (free_utf8) {
+                titles[i++] = utf8;
+			} else {
+                /* Use GTK+ memory function here since utf8 may also allocated by it */
+                titles[i++] = g_strdup(utf8);
+            }
+
+			zend_hash_move_forward(Z_ARRVAL_P(php_titles));
+		}
+		wrapped_obj = (GObject *) gtk_clist_new_with_titles(columns, titles);
+        for (--i; i >= 0; i--) {
+            g_free(titles[i]);
+        }
+		efree(titles);
+
+	} else {
+		wrapped_obj = (GObject *)gtk_clist_new(columns);
+	}
+
+	if (!wrapped_obj) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCList);
+	}
+
+	phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+}
+
+%%
 add-arginfo GtkCList get_selection_info
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
@@ -1594,6 +1671,177 @@ PHP_METHOD
     gtk_combo_box_set_row_separator_func(GTK_COMBO_BOX(PHPG_GOBJECT(this_ptr)),
                                                            callback,
                                                            cb_data, phpg_cb_data_destroy);
+}
+
+%% }}}
+
+%% {{{ GtkCTree
+
+%%
+add-arginfo GtkCTree __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, columns)
+    ZEND_ARG_INFO(0, tree_column)
+    ZEND_ARG_INFO(0, titles)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_ctree_new
+PHP_METHOD
+{
+	GObject *wrapped_obj;
+	gint columns, tree_column, i = 0;
+	gchar **titles;
+	zval *php_titles = NULL, **temp_title;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii|a", &columns, &tree_column, &php_titles)) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCTree);
+	}
+
+	phpg_warn_deprecated("use GtkTreeStore/GtkTreeView" TSRMLS_CC);
+
+	if (columns <= 0) {
+		php_error(E_WARNING, "%s::%s() requires the number of columns to be > 0",
+			get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+			PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCTree);
+	}
+
+	if (php_titles) {
+		if (zend_hash_num_elements(Z_ARRVAL_P(php_titles)) < columns) {
+			php_error(E_WARNING, "%s::%s(): the size of the title array needs to match the number of columns",
+			get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+			PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCTree);
+		}
+
+		titles = safe_emalloc(sizeof(gchar *), columns, 0);
+		zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_titles));
+		while (zend_hash_get_current_data(Z_ARRVAL_P(php_titles), (void **)&temp_title) == SUCCESS) {
+
+			gchar *utf8 = NULL;
+			gsize utf8_len = 0;
+			zend_bool free_utf8 = 0;
+
+			convert_to_string_ex(temp_title);
+			utf8 = phpg_to_utf8(Z_STRVAL_PP(temp_title), Z_STRLEN_PP(temp_title), &utf8_len, &free_utf8 TSRMLS_CC);
+
+			if (!utf8) {
+                efree(titles);
+                PHPG_THROW_EXCEPTION(phpg_construct_exception, "Could not convert title string to UTF-8");
+            }
+
+            if (free_utf8) {
+                titles[i++] = utf8;
+			} else {
+                /* Use GTK+ memory function here since utf8 may also allocated by it */
+                titles[i++] = g_strdup(utf8);
+            }
+
+			zend_hash_move_forward(Z_ARRVAL_P(php_titles));
+		}
+
+		wrapped_obj = (GObject *) gtk_ctree_new_with_titles(columns, tree_column, titles);
+        for (--i; i >= 0; i--) {
+            g_free(titles[i]);
+        }
+		efree(titles);
+	} else {
+		wrapped_obj = (GObject *)gtk_ctree_new(columns, tree_column);
+	}
+
+	if (!wrapped_obj) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCTree);
+	}
+
+	phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+}
+
+%%
+override gtk_ctree_insert_node
+PHP_METHOD
+{
+	zval *php_parent, *php_sibling, *php_text, **temp_text;
+	zval *php_pixmap_closed = NULL, *php_pixmap_opened = NULL,
+		 *php_mask_closed = NULL, *php_mask_opened = NULL;
+	gint columns, spacing = 5, i = 0;
+	zend_bool is_leaf = 0, expanded = 0;
+	GtkCTreeNode *parent = NULL, *sibling = NULL, *php_retval;
+	GdkPixmap *pixmap_closed = NULL, *pixmap_opened = NULL;
+	GdkBitmap *mask_closed = NULL, *mask_opened = NULL;
+	GtkCTree *tree;
+	gchar **text = NULL;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "NNa|iNNNNbb",  &php_parent, gtkctreenode_ce,
+															&php_sibling, gtkctreenode_ce,
+															&php_text, &spacing,
+															&php_pixmap_closed, gdkpixmap_ce,
+															&php_mask_closed, gdkpixmap_ce,
+															&php_pixmap_opened, gdkpixmap_ce,
+															&php_mask_opened, gdkpixmap_ce,
+															&is_leaf, &expanded)) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCTreeNode);
+	}
+
+	tree = GTK_CTREE(PHPG_GOBJECT(this_ptr));
+	columns = GTK_CLIST(tree)->columns;
+	if (zend_hash_num_elements(Z_ARRVAL_P(php_text)) != columns) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "the text array size (%d) does not match the number of columns in the ctree (%d)", get_active_function_name(TSRMLS_C), zend_hash_num_elements(Z_ARRVAL_P(php_text)), columns);
+		return;
+	}
+
+	if (Z_TYPE_P(php_parent) != IS_NULL)
+		parent			= GTK_CTREE_NODE(PHPG_GPOINTER(php_parent));
+	if (Z_TYPE_P(php_sibling) != IS_NULL)
+		sibling			= GTK_CTREE_NODE(PHPG_GPOINTER(php_sibling));
+	if (php_pixmap_closed && Z_TYPE_P(php_pixmap_closed) != IS_NULL)
+		pixmap_closed	= GDK_PIXMAP(PHPG_GOBJECT(php_pixmap_closed));
+	if (php_mask_closed && Z_TYPE_P(php_mask_closed) != IS_NULL)
+		mask_closed		= GDK_PIXMAP(PHPG_GOBJECT(php_mask_closed));
+	if (php_pixmap_opened && Z_TYPE_P(php_pixmap_opened) != IS_NULL)
+		pixmap_opened	= GDK_PIXMAP(PHPG_GOBJECT(php_pixmap_opened));
+	if (php_mask_opened && Z_TYPE_P(php_mask_opened) != IS_NULL)
+		mask_opened		= GDK_PIXMAP(PHPG_GOBJECT(php_mask_opened));
+
+	text = safe_emalloc(sizeof(gchar *), columns, 0);
+	zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_text));
+	while (zend_hash_get_current_data(Z_ARRVAL_P(php_text), (void **)&temp_text) == SUCCESS) {
+
+		gchar *utf8 = NULL;
+		gsize utf8_len = 0;
+		zend_bool free_utf8 = 0;
+
+		convert_to_string_ex(temp_text);
+		utf8 = phpg_to_utf8(Z_STRVAL_PP(temp_text), Z_STRLEN_PP(temp_text), &utf8_len, &free_utf8 TSRMLS_CC);
+
+        if (!utf8) {
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "Could not convert text string to UTF-8");
+            efree(text);
+            return;
+        }
+
+        if (free_utf8) {
+            text[i++] = utf8;
+        } else {
+            /* Use GTK+ memory function here since utf8 may also allocated by it */
+            text[i++] = g_strdup(utf8);
+        }
+
+		zend_hash_move_forward(Z_ARRVAL_P(php_text));
+	}
+
+	php_retval = gtk_ctree_insert_node(tree, parent, sibling, text, (guint8)spacing,
+								pixmap_closed, mask_closed, pixmap_opened,
+								mask_opened, is_leaf, expanded);
+
+    for (--i; i >= 0; i--) {
+        g_free(text[i]);
+    }
+	efree(text);
+	phpg_gpointer_new(&return_value, GTK_TYPE_CTREE_NODE, php_retval TSRMLS_CC);
 }
 
 %% }}}
