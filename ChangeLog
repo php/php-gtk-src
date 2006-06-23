@@ -1,3 +1,19 @@
+2006-06-22  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * INSTALL:
+      Typo.
+
+2006-06-22  Steph Fox  <steph.fox@virgin.net>
+
+    * TODO2:
+      We need a generic function for UTF-8 compat in arrays of strings.
+
+2006-06-22  Anant Narayanan  <anant@kix.in>
+
+    * INSTALL
+      ext/scintilla/README:
+      Added a basic INSTALL file and updated READMEs for the extensions.
+
 2006-06-21  Steph Fox  <steph.fox@virgin.net>
 
     * generator/generator.php:
