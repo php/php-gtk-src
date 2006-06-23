@@ -454,6 +454,74 @@ class Struct_Arg extends Arg_Type {
 }
 /* }}} */
 
+/* {{{ Pointer_Arg */
+class Pointer_Arg extends Arg_Type {
+
+    const check_tpl = "
+    if (phpg_gpointer_check(php_%(name), %(typecode), FALSE TSRMLS_CC)) {
+        %(name) = (%(type) *) PHPG_GPOINTER(php_%(name));
+    } else {
+        php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a valid %(type) object\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        %(on_error);
+    }\n";
+
+    const check_null_tpl = "
+    if (Z_TYPE_P(php_%(name)) != IS_NULL) {
+        if (phpg_gpointer_check(php_%(name), %(typecode), FALSE TSRMLS_CC)) {
+            %(name) = (%(type) *) PHPG_GPOINTER(php_%(name));
+        } else {
+            php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a valid %(type) object or null\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+            %(on_error);
+        }
+    }\n";
+
+    var $type           = null;
+    var $typecode       = null;
+
+    function __construct($type, $typecode)
+    {
+        $this->type     = $type;
+        $this->typecode = $typecode;
+    }
+
+    function write_param($type, $name, $default, $null_ok, $info)
+    {
+        if ($null_ok) {
+            $info->var_list->add($this->type, '*' . $name . ' = NULL');
+            $info->var_list->add('zval', '*php_' . $name . ' = NULL');
+            $info->pre_code[] = aprintf(self::check_null_tpl, array('typecode' => $this->typecode,
+                                                                    'type'     => $this->type,
+                                                                    'on_error' => $info->error_action,
+                                                                    'name'     => $name));
+        } else {
+            $info->var_list->add($this->type, '*' . $name . ' = NULL');
+            $info->var_list->add('zval', '*php_' . $name);
+            $info->pre_code[] = aprintf(self::check_tpl, array('typecode' => $this->typecode,
+                                                               'type'     => $this->type,
+                                                               'on_error' => $info->error_action,
+                                                               'name'     => $name));
+        }
+
+        $info->add_parse_list('O', array('&php_' . $name, 'gpointer_ce'));
+        $info->arg_list[] = $name;
+    }
+
+    function write_return($type, $owns_return, $info)
+    {
+        if (substr($type, -1) == '*') {
+            $info->var_list->add($this->type, '*php_retval');
+            $ret = 'php_retval';
+        } else {
+            $info->var_list->add($this->type, 'php_retval');
+            $ret = '&php_retval';
+        }
+
+        $info->post_code[] = sprintf("\tphpg_gpointer_new(&return_value, %s, %s TSRMLS_CC);\n",
+                                     $this->typecode, $ret);
+    }
+}
+/* }}} */
+
 /* {{{ Object_Arg */
 class Object_Arg extends Arg_Type {
     var $obj_name = null;
@@ -972,6 +1040,15 @@ class Arg_Matcher {
         $this->register($type, $boxed_arg);
         $this->register($type . '*', $boxed_arg);
         $this->register('const-' . $type . '*', $boxed_arg);
+    }
+
+    function register_pointer($type, $typecode)
+    {
+        if (isset($this->arg_types[$type])) return;
+        $pointer_arg = new Pointer_Arg($type, $typecode);
+        $this->register($type, $pointer_arg);
+        $this->register($type.'*', $pointer_arg);
+        $this->register('const-'.$type.'*', $pointer_arg);
     }
 
     function get($type)

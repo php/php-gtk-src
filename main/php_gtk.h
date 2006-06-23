@@ -160,6 +160,8 @@ enum {
 
 #define PHPG_GBOXED(zobj) phpg_gboxed_get(zobj TSRMLS_CC)->boxed
 
+#define PHPG_GPOINTER(zobj) phpg_gpointer_get(zobj TSRMLS_CC)->pointer
+
 #define PHPG_GDKATOM(zobj) ((phpg_gdkatom_t*)PHPG_GET(zobj))->atom
 
 
@@ -474,6 +476,17 @@ static inline phpg_gboxed_t* phpg_gboxed_get(zval *zobj TSRMLS_DC)
 /* GPointer */
 void phpg_gpointer_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gpointer_new(zval **zobj, GType gtype, gpointer pointer TSRMLS_DC);
+PHP_GTK_API zend_object_value phpg_create_gpointer(zend_class_entry *ce TSRMLS_DC);
+PHP_GTK_API zend_bool phpg_gpointer_check(zval *zobj, GType gtype, zend_bool full_check TSRMLS_DC);
+
+static inline phpg_gpointer_t* phpg_gpointer_get(zval *zobj TSRMLS_DC)
+{
+    phpg_gpointer_t *pobj = zend_object_store_get_object(zobj TSRMLS_CC);
+    if (pobj->pointer == NULL) {
+        php_error(E_ERROR, "Internal object missing in %s wrapper", Z_OBJCE_P(zobj)->name);
+    }
+    return pobj;
+}
 
 /* GdkAtom */
 void phpg_gdkatom_register_self(TSRMLS_D);

@@ -133,6 +133,19 @@ static PHP_METHOD(%(class), %(name))
 %(post_code)
 }\n\n";
 
+const pointer_method_body = "
+static PHP_METHOD(%(class), %(name))
+{
+%(var_list)
+    NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list)))
+		return;
+%(pre_code)
+    %(return)%(cname)((%(cast))PHPG_GPOINTER(this_ptr)%(arg_list));
+%(post_code)
+e\n\n";
+
 const constructor_with_props = "
 static PHP_METHOD(%(class), %(name))
 {
@@ -242,6 +255,10 @@ const register_class = "
 
 const register_boxed = "
     %(ce) = phpg_register_boxed(\"%(class)\", %(methods), %(propinfo), %(create_func), %(typecode) TSRMLS_CC);\n%(extra_reg_info)";
+
+const register_pointer = "
+    %(ce) = phpg_register_class(\"%(class)\", %(methods), NULL, 0, NULL, phpg_create_gpointer, %(typecode) TSRMLS_CC);\n%(extra_reg_info)";
+
 
 const register_interface = "
 	%(ce) = phpg_register_interface(\"%(class)\", %(methods), %(typecode) TSRMLS_CC);\n%(extra_reg_info)";

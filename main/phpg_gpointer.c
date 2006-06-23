@@ -68,6 +68,23 @@ PHP_GTK_API zend_object_value phpg_create_gpointer(zend_class_entry *ce TSRMLS_D
 }
 /* }}} */
 
+/* {{{ PHP_GTK_API phpg_gpointer_check() */
+PHP_GTK_API zend_bool phpg_gpointer_check(zval *zobj, GType gtype, zend_bool full_check TSRMLS_DC)
+{
+    phpg_gpointer_t *pobj;
+
+    phpg_return_val_if_fail(zobj != NULL, FALSE);
+    if (full_check) {
+        phpg_return_val_if_fail_quiet(Z_TYPE_P(zobj) == IS_OBJECT
+                                      && instanceof_function(Z_OBJCE_P(zobj), gpointer_ce TSRMLS_CC), FALSE);
+    }
+
+    pobj = phpg_gpointer_get(zobj TSRMLS_CC);
+
+    return (pobj->gtype == gtype);
+}
+/* }}} */
+
 /* {{{ PHP_GTK_API phpg_gpointer_new() */
 PHP_GTK_API void phpg_gpointer_new(zval **zobj, GType gtype, gpointer pointer TSRMLS_DC)
 {

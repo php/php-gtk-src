@@ -67,6 +67,7 @@ class Generator {
                                                       'method' => Templates::boxed_method_body,
                                                       'prop' => Templates::boxed_prop_access),
                                     'interface' => array('method' => Templates::method_body),
+                                    'pointer' => array('method' => Templates::pointer_method_body),
                                    );
     var $handlers           = array('read_property', 'write_property', 'get_properties',
                                     'read_dimension', 'write_dimension', 'has_dimension',
@@ -151,6 +152,10 @@ class Generator {
 
         foreach ($parser->boxed as $boxed) {
             $matcher->register_boxed($boxed->c_name, $boxed->typecode);
+        }
+
+        foreach ($parser->pointers as $pointer) {
+            $matcher->register_pointer($pointer->c_name, $pointer->typecode);
         }
     }
 
@@ -269,6 +274,7 @@ class Generator {
                 break;
 
             case 'boxed':
+            case 'pointer':
                 $dict['cast'] = $object->c_name . ' *';
                 break;
 
@@ -525,6 +531,19 @@ class Generator {
             $this->log_print("  -- none --  ");
         }
 
+        /* GPointer */
+        $this->log_print("\n\n" . $this->make_header("Pointers", 50, '-'));
+        foreach ($this->parser->pointers as $pointer) {
+            $reg_info = $this->write_class($pointer);
+            $register_classes .= aprintf(Templates::register_pointer, $reg_info);
+            if ($this->overrides->have_post_registration($pointer->c_name)) {
+                $register_classes .= $this->overrides->get_post_registration($pointer->c_name);
+            }
+        }
+        if (!$this->parser->pointers) {
+            $this->log_print("  -- none --  ");
+        }
+
         /* register all classes */
         $this->fp->write(sprintf(Templates::register_classes,
                                   $this->lprefix,
@@ -553,6 +572,7 @@ class Generator {
                 break;
 
             case 'boxed':
+            case 'pointer':
                 $dict['cast'] = $object->c_name . ' *';
                 break;
 
@@ -678,6 +698,11 @@ class Generator {
                 $dict['orig_handlers'] = 'php_gtk_handlers';
                 break;
 
+            case 'pointer':
+                $dict['create_func'] = 'phpg_create_gpointer';
+                $dict['orig_handlers'] = 'php_gtk_handlers';
+                break;
+
             default:
                 throw new Exception("unhandled definition type");
                 break;
@@ -721,7 +746,7 @@ class Generator {
                     }
                 }
             }
-        } else if ($class->def_type == 'boxed') {
+        } else if ($class->def_type == 'boxed' || $class->def_type == 'pointer') {
             foreach ($method_entries as $me) {
                 $method_defs[] = vsprintf(Templates::method_entry, $me);
             }
@@ -954,6 +979,10 @@ class Generator {
 
         foreach ($this->parser->boxed as $boxed) {
             $this->fp->write(sprintf(Templates::class_entry, $boxed->ce));
+        }
+
+        foreach ($this->parser->pointers as $pointer) {
+            $this->fp->write(sprintf(Templates::class_entry, $pointer->ce));
         }
 
         if ($this->parser->functions || $this->parser->enums) {
