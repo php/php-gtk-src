@@ -2625,9 +2625,11 @@
   )
 )
 
-(define-function pixmap_create_from_xpm
+(define-method create_from_xpm
+  (of-object "GdkPixmap")
   (c-name "gdk_pixmap_create_from_xpm")
   (return-type "GdkPixmap*")
+  (static #t)
   (parameters
     '("GdkDrawable*" "drawable")
     '("GdkBitmap**" "mask")
@@ -2636,9 +2638,11 @@
   )
 )
 
-(define-function pixmap_create_from_xpm_d
+(define-method create_from_xpm_data
+  (of-object "GdkPixmap")
   (c-name "gdk_pixmap_create_from_xpm_d")
   (return-type "GdkPixmap*")
+  (static #t)
   (parameters
     '("GdkDrawable*" "drawable")
     '("GdkBitmap**" "mask")

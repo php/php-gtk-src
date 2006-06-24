@@ -47,6 +47,8 @@ ignore
     gdk_pixbuf_new_from_array
     gdk_pixbuf_new_from_inline
     gdk_pixbuf_savev
+    gdk_pixmap_colormap_create_from_xpm
+    gdk_pixmap_colormap_create_from_xpm_d
     gdk_string_extents
     gdk_window_peek_children
 
@@ -1907,6 +1909,44 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GdkPixbuf add_alpha
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, red)
+    ZEND_ARG_INFO(0, green)
+    ZEND_ARG_INFO(0, blue)
+ZEND_END_ARG_INFO();
+
+%%
+override gdk_pixbuf_add_alpha
+PHP_METHOD
+{
+	int red, blue, green;
+	guchar r = 255, g = 255, b = 255;
+	GdkPixbuf* pixbuf;
+
+	NOT_STATIC_METHOD();
+
+	if (ZEND_NUM_ARGS() > 0) {
+		if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iii", &red, &green, &blue))
+			return;
+		r = (guchar)red;
+		g = (guchar)green;
+		b = (guchar)blue;
+		pixbuf = gdk_pixbuf_add_alpha(GDK_PIXBUF(PHPG_GOBJECT(this_ptr)), 1, r, g, b);
+	} else {
+		if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+			return;
+		pixbuf = gdk_pixbuf_add_alpha(GDK_PIXBUF(PHPG_GOBJECT(this_ptr)), 0, r, g, b);
+	}
+
+	if (pixbuf) {
+		phpg_gobject_new(&return_value, (GObject *)pixbuf TSRMLS_CC);
+		g_object_unref(pixbuf);
+	}
+}
+
+%%
 override gdk_pixbuf_get_pixels
 PHP_METHOD
 {
@@ -2307,6 +2347,115 @@ PHP_METHOD
     if (phpg_handle_gerror(&error TSRMLS_CC)) {
         return;
     }
+}
+
+%% }}}
+
+%% {{{ GdkPixmap
+
+%%
+override gdk_pixmap_create_from_xpm
+PHP_METHOD
+{
+	zval *php_drawable, *php_trans_color, *php_colormap = NULL;
+	zval *ret_pixmap = NULL, *ret_mask = NULL;
+	gchar *filename;
+	zend_bool free_filename = FALSE;
+	GdkDrawable *drawable = NULL;
+	GdkColor *trans_color = NULL;
+	GdkColormap *colormap = NULL;
+	GdkPixmap *pixmap = NULL;
+	GdkBitmap *mask;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OOu|O", &php_drawable, gdkdrawable_ce,
+													&php_trans_color, gdkcolor_ce,
+													&filename, &free_filename,
+													&php_colormap, gdkcolormap_ce)) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GdkPixmap);
+	}
+
+	drawable = GDK_DRAWABLE(PHPG_GOBJECT(php_drawable));
+	trans_color = (GdkColor *) PHPG_GBOXED(php_trans_color);
+
+	if (php_colormap) {
+		colormap = GDK_COLORMAP(PHPG_GOBJECT(php_colormap));
+		pixmap = gdk_pixmap_colormap_create_from_xpm(drawable, colormap, &mask, trans_color, filename);
+	} else {
+		pixmap = gdk_pixmap_create_from_xpm(drawable, &mask, trans_color, filename);
+	}
+
+	if (free_filename) g_free(filename);
+
+	if (!pixmap) {
+		php_error(E_WARNING, "%s() cannot load pixmap", get_active_function_name(TSRMLS_C));
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GdkPixmap);
+	}
+
+	phpg_gobject_new(&ret_pixmap, (GObject*)pixmap TSRMLS_CC);
+	gdk_pixmap_unref(pixmap);
+
+	phpg_gobject_new(&ret_mask, (GObject *)mask TSRMLS_CC);
+	gdk_bitmap_unref(mask);
+
+	php_gtk_build_value(&return_value, "(NN)", ret_pixmap, ret_mask);
+}
+
+%%
+override gdk_pixmap_create_from_xpm_d
+PHP_METHOD
+{
+	zval *php_drawable, *php_trans_color, *php_data, *php_colormap = NULL;
+	zval *ret_pixmap = NULL, *ret_mask = NULL;
+	zval **line;
+	GdkDrawable *drawable = NULL;
+	GdkColor *trans_color = NULL;
+	GdkColormap *colormap = NULL;
+	GdkPixmap *pixmap = NULL;
+	GdkBitmap *mask;
+	char **data;
+	int len, i = 0;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OOa|O", &php_drawable, gdkdrawable_ce,
+													&php_trans_color, gdkcolor_ce,
+													&php_data,
+													&php_colormap, gdkcolormap_ce)) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GdkPixmap);
+	}
+
+	drawable = GDK_DRAWABLE(PHPG_GOBJECT(php_drawable));
+	trans_color = (GdkColor *) PHPG_GBOXED(php_trans_color);
+
+	len = zend_hash_num_elements(Z_ARRVAL_P(php_data));
+	data = safe_emalloc(len, sizeof(char *), 0);
+
+	for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_data));
+		 zend_hash_get_current_data(Z_ARRVAL_P(php_data), (void **)&line) == SUCCESS;
+		 zend_hash_move_forward(Z_ARRVAL_P(php_data))) {
+		convert_to_string_ex(line);
+		data[i++] = Z_STRVAL_PP(line);
+	}
+
+	if (php_colormap) {
+		colormap = GDK_COLORMAP(PHPG_GOBJECT(php_colormap));
+		pixmap = gdk_pixmap_colormap_create_from_xpm_d(drawable, colormap, &mask, trans_color, data);
+	} else {
+		pixmap = gdk_pixmap_create_from_xpm_d(drawable, &mask, trans_color, data);
+	}
+
+	efree(data);
+
+	if (!pixmap) {
+		php_error(E_WARNING, "%s() cannot load pixmap", get_active_function_name(TSRMLS_C));
+		PHPG_THROW_CONSTRUCT_EXCEPTION(GdkPixmap);
+	}
+
+	phpg_gobject_new(&ret_pixmap, (GObject*)pixmap TSRMLS_CC);
+	gdk_pixmap_unref(pixmap);
+
+	phpg_gobject_new(&ret_mask, (GObject *)mask TSRMLS_CC);
+	gdk_bitmap_unref(mask);
+
+	php_gtk_build_value(&return_value, "(NN)", ret_pixmap, ret_mask);
 }
 
 %% }}}
