@@ -1,3 +1,36 @@
+2006-06-23  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/gtk+/atk.defs:
+      - Bring atk defs into line with the other defs layouts
+      - correct typo that had us constructing something called 'AtkSetSet' :)
+      (okay okay I'll do the usernotes next...)
+
+    * ext/gtk+/atk.overrides:
+      Override for AtkRelation constructor (sorry, couldn't resist that one)
+      - thanks Andrei
+
+2006-06-23  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      Commit Steph's patch for GtkCList/GtkCTree constructors. Reworked it a
+      bit for UTF-8 stuff.
+
+    * generator/arg_types.php
+      generator/generator.php
+      generator/templates.php
+      main/php_gtk.h
+      main/phpg_gpointer.c:
+      Rework Steph's pointer generation patch so that it works like boxed
+      type.
+
+    * makedist:
+      Clean up after packaging.
+
+2006-06-23  Anant Narayanan  <anant@kix.in>
+
+    * INSTALL:
+      Some more typos :-/
+
 2006-06-22  Andrei Zmievski  <andrei@gravitonic.com>
 
     * INSTALL:
