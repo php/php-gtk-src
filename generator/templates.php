@@ -257,7 +257,7 @@ const register_boxed = "
     %(ce) = phpg_register_boxed(\"%(class)\", %(methods), %(propinfo), %(create_func), %(typecode) TSRMLS_CC);\n%(extra_reg_info)";
 
 const register_pointer = "
-    %(ce) = phpg_register_class(\"%(class)\", %(methods), NULL, 0, NULL, phpg_create_gpointer, %(typecode) TSRMLS_CC);\n%(extra_reg_info)";
+    %(ce) = phpg_register_pointer(\"%(class)\", %(methods), %(create_func), %(typecode) TSRMLS_CC);\n%(extra_reg_info)";
 
 
 const register_interface = "

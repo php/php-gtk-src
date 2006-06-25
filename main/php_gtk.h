@@ -476,6 +476,7 @@ static inline phpg_gboxed_t* phpg_gboxed_get(zval *zobj TSRMLS_DC)
 /* GPointer */
 void phpg_gpointer_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gpointer_new(zval **zobj, GType gtype, gpointer pointer TSRMLS_DC);
+PHP_GTK_API zend_class_entry* phpg_register_pointer(const char *class_name, function_entry *class_methods, create_object_func_t create_obj_func, GType gtype TSRMLS_DC);
 PHP_GTK_API zend_object_value phpg_create_gpointer(zend_class_entry *ce TSRMLS_DC);
 PHP_GTK_API zend_bool phpg_gpointer_check(zval *zobj, GType gtype, zend_bool full_check TSRMLS_DC);
 

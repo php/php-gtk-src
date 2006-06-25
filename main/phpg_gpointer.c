@@ -49,6 +49,16 @@ static void phpg_free_gpointer_storage(phpg_gpointer_t *object TSRMLS_DC)
 }
 /* }}} */
 
+/* {{{ PHP_GTK_API phpg_register_pointer() */
+PHP_GTK_API zend_class_entry* phpg_register_pointer(const char *class_name,
+                                                  function_entry *class_methods,
+                                                  create_object_func_t create_obj_func,
+                                                  GType gtype TSRMLS_DC)
+{
+    return phpg_register_class(class_name, class_methods, gpointer_ce, 0, NULL, create_obj_func ? create_obj_func : phpg_create_gpointer, gtype TSRMLS_CC);
+}
+/* }}} */
+
 /* {{{ PHP_GTK_API phpg_create_gpointer() */
 PHP_GTK_API zend_object_value phpg_create_gpointer(zend_class_entry *ce TSRMLS_DC)
 {
