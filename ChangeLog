@@ -1,3 +1,14 @@
+2006-06-24  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/gtk+/atk.overrides:
+      Update arg info to reflect PHP-GTK reality.
+
+2006-06-24  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.defs
+      ext/gtk+/gdk.overrides:
+      Commit Steph's GDK patches (add_alpha(), create_from_xpm[_data]())
+
 2006-06-23  Steph Fox  <steph.fox@virgin.net>
 
     * ext/gtk+/atk.defs:
