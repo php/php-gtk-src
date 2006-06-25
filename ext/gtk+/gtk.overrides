@@ -1772,6 +1772,7 @@ PHP_METHOD
 	GdkBitmap *mask_closed = NULL, *mask_opened = NULL;
 	GtkCTree *tree;
 	gchar **text = NULL;
+    int array_size;
 
 	NOT_STATIC_METHOD();
 
@@ -1788,8 +1789,9 @@ PHP_METHOD
 
 	tree = GTK_CTREE(PHPG_GOBJECT(this_ptr));
 	columns = GTK_CLIST(tree)->columns;
-	if (zend_hash_num_elements(Z_ARRVAL_P(php_text)) != columns) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "the text array size (%d) does not match the number of columns in the ctree (%d)", get_active_function_name(TSRMLS_C), zend_hash_num_elements(Z_ARRVAL_P(php_text)), columns);
+    array_size = zend_hash_num_elements(Z_ARRVAL_P(php_text));
+	if (array_size != columns) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "the text array size (%d) does not match the number of columns in the ctree (%d)", array_size, columns);
 		return;
 	}
 
