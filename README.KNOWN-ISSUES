@@ -1,4 +1,5 @@
-- Examining a widget's style property after it's unrealized can result in a
-  crash, since Gtk+ does not properly clean it up. This can happen if you
-  connect to 'destroy' signal for the widget, for example, and then var_dump()
-  the callback's first argument.
+Release 2.0.0zeta
+* Memeory leaks when using GtkTreeModelFilter::set_visible_func(). This is an
+  issue with Gtk+. It has been resolved in version 2.8.x. Users using version
+  2.8.x will not see this issue. Other users may.
+  http://bugzilla.gnome.org/show_bug.cgi?id=344624

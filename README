@@ -12,17 +12,14 @@ locally. It is intended for creating standalone GUI applications.
 
 Requirements
 ============
-As a prerequisite, you should have a CGI binary (command-line) version of PHP
+As a prerequisite, you should have a CLI binary (command-line) version of PHP
 installed along with the header files and development scripts. They should
 normally be installed when you do 'make install' in the PHP source tree.
 
-Currently, PHP-GTK requires PHP 4.0.5 or greater to run, and 4.1.0 or greater to
-build.
+Currently, PHP-GTK requires PHP 5.1.2 or greater to run, and to build.
 
-PHP-GTK supports GTK+ v1.2 and requires v1.2.6 or greater. GTK+ v2.0 is not yet
-supported but will be so in the future when v2.0 is out of the development phase
-and is used more widely. The latest stable release of GTK+ v1.2.x can be
-obtained from ftp://ftp.gtk.org/pub/gtk/v1.2/.
+PHP-GTK supports GTK+ v2.6 and requires v2.6 or greater. The latest stable
+release of GTK+ v2.6 can be obtained from ftp://ftp.gtk.org/pub/gtk/v2.6/.
 
 
 Installation and testing
@@ -44,9 +41,9 @@ write...", that just means that certain GTK+ objects or features are not yet
 supported. If the compilation is successful, run 'make install' to install the
 extension into your default PHP extension directory.
 
-To test the extension, try running the example scripts in the test/ directory,
-especially gtk.php. These are also good for showing how the extension can be
-used.
+To test the extension, try running the demo scripts in the demos/ directory,
+especially phpgtk2-demo.php. These are also good for showing how the extension
+can be used.
 
 
 Website
@@ -96,9 +93,9 @@ subscription address.
 Patches and feedback
 ====================
 You can contact me directly at andrei@php.net or through the mailing list.
-Please use the mailing lists for most of your questions -- many people read them
-and you are more likely to get quicker feedback if you post there first. Patches
-in the unified diff (diff -u) format can be sent via the same means.
+Please use the mailing lists for most of your questions -- many people read
+them and you are more likely to get quicker feedback if you post there first.
+Patches in the unified diff (diff -u) format can be sent via the same means.
 
 
 Acknowledgements
