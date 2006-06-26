@@ -1,3 +1,15 @@
+2006-06-25  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      Kill warning.
+
+2006-06-25  Steph Fox  <steph.fox@virgin.net>
+
+    * generator/templates.php
+      main/php_gtk.h
+      main/phpg_gpointer.c:
+      Give GPointer types something to hold onto...
+
 2006-06-24  Steph Fox  <steph.fox@virgin.net>
 
     * ext/gtk+/atk.overrides:
