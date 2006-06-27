@@ -1,3 +1,9 @@
+2006-06-26  Scott Mattocks  <scott@crisscott.com>
+
+    * README
+      README.KNOWN-ISSUES:
+      Updates for zeta release.
+
 2006-06-25  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides:
