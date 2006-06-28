@@ -4208,6 +4208,33 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkWidget size_allocate
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, allocation)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_widget_size_allocate
+PHP_METHOD
+{
+    GdkRectangle allocation = { 0, 0, 0, 0 };
+    zval *php_allocation;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_allocation))
+        return;
+
+    if (phpg_rectangle_from_zval(php_allocation, &allocation TSRMLS_CC) == FAILURE) {
+        php_error(E_WARNING, "%s::%s() expects allocation argument to be either a 4-element array or a GdkRectangle object", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+    gtk_widget_size_allocate(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), &allocation);
+
+}
+
+%%
 add-arginfo GtkWidget translate_coordinates
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
