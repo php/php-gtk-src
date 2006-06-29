@@ -1,3 +1,9 @@
+2006-06-28  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.overrides:
+      Setting the allocation type to mixed instead of the
+      automatically defined, not existing GtkAllocation class
+
 2006-06-26  Scott Mattocks  <scott@crisscott.com>
 
     * README
