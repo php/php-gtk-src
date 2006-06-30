@@ -24,8 +24,6 @@ Base Functionality
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
-* GtkCellView
-    get_size_of_row NTRVNRP
 * GtkClipboard
 	method      GtkClipboard::request_contents: unknown type 'GtkClipboardReceivedFunc'
 	method      GtkClipboard::request_targets: unknown type 'GtkClipboardTargetsReceivedFunc'

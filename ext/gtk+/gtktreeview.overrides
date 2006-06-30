@@ -190,6 +190,40 @@ PHP_METHOD
     g_list_free(list);
 }
 
+%%
+add-arginfo GtkCellLayout get_size_of_row
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, path)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_cell_view_get_size_of_row
+PHP_METHOD
+{
+    GtkTreePath *path;
+    zval *php_path;
+    GtkRequisition requisition;
+    gboolean php_retval;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_path))
+        return;
+
+    if (phpg_tree_path_from_zval(php_path, &path TSRMLS_CC) == FAILURE) {
+        php_error(E_WARNING, "%s::%s() expects path to be a valid tree path specification", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    php_retval = gtk_cell_view_get_size_of_row(GTK_CELL_VIEW(PHPG_GOBJECT(this_ptr)), path, &requisition);
+
+    if (path)
+        gtk_tree_path_free(path);
+
+    phpg_gboxed_new(&return_value, GTK_TYPE_REQUISITION, &requisition, TRUE, TRUE TSRMLS_CC);
+}
+
 %% }}}
 
 %% {{{ GtkListStore

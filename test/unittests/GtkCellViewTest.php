@@ -37,6 +37,12 @@ class GtkCellViewTest extends PHPUnit2_Framework_TestCase {
      * @access protected
      */
     protected function setUp() {
+        $this->cv = new GtkCellView();
+        $mod = new GtkListStore(Gtk::TYPE_STRING, Gtk::TYPE_STRING);
+        $this->cv->set_model($mod);
+        $mod->append(array('a', '1'));
+        $mod->append(array('b', '2'));
+        $mod->append(array('c', '3'));
     }
 
     /**
@@ -65,11 +71,13 @@ class GtkCellViewTest extends PHPUnit2_Framework_TestCase {
     }
 
     /**
-     * @todo Implement testGet_size_of_row().
+     *
      */
     public function testGet_size_of_row() {
-        // Remove the following line when you implement this test.
-        throw new PHPUnit2_Framework_IncompleteTestError;
+        //path 0 is first row
+        $req = $this->cv->get_size_of_row('0');
+        $this->assertNotNull($req);
+        $this->assertType('GtkRequisition', $req);
     }
 
     /**
