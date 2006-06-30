@@ -204,7 +204,6 @@ PHP_METHOD
     GtkTreePath *path;
     zval *php_path;
     GtkRequisition requisition;
-    gboolean php_retval;
 
     NOT_STATIC_METHOD();
 
@@ -216,7 +215,7 @@ PHP_METHOD
         return;
     }
 
-    php_retval = gtk_cell_view_get_size_of_row(GTK_CELL_VIEW(PHPG_GOBJECT(this_ptr)), path, &requisition);
+    gtk_cell_view_get_size_of_row(GTK_CELL_VIEW(PHPG_GOBJECT(this_ptr)), path, &requisition);
 
     if (path)
         gtk_tree_path_free(path);
