@@ -17772,16 +17772,6 @@
   (return-type "GType")
 )
 
-(define-method filter_new
-  (of-object "GtkTreeModel")
-  (c-name "gtk_tree_model_filter_new")
-  (return-type "GtkTreeModel*")
-  (caller-owns-return #t)
-  (parameters
-    '("GtkTreePath*" "root" (default "NULL") (null-ok))
-  )
-)
-
 (define-method refilter
   (of-object "GtkTreeModelFilter")
   (c-name "gtk_tree_model_filter_refilter")
