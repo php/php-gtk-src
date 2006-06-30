@@ -2145,7 +2145,8 @@
   (return-type "GtkWidget*")
 )
 
-(define-function cell_view_new_with_markup
+(define-method new_with_markup
+  (is-constructor-of "GtkCellView")
   (c-name "gtk_cell_view_new_with_markup")
   (return-type "GtkWidget*")
   (parameters
@@ -2153,7 +2154,8 @@
   )
 )
 
-(define-function cell_view_new_with_pixbuf
+(define-function new_with_pixbuf
+  (is-constructor-of "GtkCellView")
   (c-name "gtk_cell_view_new_with_pixbuf")
   (return-type "GtkWidget*")
   (parameters
@@ -2161,7 +2163,8 @@
   )
 )
 
-(define-function cell_view_new_with_text
+(define-function new_with_text
+  (is-constructor-of "GtkCellView")
   (c-name "gtk_cell_view_new_with_text")
   (return-type "GtkWidget*")
   (parameters
@@ -2348,9 +2351,11 @@
   (return-type "none")
 )
 
-(define-function clipboard_get
+(define-method get
   (c-name "gtk_clipboard_get")
+  (of-object "GtkClipboard")
   (return-type "GtkClipboard*")
+  (static #t)
   (parameters
     '("GdkAtom" "selection" (default "GDK_SELECTION_CLIPBOARD"))
   )
@@ -6322,6 +6327,7 @@
 )
 
 (define-function file_chooser_button_new_with_backend
+  (is-constructor-of "GtkFileChooserButton")
   (c-name "gtk_file_chooser_button_new_with_backend")
   (return-type "GtkWidget*")
   (parameters
@@ -6332,6 +6338,7 @@
 )
 
 (define-function file_chooser_button_new_with_dialog
+  (is-constructor-of "GtkFileChooserButton")
   (c-name "gtk_file_chooser_button_new_with_dialog")
   (return-type "GtkWidget*")
   (parameters
@@ -7801,14 +7808,18 @@
   )
 )
 
-(define-function hbutton_box_get_layout_default
+(define-method get_layout_default
   (c-name "gtk_hbutton_box_get_layout_default")
+  (of-object "GtkHButtonBox")
   (return-type "GtkButtonBoxStyle")
+  (static #t)
 )
 
-(define-function hbutton_box_get_spacing_default
+(define-method get_spacing_default
   (c-name "gtk_hbutton_box_get_spacing_default")
+  (of-object "GtkHButtonBox")
   (return-type "gint")
+  (static #t)
 )
 
 (define-function gtk_hbutton_box_get_type
@@ -7823,17 +7834,21 @@
   (return-type "GtkWidget*")
 )
 
-(define-function hbutton_box_set_layout_default
+(define-method set_layout_default
   (c-name "gtk_hbutton_box_set_layout_default")
+  (of-object "GtkHButtonBox")
   (return-type "none")
+  (static #t)
   (parameters
     '("GtkButtonBoxStyle" "layout")
   )
 )
 
-(define-function hbutton_box_set_spacing_default
+(define-method set_spacing_default
   (c-name "gtk_hbutton_box_set_spacing_default")
+  (of-object "GtkHButtonBox")
   (return-type "none")
+  (static #t)
   (parameters
     '("gint" "spacing")
   )
@@ -8087,6 +8102,7 @@
 )
 
 (define-function icon_set_new
+  (is-constructor-of "GtkIconSet")
   (c-name "gtk_icon_set_new")
   (return-type "GtkIconSet*")
 )
@@ -8362,11 +8378,6 @@
   (parameters
     '("const-gchar*" "path")
   )
-)
-
-(define-function icon_theme_error_quark
-  (c-name "gtk_icon_theme_error_quark")
-  (return-type "GQuark")
 )
 
 (define-method get_default
@@ -9149,9 +9160,11 @@
   )
 )
 
-(define-function image_new_from_icon_name
+(define-method new_from_icon_name
   (c-name "gtk_image_new_from_icon_name")
+  (of-object "GtkImage")
   (return-type "GtkWidget*")
+  (static #t)
   (parameters
     '("const-gchar*" "icon_name")
     '("GtkIconSize" "size")
@@ -9433,9 +9446,11 @@
   (return-type "none")
 )
 
-(define-function item_factories_path_delete
+(define-method factories_path_delete
+  (of-object "GtkItemFactory")
   (c-name "gtk_item_factories_path_delete")
   (return-type "none")
+  (static #t)
   (parameters
     '("const-gchar*" "ifactory_path")
     '("const-gchar*" "path")
@@ -9539,17 +9554,21 @@
   )
 )
 
-(define-function item_factory_from_path
+(define-method from_path
   (c-name "gtk_item_factory_from_path")
+  (of-object "GtkItemFactory")
   (return-type "GtkItemFactory*")
+  (static #t)
   (parameters
     '("const-gchar*" "path")
   )
 )
 
-(define-function item_factory_from_widget
+(define-method from_widget
   (c-name "gtk_item_factory_from_widget")
+  (of-object "GtkItemFactory")
   (return-type "GtkItemFactory*")
+  (static #t)
   (parameters
     '("GtkWidget*" "widget")
   )
@@ -9609,9 +9628,11 @@
   )
 )
 
-(define-function item_factory_path_from_widget
+(define-method path_from_widget
   (c-name "gtk_item_factory_path_from_widget")
+  (of-object "GtkItemFactory")
   (return-type "const-gchar*")
+  (static #t)
   (parameters
     '("GtkWidget*" "widget")
   )
@@ -12243,15 +12264,19 @@
   )
 )
 
-(define-function preview_get_cmap
+(define-method get_cmap
+  (of-object "GtkPreview")
   (c-name "gtk_preview_get_cmap")
   (return-type "GdkColormap*")
+  (static #t)
   (deprecated "use GtkPixbuf")
 )
 
-(define-function preview_get_info
+(define-method get_info
+  (of-object "GtkPreview")
   (c-name "gtk_preview_get_info")
   (return-type "GtkPreviewInfo*")
+  (static #t)
   (deprecated "use GtkPixbuf")
 )
 
@@ -12260,9 +12285,11 @@
   (return-type "GType")
 )
 
-(define-function preview_get_visual
+(define-method get_preview_visual
+  (of-object "GtkPreview")
   (c-name "gtk_preview_get_visual")
   (return-type "GdkVisual*")
+  (static #t)
   (deprecated "use GtkPixbuf")
 )
 
@@ -12271,6 +12298,7 @@
   (c-name "gtk_preview_new")
   (caller-owns-return #t)
   (return-type "GtkWidget*")
+  (static #t)
   (deprecated "use GtkDrawingArea")
   (parameters
     '("GtkPreviewType" "type")
@@ -12293,15 +12321,19 @@
   )
 )
 
-(define-function preview_reset
+(define-method reset
+  (of-object "GtkPreview")
   (c-name "gtk_preview_reset")
   (return-type "none")
+  (static #t)
   (deprecated "use GtkPixbuf")
 )
 
-(define-function preview_set_color_cube
+(define-method set_color_cube
+  (of-object "GtkPreview")
   (c-name "gtk_preview_set_color_cube")
   (return-type "none")
+  (static #t)
   (deprecated "use GtkPixbuf")
   (parameters
     '("guint" "nred_shades")
@@ -12330,27 +12362,33 @@
   )
 )
 
-(define-function preview_set_gamma
+(define-method set_gamma
+  (of-object "GtkPreview")
   (c-name "gtk_preview_set_gamma")
   (return-type "none")
+  (static #t)
   (deprecated "use GtkPixbuf")
   (parameters
     '("double" "gamma")
   )
 )
 
-(define-function preview_set_install_cmap
+(define-method set_install_cmap
+  (of-object "GtkPreview")
   (c-name "gtk_preview_set_install_cmap")
   (return-type "none")
+  (static #t)
   (deprecated "use GtkPixbuf")
   (parameters
     '("gint" "install_cmap")
   )
 )
 
-(define-function preview_set_reserved
+(define-method set_reserved
+  (of-object "GtkPreview")
   (c-name "gtk_preview_set_reserved")
   (return-type "none")
+  (static #t)
   (deprecated "use GtkPixbuf")
   (parameters
     '("gint" "nreserved")
@@ -12367,8 +12405,10 @@
   )
 )
 
-(define-function preview_uninit
+(define-method uninit
+  (of-object "GtkPreview")
   (c-name "gtk_preview_uninit")
+  (static #t)
   (return-type "none")
   (deprecated "use GtkPixbuf")
 )
@@ -19978,14 +20018,18 @@
   )
 )
 
-(define-function vbutton_box_get_layout_default
+(define-method get_layout_default
   (c-name "gtk_vbutton_box_get_layout_default")
+  (of-object "GtkVButtonBox")
   (return-type "GtkButtonBoxStyle")
+  (static #t)
 )
 
-(define-function vbutton_box_get_spacing_default
+(define-method get_spacing_default
   (c-name "gtk_vbutton_box_get_spacing_default")
+  (of-object "GtkVButtonBox")
   (return-type "gint")
+  (static #t)
 )
 
 (define-function gtk_vbutton_box_get_type
@@ -20000,17 +20044,21 @@
   (return-type "GtkWidget*")
 )
 
-(define-function vbutton_box_set_layout_default
+(define-method set_layout_default
   (c-name "gtk_vbutton_box_set_layout_default")
+  (of-object "GtkVButtonBox")
   (return-type "none")
+  (static #t)
   (parameters
     '("GtkButtonBoxStyle" "layout")
   )
 )
 
-(define-function vbutton_box_set_spacing_default
+(define-method set_spacing_default
   (c-name "gtk_vbutton_box_set_spacing_default")
+  (of-object "GtkVButtonBox")
   (return-type "none")
+  (static #t)
   (parameters
     '("gint" "spacing")
   )
