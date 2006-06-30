@@ -1421,6 +1421,70 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkTreeModelFilter convert_child_iter_to_iter
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, child_iter, GtkTreeIter, 1)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_model_filter_convert_child_iter_to_iter
+PHP_METHOD
+{
+    GtkTreeIter *filter_iter = NULL, *child_iter = NULL;
+    zval *php_child_iter;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &php_child_iter, gboxed_ce))
+        return;
+
+    if (phpg_gboxed_check(php_child_iter, GTK_TYPE_TREE_ITER, FALSE TSRMLS_CC)) {
+        child_iter = (GtkTreeIter *) PHPG_GBOXED(php_child_iter);
+    } else {
+        php_error(E_WARNING, "%s::%s() expects child_iter argument to be a valid GtkTreeIter object",
+                  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    gtk_tree_model_filter_convert_child_iter_to_iter(GTK_TREE_MODEL_FILTER(PHPG_GOBJECT(this_ptr)), filter_iter, child_iter);
+
+    phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &filter_iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
+add-arginfo GtkTreeModelFilter convert_iter_to_child_iter
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, filter_iter, GtkTreeIter, 1)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_model_filter_convert_iter_to_child_iter
+PHP_METHOD
+{
+    GtkTreeIter *child_iter = NULL, *filter_iter = NULL;
+    zval *php_filter_iter;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &php_filter_iter, gboxed_ce))
+        return;
+
+    if (phpg_gboxed_check(php_filter_iter, GTK_TYPE_TREE_ITER, FALSE TSRMLS_CC)) {
+        filter_iter = (GtkTreeIter *) PHPG_GBOXED(php_filter_iter);
+    } else {
+        php_error(E_WARNING, "%s::%s() expects filter_iter argument to be a valid GtkTreeIter object",
+                  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(PHPG_GOBJECT(this_ptr)), child_iter, filter_iter);
+
+    phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &child_iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
 add-arginfo GtkTreeModelFilter set_visible_func
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)

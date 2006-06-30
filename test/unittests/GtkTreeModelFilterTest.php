@@ -37,6 +37,24 @@ class GtkTreeModelFilterTest extends PHPUnit2_Framework_TestCase {
      * @access protected
      */
     protected function setUp() {
+        $this->mod = new GtkTreeStore(Gtk::TYPE_STRING);
+        $this->a = $this->mod->append(null, array('a'));
+            $this->aa = $this->mod->append($this->a, array('aa'));
+            $this->ab = $this->mod->append($this->a, array('ab'));
+            $this->ac = $this->mod->append($this->a, array('ac'));
+            $this->ad = $this->mod->append($this->a, array('ad'));
+        $this->b = $this->mod->append(null, array('b'));
+        $this->c = $this->mod->append(null, array('c'));
+
+
+        $path_a = $this->mod->get_string_from_iter($this->a);
+        $this->tmf = new GtkTreeModelFilter($this->mod, $path_a);
+
+        $this->assertEquals(3, $this->mod->iter_n_children(null));
+        $this->assertEquals(4, $this->mod->iter_n_children($this->a));
+
+        $this->assertNotNull($this->tmf->get_property('virtual-root'));
+        $this->assertEquals(4, $this->tmf->iter_n_children(null));
     }
 
     /**
@@ -73,11 +91,21 @@ class GtkTreeModelFilterTest extends PHPUnit2_Framework_TestCase {
     }
 
     /**
-     * @todo Implement testConvert_iter_to_child_iter().
+     *
      */
     public function testConvert_iter_to_child_iter() {
-        // Remove the following line when you implement this test.
-        throw new PHPUnit2_Framework_IncompleteTestError;
+        $a = $this->tmf->get_iter_first();
+        $this->assertType('GtkTreeIter', $a);
+//        var_dump($this->tmf->get_value($a, 0));
+        $this->assertEquals('aa', $this->tmf->get_value($a, 0));
+
+        $child_a = $this->tmf->convert_iter_to_child_iter($a);
+        $this->assertNotNull($child_a);
+        $this->assertType('GtkTreeIter', $child_a);
+        $this->assertEquals(
+            'aa',
+            $this->mod->get_value($child_a, 0)
+        );
     }
 
     /**

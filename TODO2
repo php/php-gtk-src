@@ -62,8 +62,8 @@ Classes and Functions
 	method      GtkTreeModel::rows_reordered: unknown type 'gint*'
 	maybe implement some SPL interfaces?
 * GtkTreeModelFilter
-    NTRVNRP: convert_child_iter_to_iter(GtkTreeIter sort_iter, GtkTreeIter child_iter)
-    NTRVNRP: convert_iter_to_child_iter(GtkTreeIter child_iter, GtkTreeIter sorted_iter);
+    memleak when using get_property('virtual-root')
+    second constructor parameter doesn't work (see unit test)
 * GtkTreeModelSort
     NTRVNRP: convert_child_iter_to_iter(GtkTreeIter sort_iter, GtkTreeIter child_iter)
     NTRVNRP: convert_iter_to_child_iter(GtkTreeIter child_iter, GtkTreeIter sorted_iter);
