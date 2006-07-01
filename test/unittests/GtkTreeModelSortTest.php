@@ -37,6 +37,14 @@ class GtkTreeModelSortTest extends PHPUnit2_Framework_TestCase {
      * @access protected
      */
     protected function setUp() {
+        $this->mod = new GtkTreeStore(Gtk::TYPE_STRING);
+        $this->a = $this->mod->append(null, array('a'));
+        $this->b = $this->mod->append(null, array('b'));
+        $this->c = $this->mod->append(null, array('c'));
+
+        $this->tms = new GtkTreeModelSort($this->mod);
+        $this->tms->set_default_sort_func(array($this, 'sortCallback'));
+        $this->tms->set_sort_column_id(0, Gtk::SORT_ASCENDING);
     }
 
     /**
@@ -48,6 +56,10 @@ class GtkTreeModelSortTest extends PHPUnit2_Framework_TestCase {
     protected function tearDown() {
     }
 
+    public function sortCallback($model, $iter1, $iter2) {
+        var_dump($model, $iter1, $iter2);
+    }
+
     /**
      * @todo Implement testClear_cache().
      */
@@ -57,11 +69,21 @@ class GtkTreeModelSortTest extends PHPUnit2_Framework_TestCase {
     }
 
     /**
-     * @todo Implement testConvert_child_iter_to_iter().
+     *
      */
     public function testConvert_child_iter_to_iter() {
-        // Remove the following line when you implement this test.
-        throw new PHPUnit2_Framework_IncompleteTestError;
+        $child_a = $this->mod->get_iter_first();
+        $this->assertNotNull($child_a);
+        $this->assertType('GtkTreeIter', $child_a);
+
+        $sort_a = $this->tms->convert_child_iter_to_iter($child_a);
+        $this->assertNotNull($sort_a);
+        $this->assertType('GtkTreeIter', $sort_a);
+
+        $this->assertEquals(
+            $this->mod->get_value($child_a, 0),
+            $this->tms->get_value($sort_a, 0)
+        );
     }
 
     /**
@@ -73,11 +95,21 @@ class GtkTreeModelSortTest extends PHPUnit2_Framework_TestCase {
     }
 
     /**
-     * @todo Implement testConvert_iter_to_child_iter().
+     *
      */
     public function testConvert_iter_to_child_iter() {
-        // Remove the following line when you implement this test.
-        throw new PHPUnit2_Framework_IncompleteTestError;
+        $sort_a = $this->tms->get_iter_first();
+        $this->assertNotNull($sort_a);
+        $this->assertType('GtkTreeIter', $sort_a);
+
+        $child_a = $this->tms->convert_iter_to_child_iter($sort_a);
+        $this->assertNotNull($child_a);
+        $this->assertType('GtkTreeIter', $child_a);
+
+        $this->assertEquals(
+            $this->tms->get_value($sort_a, 0),
+            $this->mod->get_value($child_a, 0)
+        );
     }
 
     /**

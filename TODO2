@@ -64,9 +64,6 @@ Classes and Functions
 * GtkTreeModelFilter
     memleak when using get_property('virtual-root')
     second constructor parameter doesn't work (see unit test)
-* GtkTreeModelSort
-    NTRVNRP: convert_child_iter_to_iter(GtkTreeIter sort_iter, GtkTreeIter child_iter)
-    NTRVNRP: convert_iter_to_child_iter(GtkTreeIter child_iter, GtkTreeIter sorted_iter);
 * GtkTreeStore
 	method      GtkTreeStore::reorder: unknown type 'gint*'
 	method      GtkTreeStore::set_column_types: unknown type 'GType*'
