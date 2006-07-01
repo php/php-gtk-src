@@ -1,3 +1,31 @@
+2006-06-30  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.defs:
+      Removing GtkTreeModel::filter_new, since we already have a
+      GtkTreeModelFilter constructor
+
+    * TODO2
+      ext/gtk+/gtktreeview.overrides:
+      While fixing the NTRVNRP methods
+      GtkTreeModelFilter::convert_iter_to_child_iter
+      GtkTreeModelFilter::convert_child_iter_to_iter
+      I noted that the gtktreemodelfilter constructor
+      does not really work, since the second parameter seems
+      to be ignored at all.
+      Further, there is a memleak when trying to get the
+      virtual-root property of a tree model filter.
+      Just check the unit test.
+
+    * ext/gtk+/gtktreeview.overrides:
+      Saving one bit of memory
+
+    * TODO2
+      ext/gtk+/gtktreeview.overrides:
+      Fixing NTRVNRP method GtkCellView::get_size_of_row()
+
+    * ext/gtk+/gtk.defs:
+      Moving functions to static class methods
+
 2006-06-28  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gtk.overrides:
