@@ -1395,14 +1395,13 @@ PHP_METHOD
     GtkTreePath *path = NULL;
     zval *php_model = NULL, *php_path = NULL;
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V|s", &php_model, gtktreemodel_ce, &php_path))
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O|V", &php_model, gtktreemodel_ce, &php_path))
         return;
 
     if (php_path && phpg_tree_path_from_zval(php_path, &path TSRMLS_CC) == FAILURE) {
         php_error(E_WARNING, "%s::%s() expects path argument to be a valid tree path specification", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
         return;
     }
-
 
     wrapped_obj = g_object_new(phpg_gtype_from_zval(this_ptr),
                                "child-model", GTK_TREE_MODEL(PHPG_GOBJECT(php_model)),
