@@ -47,11 +47,15 @@ class GtkTreeModelFilterTest extends PHPUnit2_Framework_TestCase {
         $this->c = $this->mod->append(null, array('c'));
 
 
-        $path_a = $this->mod->get_string_from_iter($this->a);
+        $path_a = $this->mod->get_path($this->a);
+        $this->assertNotNull($path_a);
         $this->tmf = new GtkTreeModelFilter($this->mod, $path_a);
 
         $this->assertEquals(3, $this->mod->iter_n_children(null));
         $this->assertEquals(4, $this->mod->iter_n_children($this->a));
+
+        $this->assertNotNull($this->tmf->get_property('child-model'));
+        $this->assertEquals($this->mod, $this->tmf->get_property('child-model'));
 
         $this->assertNotNull($this->tmf->get_property('virtual-root'));
         $this->assertEquals(4, $this->tmf->iter_n_children(null));
@@ -75,11 +79,31 @@ class GtkTreeModelFilterTest extends PHPUnit2_Framework_TestCase {
     }
 
     /**
-     * @todo Implement testConvert_child_iter_to_iter().
+     *
      */
     public function testConvert_child_iter_to_iter() {
-        // Remove the following line when you implement this test.
-        throw new PHPUnit2_Framework_IncompleteTestError;
+        $child_a = $this->mod->get_iter_first();
+        $this->assertNotNull($child_a);
+        $this->assertType('GtkTreeIter', $child_a);
+        $this->assertEquals('a', $this->mod->get_value($child_a, 0));
+
+        $child_aa = $this->mod->iter_nth_child($child_a, 0);
+        $this->assertNotNull($child_aa);
+        $this->assertType('GtkTreeIter', $child_aa);
+        $this->assertEquals('aa', $this->mod->get_value($child_aa, 0));
+
+
+        $aa = $this->tmf->convert_child_iter_to_iter($child_aa);
+        $this->assertNotNull($aa);
+        $this->assertType('GtkTreeIter', $aa);
+        $this->assertEquals(
+            $this->tmf->get_value($aa, 0),
+            $this->mod->get_value($child_aa, 0)
+        );
+
+        //This should return NULL if the virtual root would work
+        $a = $this->tmf->convert_child_iter_to_iter($child_a);
+        //FIXME: check for null when virtual root works
     }
 
     /**
@@ -95,6 +119,7 @@ class GtkTreeModelFilterTest extends PHPUnit2_Framework_TestCase {
      */
     public function testConvert_iter_to_child_iter() {
         $a = $this->tmf->get_iter_first();
+        $this->assertNotNull($a);
         $this->assertType('GtkTreeIter', $a);
 //        var_dump($this->tmf->get_value($a, 0));
         $this->assertEquals('aa', $this->tmf->get_value($a, 0));
@@ -103,9 +128,10 @@ class GtkTreeModelFilterTest extends PHPUnit2_Framework_TestCase {
         $this->assertNotNull($child_a);
         $this->assertType('GtkTreeIter', $child_a);
         $this->assertEquals(
-            'aa',
+            $this->tmf->get_value($a, 0),
             $this->mod->get_value($child_a, 0)
         );
+
     }
 
     /**
