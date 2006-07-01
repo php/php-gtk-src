@@ -191,7 +191,7 @@ PHP_METHOD
 }
 
 %%
-add-arginfo GtkCellLayout get_size_of_row
+add-arginfo GtkCellView get_size_of_row
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, path)
