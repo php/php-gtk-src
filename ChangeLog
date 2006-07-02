@@ -1,3 +1,24 @@
+2006-07-01  Christian Weiske  <cweiske@cweiske.de>
+
+    * TODO2
+      ext/gtk+/gtktreeview.overrides:
+      Fixed NTRVTRP methods
+      GtkTreeModelSort::convert_iter_to_child_iter
+      GtkTreeModelSort::convert_child_iter_to_iter
+      
+      The script leaks memory, but this is because of
+      http://bugzilla.gnome.org/show_bug.cgi?id=346341
+
+    * ext/gtk+/gtktreeview.overrides:
+      Fixed the both convert methods and added unit test for them
+
+    * ext/gtk+/gtktreeview.overrides:
+      Fixing the parameter type.
+      I still don't know why virtual_root is null, although we set it.
+
+    * ext/gtk+/gtktreeview.overrides:
+      Wrong class in arginfo
+
 2006-06-30  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gtk.defs:
