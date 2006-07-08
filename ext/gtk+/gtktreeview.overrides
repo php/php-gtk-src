@@ -82,7 +82,7 @@ PHP_METHOD
     if ((argc-1)% 2) {
         php_error(E_WARNING, "%s::%s() requires arguments 3-n to be attribute/column pairs",
                   get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkTreeViewColumn);
+        return;
     }
 
     layout = GTK_CELL_LAYOUT(PHPG_GOBJECT(this_ptr));
@@ -98,14 +98,14 @@ PHP_METHOD
                       get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C),
                       i, zend_zval_type_name(attr));
             efree(args);
-            PHPG_THROW_CONSTRUCT_EXCEPTION(GtkTreeViewColumn);
+            return;
         }
         if (Z_TYPE_P(column) != IS_LONG) {
             php_error(E_WARNING, "%s::%s() requires argument %d to be an integer, %s given",
                       get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C),
                       i, zend_zval_type_name(column));
             efree(args);
-            PHPG_THROW_CONSTRUCT_EXCEPTION(GtkTreeViewColumn);
+            return;
         }
 
         gtk_cell_layout_add_attribute(layout, cell, Z_STRVAL_P(attr), Z_LVAL_P(column));
