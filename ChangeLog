@@ -1,3 +1,8 @@
+2006-07-08  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtktreeview.overrides:
+      Regular methods shouldn't throw exceptions.
+
 2006-07-05  Anant Narayanan  <anant@kix.in>
 
     * ext/scintilla/scintilla.overrides:
