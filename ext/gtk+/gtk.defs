@@ -9446,7 +9446,7 @@
   (return-type "none")
 )
 
-(define-method factories_path_delete
+(define-method path_delete
   (of-object "GtkItemFactory")
   (c-name "gtk_item_factories_path_delete")
   (return-type "none")
