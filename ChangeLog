@@ -1,3 +1,8 @@
+2006-07-10  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.defs:
+      Removing "factories_" to Andrei's wish
+
 2006-07-08  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtktreeview.overrides:
