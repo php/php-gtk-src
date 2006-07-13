@@ -1,5 +1,5 @@
-Version ????  "As Yet unnamed and might be ZE2" 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Version 1.0.1 09-August-2004
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      - added support for GtkCanvas widget (Alan)
      - added support for GdkImLib toolkit - experimental (Alan)
      - added support for GtkExtra widgets ,GtkPlot, GtkSheet and many
@@ -8,8 +8,6 @@ Version ????  "As Yet unnamed and might be ZE2"
      - fixed segfault when providing GtkCtree::insert_node wrong parameters
      - added GtkScintilla, GtkComboButton, GtkSpaned, GtkScrollpane to
        Win32 distribution (Frank)
- 
-	 
 
 Version 0.5.2 "Bass does a body good" 01-Nov-2002
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
