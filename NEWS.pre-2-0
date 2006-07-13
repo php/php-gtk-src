@@ -1,0 +1,174 @@
+Version 1.0.1 09-August-2004
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     - added support for GtkCanvas widget (Alan)
+     - added support for GdkImLib toolkit - experimental (Alan)
+     - added support for GtkExtra widgets ,GtkPlot, GtkSheet and many
+       others (Angel Maza, Alan)
+     - added get_wrap_mode, set_wrap_mode to GtkScintilla (Benjamin Smith)
+     - fixed segfault when providing GtkCtree::insert_node wrong parameters
+     - added GtkScintilla, GtkComboButton, GtkSpaned, GtkScrollpane to
+       Win32 distribution (Frank)
+
+Version 0.5.2 "Bass does a body good" 01-Nov-2002
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - simplified GdkPixbuf constructor parameters. (Andrei)
+    - fixed setting of tile/stipple/clip_mask/bg_pixmap properties of GdkGC.
+      (Andrei)
+    - implemented GdkPixbuf::fill(). (Andrei)
+    - changed failure to allocate color to output only a notice instead of a
+      warning. (Andrei)
+    - made depth parameter of GdkPixmap constructor optional. (Andrei)
+    - added copy_area() method for drawables. (Andrei)
+    - added group() and set_group() methods for GtkRadioButton/GtkRadioMenuItem.
+      (Andrei)
+    - added GDK functions pointer_grab(), pointer_ungrab(), keyboard_grab(),
+      keyboard_ungrab(). (Andrei)
+    - added utf8 support to GtkRadioButton, GtkToggleButton, GtkCheckMenuItem,
+      and GtkCheckButton. (Frank)
+    - fixed a crash bug when using non-string variables to access
+      overloaded object's properties. (Andrei)
+    - fixed a crash bug in GtkCheckButton constructor. (Andrei)
+
+Version 0.5.1 "hardboiled wonderland" 26-Apr-2002
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - changed gdkwindow::set_cursor() to allow reverting the cursor to default
+      one. (Andrei)
+    - fixed gtk::input_add() for pre-streams PHP versions. (Andrei)
+    - adapted build system to work with the new PHP build system. (Andrei)
+    - made gtk::input_add() work with PHP streams. (Andrei)
+    - fixed gtkscintilla::marker_add return type. (Alan)
+    - fixed property and method access on GdkBitmap. (Andrei)
+    - fixed a crash bug in gtkclist::append() when size of input was greater
+      than the number of columns. (Markus)
+
+Version 0.5.0 "monday starts on saturday" 24-Jan-2002
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - added new widgets with samples: GtkComboButton, GtkSPaned, GtkScrollPane
+      and GtkPieMenu. (Markus)
+    - implemented GtkFontSelection::set_filter(),
+      GtkFontSelectionDialog::set_filter(),
+      Gtk::button_box_get_child_ipadding_default(),
+      Gtk::button_box_get_child_size_default() and GtkWidget::get_pointer().
+      (Markus)
+    - implemented gdkpixbuf extension (loading and displaying images). (Andrei)
+    - added GtkCTree methods find_by_row_data, find_all_by_row_data. (Andrei)
+    - added gtkhtml extension which provides support for GtkHTML, an HTML
+      rendering widget. (Alan Knowles)
+    - added GtkClist methods find_row_from_data(), get_pixmap(). (Andrei)
+    - added GtkList::remove_items() method. (Andrei)
+    - added ability to build extensions as shared libraries and load them
+      selectively. (Andrei)
+    - made libglade work on Win32 platforms. (Frank)
+    - added support for GtkSQPane widget. (Markus)
+    - added GtkCList::get_pixtext(). (Andrei, Rich Payne)
+
+Version 0.1.1 "no-holds-barred memento" 24-Sep-2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - added GtkCList::get_selection_info() method. (Andrei)
+    - made type checking of parameters passed to PHP-GTK functions more
+      forgiving. (Andrei)
+    - added GtkNotebook::query_tab_label_packing(),
+      GtkBox::query_child_packing(). (Markus)
+    - added event watcher, dialog, file selection, panes, and notebook examples
+      to gtk.php. (Markus)
+    - added Gtk::signal_(add|remove)_emission_hook(), Gtk::signal_name(), and
+      Gtk::signal_lookup() functions. (Markus)
+    - added GtkCList methods set_row_data(), get_row_data(). (Markus)
+    - added support for GtkScintilla, a text-editing widget. (Andrei)
+    - implemented GladeXML methods signal_connect_object() and
+      signal_autoconnect_object(). (Andrei)
+    - fixed GDK keysym constants warnings by prefixing some of them with
+      underscores. (Frank)
+    - changed PHP-visible extension name from 'gtk' to 'php-gtk'. (Andrei)
+
+Version 0.1.0 "the void which binds" 1-Aug-2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - added GDK keysyms constants. (Andrei)
+    - fixed bug with GtkStyle::copy() that was not returning the result
+      properly. (Andrei)
+    - implemented support for struct based classes (GdkRectangle, GtkAllocation,
+      GtkRequisition, etc). (Andrei)
+    - finished drag-n-drop support. (Andrei)
+    - ported Scribble example from C. (Andrei)
+    - modified GdkWindow::get_pointer() to be simpler, without XInput support.
+      (Andrei)
+    - changed 'area' event property to be a GdkRectangle. (Andrei)
+    - changed 'is_hint' event property to be boolean. (Andrei)
+    - added ability to query the state and allocation of a widget. (Andrei)
+    - added direct construction of pixmaps. (Andrei)
+    - added GdkWindow::set_icon() method. (Andrei)
+    - implemented GtkList methods insert_items() and prepend_items(). (Andrei)
+    - implemented new PHP-like build system that supports adding extensions to
+      PHP-GTK. (Andrei)
+    - implemented GtkCTree methods node_get_pixtext(), node_get_pixmap(), and
+      get_node_info().  (Andrei)
+    - implemented GtkObject::emit(), thus allowing programmatical emission of
+      signals. (Andrei)
+    - added support for accessing GtkObject arguments via get_arg() and
+      set_arg() methods. (Andrei)
+
+Version 0.0.4 "indistinguishable from magic": 5-May-2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - improved speed/memory efficiency by having only one wrapper for boxed
+      types, except for GdkEvent, GdkColor and GdkAtom. (Andrei)
+    - implemented object overloading emulation layer to correct for Zend
+      engine's problems, now it's possible to assign and read custom properties
+      on Gtk+ objects. (Andrei)
+    - added GtkAspectFrame class definition. (Andrei)
+    - added GtkCTree traversal functions. (Andrei)
+    - optimized internal resource handling, this should save on memory. (Andrei)
+    - fixed a bug that would corrupt object type when setting cascaded property.
+      (Andrei)
+    - added a few more properties to GtkCTree and GtkCList. (Andrei)
+    - implemented GtkMenu::popup(). (Andrei)
+    - fixed GtkCTree::insert_row() for good, added GtkCTree methods
+      node_set_row_data() and node_get_row_data(). (Andrei)
+    - added helper GtkCListRow class. (Andrei)
+    - separated GdkWindow, GdkBitmap, GdkPixmap implementations to allow for
+      more flexibility and clarity. (Andrei)
+    - implemented GtkObject methods get_data(), set_data, connect_after(),
+      connect_object_after(). (Andrei)
+    - added several more widget examples to gtk.php. (Andrei)
+    - added ability to get and set color for GtkColorSelection. (Andrei)
+
+Version 0.0.3 "slow glass": 20-Mar-2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - added libglade support. (Andrei)
+    - fixed cascading property access in objects. (Andrei)
+    - added GtkRadioMenuItem, GtkRadioButton constructors. (Andrei)
+    - added Gdk::pixmap_create_from_xpm_d(). (Andrei)
+    - added GtkCList::prepend(), GtkClist::insert(). (Andrei)
+    - added GtkCList example to gtk.php. (Andrei)
+    - made Gdk::input_add() work with file resources. (Andrei)
+    - fixed GDK locale support. (Alex Bokovoy)
+    - reworked the generator to make it more generalized. (Andrei)
+    - re-engineered the build system a bit to accomodate the need to build
+      additional modules. (Andrei)
+    - added helper GtkBoxChild, GtkFixedChild classes. (Andrei)
+    - added some properties for GtkWidget, GtkBin, GtkMisc, GtkArrow, GtkBox,
+      GtkCalendar, GtkCTree, GtkList, and GtkCList classes. (Andrei)
+
+
+Version 0.0.2 "primordial nucleosynthesis": 7-Mar-2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - added 'child' property to GtkBin and its descendants. (Andrei)
+    - all callbacks now take user supplied extra arguments and better error
+      messages are shown if the callbacks are not valid. (Andrei)
+    - added GtkCombo::set_popdown_strings(), GdkPixmap::create_from_xpm().
+      (Andrei)
+    - implemented support for creating menus via GtkItemFactory. (Andrei)
+    - fixed loading of the extension via php.ini. (Andrei)
+    - fixed timeout and idle handler marshaller so that they are called more
+      than once. (Andrei)
+    - added connect_object() method that allows calling an object method as a
+      signal callback. (Andrei)
+    - fixed a silent crash that was happening due to object corruption. (Andrei)
+    - implemented GtkTipsQuery class. (Andrei)
+
+
+Version 0.0.1 "Genesis": 1-Mar-2001
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - first release. (Andrei)
+
+
+# vim: set et tw=80 ai sts=4:
