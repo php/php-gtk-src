@@ -92,10 +92,10 @@ subscription address.
 
 Patches and feedback
 ====================
-You can contact me directly at andrei@php.net or through the mailing list.
 Please use the mailing lists for most of your questions -- many people read
 them and you are more likely to get quicker feedback if you post there first.
-Patches in the unified diff (diff -u) format can be sent via the same means.
+Patches in the unified diff (diff -u) format should be sent to the developers
+list (see above).
 
 
 Acknowledgements
