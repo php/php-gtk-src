@@ -1,3 +1,22 @@
+2006-07-13  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk.h:
+      Bump to next greek letter.
+
+    * (php_gtk_2_0_0zeta)
+      NEWS
+      NEWS.pre-2-0
+      main/php_gtk.h:
+      Split NEWS. Update version.
+
+    * NEWS
+      README:
+      -** empty log message ***
+
+    * (php_gtk_2_0_0zeta)
+      README.KNOWN-ISSUES:
+      Typo
+
 2006-07-10  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gtk.defs:
