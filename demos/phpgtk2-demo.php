@@ -203,12 +203,13 @@ class PHPGtk2Demo extends GtkWindow
     protected function highlightSource($filename, $highlight)
     {
         $filecontents = file_get_contents($filename);
-        $tokens = token_get_all($filecontents);
 
         $highlighted = '';
         $color_codes = array();
 
-        if ($highlight) {
+        if ($highlight && extension_loaded('tokenizer')) {
+			$tokens = token_get_all($filecontents);
+
             // this would be much easier if we had functions which supported varargs (like insert_with_tags_by_name), but improvised solution works in the meantime.
 
             foreach ($tokens as $token) {
