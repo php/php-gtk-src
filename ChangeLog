@@ -1,3 +1,16 @@
+2006-07-15  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * (php_gtk_2_0_0zeta)
+      demos/phpgtk2-demo.php:
+      Highlight only if tokenizer is available.
+
+2006-07-15  Steph Fox  <steph.fox@virgin.net>
+
+    * win32/README.txt
+      win32/gtkpath.bat
+      win32/php.ini:
+      Bits and pieces around the win32 release
+
 2006-07-13  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/php_gtk.h:
