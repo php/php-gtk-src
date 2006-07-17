@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.17 2005-10-31 11:44:43 sfox Exp $
+// $Id: confutils.js,v 1.18 2006-07-17 15:06:14 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -123,7 +123,7 @@ function get_version_numbers() {
 	vfile.WriteLine("#define PHP_GTK_MAJOR_VERSION " + major);
 	vfile.WriteLine("#define PHP_GTK_MINOR_VERSION " + minor);
 	vfile.WriteLine("#define PHP_GTK_RELEASE_VERSION " + release);
-	if (PHP_GTK_DEBUG) {
+	if (PHP_GTK_DEBUG == "yes") {
 		vfile.WriteLine("#define PHP_GTK_EXTRA_VERSION \"" + extra + " (DEBUG)\"");
 	} else {
 		vfile.WriteLine("#define PHP_GTK_EXTRA_VERSION \"" + extra + "\"");
