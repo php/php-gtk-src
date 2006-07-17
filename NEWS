@@ -1,7 +1,7 @@
-Version 2.0.0zeta "renaissance redux": xx-xxx-2006
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Version 2.0.0alpha "renaissance redux": 15-July-2006
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - first test release of the new architecture
-    - make PHP 5, ZE 2, and 15 gajillion little and big pieces work, basically.
+    - make PHP 5, ZE 2, and 1.5 gajillion little and big pieces work, basically.
       (Andrei, et al )
 
 
