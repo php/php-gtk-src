@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.18 2006-07-17 15:06:14 sfox Exp $
+// $Id: confutils.js,v 1.19 2006-07-17 17:00:09 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -98,7 +98,7 @@ function get_version_numbers() {
 
 	/* pick up the version from main/php_gtk.h */
 	var vin = file_get_contents("main\\php_gtk.h");
-	var version, version_strings, major, minor, details, release, subversion_strings, extra = "";
+	var version, version_strings, major, minor, details, release = "", extra = "";
 
 	if (vin.match(new RegExp("PHP_GTK_VERSION \"([^\"]+)\""))) {
 		version = RegExp.$1;
@@ -108,12 +108,13 @@ function get_version_numbers() {
 		minor = version_strings[1];
 		details = version_strings[2];
 
-		if (details.indexOf("-") == -1) {
-			release = details;
-		} else {
-			subversion_strings = details.split("-");
-			release = subversion_strings[0];
-			extra = "-" + subversion_strings[1];
+		for (i = 0; i < details.length; i++) {
+			if(!isNaN(details.charAt(i))) {
+				release = release + details.charAt(i);
+			} else {
+				extra = details.substring(i);
+				break;
+			}
 		}
 	}
 
