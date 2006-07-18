@@ -1,3 +1,26 @@
+2006-07-17  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk.h:
+      Back to -dev.
+
+    * (php_gtk_2_0_0alpha)
+      NEWS
+      README.KNOWN-ISSUES:
+      zeta -> alpha
+
+    * (php_gtk_2_0_0alpha)
+      main/php_gtk.h:
+      Alas, our tools fail us again (zeta -> alpha)
+
+2006-07-17  Steph Fox  <steph.fox@virgin.net>
+
+    * win32/confutils.js:
+      - Kill the reliance on markers
+      - Versioning works properly now, whatever you do to it :)
+
+    * win32/confutils.js:
+      I've no idea why this stopped working, but it did.
+
 2006-07-15  Andrei Zmievski  <andrei@gravitonic.com>
 
     * (php_gtk_2_0_0zeta)
