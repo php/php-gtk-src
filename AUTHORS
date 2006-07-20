@@ -1,5 +1,14 @@
 Andrei Zmievski <andrei@php.net>
-    Main body of work
+	Project lead and architect, main body of code, some documentation
+
+Steph Fox <steph@zend.com>
+	Code contributions, documentation editor
+
+Christian Weiske <cweiske@cweiske.de>
+	Code contributions, documentation
+
+Anant Narayanan <anant@kix.in>
+	mozembed, scintilla, sourceview extensions
 
 Frank Kromann <fmk@php.net>
     Win32 compilation and some code generator work
