@@ -2,13 +2,14 @@ Andrei Zmievski <andrei@php.net>
 	Project lead and architect, main body of code, some documentation
 
 Steph Fox <steph@zend.com>
-	Code contributions, documentation editor
+	Win32 compilation and binary distributions, Glade support,
+	miscellaneous code, documentation editor
 
 Christian Weiske <cweiske@cweiske.de>
-	Code contributions, documentation
+	reflection support, patches, documentation
 
 Anant Narayanan <anant@kix.in>
-	mozembed, scintilla, sourceview extensions
+	mozembed, scintilla, sourceview extensions, patches
 
 Frank Kromann <fmk@php.net>
     Win32 compilation and some code generator work
