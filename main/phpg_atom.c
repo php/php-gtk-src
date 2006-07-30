@@ -69,16 +69,19 @@ static int phpg_gdkatom_compare_objects(zval *zobj1, zval *zobj2 TSRMLS_DC)
 static int phpg_gdkatom_cast_object(zval *readobj, zval *writeobj, int type TSRMLS_DC)
 {
     phpg_gdkatom_t *pobj;
+    gchar *atom_name = NULL;
 
     if (type == IS_STRING) {
         pobj = zend_object_store_get_object(readobj TSRMLS_CC);
         if (!pobj->name) {
-            pobj->name = estrdup(gdk_atom_name(pobj->atom));
+            atom_name = gdk_atom_name(pobj->atom);
+            if (atom_name) {
+                pobj->name = estrdup(atom_name);
+                ZVAL_STRING(writeobj, pobj->name, 1);
+            } else {
+                ZVAL_EMPTY_STRING(writeobj);
+            }
         }
-        if (!pobj->name) {
-            /* TODO obtain representation from __toString() perhaps */
-        }
-        ZVAL_STRING(writeobj, pobj->name, 1);
         return SUCCESS;
     }
 
@@ -96,12 +99,14 @@ static int phpg_gdkatom_cast_object(zval *readobj, zval *writeobj, int type, int
             free_obj = *writeobj;
         }
         if (!pobj->name) {
-            pobj->name = estrdup(gdk_atom_name(pobj->atom));
+            atom_name = gdk_atom_name(pobj->atom);
+            if (atom_name) {
+                pobj->name = estrdup(atom_name);
+                ZVAL_STRING(writeobj, pobj->name, 1);
+            } else {
+                ZVAL_EMPTY_STRING(writeobj);
+            }
         }
-        if (!pobj->name) {
-            /* TODO obtain representation from __toString() perhaps */
-        }
-        ZVAL_STRING(writeobj, pobj->name, 1);
         if (should_free) {
             zval_dtor(&free_obj);
         }

@@ -754,7 +754,7 @@ class Atom_Arg extends Int_Arg {
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add('GdkAtom', 'php_retval');
-        $info->post_code[] = "\tRETVAL_STRING(gdk_atom_name(php_retval), 1);";
+        $info->post_code[] = "\tphpg_gdkatom_new(&return_value, php_retval);";
     }
 }
 /* }}} */
