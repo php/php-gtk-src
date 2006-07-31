@@ -99,7 +99,7 @@ static int phpg_gdkatom_cast_object(zval *readobj, zval *writeobj, int type, int
             free_obj = *writeobj;
         }
         if (!pobj->name) {
-            atom_name = gdk_atom_name(pobj->atom);
+            gchar *atom_name = gdk_atom_name(pobj->atom);
             if (atom_name) {
                 pobj->name = estrdup(atom_name);
                 ZVAL_STRING(writeobj, pobj->name, 1);
