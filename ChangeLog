@@ -1,3 +1,13 @@
+2006-07-30  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * generator/arg_types.php
+      main/phpg_atom.c:
+      Make GtkSelectionData GdkAtom fields be actual GdkAtom objects.
+
+    * ext/gtk+/gtk.overrides:
+      Implement GtkSelectionData's get_uris() and set_uris. (Patch by
+      Christian W, updated by Andrei)
+
 2006-07-20  Andrei Zmievski  <andrei@gravitonic.com>
 
     * AUTHORS:
