@@ -1,3 +1,8 @@
+2006-07-31  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/phpg_atom.c:
+      Declare the atom_name var.
+
 2006-07-30  Andrei Zmievski  <andrei@gravitonic.com>
 
     * generator/arg_types.php
