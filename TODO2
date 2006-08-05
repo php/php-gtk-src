@@ -21,6 +21,7 @@ Base Functionality
   front. This means that the callback has to be defined and accessible when you
   register it.
 * Add a generic function to allow i18n support for strings in arrays.
+* Migrate callbacks to use zend_fcall_info and zend_fcall_info_cache (this will also buy us goodies like specifying statis callbacks as 'gtk::main_quit')
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
