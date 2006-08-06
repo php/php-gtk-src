@@ -39,6 +39,8 @@ ignore
     gtk_action_group_add_radio_actions_full
     gtk_button_new_with_label
     gtk_button_new_with_mnemonic
+    gtk_check_menu_item_new_with_label
+    gtk_check_menu_item_new_with_mnemonic
     gtk_clist_new_with_titles
     gtk_color_button_new
     gtk_combo_box_new_with_model
@@ -64,6 +66,8 @@ ignore
     gtk_plug_new_for_display
     gtk_radio_menu_item_new_with_label
     gtk_radio_menu_item_new_with_mnemonic
+    gtk_radio_menu_item_new_with_label_from_widget
+    gtk_radio_menu_item_new_with_mnemonic_from_widget
     gtk_true
 %%
 ignore-win32
@@ -99,8 +103,6 @@ ignore
     gtk_accel_group_unlock_entry
     gtk_accel_group_unref
     gtk_adjustment_set_all
-    gtk_check_menu_item_new_with_label
-    gtk_check_menu_item_new_with_mnemonic
     gtk_clist_set_row_data_full
     gtk_draw_box_gap
     gtk_draw_check
@@ -157,8 +159,6 @@ ignore
     gtk_propagate_event
     gtk_quit_remove_by_data
     gtk_radio_menu_item_group
-    gtk_radio_menu_item_new_with_label_from_widget
-    gtk_radio_menu_item_new_with_mnemonic_from_widget
     gtk_range_default_htrough_click
     gtk_range_default_vtrough_click
     gtk_range_trough_click
