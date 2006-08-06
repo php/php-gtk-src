@@ -99,6 +99,8 @@ ignore
     gtk_accel_group_unlock_entry
     gtk_accel_group_unref
     gtk_adjustment_set_all
+    gtk_check_menu_item_new_with_label
+    gtk_check_menu_item_new_with_mnemonic
     gtk_clist_set_row_data_full
     gtk_draw_box_gap
     gtk_draw_check
@@ -155,6 +157,8 @@ ignore
     gtk_propagate_event
     gtk_quit_remove_by_data
     gtk_radio_menu_item_group
+    gtk_radio_menu_item_new_with_label_from_widget
+    gtk_radio_menu_item_new_with_mnemonic_from_widget
     gtk_range_default_htrough_click
     gtk_range_default_vtrough_click
     gtk_range_trough_click
@@ -3574,6 +3578,40 @@ PHP_METHOD
     }
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 
+}
+
+%%
+add-arginfo GtkRadioMenuItem new_from_widget
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, text)
+    ZEND_ARG_INFO(0, use_underline)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_radio_menu_item_new_from_widget
+PHP_METHOD
+{
+    GtkWidget* item;
+    char *label;
+    zend_bool free_label, use_underline = 1;
+
+    NOT_STATIC_METHOD();
+
+    if (ZEND_NUM_ARGS() == 0) {
+        item = gtk_radio_menu_item_new_from_widget(GTK_RADIO_MENU_ITEM(PHPG_GOBJECT(this_ptr)));
+    } else {
+        if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u|b", &label, &free_label, &use_underline))
+            return;
+        if (!use_underline) {
+            item = gtk_radio_menu_item_new_with_label_from_widget(GTK_RADIO_MENU_ITEM(PHPG_GOBJECT(this_ptr)), label);
+        } else {
+            item = gtk_radio_menu_item_new_with_mnemonic_from_widget(GTK_RADIO_MENU_ITEM(PHPG_GOBJECT(this_ptr)), label);
+        }
+        if (free_label) g_free(label);
+    }
+
+    phpg_gobject_new(&return_value, (GObject *)item TSRMLS_CC);
 }
 
 %%
