@@ -1,3 +1,11 @@
+2006-08-06  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.overrides:
+      Moving ignores to correct place
+
+    * ext/gtk+/gtk.overrides:
+      Merging some GtkRadioMenuItem constructors, and removing some
+
 2006-08-05  Andrei Zmievski  <andrei@gravitonic.com>
 
     * TODO2:
