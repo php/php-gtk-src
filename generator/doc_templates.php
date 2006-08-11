@@ -214,7 +214,7 @@ EOD;
 
 $etter_start_tpl = <<<EOD
     <para>
-     See also: 
+     &seealso;
 EOD;
 
 $etter_end_tpl = <<<EOD
