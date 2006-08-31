@@ -1546,6 +1546,50 @@ PHP_METHOD
     gtk_color_selection_set_color(GTK_COLOR_SELECTION(PHPG_GOBJECT(this_ptr)), value);
 }
 
+%%
+override gtk_color_selection_palette_to_string
+PHP_METHOD
+{
+    GdkColor *colors = NULL;
+    zval *php_colors; 
+    int n_colors, i;
+    zval **elem;
+    gchar *ret, *cp_ret;
+    gsize cp_len;
+    zend_bool free_result;
+        
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_colors)) {
+        return;
+    }
+        
+    n_colors = zend_hash_num_elements(Z_ARRVAL_P(php_colors));
+    colors = safe_emalloc(sizeof(GdkColor), n_colors, 0);
+
+    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_colors)), i = 0;
+         zend_hash_get_current_data(Z_ARRVAL_P(php_colors), (void**)&elem) == SUCCESS;
+         zend_hash_move_forward(Z_ARRVAL_P(php_colors)), i++) {
+        if (!phpg_gboxed_check(*elem, GDK_TYPE_COLOR, TRUE TSRMLS_CC)) {
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "colors array should contain only GdkColor objects");
+            efree(colors);
+            return;
+        }
+
+        colors[i] = *(GdkColor *) PHPG_GBOXED(*elem);
+    }
+
+    ret = gtk_color_selection_palette_to_string(colors, (gint)n_colors);
+    cp_ret = phpg_from_utf8(ret, strlen(ret), &cp_len, &free_result TSRMLS_CC);
+    if (cp_ret) {
+        RETVAL_STRINGL((char *)cp_ret, cp_len, 1);
+    } else {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "could not convert return value from UTF-8");
+    }
+    g_free(ret);
+    if (free_result)
+        g_free(cp_ret);
+    efree(colors);
+}
+
 %% }}}
 
 %% {{{ GtkCombo
