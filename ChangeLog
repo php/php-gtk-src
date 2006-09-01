@@ -1,3 +1,8 @@
+2006-08-31  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      Fix GtkColorSelection::palette_to_string().
+
 2006-08-11  Christian Weiske  <cweiske@cweiske.de>
 
     * generator/doc_templates.php:
