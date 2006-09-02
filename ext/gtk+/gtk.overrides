@@ -42,8 +42,10 @@ ignore
     gtk_check_menu_item_new_with_label
     gtk_check_menu_item_new_with_mnemonic
     gtk_clist_new_with_titles
+    gtk_clist_remove
     gtk_color_button_new
     gtk_combo_box_new_with_model
+    gtk_ctree_is_ancestor
     gtk_ctree_new_with_titles
     gtk_dialog_new
     gtk_exit
@@ -70,6 +72,7 @@ ignore
     gtk_radio_menu_item_new_with_mnemonic
     gtk_radio_menu_item_new_with_label_from_widget
     gtk_radio_menu_item_new_with_mnemonic_from_widget
+    gtk_statusbar_remove
     gtk_toolbar_get_style
     gtk_toolbar_set_style
     gtk_true
@@ -1434,6 +1437,27 @@ PHP_METHOD
     }
 }
 
+%%
+add-arginfo GtkCList remove_row
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, row)
+ZEND_END_ARG_INFO();
+
+%%
+add GtkCList remove_row
+PHP_METHOD
+{
+    long row;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &row))
+        return;
+
+    gtk_clist_remove(GTK_CLIST(PHPG_GOBJECT(this_ptr)), (gint)row);
+}
+
 %% }}}
 
 %% {{{ GtkColorButton
@@ -1897,6 +1921,45 @@ PHP_METHOD
     }
 	efree(text);
 	phpg_gpointer_new(&return_value, GTK_TYPE_CTREE_NODE, php_retval TSRMLS_CC);
+}
+
+%%
+add-arginfo GtkCTree row_is_ancestor
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, node, GtkCTreeNode, 1)
+    ZEND_ARG_OBJ_INFO(0, child, GtkCTreeNode, 1)
+ZEND_END_ARG_INFO();
+
+%%
+add GtkCTree row_is_ancestor
+PHP_METHOD
+{
+    GtkCTreeNode *node = NULL, *child = NULL;
+    zval *php_node, *php_child;
+    gboolean php_retval;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OO", &php_node, gpointer_ce, &php_child, gpointer_ce))
+        return;
+
+    if (phpg_gpointer_check(php_node, GTK_TYPE_CTREE_NODE, FALSE TSRMLS_CC)) {
+        node = (GtkCTreeNode *) PHPG_GPOINTER(php_node);
+    } else {
+        php_error(E_WARNING, "%s::%s() expects node argument to be a valid GtkCTreeNode object", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    if (phpg_gpointer_check(php_child, GTK_TYPE_CTREE_NODE, FALSE TSRMLS_CC)) {
+        child = (GtkCTreeNode *) PHPG_GPOINTER(php_child);
+    } else {
+        php_error(E_WARNING, "%s::%s() expects child argument to be a valid GtkCTreeNode object", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    php_retval = gtk_ctree_is_ancestor(GTK_CTREE(PHPG_GOBJECT(this_ptr)), node, child);
+    RETVAL_BOOL(php_retval);
 }
 
 %% }}}
@@ -4030,6 +4093,32 @@ PHP_METHOD
 
     gtk_spin_button_get_range(GTK_SPIN_BUTTON(PHPG_GOBJECT(this_ptr)), &min, &max);
     php_gtk_build_value(&return_value, "(dd)", min, max);
+}
+
+%% }}}
+
+%% {{{ GtkStatusbar
+
+%%
+add-arginfo GtkStatusbar remove_message
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, context_id)
+    ZEND_ARG_INFO(0, message_id)
+ZEND_END_ARG_INFO();
+
+%%
+add GtkStatusbar remove_message
+PHP_METHOD
+{
+    long context_id, message_id;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &context_id, &message_id))
+        return;
+
+    gtk_statusbar_remove(GTK_STATUSBAR(PHPG_GOBJECT(this_ptr)), (guint)context_id, (guint)message_id);
 }
 
 %% }}}
