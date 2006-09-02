@@ -61,6 +61,8 @@ ignore
     gtk_list_item_new_with_label
     gtk_menu_item_new_with_label
     gtk_menu_item_new_with_mnemonic
+    gtk_menu_item_set_accel_path
+    gtk_menu_set_accel_path
     gtk_plug_construct
     gtk_plug_construct_for_display
     gtk_plug_new_for_display
@@ -71,6 +73,7 @@ ignore
     gtk_toolbar_get_style
     gtk_toolbar_set_style
     gtk_true
+    gtk_window_mnemonic_activate
 %%
 ignore-win32
     GtkPlug
@@ -3049,6 +3052,31 @@ PHP_METHOD(GtkListItem, __construct)
 %% }}}
 
 %% {{{ GtkMenu
+
+%%
+add-arginfo GtkMenu set_menu_accel_path
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, accel_path)
+ZEND_END_ARG_INFO();
+
+%%
+add GtkMenu set_menu_accel_path
+PHP_METHOD
+{
+    char *accel_path;
+    zend_bool free_accel_path = FALSE;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u", &accel_path, &free_accel_path))
+        return;
+
+    gtk_menu_set_accel_path(GTK_MENU(PHPG_GOBJECT(this_ptr)), accel_path);
+    if (free_accel_path) g_free(accel_path);
+
+}
+
 %%
 add-arginfo GtkMenu popup
 static
@@ -3139,6 +3167,34 @@ PHP_METHOD
         gtk_menu_popup(GTK_MENU(PHPG_GOBJECT(this_ptr)), pms, pmi, NULL, NULL, button, time);
     }
 }
+%% }}}
+
+%% {{{ GtkMenuItem
+
+%%
+add-arginfo GtkMenuItem set_item_accel_path
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, accel_path)
+ZEND_END_ARG_INFO();
+
+
+%%
+add GtkMenuItem set_item_accel_path
+PHP_METHOD
+{
+    char *accel_path;
+    zend_bool free_accel_path = FALSE;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u", &accel_path, &free_accel_path))
+        return;
+
+    gtk_menu_item_set_accel_path(GTK_MENU_ITEM(PHPG_GOBJECT(this_ptr)), accel_path);
+    if (free_accel_path) g_free(accel_path);
+}
+
 %% }}}
 
 %% {{{ GtkMessageDialog
@@ -4829,6 +4885,38 @@ PHP_METHOD
 
     g_list_free(icons);
 }
+
+
+%%
+add-arginfo GtkWindow window_mnemonic_activate
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, keyval)
+    ZEND_ARG_INFO(0, modifier)
+ZEND_END_ARG_INFO();
+
+%%
+add GtkWindow window_mnemonic_activate
+PHP_METHOD
+{
+    long keyval;
+    GdkModifierType modifier;
+    zval *php_modifier = NULL;
+    gboolean php_retval;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "iV", &keyval, &php_modifier))
+        return;
+
+    if (php_modifier && phpg_gvalue_get_flags(GDK_TYPE_MODIFIER_TYPE, php_modifier, (gint *)&modifier) == FAILURE) {
+        return;
+    }
+
+    php_retval = gtk_window_mnemonic_activate(GTK_WINDOW(PHPG_GOBJECT(this_ptr)), (guint)keyval, modifier);
+    RETVAL_BOOL(php_retval);
+}
+
 
 %% }}}
 
