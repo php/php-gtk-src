@@ -68,6 +68,8 @@ ignore
     gtk_radio_menu_item_new_with_mnemonic
     gtk_radio_menu_item_new_with_label_from_widget
     gtk_radio_menu_item_new_with_mnemonic_from_widget
+    gtk_toolbar_get_style
+    gtk_toolbar_set_style
     gtk_true
 %%
 ignore-win32
@@ -4099,6 +4101,51 @@ PHP_METHOD
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
+%% }}}
+
+%% {{{ GtkToolbar
+
+%%
+add GtkToolbar get_toolbar_style
+PHP_METHOD
+{
+    long php_retval;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    php_retval = gtk_toolbar_get_style(GTK_TOOLBAR(PHPG_GOBJECT(this_ptr)));
+    RETVAL_LONG(php_retval);
+}
+
+%%
+add-arginfo GtkToolbar set_toolbar_style
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, style)
+ZEND_END_ARG_INFO();
+
+%%
+add GtkToolbar set_toolbar_style
+PHP_METHOD
+{
+    GtkToolbarStyle style;
+    zval *php_style = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_style))
+        return;
+
+    if (php_style && phpg_gvalue_get_enum(GTK_TYPE_TOOLBAR_STYLE, php_style, (gint *)&style) == FAILURE) {
+        return;
+    }
+
+    gtk_toolbar_set_style(GTK_TOOLBAR(PHPG_GOBJECT(this_ptr)), style);
+}
+
 %% }}}
 
 %% {{{ GtkUIManager
