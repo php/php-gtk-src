@@ -1,3 +1,20 @@
+2006-09-02  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.overrides:
+      E_STRICT renamings: the last ones
+      GtkCList::remove -> remove_row
+      GtkCTree::is_ancestor -> row_is_ancestor
+      GtkStatusbar::remove -> remove_message
+
+    * ext/gtk+/gtk.overrides:
+      E_STRICT renamings:
+      GtkWindow::mnemonic_activate  -> window_mnemonic_activate
+      GtkMenu::set_accel_path       -> set_menu_accel_path
+      GtkMenuItem::set_accel_path   -> set_item_accel_path
+
+    * ext/gtk+/gtk.overrides:
+      E_STRICT renaming: GtkToolbar::get|set_style -> get|set_toolbar_style
+
 2006-08-31  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides:
