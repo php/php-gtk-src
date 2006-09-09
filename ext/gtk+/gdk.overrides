@@ -1833,7 +1833,14 @@ PHP_METHOD
                 } else {
                     alpha = 127 - gdTrueColorGetAlpha(pixel);
                 }
+#ifdef WORDS_BIGENDIAN
                 data[c++] = (pixel << 8) | ((alpha << 1) + (alpha >> 6));
+#else
+                data[c++] = (((alpha << 1) + (alpha >> 6)) << 24) |
+                            (gdTrueColorGetBlue(pixel)     << 16) |
+                            (gdTrueColorGetGreen(pixel)    << 8)  |
+                            (gdTrueColorGetRed(pixel));
+#endif
             }
         }
     } else {
@@ -1845,10 +1852,17 @@ PHP_METHOD
                 } else {
                     alpha = 127 - gd->alpha[pixel];
                 }
-                data[c++] = (gd->red[pixel]   << 24) + 
-                            (gd->blue[pixel]  << 16) + 
-                            (gd->green[pixel] << 8)  +
+#ifdef WORDS_BIGENDIAN
+                data[c++] = (gd->red[pixel]   << 24) | 
+                            (gd->blue[pixel]  << 16) | 
+                            (gd->green[pixel] << 8)  |
                             ((alpha << 1) + (alpha >> 6));
+#else
+                data[c++] = (((alpha << 1) + (alpha >> 6)) << 24) |
+                            (gd->blue[pixel]               << 16) | 
+                            (gd->green[pixel]              << 8)  |
+                            (gd->red[pixel]);
+#endif
             }
         }
     }
