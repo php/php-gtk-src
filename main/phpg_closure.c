@@ -188,6 +188,8 @@ PHP_GTK_API void phpg_cb_data_destroy(gpointer data)
 {
     phpg_cb_data_t *cbd = (phpg_cb_data_t *) data;
 
+    if (!cbd) return;
+
     zval_ptr_dtor(&cbd->callback);
     if (cbd->user_args) {
         zval_ptr_dtor(&cbd->user_args);

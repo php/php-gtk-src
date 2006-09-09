@@ -211,6 +211,9 @@ PHP_RSHUTDOWN_FUNCTION(gtk)
 	context = g_main_context_default();
 	g_main_context_unref(context);
 
+	/* more clean-ups after Gtk+ */
+	gtk_about_dialog_set_url_hook(NULL, NULL, NULL);
+
 	return SUCCESS;
 }
 

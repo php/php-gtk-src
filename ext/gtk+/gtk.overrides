@@ -983,7 +983,7 @@ ZEND_END_ARG_INFO();
 override gtk_about_dialog_set_url_hook
 PHP_METHOD
 {
-    zval *php_callback, *extra;
+    zval *php_callback = NULL, *extra;
     phpg_cb_data_t *cb_data;
     GtkAboutDialogActivateLinkFunc callback;
 
