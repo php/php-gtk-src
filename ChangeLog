@@ -1,3 +1,13 @@
+2006-09-09  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gdk.overrides:
+      Reverse the order of colors/alpha if on little-endian platform.
+
+    * ext/gtk+/gtk.overrides
+      main/php_gtk.c
+      main/phpg_closure.c:
+      Clean-up after Gtk+ in case set_url_hook() was called.
+
 2006-09-02  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gtk.overrides:
