@@ -1,0 +1,21 @@
+<?php
+/**
+ * Spin buttons are not showing up with the right value when first shown. They
+ * always appear with a value of 0 instead of the given value. When you click
+ * the up arrow, the value goes to <min>+1 not <value>+1.
+ *
+ * You have to explicityly set the value in order for it to show up by default.
+ */
+$win = new GtkWindow();
+$win->connect_simple('destroy', array('Gtk', 'main_quit'));
+
+// Should appear with a value of 5. Actually appears with a value of 0.
+$spin = new GtkSpinButton(new GtkAdjustment(5, 1, 10, 1, 1, 1), 1, 2);
+
+// You have to explicitly call set_value() to have the default show correctly.
+//$spin->set_value(5);
+
+$win->add($spin);
+$win->show_all();
+Gtk::main();
+?>
