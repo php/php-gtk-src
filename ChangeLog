@@ -1,3 +1,8 @@
+2006-09-14  Scott Mattocks  <scott@crisscott.com>
+
+    * test/bug_gtkspinbutton_construct_value.phpw:
+      Bug: default value for spin buttons does not show properly.
+
 2006-09-09  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gdk.overrides:
