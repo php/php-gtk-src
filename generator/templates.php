@@ -62,6 +62,7 @@ static PHP_METHOD(%(class), %(name))
 	if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
 	}
+%(post_create_code)
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }\n\n";
 

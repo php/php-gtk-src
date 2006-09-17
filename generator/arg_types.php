@@ -748,7 +748,7 @@ class Atom_Arg extends Int_Arg {
                                                               'on_error' => $info->error_action));
         }
         $info->arg_list[] = $name;
-        $info->add_parse_list('O', array('&php_' . $name, 'gdkatom_ce'));
+        $info->add_parse_list('V', '&php_' . $name);
     }
 
     function write_return($type, $owns_return, $info)

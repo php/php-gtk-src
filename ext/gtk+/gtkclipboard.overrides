@@ -1,0 +1,344 @@
+/* vim: set et ft=cpp fdm=marker: */
+
+/* TODO figure out why gtk_clipboard_finalize is not called */
+
+%% {{{ ignores
+%%
+ignore
+    gtk_clipboard_set_with_owner
+%% }}}
+
+%% {{{ gtk_clipboard_request_targets
+
+%%
+override gtk_clipboard_request_targets
+
+static void phpg_clipboard_request_targets_marshal(GtkClipboard *clipboard,
+                                                   GdkAtom *atoms,
+                                                   gint n_atoms,
+                                                   gpointer user_data)
+{
+    phpg_cb_data_t *cbd = (phpg_cb_data_t *) user_data;
+    zval *retval = NULL;
+    zval ***args = NULL;
+    int n_args = 0;
+    char *callback_name;
+    zval *php_clipboard = NULL;
+    zval *php_atoms = NULL;
+    gchar *name;
+    int i;
+    
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+        php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
+        efree(callback_name);
+        return;
+    }
+
+    phpg_gobject_new(&php_clipboard, (GObject*)clipboard TSRMLS_CC);
+    MAKE_STD_ZVAL(php_atoms);
+    array_init(php_atoms);
+    for (i = 0; i < n_atoms; i++) {
+        name = gdk_atom_name(atoms[i]);
+        add_next_index_string(php_atoms, name, 1);
+        g_free(name);
+    }
+
+    args = php_gtk_hash_as_array_offset(cbd->user_args, 2, &n_args);
+    args[0] = &php_clipboard;
+    args[1] = &php_atoms;
+
+    call_user_function_ex(EG(function_table), NULL, cbd->callback, &retval, n_args, args, 0, NULL TSRMLS_CC);
+
+    zval_ptr_dtor(&php_clipboard);
+    zval_ptr_dtor(&php_atoms);
+
+    if (retval) {
+        zval_ptr_dtor(&retval);
+    }
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
+    efree(callback_name);
+    efree(args);
+    phpg_cb_data_destroy(cbd);
+}
+
+PHP_METHOD
+{
+    zval *callback, *extra;
+    phpg_cb_data_t *cbd;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 1, &extra, "V", &callback))
+		return;
+
+    zval_add_ref(&callback);
+    cbd = phpg_cb_data_new(callback, extra TSRMLS_CC);
+
+    gtk_clipboard_request_targets(GTK_CLIPBOARD(PHPG_GOBJECT(this_ptr)),
+                                  phpg_clipboard_request_targets_marshal, cbd);
+    RETURN_TRUE;
+}
+
+%% }}}
+
+%% {{{ gtk_clipboard_request_text
+
+%%
+override gtk_clipboard_request_text
+
+static void phpg_clipboard_request_text_marshal(GtkClipboard *clipboard,
+                                                const gchar *text,
+                                                gpointer user_data)
+{
+    phpg_cb_data_t *cbd = (phpg_cb_data_t *) user_data;
+    zval *retval = NULL;
+    zval ***args = NULL;
+    int n_args = 0;
+    char *callback_name;
+    zval *php_clipboard = NULL;
+    zval *php_text = NULL;
+    gchar *cp_str;
+    gsize cp_len;
+    zend_bool free_cp_str;
+    
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+        php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
+        efree(callback_name);
+        return;
+    }
+
+    phpg_gobject_new(&php_clipboard, (GObject*)clipboard TSRMLS_CC);
+    MAKE_STD_ZVAL(php_text);
+    if (text) {
+        cp_str = phpg_from_utf8(text, strlen(text), &cp_len, &free_cp_str TSRMLS_CC);
+        if (cp_str) {
+            ZVAL_STRINGL(php_text, cp_str, cp_len, 1);
+            if (free_cp_str) {
+                g_free(cp_str);
+            }
+        } else {
+            ZVAL_NULL(php_text);
+        }
+    } else {
+        ZVAL_NULL(php_text);
+    }
+
+    args = php_gtk_hash_as_array_offset(cbd->user_args, 2, &n_args);
+    args[0] = &php_clipboard;
+    args[1] = &php_text;
+
+    call_user_function_ex(EG(function_table), NULL, cbd->callback, &retval, n_args, args, 0, NULL TSRMLS_CC);
+
+    zval_ptr_dtor(&php_clipboard);
+    zval_ptr_dtor(&php_text);
+
+    if (retval) {
+        zval_ptr_dtor(&retval);
+    }
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
+    efree(callback_name);
+    efree(args);
+    phpg_cb_data_destroy(cbd);
+}
+
+PHP_METHOD
+{
+    zval *callback, *extra;
+    phpg_cb_data_t *cbd;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 1, &extra, "V", &callback))
+		return;
+
+    zval_add_ref(&callback);
+    cbd = phpg_cb_data_new(callback, extra TSRMLS_CC);
+
+    gtk_clipboard_request_text(GTK_CLIPBOARD(PHPG_GOBJECT(this_ptr)),
+                               phpg_clipboard_request_text_marshal, cbd);
+    RETURN_TRUE;
+}
+
+%% }}}
+
+%% {{{ gtk_clipboard_set_with_data
+
+%%
+override gtk_clipboard_set_with_data
+typedef struct {
+    phpg_cb_data_t *get_cb_data;
+    phpg_cb_data_t *clear_cb_data;
+} phpg_clipboard_set_info;
+
+static void phpg_clipboard_get_func_marshal(GtkClipboard *clipboard,
+                                            GtkSelectionData *selection_data,
+                                            guint info,
+                                            gpointer user_data)
+{
+    zval *retval = NULL;
+    zval ***args = NULL;
+    int n_args = 0;
+    char *callback_name;
+    zval *php_clipboard = NULL;
+    zval *php_selection_data = NULL;
+    zval *php_info = NULL;
+    phpg_clipboard_set_info *set_info = (phpg_clipboard_set_info *) user_data;
+
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(set_info->get_cb_data->callback, 0, &callback_name)) {
+        php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, set_info->get_cb_data->src_filename, set_info->get_cb_data->src_lineno);
+        efree(callback_name);
+        return;
+    }
+
+    phpg_gobject_new(&php_clipboard, (GObject*)clipboard TSRMLS_CC);
+    phpg_gboxed_new(&php_selection_data, GTK_TYPE_SELECTION_DATA, selection_data, FALSE, FALSE TSRMLS_CC);
+    MAKE_STD_ZVAL(php_info);
+    ZVAL_LONG(php_info, info);
+
+    args = php_gtk_hash_as_array_offset(set_info->get_cb_data->user_args, 3, &n_args);
+    args[0] = &php_clipboard;
+    args[1] = &php_selection_data;
+    args[2] = &php_info;
+
+    call_user_function_ex(EG(function_table), NULL, set_info->get_cb_data->callback, &retval, n_args, args, 0, NULL TSRMLS_CC);
+
+    zval_ptr_dtor(&php_clipboard);
+    zval_ptr_dtor(&php_selection_data);
+    zval_ptr_dtor(&php_info);
+
+    if (retval) {
+        zval_ptr_dtor(&retval);
+    }
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
+    efree(callback_name);
+    efree(args);
+}
+
+static void phpg_clipboard_clear_func_marshal(GtkClipboard *clipboard,
+                                              gpointer user_data)
+{
+    zval *retval = NULL;
+    zval ***args = NULL;
+    int n_args = 0;
+    char *callback_name;
+    zval *php_clipboard = NULL;
+    phpg_clipboard_set_info *set_info = (phpg_clipboard_set_info *) user_data;
+
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(set_info->clear_cb_data->callback, 0, &callback_name)) {
+        php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, set_info->clear_cb_data->src_filename, set_info->clear_cb_data->src_lineno);
+        efree(callback_name);
+        return;
+    }
+
+    phpg_gobject_new(&php_clipboard, (GObject*)clipboard TSRMLS_CC);
+
+    args = php_gtk_hash_as_array_offset(set_info->clear_cb_data->user_args, 1, &n_args);
+    args[0] = &php_clipboard;
+
+    call_user_function_ex(EG(function_table), NULL, set_info->clear_cb_data->callback, &retval, n_args, args, 0, NULL TSRMLS_CC);
+
+    zval_ptr_dtor(&php_clipboard);
+
+    if (retval) {
+        zval_ptr_dtor(&retval);
+    }
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
+    efree(callback_name);
+    efree(args);
+
+    phpg_cb_data_destroy(set_info->get_cb_data);
+    phpg_cb_data_destroy(set_info->clear_cb_data);
+    efree(set_info);
+}
+
+PHP_METHOD
+{
+    zval *get_cb, *clear_cb, *php_targets, *extra;
+    phpg_clipboard_set_info *set_info;
+	GtkTargetEntry *entries;
+    gboolean ret;
+    int n;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 3, &extra, "aVV", &php_targets, &get_cb, &clear_cb))
+		return;
+
+    zval_add_ref(&get_cb);
+    zval_add_ref(&clear_cb);
+    if (extra) {
+        zval_add_ref(&extra);
+    }
+
+    set_info = emalloc(sizeof(phpg_clipboard_set_info));
+    set_info->get_cb_data  = phpg_cb_data_new(get_cb, extra TSRMLS_CC);
+    set_info->clear_cb_data  = phpg_cb_data_new(clear_cb, extra TSRMLS_CC);
+	entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
+
+    ret = gtk_clipboard_set_with_data(GTK_CLIPBOARD(PHPG_GOBJECT(this_ptr)), entries, n,
+                                      phpg_clipboard_get_func_marshal,
+                                      phpg_clipboard_clear_func_marshal,
+                                      set_info);
+    efree(entries);
+
+    RETURN_BOOL(ret);
+}
+
+%% }}}
+
+%% {{{ gtk_clipboard_wait_for_targets
+
+%%
+override gtk_clipboard_wait_for_targets
+PHP_METHOD
+{
+    GtkSelectionData *data;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    /* have to work around GTK+ bug #139883 */
+    data = gtk_clipboard_wait_for_contents(GTK_CLIPBOARD(PHPG_GOBJECT(this_ptr)),
+                                           gdk_atom_intern("TARGETS", FALSE));
+
+    if (data) {
+        gint n_targets = 0;
+        GdkAtom *targets = NULL;
+
+        if (gtk_selection_data_get_targets(data, &targets, &n_targets)) {
+            gchar *name;
+            int i;
+
+            array_init(return_value);
+            for (i = 0; i < n_targets; i++) {
+                name = gdk_atom_name(targets[i]);
+                add_next_index_string(return_value, name, 1);
+                g_free(name);
+            }
+            g_free(targets);
+        }
+
+        gtk_selection_data_free(data);
+    }
+}
+
+%% }}}

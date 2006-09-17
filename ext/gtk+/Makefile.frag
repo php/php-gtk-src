@@ -4,6 +4,7 @@ COMMONDEFS=$(srcdir)/gtk-types.defs $(srcdir)/gdk-types.defs \
 
 GTK_OVERRIDES = \
 	$(srcdir)/gtk.overrides \
+	$(srcdir)/gtkclipboard.overrides \
 	$(srcdir)/gtkcontainer.overrides \
 	$(srcdir)/gtkstyle.overrides \
 	$(srcdir)/gtktextview.overrides \

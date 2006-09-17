@@ -562,3 +562,4 @@ AC_MSG_CHECKING([$2])
 AC_ARG_WITH($1,[$3],$5=[$]withval,$5=ifelse($4,,no,$4))
 PHP_GTK_ARG_ANALYZE($5)
 ])
+

@@ -28,7 +28,7 @@
 
 extern zend_class_entry *gdk_ce;
 
-void php_gdk_register_keysyms()
+void phpg_gdk_register_keysyms()
 {
 	phpg_register_int_constant(gdk_ce, "KEY_VoidSymbol", sizeof("KEY_VoidSymbol")-1, GDK_VoidSymbol);
 	phpg_register_int_constant(gdk_ce, "KEY_BackSpace", sizeof("KEY_BackSpace")-1, GDK_BackSpace);

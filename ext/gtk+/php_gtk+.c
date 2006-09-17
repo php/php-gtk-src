@@ -30,9 +30,10 @@
 PHP_GTK_API int le_gtk_object;
 PHP_GTK_API zend_class_entry *php_gtk_exception_ce;
 extern zend_class_entry *gtk_ce;
+extern zend_class_entry *gdk_ce;
 
 /* defined in php_gdk.c */
-void php_gdk_register_keysyms();
+void phpg_gdk_register_keysyms();
 
 /* TODO check pygtk version */
 static void init_gtk(void)
@@ -144,7 +145,7 @@ static void register_exception(TSRMLS_D)
 }
 */
 
-static void register_stock_constants()
+static void phpg_register_stock_constants()
 {
 	GSList *stock_ids, *item;
 	char buf[128];
@@ -174,6 +175,33 @@ static void register_stock_constants()
 	g_slist_free(stock_ids);
 }
 
+#define register_atom(name) \
+	{ \
+		gchar *__atom_name = gdk_atom_name((GDK_##name)); \
+		phpg_register_string_constant(gdk_ce, #name, strlen(#name), __atom_name, strlen(__atom_name)); \
+		g_free(__atom_name); \
+	}
+static void phpg_register_atoms()
+{
+	register_atom(SELECTION_PRIMARY);
+    register_atom(SELECTION_SECONDARY);
+    register_atom(SELECTION_CLIPBOARD);
+    register_atom(TARGET_BITMAP);
+    register_atom(TARGET_COLORMAP);
+    register_atom(TARGET_DRAWABLE);
+    register_atom(TARGET_PIXMAP);
+    register_atom(TARGET_STRING);
+    register_atom(SELECTION_TYPE_ATOM);
+    register_atom(SELECTION_TYPE_BITMAP);
+    register_atom(SELECTION_TYPE_COLORMAP);
+    register_atom(SELECTION_TYPE_DRAWABLE);
+    register_atom(SELECTION_TYPE_INTEGER);
+    register_atom(SELECTION_TYPE_PIXMAP);
+    register_atom(SELECTION_TYPE_WINDOW);
+    register_atom(SELECTION_TYPE_STRING);
+}
+#undef register_atom
+
 PHP_GTK_XINIT_FUNCTION(gtk_plus)
 {
 	//register_exception(TSRMLS_C);
@@ -188,9 +216,10 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 	phpg_pango_register_constants("PANGO_");
 	phpg_gdk_register_constants("GDK_");
 	phpg_gtk_register_constants("GTK_");
-	register_stock_constants();
 
-	php_gdk_register_keysyms();
+	phpg_register_stock_constants();
+	phpg_gdk_register_keysyms();
+	phpg_register_atoms();
 
 	php_gtk_plus_register_types(TSRMLS_C);
 

@@ -2370,8 +2370,8 @@
 (define-function clipboard_get_for_display
   (is-constructor-of "GtkClipboard")
   (c-name "gtk_clipboard_get_for_display")
-  (caller-owns-return #t)
   (return-type "GtkClipboard*")
+  (caller-owns-return #f)
   (parameters
     '("GdkDisplay*" "display" (default "gdk_display_get_default()"))
     '("GdkAtom" "selection" (default "GDK_SELECTION_CLIPBOARD"))

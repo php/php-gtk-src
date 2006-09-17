@@ -373,7 +373,7 @@ class Generator {
 
         if ($ctors) {
             $dict['class'] = $object->c_name;
-            $dict['typecode'] = $object->typecode;;
+            $dict['typecode'] = $object->typecode;
             $first = 1;
 
             foreach ($ctors as $ctor) {
@@ -382,6 +382,9 @@ class Generator {
                     $ctor_fe_name = '__construct';
                     $flags = 'ZEND_ACC_PUBLIC';
                     $template_name = 'constructor';
+                    if (!$ctor->caller_owns_return) {
+                        $dict['post_create_code'] = "\tg_object_ref(wrapped_obj);";
+                    }
                 } else {
                     // remove class name from the constructor name, i.e. turn
                     // gtk_button_new_with_mnemonic into new_with_mnemonic
@@ -1353,7 +1356,8 @@ class Generator {
                                  'float'          => 'double',
                                  'gfloat'         => 'double',
                                  
-                                 'GdkDrawable*'   => 'GdkWindow');
+                                 'GdkDrawable*'   => 'GdkWindow',
+                                 'GdkAtom'        => 'string');
         
         return isset($type_map[$in_type]);
     }//function is_php_type($in_type)

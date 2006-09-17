@@ -5009,6 +5009,7 @@ PHP_METHOD
 
 %% }}}
 
+%% include gtkclipboard.overrides
 %% include gtkcontainer.overrides
 %% include gtkdrag.overrides
 %% include gtkstyle.overrides
