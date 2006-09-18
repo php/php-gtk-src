@@ -1,3 +1,17 @@
+2006-09-17  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * php_gtk.m4
+      ext/gtk+/Makefile.frag
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtkclipboard.overrides
+      ext/gtk+/php_gdk.c
+      ext/gtk+/php_gtk+.c
+      generator/arg_types.php
+      generator/generator.php
+      generator/templates.php:
+      Some clipboard support.
+
 2006-09-14  Scott Mattocks  <scott@crisscott.com>
 
     * test/bug_gtkspinbutton_construct_value.phpw:
