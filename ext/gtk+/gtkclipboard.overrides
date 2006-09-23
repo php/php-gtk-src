@@ -8,6 +8,78 @@ ignore
     gtk_clipboard_set_with_owner
 %% }}}
 
+%%
+override gtk_clipboard_request_contents
+
+static void phpg_clipboard_request_contents_marshal(GtkClipboard *clipboard,
+                                                    GtkSelectionData *selection_data,
+                                                    gpointer user_data)
+{
+    phpg_cb_data_t *cbd = (phpg_cb_data_t *) user_data;
+    zval *retval = NULL;
+    zval ***args = NULL;
+    int n_args = 0;
+    char *callback_name;
+    zval *php_clipboard = NULL;
+    zval *php_sel_data = NULL;
+    
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+        php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
+        efree(callback_name);
+        return;
+    }
+
+    phpg_gobject_new(&php_clipboard, (GObject*)clipboard TSRMLS_CC);
+    phpg_gboxed_new(&php_sel_data, GTK_TYPE_SELECTION_DATA, selection_data, TRUE, TRUE TSRMLS_CC);
+
+    args = php_gtk_hash_as_array_offset(cbd->user_args, 2, &n_args);
+    args[0] = &php_clipboard;
+    args[1] = &php_sel_data;
+
+    call_user_function_ex(EG(function_table), NULL, cbd->callback, &retval, n_args, args, 0, NULL TSRMLS_CC);
+
+    zval_ptr_dtor(&php_clipboard);
+    zval_ptr_dtor(&php_sel_data);
+
+    if (retval) {
+        zval_ptr_dtor(&retval);
+    }
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
+    efree(callback_name);
+    efree(args);
+    phpg_cb_data_destroy(cbd);
+}
+
+PHP_METHOD
+{
+    zval *php_target, *callback, *extra;
+    phpg_cb_data_t *cbd;
+    GdkAtom target;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 2, &extra, "VV", &php_target, &callback))
+		return;
+    
+    target = phpg_gdkatom_from_zval(php_target TSRMLS_CC);
+    if (target == NULL) {
+        php_error(E_WARNING, "%s::%s() expects target argument to be a valid GdkAtom object",
+                  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    zval_add_ref(&callback);
+    cbd = phpg_cb_data_new(callback, extra TSRMLS_CC);
+
+    gtk_clipboard_request_contents(GTK_CLIPBOARD(PHPG_GOBJECT(this_ptr)), target,
+                                   phpg_clipboard_request_contents_marshal, cbd);
+    RETURN_TRUE;
+}
+
 %% {{{ gtk_clipboard_request_targets
 
 %%
@@ -339,6 +411,31 @@ PHP_METHOD
 
         gtk_selection_data_free(data);
     }
+}
+
+%%
+override gtk_clipboard_set_can_store
+PHP_METHOD
+{
+    zval *php_targets = NULL;
+	GtkTargetEntry *entries;
+    int n;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a!", &php_targets))
+		return;
+
+    if (php_targets) {
+        entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
+    } else {
+        entries = NULL;
+        n = 0;
+    }
+
+    gtk_clipboard_set_can_store(GTK_CLIPBOARD(PHPG_GOBJECT(this_ptr)), entries, n);
+    efree(entries);
+    RETURN_TRUE;
 }
 
 %% }}}
