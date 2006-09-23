@@ -28,4 +28,4 @@ PHP_EVAL_LIBLINE($PANGO_LIBS, PHP_GTK2_SHARED_LIBADD)
 
 PHP_SUBST(PHP_GTK2_SHARED_LIBADD)
 
-PHP_GTK_EXTENSION([gtk+], no, [php_gtk+.c], [gen_atk.c gen_pango.c gen_gdk.c gen_gtk.c php_gdk.c php_gtk+_types.c])
+PHP_GTK_EXTENSION([gtk+], no, [php_gtk+.c], [gen_atk.c gen_pango.c gen_gdk.c gen_gtk.c php_gdk.c php_gtk+_types.c phpg_custom_tree_model.c])
