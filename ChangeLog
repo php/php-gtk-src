@@ -1,3 +1,14 @@
+2006-09-23  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/config.m4
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/phpg_custom_tree_model.c
+      ext/gtk+/phpg_custom_tree_model.h:
+      Framework for custom tree models.
+
+    * ext/gtk+/gtkclipboard.overrides:
+      A couple more clipboard methods.
+
 2006-09-17  Andrei Zmievski  <andrei@gravitonic.com>
 
     * php_gtk.m4
