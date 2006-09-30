@@ -122,5 +122,10 @@ phpg_custom_tree_model_init(PhpGtkCustomTreeModel *self)
 	} while (self->stamp == 0);
 }
 
+static void
+phpg_custom_tree_model_class_init(PhpGtkCustomTreeModelClass *klass)
+{
+    return NULL;
+}
 
 #endif
