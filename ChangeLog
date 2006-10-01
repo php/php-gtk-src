@@ -1,3 +1,8 @@
+2006-09-30  Anant Narayanan  <anant@kix.in>
+
+    * ext/gtk+/phpg_custom_tree_model.c:
+      Add phpg_custom_tree_model_class_init() stub
+
 2006-09-28  Christian Weiske  <cweiske@cweiske.de>
 
     * main/phpg_gobject.c:
