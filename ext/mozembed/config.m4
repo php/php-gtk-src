@@ -1,16 +1,22 @@
 dnl $Id$
 dnl config.m4 for mozembed module
 
-define(mozembed_required_version,   1.7.0)
+define(firefox_required_version, 1.5.0)
+define(mozilla_required_version, 1.7.0)
 
 PHP_GTK_ARG_ENABLE(mozembed,for GtkMozEmbed support,
-[  --enable-mozembed      Enable GtkMozEmbed support],no)
+[  --enable-mozembed       Enable GtkMozEmbed support],no)
 
+dnl first check for firefox, then mozilla
 if test "$PHP_GTK_MOZEMBED" != "no"; then
-  PKG_CHECK_MODULES(MOZEMBED, [mozilla-gtkmozembed >= mozembed_required_version],
+  PKG_CHECK_MODULES(MOZEMBED, [firefox-gtkmozembed >= firefox_required_version],
   have_mozembed=yes, have_mozembed=no)
   if test "$have_mozembed" != "yes"; then
-    AC_MSG_RESULT([Unable to locate mozembed version mozembed_required_version or higher: not building])
+    PKG_CHECK_MODULES(MOZEMBED, [mozilla-gtkmozembed >= mozilla_required_version],
+    have_mozembed=yes, have_mozembed=no)
+  fi
+  if test "$have_mozembed" != "yes"; then
+    AC_MSG_RESULT([Unable to locate firefox-gtkmozembed version firefox_required_version or mozilla-gtkmozembed version mozilla_required_version or higher: not building])
   else
     AC_DEFINE(HAVE_MOZEMBED, 1, [mozembed support])
     PHP_EVAL_INCLINE($MOZEMBED_CFLAGS)
