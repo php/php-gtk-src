@@ -1964,6 +1964,64 @@ PHP_METHOD
 
 %% }}}
 
+%% {{{ GtkCurve
+
+%%
+override gtk_curve_get_vector
+PHP_METHOD
+{
+    int num, i;
+    
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &num))
+        return;
+
+    gfloat vector[num];
+
+    gtk_curve_get_vector(GTK_CURVE(PHPG_GOBJECT(this_ptr)), num, vector);
+    
+    array_init(return_value);
+    for (i = 0; i < num; i++) {
+        add_next_index_double(return_value, vector[i]); 
+    }
+}
+
+%%
+override gtk_curve_set_vector
+PHP_METHOD
+{
+    int num, i = 0;
+    zval *points = NULL;
+    zval **data;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &points))
+        return;
+
+    num = zend_hash_num_elements(Z_ARRVAL_P(points));
+    gfloat vectors[num];
+
+    zend_hash_internal_pointer_reset(Z_ARRVAL_P(points));
+    while (zend_hash_get_current_data(Z_ARRVAL_P(points), (void **)&data) 
+            == SUCCESS) {
+        if (Z_TYPE_PP(data) != IS_DOUBLE) {
+            php_error(E_WARNING, "%s::%s(): each point must be a float value.",
+                        get_active_class_name(NULL TSRMLS_CC),
+                        get_active_function_name(TSRMLS_C));
+            return;
+        }
+        vectors[i] = Z_LVAL_PP(data);
+        i++;
+        zend_hash_move_forward(Z_ARRVAL_P(points));
+    }
+
+    gtk_curve_set_vector(GTK_CURVE(PHPG_GOBJECT(this_ptr)), num, vectors);
+}
+
+%% }}}
+
 %% {{{ GtkDialog
 
 %%
