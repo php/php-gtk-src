@@ -710,7 +710,7 @@ signal_query_done:
 /* {{{ GObject reflection info */
 static
 ZEND_BEGIN_ARG_INFO(arginfo_gobject_block, 0)
-    ZEND_ARG_INFO(0, signal_id)
+    ZEND_ARG_INFO(0, handler_id)
 ZEND_END_ARG_INFO();
 
 static
@@ -756,6 +756,11 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_gobject_connect_object_after, 0, 0, 2)
 ZEND_END_ARG_INFO();
 
 static
+ZEND_BEGIN_ARG_INFO(arginfo_gobject_disconnect, 0)
+    ZEND_ARG_INFO(0, handler_id)
+ZEND_END_ARG_INFO();
+
+static
 ZEND_BEGIN_ARG_INFO(arginfo_gobject_notify, 0)
     ZEND_ARG_INFO(0, property_name)
 ZEND_END_ARG_INFO();
@@ -774,6 +779,11 @@ ZEND_END_ARG_INFO();
 static
 ZEND_BEGIN_ARG_INFO(arginfo_gobject_get_data, 0)
     ZEND_ARG_INFO(0, key)
+ZEND_END_ARG_INFO();
+
+static
+ZEND_BEGIN_ARG_INFO(arginfo_gobject_is_connected, 0)
+    ZEND_ARG_INFO(0, handler_id)
 ZEND_END_ARG_INFO();
 
 static
@@ -800,7 +810,7 @@ ZEND_END_ARG_INFO();
 
 static
 ZEND_BEGIN_ARG_INFO(arginfo_gobject_unblock, 0)
-    ZEND_ARG_INFO(0, signal_id)
+    ZEND_ARG_INFO(0, handler_id)
 ZEND_END_ARG_INFO();
 
 /* }}} */
@@ -821,8 +831,8 @@ static zend_function_entry gobject_methods[] = {
     PHP_ME(GObject, set_data,             arginfo_gobject_set_data              , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, block,                arginfo_gobject_block                 , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, unblock,              arginfo_gobject_unblock               , ZEND_ACC_PUBLIC)
-    PHP_ME(GObject, disconnect,           NULL                                  , ZEND_ACC_PUBLIC)
-    PHP_ME(GObject, is_connected,         NULL                                  , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, disconnect,           arginfo_gobject_disconnect            , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, is_connected,         arginfo_gobject_is_connected          , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, signal_list_ids,      arginfo_gobject_signal_list_ids       , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, signal_list_names,    arginfo_gobject_signal_list_names     , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, signal_query,         arginfo_gobject_signal_query          , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
