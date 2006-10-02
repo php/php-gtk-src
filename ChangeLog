@@ -1,3 +1,9 @@
+2006-10-01  Anant Narayanan  <anant@kix.in>
+
+    * ext/mozembed/config.m4
+      ext/sourceview/config.m4:
+      Allow mozembed to build against firefox
+
 2006-09-30  Anant Narayanan  <anant@kix.in>
 
     * ext/gtk+/phpg_custom_tree_model.c:
