@@ -1,3 +1,16 @@
+2006-10-02  Christian Weiske  <cweiske@cweiske.de>
+
+    * generator/docmerger2.php:
+      Reference isn't needed here
+
+    * main/phpg_gobject.c:
+      Seems I forgot to commit
+
+2006-10-02  Anant Narayanan  <anant@kix.in>
+
+    * ext/gtk+/gtk.overrides:
+      Overrides for GtkCurve::set/get_vector
+
 2006-10-01  Anant Narayanan  <anant@kix.in>
 
     * ext/mozembed/config.m4
