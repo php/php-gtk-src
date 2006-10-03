@@ -41,6 +41,8 @@ ignore
     gtk_cell_renderer_get_size
     gtk_list_store_newv
     gtk_list_store_set_valist
+    gtk_tree_iter_copy
+    gtk_tree_iter_free
     gtk_tree_model_get_valist
     gtk_tree_row_reference_new_proxy
     gtk_tree_row_reference_inserted
