@@ -1,3 +1,8 @@
+2006-10-04  Anant Narayanan  <anant@kix.in>
+
+    * ext/gtk+/gtk.overrides:
+      Overrides for GtkEntry::get/set_invisible_char
+
 2006-10-03  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtktreeview.overrides:
