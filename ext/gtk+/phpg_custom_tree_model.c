@@ -169,16 +169,15 @@ static guint phpg_custom_tree_model_get_flags(GtkTreeModel *tree_model)
 	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
 	ZVAL_STRING(&method_name, "on_get_flags", 0);
 
-	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 0, NULL, 0, NULL TSRMLS_CC);
-
-	zval_ptr_dtor(&wrapper);
-	if (retval) {
+	if (call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 0, NULL, 0, NULL TSRMLS_CC) == SUCCESS
+		&& retval) {
 		convert_to_long(retval);
 		result = Z_LVAL_P(retval);
 		zval_ptr_dtor(&retval);
 	} else {
-		php_error(E_WARNING, "Could not get return value of on_get_flags handler");
+		php_error(E_WARNING, "Could not invoke on_get_flags handler");
 	}
+	zval_ptr_dtor(&wrapper);
 
 	return result;
 }
@@ -197,16 +196,15 @@ static gint phpg_custom_tree_model_get_n_columns(GtkTreeModel *tree_model)
 	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
 	ZVAL_STRING(&method_name, "on_get_n_columns", 0);
 
-	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 0, NULL, 0, NULL TSRMLS_CC);
-
-	zval_ptr_dtor(&wrapper);
-	if (retval) {
+	if (call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 0, NULL, 0, NULL TSRMLS_CC) == SUCCESS
+		&& retval) {
 		convert_to_long(retval);
 		result = Z_LVAL_P(retval);
 		zval_ptr_dtor(&retval);
 	} else {
-		php_error(E_WARNING, "Could not get return value of on_get_n_columns handler");
+		php_error(E_WARNING, "Could not invoke on_get_n_columns handler");
 	}
+	zval_ptr_dtor(&wrapper);
 
 	return result;
 }
@@ -230,17 +228,15 @@ static GType phpg_custom_tree_model_get_column_type(GtkTreeModel *tree_model, gi
 
 	args[0] = &arg1;
 
-	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
-
-	zval_ptr_dtor(&wrapper);
-	zval_ptr_dtor(&arg1);
-
-	if (retval) {
+	if (call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC) == SUCCESS
+		&& retval) {
 		result = phpg_gtype_from_zval(retval);
 		zval_ptr_dtor(&retval);
 	} else {
-		php_error(E_WARNING, "Could not get return value of on_get_column_type handler");
+		php_error(E_WARNING, "Could not invoke on_get_column_type handler");
 	}
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
 
 	return result;
 }
@@ -268,13 +264,10 @@ static gboolean phpg_custom_tree_model_get_iter(GtkTreeModel *tree_model,
 
 	args[0] = &arg1;
 
-	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
-
-	zval_ptr_dtor(&wrapper);
-	zval_ptr_dtor(&arg1);
-
 	iter->stamp = PHPG_CUSTOM_TREE_MODEL(tree_model)->stamp;
-	if (retval) {
+
+	if (call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC) == SUCCESS
+		&& retval) {
 		if (Z_TYPE_P(retval) != IS_NULL) {
 			iter->user_data = retval;
 			result = TRUE;
@@ -285,9 +278,11 @@ static gboolean phpg_custom_tree_model_get_iter(GtkTreeModel *tree_model,
 			zval_ptr_dtor(&retval);
 		}
 	} else {
-		php_error(E_WARNING, "Could not get return value of on_get_iter handler");
+		php_error(E_WARNING, "Could not invoke on_get_iter handler");
 		iter->user_data = NULL;
 	}
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
 
 	return result;
 }
@@ -319,19 +314,17 @@ static GtkTreePath *phpg_custom_tree_model_get_path(GtkTreeModel *tree_model,
 
 	args[0] = &arg1;
 
-	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
-
-	zval_ptr_dtor(&wrapper);
-	zval_ptr_dtor(&arg1);
-
-	if (retval) {
+	if (call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC) == SUCCESS
+		&& retval) {
 		if (phpg_tree_path_from_zval(retval, &path TSRMLS_CC) == FAILURE) {
 			php_error(E_WARNING, "Could not convert return value to tree path");
 		}
 		zval_ptr_dtor(&retval);
 	} else {
-		php_error(E_WARNING, "Could not get return value of on_get_path handler");
+		php_error(E_WARNING, "Could not invoke on_get_path handler");
 	}
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
 
 	return path;
 }
@@ -369,13 +362,8 @@ static void phpg_custom_tree_model_get_value(GtkTreeModel*tree_model,
 	args[0] = &arg1;
 	args[1] = &arg2;
 
-	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 2, args, 0, NULL TSRMLS_CC);
-
-	zval_ptr_dtor(&wrapper);
-	zval_ptr_dtor(&arg1);
-	zval_ptr_dtor(&arg2);
-
-	if (retval) {
+	if (call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 2, args, 0, NULL TSRMLS_CC) == SUCCESS
+		&& retval) {
 		if (Z_TYPE_P(retval) != IS_NULL) {
 			if (phpg_gvalue_from_zval(value, retval, 1 TSRMLS_CC) == FAILURE) {
 				php_error(E_WARNING, "Could not convert return value to appropriate type");
@@ -383,8 +371,12 @@ static void phpg_custom_tree_model_get_value(GtkTreeModel*tree_model,
 		}
 		zval_ptr_dtor(&retval);
 	} else {
-		php_error(E_WARNING, "Could not get return value of on_get_path handler");
+		php_error(E_WARNING, "Could not invoke on_get_path handler");
 	}
+
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
+	zval_ptr_dtor(&arg2);
 }
 
 
@@ -414,13 +406,10 @@ static gboolean phpg_custom_tree_model_iter_next(GtkTreeModel *tree_model,
 
 	args[0] = &arg1;
 
-	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
-
-	zval_ptr_dtor(&wrapper);
-	zval_ptr_dtor(&arg1);
-
 	iter->stamp = PHPG_CUSTOM_TREE_MODEL(tree_model)->stamp;
-	if (retval) {
+
+	if (call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC) == SUCCESS
+		&& retval) {
 		if (Z_TYPE_P(retval) != IS_NULL) {
 			iter->user_data = retval;
 			result = TRUE;
@@ -431,9 +420,11 @@ static gboolean phpg_custom_tree_model_iter_next(GtkTreeModel *tree_model,
 			zval_ptr_dtor(&retval);
 		}
 	} else {
-		php_error(E_WARNING, "Could not get return value of on_iter_next handler");
+		php_error(E_WARNING, "Could not invoke on_iter_next handler");
 		iter->user_data = NULL;
 	}
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
 
 	return result;
 }
@@ -467,13 +458,10 @@ static gboolean phpg_custom_tree_model_iter_children(GtkTreeModel *tree_model,
 
 	args[0] = &arg1;
 
-	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
-
-	zval_ptr_dtor(&wrapper);
-	zval_ptr_dtor(&arg1);
-
 	iter->stamp = PHPG_CUSTOM_TREE_MODEL(tree_model)->stamp;
-	if (retval) {
+
+	if (call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC) == SUCCESS
+		&& retval) {
 		if (Z_TYPE_P(retval) != IS_NULL) {
 			iter->user_data = retval;
 			result = TRUE;
@@ -484,9 +472,11 @@ static gboolean phpg_custom_tree_model_iter_children(GtkTreeModel *tree_model,
 			zval_ptr_dtor(&retval);
 		}
 	} else {
-		php_error(E_WARNING, "Could not get return value of on_iter_children handler");
+		php_error(E_WARNING, "Could not invoke on_iter_children handler");
 		iter->user_data = NULL;
 	}
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
 
 	return result;
 }
@@ -518,17 +508,15 @@ static gboolean phpg_custom_tree_model_iter_has_child(GtkTreeModel *tree_model,
 
 	args[0] = &arg1;
 
-	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
-
-	zval_ptr_dtor(&wrapper);
-	zval_ptr_dtor(&arg1);
-
-	if (retval) {
+	if (call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC) == SUCCESS
+		&& retval) {
 		result = zval_is_true(retval);
 		zval_ptr_dtor(&retval);
 	} else {
-		php_error(E_WARNING, "Could not get return value of on_iter_has_child handler");
+		php_error(E_WARNING, "Could not invoke on_iter_has_child handler");
 	}
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
 
 	return result;
 }
@@ -560,18 +548,16 @@ static gint phpg_custom_tree_model_iter_n_children(GtkTreeModel *tree_model,
 
 	args[0] = &arg1;
 
-	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
-
-	zval_ptr_dtor(&wrapper);
-	zval_ptr_dtor(&arg1);
-
-	if (retval) {
+	if (call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC) == SUCCESS
+		&& retval) {
 		convert_to_long(retval);
 		result = Z_LVAL_P(retval);
 		zval_ptr_dtor(&retval);
 	} else {
-		php_error(E_WARNING, "Could not get return value of on_iter_n_children handler");
+		php_error(E_WARNING, "Could not invoke on_iter_n_children handler");
 	}
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
 
 	return result;
 }
@@ -610,14 +596,10 @@ static gboolean phpg_custom_tree_model_iter_nth_child(GtkTreeModel *tree_model,
 	args[0] = &arg1;
 	args[1] = &arg2;
 
-	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 2, args, 0, NULL TSRMLS_CC);
-
-	zval_ptr_dtor(&wrapper);
-	zval_ptr_dtor(&arg1);
-	zval_ptr_dtor(&arg2);
-
 	iter->stamp = PHPG_CUSTOM_TREE_MODEL(tree_model)->stamp;
-	if (retval) {
+
+	if (call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 2, args, 0, NULL TSRMLS_CC) == SUCCESS
+		&& retval) {
 		if (Z_TYPE_P(retval) != IS_NULL) {
 			iter->user_data = retval;
 			result = TRUE;
@@ -628,9 +610,12 @@ static gboolean phpg_custom_tree_model_iter_nth_child(GtkTreeModel *tree_model,
 			zval_ptr_dtor(&retval);
 		}
 	} else {
-		php_error(E_WARNING, "Could not get return value of on_nth_child handler");
+		php_error(E_WARNING, "Could not invoke on_nth_child handler");
 		iter->user_data = NULL;
 	}
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
+	zval_ptr_dtor(&arg2);
 
 	return result;
 }
@@ -664,13 +649,10 @@ static gboolean phpg_custom_tree_model_iter_parent(GtkTreeModel *tree_model,
 
 	args[0] = &arg1;
 
-	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
-
-	zval_ptr_dtor(&wrapper);
-	zval_ptr_dtor(&arg1);
-
 	iter->stamp = PHPG_CUSTOM_TREE_MODEL(tree_model)->stamp;
-	if (retval) {
+
+	if (call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC) == SUCCESS
+		&& retval) {
 		if (Z_TYPE_P(retval) != IS_NULL) {
 			iter->user_data = retval;
 			result = TRUE;
@@ -681,9 +663,11 @@ static gboolean phpg_custom_tree_model_iter_parent(GtkTreeModel *tree_model,
 			zval_ptr_dtor(&retval);
 		}
 	} else {
-		php_error(E_WARNING, "Could not get return value of on_iter_parent handler");
+		php_error(E_WARNING, "Could not invoke on_iter_parent handler");
 		iter->user_data = NULL;
 	}
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
 
 	return result;
 }
