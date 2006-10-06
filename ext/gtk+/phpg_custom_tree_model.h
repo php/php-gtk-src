@@ -22,7 +22,7 @@
 
 #include <gtk/gtktreemodel.h>
 
-#define PHPG_TYPE_CUSTOM_TREE_MODEL            (pygtk_custom_tree_model_get_type())
+#define PHPG_TYPE_CUSTOM_TREE_MODEL            (phpg_custom_tree_model_get_type())
 #define PHPG_CUSTOM_TREE_MODEL(object)         (G_TYPE_CHECK_INSTANCE_CAST((object), PHPG_TYPE_CUSTOM_TREE_MODEL, PhpGtkCustomTreeModel))
 #define PHPG_CUSTOM_TREE_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), PHPG_TYPE_CUSTOM_TREE_MODEL, PhpGtkCustomTreeModelClass))
 #define PHPG_IS_CUSTOM_TREE_MODEL(object)      (G_TYPE_CHECK_INSTANCE_TYPE((object), PHPG_TYPE_CUSTOM_TREE_MODEL))
@@ -36,6 +36,7 @@ struct _PhpGtkCustomTreeModel {
     GObject parent_instance;
 
     gint stamp;
+	HashTable owned_nodes;
 };
 
 struct _PhpGtkCustomTreeModelClass {

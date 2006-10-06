@@ -26,9 +26,14 @@
 
 #include "phpg_custom_tree_model.h"
 
+#define ITER_IS_VALID(iter, tree_model) \
+	 (iter != NULL && iter->stamp == PHPG_CUSTOM_TREE_MODEL(tree_model)->stamp)
+
 static void phpg_custom_tree_model_class_init(PhpGtkCustomTreeModelClass *klass);
 static void phpg_custom_tree_model_init(PhpGtkCustomTreeModel *self);
 static void phpg_custom_tree_model_iface_init(GtkTreeModelIface *iface);
+
+static GObjectClass *parent_class = NULL;
 
 GType
 phpg_custom_tree_model_get_type(void)
@@ -94,6 +99,8 @@ static void phpg_custom_tree_model_unref_node(GtkTreeModel *tree_model,
 											  GtkTreeIter *iter);
 static void phpg_custom_tree_model_ref_node(GtkTreeModel *tree_model,
 											GtkTreeIter *iter);
+static void phpg_custom_tree_model_finalize(GObject *object);
+
 
 static void
 phpg_custom_tree_model_iface_init(GtkTreeModelIface *iface)
@@ -120,12 +127,638 @@ phpg_custom_tree_model_init(PhpGtkCustomTreeModel *self)
 	do {
 		self->stamp = g_random_int();
 	} while (self->stamp == 0);
+
+	zend_hash_init(&self->owned_nodes, 10, NULL, ZVAL_PTR_DTOR, 0);
 }
 
 static void
 phpg_custom_tree_model_class_init(PhpGtkCustomTreeModelClass *klass)
 {
-    return NULL;
+	GObjectClass *object_class = (GObjectClass *) klass;
+
+	parent_class = g_type_class_peek_parent (klass);
+	object_class->finalize = phpg_custom_tree_model_finalize;
 }
+
+static void phpg_custom_tree_model_finalize(GObject *object)
+{
+	PhpGtkCustomTreeModel *model = PHPG_CUSTOM_TREE_MODEL(object);
+
+	zend_hash_destroy(&model->owned_nodes);
+
+	/* must chain up */
+	(* parent_class->finalize) (object);
+}
+
+PhpGtkCustomTreeModel* phpg_custom_tree_model_new(void)
+{
+	return PHPG_CUSTOM_TREE_MODEL(g_object_new(PHPG_TYPE_CUSTOM_TREE_MODEL, NULL));
+}
+
+
+static guint phpg_custom_tree_model_get_flags(GtkTreeModel *tree_model)
+{
+	zval *wrapper = NULL;
+	zval *retval = NULL;
+	zval method_name;
+	guint result = 0;
+
+	phpg_return_val_if_fail(tree_model != NULL, 0);
+	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), 0);
+
+	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
+	ZVAL_STRING(&method_name, "on_get_flags", 0);
+
+	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 0, NULL, 0, NULL TSRMLS_CC);
+
+	zval_ptr_dtor(&wrapper);
+	if (retval) {
+		convert_to_long(retval);
+		result = Z_LVAL_P(retval);
+		zval_ptr_dtor(&retval);
+	} else {
+		php_error(E_WARNING, "Could not get return value of on_get_flags handler");
+	}
+
+	return result;
+}
+
+
+static gint phpg_custom_tree_model_get_n_columns(GtkTreeModel *tree_model)
+{
+	zval *wrapper = NULL;
+	zval *retval = NULL;
+	zval method_name;
+	gint result = 0;
+
+	phpg_return_val_if_fail(tree_model != NULL, 0);
+	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), 0);
+
+	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
+	ZVAL_STRING(&method_name, "on_get_n_columns", 0);
+
+	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 0, NULL, 0, NULL TSRMLS_CC);
+
+	zval_ptr_dtor(&wrapper);
+	if (retval) {
+		convert_to_long(retval);
+		result = Z_LVAL_P(retval);
+		zval_ptr_dtor(&retval);
+	} else {
+		php_error(E_WARNING, "Could not get return value of on_get_n_columns handler");
+	}
+
+	return result;
+}
+
+
+static GType phpg_custom_tree_model_get_column_type(GtkTreeModel *tree_model, gint index)
+{
+	zval *wrapper = NULL;
+	zval *retval = NULL;
+	zval **args[1], *arg1;
+	zval method_name;
+	GType result = G_TYPE_INVALID;
+
+	phpg_return_val_if_fail(tree_model != NULL, G_TYPE_INVALID);
+	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), G_TYPE_INVALID);
+
+	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
+	ZVAL_STRING(&method_name, "on_get_column_type", 0);
+	MAKE_STD_ZVAL(arg1);
+	ZVAL_LONG(arg1, index);
+
+	args[0] = &arg1;
+
+	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
+
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
+
+	if (retval) {
+		result = phpg_gtype_from_zval(retval);
+		zval_ptr_dtor(&retval);
+	} else {
+		php_error(E_WARNING, "Could not get return value of on_get_column_type handler");
+	}
+
+	return result;
+}
+
+
+static gboolean phpg_custom_tree_model_get_iter(GtkTreeModel *tree_model,
+												GtkTreeIter *iter,
+												GtkTreePath *path)
+{
+	zval *wrapper = NULL;
+	zval *retval = NULL;
+	zval **args[1], *arg1 = NULL;
+	zval method_name;
+	gboolean result = FALSE;
+
+	phpg_return_val_if_fail(tree_model != NULL, FALSE);
+	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), FALSE);
+	phpg_return_val_if_fail(iter != NULL, FALSE);
+	phpg_return_val_if_fail(path != NULL, FALSE);
+
+	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
+	ZVAL_STRING(&method_name, "on_get_iter", 0);
+
+	phpg_tree_path_to_zval(path, &arg1);
+
+	args[0] = &arg1;
+
+	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
+
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
+
+	iter->stamp = PHPG_CUSTOM_TREE_MODEL(tree_model)->stamp;
+	if (retval) {
+		if (Z_TYPE_P(retval) != IS_NULL) {
+			iter->user_data = retval;
+			result = TRUE;
+			zend_hash_index_update(&PHPG_CUSTOM_TREE_MODEL(tree_model)->owned_nodes,
+								   (long)retval, (void *)&retval, sizeof(zval *), NULL);
+		} else {
+			iter->user_data = NULL;
+			zval_ptr_dtor(&retval);
+		}
+	} else {
+		php_error(E_WARNING, "Could not get return value of on_get_iter handler");
+		iter->user_data = NULL;
+	}
+
+	return result;
+}
+
+
+static GtkTreePath *phpg_custom_tree_model_get_path(GtkTreeModel *tree_model,
+													GtkTreeIter *iter)
+{
+	zval *wrapper = NULL;
+	zval *retval = NULL;
+	zval **args[1], *arg1 = NULL;
+	zval method_name;
+	GtkTreePath *path = NULL;
+
+	phpg_return_val_if_fail(tree_model != NULL, NULL);
+	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), NULL);
+	phpg_return_val_if_fail(ITER_IS_VALID(iter, tree_model), NULL);
+
+	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
+	ZVAL_STRING(&method_name, "on_get_path", 0);
+
+	arg1 = (zval *) iter->user_data;
+	if (arg1) {
+		zval_add_ref(&arg1);
+	} else {
+		MAKE_ZVAL_IF_NULL(arg1);
+		ZVAL_NULL(arg1);
+	}
+
+	args[0] = &arg1;
+
+	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
+
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
+
+	if (retval) {
+		if (phpg_tree_path_from_zval(retval, &path TSRMLS_CC) == FAILURE) {
+			php_error(E_WARNING, "Could not convert return value to tree path");
+		}
+		zval_ptr_dtor(&retval);
+	} else {
+		php_error(E_WARNING, "Could not get return value of on_get_path handler");
+	}
+
+	return path;
+}
+
+
+static void phpg_custom_tree_model_get_value(GtkTreeModel*tree_model,
+											 GtkTreeIter *iter,
+											 gint column, GValue *value)
+{
+	zval *wrapper = NULL;
+	zval *retval = NULL;
+	zval **args[2], *arg1 = NULL, *arg2 = NULL;
+	zval method_name;
+
+	phpg_return_if_fail(tree_model != NULL);
+	phpg_return_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model));
+	phpg_return_if_fail(ITER_IS_VALID(iter, tree_model));
+
+	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
+	ZVAL_STRING(&method_name, "on_get_value", 0);
+
+	g_value_init(value, phpg_custom_tree_model_get_column_type(tree_model, column));
+
+	arg1 = (zval *) iter->user_data;
+	if (arg1) {
+		zval_add_ref(&arg1);
+	} else {
+		MAKE_ZVAL_IF_NULL(arg1);
+		ZVAL_NULL(arg1);
+	}
+
+	MAKE_STD_ZVAL(arg2);
+	ZVAL_LONG(arg2, column);
+
+	args[0] = &arg1;
+	args[1] = &arg2;
+
+	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 2, args, 0, NULL TSRMLS_CC);
+
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
+	zval_ptr_dtor(&arg2);
+
+	if (retval) {
+		if (Z_TYPE_P(retval) != IS_NULL) {
+			if (phpg_gvalue_from_zval(value, retval, 1 TSRMLS_CC) == FAILURE) {
+				php_error(E_WARNING, "Could not convert return value to appropriate type");
+			}
+		}
+		zval_ptr_dtor(&retval);
+	} else {
+		php_error(E_WARNING, "Could not get return value of on_get_path handler");
+	}
+}
+
+
+static gboolean phpg_custom_tree_model_iter_next(GtkTreeModel *tree_model,
+												 GtkTreeIter *iter)
+{
+	zval *wrapper = NULL;
+	zval *retval = NULL;
+	zval **args[1], *arg1 = NULL;
+	zval method_name;
+	gboolean result = FALSE;
+
+	phpg_return_val_if_fail(tree_model != NULL, FALSE);
+	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), FALSE);
+	phpg_return_val_if_fail(ITER_IS_VALID(iter, tree_model), FALSE);
+
+	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
+	ZVAL_STRING(&method_name, "on_iter_next", 0);
+
+	arg1 = (zval *) iter->user_data;
+	if (arg1) {
+		zval_add_ref(&arg1);
+	} else {
+		MAKE_ZVAL_IF_NULL(arg1);
+		ZVAL_NULL(arg1);
+	}
+
+	args[0] = &arg1;
+
+	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
+
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
+
+	iter->stamp = PHPG_CUSTOM_TREE_MODEL(tree_model)->stamp;
+	if (retval) {
+		if (Z_TYPE_P(retval) != IS_NULL) {
+			iter->user_data = retval;
+			result = TRUE;
+			zend_hash_index_update(&PHPG_CUSTOM_TREE_MODEL(tree_model)->owned_nodes,
+								   (long)retval, (void *)&retval, sizeof(zval *), NULL);
+		} else {
+			iter->user_data = NULL;
+			zval_ptr_dtor(&retval);
+		}
+	} else {
+		php_error(E_WARNING, "Could not get return value of on_iter_next handler");
+		iter->user_data = NULL;
+	}
+
+	return result;
+}
+
+
+static gboolean phpg_custom_tree_model_iter_children(GtkTreeModel *tree_model,
+													 GtkTreeIter *iter,
+													 GtkTreeIter *parent)
+{
+	zval *wrapper = NULL;
+	zval *retval = NULL;
+	zval **args[1], *arg1 = NULL;
+	zval method_name;
+	gboolean result = FALSE;
+
+	phpg_return_val_if_fail(tree_model != NULL, FALSE);
+	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), FALSE);
+	phpg_return_val_if_fail(iter != NULL, FALSE);
+	phpg_return_val_if_fail(parent == NULL || parent->stamp == PHPG_CUSTOM_TREE_MODEL(tree_model)->stamp, FALSE);
+
+	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
+	ZVAL_STRING(&method_name, "on_iter_children", 0);
+
+	if (parent && parent->user_data != NULL) {
+		arg1 = (zval *) parent->user_data;
+		zval_add_ref(&arg1);
+	} else {
+		MAKE_ZVAL_IF_NULL(arg1);
+		ZVAL_NULL(arg1);
+	}
+
+	args[0] = &arg1;
+
+	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
+
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
+
+	iter->stamp = PHPG_CUSTOM_TREE_MODEL(tree_model)->stamp;
+	if (retval) {
+		if (Z_TYPE_P(retval) != IS_NULL) {
+			iter->user_data = retval;
+			result = TRUE;
+			zend_hash_index_update(&PHPG_CUSTOM_TREE_MODEL(tree_model)->owned_nodes,
+								   (long)retval, (void *)&retval, sizeof(zval *), NULL);
+		} else {
+			iter->user_data = NULL;
+			zval_ptr_dtor(&retval);
+		}
+	} else {
+		php_error(E_WARNING, "Could not get return value of on_iter_children handler");
+		iter->user_data = NULL;
+	}
+
+	return result;
+}
+
+
+static gboolean phpg_custom_tree_model_iter_has_child(GtkTreeModel *tree_model,
+													  GtkTreeIter *iter)
+{
+	zval *wrapper = NULL;
+	zval *retval = NULL;
+	zval **args[1], *arg1 = NULL;
+	zval method_name;
+	gboolean result = FALSE;
+
+	phpg_return_val_if_fail(tree_model != NULL, FALSE);
+	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), FALSE);
+	phpg_return_val_if_fail(ITER_IS_VALID(iter, tree_model), FALSE);
+
+	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
+	ZVAL_STRING(&method_name, "on_iter_has_child", 0);
+
+	arg1 = (zval *) iter->user_data;
+	if (arg1) {
+		zval_add_ref(&arg1);
+	} else {
+		MAKE_ZVAL_IF_NULL(arg1);
+		ZVAL_NULL(arg1);
+	}
+
+	args[0] = &arg1;
+
+	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
+
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
+
+	if (retval) {
+		result = zval_is_true(retval);
+		zval_ptr_dtor(&retval);
+	} else {
+		php_error(E_WARNING, "Could not get return value of on_iter_has_child handler");
+	}
+
+	return result;
+}
+
+
+static gint phpg_custom_tree_model_iter_n_children(GtkTreeModel *tree_model,
+												   GtkTreeIter *iter)
+{
+	zval *wrapper = NULL;
+	zval *retval = NULL;
+	zval **args[1], *arg1 = NULL;
+	zval method_name;
+	guint result = 0;
+
+	phpg_return_val_if_fail(tree_model != NULL, 0);
+	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), 0);
+	phpg_return_val_if_fail(iter == NULL || iter->stamp == PHPG_CUSTOM_TREE_MODEL(tree_model)->stamp, 0);
+
+	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
+	ZVAL_STRING(&method_name, "on_iter_n_children", 0);
+
+	arg1 = (zval *) iter->user_data;
+	if (arg1) {
+		zval_add_ref(&arg1);
+	} else {
+		MAKE_ZVAL_IF_NULL(arg1);
+		ZVAL_NULL(arg1);
+	}
+
+	args[0] = &arg1;
+
+	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
+
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
+
+	if (retval) {
+		convert_to_long(retval);
+		result = Z_LVAL_P(retval);
+		zval_ptr_dtor(&retval);
+	} else {
+		php_error(E_WARNING, "Could not get return value of on_iter_n_children handler");
+	}
+
+	return result;
+}
+
+
+static gboolean phpg_custom_tree_model_iter_nth_child(GtkTreeModel *tree_model,
+													  GtkTreeIter  *iter,
+													  GtkTreeIter  *parent,
+													  gint n)
+{
+	zval *wrapper = NULL;
+	zval *retval = NULL;
+	zval **args[2], *arg1 = NULL, *arg2 = NULL;
+	zval method_name;
+	gboolean result = FALSE;
+
+	phpg_return_val_if_fail(tree_model != NULL, FALSE);
+	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), FALSE);
+	phpg_return_val_if_fail(iter != NULL, FALSE);
+	phpg_return_val_if_fail(parent == NULL || parent->stamp == PHPG_CUSTOM_TREE_MODEL(tree_model)->stamp, FALSE);
+
+	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
+	ZVAL_STRING(&method_name, "on_iter_nth_child", 0);
+
+	if (parent && parent->user_data != NULL) {
+		arg1 = (zval *) parent->user_data;
+		zval_add_ref(&arg1);
+	} else {
+		MAKE_ZVAL_IF_NULL(arg1);
+		ZVAL_NULL(arg1);
+	}
+
+	MAKE_STD_ZVAL(arg2);
+	ZVAL_LONG(arg2, n);
+
+	args[0] = &arg1;
+	args[1] = &arg2;
+
+	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 2, args, 0, NULL TSRMLS_CC);
+
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
+	zval_ptr_dtor(&arg2);
+
+	iter->stamp = PHPG_CUSTOM_TREE_MODEL(tree_model)->stamp;
+	if (retval) {
+		if (Z_TYPE_P(retval) != IS_NULL) {
+			iter->user_data = retval;
+			result = TRUE;
+			zend_hash_index_update(&PHPG_CUSTOM_TREE_MODEL(tree_model)->owned_nodes,
+								   (long)retval, (void *)&retval, sizeof(zval *), NULL);
+		} else {
+			iter->user_data = NULL;
+			zval_ptr_dtor(&retval);
+		}
+	} else {
+		php_error(E_WARNING, "Could not get return value of on_nth_child handler");
+		iter->user_data = NULL;
+	}
+
+	return result;
+}
+
+
+static gboolean phpg_custom_tree_model_iter_parent(GtkTreeModel *tree_model,
+												   GtkTreeIter *iter,
+												   GtkTreeIter *child)
+{
+	zval *wrapper = NULL;
+	zval *retval = NULL;
+	zval **args[1], *arg1 = NULL;
+	zval method_name;
+	gboolean result = FALSE;
+
+	phpg_return_val_if_fail(tree_model != NULL, FALSE);
+	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), FALSE);
+	phpg_return_val_if_fail(iter != NULL, FALSE);
+	phpg_return_val_if_fail(ITER_IS_VALID(child, tree_model), FALSE);
+
+	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
+	ZVAL_STRING(&method_name, "on_iter_parent", 0);
+
+	if (child && child->user_data != NULL) {
+		arg1 = (zval *) child->user_data;
+		zval_add_ref(&arg1);
+	} else {
+		MAKE_ZVAL_IF_NULL(arg1);
+		ZVAL_NULL(arg1);
+	}
+
+	args[0] = &arg1;
+
+	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
+
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
+
+	iter->stamp = PHPG_CUSTOM_TREE_MODEL(tree_model)->stamp;
+	if (retval) {
+		if (Z_TYPE_P(retval) != IS_NULL) {
+			iter->user_data = retval;
+			result = TRUE;
+			zend_hash_index_update(&PHPG_CUSTOM_TREE_MODEL(tree_model)->owned_nodes,
+								   (long)retval, (void *)&retval, sizeof(zval *), NULL);
+		} else {
+			iter->user_data = NULL;
+			zval_ptr_dtor(&retval);
+		}
+	} else {
+		php_error(E_WARNING, "Could not get return value of on_iter_parent handler");
+		iter->user_data = NULL;
+	}
+
+	return result;
+}
+
+
+static void phpg_custom_tree_model_unref_node(GtkTreeModel *tree_model,
+											  GtkTreeIter *iter)
+{
+	zval *wrapper = NULL;
+	zval *retval = NULL;
+	zval **args[1], *arg1 = NULL;
+	zval method_name;
+
+	phpg_return_if_fail(tree_model != NULL);
+	phpg_return_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model));
+	phpg_return_if_fail(ITER_IS_VALID(iter, tree_model));
+
+	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
+	ZVAL_STRING(&method_name, "on_unref_node", 0);
+
+	if (iter && iter->user_data != NULL) {
+		arg1 = (zval *) iter->user_data;
+		zval_add_ref(&arg1);
+	} else {
+		MAKE_ZVAL_IF_NULL(arg1);
+		ZVAL_NULL(arg1);
+	}
+
+	args[0] = &arg1;
+
+	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
+
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
+
+	if (retval) {
+		zval_ptr_dtor(&retval);
+	}
+}
+
+
+static void phpg_custom_tree_model_ref_node(GtkTreeModel *tree_model,
+											GtkTreeIter *iter)
+{
+	zval *wrapper = NULL;
+	zval *retval = NULL;
+	zval **args[1], *arg1 = NULL;
+	zval method_name;
+
+	phpg_return_if_fail(tree_model != NULL);
+	phpg_return_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model));
+	phpg_return_if_fail(ITER_IS_VALID(iter, tree_model));
+
+	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
+	ZVAL_STRING(&method_name, "on_ref_node", 0);
+
+	if (iter && iter->user_data != NULL) {
+		arg1 = (zval *) iter->user_data;
+		zval_add_ref(&arg1);
+	} else {
+		MAKE_ZVAL_IF_NULL(arg1);
+		ZVAL_NULL(arg1);
+	}
+
+	args[0] = &arg1;
+
+	call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC);
+
+	zval_ptr_dtor(&wrapper);
+	zval_ptr_dtor(&arg1);
+
+	if (retval) {
+		zval_ptr_dtor(&retval);
+	}
+}
+
 
 #endif

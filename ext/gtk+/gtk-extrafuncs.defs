@@ -50,3 +50,19 @@
   )
 )
 
+;; PhpGtkCustomTreeModel
+
+(define-object CustomTreeModel
+  (in-module "PhpGtk")
+  (parent "GObject")
+  (c-name "PhpGtkCustomTreeModel")
+  (gtype-id "PHPG_TYPE_CUSTOM_TREE_MODEL")
+  (implements "GtkTreeModel")
+)
+
+(define-function phpg_custom_tree_model_new
+  (c-name "phpg_custom_tree_model_new")
+  (is-constructor-of PhpGtkCustomTreeModel)
+  (return-type "PhpGtkCustomTreeModel*")
+)
+

@@ -3,6 +3,8 @@
 headers
 #include "php_gtk_api.h"
 #include "ext/standard/file.h"
+#include "ext/gtk+/phpg_custom_tree_model.h"
+
 static void phpg_about_dialog_activate_link_func_marshal (GtkAboutDialog *about, const gchar *link, gpointer data);
 static gboolean phpg_entry_completion_match_func_marshal (GtkEntryCompletion *completion, const gchar *key, GtkTreeIter *iter, gpointer data);
 static gboolean phpg_tree_view_row_separator_func_marshal (GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
