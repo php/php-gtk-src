@@ -1,3 +1,14 @@
+2006-10-06  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/phpg_custom_tree_model.c:
+      Some error handling.
+
+    * ext/gtk+/gtk-extrafuncs.defs
+      ext/gtk+/gtk.overrides
+      ext/gtk+/phpg_custom_tree_model.c
+      ext/gtk+/phpg_custom_tree_model.h:
+      Support for custom tree models.
+
 2006-10-04  Anant Narayanan  <anant@kix.in>
 
     * ext/gtk+/gtk.overrides:
