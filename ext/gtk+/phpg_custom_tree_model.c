@@ -538,8 +538,8 @@ static gint phpg_custom_tree_model_iter_n_children(GtkTreeModel *tree_model,
 	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
 	ZVAL_STRING(&method_name, "on_iter_n_children", 0);
 
-	arg1 = (zval *) iter->user_data;
-	if (arg1) {
+	if (iter && iter->user_data != NULL) {
+		arg1 = (zval *) iter->user_data;
 		zval_add_ref(&arg1);
 	} else {
 		MAKE_ZVAL_IF_NULL(arg1);
