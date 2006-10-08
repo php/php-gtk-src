@@ -413,8 +413,8 @@ int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items TSRML
     if (GTK_IS_TREE_MODEL_SORT(model)) {
         child = gtk_tree_model_sort_get_model(GTK_TREE_MODEL_SORT(model));
         gtk_tree_model_sort_convert_iter_to_child_iter(GTK_TREE_MODEL_SORT(model), &child_iter, iter);
-        return phpg_model_set_row(child, &child_iter, items TSRMLS_CC);
-    }
+        return phpg_model_set_row(child, &child_iter, items TSRMLS_CC);/*{{{*/
+    }/*}}}*/
 
     if (GTK_IS_TREE_MODEL_FILTER(model)) {
         child = gtk_tree_model_filter_get_model(GTK_TREE_MODEL_FILTER(model));
@@ -479,6 +479,135 @@ int phpg_model_remove_row(GtkTreeModel *model, GtkTreeIter *iter TSRMLS_DC)
 
     php_error(E_WARNING, "Cannot remove row: unknown model type");
     return FAILURE;
+}
+
+PHP_GTK_API zval* phpg_gtktreemodel_read_dimension_handler(zval *object, zval *offset, int type TSRMLS_DC)
+{
+    GtkTreeModel *model;
+    GtkTreePath *path = NULL;
+    GtkTreeIter iter;
+    zval tmp_offset;
+    zval *result = NULL;
+
+    MAKE_STD_ZVAL(result);
+    ZVAL_NULL(result);
+    result->refcount = 0;
+    result->is_ref = 0;
+
+    if (phpg_gboxed_check(offset, GTK_TYPE_TREE_ITER, TRUE TSRMLS_CC)) {
+        phpg_modelrow_new(&result, GTK_TREE_MODEL(PHPG_GOBJECT(object)), (GtkTreeIter *)
+                          PHPG_GBOXED(offset) TSRMLS_CC);
+        return result;
+    }
+
+    model = GTK_TREE_MODEL(PHPG_GOBJECT(object));
+
+    if (Z_TYPE_P(offset) == IS_LONG && Z_LVAL_P(offset) < 0) {
+        int n_columns = gtk_tree_model_get_n_columns(model);
+        tmp_offset = *offset;
+        ZVAL_LONG(&tmp_offset, Z_LVAL_P(offset) + n_columns);
+        offset = &tmp_offset;
+    }
+
+    if (phpg_tree_path_from_zval(offset, &path TSRMLS_CC) == FAILURE) {
+        php_error(E_WARNING, "Could not parse index as a tree path");
+        zval_dtor(result);
+        FREE_ZVAL(result);
+        return EG(uninitialized_zval_ptr);
+    }
+
+    if (gtk_tree_model_get_iter(model, &iter, path)) {
+        phpg_modelrow_new(&result, model, &iter TSRMLS_CC);
+    } else {
+        php_error(E_WARNING, "Invalid tree path");
+        zval_dtor(result);
+        FREE_ZVAL(result);
+        result = EG(uninitialized_zval_ptr);
+    }
+    gtk_tree_path_free(path);
+
+    return result;
+}
+
+PHP_GTK_API void phpg_gtktreemodel_write_dimension_handler(zval *object, zval *offset, zval *value TSRMLS_DC)
+{
+    GtkTreeIter *iter, tmp_iter;
+    GtkTreeModel *model;
+
+    model = GTK_TREE_MODEL(PHPG_GOBJECT(object));
+
+    if (phpg_gboxed_check(offset, GTK_TYPE_TREE_ITER, TRUE TSRMLS_CC)) {
+        iter = (GtkTreeIter *) PHPG_GBOXED(offset);
+    } else {
+        GtkTreePath *path;
+        zval tmp_offset;
+
+        if (Z_TYPE_P(offset) == IS_LONG && Z_LVAL_P(offset) < 0) {
+            int n_columns = gtk_tree_model_get_n_columns(model);
+            tmp_offset = *offset;
+            ZVAL_LONG(&tmp_offset, Z_LVAL_P(offset) + n_columns);
+            offset = &tmp_offset;
+        }
+
+        if (phpg_tree_path_from_zval(offset, &path TSRMLS_CC) == FAILURE) {
+            php_error(E_WARNING, "Could not parse index as a tree path");
+            return;
+        }
+
+        if (!gtk_tree_model_get_iter(model, &tmp_iter, path)) {
+            php_error(E_WARNING, "Invalid tree path");
+            gtk_tree_path_free(path);
+            return;
+        }
+
+        iter = &tmp_iter;
+        gtk_tree_path_free(path);
+    }
+
+    if (value == NULL) {
+        phpg_model_remove_row(model, iter TSRMLS_CC);
+    } else {
+        phpg_model_set_row(model, iter, value TSRMLS_CC);
+    }
+}
+
+PHP_GTK_API int phpg_gtktreemodel_has_dimension_handler(zval *object, zval *offset, int check_empty TSRMLS_DC)
+{
+    GtkTreeModel *model;
+    GtkTreeIter iter;
+    zval tmp_offset;
+    GtkTreePath *path = NULL;
+    int result = 1;
+
+    if (phpg_gboxed_check(offset, GTK_TYPE_TREE_ITER, TRUE TSRMLS_CC)) {
+        return 1;
+    }
+
+    model = GTK_TREE_MODEL(PHPG_GOBJECT(object));
+
+    if (Z_TYPE_P(offset) == IS_LONG && Z_LVAL_P(offset) < 0) {
+        int n_columns = gtk_tree_model_get_n_columns(model);
+        tmp_offset = *offset;
+        ZVAL_LONG(&tmp_offset, Z_LVAL_P(offset) + n_columns);
+        offset = &tmp_offset;
+    }
+
+    if (phpg_tree_path_from_zval(offset, &path TSRMLS_CC) == FAILURE) {
+        return 0;
+    }
+    
+    if (!gtk_tree_model_get_iter(model, &iter, path)) {
+        result = 0;
+    }
+
+    gtk_tree_path_free(path);
+    return result;
+}
+
+PHP_GTK_API int phpg_gtktreemodel_count_elements_handler(zval *object, long *count TSRMLS_DC)
+{
+    *count = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(PHPG_GOBJECT(object)), NULL);
+    return SUCCESS;
 }
 
 /* }}} */
@@ -869,7 +998,7 @@ static void treemodelrow_write_dimension(zval *object, zval *offset, zval *value
 
     row = zend_object_store_get_object(object TSRMLS_CC);
     if (!GTK_IS_LIST_STORE(row->model) && !GTK_IS_TREE_STORE(row->model)) {
-        php_error(E_WARNING, "Unknown tree model");
+        php_error(E_WARNING, "Tree model does not support setting values through GtkTreeModelRow");
         return;
     }
 

@@ -42,6 +42,11 @@ PHP_GTK_API int phpg_tree_path_to_zval(GtkTreePath *path, zval **value TSRMLS_DC
 int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items TSRMLS_DC);
 int phpg_model_remove_row(GtkTreeModel *model, GtkTreeIter *iter TSRMLS_DC);
 
+PHP_GTK_API zval* phpg_gtktreemodel_read_dimension_handler(zval *object, zval *offset, int type TSRMLS_DC);
+PHP_GTK_API int phpg_gtktreemodel_has_dimension_handler(zval *object, zval *offset, int check_empty TSRMLS_DC);
+PHP_GTK_API void phpg_gtktreemodel_write_dimension_handler(zval *object, zval *offset, zval *value TSRMLS_DC);
+PHP_GTK_API int phpg_gtktreemodel_count_elements_handler(zval *object, long *count TSRMLS_DC);
+
 #if ZEND_EXTENSION_API_NO > 220051025
 zend_object_iterator* phpg_treemodel_get_iterator(zend_class_entry *ce, zval *object, int by_ref TSRMLS_DC);
 #else

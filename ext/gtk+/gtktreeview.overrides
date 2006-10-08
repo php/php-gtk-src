@@ -7,10 +7,6 @@ headers
 
 static void phpg_cell_data_func_marshal(GtkCellLayout *cell_layout, GtkCellRenderer *renderer, GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
 static void phpg_store_set_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool is_tree);
-static zval* phpg_gtktreemodel_read_dimension_handler(zval *object, zval *offset, int type TSRMLS_DC);
-static int phpg_gtktreemodel_has_dimension_handler(zval *object, zval *offset, int check_empty TSRMLS_DC);
-static void phpg_gtktreemodel_write_dimension_handler(zval *object, zval *offset, zval *value TSRMLS_DC);
-static int phpg_gtktreemodel_count_elements_handler(zval *object, long *count TSRMLS_DC);
 static gint phpg_tree_iter_compare_func_marshal(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer data);
 static gboolean phpg_tree_model_filter_visible_func_marshal(GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
 static gboolean phpg_tree_view_row_separator_func_marshal (GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
@@ -445,6 +441,7 @@ PHP_METHOD
 
     phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 }
+
 %%
 add-arginfo GtkListStore set
 static
@@ -832,12 +829,6 @@ PHP_METHOD
 %%
 override-handler GtkTreeStore count_elements
 
-static int phpg_gtktreemodel_count_elements_handler(zval *object, long *count TSRMLS_DC)
-{
-    *count = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(PHPG_GOBJECT(object)), NULL);
-    return SUCCESS;
-}
-
 static int phpg_gtktreestore_count_elements_handler(zval *object, long *count TSRMLS_DC)
 {
     return phpg_gtktreemodel_count_elements_handler(object, count TSRMLS_CC);
@@ -847,39 +838,6 @@ static int phpg_gtktreestore_count_elements_handler(zval *object, long *count TS
 %%
 override-handler GtkTreeStore has_dimension
 
-static int phpg_gtktreemodel_has_dimension_handler(zval *object, zval *offset, int check_empty TSRMLS_DC)
-{
-    GtkTreeModel *model;
-    GtkTreeIter iter;
-    zval tmp_offset;
-    GtkTreePath *path = NULL;
-    int result = 1;
-
-    if (phpg_gboxed_check(offset, GTK_TYPE_TREE_ITER, TRUE TSRMLS_CC)) {
-        return 1;
-    }
-
-    model = GTK_TREE_MODEL(PHPG_GOBJECT(object));
-
-    if (Z_TYPE_P(offset) == IS_LONG && Z_LVAL_P(offset) < 0) {
-        int n_columns = gtk_tree_model_get_n_columns(model);
-        tmp_offset = *offset;
-        ZVAL_LONG(&tmp_offset, Z_LVAL_P(offset) + n_columns);
-        offset = &tmp_offset;
-    }
-
-    if (phpg_tree_path_from_zval(offset, &path TSRMLS_CC) == FAILURE) {
-        return 0;
-    }
-    
-    if (!gtk_tree_model_get_iter(model, &iter, path)) {
-        result = 0;
-    }
-
-    gtk_tree_path_free(path);
-    return result;
-}
-
 static int phpg_gtktreestore_has_dimension_handler(zval *object, zval *offset, int check_empty TSRMLS_DC)
 {
     return phpg_gtktreemodel_has_dimension_handler(object, offset, check_empty TSRMLS_CC);
@@ -888,54 +846,6 @@ static int phpg_gtktreestore_has_dimension_handler(zval *object, zval *offset, i
 %%
 override-handler GtkTreeStore read_dimension
 
-static zval* phpg_gtktreemodel_read_dimension_handler(zval *object, zval *offset, int type TSRMLS_DC)
-{
-    GtkTreeModel *model;
-    GtkTreePath *path = NULL;
-    GtkTreeIter iter;
-    zval tmp_offset;
-    zval *result = NULL;
-
-    MAKE_STD_ZVAL(result);
-    ZVAL_NULL(result);
-    result->refcount = 0;
-    result->is_ref = 0;
-
-    if (phpg_gboxed_check(offset, GTK_TYPE_TREE_ITER, TRUE TSRMLS_CC)) {
-        phpg_modelrow_new(&result, GTK_TREE_MODEL(PHPG_GOBJECT(object)), (GtkTreeIter *)
-                          PHPG_GBOXED(offset) TSRMLS_CC);
-        return result;
-    }
-
-    model = GTK_TREE_MODEL(PHPG_GOBJECT(object));
-
-    if (Z_TYPE_P(offset) == IS_LONG && Z_LVAL_P(offset) < 0) {
-        int n_columns = gtk_tree_model_get_n_columns(model);
-        tmp_offset = *offset;
-        ZVAL_LONG(&tmp_offset, Z_LVAL_P(offset) + n_columns);
-        offset = &tmp_offset;
-    }
-
-    if (phpg_tree_path_from_zval(offset, &path TSRMLS_CC) == FAILURE) {
-        php_error(E_WARNING, "Could not parse index as a tree path");
-        zval_dtor(result);
-        FREE_ZVAL(result);
-        return EG(uninitialized_zval_ptr);
-    }
-
-    if (gtk_tree_model_get_iter(model, &iter, path)) {
-        phpg_modelrow_new(&result, model, &iter TSRMLS_CC);
-    } else {
-        php_error(E_WARNING, "Invalid tree path");
-        zval_dtor(result);
-        FREE_ZVAL(result);
-        result = EG(uninitialized_zval_ptr);
-    }
-    gtk_tree_path_free(path);
-
-    return result;
-}
-
 static zval* phpg_gtktreestore_read_dimension_handler(zval *object, zval *offset, int type TSRMLS_DC)
 {
     return phpg_gtktreemodel_read_dimension_handler(object, offset, type TSRMLS_CC);
@@ -943,48 +853,6 @@ static zval* phpg_gtktreestore_read_dimension_handler(zval *object, zval *offset
 
 %%
 override-handler GtkTreeStore write_dimension
-
-static void phpg_gtktreemodel_write_dimension_handler(zval *object, zval *offset, zval *value TSRMLS_DC)
-{
-    GtkTreeIter *iter, tmp_iter;
-    GtkTreeModel *model;
-
-    model = GTK_TREE_MODEL(PHPG_GOBJECT(object));
-
-    if (phpg_gboxed_check(offset, GTK_TYPE_TREE_ITER, TRUE TSRMLS_CC)) {
-        iter = (GtkTreeIter *) PHPG_GBOXED(offset);
-    } else {
-        GtkTreePath *path;
-        zval tmp_offset;
-
-        if (Z_TYPE_P(offset) == IS_LONG && Z_LVAL_P(offset) < 0) {
-            int n_columns = gtk_tree_model_get_n_columns(model);
-            tmp_offset = *offset;
-            ZVAL_LONG(&tmp_offset, Z_LVAL_P(offset) + n_columns);
-            offset = &tmp_offset;
-        }
-
-        if (phpg_tree_path_from_zval(offset, &path TSRMLS_CC) == FAILURE) {
-            php_error(E_WARNING, "Could not parse index as a tree path");
-            return;
-        }
-
-        if (!gtk_tree_model_get_iter(model, &tmp_iter, path)) {
-            php_error(E_WARNING, "Invalid tree path");
-            gtk_tree_path_free(path);
-            return;
-        }
-
-        iter = &tmp_iter;
-        gtk_tree_path_free(path);
-    }
-
-    if (value == NULL) {
-        phpg_model_remove_row(model, iter TSRMLS_CC);
-    } else {
-        phpg_model_set_row(model, iter, value TSRMLS_CC);
-    }
-}
 
 static void phpg_gtktreestore_write_dimension_handler(zval *object, zval *offset, zval *value TSRMLS_DC)
 {
@@ -2172,8 +2040,6 @@ PHP_METHOD
                                                            cb_data, phpg_cb_data_destroy);
 }
 
-%% }}}
-
 %%add-arginfo GtkTreeView insert_column_with_data_func
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
@@ -2653,6 +2519,52 @@ PHP_METHOD
 
     g_list_free(list);
 }
+
+
+%% }}}
+
+%% {{{ PhpGtkCustomTreeModel
+
+%%
+override-handler PhpGtkCustomTreeModel count_elements
+static int phpg_phpgtkcustomtreemodel_count_elements_handler(zval *object, long *count TSRMLS_DC)
+{
+    return phpg_gtktreemodel_count_elements_handler(object, count TSRMLS_CC);
+}
+
+%%
+override-handler PhpGtkCustomTreeModel has_dimension
+static int phpg_phpgtkcustomtreemodel_has_dimension_handler(zval *object, zval *offset, int check_empty TSRMLS_DC)
+{
+    return phpg_gtktreemodel_has_dimension_handler(object, offset, check_empty TSRMLS_CC);
+}
+
+%%
+override-handler PhpGtkCustomTreeModel read_dimension
+static zval* phpg_phpgtkcustomtreemodel_read_dimension_handler(zval *object, zval *offset, int type TSRMLS_DC)
+{
+    return phpg_gtktreemodel_read_dimension_handler(object, offset, type TSRMLS_CC);
+}
+
+%%
+override-handler PhpGtkCustomTreeModel write_dimension
+static void phpg_phpgtkcustomtreemodel_write_dimension_handler(zval *object, zval *offset, zval *value TSRMLS_DC)
+{
+    phpg_gtktreemodel_write_dimension_handler(object, offset, value TSRMLS_CC);
+}
+
+%%
+override-handler PhpGtkCustomTreeModel unset_dimension
+static void phpg_phpgtkcustomtreemodel_unset_dimension_handler(zval *object, zval *offset TSRMLS_DC)
+{
+    phpg_gtktreemodel_write_dimension_handler(object, offset, NULL TSRMLS_CC);
+}
+
+%%
+post-registration PhpGtkCustomTreeModel
+
+    phpgtkcustomtreemodel_ce->get_iterator = phpg_treemodel_get_iterator;
+    zend_class_implements(phpgtkcustomtreemodel_ce TSRMLS_CC, 1, zend_ce_traversable);
 
 
 %% }}}
