@@ -1,3 +1,14 @@
+2006-10-08  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtktreeview.overrides
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c:
+      Allow PhpGtkCustomTreeModel to expose itself through GtkTreeModelRow and
+      GtkTreeModelRowIterator.
+
+    * ext/gtk+/phpg_custom_tree_model.c:
+      Fix possible crash in iter_n_children handler.
+
 2006-10-06  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/phpg_custom_tree_model.c:
