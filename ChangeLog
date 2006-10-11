@@ -1,3 +1,8 @@
+2006-10-10  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtktreeview.overrides:
+      Allow NULL to be passesd to set_default_sort_func().
+
 2006-10-08  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtktreeview.overrides
