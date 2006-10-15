@@ -443,7 +443,7 @@ PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC);
 PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC);
 PHP_GTK_API void phpg_gobject_watch_closure(zval *zobj, GClosure *closure TSRMLS_DC);
 void phpg_gobject_register_self(TSRMLS_D);
-zend_bool phpg_gobject_construct(zval *this_ptr TSRMLS_DC);
+zend_bool phpg_gobject_construct(zval *this_ptr, GType object_type, zval *props TSRMLS_DC);
 
 static inline phpg_gobject_t* phpg_gobject_get(zval *zobj TSRMLS_DC)
 {

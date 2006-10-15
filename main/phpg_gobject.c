@@ -254,36 +254,82 @@ PHP_GTK_API void phpg_gobject_watch_closure(zval *zobj, GClosure *closure TSRMLS
 /* }}} */
 
 /* {{{ phpg_gobject_construct */
-zend_bool phpg_gobject_construct(zval *this_ptr TSRMLS_DC)
+zend_bool phpg_gobject_construct(zval *this_ptr, GType object_type, zval *props TSRMLS_DC)
 {
-    GType my_type;
     guint n_params = 0;
     GParameter *params = NULL;
-    GObjectClass *class;
+    GObjectClass *klass;
     GObject *obj;
+    char buf [128];
+    int i;
 
-    my_type = phpg_gtype_from_zval(this_ptr);
-    
-    if (G_TYPE_IS_ABSTRACT(my_type)) {
-        zend_error(E_ERROR, "Cannot instantiate abstract class %s", Z_OBJCE_P(this_ptr)->name);
-        return 0;
-    }
-
-    if ((class = g_type_class_ref(my_type)) == NULL) {
-        zend_error(E_ERROR, "Could not get a reference to type class");
-        return 0;
-    }
-
-    obj = g_object_newv(my_type, n_params, params);
-    if (!obj) {
-        char buf [128];
-        snprintf(buf, 128, "could not construct %s object", Z_OBJCE_P(this_ptr)->name);
+    if (G_TYPE_IS_ABSTRACT(object_type)) {
+        snprintf(buf, 128, "Cannot instantiate abstract class %s", g_type_name(object_type));
         PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_construct_exception, buf, 0);
     }
 
-    phpg_gobject_set_wrapper(this_ptr, obj TSRMLS_CC);
+    if ((klass = g_type_class_ref(object_type)) == NULL) {
+        PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_construct_exception,
+                                         "Could not get a reference to type class", 0);
+    }
 
-    return 1;
+    if (props) {
+        int key_type;
+        char *key;
+        ulong num_key;
+        zval **value;
+        GParamSpec *pspec;
+
+        params = ecalloc(zend_hash_num_elements(Z_ARRVAL_P(props)), sizeof(GParameter));
+        for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(props));
+             zend_hash_get_current_data(Z_ARRVAL_P(props), (void**)&value) == SUCCESS;
+             zend_hash_move_forward(Z_ARRVAL_P(props))) {
+
+            key_type = zend_hash_get_current_key(Z_ARRVAL_P(props), &key, &num_key, 0);
+            if (key_type != HASH_KEY_IS_STRING) {
+                zend_throw_exception(phpg_construct_exception, "parameter names have to be keys", 0 TSRMLS_CC);
+                goto cleanup;
+            }
+
+            pspec = g_object_class_find_property(klass, key);
+            if (!pspec) {
+                snprintf(buf, 128, "Class %s does not support property '%s'", g_type_name(object_type), key);
+                zend_throw_exception(phpg_construct_exception, buf, 0 TSRMLS_CC);
+                goto cleanup;
+            }
+
+            g_value_init(&params[n_params].value, G_PARAM_SPEC_VALUE_TYPE(pspec));
+            if (phpg_gvalue_from_zval(&params[n_params].value, *value, TRUE TSRMLS_CC) == FAILURE) {
+                snprintf(buf, 128, "Could not convert value for property '%s'", key);
+                zend_throw_exception(phpg_construct_exception, buf, 0 TSRMLS_CC);
+                goto cleanup;
+            }
+
+            params[n_params].name = estrdup(key);
+
+            n_params++;
+        }
+    }
+
+    obj = g_object_newv(object_type, n_params, params);
+    if (obj) {
+        phpg_gobject_set_wrapper(this_ptr, obj TSRMLS_CC);
+    } else {
+        snprintf(buf, 128, "Could not construct %s object", Z_OBJCE_P(this_ptr)->name);
+        zend_throw_exception(phpg_construct_exception, buf, 0 TSRMLS_CC);
+    }
+
+cleanup:
+    if (params) {
+        for (i = 0; i < n_params; i++) {
+            efree((void *)params[i].name);
+            g_value_unset(&params[i].value);
+        }
+        efree(params);
+    }
+    g_type_class_unref(klass);
+
+    return (obj) ? 1 : 0;
 }
 
 /* }}} */
@@ -297,7 +343,23 @@ PHP_GTK_EXPORT_CE(gobject_ce) = NULL;
 /* {{{ GObject::__construct */
 static PHP_METHOD(GObject, __construct)
 {
-    phpg_gobject_construct(this_ptr TSRMLS_CC);
+    GType my_type;
+    zval *php_type = NULL;
+    zval *php_props = NULL;
+    char buf[128];
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Va", &php_type, &php_props)) {
+        snprintf(buf, 128, "Could not construct %s object", Z_OBJCE_P(this_ptr)->name);
+        PHPG_THROW_EXCEPTION(phpg_construct_exception, buf);
+    }
+
+    if (php_type) {
+        my_type = phpg_gtype_from_zval(php_type);
+    } else {
+        my_type = phpg_gtype_from_zval(this_ptr);
+    }
+
+    phpg_gobject_construct(this_ptr, my_type, php_props TSRMLS_CC);
 }
 /* }}} */
 
