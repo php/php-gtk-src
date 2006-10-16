@@ -1,3 +1,11 @@
+2006-10-15  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * TODO2
+      main/php_gtk.h
+      main/phpg_gobject.c:
+      Enhance GObject constructor to support creation of objects vai GType and
+      properties.
+
 2006-10-10  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtktreeview.overrides:
