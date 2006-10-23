@@ -1973,13 +1973,14 @@ override gtk_curve_get_vector
 PHP_METHOD
 {
     int num, i;
-    
+    gfloat *vector = NULL;
+
     NOT_STATIC_METHOD();
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &num))
         return;
 
-    gfloat vector[num];
+    vector = safe_emalloc(num, sizeof (gfloat *), 0);
 
     gtk_curve_get_vector(GTK_CURVE(PHPG_GOBJECT(this_ptr)), num, vector);
     
@@ -1994,6 +1995,7 @@ override gtk_curve_set_vector
 PHP_METHOD
 {
     int num, i = 0;
+    gfloat *vectors = NULL;
     zval *points = NULL;
     zval **data;
 
@@ -2003,7 +2005,7 @@ PHP_METHOD
         return;
 
     num = zend_hash_num_elements(Z_ARRVAL_P(points));
-    gfloat vectors[num];
+    vectors = safe_emalloc(num, sizeof (gfloat *), 0); 
 
     zend_hash_internal_pointer_reset(Z_ARRVAL_P(points));
     while (zend_hash_get_current_data(Z_ARRVAL_P(points), (void **)&data) 
