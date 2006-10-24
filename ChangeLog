@@ -1,3 +1,8 @@
+2006-10-23  Anant Narayanan  <anant@kix.in>
+
+    * ext/gtk+/gtk.overrides:
+      Using safe_emalloc() instead of explicit allocation
+
 2006-10-21  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtktreeview.overrides:
