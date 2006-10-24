@@ -15,7 +15,7 @@ if (CHECK_HEADER("main/php.h") && CHECK_LIB(PHP_GTK_DEBUG != "no" ? "php5ts_debu
 
 		ADD_FLAG("CFLAGS_PHP_GTK", "/I ext\\gtk+ /I ..\\ext\\gtk+ /D HAVE_PHP_GTK=1");
 
-		EXTENSION("php-gtk", "gen_atk.c gen_gdk.c gen_gtk.c gen_pango.c php_gdk.c php_gtk+.c php_gtk+_types.c", true); // always shared
+		EXTENSION("php-gtk", "gen_atk.c gen_gdk.c gen_gtk.c gen_pango.c php_gdk.c php_gtk+.c php_gtk+_types.c phpg_custom_tree_model.c", true); // always shared
 
 		AC_DEFINE("HAVE_PHP_GTK", 1, "PHP-GTK enabled");
 }

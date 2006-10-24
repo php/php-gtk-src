@@ -321,7 +321,7 @@ zend_bool phpg_gobject_construct(zval *this_ptr, GType object_type, zval *props 
 
 cleanup:
     if (params) {
-        for (i = 0; i < n_params; i++) {
+        for (i = 0; i < (int)n_params; i++) {
             efree((void *)params[i].name);
             g_value_unset(&params[i].value);
         }

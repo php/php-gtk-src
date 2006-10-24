@@ -2016,7 +2016,7 @@ PHP_METHOD
                         get_active_function_name(TSRMLS_C));
             return;
         }
-        vectors[i] = Z_LVAL_PP(data);
+        (int)vectors[i] = Z_LVAL_PP(data);
         i++;
         zend_hash_move_forward(Z_ARRVAL_P(points));
     }

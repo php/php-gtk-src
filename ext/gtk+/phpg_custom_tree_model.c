@@ -163,6 +163,8 @@ static guint phpg_custom_tree_model_get_flags(GtkTreeModel *tree_model)
 	zval method_name;
 	guint result = 0;
 
+	TSRMLS_FETCH();
+
 	phpg_return_val_if_fail(tree_model != NULL, 0);
 	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), 0);
 
@@ -189,6 +191,8 @@ static gint phpg_custom_tree_model_get_n_columns(GtkTreeModel *tree_model)
 	zval *retval = NULL;
 	zval method_name;
 	gint result = 0;
+
+	TSRMLS_FETCH();
 
 	phpg_return_val_if_fail(tree_model != NULL, 0);
 	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), 0);
@@ -217,6 +221,8 @@ static GType phpg_custom_tree_model_get_column_type(GtkTreeModel *tree_model, gi
 	zval **args[1], *arg1;
 	zval method_name;
 	GType result = G_TYPE_INVALID;
+
+	TSRMLS_FETCH();
 
 	phpg_return_val_if_fail(tree_model != NULL, G_TYPE_INVALID);
 	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), G_TYPE_INVALID);
@@ -252,6 +258,8 @@ static gboolean phpg_custom_tree_model_get_iter(GtkTreeModel *tree_model,
 	zval method_name;
 	gboolean result = FALSE;
 
+	TSRMLS_FETCH();
+
 	phpg_return_val_if_fail(tree_model != NULL, FALSE);
 	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), FALSE);
 	phpg_return_val_if_fail(iter != NULL, FALSE);
@@ -260,7 +268,7 @@ static gboolean phpg_custom_tree_model_get_iter(GtkTreeModel *tree_model,
 	phpg_gobject_new(&wrapper, (GObject *) tree_model TSRMLS_CC);
 	ZVAL_STRING(&method_name, "on_get_iter", 0);
 
-	phpg_tree_path_to_zval(path, &arg1);
+	phpg_tree_path_to_zval(path, &arg1 TSRMLS_CC);
 
 	args[0] = &arg1;
 
@@ -296,6 +304,8 @@ static GtkTreePath *phpg_custom_tree_model_get_path(GtkTreeModel *tree_model,
 	zval **args[1], *arg1 = NULL;
 	zval method_name;
 	GtkTreePath *path = NULL;
+
+	TSRMLS_FETCH();
 
 	phpg_return_val_if_fail(tree_model != NULL, NULL);
 	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), NULL);
@@ -338,6 +348,8 @@ static void phpg_custom_tree_model_get_value(GtkTreeModel*tree_model,
 	zval *retval = NULL;
 	zval **args[2], *arg1 = NULL, *arg2 = NULL;
 	zval method_name;
+
+	TSRMLS_FETCH();
 
 	phpg_return_if_fail(tree_model != NULL);
 	phpg_return_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model));
@@ -388,6 +400,8 @@ static gboolean phpg_custom_tree_model_iter_next(GtkTreeModel *tree_model,
 	zval **args[1], *arg1 = NULL;
 	zval method_name;
 	gboolean result = FALSE;
+
+	TSRMLS_FETCH();
 
 	phpg_return_val_if_fail(tree_model != NULL, FALSE);
 	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), FALSE);
@@ -440,6 +454,8 @@ static gboolean phpg_custom_tree_model_iter_children(GtkTreeModel *tree_model,
 	zval method_name;
 	gboolean result = FALSE;
 
+	TSRMLS_FETCH();
+
 	phpg_return_val_if_fail(tree_model != NULL, FALSE);
 	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), FALSE);
 	phpg_return_val_if_fail(iter != NULL, FALSE);
@@ -491,6 +507,8 @@ static gboolean phpg_custom_tree_model_iter_has_child(GtkTreeModel *tree_model,
 	zval method_name;
 	gboolean result = FALSE;
 
+	TSRMLS_FETCH();
+
 	phpg_return_val_if_fail(tree_model != NULL, FALSE);
 	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), FALSE);
 	phpg_return_val_if_fail(ITER_IS_VALID(iter, tree_model), FALSE);
@@ -530,6 +548,8 @@ static gint phpg_custom_tree_model_iter_n_children(GtkTreeModel *tree_model,
 	zval **args[1], *arg1 = NULL;
 	zval method_name;
 	guint result = 0;
+
+	TSRMLS_FETCH();
 
 	phpg_return_val_if_fail(tree_model != NULL, 0);
 	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), 0);
@@ -573,6 +593,8 @@ static gboolean phpg_custom_tree_model_iter_nth_child(GtkTreeModel *tree_model,
 	zval **args[2], *arg1 = NULL, *arg2 = NULL;
 	zval method_name;
 	gboolean result = FALSE;
+
+	TSRMLS_FETCH();
 
 	phpg_return_val_if_fail(tree_model != NULL, FALSE);
 	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), FALSE);
@@ -631,6 +653,8 @@ static gboolean phpg_custom_tree_model_iter_parent(GtkTreeModel *tree_model,
 	zval method_name;
 	gboolean result = FALSE;
 
+	TSRMLS_FETCH();
+
 	phpg_return_val_if_fail(tree_model != NULL, FALSE);
 	phpg_return_val_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model), FALSE);
 	phpg_return_val_if_fail(iter != NULL, FALSE);
@@ -681,6 +705,8 @@ static void phpg_custom_tree_model_unref_node(GtkTreeModel *tree_model,
 	zval **args[1], *arg1 = NULL;
 	zval method_name;
 
+	TSRMLS_FETCH();
+
 	phpg_return_if_fail(tree_model != NULL);
 	phpg_return_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model));
 	phpg_return_if_fail(ITER_IS_VALID(iter, tree_model));
@@ -716,6 +742,8 @@ static void phpg_custom_tree_model_ref_node(GtkTreeModel *tree_model,
 	zval *retval = NULL;
 	zval **args[1], *arg1 = NULL;
 	zval method_name;
+
+	TSRMLS_FETCH();
 
 	phpg_return_if_fail(tree_model != NULL);
 	phpg_return_if_fail(PHPG_IS_CUSTOM_TREE_MODEL(tree_model));
