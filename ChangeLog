@@ -1,3 +1,12 @@
+2006-10-24  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/gtk+/config.w32
+      ext/gtk+/gtk.overrides
+      ext/gtk+/phpg_custom_tree_model.c
+      generator/arg_types.php
+      main/phpg_gobject.c:
+      ZTS fixes
+
 2006-10-23  Anant Narayanan  <anant@kix.in>
 
     * ext/gtk+/gtk.overrides:
