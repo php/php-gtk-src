@@ -1,3 +1,9 @@
+2006-10-26  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/gtk+/gtk.overrides:
+      Need to find a better way to fix this msvc warning - it seems to have
+      broken gcc.
+
 2006-10-24  Steph Fox  <steph.fox@virgin.net>
 
     * ext/gtk+/config.w32
