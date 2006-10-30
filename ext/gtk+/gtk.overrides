@@ -1058,7 +1058,7 @@ PHP_METHOD
 override gtk_alignment_get_padding
 PHP_METHOD
 {
-    gint padding_top, padding_bottom, padding_left, padding_right;
+    guint padding_top, padding_bottom, padding_left, padding_right;
 
     NOT_STATIC_METHOD();
 
@@ -3195,7 +3195,7 @@ PHP_METHOD
 override gtk_layout_get_size
 PHP_METHOD
 {
-    gint width, height;
+    guint width, height;
 
     NOT_STATIC_METHOD();
 
