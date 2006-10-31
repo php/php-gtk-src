@@ -1,3 +1,12 @@
+2006-10-30  Anant Narayanan  <anant@kix.in>
+
+    * ext/gtk+/gtk.overrides:
+      Remove a few warnings for gcc 4.1
+
+    * ext/sourceview/sourceview.defs:
+      Remove GtkSourceViewPrintJob and its methods since libgnomeprint isn't
+      handy enough.
+
 2006-10-26  Steph Fox  <steph.fox@virgin.net>
 
     * ext/gtk+/gtk.overrides:
