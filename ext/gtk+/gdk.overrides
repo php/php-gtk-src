@@ -624,7 +624,7 @@ PHP_METHOD
 	zval *gc, *php_dith = NULL;
 	long x, y, width, height, rowstride = -1, xdith = 0, ydith = 0;
 	GdkRgbDither dith;
-	char *rgb_buf;
+	guchar *rgb_buf;
     int rgb_buf_len;
 
     NOT_STATIC_METHOD();
@@ -659,7 +659,7 @@ PHP_METHOD
 	zval *gc, *php_dith = NULL;
 	long x, y, width, height, rowstride = -1, xdith = 0, ydith = 0;
 	GdkRgbDither dith;
-	char *rgb_buf;
+	guchar *rgb_buf;
     int rgb_buf_len;
 
     NOT_STATIC_METHOD();
@@ -1495,7 +1495,7 @@ PHP_METHOD
 {
     int dash_offset, n, i;
     zval *dash_array, **item;
-    guchar *dash_list;
+    gint8 *dash_list;
 
     NOT_STATIC_METHOD();
 
