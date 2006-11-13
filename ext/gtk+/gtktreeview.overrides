@@ -494,6 +494,57 @@ PHP_METHOD
 }
 
 %%
+override gtk_list_store_insert_before
+PHP_METHOD
+{
+    GtkTreeIter iter;
+    GtkTreeIter *sibling = NULL;
+    GtkTreeModel *model;
+    zval *items = NULL;
+    zval *php_iter = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O|a", &php_iter, gtktreeiter_ce, &items))
+        return;
+
+    sibling = (GtkTreeIter *) PHPG_GBOXED(php_iter);
+
+    model = GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr));
+
+    gtk_list_store_insert_before(GTK_LIST_STORE(model), &iter, sibling);
+
+    if (items) {
+        gint n_cols, i;
+        GValue value = { 0 };
+        zval **item;
+
+        n_cols = gtk_tree_model_get_n_columns(model);
+        if (zend_hash_num_elements(Z_ARRVAL_P(items)) != n_cols) {
+            php_error(E_WARNING, "Cannot set row: number of row elements does not match the model");
+            return;
+        }
+
+        for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(items)), i = 0;
+             zend_hash_get_current_data(Z_ARRVAL_P(items), (void **)&item) == SUCCESS;
+             zend_hash_move_forward(Z_ARRVAL_P(items)), i++) {
+
+            g_value_init(&value, gtk_tree_model_get_column_type(model, i));
+
+            if (phpg_gvalue_from_zval(&value, *item, TRUE TSRMLS_CC) == FAILURE) {
+                php_error(E_WARNING, "Cannot set row: type of element %d does not match the model", i);
+                g_value_unset(&value);
+                return;
+            }
+            gtk_list_store_set_value(GTK_LIST_STORE(model), &iter, i, &value);
+        }
+        g_value_unset(&value);
+    } 
+
+    phpg_gboxed_new(&return_value, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
 add-arginfo GtkListStore set
 static
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 3)
