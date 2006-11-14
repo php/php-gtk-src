@@ -1,3 +1,8 @@
+2006-11-13  Scott Mattocks  <scott@crisscott.com>
+
+    * ext/gtk+/gtktreeview.overrides:
+      GtkListStore::insert_before()
+
 2006-10-31  Anant Narayanan  <anant@kix.in>
 
     * ext/gtk+/gdk.overrides:
