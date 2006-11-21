@@ -132,8 +132,22 @@ class GtkTreeStoreTest extends PHPUnit2_Framework_TestCase {
      * @todo Implement testPrepend().
      */
     public function testPrepend() {
-        // Remove the following line when you implement this test.
-        throw new PHPUnit2_Framework_IncompleteTestError;
+        $ts = new GtkTreeStore(Gtk::TYPE_STRING);
+        $this->assertEquals(0, $ts->iter_n_children(null));
+
+        $one = $ts->prepend(null, array('one'));
+        $this->assertEquals(1, $ts->iter_n_children(null));
+        $this->assertEquals($one, $ts->get_iter_first());
+
+        $two = $ts->prepend(null, array('two'));
+        $this->assertEquals(2, $ts->iter_n_children(null));
+        $this->assertEquals($two, $ts->get_iter_first());
+
+        $three = $ts->prepend($one, array('three'));
+        $this->assertEquals(2, $ts->iter_n_children(null));
+        $this->assertEquals(1, $ts->iter_n_children($one));
+        $this->assertEquals($two, $ts->get_iter_first());
+        $this->assertEquals($three, $ts->iter_next($two));
     }
 
     /**
