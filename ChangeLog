@@ -1,3 +1,16 @@
+2006-11-21  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.overrides:
+      That spinbutton was scott's test patch which shouldn't go live yet
+
+    * ext/gtk+/gtk.overrides
+      ext/gtk+/gtktreeview.overrides
+      test/unittests/GtkTreeStoreTest.php
+      test/unittests/GtkTreeViewTest.php:
+      - GtkTreeView::get_cell_area() and get_background_area()
+      - unit tests for both
+      - Switch treeview test to phpunit3
+
 2006-11-13  Scott Mattocks  <scott@crisscott.com>
 
     * ext/gtk+/gtktreeview.overrides:
