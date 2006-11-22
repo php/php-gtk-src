@@ -707,6 +707,31 @@ PHP_METHOD
 }
 %% }}}
 
+%% {{{ GtkAction
+
+%%
+override gtk_action_get_proxies
+PHP_METHOD
+{
+    GSList *widgets, *current;
+    zval *item;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    widgets = gtk_action_get_proxies(GTK_ACTION(PHPG_GOBJECT(this_ptr)));
+
+    array_init(return_value);
+    for (current = widgets; current; current = current->next) {
+        MAKE_STD_ZVAL(item);
+        phpg_gobject_new(&item, G_OBJECT(current->data) TSRMLS_CC);
+        add_next_index_zval(return_value, item);
+    }
+}
+%% }}}
+
 %% {{{ GtkAboutDialog
 
 %%
