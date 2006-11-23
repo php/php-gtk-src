@@ -1,3 +1,8 @@
+2006-11-22  Anant Narayanan  <anant@kix.in>
+
+    * ext/gtk+/gtk.overrides:
+      Override for GtkAction::get_proxies()
+
 2006-11-21  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/gtk+/gtk.overrides:
