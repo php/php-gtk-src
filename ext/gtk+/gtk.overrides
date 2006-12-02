@@ -3267,7 +3267,7 @@ PHP_METHOD(GtkListItem, __construct)
     }
 
     phpg_gobject_new(&return_value, wrapped_obj TSRMLS_CC);
-    if (ZEND_NUM_ARGS() == 1) {
+    if (ZEND_NUM_ARGS() != 1) {
         g_object_unref(wrapped_obj); /* phpg_gobject_new() increments reference count */
     }
 }
