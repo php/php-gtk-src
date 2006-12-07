@@ -54,8 +54,8 @@ static inline void phpg_free_gobject_storage(phpg_gobject_t *object, zend_object
     g_object_set_qdata(object->obj, gobject_wrapper_handlers_key, NULL);
     */
 
-	if (object->obj && object->dtor && !object->is_owned)
-		object->dtor(object->obj);
+    if (object->obj && object->dtor && !object->is_owned)
+        object->dtor(object->obj);
     object->obj = NULL;
 
     tmp = object->closures;
@@ -120,10 +120,10 @@ static void phpg_unref_by_handle(void *data)
 void phpg_gobject_del_ref(zval *zobject TSRMLS_DC)
 {
     zend_object_handle handle = Z_OBJ_HANDLE_P(zobject);
-	struct _store_object *stored = &EG(objects_store).object_buckets[handle].bucket.obj;
+    struct _store_object *stored = &EG(objects_store).object_buckets[handle].bucket.obj;
     phpg_gobject_t *pobj = (phpg_gobject_t *) stored->object;
 
-	if (EG(objects_store).object_buckets[handle].valid && stored->refcount == 1) {
+    if (EG(objects_store).object_buckets[handle].valid && stored->refcount == 1) {
         if (pobj->obj && pobj->obj->ref_count > 1) {
             pobj->is_owned = TRUE;
             g_object_set_qdata_full(pobj->obj, gobject_wrapper_owned_key, (void *)handle, phpg_unref_by_handle);
@@ -139,21 +139,21 @@ void phpg_gobject_del_ref(zval *zobject TSRMLS_DC)
 /* {{{ PHP_GTK_API phpg_create_gobject() */
 PHP_GTK_API zend_object_value phpg_create_gobject(zend_class_entry *ce TSRMLS_DC)
 {
-	zend_object_value zov;
-	phpg_gobject_t *object;
+    zend_object_value zov;
+    phpg_gobject_t *object;
 
-	object = emalloc(sizeof(phpg_gobject_t));
-	phpg_init_object(object, ce);
+    object = emalloc(sizeof(phpg_gobject_t));
+    phpg_init_object(object, ce);
 
-	object->obj  = NULL;
-	object->dtor = NULL;
-	object->closures = NULL;
-	object->is_owned = FALSE;
+    object->obj  = NULL;
+    object->dtor = NULL;
+    object->closures = NULL;
+    object->is_owned = FALSE;
 
-	zov.handlers = &phpg_gobject_handlers;
-	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_free_gobject_storage, NULL TSRMLS_CC);
+    zov.handlers = &phpg_gobject_handlers;
+    zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_free_gobject_storage, NULL TSRMLS_CC);
 
-	return zov;
+    return zov;
 }
 /* }}} */
 
@@ -175,8 +175,8 @@ PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC)
 /* {{{ PHP_GTK_API phpg_gobject_new() */
 PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC)
 {
-	zend_class_entry *ce = NULL;
-	phpg_gobject_t *pobj = NULL;
+    zend_class_entry *ce = NULL;
+    phpg_gobject_t *pobj = NULL;
     zend_object_handle handle;
     zend_object_handlers *handlers;
 
@@ -184,26 +184,26 @@ PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC)
     if (*zobj == NULL) {
         MAKE_STD_ZVAL(*zobj);
     }
-	ZVAL_NULL(*zobj);
+    ZVAL_NULL(*zobj);
 
-	if (obj == NULL) {
-		return;
-	}
+    if (obj == NULL) {
+        return;
+    }
 
-	/* 
-	 * 1. Lookup stored object handle based on wrapper key.
-	 * 2. Make zval refer to this handle.
-	 * 3. If not found, create new object and store it.
-	 * 4. Install wrapper key.
-	 */
+    /* 
+     * 1. Lookup stored object handle based on wrapper key.
+     * 2. Make zval refer to this handle.
+     * 3. If not found, create new object and store it.
+     * 4. Install wrapper key.
+     */
 
-	handle = (zend_object_handle) g_object_get_qdata(obj, gobject_wrapper_handle_key);
-	if ((void*)handle != NULL) {
+    handle = (zend_object_handle) g_object_get_qdata(obj, gobject_wrapper_handle_key);
+    if ((void*)handle != NULL) {
         phpg_gobject_t *pobj;
         handlers = (zend_object_handlers*) g_object_get_qdata(obj, gobject_wrapper_handlers_key);
-		Z_TYPE_PP(zobj) = IS_OBJECT;
-		Z_OBJ_HANDLE_PP(zobj) = handle;
-		Z_OBJ_HT_PP(zobj) = handlers;
+        Z_TYPE_PP(zobj) = IS_OBJECT;
+        Z_OBJ_HANDLE_PP(zobj) = handle;
+        Z_OBJ_HT_PP(zobj) = handlers;
         pobj = zend_object_store_get_object(*zobj TSRMLS_CC);
         if (pobj->is_owned) {
             pobj->is_owned = FALSE;
@@ -212,20 +212,20 @@ PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC)
         } else {
             zend_objects_store_add_ref(*zobj TSRMLS_CC);
         }
-	} else {
-		ce = phpg_class_from_gtype(G_OBJECT_TYPE(obj));
-		object_init_ex(*zobj, ce);
+    } else {
+        ce = phpg_class_from_gtype(G_OBJECT_TYPE(obj));
+        object_init_ex(*zobj, ce);
 
-		g_object_ref(obj);
+        g_object_ref(obj);
         phpg_sink_object(obj);
 
-		pobj = (phpg_gobject_t *) zend_object_store_get_object(*zobj TSRMLS_CC);
-		pobj->obj = obj;
+        pobj = (phpg_gobject_t *) zend_object_store_get_object(*zobj TSRMLS_CC);
+        pobj->obj = obj;
         pobj->dtor = (phpg_dtor_t) g_object_unref;
         pobj->is_owned = FALSE;
-		g_object_set_qdata(obj, gobject_wrapper_handle_key, (void*)Z_OBJ_HANDLE_PP(zobj));
-		g_object_set_qdata(obj, gobject_wrapper_handlers_key, (void*)Z_OBJ_HT_PP(zobj));
-	}
+        g_object_set_qdata(obj, gobject_wrapper_handle_key, (void*)Z_OBJ_HANDLE_PP(zobj));
+        g_object_set_qdata(obj, gobject_wrapper_handlers_key, (void*)Z_OBJ_HT_PP(zobj));
+    }
 }
 /* }}} */
 
@@ -415,43 +415,43 @@ static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int connect_t
 /* {{{ GObject::connect */
 static PHP_METHOD(GObject, connect)
 {
-	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_NORMAL, FALSE);
+    phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_NORMAL, FALSE);
 }
 /* }}} */
 /* {{{ GObject::connect_after */
 static PHP_METHOD(GObject, connect_after)
 {
-	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_NORMAL, TRUE);
+    phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_NORMAL, TRUE);
 }
 /* }}} */
 /* {{{ GObject::connect_simple */
 static PHP_METHOD(GObject, connect_simple)
 {
-	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_SIMPLE, FALSE);
+    phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_SIMPLE, FALSE);
 }
 /* }}} */
 /* {{{ GObject::connect_simple_after */
 static PHP_METHOD(GObject, connect_simple_after)
 {
-	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_SIMPLE, TRUE);
+    phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_SIMPLE, TRUE);
 }
 /* }}} */
 /* {{{ GObject::connect_object */
 static PHP_METHOD(GObject, connect_object)
 {
     phpg_warn_deprecated("use connect() or connect_simple()" TSRMLS_CC);
-	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_OBJECT, FALSE);
+    phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_OBJECT, FALSE);
 }
 /* }}} */
 /* {{{ GObject::connect_object_after */
 static PHP_METHOD(GObject, connect_object_after)
 {
     phpg_warn_deprecated("use connect_after() or connect_simple_after()" TSRMLS_CC);
-	phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_OBJECT, TRUE);
+    phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, PHPG_CONNECT_OBJECT, TRUE);
 }
 /* }}} */
 
-/* {{{ GObject::notify */
+/* {{{ GObject::notify stuff */
 static PHP_METHOD(GObject, notify)
 {
     char *property;
@@ -472,6 +472,24 @@ static PHP_METHOD(GObject, notify)
     }
 
     g_object_notify(obj, property);
+}
+
+static PHP_METHOD(GObject, freeze_notify)
+{
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    g_object_freeze_notify(PHPG_GOBJECT(this_ptr));
+}
+
+static PHP_METHOD(GObject, thaw_notify)
+{
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    g_object_thaw_notify(PHPG_GOBJECT(this_ptr));
 }
 /* }}} */
 
@@ -915,6 +933,8 @@ static zend_function_entry gobject_methods[] = {
     PHP_ME(GObject, connect_simple,       arginfo_gobject_connect_simple        , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, connect_simple_after, arginfo_gobject_connect_simple_after  , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, notify,               arginfo_gobject_notify                , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, freeze_notify,        NULL                                  , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, thaw_notify,          NULL                                  , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, get_property,         arginfo_gobject_get_property          , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, set_property,         arginfo_gobject_set_property          , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, get_data,             arginfo_gobject_get_data              , ZEND_ACC_PUBLIC)
@@ -934,19 +954,19 @@ static zend_function_entry gobject_methods[] = {
 
 PHPG_PROP_READER(GObject, gtype)
 {
-	ZVAL_LONG(return_value, G_OBJECT_TYPE(((phpg_gobject_t *)object)->obj));
-	return SUCCESS;
+    ZVAL_LONG(return_value, G_OBJECT_TYPE(((phpg_gobject_t *)object)->obj));
+    return SUCCESS;
 }
 
 static prop_info_t gobject_props_info[] = {
-	{ "gtype", PHPG_PROP_READ_FN(GObject, gtype), NULL },
-	{ NULL, NULL, NULL },
+    { "gtype", PHPG_PROP_READ_FN(GObject, gtype), NULL },
+    { NULL, NULL, NULL },
 };
 
 
 void phpg_gobject_register_self(TSRMLS_D)
 {
-	if (gobject_ce) return;
+    if (gobject_ce) return;
 
     gobject_wrapper_handle_key   = g_quark_from_static_string("phpg-wrapper-handle");
     gobject_wrapper_handlers_key = g_quark_from_static_string("phpg-wrapper-handlers");
@@ -955,7 +975,7 @@ void phpg_gobject_register_self(TSRMLS_D)
     phpg_gobject_handlers = php_gtk_handlers;
     phpg_gobject_handlers.del_ref = phpg_gobject_del_ref;
 
-	gobject_ce = phpg_register_class("GObject", gobject_methods, NULL, 0, gobject_props_info, NULL, G_TYPE_OBJECT TSRMLS_CC);
+    gobject_ce = phpg_register_class("GObject", gobject_methods, NULL, 0, gobject_props_info, NULL, G_TYPE_OBJECT TSRMLS_CC);
     phpg_register_int_constant(gobject_ce, "gtype", sizeof("gtype")-1, G_TYPE_OBJECT);
 }
 
