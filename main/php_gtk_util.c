@@ -524,7 +524,9 @@ PHP_GTK_API int php_gtk_parse_varargs(int argc, int min_args, zval **varargs, ch
 	va_start(va, format);
 	retval = php_gtk_parse_args_impl(min_args, format, &va, 0);
 	va_end(va);
-	*varargs = php_gtk_array_as_hash(args, argc, min_args, argc-min_args);
+	if (varargs) {
+		*varargs = php_gtk_array_as_hash(args, argc, min_args, argc-min_args);
+	}
 	efree(args);
 
 	return retval;

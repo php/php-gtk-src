@@ -476,6 +476,8 @@ static PHP_METHOD(GObject, notify)
 
 static PHP_METHOD(GObject, freeze_notify)
 {
+    NOT_STATIC_METHOD();
+
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
         return;
     }
@@ -485,6 +487,8 @@ static PHP_METHOD(GObject, freeze_notify)
 
 static PHP_METHOD(GObject, thaw_notify)
 {
+    NOT_STATIC_METHOD();
+
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
         return;
     }
@@ -660,6 +664,8 @@ static PHP_METHOD(GObject, stop_emission)
     GQuark detail;
     GObject *obj;
 
+    NOT_STATIC_METHOD();
+
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &signal)) {
         return;
     }
@@ -673,6 +679,77 @@ static PHP_METHOD(GObject, stop_emission)
     g_signal_stop_emission(obj, signal_id, detail);
 }
 /* }}} */
+
+static PHP_METHOD(GObject, emit)
+{
+    char *signal;
+    zval *extra = NULL, **item;
+    guint signal_id;
+    GQuark detail;
+    GObject *obj;
+    GSignalQuery query;
+    GValue *params, ret = { 0, };
+    int i;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 1, &extra, "s", &signal)) {
+        return;
+    }
+
+    obj = PHPG_GOBJECT(this_ptr);
+    if (!g_signal_parse_name(signal, G_OBJECT_TYPE(obj), &signal_id, &detail, TRUE)) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "unknown signal name '%s'", signal);
+        return;
+    }
+
+    g_signal_query(signal_id, &query);
+    if (extra && zend_hash_num_elements(Z_ARRVAL_P(extra)) != query.n_params) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "%d parameters needed for signal '%s', %d given", query.n_params, signal, zend_hash_num_elements(Z_ARRVAL_P(extra)));
+        return;
+    }
+
+    params = ecalloc(query.n_params+1, sizeof(GValue));
+    g_value_init(&params[0], G_OBJECT_TYPE(obj));
+    g_value_set_object(&params[0], G_OBJECT(obj));
+    i = 1;
+
+    if (extra) {
+        for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(extra));
+             zend_hash_get_current_data(Z_ARRVAL_P(extra), (void**) &item) == SUCCESS;
+             zend_hash_move_forward(Z_ARRVAL_P(extra)), i++)
+        {
+            g_value_init(&params[i], query.param_types[i-1] & ~G_SIGNAL_TYPE_STATIC_SCOPE);
+
+            if (phpg_gvalue_from_zval(&params[i], *item, TRUE TSRMLS_CC) == FAILURE) {
+                php_error_docref(NULL TSRMLS_CC, E_WARNING,
+                                 "could not convert value to %s for parameter %d",
+                                 g_type_name(G_VALUE_TYPE(&params[i])), i-1);
+                goto cleanup;
+            }
+        }
+    }
+    
+    if (query.return_type != G_TYPE_NONE) {
+        g_value_init(&ret, query.return_type & ~G_SIGNAL_TYPE_STATIC_SCOPE);
+    }
+
+    g_signal_emitv(params, signal_id, detail, &ret);
+
+    if ((query.return_type & ~G_SIGNAL_TYPE_STATIC_SCOPE) != G_TYPE_NONE) {
+        phpg_gvalue_to_zval(&ret, &return_value, TRUE, TRUE TSRMLS_CC);
+        g_value_unset(&ret);
+    }
+
+cleanup:
+    for (--i ; i >= 0; i--) {
+        g_value_unset(&params[i]);
+    }
+    efree(params);
+    if (extra) {
+        zval_ptr_dtor(&extra);
+    }
+}
 
 /* {{{ GObject::signal_list_ids/names */
 static void phpg_signal_list_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool list_names)
@@ -939,14 +1016,15 @@ static zend_function_entry gobject_methods[] = {
     PHP_ME(GObject, set_property,         arginfo_gobject_set_property          , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, get_data,             arginfo_gobject_get_data              , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, set_data,             arginfo_gobject_set_data              , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, emit,                 NULL                                  , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, block,                arginfo_gobject_block                 , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, unblock,              arginfo_gobject_unblock               , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, disconnect,           arginfo_gobject_disconnect            , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, is_connected,         arginfo_gobject_is_connected          , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, signal_query,         arginfo_gobject_signal_query          , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, stop_emission,        arginfo_gobject_stop_emission         , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, signal_list_ids,      arginfo_gobject_signal_list_ids       , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, signal_list_names,    arginfo_gobject_signal_list_names     , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
-    PHP_ME(GObject, signal_query,         arginfo_gobject_signal_query          , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_MALIAS(GObject, emit_stop_by_name, stop_emission, arginfo_gobject_stop_emission, ZEND_ACC_PUBLIC)
     {NULL, NULL, NULL}
 };
