@@ -473,6 +473,7 @@ static PHP_METHOD(GObject, notify)
 
     g_object_notify(obj, property);
 }
+/* }}} */
 
 /* {{{ GObject::get/set_property */
 static PHP_METHOD(GObject, get_property)
@@ -630,6 +631,28 @@ static PHP_METHOD(GObject, is_connected)
     }
 
     RETURN_BOOL(g_signal_handler_is_connected(PHPG_GOBJECT(this_ptr), handler_id));
+}
+/* }}} */
+
+/* {{{ GObject::stop_emission */
+static PHP_METHOD(GObject, stop_emission)
+{
+    char *signal;
+    guint signal_id;
+    GQuark detail;
+    GObject *obj;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &signal)) {
+        return;
+    }
+
+    obj = PHPG_GOBJECT(this_ptr);
+    if (!g_signal_parse_name(signal, G_OBJECT_TYPE(obj), &signal_id, &detail, TRUE)) {
+        php_error(E_WARNING, "%s(): unknown signal name '%s'", get_active_function_name(TSRMLS_C), signal);
+        return;
+    }
+
+    g_signal_stop_emission(obj, signal_id, detail);
 }
 /* }}} */
 
@@ -875,6 +898,11 @@ ZEND_BEGIN_ARG_INFO(arginfo_gobject_unblock, 0)
     ZEND_ARG_INFO(0, handler_id)
 ZEND_END_ARG_INFO();
 
+static
+ZEND_BEGIN_ARG_INFO(arginfo_gobject_stop_emission, 0)
+    ZEND_ARG_INFO(0, signal)
+ZEND_END_ARG_INFO();
+
 /* }}} */
 
 static zend_function_entry gobject_methods[] = {
@@ -895,9 +923,11 @@ static zend_function_entry gobject_methods[] = {
     PHP_ME(GObject, unblock,              arginfo_gobject_unblock               , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, disconnect,           arginfo_gobject_disconnect            , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, is_connected,         arginfo_gobject_is_connected          , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, stop_emission,        arginfo_gobject_stop_emission         , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, signal_list_ids,      arginfo_gobject_signal_list_ids       , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, signal_list_names,    arginfo_gobject_signal_list_names     , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, signal_query,         arginfo_gobject_signal_query          , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+    PHP_MALIAS(GObject, emit_stop_by_name, stop_emission, arginfo_gobject_stop_emission, ZEND_ACC_PUBLIC)
     {NULL, NULL, NULL}
 };
 
