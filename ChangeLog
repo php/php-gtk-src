@@ -1,3 +1,15 @@
+2006-12-07  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk_util.c
+      main/phpg_gobject.c:
+      Implement GObject::emit().
+
+    * main/phpg_gobject.c:
+      Implement GObject's freeze_notify() and thaw_notify().
+
+    * main/phpg_gobject.c:
+      Implement GObject::stop_emission()/emit_stop_by_name().
+
 2006-12-02  Anant Narayanan  <anant@kix.in>
 
     * ext/gtk+/gtk.overrides:
