@@ -849,7 +849,7 @@ PHP_METHOD
     }
 
     arr_count = zend_hash_num_elements(Z_ARRVAL_P(arr));
-    artists = safe_emalloc(arr_count+1, sizeof (gchar *), 0);
+    artists = safe_emalloc(sizeof(gchar *), arr_count+1, 0);
 
     for (i=0, zend_hash_internal_pointer_reset(Z_ARRVAL_P(arr));
          zend_hash_get_current_data(Z_ARRVAL_P(arr), (void **)&data) == SUCCESS;
@@ -888,7 +888,7 @@ PHP_METHOD
     }
 
     arr_count = zend_hash_num_elements(Z_ARRVAL_P(arr));
-    authors = safe_emalloc(arr_count+1, sizeof (gchar *), 0);
+    authors = safe_emalloc(sizeof(gchar *), arr_count+1, 0);
 
     for (i=0, zend_hash_internal_pointer_reset(Z_ARRVAL_P(arr));
          zend_hash_get_current_data(Z_ARRVAL_P(arr), (void **)&data) == SUCCESS;
@@ -927,7 +927,7 @@ PHP_METHOD
     }
 
     arr_count = zend_hash_num_elements(Z_ARRVAL_P(arr));
-    doccers = safe_emalloc(arr_count+1, sizeof (gchar *), 0);
+    doccers = safe_emalloc(sizeof(gchar *), arr_count+1, 0);
 
     for (i=0, zend_hash_internal_pointer_reset(Z_ARRVAL_P(arr));
          zend_hash_get_current_data(Z_ARRVAL_P(arr), (void **)&data) == SUCCESS;
@@ -2031,7 +2031,7 @@ PHP_METHOD
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &num))
         return;
 
-    vector = safe_emalloc(num, sizeof (gfloat *), 0);
+    vector = safe_emalloc(sizeof(gfloat *), num, 0);
 
     gtk_curve_get_vector(GTK_CURVE(PHPG_GOBJECT(this_ptr)), num, vector);
     
@@ -2056,7 +2056,7 @@ PHP_METHOD
         return;
 
     num = zend_hash_num_elements(Z_ARRVAL_P(points));
-    vectors = safe_emalloc(num, sizeof (gfloat *), 0); 
+    vectors = safe_emalloc(sizeof(gfloat *), num, 0); 
 
     zend_hash_internal_pointer_reset(Z_ARRVAL_P(points));
     while (zend_hash_get_current_data(Z_ARRVAL_P(points), (void **)&data) 
@@ -2321,7 +2321,7 @@ PHP_METHOD
 {
     gunichar ichar;
     gint len;
-    gchar *ret = safe_emalloc(6, sizeof (gchar *), 0);
+    gchar *ret = safe_emalloc(sizeof(gchar *), 6, 0);
     gchar *cp_ret;
     gsize cp_len;
     zend_bool free_result = FALSE;
@@ -4229,7 +4229,7 @@ PHP_METHOD
     }
 
     arr_count = zend_hash_num_elements(Z_ARRVAL_P(arr));
-    uris = safe_emalloc(arr_count+1, sizeof (gchar *), 0);
+    uris = safe_emalloc(sizeof(gchar *), arr_count+1, 0);
 
     for (i=0, zend_hash_internal_pointer_reset(Z_ARRVAL_P(arr));
          zend_hash_get_current_data(Z_ARRVAL_P(arr), (void **)&data) == SUCCESS;
