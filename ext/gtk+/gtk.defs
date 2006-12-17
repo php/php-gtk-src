@@ -17547,15 +17547,6 @@
   )
 )
 
-(define-function gtk_tooltips_data_get
-  (c-name "gtk_tooltips_data_get1")
-  (return-type "GtkTooltipsData*")
-  (deprecated "use tooltips_data_get")
-  (parameters
-    '("GtkWidget*" "widget")
-  )
-)
-
 (define-method disable
   (of-object "GtkTooltips")
   (c-name "gtk_tooltips_disable")

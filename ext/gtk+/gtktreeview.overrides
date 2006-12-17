@@ -35,8 +35,11 @@ ignore-glob
 %%
 ignore
     gtk_cell_renderer_get_size
+    gtk_list_store_insert_with_values
+    gtk_list_store_insert_with_valuesv
     gtk_list_store_newv
     gtk_list_store_set_valist
+    gtk_list_store_set_value
     gtk_tree_iter_copy
     gtk_tree_iter_free
     gtk_tree_model_get_valist
@@ -46,6 +49,7 @@ ignore
     gtk_tree_row_reference_reordered
     gtk_tree_store_newv
     gtk_tree_store_set_valist
+    gtk_tree_store_set_value
     gtk_tree_view_new
     gtk_tree_view_column_new
     gtk_tree_view_column_set_attributes
@@ -637,6 +641,47 @@ PHP_METHOD
 }
 
 %%
+override gtk_list_store_reorder
+PHP_METHOD
+{
+    zval *php_order, **elem;
+    GtkListStore *store;
+    gint *order;
+    int i, n_elems, store_size;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a/", &php_order))
+        return;
+
+    store = GTK_LIST_STORE(PHPG_GOBJECT(this_ptr));
+    store_size = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store), NULL);
+    n_elems = zend_hash_num_elements(Z_ARRVAL_P(php_order));
+
+    if (n_elems != store_size) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "new order array size (%d) not the same the number of items in the store (%d)", n_elems, store_size);
+        return;
+    }
+
+    order = safe_emalloc(store_size, sizeof(gint), 0);
+    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_order)), i = 0;
+         zend_hash_get_current_data(Z_ARRVAL_P(php_order), (void **) &elem) == SUCCESS;
+         zend_hash_move_forward(Z_ARRVAL_P(php_order)), i++) {
+
+        convert_to_long(*elem);
+        if (Z_LVAL_PP(elem) < 0 || Z_LVAL_PP(elem) >= store_size) {
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "position index out of range 0-%d", store_size);
+            efree(order);
+            return;
+        }
+        order[i] = Z_LVAL_PP(elem);
+    }
+
+    gtk_list_store_reorder(store, order);
+    efree(order);
+}
+
+%%
 override-handler GtkListStore count_elements
 static int phpg_gtkliststore_count_elements_handler(zval *object, long *count TSRMLS_DC)
 {
@@ -959,6 +1004,48 @@ override gtk_tree_store_set
 PHP_METHOD
 {
     phpg_store_set_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, TRUE);
+}
+
+%%
+override gtk_tree_store_reorder
+PHP_METHOD
+{
+    zval *php_parent, *php_order, **elem;
+    GtkTreeStore *store;
+    GtkTreeIter *parent = NULL;
+    gint *order;
+    int i, n_elems, n_children;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O!a/", &php_parent, gtktreeiter_ce, &php_order))
+        return;
+
+    store = GTK_TREE_STORE(PHPG_GOBJECT(this_ptr));
+    n_children = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(store), parent);
+    n_elems = zend_hash_num_elements(Z_ARRVAL_P(php_order));
+
+    if (n_elems != n_children) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "new order array size (%d) not the same as the number of children of parent iterator (%d)", n_elems, n_children);
+        return;
+    }
+
+    order = safe_emalloc(n_children, sizeof(gint), 0);
+    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_order)), i = 0;
+         zend_hash_get_current_data(Z_ARRVAL_P(php_order), (void **) &elem) == SUCCESS;
+         zend_hash_move_forward(Z_ARRVAL_P(php_order)), i++) {
+
+        convert_to_long(*elem);
+        if (Z_LVAL_PP(elem) < 0 || Z_LVAL_PP(elem) >= n_children) {
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "position index out of range 0-%d", n_children);
+            efree(order);
+            return;
+        }
+        order[i] = Z_LVAL_PP(elem);
+    }
+
+    gtk_tree_store_reorder(store, parent, order);
+    efree(order);
 }
 
 
@@ -1379,6 +1466,66 @@ PHP_METHOD
 
         if (varargs) zval_ptr_dtor(&columns);
     }
+}
+
+%%
+override gtk_tree_model_rows_reordered
+
+PHP_METHOD
+{
+    zval *php_path, *php_iter, *php_new_order, **elem;
+    GtkTreePath *path = NULL;
+    GtkTreeIter *iter = NULL;
+    int n_children, n_elems, i;
+    gint *new_order;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "VO!a/", &php_path, &php_iter, gtktreeiter_ce, &php_new_order))
+        return;
+    
+    if (Z_TYPE_P(php_path) == IS_NULL ||
+        (Z_TYPE_P(php_path) == IS_STRING && Z_STRLEN_P(php_path) == 0)) {
+        path = gtk_tree_path_new();
+    } else {
+        phpg_tree_path_from_zval(php_path, &path TSRMLS_CC);
+    }
+    if (path == NULL) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "path argument is not a valid tree path specification");
+        return;
+    }
+
+    if (php_iter) {
+        iter = (GtkTreeIter *) PHPG_GBOXED(php_iter);
+    }
+
+    n_children = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr)), iter);
+    n_elems = zend_hash_num_elements(Z_ARRVAL_P(php_new_order));
+    if (n_children != n_elems) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "new order array size (%d) not the same as the number of iter children (%d)", n_elems, n_children);
+        gtk_tree_path_free(path);
+        return;
+    }
+
+    new_order = safe_emalloc(n_elems, sizeof(gint), 0);
+    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_new_order)), i = 0;
+         zend_hash_get_current_data(Z_ARRVAL_P(php_new_order), (void **) &elem) == SUCCESS;
+         zend_hash_move_forward(Z_ARRVAL_P(php_new_order)), i++) {
+
+        convert_to_long(*elem);
+        if (Z_LVAL_PP(elem) < 0 || Z_LVAL_PP(elem) >= n_children) {
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "position index out of range 0-%d", n_children);
+            gtk_tree_path_free(path);
+            efree(new_order);
+            return;
+        }
+        new_order[i] = Z_LVAL_PP(elem);
+    }
+
+    gtk_tree_model_rows_reordered(GTK_TREE_MODEL(PHPG_GOBJECT(this_ptr)), path, iter, new_order);
+
+    gtk_tree_path_free(path);
+    efree(new_order);
 }
 
 %% }}}

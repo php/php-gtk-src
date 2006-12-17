@@ -31,14 +31,23 @@ ignore-glob
     gtk_quit_add_*
     gtk_radio_button_new_*
     gtk_radio_tool_button_new_*
+    gtk_rc_property_parse_*
     gtk_signal_*
     gtk_timeout_add_*
     gtk_toggle_button_new_*
 %%
 ignore
+    gtk_accel_map_foreach
+    gtk_accel_map_foreach_unfiltered
+    gtk_accel_map_get
+    gtk_accel_map_load_scanner
     gtk_action_group_add_actions_full
     gtk_action_group_add_toggle_actions_full
     gtk_action_group_add_radio_actions_full
+    gtk_binding_entry_add_signall
+    gtk_binding_entry_clear
+    gtk_binding_parse_binding
+    gtk_binding_set_by_class
     gtk_button_new_with_label
     gtk_button_new_with_mnemonic
     gtk_check_menu_item_new_with_label
@@ -54,6 +63,9 @@ ignore
     gtk_entry_new_with_max_length
     gtk_false
     gtk_file_chooser_error_quark
+    gtk_file_paths_copy
+    gtk_file_paths_free
+    gtk_file_paths_sort
     gtk_file_system_error_quark
     gtk_icon_view_new_with_model
     gtk_icon_theme_error_quark
@@ -61,7 +73,11 @@ ignore
     gtk_image_menu_item_new_with_label
     gtk_image_menu_item_new_with_mnemonic
     gtk_init
+    gtk_init_abi_check
+    gtk_init_add
     gtk_init_check
+    gtk_init_check_abi_check
+    gtk_input_add_full
     gtk_list_item_new_with_label
     gtk_menu_item_new_with_label
     gtk_menu_item_new_with_mnemonic
@@ -74,7 +90,13 @@ ignore
     gtk_radio_menu_item_new_with_mnemonic
     gtk_radio_menu_item_new_with_label_from_widget
     gtk_radio_menu_item_new_with_mnemonic_from_widget
+    gtk_rc_find_pixmap_in_path
+    gtk_rc_scanner_new
+    gtk_rc_parse_color
+    gtk_rc_parse_state
+    gtk_rc_parse_priority
     gtk_statusbar_remove
+    gtk_stock_add_static
     gtk_toolbar_get_style
     gtk_toolbar_set_style
     gtk_true
@@ -705,6 +727,77 @@ PHP_METHOD
         return;
     }
 }
+
+%%
+override gtk_get_current_event_state
+PHP_METHOD
+{
+    GdkModifierType state = 0;
+
+    if (gtk_get_current_event_state(&state)) {
+        RETURN_LONG(state);
+    }
+}
+
+%%
+override gtk_tooltips_data_get
+PHP_METHOD
+{
+    zval *widget;
+    GtkTooltipsData *data;
+    zval *tooltips = NULL, *tt_widget = NULL;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &widget, gtkwidget_ce)) {
+        return;
+    }
+
+    data = gtk_tooltips_data_get(GTK_WIDGET(PHP_GOBJECT(widget)));
+    if (!data) {
+        return;
+    }
+
+    phpg_gobject_new(&tooltips, (GObject *) data->tooltips TSRMLS_CC);
+    phpg_gobject_new(&tt_widget, (GObject *) data->widget TSRMLS_CC);
+    php_gtk_build_value(&return_value, "(NNuu)", tooltips, tt_widget, data->tip_text,
+                        data->tip_private);
+}
+
+%%
+override gtk_accelerator_parse
+PHP_METHOD
+{
+    char *accel;
+    guint keyval;
+    GdkModifierType modifier;
+    zend_bool free_accel;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u", &accel, &free_accel))
+        return;
+
+    gtk_accelerator_parse((const gchar *)accel, &keyval, &modifier);
+    if (free_accel)
+        efree(accel);
+
+    php_gtk_build_value(&return_value, "(ii)", keyval, modifier);
+}
+
+%%
+override gtk_accel_map_lookup_entry
+PHP_METHOD
+{
+    char *accel_path;
+    zend_bool free_accel_path;
+    GtkAccelKey accel_key;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u", &accel_path, &free_accel_path))
+        return;
+    
+    if (gtk_accel_map_lookup_entry((const gchar *)accel_path, &accel_key)) {
+        php_gtk_build_value(&return_value, "(ii)", accel_key.accel_key,
+                            accel_key.accel_mods);
+    }
+}
+
 %% }}}
 
 %% {{{ GtkAction
@@ -2358,31 +2451,17 @@ PHP_METHOD
 override gtk_entry_set_invisible_char
 PHP_METHOD
 {
-    gchar *getchar;
-    gchar *utf8;
-    gsize utf8_len = 0;
+    char *getchar;
     gunichar setchar;
     zend_bool free_char = FALSE;
-    zend_bool free_utf8 = FALSE;
 
     NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &getchar, &free_char))
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u", &getchar, &free_char))
         return;
   
-    utf8 = phpg_to_utf8(getchar, strlen(getchar), &utf8_len, &free_utf8 TSRMLS_CC);
-
-    if (utf8) {
-        setchar = g_utf8_get_char(utf8);
-        if (setchar) {
-            gtk_entry_set_invisible_char(GTK_ENTRY(PHPG_GOBJECT(this_ptr)), setchar);
-        }
-    } else {
-        php_error(E_WARNING, "%s::%s(): could not convert value to UTF-8", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
-    }
-
-    if (free_utf8)
-        g_free(utf8);
+    setchar = g_utf8_get_char((const gchar*)getchar);
+    gtk_entry_set_invisible_char(GTK_ENTRY(PHPG_GOBJECT(this_ptr)), setchar);
 
     if (free_char)
         efree(getchar);
@@ -2979,6 +3058,35 @@ PHP_METHOD
     if (free_context) g_free(context);
 }
 
+%%
+override gtk_icon_info_get_attach_points
+PHP_METHOD
+{
+    GdkPoint *points;
+    int n_points;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    if (gtk_icon_info_get_attach_points((GtkIconInfo *)PHPG_GBOXED(this_ptr), &points,
+                                        &n_points)) {
+        int i;
+        zval *item = NULL;
+
+        array_init(return_value);
+        for (i = 0; i < n_points; i++) {
+            MAKE_STD_ZVAL(item);
+            array_init(item);
+            add_next_index_long(item, points[i].x);
+            add_next_index_long(item, points[i].y);
+            add_next_index_zval(return_value, item);
+        }
+        efree(points);
+    }
+}
+
 %% }}}
 
 %% {{{ GtkIconView
@@ -3558,6 +3666,13 @@ PHP_METHOD
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 
+}
+
+%%
+override gtk_menu_item_toggle_size_request
+PHP_METHOD
+{
+    NOT_STATIC_METHOD();
 }
 %% }}}
 
