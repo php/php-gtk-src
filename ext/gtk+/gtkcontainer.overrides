@@ -7,6 +7,7 @@ static ZEND_METHOD(GtkContainer, get_children);
 ignore
 	gtk_container_child_set_valist
 	gtk_container_child_get_valist
+    gtk_container_class_find_child_property
 	gtk_container_foreach_full
 
 %%

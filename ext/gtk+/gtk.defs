@@ -10737,10 +10737,14 @@
   (return-type "GtkWidget*")
 )
 
-(define-method menu_get_for_attach_widget
-  (of-object "GtkWidget")
+(define-method get_for_attach_widget
+  (of-object "GtkMenu")
   (c-name "gtk_menu_get_for_attach_widget")
   (return-type "GList*")
+  (parameters
+    '("GtkWidget*" "widget")
+  )
+  (static #t)
 )
 
 (define-method get_tearoff_state

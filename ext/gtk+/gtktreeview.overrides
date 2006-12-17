@@ -34,7 +34,6 @@ ignore-glob
     gtk_tree_path_*
 %%
 ignore
-    gtk_cell_renderer_get_size
     gtk_list_store_insert_with_values
     gtk_list_store_insert_with_valuesv
     gtk_list_store_newv
@@ -47,13 +46,18 @@ ignore
     gtk_tree_row_reference_inserted
     gtk_tree_row_reference_deleted
     gtk_tree_row_reference_reordered
+    gtk_tree_selection_get_user_data
     gtk_tree_store_newv
     gtk_tree_store_set_valist
     gtk_tree_store_set_value
-    gtk_tree_view_new
+    gtk_tree_view_column_clear
     gtk_tree_view_column_new
     gtk_tree_view_column_set_attributes
     gtk_tree_view_column_set_cell_data_func
+    gtk_tree_view_get_row_separator_func
+    gtk_tree_view_get_search_equal_func
+    gtk_tree_view_new
+    gtk_tree_view_set_destroy_count_func
 %% }}}
 
 %% {{{ GtkCellLayout

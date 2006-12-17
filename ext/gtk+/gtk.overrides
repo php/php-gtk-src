@@ -37,6 +37,9 @@ ignore-glob
     gtk_toggle_button_new_*
 %%
 ignore
+    gtk_accel_group_connect
+    gtk_accel_group_disconnect
+    gtk_accel_group_from_accel_closure
     gtk_accel_map_foreach
     gtk_accel_map_foreach_unfiltered
     gtk_accel_map_get
@@ -44,6 +47,7 @@ ignore
     gtk_action_group_add_actions_full
     gtk_action_group_add_toggle_actions_full
     gtk_action_group_add_radio_actions_full
+    gtk_action_group_set_translate_func
     gtk_binding_entry_add_signall
     gtk_binding_entry_clear
     gtk_binding_parse_binding
@@ -55,10 +59,16 @@ ignore
     gtk_clist_new_with_titles
     gtk_clist_remove
     gtk_color_button_new
+    gtk_color_selection_set_change_palette_hook
+    gtk_color_selection_set_change_palette_with_screen_hook
+    gtk_combo_box_get_row_separator_func
     gtk_combo_box_new_with_model
     gtk_ctree_is_ancestor
     gtk_ctree_new_with_titles
     gtk_dialog_new
+    gtk_dialog_set_alternative_button_order
+    gtk_dialog_set_alternative_button_order_from_array
+    gtk_draw_polygon
     gtk_exit
     gtk_entry_new_with_max_length
     gtk_false
@@ -67,8 +77,12 @@ ignore
     gtk_file_paths_free
     gtk_file_paths_sort
     gtk_file_system_error_quark
-    gtk_icon_view_new_with_model
+    gtk_gc_get
+    gtk_gc_release
+    gtk_get_event_widget
     gtk_icon_theme_error_quark
+    gtk_icon_view_new_with_model
+    gtk_im_context_simple_add_table 
     gtk_image_menu_item_new_from_stock
     gtk_image_menu_item_new_with_label
     gtk_image_menu_item_new_with_mnemonic
@@ -78,6 +92,15 @@ ignore
     gtk_init_check
     gtk_init_check_abi_check
     gtk_input_add_full
+    gtk_item_factory_create_item
+    gtk_item_factory_create_items
+    gtk_item_factory_create_items_ac
+    gtk_item_factory_create_menu_entries
+    gtk_item_factory_delete_entries
+    gtk_item_factory_delete_entry
+    gtk_item_factory_popup_data
+    gtk_item_factory_popup_with_data
+    gtk_item_factory_set_translate_func
     gtk_list_item_new_with_label
     gtk_menu_item_new_with_label
     gtk_menu_item_new_with_mnemonic
@@ -86,6 +109,8 @@ ignore
     gtk_plug_construct
     gtk_plug_construct_for_display
     gtk_plug_new_for_display
+    gtk_preview_get_info
+    gtk_preview_uninit
     gtk_radio_menu_item_new_with_label
     gtk_radio_menu_item_new_with_mnemonic
     gtk_radio_menu_item_new_with_label_from_widget
@@ -95,11 +120,23 @@ ignore
     gtk_rc_parse_color
     gtk_rc_parse_state
     gtk_rc_parse_priority
+    gtk_settings_install_property
+    gtk_settings_set_property_value
     gtk_statusbar_remove
     gtk_stock_add_static
     gtk_toolbar_get_style
     gtk_toolbar_set_style
     gtk_true
+    gtk_widget_class_find_style_property
+    gtk_widget_class_install_style_property_parser
+    gtk_widget_destroyed
+    gtk_widget_get
+    gtk_widget_getv
+    gtk_widget_list_accel_closures
+    gtk_widget_newv
+    gtk_widget_set
+    gtk_widget_setv
+    gtk_widget_style_get_valist
     gtk_window_mnemonic_activate
 %%
 ignore-win32
@@ -134,6 +171,7 @@ ignore
     gtk_accel_group_unlock
     gtk_accel_group_unlock_entry
     gtk_accel_group_unref
+    gtk_accel_label_set_accel_closure
     gtk_adjustment_set_all
     gtk_clist_set_row_data_full
     gtk_draw_box_gap
@@ -185,7 +223,6 @@ ignore
     gtk_object_setv
     gtk_object_weakref
     gtk_object_weakunref
-    gtk_preview_uninit
     gtk_progress_bar_new
     gtk_progress_bar_update
     gtk_propagate_event
@@ -217,13 +254,7 @@ ignore
     gtk_type_check_object_cast
     gtk_type_register_enum
     gtk_type_register_flags
-    gtk_widget_get
-    gtk_widget_getv
-    gtk_widget_new
-    gtk_widget_newv
     gtk_widget_reset_shapes
-    gtk_widget_set
-    gtk_widget_setv
     gtk_window_add_embedded_xid
     gtk_window_remove_embedded_xid
     gtk_window_reposition
