@@ -13,9 +13,6 @@ static void phpg_icon_view_foreach_func_marshal (GtkIconView *icon_view, GtkTree
 #undef GDK_DISPLAY
 #define GDK_DISPLAY(object) (GDK_DISPLAY_OBJECT(object))
 
-/* TODO
- * implement gtk_adjustment_set_all
- */
 %% {{{ ignores [confirmed]
 
 %%
@@ -26,6 +23,7 @@ ignore-glob
     gtk_arg_*
     gtk_args_*
     gtk_check_button_new_*
+    gtk_idle_*
     gtk_init_add_*
     gtk_marshal_*
     gtk_quit_add_*
@@ -33,13 +31,32 @@ ignore-glob
     gtk_radio_tool_button_new_*
     gtk_rc_property_parse_*
     gtk_signal_*
+    gtk_target_list_*
     gtk_timeout_add_*
     gtk_toggle_button_new_*
 %%
 ignore
+    gtk_accel_group_activate
+    gtk_accel_group_add
+    gtk_accel_group_attach
     gtk_accel_group_connect
+    gtk_accel_group_create_add
+    gtk_accel_group_create_remove
+    gtk_accel_group_detach
     gtk_accel_group_disconnect
+    gtk_accel_group_entries_from_object
     gtk_accel_group_from_accel_closure
+    gtk_accel_group_get_entry
+    gtk_accel_group_handle_add
+    gtk_accel_group_handle_remove
+    gtk_accel_group_lock_entry
+    gtk_accel_group_new
+    gtk_accel_group_ref
+    gtk_accel_group_remove
+    gtk_accel_group_unlock_entry
+    gtk_accel_group_unref
+    gtk_accel_groups_activate
+    gtk_accel_label_set_accel_closure
     gtk_accel_map_foreach
     gtk_accel_map_foreach_unfiltered
     gtk_accel_map_get
@@ -52,12 +69,16 @@ ignore
     gtk_binding_entry_clear
     gtk_binding_parse_binding
     gtk_binding_set_by_class
+    gtk_binding_set_clear
+    gtk_binding_set_find
+    gtk_binding_set_new
     gtk_button_new_with_label
     gtk_button_new_with_mnemonic
     gtk_check_menu_item_new_with_label
     gtk_check_menu_item_new_with_mnemonic
     gtk_clist_new_with_titles
     gtk_clist_remove
+    gtk_clist_set_row_data_full
     gtk_color_button_new
     gtk_color_selection_set_change_palette_hook
     gtk_color_selection_set_change_palette_with_screen_hook
@@ -68,11 +89,32 @@ ignore
     gtk_dialog_new
     gtk_dialog_set_alternative_button_order
     gtk_dialog_set_alternative_button_order_from_array
+    gtk_draw_hline
+    gtk_draw_vline
+    gtk_draw_shadow
     gtk_draw_polygon
+    gtk_draw_arrow
+    gtk_draw_diamond
+    gtk_draw_box
+    gtk_draw_flat_box
+    gtk_draw_check
+    gtk_draw_option
+    gtk_draw_tab
+    gtk_draw_shadow_gap
+    gtk_draw_box_gap
+    gtk_draw_extension
+    gtk_draw_focus
+    gtk_draw_slider
+    gtk_draw_handle
+    gtk_draw_expander
+    gtk_draw_layout
+    gtk_draw_resize_grip
+    gtk_draw_string
     gtk_exit
     gtk_entry_new_with_max_length
     gtk_false
     gtk_file_chooser_error_quark
+    gtk_file_chooser_dialog_new
     gtk_file_paths_copy
     gtk_file_paths_free
     gtk_file_paths_sort
@@ -101,32 +143,77 @@ ignore
     gtk_item_factory_popup_data
     gtk_item_factory_popup_with_data
     gtk_item_factory_set_translate_func
+    gtk_key_snooper_install
+    gtk_key_snooper_remove
+    gtk_label_new_with_mnemonic
     gtk_list_item_new_with_label
     gtk_menu_item_new_with_label
     gtk_menu_item_new_with_mnemonic
     gtk_menu_item_set_accel_path
     gtk_menu_set_accel_path
+    gtk_message_dialog_new_with_markup
+    gtk_object_add_arg_type
+    gtk_object_arg_get
+    gtk_object_arg_get_info
+    gtk_object_args_collect
+    gtk_object_arg_set
+    gtk_object_get
+    gtk_object_get_data
+    gtk_object_get_data_by_id
+    gtk_object_get_user_data
+    gtk_object_getv
+    gtk_object_new
+    gtk_object_newv
+    gtk_object_query_args
+    gtk_object_ref
+    gtk_object_remove_data_by_id
+    gtk_object_remove_no_notify_by_id
+    gtk_object_set
+    gtk_object_set_data
+    gtk_object_set_data_by_id
+    gtk_object_set_data_by_id_full
+    gtk_object_set_data_full
+    gtk_object_set_user_data
+    gtk_object_setv
+    gtk_object_sink
+    gtk_object_unref
+    gtk_object_weakref
+    gtk_object_weakunref
     gtk_plug_construct
     gtk_plug_construct_for_display
     gtk_plug_new_for_display
     gtk_preview_get_info
     gtk_preview_uninit
+    gtk_progress_bar_new
+    gtk_progress_bar_update
+    gtk_propagate_event
+    gtk_quit_remove_by_data
+    gtk_radio_menu_item_group
     gtk_radio_menu_item_new_with_label
     gtk_radio_menu_item_new_with_mnemonic
     gtk_radio_menu_item_new_with_label_from_widget
     gtk_radio_menu_item_new_with_mnemonic_from_widget
+    gtk_range_default_htrough_click
+    gtk_range_default_vtrough_click
+    gtk_range_trough_click
     gtk_rc_find_pixmap_in_path
     gtk_rc_scanner_new
     gtk_rc_parse_color
     gtk_rc_parse_state
     gtk_rc_parse_priority
+    gtk_set_locale
     gtk_settings_install_property
     gtk_settings_set_property_value
     gtk_statusbar_remove
     gtk_stock_add_static
     gtk_toolbar_get_style
     gtk_toolbar_set_style
+    gtk_trace_referencing
     gtk_true
+    gtk_type_check_class_cast
+    gtk_type_check_object_cast
+    gtk_type_register_enum
+    gtk_type_register_flags
     gtk_widget_class_find_style_property
     gtk_widget_class_install_style_property_parser
     gtk_widget_destroyed
@@ -137,131 +224,17 @@ ignore
     gtk_widget_set
     gtk_widget_setv
     gtk_widget_style_get_valist
-    gtk_window_mnemonic_activate
-%%
-ignore-win32
-    GtkPlug
-    GtkSocket
-%% }}}
-    
-%% {{{ ignores [tbd]
-%%
-ignore-glob
-    gtk_idle_add_*
-    gtk_target_list_*
-%%
-ignore
-    gtk_accel_group_activate
-    gtk_accel_group_add
-    gtk_accel_group_attach
-    gtk_accel_group_create_add
-    gtk_accel_group_create_remove
-    gtk_accel_group_detach
-    gtk_accel_group_entries_from_object
-    gtk_accel_group_get_entry
-    gtk_accel_group_handle_add
-    gtk_accel_group_handle_remove
-    gtk_accel_group_lock
-    gtk_accel_group_lock_entry
-    gtk_accel_group_new
-    gtk_accel_group_ref
-    gtk_accel_group_remove
-    gtk_accel_groups_activate
-    gtk_accel_groups_from_object
-    gtk_accel_group_unlock
-    gtk_accel_group_unlock_entry
-    gtk_accel_group_unref
-    gtk_accel_label_set_accel_closure
-    gtk_adjustment_set_all
-    gtk_clist_set_row_data_full
-    gtk_draw_box_gap
-    gtk_draw_check
-    gtk_draw_cross
-    gtk_draw_extension
-    gtk_draw_flat_box
-    gtk_draw_focus
-    gtk_draw_handle
-    gtk_draw_option
-    gtk_draw_ramp
-    gtk_draw_shadow_gap
-    gtk_draw_slider
-    gtk_draw_tab
-    gtk_file_chooser_dialog_new
-    gtk_idle_remove_by_data
-    gtk_item_factory_create_item
-    gtk_item_factory_create_items_ac
-    gtk_item_factory_create_menu_entries
-    gtk_item_factory_delete_entries
-    gtk_item_factory_delete_entry
-    gtk_item_factory_popup_data
-    gtk_item_factory_popup_with_data
-    gtk_item_factory_set_translate_func
-    gtk_key_snooper_install
-    gtk_key_snooper_remove
-    gtk_label_new_with_mnemonic
-    gtk_menu_attach_to_widget
-    gtk_message_dialog_new_with_markup
-    gtk_object_add_arg_type
-    gtk_object_arg_get
-    gtk_object_arg_get_info
-    gtk_object_args_collect
-    gtk_object_arg_set
-    gtk_object_get
-    gtk_object_get_data_by_id
-    gtk_object_get_user_data
-    gtk_object_getv
-    gtk_object_new
-    gtk_object_newv
-    gtk_object_query_args
-    gtk_object_remove_data_by_id
-    gtk_object_remove_no_notify_by_id
-    gtk_object_set
-    gtk_object_set_data_by_id
-    gtk_object_set_data_by_id_full
-    gtk_object_set_data_full
-    gtk_object_set_user_data
-    gtk_object_setv
-    gtk_object_weakref
-    gtk_object_weakunref
-    gtk_progress_bar_new
-    gtk_progress_bar_update
-    gtk_propagate_event
-    gtk_quit_remove_by_data
-    gtk_radio_menu_item_group
-    gtk_range_default_htrough_click
-    gtk_range_default_vtrough_click
-    gtk_range_trough_click
-    gtk_set_locale
-    gtk_signal_add_emission_hook_full
-    gtk_signal_disconnect_by_data
-    gtk_signal_disconnect_by_func
-    gtk_signal_emit
-    gtk_signal_emit_by_name
-    gtk_signal_emitv
-    gtk_signal_emitv_by_name
-    gtk_signal_handler_block_by_data
-    gtk_signal_handler_block_by_func
-    gtk_signal_handler_pending_by_func
-    gtk_signal_handler_unblock_by_data
-    gtk_signal_handler_unblock_by_func
-    gtk_signal_n_emissions
-    gtk_signal_n_emissions_by_name
-    gtk_signal_query
-    gtk_signal_set_funcs
-    gtk_tooltips_data_get
-    gtk_trace_referencing
-    gtk_type_check_class_cast
-    gtk_type_check_object_cast
-    gtk_type_register_enum
-    gtk_type_register_flags
-    gtk_widget_reset_shapes
     gtk_window_add_embedded_xid
     gtk_window_remove_embedded_xid
-    gtk_window_reposition
+    gtk_window_mnemonic_activate
 %%
 ignore
     GtkArgFlags
     GtkPrivateFlags
+%%
+ignore-win32
+    GtkPlug
+    GtkSocket
 %% }}}
 
 %% {{{ constants
@@ -782,7 +755,7 @@ PHP_METHOD
         return;
     }
 
-    data = gtk_tooltips_data_get(GTK_WIDGET(PHP_GOBJECT(widget)));
+    data = gtk_tooltips_data_get(GTK_WIDGET(PHPG_GOBJECT(widget)));
     if (!data) {
         return;
     }
@@ -1223,6 +1196,13 @@ PHP_METHOD
     }
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+}
+
+%%
+override gtk_adjustment_set_all
+PHP_METHOD
+{
+    /* TODO */
 }
 
 %% }}}
