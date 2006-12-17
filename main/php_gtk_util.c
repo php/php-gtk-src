@@ -881,6 +881,38 @@ static zend_bool php_gtk_build_single(zval **result, char **format, va_list *va 
 					return 1;
 				}
 
+			case 'u':
+				{
+					char *str = va_arg(*va, char *);
+					char *cp_str;
+					int len;
+					gsize cp_len;
+					zend_bool free_result;
+
+					MAKE_ZVAL_IF_NULL(*result);
+					if (str) {
+						if (**format == '#') {
+							++*format;
+							len = va_arg(*va, int);
+						} else
+							len = strlen(str);
+						cp_str = phpg_from_utf8(str, len, &cp_len, &free_result TSRMLS_CC);
+						if (cp_str) {
+							ZVAL_STRINGL(*result, cp_str, cp_len, 1);
+						} else {
+							php_error_docref(NULL TSRMLS_CC, E_WARNING, "could not convert string from UTF-8");
+							ZVAL_NULL(*result);
+						}
+						if (free_result) {
+							g_free(cp_str);
+						}
+					} else {
+						ZVAL_NULL(*result);
+					}
+
+					return 1;
+				}
+
 			case 'V':
 			case 'N':
 				*result = (zval *)va_arg(*va, zval *);
