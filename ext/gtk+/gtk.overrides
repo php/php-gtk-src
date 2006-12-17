@@ -3668,12 +3668,6 @@ PHP_METHOD
 
 }
 
-%%
-override gtk_menu_item_toggle_size_request
-PHP_METHOD
-{
-    NOT_STATIC_METHOD();
-}
 %% }}}
 
 %% {{{ GtkMisc
