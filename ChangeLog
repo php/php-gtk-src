@@ -1,3 +1,35 @@
+2006-12-17  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      Clean up ignores.
+
+    * ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtkcontainer.overrides
+      ext/gtk+/gtktreeview.overrides:
+      Ignore a lot of stuff in Gtk. This is surprisingly tedious work.
+
+2006-12-17  Anant Narayanan  <anant@kix.in>
+
+    * ext/gtk+/gtk.overrides:
+      Correct safe_emalloc() usage.
+
+2006-12-17  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.overrides:
+      What the heck is gtk_menu_item_toggle_size_request() supposed to do?
+      Remove this stub until we find out.
+
+    * ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtktreeview.overrides:
+      Start the Grand Coverage Crusade [TM] (abbreviates to GCC, interestingly
+      enough), since no one else seems eager to do it. The functions are
+      untested; I only made sure that they compile, so please test on your own
+
+    * main/php_gtk_util.c:
+      Support 'u' in php_gtk_build_value for adding UTF-8 strings
+
 2006-12-10  Anant Narayanan  <anant@kix.in>
 
     * ext/gtk+/gtk.overrides:
