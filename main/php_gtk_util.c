@@ -474,10 +474,24 @@ static int php_gtk_parse_args_impl(int argc, char *format, va_list *va, int quie
 	return retval;
 }
 
+#define RETURN_IF_ZERO_ARGS(num_args, type_spec, quiet)  { \
+    int __num_args = (num_args); \
+    if (0 == (type_spec)[0] && 0 != __num_args && !(quiet)) { \
+        char *__space; \
+        char *__class_name = get_active_class_name(&__space TSRMLS_CC); \
+        zend_error(E_WARNING, "%s%s%s() expects exactly 0 parameters, %d given", \
+                   __class_name, __space, \
+                   get_active_function_name(TSRMLS_C), __num_args); \
+        return 0; \
+    }\
+}    
+
 int php_gtk_parse_args(int argc, char *format, ...)
 {
 	va_list va;
 	int retval;
+
+	RETURN_IF_ZERO_ARGS(argc, format, 0);
 
 	va_start(va, format);
 	retval = php_gtk_parse_args_impl( argc, format, &va, 0);
@@ -490,6 +504,8 @@ PHP_GTK_API int php_gtk_parse_args_quiet(int argc, char *format, ...)
 {
 	va_list va;
 	int retval;
+
+	RETURN_IF_ZERO_ARGS(argc, format, 1);
 
 	va_start(va, format);
 	retval = php_gtk_parse_args_impl(argc, format, &va, 1);
