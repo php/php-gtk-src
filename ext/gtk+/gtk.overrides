@@ -10,6 +10,9 @@ static gboolean phpg_entry_completion_match_func_marshal (GtkEntryCompletion *co
 static gboolean phpg_tree_view_row_separator_func_marshal (GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
 static void phpg_icon_view_foreach_func_marshal (GtkIconView *icon_view, GtkTreePath *path, gpointer data);
 
+/* forward declaration */
+static PHP_METHOD(GtkImage, get_image);
+
 #undef GDK_DISPLAY
 #define GDK_DISPLAY(object) (GDK_DISPLAY_OBJECT(object))
 
@@ -3224,6 +3227,196 @@ PHP_METHOD
 
     gtk_icon_view_selected_foreach(GTK_ICON_VIEW(PHPG_GOBJECT(this_ptr)), callback, cb_data);
     phpg_cb_data_destroy(cb_data);
+}
+
+%% }}}
+
+%% {{{ GtkImage
+
+%%
+override gtk_image_get_icon_name
+PHP_METHOD
+{
+    gchar *icon_name = NULL;
+    GtkIconSize size = GTK_ICON_SIZE_INVALID;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    gtk_image_get_icon_name(GTK_IMAGE(PHPG_GOBJECT(this_ptr)),
+                            (G_CONST_RETURN gchar **)&icon_name, &size);
+
+    php_gtk_build_value(&return_value, "(ui)", icon_name, size);
+}
+
+%%
+override gtk_image_get_icon_set
+PHP_METHOD
+{
+    GtkIconSet *icon_set;
+    GtkIconSize size;
+    GtkImageType type;
+    zval *php_icon_set = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    type = gtk_image_get_storage_type(GTK_IMAGE(PHPG_GOBJECT(this_ptr)));
+    if (type != GTK_IMAGE_ICON_SET && type != GTK_IMAGE_EMPTY) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "GtkImage should contain a GtkIconSet or be empty");
+        return;
+    }
+    gtk_image_get_icon_set(GTK_IMAGE(PHPG_GOBJECT(this_ptr)), &icon_set, &size);
+
+    phpg_gobject_new(&php_icon_set, (GObject *) icon_set TSRMLS_CC);
+    php_gtk_build_value(&return_value, "(Ni)", php_icon_set, size);
+}
+
+%%
+override gtk_image_get_stock
+PHP_METHOD
+{
+    gchar *stock_id;
+    GtkIconSize size;
+    GtkImageType type;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    type = gtk_image_get_storage_type(GTK_IMAGE(PHPG_GOBJECT(this_ptr)));
+    if (type != GTK_IMAGE_STOCK && type != GTK_IMAGE_EMPTY) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "GtkImage should contain a GtkStock or be empty");
+        return;
+    }
+    gtk_image_get_stock(GTK_IMAGE(PHPG_GOBJECT(this_ptr)), &stock_id, &size);
+
+    if (stock_id) {
+        php_gtk_build_value(&return_value, "(ui)", stock_id, size);
+    } else {
+        zval *dummy = NULL;
+        php_gtk_build_value(&return_value, "(ni)", dummy, size);
+    }
+}
+
+%%
+override gtk_image_get_image
+PHP_METHOD
+{
+    GdkImage *image;
+    GdkBitmap *mask;
+    GtkImageType type;
+    zval *php_image = NULL, *php_mask = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    type = gtk_image_get_storage_type(GTK_IMAGE(PHPG_GOBJECT(this_ptr)));
+    if (type != GTK_IMAGE_IMAGE && type != GTK_IMAGE_EMPTY) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "GtkImage should contain a GdkImage or be empty");
+        return;
+    }
+    gtk_image_get_image(GTK_IMAGE(PHPG_GOBJECT(this_ptr)), &image, &mask);
+
+    phpg_gobject_new(&php_image, (GObject *) image TSRMLS_CC);
+    phpg_gobject_new(&php_mask, (GObject *) mask TSRMLS_CC);
+    php_gtk_build_value(&return_value, "(NN)", php_image, php_mask);
+}
+
+%%
+override gtk_image_get_pixmap
+PHP_METHOD
+{
+    GdkPixmap *pixmap;
+    GdkBitmap *mask;
+    GtkImageType type;
+    zval *php_pixmap = NULL, *php_mask = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    type = gtk_image_get_storage_type(GTK_IMAGE(PHPG_GOBJECT(this_ptr)));
+    if (type != GTK_IMAGE_PIXMAP && type != GTK_IMAGE_EMPTY) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "GtkImage should contain a GdkPixmap or be empty");
+        return;
+    }
+    gtk_image_get_pixmap(GTK_IMAGE(PHPG_GOBJECT(this_ptr)), &pixmap, &mask);
+
+    phpg_gobject_new(&php_pixmap, (GObject *) pixmap TSRMLS_CC);
+    phpg_gobject_new(&php_mask, (GObject *) mask TSRMLS_CC);
+    php_gtk_build_value(&return_value, "(NN)", php_pixmap, php_mask);
+}
+
+%%
+override gtk_image_get
+PHP_METHOD
+{
+    phpg_warn_deprecated("use GtkImage::get_image()" TSRMLS_CC);
+#if ZEND_EXTENSION_API_NO > 220051025
+    PHP_MN(GtkImage_get_image)(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+#else
+    PHP_FN(GtkImage_get_image)(INTERNAL_FUNCTION_PARAM_PASSTHRU);
+#endif
+}
+
+%%
+override gtk_image_get_pixbuf
+PHP_METHOD
+{
+    GdkPixbuf *pixbuf;
+    GtkImageType type;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    type = gtk_image_get_storage_type(GTK_IMAGE(PHPG_GOBJECT(this_ptr)));
+    if (type != GTK_IMAGE_PIXBUF && type != GTK_IMAGE_EMPTY) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "GtkImage should contain a GdkPixbuf or be empty");
+        return;
+    }
+    pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(PHPG_GOBJECT(this_ptr)));
+
+    phpg_gobject_new(&return_value, (GObject *) pixbuf TSRMLS_CC);
+}
+
+%%
+override gtk_image_get_animation
+PHP_METHOD
+{
+    GdkPixbufAnimation *anim;
+    GtkImageType type;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    type = gtk_image_get_storage_type(GTK_IMAGE(PHPG_GOBJECT(this_ptr)));
+    if (type != GTK_IMAGE_ANIMATION && type != GTK_IMAGE_EMPTY) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "GtkImage should contain a GdkPixbufAnimation or be empty");
+        return;
+    }
+    anim = gtk_image_get_animation(GTK_IMAGE(PHPG_GOBJECT(this_ptr)));
+
+    phpg_gobject_new(&return_value, (GObject *) anim TSRMLS_CC);
 }
 
 %% }}}
