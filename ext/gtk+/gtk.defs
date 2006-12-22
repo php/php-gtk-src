@@ -17577,6 +17577,7 @@
     '("GtkTooltips**" "tooltips")
     '("GtkWidget**" "current_widget")
   )
+  (static #t)
 )
 
 (define-function gtk_tooltips_get_type

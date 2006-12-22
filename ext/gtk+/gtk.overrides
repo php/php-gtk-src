@@ -5505,6 +5505,29 @@ PHP_METHOD
     RETVAL_BOOL(php_retval);
 }
 
+%%
+override gtk_tooltips_get_info_from_tip_window
+PHP_METHOD
+{
+    zval *window;
+    GtkTooltips *tooltips;
+    GtkWidget *widget;
+    gboolean ret;
+    zval *php_tooltips = NULL, *php_widget = NULL;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &window, gtkwindow_ce)) {
+        return;
+    }
+
+    ret = gtk_tooltips_get_info_from_tip_window(GTK_WINDOW(PHPG_GOBJECT(window)), &tooltips, &widget);
+    if (ret) {
+        phpg_gobject_new(&php_tooltips, (GObject *) tooltips TSRMLS_CC);
+        phpg_gobject_new(&php_widget, (GObject *) widget TSRMLS_CC);
+        php_gtk_build_value(&return_value, "(NN)", tooltips, widget);
+    }
+
+    RETURN_FALSE;
+}
 
 %% }}}
 
