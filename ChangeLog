@@ -1,3 +1,11 @@
+2006-12-21  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk_util.c:
+      Speed up parameter parsing for 0-arg functions by failing early.
+
+    * ext/gtk+/gtk.overrides:
+      Implement a bunch of GtkImage::get_* methods.
+
 2006-12-17  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides:
