@@ -3427,7 +3427,7 @@ PHP_METHOD
     gtk_image_get_icon_set(GTK_IMAGE(PHPG_GOBJECT(this_ptr)), &icon_set, &size);
 
     phpg_gobject_new(&php_icon_set, (GObject *) icon_set TSRMLS_CC);
-    pphpg_warn_deprecated(NULL TSRMLS_CC);hp_gtk_build_value(&return_value, "(Ni)", php_icon_set, size);
+    php_gtk_build_value(&return_value, "(Ni)", php_icon_set, size);
 }
 
 %%
