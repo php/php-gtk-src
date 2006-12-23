@@ -1,3 +1,11 @@
+2006-12-22  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtktextview.overrides:
+      Implement GtkTooltips::get_info_from_tip_window() and
+      GtkTextBuffer::insert_with_tags_by_name().
+
 2006-12-21  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/php_gtk_util.c:
