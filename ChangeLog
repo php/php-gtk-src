@@ -1,3 +1,11 @@
+2006-12-23  Anant Narayanan  <anant@kix.in>
+
+    * ext/gtk+/gtk.overrides:
+      Correct small Oops.
+
+    * ext/gtk+/gtk.overrides:
+      Help the GCC(TM) with a few GtkCList methods.
+
 2006-12-22  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.defs
