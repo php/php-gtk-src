@@ -504,6 +504,7 @@ PHP_GTK_API int php_gtk_parse_args_quiet(int argc, char *format, ...)
 {
 	va_list va;
 	int retval;
+	TSRMLS_FETCH();
 
 	RETURN_IF_ZERO_ARGS(argc, format, 1);
 
