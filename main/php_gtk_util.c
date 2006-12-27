@@ -452,11 +452,10 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 	return 1;
 }
 
-static int php_gtk_parse_args_impl(int argc, char *format, va_list *va, int quiet)
+static int php_gtk_parse_args_impl(int argc, char *format, va_list *va, int quiet TSRMLS_DC)
 {
 	zval ***args;
 	int retval;
-	TSRMLS_FETCH();
 
 	args = (zval ***)emalloc(argc * sizeof(zval **));
 
@@ -490,11 +489,12 @@ int php_gtk_parse_args(int argc, char *format, ...)
 {
 	va_list va;
 	int retval;
+	TSRMLS_FETCH();
 
 	RETURN_IF_ZERO_ARGS(argc, format, 0);
 
 	va_start(va, format);
-	retval = php_gtk_parse_args_impl( argc, format, &va, 0);
+	retval = php_gtk_parse_args_impl( argc, format, &va, 0 TSRMLS_CC);
 	va_end(va);
 
 	return retval;
@@ -508,7 +508,7 @@ PHP_GTK_API int php_gtk_parse_args_quiet(int argc, char *format, ...)
 	RETURN_IF_ZERO_ARGS(argc, format, 1);
 
 	va_start(va, format);
-	retval = php_gtk_parse_args_impl(argc, format, &va, 1);
+	retval = php_gtk_parse_args_impl(argc, format, &va, 1 TSRMLS_CC);
 	va_end(va);
 
 	return retval;
@@ -538,7 +538,7 @@ PHP_GTK_API int php_gtk_parse_varargs(int argc, int min_args, zval **varargs, ch
 	}
 
 	va_start(va, format);
-	retval = php_gtk_parse_args_impl(min_args, format, &va, 0);
+	retval = php_gtk_parse_args_impl(min_args, format, &va, 0 TSRMLS_CC);
 	va_end(va);
 	if (varargs) {
 		*varargs = php_gtk_array_as_hash(args, argc, min_args, argc-min_args);
