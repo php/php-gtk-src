@@ -1,3 +1,11 @@
+2006-12-27  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * main/php_gtk_util.c:
+      -** empty log message ***
+
+    * main/php_gtk_util.c:
+      Fix TSRMLS issues.
+
 2006-12-23  Anant Narayanan  <anant@kix.in>
 
     * ext/gtk+/gtk.overrides:
