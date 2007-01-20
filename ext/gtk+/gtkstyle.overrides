@@ -1,3 +1,60 @@
+/* vim: set et ft=cpp fdm=marker: */
+
+%%
+override gtk_paint_polygon
+PHP_METHOD
+{
+    zval *window, *php_state_type, *php_shadow_type, *php_area;
+    GtkStateType state_type;
+    GtkShadowType shadow_type;
+    GdkRectangle area;
+    zval *widget;
+    const gchar *detail;
+    zval *php_points;
+    int npoints, i;
+    GdkPoint *points;
+    zend_bool fill;
+    zval **item;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OVVVOs!ab", &window, gdkwindow_ce,
+                            &php_state_type, &php_shadow_type, &php_area, &widget,
+                            gtkwidget_ce, &detail, &php_points, &fill)) {
+        return;
+    }
+
+    if (phpg_gvalue_get_enum(GTK_TYPE_STATE_TYPE, php_state_type, (gint *)&state_type) == FAILURE) {
+        return;
+    }
+
+    if (phpg_gvalue_get_enum(GTK_TYPE_STATE_TYPE, php_shadow_type, (gint *)&shadow_type) == FAILURE) {
+        return;
+    }
+
+    if (phpg_rectangle_from_zval(php_area, &area TSRMLS_CC) == FAILURE) {
+        return;
+    }
+
+    npoints = zend_hash_num_elements(Z_ARRVAL_P(php_area));
+    points = g_new(GdkPoint, npoints);
+    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_points)), i = 0;
+         zend_hash_get_current_data(Z_ARRVAL_P(php_points), (void**)&item) == SUCCESS;
+         zend_hash_move_forward(Z_ARRVAL_P(php_points)), i++) {
+
+		if (Z_TYPE_PP(item) != IS_ARRAY ||
+            !php_gtk_parse_args_hash_quiet(*item, "ii", &points[i].x, &points[i].y)) {
+			php_error_docref(NULL TSRMLS_CC, E_WARNING, "points have to be 2 element integer arrays");
+            g_free(points);
+            return;
+        }
+    }
+
+    gtk_paint_polygon(GTK_STYLE(PHPG_GOBJECT(this_ptr)), GDK_WINDOW(PHPG_GOBJECT(window)),
+                      state_type, shadow_type, &area, GTK_WIDGET(PHPG_GOBJECT(widget)),
+                      detail, points, npoints, fill);
+    g_free(points);
+}
 
 %%
 override-prop GtkStyle fg

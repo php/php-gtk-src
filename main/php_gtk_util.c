@@ -155,18 +155,27 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int
 			{
 				switch (Z_TYPE_PP(arg)) {
 					case IS_NULL:
+						if (return_null) {
+							*va_arg(*va, char **) = NULL;
+							if (*spec_walk == '#') {
+								*va_arg(*va, int *) = 0;
+								spec_walk++;
+							}
+						}
+						/* drop through */
 					case IS_STRING:
 					case IS_LONG:
 					case IS_DOUBLE:
-					case IS_BOOL:
+					case IS_BOOL: {
 						convert_to_string_ex(arg);
 						if (as_zval) goto ret_zval;
-						*va_arg(*va, char **) = Z_STRVAL_PP(arg);;
+						*va_arg(*va, char **) = Z_STRVAL_PP(arg);
 						if (*spec_walk == '#') {
 							*va_arg(*va, int *) = Z_STRLEN_PP(arg);
 							spec_walk++;
 						}
 						break;
+								  }
 
 					case IS_ARRAY:
 					case IS_OBJECT:

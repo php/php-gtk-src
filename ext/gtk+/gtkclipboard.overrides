@@ -352,6 +352,9 @@ PHP_METHOD
 	if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 3, &extra, "aVV", &php_targets, &get_cb, &clear_cb))
 		return;
 
+	entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
+    if (!entries) return;
+
     zval_add_ref(&get_cb);
     zval_add_ref(&clear_cb);
     if (extra) {
@@ -361,7 +364,6 @@ PHP_METHOD
     set_info = emalloc(sizeof(phpg_clipboard_set_info));
     set_info->get_cb_data  = phpg_cb_data_new(get_cb, extra TSRMLS_CC);
     set_info->clear_cb_data  = phpg_cb_data_new(clear_cb, extra TSRMLS_CC);
-	entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
 
     ret = gtk_clipboard_set_with_data(GTK_CLIPBOARD(PHPG_GOBJECT(this_ptr)), entries, n,
                                       phpg_clipboard_get_func_marshal,

@@ -102,6 +102,8 @@ PHP_METHOD
     }
 
 	entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
+    if (!entries) return;
+
 	tlist = gtk_target_list_new(entries, n);
 	efree(entries);
 	context = gtk_drag_begin(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), tlist, actions, button, (GdkEvent *)PHPG_GBOXED(event));
