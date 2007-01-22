@@ -31,7 +31,8 @@ set_time_limit(300);
 
 // override the default PHP 8Mb as this script tends to use a lot more
 // and hopefully reduce the support questions a bit..
-ini_set('memory_limit','64M');
+// Make it 0 instead :)
+ini_set('memory_limit','0');
 
 if (strstr(PHP_OS, 'WIN')) {
 	define('WIN_OS', true);
