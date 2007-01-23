@@ -1,3 +1,11 @@
+2007-01-22  Anant Narayanan  <anant@kix.in>
+
+    * generator/generator.php:
+      Apparently 0 is incorrect, change to -1
+
+    * generator/generator.php:
+      Make memory_limit 0 for generator
+
 2007-01-20  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/gtk+/gtk.overrides
