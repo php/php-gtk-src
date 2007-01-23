@@ -26,7 +26,6 @@ ignore-glob
     gtk_arg_*
     gtk_args_*
     gtk_check_button_new_*
-    gtk_idle_*
     gtk_init_add_*
     gtk_marshal_*
     gtk_quit_add_*
