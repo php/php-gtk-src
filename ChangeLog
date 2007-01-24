@@ -1,3 +1,8 @@
+2007-01-23  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.overrides:
+      Let gtk_idle_add() be generated
+
 2007-01-22  Anant Narayanan  <anant@kix.in>
 
     * generator/generator.php:
