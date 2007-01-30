@@ -2143,6 +2143,75 @@ PHP_METHOD
 %% {{{ GtkTreeView
 
 %%
+add-arginfo GtkTreeView enable_model_drag_source
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, sbmask)
+    ZEND_ARG_INFO(0, targets)
+    ZEND_ARG_INFO(0, actions)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_enable_model_drag_source
+PHP_METHOD
+{
+	zval *php_sbmask, *php_targets, *php_actions;
+	GdkModifierType sbmask;
+	GdkDragAction actions;
+	GtkTargetEntry *entries;
+	int n;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "VaV", &php_sbmask, &php_targets, &php_actions)) {
+		return;
+    }
+
+	if (phpg_gvalue_get_flags(GDK_TYPE_MODIFIER_TYPE, php_sbmask, (gint *)&sbmask) == FAILURE) {
+		return;
+    }
+
+	if (phpg_gvalue_get_flags(GDK_TYPE_DRAG_ACTION, php_actions, (gint *)&actions) == FAILURE) {
+        return;
+    }
+
+	entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
+	gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), sbmask, entries, n, actions);
+	efree(entries);
+}
+
+%%
+add-arginfo GtkTreeView enable_model_drag_dest
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, targets)
+    ZEND_ARG_INFO(0, actions)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_enable_model_drag_dest
+PHP_METHOD
+{
+	zval *php_targets, *php_actions;
+	GdkDragAction actions;
+	GtkTargetEntry *entries;
+	int n;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "aV", &php_targets, &php_actions)) {
+		return;
+	}
+
+	if (phpg_gvalue_get_flags(GDK_TYPE_DRAG_ACTION, php_actions, (gint *)&actions) == FAILURE) {
+		return;
+	}
+
+	entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
+	gtk_tree_view_enable_model_drag_dest(GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), entries, n, actions);
+	efree(entries);
+}
+%%
 override gtk_tree_view_get_columns
 PHP_METHOD
 {
@@ -2559,6 +2628,74 @@ PHP_METHOD
     add_next_index_long(return_value, cell_y);
 }
 
+%%
+add-arginfo GtkTreeView get_dest_row_at_pos
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, x)
+    ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_get_dest_row_at_pos
+PHP_METHOD
+{
+    gint x, y;
+    GtkTreePath *path;
+    GtkTreeViewDropPosition pos;
+    zval *php_path = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &x, &y)) {
+        return;
+    }
+
+    if (!gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), x, y, &path,
+                                       &pos)) {
+        return;
+    }
+
+    array_init(return_value);
+
+
+    if (path) {
+        phpg_tree_path_to_zval(path, &php_path TSRMLS_CC);
+    } else {
+        MAKE_STD_ZVAL(php_path);
+    }
+    add_next_index_zval(return_value, php_path);
+
+    add_next_index_long(return_value, pos);
+}
+
+%%
+override gtk_tree_view_get_drag_dest_row
+PHP_METHOD
+{
+    GtkTreePath *path;
+    GtkTreeViewDropPosition pos;
+	zval *php_path = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    gtk_tree_view_get_drag_dest_row(GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), &path, &pos);
+
+   array_init(return_value);
+
+    if (path) {
+        phpg_tree_path_to_zval(path, &php_path TSRMLS_CC);
+    } else {
+        MAKE_STD_ZVAL(php_path);
+    }
+    add_next_index_zval(return_value, php_path);
+
+    add_next_index_long(return_value, pos);
+}
 
 %%
 override gtk_tree_view_get_visible_rect
