@@ -1406,23 +1406,24 @@ if (isset($_SERVER['argc']) &&
 }
 
  
-$result = Console_Getopt::getopt($argv, 'l:o:p:c:r:f:');
+$result = Console_Getopt::getopt($argv, 'l:o:p:c:r:f:v:');
 if (!$result || count($result[1]) < 2)
-    die("usage: php generator.php [-l logfile] [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] [-f savefile] defsfile\n");
+    die("usage: php generator.php [-l logfile] [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] [-f savefile] [-v gtklibversion] defsfile\n");
 
 list($opts, $argv) = $result;
 
 $prefix = 'Gtk';
 $function_class = null;
-$overrides = new Overrides();
+$overrides = null;
 $register_defs = array();
 $savefile = 'php://stdout';
 $logfile = 'php://stderr';
+$gtkversion = '2.6';
 
 foreach ($opts as $opt) {
     list($opt_spec, $opt_arg) = $opt;
     if ($opt_spec == 'o') {
-        $overrides = new Overrides($opt_arg);
+        $overrides = $opt_arg;
     } else if ($opt_spec == 'p') {
         $prefix = $opt_arg;
     } else if ($opt_spec == 'c') {
@@ -1433,6 +1434,8 @@ foreach ($opts as $opt) {
         $savefile = $opt_arg;
     } else if ($opt_spec == 'l') {
         $logfile = $opt_arg;
+    } else if ($opt_spec == 'v') {
+        $gtkversion = $opt_arg;
     }
 }
 
@@ -1440,11 +1443,12 @@ if (file_exists(dirname($argv[1]) . '/arg_types.php')) {
     include(dirname($argv[1]) . '/arg_types.php');
 }
 
-$parser = new Defs_Parser($argv[1]);
+$overrides = new Overrides($overrides, $gtkversion);
+$parser = new Defs_Parser($argv[1], $gtkversion);
 $generator = new Generator($parser, $overrides, $prefix, $function_class);
 $generator->set_logfile($logfile);
 foreach ($register_defs as $defs) {
-    $type_parser = new Defs_Parser($defs);
+    $type_parser = new Defs_Parser($defs, $gtkversion);
     $type_parser->start_parsing();
     $generator->register_types($type_parser);
 }

@@ -23,6 +23,7 @@
 
 class Overrides {
     var $ignores              = array();
+    var $unignores            = array();
     var $glob_ignores         = array();
     var $overrides            = array();
     var $prop_overrides       = array();
@@ -37,9 +38,15 @@ class Overrides {
     var $post_registration    = array();
     var $lineinfo             = array();
     var $top_dir              = '';
+    var $gtkversion           = null; // gtk lib version
 
-    function Overrides($file_name = null)
+    function Overrides($file_name = null, $gtkversion = null)
     {
+        if (version_compare($gtkversion, '2.6', '<'))
+        {
+            $gtkversion = '2.6';
+        }
+        $this->gtkversion = $gtkversion;
         if (!isset($file_name))
             return;
 
@@ -111,6 +118,13 @@ class Overrides {
                     $this->ignores[$func] = true;
                 break;
 
+            case 'restore':
+                foreach ($words as $func)
+                    $this->unignores[$func] = true;
+                foreach (preg_split('!\s+!', $rest, -1, PREG_SPLIT_NO_EMPTY) as $func)
+                    $this->unignores[$func] = true;
+                break;
+
             case 'ignore-win32':
                 if (WIN_OS) {
                     foreach ($words as $func)
@@ -176,7 +190,11 @@ class Overrides {
 
             case 'include':
                 $file_name = $words[0];
-                $this->read_file($file_name);
+                // check for gtk lib version
+                if (!isset($words[1]) || version_compare($words[1], $this->gtkversion, '<='))
+                {
+                    $this->read_file($file_name);
+                }
                 foreach (preg_split(',\s+,', $rest, -1, PREG_SPLIT_NO_EMPTY) as $file_name) {
                     $this->read_file($file_name);
                 }
@@ -227,6 +245,9 @@ class Overrides {
 
     function is_ignored($name)
     {
+        if(isset($this->unignores[$name]))
+            return false;
+
         if (isset($this->ignores[$name]))
             return true;
 

@@ -110,9 +110,15 @@ class Defs_Parser {
     var $boxed          = array();  // boxed types
     var $pointers       = array();  // pointers
     var $c_name         = array();  // C names of entities
+    var $gtkversion     = null; // gtk lib version
 
-    function Defs_Parser($arg)
+    function Defs_Parser($arg, $gtkversion = 0)
     {
+        if (version_compare($gtkversion, '2.6', '<'))
+        {
+            $gtkversion = '2.6';
+        }
+        $this->gtkversion = $gtkversion;
         switch (gettype($arg)) {
             case 'string':
                 $this->_parse_or_load($arg);
@@ -415,9 +421,17 @@ class Defs_Parser {
     function handle_include($arg)
     {
         $include_file = $this->file_path . "/" . $arg[0];
-        error_log("Parsing file \"$include_file\".");
-        $include_tree = parse($include_file, 'r');
-        $this->start_parsing($include_tree);
+        // check for gtk lib version
+        if (isset($arg[1]) && version_compare($arg[1], $this->gtkversion, '<='))
+        {
+            error_log("Ignoring \"$include_file\". - needs version {$arg[1]}");
+        }
+        else
+        {
+            error_log("Parsing file \"$include_file\".");
+            $include_tree = parse($include_file, 'r');
+            $this->start_parsing($include_tree);
+        }
     }
 
     function handle_define_virtual($arg)
