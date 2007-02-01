@@ -1,0 +1,17 @@
+
+ARG_WITH("spell", "for spell support", "no");
+
+if (PHP_GTK_SPELL!= "no" || PHP_GTK_ALL != "no") {
+
+	if (CHECK_HEADER("gtkspell\\gtkspell.h") && CHECK_LIB("gtkspell-2.0.lib", "spell")) {
+
+		ADD_FLAG("CFLAGS_SPELL", "/I ext\\spell /I ..\\ext\\spell /D HAVE_SPELL=1");
+		EXTENSION("spell", "php_spell.c gen_spell.c", true); // always shared
+		AC_DEFINE("HAVE_SPELL", 1, "gtkspell enabled");
+
+	} else {
+
+		WARNING("gtkspell not enabled; libraries and headers not found");
+	}
+
+}
