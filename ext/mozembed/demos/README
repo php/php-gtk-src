@@ -1,0 +1,10 @@
+LICENSE: GPL
+AUTHOR: Even Martin, Nathan Fredrickson
+URL: http://gtkspell.sourceforge.net/ 
+
+GtkSpell provides word-processor-style highlighting and replacement of misspelled words in a GtkTextView widget.
+Right-clicking a misspelled word pops up a menu of suggested replacements.
+
+You need to add the --enable-spell switch to your ./configure statement when
+you build PHP-GTK 2 in order to enable this extension.
+
