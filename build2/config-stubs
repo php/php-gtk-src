@@ -3,6 +3,15 @@
 # $Id$
 
 dir=$1; shift
-for stubfile in $dir/*/config.m4; do
-  echo "sinclude([$stubfile])"
+
+if test "$dir" == *ext; then
+    echo "sinclude([$dir/gtk+/config.m4])"
+fi
+
+for stub in $dir/*; do
+    if [[ -f $stub/config.m4 
+            && "$stub" != *skeleton
+                && "$stub" != *gtk\+ ]]; then
+        echo "sinclude([$stub/config.m4])"
+    fi
 done
