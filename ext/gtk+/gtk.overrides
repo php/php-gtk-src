@@ -9,6 +9,7 @@ static void phpg_about_dialog_activate_link_func_marshal (GtkAboutDialog *about,
 static gboolean phpg_entry_completion_match_func_marshal (GtkEntryCompletion *completion, const gchar *key, GtkTreeIter *iter, gpointer data);
 static gboolean phpg_tree_view_row_separator_func_marshal (GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
 static void phpg_icon_view_foreach_func_marshal (GtkIconView *icon_view, GtkTreePath *path, gpointer data);
+static gboolean phpg_toolbar_signal_func_marshal(GtkWidget *widget, gpointer data);
 
 /* forward declaration */
 static PHP_METHOD(GtkImage, get_image);
@@ -4922,6 +4923,93 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkToolbar
+
+%%
+add-arginfo GtkToolbar append_item
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, text)
+    ZEND_ARG_INFO(0, tooltip_text)
+    ZEND_ARG_OBJ_INFO(0, icon, GtkWidget, 1)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_toolbar_append_item
+
+static gboolean phpg_toolbar_signal_func_marshal(GtkWidget *widget, gpointer data)
+{
+    phpg_cb_data_t *cbd = (phpg_cb_data_t *) data;
+    zval *retval = NULL;
+    zval ***args = NULL;
+    int n_args = 0;
+    char *callback_name;
+    zval *php_widget = NULL;
+    zend_bool toreturn;
+    
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+        php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
+        efree(callback_name);
+        return 0;
+    }
+
+    phpg_gobject_new(&php_widget, (GObject*)widget TSRMLS_CC);
+
+    args = php_gtk_hash_as_array_offset(cbd->user_args, 1, &n_args);
+    args[0] = &php_widget;
+
+    call_user_function_ex(EG(function_table), NULL, cbd->callback, &retval, n_args, args, 0, NULL TSRMLS_CC);
+
+    zval_ptr_dtor(&php_widget);
+
+    if (retval) {
+        toreturn = zend_is_true(retval);
+        zval_ptr_dtor(&retval);
+    } else {
+        toreturn = FALSE;
+    }
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
+    efree(callback_name);
+    efree(args);
+
+    return toreturn;
+}
+
+PHP_METHOD
+{
+    zval *php_callback, *extra, *icon = NULL;
+    phpg_cb_data_t *cb_data;
+    GtkSignalFunc callback;
+    char *text = NULL;
+    char *tooltip = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 4, &extra, "ssNV", &text, &tooltip, &icon, gtkwidget_ce, &php_callback))
+        return;
+
+    if (php_callback) {
+        if (Z_TYPE_P(php_callback) == IS_NULL) {
+            cb_data  = NULL;
+            callback = NULL;
+        } else {
+            zval_add_ref(&php_callback);
+            cb_data  = phpg_cb_data_new(php_callback, extra TSRMLS_CC);
+            callback = (GtkSignalFunc)phpg_toolbar_signal_func_marshal;
+        }
+    }
+
+    if (Z_TYPE_P(icon) != IS_NULL)
+        gtk_toolbar_append_item(GTK_TOOLBAR(PHPG_GOBJECT(this_ptr)),
+                                    text, tooltip, NULL, GTK_WIDGET(PHPG_GOBJECT(icon)), callback, cb_data);
+    else 
+        gtk_toolbar_append_item(GTK_TOOLBAR(PHPG_GOBJECT(this_ptr)),
+                                    text, tooltip, NULL, NULL, callback, cb_data);
+}
 
 %%
 add GtkToolbar get_toolbar_style
