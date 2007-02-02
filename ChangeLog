@@ -1,3 +1,27 @@
+2007-02-01  Anant Narayanan  <anant@kix.in>
+
+    * ext/gtk+/gtk.overrides:
+      Revitalize the GCC with GtkToolbar::append_item()
+
+    * ext/mozembed/demos/README
+      ext/spell/README
+      ext/spell/demos/spell.php:
+      Wrong directory; why is CVS acting weird?
+
+    * ext/mozembed/demos/README
+      ext/mozembed/demos/demos/spell.php:
+      README and sample usage for GtkSpell
+
+    * ext/spell/config.m4
+      ext/spell/config.w32
+      ext/spell/gen_spell.c
+      ext/spell/php_spell.c
+      ext/spell/php_spell.h:
+      Check in the GtkSpell extension.
+
+    * build2/config-stubs:
+      Make sure the gtk+ extension builds before anything else.
+
 2007-01-31  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * generator/generator.php
