@@ -20,6 +20,6 @@ if test "$PHP_GTK_SPELL" != "no"; then
     else
       PHP_EVAL_LIBLINE($SPELL_LIBS, PHP_GTK2_SHARED_LIBADD)
     fi
-    PHP_GTK_EXTENSION(spell, $php_gtk_ext_shared, php_spell.c, gen_spell.c)
+    PHP_GTK_EXTENSION(spell, $php_gtk_ext_shared, php_spell.c)
   fi
 fi
