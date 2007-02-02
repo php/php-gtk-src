@@ -4,14 +4,12 @@
 
 dir=$1; shift
 
-if test "$dir" == *ext; then
+if [[ "$dir" == *ext ]]; then
     echo "sinclude([$dir/gtk+/config.m4])"
 fi
 
-for stub in $dir/*; do
-    if [[ -f $stub/config.m4 
-            && "$stub" != *skeleton
-                && "$stub" != *gtk\+ ]]; then
-        echo "sinclude([$stub/config.m4])"
+for stubfile in $dir/*/config.m4; do
+    if [[ "$stubfile" != *skeleton* && "$stubfile" != *gtk\+* ]]; then
+        echo "sinclude([$stubfile])"
     fi
 done
