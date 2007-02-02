@@ -53,6 +53,8 @@ PHP_METHOD
     pobj->free_on_destroy = TRUE;
 }
 
+%% {{{ PangoLayout
+
 %%
 override pango_layout_get_pixel_extents
 PHP_METHOD
@@ -70,3 +72,103 @@ PHP_METHOD
                         ink.height, logical.x, logical.y, logical.width,
                         logical.height);
 }
+
+%%
+override pango_layout_get_pixel_size
+PHP_METHOD
+{
+    int height, width;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    pango_layout_get_pixel_size(PANGO_LAYOUT(PHPG_GOBJECT(this_ptr)), &height, &width);
+
+    php_gtk_build_value(&return_value, "(ii)", height, width);
+}
+
+%%
+override pango_layout_get_size
+PHP_METHOD
+{
+    int height, width;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    pango_layout_get_size(PANGO_LAYOUT(PHPG_GOBJECT(this_ptr)), &height, &width);
+
+    php_gtk_build_value(&return_value, "(ii)", height, width);
+}
+
+%%
+override pango_layout_get_line
+PHP_METHOD
+{
+    PangoLayoutLine *line;
+    int num, max;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &num))
+        return;
+
+    max = pango_layout_get_line_count(PANGO_LAYOUT(PHPG_GOBJECT(this_ptr)));
+
+    if ((num < 1) || (num > max)) {
+        php_error(E_WARNING, "%s::%s() expects number argument to be between 0 and the maximum number of lines (as given by get_line_count)",
+            get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    line = pango_layout_get_line(PANGO_LAYOUT(PHPG_GOBJECT(this_ptr)), num);
+
+    phpg_gobject_new(&return_value, G_OBJECT(line) TSRMLS_CC);
+}
+
+%%
+override pango_layout_get_lines
+PHP_METHOD
+{
+    GSList *list, *tmp;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    list = pango_layout_get_lines(PANGO_LAYOUT(PHPG_GOBJECT(this_ptr)));
+
+    array_init(return_value);
+    for (tmp = list; tmp; tmp = tmp->next) {
+        zval *line = NULL;
+        phpg_gobject_new(&line, G_OBJECT(tmp->data) TSRMLS_CC);
+        add_next_index_zval(return_value, line);
+    }
+}
+
+%%
+override pango_layout_xy_to_index
+PHP_METHOD
+{
+    int x, y, index, trailing;
+    gboolean res;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &x, &y))
+        return;
+
+    res = pango_layout_xy_to_index(PANGO_LAYOUT(PHPG_GOBJECT(this_ptr)), x, y, &index, &trailing);
+
+    if (res)
+        php_gtk_build_value(&return_value, "(ii)", index, trailing);
+    else
+        RETVAL_BOOL(res);
+}
+
+%% }}}
