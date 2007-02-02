@@ -23,13 +23,13 @@
 #ifndef _PHP_GTK_H
 #define _PHP_GTK_H
 
-#include "php.h"
-#include "php_ini.h"
 #ifdef PHP_WIN32
 #include "config.w32.h"
 #else
 #include "config.h"
 #endif
+#include "php.h"
+#include "php_ini.h"
 
 /* workaround for expat-related declaration in PHP compat file */
 #ifdef lookup

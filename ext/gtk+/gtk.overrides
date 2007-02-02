@@ -4127,16 +4127,18 @@ PHP_METHOD
 
     wrapped_obj = g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
 
-    if (display) {
-        gtk_plug_construct_for_display(GTK_PLUG(PHPG_GOBJECT(this_ptr)),
-                                       GDK_DISPLAY(PHPG_GOBJECT(display)), socket_id);
-    } else {
-        gtk_plug_construct(GTK_PLUG(PHPG_GOBJECT(this_ptr)), socket_id);
-    }
-
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkPlug);
     }
+
+    if (display) {
+        gtk_plug_construct_for_display(GTK_PLUG(wrapped_obj),
+                                       GDK_DISPLAY(PHPG_GOBJECT(display)), socket_id);
+    } else {
+        gtk_plug_construct(GTK_PLUG(wrapped_obj), socket_id);
+    }
+
+    phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
 
 %% }}}
