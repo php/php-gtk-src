@@ -4932,6 +4932,7 @@ static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, text)
     ZEND_ARG_INFO(0, tooltip_text)
+    ZEND_ARG_INFO(0, tooltip_private_text)
     ZEND_ARG_OBJ_INFO(0, icon, GtkWidget, 1)
     ZEND_ARG_INFO(0, callback)
 ZEND_END_ARG_INFO();
@@ -4986,12 +4987,11 @@ PHP_METHOD
     zval *php_callback, *extra, *icon = NULL;
     phpg_cb_data_t *cb_data;
     GtkSignalFunc callback;
-    char *text = NULL;
-    char *tooltip = NULL;
+    char *text = NULL, *tooltip = NULL, *private_tooltip = NULL;
 
     NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 4, &extra, "ssNV", &text, &tooltip, &icon, gtkwidget_ce, &php_callback))
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 5, &extra, "sssNV", &text, &tooltip, &private_tooltip, &icon, gtkwidget_ce, &php_callback))
         return;
 
     if (php_callback) {
@@ -5005,12 +5005,61 @@ PHP_METHOD
         }
     }
 
+    phpg_warn_deprecated("use GtkToolbar::insert" TSRMLS_CC);
+
     if (Z_TYPE_P(icon) != IS_NULL)
         gtk_toolbar_append_item(GTK_TOOLBAR(PHPG_GOBJECT(this_ptr)),
-                                    text, tooltip, NULL, GTK_WIDGET(PHPG_GOBJECT(icon)), callback, cb_data);
+                                    text, tooltip, private_tooltip, GTK_WIDGET(PHPG_GOBJECT(icon)), callback, cb_data);
     else 
         gtk_toolbar_append_item(GTK_TOOLBAR(PHPG_GOBJECT(this_ptr)),
-                                    text, tooltip, NULL, NULL, callback, cb_data);
+                                    text, tooltip, private_tooltip, NULL, callback, cb_data);
+}
+
+%%
+add-arginfo GtkToolbar prepend_item
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, text)
+    ZEND_ARG_INFO(0, tooltip_text)
+    ZEND_ARG_INFO(0, tooltip_private_text)
+    ZEND_ARG_OBJ_INFO(0, icon, GtkWidget, 1)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_toolbar_prepend_item
+
+PHP_METHOD
+{
+    zval *php_callback, *extra, *icon = NULL;
+    phpg_cb_data_t *cb_data;
+    GtkSignalFunc callback;
+    char *text = NULL, *tooltip = NULL, *private_tooltip = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 5, &extra, "sssNV", &text, &tooltip, &private_tooltip, &icon, gtkwidget_ce, &php_callback))
+        return;
+
+    if (php_callback) {
+        if (Z_TYPE_P(php_callback) == IS_NULL) {
+            cb_data  = NULL;
+            callback = NULL;
+        } else {
+            zval_add_ref(&php_callback);
+            cb_data  = phpg_cb_data_new(php_callback, extra TSRMLS_CC);
+            callback = (GtkSignalFunc)phpg_toolbar_signal_func_marshal;
+        }
+    }
+
+    phpg_warn_deprecated("use GtkToolbar::insert" TSRMLS_CC);
+
+    if (Z_TYPE_P(icon) != IS_NULL)
+        gtk_toolbar_prepend_item(GTK_TOOLBAR(PHPG_GOBJECT(this_ptr)),
+                                    text, tooltip, private_tooltip, GTK_WIDGET(PHPG_GOBJECT(icon)), callback, cb_data);
+    else 
+        gtk_toolbar_prepend_item(GTK_TOOLBAR(PHPG_GOBJECT(this_ptr)),
+                                    text, tooltip, private_tooltip, NULL, callback, cb_data);
 }
 
 %%
