@@ -1,14 +1,14 @@
 <?php
 
-$wÊ= new GtkWindow();
+$w= new GtkWindow();
 $t = new GtkTextBuffer();
 $v = new GtkTextView($t);
 
-$sÊ= new GtkSpell($v);
+$s= new GtkSpell($v);
 $s->set_language('en');
 
-$w->set_title('SpellÊCheck');
-$w->set_size_request(200,Ê200);
+$w->set_title('Spell Check');
+$w->set_size_request(200, 200);
 $w->add($v);
 $w->show_all();
 
