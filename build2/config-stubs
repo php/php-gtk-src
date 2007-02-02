@@ -5,6 +5,8 @@
 dir=$1; shift
 
 echo "sinclude([$dir/gtk+/config.m4])"
-for stubfile in $dir/[!g][!t][!k][!\+]*/config.m4; do
-    echo "sinclude([$stubfile])"
+for stubfile in $dir/*/config.m4; do
+    if ! expr $stubfile : '.*/gtk\+/.*' >/dev/null; then
+        echo "sinclude([$stubfile])"
+    fi
 done
