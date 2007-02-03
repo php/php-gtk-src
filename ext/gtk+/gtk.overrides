@@ -127,7 +127,7 @@ ignore
     gtk_get_event_widget
     gtk_icon_theme_error_quark
     gtk_icon_view_new_with_model
-    gtk_im_context_simple_add_table 
+    gtk_im_context_simple_add_table
     gtk_image_menu_item_new_from_stock
     gtk_image_menu_item_new_with_label
     gtk_image_menu_item_new_with_mnemonic
@@ -399,10 +399,10 @@ PHP_METHOD
     phpg_gtk_idle_add_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 0);
 }
 
-%%          
+%%
 override gtk_idle_add_priority
-PHP_METHOD 
-{           
+PHP_METHOD
+{
     phpg_gtk_idle_add_impl(INTERNAL_FUNCTION_PARAM_PASSTHRU, 1);
 }
 
@@ -799,7 +799,7 @@ PHP_METHOD
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u", &accel_path, &free_accel_path))
         return;
-    
+
     if (gtk_accel_map_lookup_entry((const gchar *)accel_path, &accel_key)) {
         php_gtk_build_value(&return_value, "(ii)", accel_key.accel_key,
                             accel_key.accel_mods);
@@ -816,7 +816,7 @@ PHP_METHOD
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "O", &php_obj, gobject_ce)) {
         return;
     }
-    
+
     list = gtk_accel_groups_from_object(PHPG_GOBJECT(php_obj));
 
     array_init(return_value);
@@ -1626,7 +1626,7 @@ PHP_METHOD
         text[n++] = Z_STRVAL_PP(item);
         zend_hash_move_forward(Z_ARRVAL_P(php_strings));
     }
-    
+
     phpg_warn_deprecated(NULL TSRMLS_CC);
     gtk_clist_append(GTK_CLIST(PHPG_GOBJECT(this_ptr)), text);
 }
@@ -1669,7 +1669,7 @@ PHP_METHOD
         text[n++] = Z_STRVAL_PP(item);
         zend_hash_move_forward(Z_ARRVAL_P(php_strings));
     }
-    
+
     phpg_warn_deprecated(NULL TSRMLS_CC);
     gtk_clist_insert(GTK_CLIST(PHPG_GOBJECT(this_ptr)), row, text);
 }
@@ -1712,7 +1712,7 @@ PHP_METHOD
         text[n++] = Z_STRVAL_PP(item);
         zend_hash_move_forward(Z_ARRVAL_P(php_strings));
     }
-    
+
     phpg_warn_deprecated(NULL TSRMLS_CC);
     gtk_clist_prepend(GTK_CLIST(PHPG_GOBJECT(this_ptr)), text);
 }
@@ -1913,17 +1913,17 @@ override gtk_color_selection_palette_to_string
 PHP_METHOD
 {
     GdkColor *colors = NULL;
-    zval *php_colors; 
+    zval *php_colors;
     int n_colors, i;
     zval **elem;
     gchar *ret, *cp_ret;
     gsize cp_len;
     zend_bool free_result;
-        
+
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_colors)) {
         return;
     }
-        
+
     n_colors = zend_hash_num_elements(Z_ARRVAL_P(php_colors));
     colors = safe_emalloc(n_colors, sizeof(GdkColor), 0);
 
@@ -2314,10 +2314,10 @@ PHP_METHOD
     vector = safe_emalloc(num, sizeof(gfloat *), 0);
 
     gtk_curve_get_vector(GTK_CURVE(PHPG_GOBJECT(this_ptr)), num, vector);
-    
+
     array_init(return_value);
     for (i = 0; i < num; i++) {
-        add_next_index_double(return_value, vector[i]); 
+        add_next_index_double(return_value, vector[i]);
     }
 }
 
@@ -2336,10 +2336,10 @@ PHP_METHOD
         return;
 
     num = zend_hash_num_elements(Z_ARRVAL_P(points));
-    vectors = safe_emalloc(num, sizeof(gfloat *), 0); 
+    vectors = safe_emalloc(num, sizeof(gfloat *), 0);
 
     zend_hash_internal_pointer_reset(Z_ARRVAL_P(points));
-    while (zend_hash_get_current_data(Z_ARRVAL_P(points), (void **)&data) 
+    while (zend_hash_get_current_data(Z_ARRVAL_P(points), (void **)&data)
             == SUCCESS) {
         if (Z_TYPE_PP(data) != IS_DOUBLE) {
             php_error(E_WARNING, "%s::%s(): each point must be a float value.",
@@ -2614,20 +2614,20 @@ PHP_METHOD
         return;
 
     ichar = gtk_entry_get_invisible_char(GTK_ENTRY(PHPG_GOBJECT(this_ptr)));
-    
+
     if (ichar) {
         len = g_unichar_to_utf8(ichar, ret);
         cp_ret = phpg_from_utf8(ret, len, &cp_len, &free_result TSRMLS_CC);
-        
+
         if (cp_ret) {
             RETVAL_STRINGL((char *)cp_ret, cp_len, 1);
         } else {
             php_error(E_WARNING, "%s::%s(): could not convert return value from UTF-8", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
         }
-        
-        if (free_result) 
+
+        if (free_result)
             g_free(cp_ret);
-        else 
+        else
             RETVAL_STRINGL((char *)ichar, len, 1);
     } else {
         RETVAL_NULL();
@@ -2635,6 +2635,13 @@ PHP_METHOD
 
     efree(ret);
 }
+
+%%
+add-arginfo GtkEntry set_invisible_char
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, char)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_entry_set_invisible_char
@@ -2648,7 +2655,7 @@ PHP_METHOD
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u", &getchar, &free_char))
         return;
-  
+
     setchar = g_utf8_get_char((const gchar*)getchar);
     gtk_entry_set_invisible_char(GTK_ENTRY(PHPG_GOBJECT(this_ptr)), setchar);
 
@@ -2825,10 +2832,10 @@ PHP_METHOD
 
     NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert)) 
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert))
         return;
 
-    selections = gtk_file_selection_get_selections(GTK_FILE_SELECTION(PHPG_GOBJECT(this_ptr))); 
+    selections = gtk_file_selection_get_selections(GTK_FILE_SELECTION(PHPG_GOBJECT(this_ptr)));
 
     if (selections) {
         array_init(return_value);
@@ -2875,7 +2882,7 @@ PHP_METHOD
 
     NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert)) 
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert))
         return;
 
     php_retval = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(PHPG_GOBJECT(this_ptr)));
@@ -2919,7 +2926,7 @@ PHP_METHOD
 
     NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert)) 
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert))
         return;
 
     array_init(return_value);
@@ -3006,7 +3013,7 @@ PHP_METHOD
 
     NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert)) 
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert))
         return;
 
     array_init(return_value);
@@ -3051,7 +3058,7 @@ PHP_METHOD
 
     NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert)) 
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert))
         return;
 
     array_init(return_value);
@@ -3623,7 +3630,7 @@ PHP_METHOD
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|uO", &stock_id, &free_stock_id, &php_accel_group, gtkaccelgroup_ce)) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(GtkImageMenuItem);
 	}
-    
+
     if (php_accel_group) {
         accel_group = GTK_ACCEL_GROUP(PHPG_GOBJECT(php_accel_group));
     }
@@ -3895,7 +3902,7 @@ PHP_METHOD
         zval_add_ref(&callback);
         data = phpg_cb_data_new(callback, user_args TSRMLS_CC);
 
-        gtk_menu_popup(GTK_MENU(PHPG_GOBJECT(this_ptr)), pms, pmi, 
+        gtk_menu_popup(GTK_MENU(PHPG_GOBJECT(this_ptr)), pms, pmi,
         (GtkMenuPositionFunc)php_gtk_menu_position, data, button, time);
 
     } else {
@@ -4949,7 +4956,7 @@ static gboolean phpg_toolbar_signal_func_marshal(GtkWidget *widget, gpointer dat
     char *callback_name;
     zval *php_widget = NULL;
     zend_bool toreturn;
-    
+
     TSRMLS_FETCH();
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
@@ -5010,7 +5017,7 @@ PHP_METHOD
     if (Z_TYPE_P(icon) != IS_NULL)
         gtk_toolbar_append_item(GTK_TOOLBAR(PHPG_GOBJECT(this_ptr)),
                                     text, tooltip, private_tooltip, GTK_WIDGET(PHPG_GOBJECT(icon)), callback, cb_data);
-    else 
+    else
         gtk_toolbar_append_item(GTK_TOOLBAR(PHPG_GOBJECT(this_ptr)),
                                     text, tooltip, private_tooltip, NULL, callback, cb_data);
 }
@@ -5057,7 +5064,7 @@ PHP_METHOD
     if (Z_TYPE_P(icon) != IS_NULL)
         gtk_toolbar_prepend_item(GTK_TOOLBAR(PHPG_GOBJECT(this_ptr)),
                                     text, tooltip, private_tooltip, GTK_WIDGET(PHPG_GOBJECT(icon)), callback, cb_data);
-    else 
+    else
         gtk_toolbar_prepend_item(GTK_TOOLBAR(PHPG_GOBJECT(this_ptr)),
                                     text, tooltip, private_tooltip, NULL, callback, cb_data);
 }
@@ -5175,7 +5182,7 @@ PHP_METHOD
 
 
 %%
-override gtk_ui_manager_get_action_groups 
+override gtk_ui_manager_get_action_groups
 
 PHP_METHOD
 {
@@ -5526,8 +5533,8 @@ PHP_METHOD
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Va", &php_selection, &php_targets)) {
         return;
     }
-    
-    selection = phpg_gdkatom_from_zval(php_targets TSRMLS_CC); 
+
+    selection = phpg_gdkatom_from_zval(php_targets TSRMLS_CC);
     if (selection == NULL) {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "target argument has to be a valid GdkAtom");
         return;

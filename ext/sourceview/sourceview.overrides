@@ -21,6 +21,77 @@ constants
 ignore-glob
   *_get_type
 
+%% {{{ GtkSourceBuffer
+
+%%
+override gtk_source_buffer_get_escape_char
+PHP_METHOD
+{
+    gunichar ichar;
+    gint len;
+    gchar *ret = safe_emalloc(6, sizeof(gchar *), 0);
+    gchar *cp_ret;
+    gsize cp_len;
+    zend_bool free_result = FALSE;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    ichar = gtk_source_buffer_get_escape_char(GTK_SOURCE_BUFFER(PHPG_GOBJECT(this_ptr)));
+
+    if (ichar) {
+        len = g_unichar_to_utf8(ichar, ret);
+        cp_ret = phpg_from_utf8(ret, len, &cp_len, &free_result TSRMLS_CC);
+
+        if (cp_ret) {
+            RETVAL_STRINGL((char *)cp_ret, cp_len, 1);
+        } else {
+            php_error(E_WARNING, "%s::%s(): could not convert return value from UTF-8", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        }
+
+        if (free_result)
+            g_free(cp_ret);
+        else
+            RETVAL_STRINGL((char *)ichar, len, 1);
+    } else {
+        RETVAL_NULL();
+    }
+
+    efree(ret);
+}
+
+%%
+add-arginfo GtkSourceBuffer set_escape_char
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, char)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_source_buffer_set_escape_char
+PHP_METHOD
+{
+    char *getchar;
+    gunichar setchar;
+    zend_bool free_char = FALSE;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u", &getchar, &free_char))
+        return;
+
+    setchar = g_utf8_get_char((const gchar*)getchar);
+    gtk_source_buffer_set_escape_char(GTK_SOURCE_BUFFER(PHPG_GOBJECT(this_ptr)), setchar);
+
+    if (free_char)
+        efree(getchar);
+}
+
+%% }}}
+%% {{{ GtkSourceLanguagesManager
+
 %%
 override gtk_source_languages_manager_get_available_languages
 PHP_METHOD
@@ -42,11 +113,53 @@ PHP_METHOD
     }
 }
 
+%% }}}
+%% {{{ GtkSourceLanguage
+
+%%
+override gtk_source_language_get_escape_char
+PHP_METHOD
+{
+    gunichar ichar;
+    gint len;
+    gchar *ret = safe_emalloc(6, sizeof(gchar *), 0);
+    gchar *cp_ret;
+    gsize cp_len;
+    zend_bool free_result = FALSE;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    ichar = gtk_source_language_get_escape_char(GTK_SOURCE_LANGUAGE(PHPG_GOBJECT(this_ptr)));
+
+    if (ichar) {
+        len = g_unichar_to_utf8(ichar, ret);
+        cp_ret = phpg_from_utf8(ret, len, &cp_len, &free_result TSRMLS_CC);
+
+        if (cp_ret) {
+            RETVAL_STRINGL((char *)cp_ret, cp_len, 1);
+        } else {
+            php_error(E_WARNING, "%s::%s(): could not convert return value from UTF-8", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        }
+
+        if (free_result)
+            g_free(cp_ret);
+        else
+            RETVAL_STRINGL((char *)ichar, len, 1);
+    } else {
+        RETVAL_NULL();
+    }
+
+    efree(ret);
+}
+
 %%
 override gtk_source_language_get_mime_types
 PHP_METHOD
 {
-    GSList *list; 
+    GSList *list;
 
     NOT_STATIC_METHOD();
 
@@ -83,3 +196,5 @@ PHP_METHOD
         add_next_index_zval(return_value, item);
     }
 }
+
+%% }}}
