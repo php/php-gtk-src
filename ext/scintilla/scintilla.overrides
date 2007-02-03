@@ -30,7 +30,7 @@ PHP_METHOD
     text = safe_emalloc(length, sizeof(char), 0);
 
     result = gtk_scintilla_get_text(GTK_SCINTILLA(PHPG_GOBJECT(this_ptr)), length, text);
-    
+
     if(result) {
         RETVAL_STRINGL(text, length-1, 1);
     }
@@ -50,7 +50,7 @@ PHP_METHOD
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u", &utf8, &free_utf8))
         return;
-    
+
     text = phpg_from_utf8(utf8, strlen(utf8), &len, &free_text TSRMLS_CC);
 
     gtk_scintilla_set_text(GTK_SCINTILLA(PHPG_GOBJECT(this_ptr)), text);
@@ -86,7 +86,7 @@ PHP_METHOD
     utf = safe_emalloc(length, sizeof(gchar), 0);
     gtk_scintilla_get_cur_line(scintilla, length, utf);
     text = phpg_from_utf8(utf, strlen(utf), &tlen, &free_result TSRMLS_CC);
-    
+
     if (text) {
         RETVAL_STRINGL((char *)text, tlen, 1);
     } else {
@@ -115,12 +115,12 @@ PHP_METHOD
 
     GtkScintilla *scintilla = GTK_SCINTILLA(PHPG_GOBJECT(this_ptr));
 
-    length = gtk_scintilla_get_selection_end(scintilla) - 
+    length = gtk_scintilla_get_selection_end(scintilla) -
                 gtk_scintilla_get_selection_start(scintilla) + 1;
     text = safe_emalloc(length, sizeof(gchar), 0);
     text[length-1] = 0;
     gtk_scintilla_get_sel_text(scintilla, text);
-    
+
     RETVAL_STRINGL(text, length-1, 0);
 
     if (free_text)
