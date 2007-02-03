@@ -113,6 +113,26 @@ PHP_METHOD
     }
 }
 
+%%
+override gtk_source_languages_manager_get_lang_files_dirs
+PHP_METHOD
+{
+    const GSList *list;
+    zval *item;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    array_init(return_value);
+    for (list = gtk_source_languages_manager_get_lang_files_dirs(GTK_SOURCE_LANGUAGES_MANAGER(PHPG_GOBJECT(this_ptr))); list; list = list->next) {
+        MAKE_STD_ZVAL(item);
+        add_next_index_string(return_value, (char *) list->data, 1);
+    }
+}
+
 %% }}}
 %% {{{ GtkSourceLanguage
 
