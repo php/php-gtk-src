@@ -114,22 +114,44 @@ PHP_METHOD
 }
 
 %%
+add-arginfo GtkSourceLanguagesManager get_lang_files_dirs
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, convert)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_source_languages_manager_get_lang_files_dirs
 PHP_METHOD
 {
     const GSList *list;
-    zval *item;
+    gchar *fn = NULL;
+    gchar *cp = NULL;
+    gsize cp_len = 0;
+    zend_bool free_cp = FALSE;
+    zend_bool convert = 1;
 
     NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert)) {
         return;
     }
 
     array_init(return_value);
     for (list = gtk_source_languages_manager_get_lang_files_dirs(GTK_SOURCE_LANGUAGES_MANAGER(PHPG_GOBJECT(this_ptr))); list; list = list->next) {
-        MAKE_STD_ZVAL(item);
-        add_next_index_string(return_value, (char *) list->data, 1);
+        if (convert) {
+            fn = g_filename_to_utf8((char *) list->data, strlen((char *) list->data), NULL, NULL, NULL);
+            cp = phpg_from_utf8(fn, strlen(fn), &cp_len, &free_cp TSRMLS_CC);
+            if (cp) {
+                add_next_index_string(return_value, (char *)cp, 1);
+            } else {
+                php_error(E_WARNING, "%s::%s(): could not convert return value from UTF-8", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+            }
+            if (free_cp)
+                g_free(cp);
+        } else {
+            add_next_index_string(return_value, (char *) list->data, 1);
+        }
     }
 }
 
@@ -221,16 +243,44 @@ PHP_METHOD
 %% {{{ GtkSourceStyleScheme
 
 %%
+add-arginfo GtkSourceStyleScheme get_style_names
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, convert)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_source_style_scheme_get_style_names
 PHP_METHOD
 {
     GSList *schemes;
+    gchar *fn = NULL;
+    gchar *cp = NULL;
+    gsize cp_len = 0;
+    zend_bool free_cp = FALSE;
+    zend_bool convert = 1;
 
     NOT_STATIC_METHOD();
 
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|b", &convert)) {
+        return;
+    }
+
     array_init(return_value);
     for (schemes = gtk_source_style_scheme_get_style_names(GTK_SOURCE_STYLE_SCHEME(PHPG_GOBJECT(this_ptr))); schemes; schemes = schemes->next) {
-        add_next_index_string(return_value, (char *) schemes->data, 1);
+        if (convert) {
+            fn = g_filename_to_utf8((char *) schemes->data, strlen((char *) schemes->data), NULL, NULL, NULL);
+            cp = phpg_from_utf8(fn, strlen(fn), &cp_len, &free_cp TSRMLS_CC);
+            if (cp) {
+                add_next_index_string(return_value, (char *)cp, 1);
+            } else {
+                php_error(E_WARNING, "%s::%s(): could not convert return value from UTF-8", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+            }
+            if (free_cp)
+                g_free(cp);
+        } else {
+            add_next_index_string(return_value, (char *) schemes->data, 1);
+        }
         g_free(schemes->data);
     }
     g_slist_free(schemes);
