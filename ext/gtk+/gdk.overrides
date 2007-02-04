@@ -523,6 +523,21 @@ PHP_METHOD
 %% {{{ GdkDisplay
 
 %%
+override gdk_display_get_maximal_cursor_size
+PHP_METHOD
+{
+    gint width, height;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gdk_display_get_maximal_cursor_size(GDK_DISPLAY(PHPG_GOBJECT(this_ptr)), &width, &height);
+    php_gtk_build_value(&return_value, "(ii)", width, height);
+}
+
+%%
 override gdk_display_get_window_at_pointer
 PHP_METHOD
 {
@@ -1853,13 +1868,13 @@ PHP_METHOD
                     alpha = 127 - gd->alpha[pixel];
                 }
 #ifdef WORDS_BIGENDIAN
-                data[c++] = (gd->red[pixel]   << 24) | 
-                            (gd->blue[pixel]  << 16) | 
+                data[c++] = (gd->red[pixel]   << 24) |
+                            (gd->blue[pixel]  << 16) |
                             (gd->green[pixel] << 8)  |
                             ((alpha << 1) + (alpha >> 6));
 #else
                 data[c++] = (((alpha << 1) + (alpha >> 6)) << 24) |
-                            (gd->blue[pixel]               << 16) | 
+                            (gd->blue[pixel]               << 16) |
                             (gd->green[pixel]              << 8)  |
                             (gd->red[pixel]);
 #endif
