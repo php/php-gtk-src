@@ -95,6 +95,35 @@ PHP_METHOD
     g_list_free(list);
 }
 
+%%
+override gdk_query_depths
+PHP_METHOD
+{
+    gint *depths, count, i;
+
+    gdk_query_depths(&depths, &count);
+
+    array_init(return_value);
+    for (i = 0; i < count; i++) {
+        add_next_index_long(return_value, depths[i]);
+    }
+}
+
+%%
+override gdk_query_visual_types
+PHP_METHOD
+{
+    GdkVisualType *visual_types;
+    gint count, i;
+
+    gdk_query_visual_types(&visual_types, &count);
+
+    array_init(return_value);
+    for (i = 0; i < count; i++) {
+        add_next_index_long(return_value, visual_types[i]);
+    }
+}
+
 %% }}}
 
 %% {{{ GdkColor
@@ -2677,6 +2706,22 @@ PHP_METHOD
     g_list_free(list);
 }
 
+
+%%
+override gdk_window_get_deskrelative_origin
+PHP_METHOD
+{
+    gint x, y;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gdk_window_get_deskrelative_origin(GDK_WINDOW(PHPG_GOBJECT(this_ptr)), &x, &y);
+    phpg_warn_deprecated(NULL TSRMLS_CC);
+    php_gtk_build_value(&return_value, "(ii)", x, y);
+}
 
 %%
 override gdk_window_get_frame_extents
