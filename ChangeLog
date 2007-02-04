@@ -1,3 +1,42 @@
+2007-02-03  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtktreeview.overrides
+      ext/scintilla/scintilla.overrides:
+      GtkCellRenderer::get_size()
+
+    * ext/sourceview/sourceview.overrides:
+      GtkSourceLanguagesManager::get_lang_files_dirs()
+
+    * ext/sourceview/sourceview.overrides:
+      I can't test it, but it compiles and should work
+
+    * ext/scintilla/.cvsignore
+      ext/sourceview/.cvsignore
+      ext/spell/.cvsignore:
+      add cvsignore for spell
+
+    * ext/scintilla/.cvsignore
+      ext/sourceview/.cvsignore:
+      cvsignore for scintilla and sourceview
+
+    * ext/gtk+/gtk.overrides
+      ext/sourceview/sourceview.overrides:
+      Add arginfo for GtkEntry::set_invisible_char
+      Implement GtkSourceBuffer::{g,s}et_escape_char
+      Implement GtkSourceLanguage::get_escape_char
+
+2007-02-03  Anant Narayanan  <anant@kix.in>
+
+    * build2/config-stubs:
+      Revert to ugly matching
+
+2007-02-03  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/spell/README
+      ext/spell/config.w32:
+      Fixed windows config to reflect removed file, added windows information to
+      readme
+
 2007-02-02  Anant Narayanan  <anant@kix.in>
 
     * ext/gtk+/pango.overrides:
