@@ -41,6 +41,7 @@ ignore
     GdkColorInfoFlags
 %%
 ignore
+    gdk_device_free_history
     gdk_draw_rgb_image_dithalign
     gdk_draw_rgb_32_image_dithalign
     gdk_gc_new2
