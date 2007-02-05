@@ -18,10 +18,7 @@ PHP_METHOD
 }
 
 %%
-ignore
-    pango_font_description_new_from_string
-    pango_font_description_free
-    pango_font_descriptions_free
+ignore pango_font_description_new_from_string
 
 %%
 add-arginfo PangoFontDescription __construct
@@ -56,6 +53,29 @@ PHP_METHOD
     pobj->boxed = wrapped_obj;
     pobj->free_on_destroy = TRUE;
 }
+
+%% {{{ PangoFontFace
+
+%%
+override pango_font_face_list_sizes
+PHP_METHOD
+{
+    int *sizes, n_sizes, i;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    pango_font_face_list_sizes(PANGO_FONT_FACE(PHPG_GOBJECT(this_ptr)), &sizes, &n_sizes);
+
+    array_init(return_value);
+    for (i = 0; i < n_sizes; i++) {
+        add_next_index_long(return_value, sizes[i]);
+    }
+
+    g_free(sizes);
+}
+
+%% }}}
 
 %% {{{ PangoLayout
 
