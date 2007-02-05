@@ -23,69 +23,34 @@ Base Functionality
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
-* GtkClipboard
-	method      GtkClipboard::request_contents: unknown type 'GtkClipboardReceivedFunc'
-	method      GtkClipboard::request_targets: unknown type 'GtkClipboardTargetsReceivedFunc'
-	method      GtkClipboard::request_text: unknown type 'GtkClipboardTextReceivedFunc'
-	method      GtkClipboard::set_can_store: unknown type 'const-GtkTargetEntry*'
-	method      GtkClipboard::set_with_data: unknown type 'const-GtkTargetEntry*'
-	method      GtkClipboard::set_with_owner: unknown type 'const-GtkTargetEntry*'
-	method      GtkClipboard::wait_for_targets: unknown type 'GdkAtom**'
-* GtkComboBox
-    method    GtkComboBox::get_row_separator_func: unknown type 'GtkTreeViewRowSeparatorFunc'
+See all missing functions in the implementation coverage
+analysis at http://php-gtk2.de/manual/classcoverage.htm
+
 * GdkGC
 	implement property access (read/write)
 * GtkIconInfo
     get_embedded_rect NTRVNRP
-* GtkIconTheme
-	method      GtkIconTheme::get_icon_sizes: unknown type 'gint*'
-	method      GtkIconTheme::get_search_path: unknown type 'gchar**[]'
-	method      GtkIconTheme::set_search_path: unknown type 'const-gchar*[]'
 * GtkLabel
 	Would it be good to call GtkLabel::set_ellipsize(PANGO::ELLIPSIZE_END) as part
 	of an override for (left-justifying) GtkLabel::set_width_chars() (optional param)?
-* GtkListStore
-	method      GtkListStore::insert_with_values: varargs methods not supported
-	method      GtkListStore::insert_with_valuesv: unknown type 'gint*'
-	method      GtkListStore::reorder: unknown type 'gint*'
-	method      GtkListStore::set_column_types: unknown type 'GType*'
-	method      GtkListStore::set_value: unknown type 'GValue*'
-* GtkRadioToolButton
-    3 new_* methods are missing
-* GtkSelectionData
-    method      GtkSelectionData::get_targets: unknown type 'GdkAtom**'
-    method      GtkSelectionData::get_uris: unknown type 'gchar**'
-    method      GtkSelectionData::set_uris: unknown type 'gchar**'
-    method      GtkSelectionData::tree_get_row_drag_data: unknown type 'GtkTreeModel**'
 * GtkTreeModel
 	method      GtkTreeModel::rows_reordered: unknown type 'gint*'
 	maybe implement some SPL interfaces?
 * GtkTreeModelFilter
     memleak when using get_property('virtual-root')
     second constructor parameter doesn't work (see unit test)
-* GtkTreeStore
-	method      GtkTreeStore::reorder: unknown type 'gint*'
-	method      GtkTreeStore::set_column_types: unknown type 'GType*'
-	method      GtkTreeStore::set_value: unknown type 'GValue*'
-* GtkTreeView
-	method      GtkTreeView::enable_model_drag_dest: unknown type 'const-GtkTargetEntry*'
-	method      GtkTreeView::enable_model_drag_source: unknown type 'const-GtkTargetEntry*'
-	method      GtkTreeView::get_dest_row_at_pos: unknown type 'GtkTreePath**'
-	method      GtkTreeView::get_drag_dest_row: unknown type 'GtkTreePath**'
-	method      GtkTreeView::get_row_separator_func: unknown type 'GtkTreeViewRowSeparatorFunc'
-	method      GtkTreeView::get_search_equal_func: unknown type 'GtkTreeViewSearchEqualFunc'
-	method      GtkTreeView::insert_column_with_attributes: varargs methods not supported
-	method      GtkTreeView::map_expanded_rows: unknown type 'GtkTreeViewMappingFunc'
-	method      GtkTreeView::set_destroy_count_func: unknown type 'GtkTreeDestroyCountFunc'
 * GtkTextBuffer
-	method      GtkTextBuffer::create_tag: varargs methods not supported
-	method      GtkTextBuffer::insert_with_tags: varargs methods not supported
-	method      GtkTextBuffer::insert_with_tags_by_name: varargs methods not supported
 	GtkTextBuffer::move_mark_by_name('selection_bound', ...) moves both the
 	insert and select_bound marks
 		(method is generated, need to test this)
-* GtkPlug/GtkSocket
 * Support (array) cast for GtkTreeModelRow and possibly unset()
+
+
+Extensions
+~~~~~~~~~~
+- Migrate Scintilla bindings to direclty use scintilla,
+  not GtkScintilla (which is unmaintained)
+  See Tom's patches
 
 Fix
 ~~~
