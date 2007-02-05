@@ -18,7 +18,10 @@ PHP_METHOD
 }
 
 %%
-ignore pango_font_description_new_from_string
+ignore
+    pango_font_description_new_from_string
+    pango_font_description_free
+    pango_font_descriptions_free
 
 %%
 add-arginfo PangoFontDescription __construct
