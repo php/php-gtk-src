@@ -44,6 +44,10 @@ ignore
     gdk_device_free_history
     gdk_draw_rgb_image_dithalign
     gdk_draw_rgb_32_image_dithalign
+    gdk_drawable_draw_text_wc
+    gdk_font_char_width_wc
+    gdk_font_text_extents_wc
+    gdk_font_text_width_wc
     gdk_gc_new2
     gdk_pixbuf_new_from_array
     gdk_pixbuf_new_from_inline
