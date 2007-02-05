@@ -2195,18 +2195,22 @@
   (return-type "GdkColorspace")
 )
 
-(define-function pixbuf_get_file_info
+(define-method pixbuf_get_file_info
+  (of-object "GdkPixbuf")
   (c-name "gdk_pixbuf_get_file_info")
   (return-type "GdkPixbufFormat*")
   (parameters
     '("gint*" "width")
     '("gint*" "height")
   )
+  (static #t)
 )
 
-(define-function pixbuf_get_formats
+(define-method pixbuf_get_formats
+  (of-object "GdkPixbuf")
   (c-name "gdk_pixbuf_get_formats")
   (return-type "GSList*")
+  (static #t)
 )
 
 (define-method get_from_drawable

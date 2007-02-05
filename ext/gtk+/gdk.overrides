@@ -58,6 +58,19 @@ ignore
 %% {{{ Gdk
 
 %%
+override gdk_keyval_convert_case
+PHP_METHOD
+{
+    guint symbol, upper, lower = 0;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &symbol))
+        return;
+
+    gdk_keyval_convert_case(symbol, &lower, &upper);
+    php_gtk_build_value(&return_value, "(ii)", lower, upper);
+}
+
+%%
 override gdk_devices_list
 PHP_METHOD
 {
