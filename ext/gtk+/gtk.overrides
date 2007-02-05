@@ -54,6 +54,7 @@ ignore
     gtk_accel_group_handle_remove
     gtk_accel_group_lock_entry
     gtk_accel_group_new
+    gtk_accel_group_query
     gtk_accel_group_ref
     gtk_accel_group_remove
     gtk_accel_group_unlock_entry
