@@ -204,6 +204,7 @@ ignore
     gtk_rc_parse_color
     gtk_rc_parse_state
     gtk_rc_parse_priority
+    gtk_rc_set_default_files
     gtk_set_locale
     gtk_settings_install_property
     gtk_settings_set_property_value
