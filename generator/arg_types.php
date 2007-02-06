@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -48,7 +48,7 @@ function enum_name($typename)
 
 /*======================================================================*\
     Class:   Var_List
-    Purpose: Format C variable list 
+    Purpose: Format C variable list
 \*======================================================================*/
 class Var_List {
     var $vars = array();
@@ -99,7 +99,7 @@ class Wrapper_Info {
     {
         return implode(', ', $this->arg_list);
     }
-    
+
     function get_parse_list()
     {
         return implode(', ', $this->parse_list);
@@ -125,7 +125,7 @@ class Arg_Type {
     {
         throw new Exception("write_param() not implemented for " . get_class($this));
     }
-    
+
     function write_return($type, $owns_return, $info)
     {
         throw new Exception("write_return() not implemented for " . get_class($this));
@@ -168,7 +168,7 @@ class String_Arg extends Arg_Type {
         $info->arg_list[] = $name;
         $info->post_code[] = "\tif (free_$name) g_free($name);\n";
     }
-    
+
     function write_return($type, $owns_return, $info)
     {
         if ($owns_return) {
@@ -176,7 +176,7 @@ class String_Arg extends Arg_Type {
             $info->var_list->add('gchar', '*cp_ret');
             $info->var_list->add('gsize', 'cp_len');
             $info->var_list->add('zend_bool', 'free_result');
-            $info->post_code[] = 
+            $info->post_code[] =
                    "    if (php_retval) {\n"                        .
                    "        cp_ret = phpg_from_utf8(php_retval, strlen(php_retval), &cp_len, &free_result TSRMLS_CC);\n" .
                    "        if (cp_ret) {\n"                        .
@@ -194,7 +194,7 @@ class String_Arg extends Arg_Type {
             $info->var_list->add('gchar', '*cp_ret');
             $info->var_list->add('gsize', 'cp_len');
             $info->var_list->add('zend_bool', 'free_result');
-            $info->post_code[] = 
+            $info->post_code[] =
                    "    if (php_retval) {\n"                           .
                    "        cp_ret = phpg_from_utf8(php_retval, strlen(php_retval), &cp_len, &free_result TSRMLS_CC);\n" .
                    "        if (cp_ret) {\n"                        .
@@ -223,7 +223,7 @@ class Char_Arg extends Arg_Type {
         $info->arg_list[] = $name;
         $info->add_parse_list('c', '&' . $name);
     }
-    
+
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add('gchar', 'php_retval');
@@ -243,7 +243,7 @@ class Int_Arg extends Arg_Type {
         $info->arg_list[] = "($type)$name";
         $info->add_parse_list('i', '&' . $name);
     }
-    
+
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add('long', 'php_retval');
@@ -277,7 +277,7 @@ class Bool_Arg extends Arg_Type {
         $info->arg_list[] = "($type)$name";
         $info->add_parse_list('b', '&' . $name);
     }
-    
+
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add('gboolean', 'php_retval');
@@ -316,7 +316,7 @@ class Double_Arg extends Arg_Type {
         else
           $info->arg_list[] = $name;
     }
-    
+
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add('double', 'php_retval');
@@ -365,7 +365,7 @@ class Enum_Arg extends Arg_Type {
                                           'name' => $name,
                                           'on_error' => $info->error_action));
     }
-    
+
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add('long', 'php_retval');
@@ -399,7 +399,7 @@ class Flags_Arg extends Arg_Type {
                                                            'name' => $name,
                                                            'on_error' => $info->error_action));
     }
-    
+
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add('long', 'php_retval');
@@ -581,7 +581,7 @@ class Object_Arg extends Arg_Type {
             }
         }
     }
-    
+
     function write_return($type, $owns_return, $info)
     {
         $info->var_list->add($type, 'php_retval');
@@ -761,7 +761,7 @@ class Atom_Arg extends Int_Arg {
 
 /* {{{ Drawable_Arg */
 /* This is a hack -- the $default handling doesn't work, neither does
-   write_return(). */ 
+   write_return(). */
 class Drawable_Arg extends Arg_Type {
     var $type = 'GdkDrawable';
 
@@ -862,31 +862,34 @@ class GdkRectangle_Arg extends Arg_Type {
 /* {{{ GdkRectanglePtr_Arg */
 class GdkRectanglePtr_Arg extends Arg_Type {
     const check_tpl = "
-    if (phpg_rectangle_from_zval(php_%(name), &%(name) TSRMLS_CC) == FAILURE) {
+    if (phpg_rectangle_from_zval(php_%(name), (GdkRectangle*)&%(name) TSRMLS_CC) == FAILURE) {
         php_error(E_WARNING, \"%s::%s() expects %(name) argument to be either a 4-element array or a GdkRectangle object\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
         %(on_error);
     }";
     const check_null_tpl = "
     if (Z_TYPE_P(php_%(name)) == IS_NULL) {
         %(name) = NULL;
-    } else if (phpg_rectangle_from_zval(php_%(name), &%(name)_arg TSRMLS_CC) == SUCCESS) {
+    } else if (phpg_rectangle_from_zval(php_%(name), (GdkRectangle*)&%(name)_arg TSRMLS_CC) == SUCCESS) {
         %(name) = &%(name)_arg;
     } else {
         php_error(E_WARNING, \"%s::%s() expects %(name) argument to be a 4-element array, a GdkRectangle object, or null\", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
         %(on_error);
     }";
+    function __construct($type = 'GdkRectangle') {
+        $this->classtype = $type;
+    }
     function write_param($type, $name, $default, $null_ok, $info)
     {
         if ($null_ok) {
-            $info->var_list->add('GdkRectangle', $name . '_arg = { 0, 0, 0, 0 }');
-            $info->var_list->add('GdkRectangle', '*' . $name);
+            $info->var_list->add($this->classtype, $name . '_arg = { 0, 0, 0, 0 }');
+            $info->var_list->add($this->classtype, '*' . $name);
             $info->var_list->add('zval', '*php_' . $name . ' = NULL');
             $info->add_parse_list('V', '&php_' . $name);
             $info->arg_list[] = $name;
             $info->pre_code[] = aprintf(self::check_null_tpl, array('name' => $name,
                                                                     'on_error' => $info->error_action));
         } else {
-            $info->var_list->add('GdkRectangle', $name . ' = { 0, 0, 0, 0 }');
+            $info->var_list->add($this->classtype, $name . ' = { 0, 0, 0, 0 }');
             $info->var_list->add('zval', '*php_' . $name);
             $info->add_parse_list('V', '&php_' . $name);
             $info->arg_list[] = '&' . $name;
@@ -1117,9 +1120,12 @@ $matcher->register('gdouble', $arg);
 $matcher->register('float', $arg);
 $matcher->register('gfloat', $arg);
 
-$arg = new GdkRectanglePtr_Arg();
+$arg = new GdkRectanglePtr_Arg('GdkRectangle');
 $matcher->register('GdkRectangle*', $arg);
 $matcher->register('GtkAllocation*', $arg);
+
+$arg = new GdkRectanglePtr_Arg('PangoRectangle');
+$matcher->register('PangoRectangle*', $arg);
 
 $matcher->register('GdkRectangle', new GdkRectangle_Arg);
 
