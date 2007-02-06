@@ -1,3 +1,53 @@
+2007-02-05  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gdk.overrides:
+      ignore widechar methods; we're using utf8
+
+2007-02-05  Anant Narayanan  <anant@kix.in>
+
+    * ext/gtk+/pango.overrides:
+      Oops. I hate emacs
+
+    * ext/gtk+/pango.overrides:
+      PangoFontFace::list_sizes(). Don't know how to test it yet, but it compile
+      fine.
+
+2007-02-05  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * build2/config-stubs:
+      Make cross-shell compatible.
+
+2007-02-05  Christian Weiske  <cweiske@cweiske.de>
+
+    * ext/gtk+/gtk.overrides:
+      gtk_idle_add_full isn't needed, since gtk_idle_add and _priority have
+      everything a php programmer needs
+
+    * ext/gtk+/gtk.overrides:
+      Ignoring gtk_accel_group_query since it is marked as "internal"
+      in gtk sources, and returns a list of accelgroupentry structs
+      that don't have any value for php-gtk programmers since they contain
+      only the key that was supplied to query() anyway, a closure that
+      cannot be used here and a quark.
+
+    * ext/gtk+/gtk.overrides:
+      files set by gtk_rc_set_default_files are called at the
+      end of gtk_init. Since php-gtk calls this method instantly without
+      executing any other userland code before, we don't need this
+      method at all
+
+    * ext/gtk+/gdk.defs:
+      Should shorten names, too
+
+    * ext/gtk+/gdk.defs
+      ext/gtk+/gdk.overrides:
+      Gdk::keyval_convert_case
+      move some static methods to pixbuf
+
+    * TODO2:
+      Removing information that is already in coverage analysis
+      add scintilla note
+
 2007-02-04  Christian Weiske  <cweiske@cweiske.de>
 
     * ext/sourceview/sourceview.overrides:
