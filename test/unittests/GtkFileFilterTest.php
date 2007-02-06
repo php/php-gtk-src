@@ -48,6 +48,33 @@ class GtkFileFilterTest extends PHPUnit_Framework_TestCase {
     protected function tearDown() {
     }
 
+    public function testAdd_custom() {
+        $info = array(
+            '/data/test.txt',
+            'file:///data/test.txt',
+            'test.txt',
+            'text/plain'
+        );
+
+        $filter = new GtkFileFilter();
+        $filter->add_custom(
+            Gtk::FILE_FILTER_FILENAME
+            | Gtk::FILE_FILTER_URI
+            | Gtk::FILE_FILTER_DISPLAY_NAME
+            | Gtk::FILE_FILTER_MIME_TYPE,
+            array($this, 'callback_add_custom')
+        );
+
+        $this->called = false;
+        $this->assertTrue($filter->filter($info));
+        $this->assertTrue($this->called);
+    }
+
+    public function callback_add_custom($info) {
+        $this->called = true;
+        return true;
+    }
+
     /**
      * @todo Implement testAdd_mime_type().
      */
@@ -70,6 +97,31 @@ class GtkFileFilterTest extends PHPUnit_Framework_TestCase {
     public function testAdd_pixbuf_formats() {
         // Remove the following line when you implement this test.
         throw new PHPUnit_Framework_IncompleteTestError;
+    }
+
+    public function testFilter() {
+        $info = array(
+            '/data/test.txt',
+            'file:///data/test.txt',
+            'test.txt',
+            'text/plain'
+        );
+
+        $filter = new GtkFileFilter();
+        $filter->add_pattern('*.txt');
+        $this->assertTrue($filter->filter($info));
+
+        $filter = new GtkFileFilter();
+        $filter->add_pattern('*.csv');
+        $this->assertFalse($filter->filter($info));
+
+        $filter = new GtkFileFilter();
+        $filter->add_mime_type('text/plain');
+        $this->assertTrue($filter->filter($info));
+
+        $filter = new GtkFileFilter();
+        $filter->add_mime_type('text/csv');
+        $this->assertFalse($filter->filter($info));
     }
 
     /**
