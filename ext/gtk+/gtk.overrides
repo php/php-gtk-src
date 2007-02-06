@@ -7,6 +7,8 @@ headers
 
 static void phpg_about_dialog_activate_link_func_marshal (GtkAboutDialog *about, const gchar *link, gpointer data);
 static gboolean phpg_entry_completion_match_func_marshal (GtkEntryCompletion *completion, const gchar *key, GtkTreeIter *iter, gpointer data);
+static void phpg_file_filter_add_custom_marshal_add_file(const gchar *filename, int flags, int flag, zval *php_filter_info);
+static gboolean phpg_file_filter_add_custom_marshal(GtkFileFilterInfo *filter_info, gpointer data);
 static gboolean phpg_tree_view_row_separator_func_marshal (GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
 static void phpg_icon_view_foreach_func_marshal (GtkIconView *icon_view, GtkTreePath *path, gpointer data);
 static gboolean phpg_toolbar_signal_func_marshal(GtkWidget *widget, gpointer data);
@@ -2769,6 +2771,238 @@ PHP_METHOD
 
 %% }}}
 
+%% {{{ GtkFileFilter
+
+%%
+add-arginfo GtkFileFilter add_custom
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, flags_needed)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_file_filter_add_custom
+static void phpg_file_filter_add_custom_marshal_add_file(const gchar *filename, int flags, int flag, zval *php_filter_info)
+{
+    gchar *cp = NULL;
+    gchar *fn = NULL;
+    gsize cp_len = 0;
+    zend_bool free_cp = FALSE;
+
+    if (filename && (flags & flag)
+    ) {
+        fn = g_filename_to_utf8(filename, strlen(filename), NULL, NULL, NULL);
+        cp = phpg_from_utf8(fn, strlen(fn), &cp_len, &free_cp TSRMLS_CC);
+        if (cp) {
+            add_next_index_string(php_filter_info, (char *)cp, 1);
+        } else {
+            php_error(E_WARNING, "%s::%s(): could not convert return value from UTF-8", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        }
+        if (free_cp)
+            g_free(cp);
+    } else {
+        add_next_index_null(php_filter_info);
+    }
+}
+static gboolean phpg_file_filter_add_custom_marshal(GtkFileFilterInfo *filter_info, gpointer data)
+{
+    phpg_cb_data_t *cbd = (phpg_cb_data_t *) data;
+    zval *retval = NULL;
+    zval ***args = NULL;
+    int n_args = 0;
+    char *callback_name;
+    zval *php_filter_info = NULL;
+    gboolean show = TRUE;
+    gchar *cp = NULL;
+    gsize cp_len = 0;
+    zend_bool free_cp = FALSE;
+
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+        php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
+        efree(callback_name);
+        return 0;
+    }
+
+    MAKE_STD_ZVAL(php_filter_info);
+    array_init(php_filter_info);
+
+    phpg_file_filter_add_custom_marshal_add_file(
+        filter_info->filename,
+        filter_info->contains,
+        GTK_FILE_FILTER_FILENAME,
+        php_filter_info
+    );
+    phpg_file_filter_add_custom_marshal_add_file(
+        filter_info->uri,
+        filter_info->contains,
+        GTK_FILE_FILTER_URI,
+        php_filter_info
+    );
+    phpg_file_filter_add_custom_marshal_add_file(
+        filter_info->display_name,
+        filter_info->contains,
+        GTK_FILE_FILTER_DISPLAY_NAME,
+        php_filter_info
+    );
+
+    //mime_type
+    if (filter_info->mime_type
+        && (filter_info->contains & GTK_FILE_FILTER_MIME_TYPE)
+    ) {
+        cp = phpg_from_utf8(filter_info->mime_type, strlen(filter_info->mime_type), &cp_len, &free_cp TSRMLS_CC);
+        if (cp) {
+            add_next_index_string(php_filter_info, (char *)cp, 1);
+        } else {
+            php_error(E_WARNING, "%s::%s(): could not convert return value from UTF-8", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        }
+        if (free_cp)
+            g_free(cp);
+    } else {
+        add_next_index_null(php_filter_info);
+    }
+
+    args = php_gtk_hash_as_array_offset(cbd->user_args, 1, &n_args);
+    args[0] = &php_filter_info;
+
+    call_user_function_ex(EG(function_table), NULL, cbd->callback, &retval, n_args, args, 0, NULL TSRMLS_CC);
+
+    zval_ptr_dtor(&php_filter_info);
+
+    if (retval) {
+        show = zend_is_true(retval);
+        zval_ptr_dtor(&retval);
+    } else {
+        show = TRUE;
+    }
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
+    efree(callback_name);
+    efree(args);
+
+    return show;
+}
+
+PHP_METHOD
+{
+    zval *callback, *extra;
+    phpg_cb_data_t *cb_data;
+    GtkFileFilterFlags flags = 0;
+    zval *php_flags = NULL;
+
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 2, &extra, "VV", &php_flags, &callback))
+        return;
+
+    if (php_flags && phpg_gvalue_get_flags(GTK_TYPE_FILE_FILTER_FLAGS, php_flags, (gint *)&flags) == FAILURE) {
+        return;
+    }
+
+    zval_add_ref(&callback);
+    cb_data = phpg_cb_data_new(callback, extra TSRMLS_CC);
+
+    gtk_file_filter_add_custom(
+            GTK_FILE_FILTER(PHPG_GOBJECT(this_ptr)),
+            flags,
+            (GtkFileFilterFunc)phpg_file_filter_add_custom_marshal,
+            cb_data, phpg_cb_data_destroy
+    );
+}
+
+
+%%
+add-arginfo GtkFileFilter filter
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, filterinfo)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_file_filter_filter
+PHP_METHOD
+{
+    GtkFileFilterInfo filter_info = { 0, NULL, NULL, NULL, NULL };
+    zval *php_filter_info = NULL, **temp_value;
+    gchar **values;
+    gboolean result;
+    int i = 0;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_filter_info)) {
+        return;
+    }
+
+    if (zend_hash_num_elements(Z_ARRVAL_P(php_filter_info)) != 4) {
+        php_error(E_WARNING, "%s::%s() file info array requires 4 values of type string or NULL",
+                  get_active_class_name(NULL TSRMLS_CC),
+                  get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_filter_info));
+    values = safe_emalloc(4, sizeof(gchar *), 0);
+
+    while (zend_hash_get_current_data(Z_ARRVAL_P(php_filter_info), (void **)&temp_value) == SUCCESS) {
+        gchar *utf8 = NULL;
+        gsize utf8_len = 0;
+        zend_bool free_utf8 = 0;
+
+        if (Z_TYPE_P(*temp_value) == IS_NULL) {
+            values[i++] = NULL;
+        } else {
+            convert_to_string_ex(temp_value);
+            utf8 = phpg_to_utf8(Z_STRVAL_PP(temp_value), Z_STRLEN_PP(temp_value), &utf8_len, &free_utf8 TSRMLS_CC);
+
+            if (!utf8) {
+                efree(values);
+                php_error(E_WARNING, "%s::%s() Could not convert filter info string to UTF-8",
+                        get_active_class_name(NULL TSRMLS_CC),
+                        get_active_function_name(TSRMLS_C));
+                return;
+            }
+
+            if (free_utf8) {
+                values[i++] = utf8;
+            } else {
+                /* Use GTK+ memory function here since utf8 may also allocated by it */
+                values[i++] = g_strdup(utf8);
+            }
+        }
+
+        zend_hash_move_forward(Z_ARRVAL_P(php_filter_info));
+    }
+
+    if (values[0] != NULL) {
+        filter_info.filename     = values[0];
+        filter_info.contains     |= GTK_FILE_FILTER_FILENAME;
+    }
+    if (values[1] != NULL) {
+        filter_info.uri          = values[1];
+        filter_info.contains     |= GTK_FILE_FILTER_URI;
+    }
+    if (values[2] != NULL) {
+        filter_info.display_name = values[2];
+        filter_info.contains     |= GTK_FILE_FILTER_DISPLAY_NAME;
+    }
+    if (values[3] != NULL) {
+        filter_info.mime_type    = values[3];
+        filter_info.contains     |= GTK_FILE_FILTER_MIME_TYPE;
+    }
+
+    efree(values);
+
+    result = gtk_file_filter_filter(GTK_FILE_FILTER(PHPG_GOBJECT(this_ptr)), &filter_info);
+    RETURN_BOOL(result);
+}
+
+%% }}}
+
 %% {{{ GtkFileSelection
 
 %%
@@ -3924,7 +4158,6 @@ ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, accel_path)
 ZEND_END_ARG_INFO();
 
-
 %%
 add GtkMenuItem set_item_accel_path
 PHP_METHOD
@@ -3939,6 +4172,21 @@ PHP_METHOD
 
     gtk_menu_item_set_accel_path(GTK_MENU_ITEM(PHPG_GOBJECT(this_ptr)), accel_path);
     if (free_accel_path) g_free(accel_path);
+}
+
+%%
+override gtk_menu_item_toggle_size_request
+PHP_METHOD
+{
+    gint requisition;
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_menu_item_toggle_size_request(GTK_MENU_ITEM(PHPG_GOBJECT(this_ptr)), &requisition);
+
+    RETURN_LONG(requisition);
 }
 
 %% }}}
