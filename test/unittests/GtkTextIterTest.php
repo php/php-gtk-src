@@ -408,6 +408,23 @@ class GtkTextIterTest extends PHPUnit_Framework_TestCase {
         throw new PHPUnit_Framework_IncompleteTestError;
     }
 
+    public function testGet_char() {
+        $buf = new GtkTextBuffer();
+        $buf->set_text("abcde");
+        $iter = $buf->get_start_iter();
+        $ar = array();
+        while (($char = $iter->get_char()) != null) {
+            $ar[$char] = true;
+            $iter->forward_char();
+        }
+        $this->assertEquals(5, count($ar));
+        $this->assertTrue(isset($ar['a']));
+        $this->assertTrue(isset($ar['b']));
+        $this->assertTrue(isset($ar['c']));
+        $this->assertTrue(isset($ar['d']));
+        $this->assertTrue(isset($ar['e']));
+    }
+
     /**
      * @todo Implement testGet_attributes().
      */
