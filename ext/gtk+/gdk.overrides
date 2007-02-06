@@ -41,13 +41,8 @@ ignore
     GdkColorInfoFlags
 %%
 ignore
-    gdk_device_free_history
     gdk_draw_rgb_image_dithalign
     gdk_draw_rgb_32_image_dithalign
-    gdk_drawable_draw_text_wc
-    gdk_font_char_width_wc
-    gdk_font_text_extents_wc
-    gdk_font_text_width_wc
     gdk_gc_new2
     gdk_pixbuf_new_from_array
     gdk_pixbuf_new_from_inline
@@ -60,19 +55,6 @@ ignore
 /* }}} */
 
 %% {{{ Gdk
-
-%%
-override gdk_keyval_convert_case
-PHP_METHOD
-{
-    guint symbol, upper, lower = 0;
-
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "i", &symbol))
-        return;
-
-    gdk_keyval_convert_case(symbol, &lower, &upper);
-    php_gtk_build_value(&return_value, "(ii)", lower, upper);
-}
 
 %%
 override gdk_devices_list
@@ -111,35 +93,6 @@ PHP_METHOD
     }
 
     g_list_free(list);
-}
-
-%%
-override gdk_query_depths
-PHP_METHOD
-{
-    gint *depths, count, i;
-
-    gdk_query_depths(&depths, &count);
-
-    array_init(return_value);
-    for (i = 0; i < count; i++) {
-        add_next_index_long(return_value, depths[i]);
-    }
-}
-
-%%
-override gdk_query_visual_types
-PHP_METHOD
-{
-    GdkVisualType *visual_types;
-    gint count, i;
-
-    gdk_query_visual_types(&visual_types, &count);
-
-    array_init(return_value);
-    for (i = 0; i < count; i++) {
-        add_next_index_long(return_value, visual_types[i]);
-    }
 }
 
 %% }}}
@@ -568,21 +521,6 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GdkDisplay
-
-%%
-override gdk_display_get_maximal_cursor_size
-PHP_METHOD
-{
-    gint width, height;
-
-    NOT_STATIC_METHOD();
-
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
-        return;
-
-    gdk_display_get_maximal_cursor_size(GDK_DISPLAY(PHPG_GOBJECT(this_ptr)), &width, &height);
-    php_gtk_build_value(&return_value, "(ii)", width, height);
-}
 
 %%
 override gdk_display_get_window_at_pointer
@@ -1915,13 +1853,13 @@ PHP_METHOD
                     alpha = 127 - gd->alpha[pixel];
                 }
 #ifdef WORDS_BIGENDIAN
-                data[c++] = (gd->red[pixel]   << 24) |
-                            (gd->blue[pixel]  << 16) |
+                data[c++] = (gd->red[pixel]   << 24) | 
+                            (gd->blue[pixel]  << 16) | 
                             (gd->green[pixel] << 8)  |
                             ((alpha << 1) + (alpha >> 6));
 #else
                 data[c++] = (((alpha << 1) + (alpha >> 6)) << 24) |
-                            (gd->blue[pixel]               << 16) |
+                            (gd->blue[pixel]               << 16) | 
                             (gd->green[pixel]              << 8)  |
                             (gd->red[pixel]);
 #endif
@@ -2726,22 +2664,6 @@ PHP_METHOD
 
 
 %%
-override gdk_window_get_deskrelative_origin
-PHP_METHOD
-{
-    gint x, y;
-
-    NOT_STATIC_METHOD();
-
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
-        return;
-
-    gdk_window_get_deskrelative_origin(GDK_WINDOW(PHPG_GOBJECT(this_ptr)), &x, &y);
-    phpg_warn_deprecated(NULL TSRMLS_CC);
-    php_gtk_build_value(&return_value, "(ii)", x, y);
-}
-
-%%
 override gdk_window_get_frame_extents
 PHP_METHOD
 {
@@ -2859,6 +2781,33 @@ PHP_METHOD
     g_list_free(list);
 }
 
+%%
+override gdk_window_set_icon_list
+PHP_METHOD
+{
+    zval *php_pixbufs = NULL, **php_pixbuf;
+    GList *pixbufs;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_pixbufs))
+        return;
+
+    zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_pixbufs));
+    while (zend_hash_get_current_data(Z_ARRVAL_P(php_pixbufs), (void **)&php_pixbuf) == SUCCESS) {
+        if (php_gtk_check_class(*php_pixbuf, gdkpixbuf_ce)) {
+            GdkPixbuf *pixbuf = GDK_PIXBUF(PHPG_GOBJECT(*php_pixbuf));
+            pixbufs = g_list_prepend(pixbufs, pixbuf);
+        } else {
+            php_error(E_WARNING, "%s::%s() requires the array elements to be objects of class GdkPixbuf", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        }
+    }
+
+    pixbufs = g_list_reverse(pixbufs);
+    gdk_window_set_icon_list(GDK_WINDOW(PHPG_GOBJECT(this_ptr)), pixbufs);
+
+    g_list_free(pixbufs);
+}
 
 %% }}}
 
