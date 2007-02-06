@@ -2,6 +2,7 @@
 // Use PHPUnit2 to create the skeletons.
 //ATTENTION: needs phpunit2 bugfix
 // http://pear.php.net/bugs/bug.php?id=6965
+die("deactived for security reasons");
 require_once 'PHPUnit/Util/Skeleton.php';
 
 // Get all of the classes in PHP-GTK 2.
