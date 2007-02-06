@@ -2,7 +2,7 @@
 // Use PHPUnit2 to create the skeletons.
 //ATTENTION: needs phpunit2 bugfix
 // http://pear.php.net/bugs/bug.php?id=6965
-require_once 'PHPUnit2/Util/Skeleton.php';
+require_once 'PHPUnit/Util/Skeleton.php';
 
 // Get all of the classes in PHP-GTK 2.
 /* Get all classes and filter out Gtk classes only */
@@ -23,7 +23,7 @@ sort($classes);
 
 foreach ($classes as $class) {
     // Create a skeleton for the class.
-    $skeleton = new PHPUnit2_Util_Skeleton($class);
+    $skeleton = new PHPUnit_Util_Skeleton($class);
 
     // Write the test.
     $skeleton->write();
