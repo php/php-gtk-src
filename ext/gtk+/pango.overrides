@@ -65,6 +65,8 @@ PHP_METHOD
 {
     int *sizes, n_sizes, i;
 
+    NOT_STATIC_METHOD();
+
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
         return;
 
