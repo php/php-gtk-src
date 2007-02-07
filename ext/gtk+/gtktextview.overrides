@@ -379,8 +379,8 @@ PHP_METHOD
 add-arginfo GtkTextIter forward_find_char 
 static
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
-    ZEND_ARG_OBJ_INFO(0, iter, GtkTextIter, 1)
     ZEND_ARG_INFO(0, callback)
+    ZEND_ARG_OBJ_INFO(0, iter, GtkTextIter, 1)
 ZEND_END_ARG_INFO();
 
 %%
@@ -441,19 +441,19 @@ static gboolean phpg_text_iter_char_predicate_func_marshal (gunichar ch, gpointe
 
 PHP_METHOD
 {
-    zval *php_callback, *extra, *iter = NULL;
+    zval *php_callback, *extra, *limit_iter = NULL;
     phpg_cb_data_t *cb_data;
     GtkTextCharPredicate callback;
 
     NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 2, &extra, "NV", &iter, gtktextiter_ce, &php_callback))
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 2, &extra, "VN", &php_callback, &limit_iter, gtktextiter_ce))
         return;
 
     if (php_callback) {
         if (Z_TYPE_P(php_callback) == IS_NULL) {
-            cb_data  = NULL;
-            callback = NULL;
+            php_error(E_WARNING, "%s::%s(): You must specify a callback!", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+            return;
         } else {
             zval_add_ref(&php_callback);
             cb_data  = phpg_cb_data_new(php_callback, extra TSRMLS_CC);
@@ -461,11 +461,11 @@ PHP_METHOD
         }
     }
 
-    if (Z_TYPE_P(iter) != IS_NULL)
+    if (Z_TYPE_P(limit_iter) != IS_NULL)
         gtk_text_iter_forward_find_char((GtkTextIter *)PHPG_GBOXED(this_ptr),
-                                            callback, cb_data, (GtkTextIter *)PHPG_GBOXED(iter));
+                                            callback, cb_data, (GtkTextIter *)PHPG_GBOXED(limit_iter));
     else
-       gtk_text_iter_forward_find_char((GtkTextIter *)PHPG_GBOXED(this_ptr),
+        gtk_text_iter_forward_find_char((GtkTextIter *)PHPG_GBOXED(this_ptr),
                                             callback, cb_data, NULL); 
 }
 
@@ -481,19 +481,19 @@ ZEND_END_ARG_INFO();
 override gtk_text_iter_backward_find_char
 PHP_METHOD
 {
-    zval *php_callback, *extra, *iter = NULL;
+    zval *php_callback, *extra, *limit_iter = NULL;
     phpg_cb_data_t *cb_data;
     GtkTextCharPredicate callback;
 
     NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 2, &extra, "NV", &iter, gtktextiter_ce, &php_callback))
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 2, &extra, "VN", &php_callback, &limit_iter, gtktextiter_ce))
         return;
 
     if (php_callback) {
         if (Z_TYPE_P(php_callback) == IS_NULL) {
-            cb_data  = NULL;
-            callback = NULL;
+            php_error(E_WARNING, "%s::%s(): You must specify a callback!", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+            return;
         } else {
             zval_add_ref(&php_callback);
             cb_data  = phpg_cb_data_new(php_callback, extra TSRMLS_CC);
@@ -501,11 +501,11 @@ PHP_METHOD
         }
     }
 
-    if (Z_TYPE_P(iter) != IS_NULL)
+    if (Z_TYPE_P(limit_iter) != IS_NULL)
         gtk_text_iter_backward_find_char((GtkTextIter *)PHPG_GBOXED(this_ptr),
-                                            callback, cb_data, (GtkTextIter *)PHPG_GBOXED(iter));
+                                            callback, cb_data, (GtkTextIter *)PHPG_GBOXED(limit_iter));
     else
-       gtk_text_iter_backward_find_char((GtkTextIter *)PHPG_GBOXED(this_ptr),
+        gtk_text_iter_backward_find_char((GtkTextIter *)PHPG_GBOXED(this_ptr),
                                             callback, cb_data, NULL); 
 }
 
