@@ -184,3 +184,22 @@ constants
 ignore-glob
   *_get_type
 
+
+%%
+override gtk_sheet_get_active_cell
+PHP_METHOD
+{
+    gint row, column;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_sheet_get_active_cell(GTK_SHEET(PHPG_GOBJECT(this_ptr)), &row, &column);
+
+    array_init(return_value);
+    add_index_long(return_value,0,(long)row);
+    add_index_long(return_value,1,(long)column);
+}
+
