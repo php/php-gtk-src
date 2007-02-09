@@ -1,0 +1,186 @@
+/* vim: set ft=cpp: */
+%%
+headers
+#include <gtkextra/gtkextra.h>
+#include <gtkextra/gtkextratypebuiltins.h>
+#include "ext/gtk+/php_gtk+.h"
+#include "php_gtk_api.h"
+
+#define GTK_ICON_FILE_SEL GTK_ICON_FILESEL
+#define GTK_TYPE_ICON_FILE_SEL (gtk_icon_file_selection_get_type())
+#define GTK_TYPE_COMBO_BUTTON (gtk_combo_button_get_type())
+#define GTK_TYPE_COLOR_COMBO (gtk_color_combo_get_type())
+#define GTK_TYPE_BORDER_COMBO (gtk_border_combo_get_type())
+#define GTK_TYPE_FONT_COMBO (gtk_font_combo_get_type())
+#define GTK_TYPE_PLOT3_D (gtk_plot3d_get_type())
+#define GTK_TYPE_TOGGLE_COMBO (gtk_toggle_combo_get_type())
+#define GTK_TYPE_PLOT_CANDLE (gtk_plot_candle_get_type())
+
+#define GTK_TYPE_PSFONT (gtk_psfont_get_type ())
+static GType
+gtk_psfont_get_type (void)
+{
+  static GType our_type = 0;
+  
+  if (our_type == 0)
+    our_type = g_pointer_type_register_static ("GtkPSFont");
+
+  return our_type;
+}
+
+#define GTK_TYPE_PLOT_MARKER (gtk_plot_marker_get_type ())
+GtkPlotMarker*
+gtk_plot_marker_copy (const GtkPlotMarker *marker)
+{
+    /* FIXME: am I correct? */
+    GtkPlotMarker *copy;
+    g_return_val_if_fail (marker != NULL, NULL);
+    copy = g_new (GtkPlotMarker, 1);
+    *copy = *marker;
+    if (marker->data)
+	g_object_ref (G_OBJECT (marker->data));
+    return copy;
+}
+
+void
+gtk_plot_marker_free (GtkPlotMarker *marker)
+{
+    /* FIXME: am I correct? */
+    g_return_if_fail (marker != NULL);
+    if (marker->data)
+	g_object_unref (G_OBJECT (marker->data));
+    g_free (marker);
+}
+
+static GType
+gtk_plot_marker_get_type (void)
+{
+  static GType our_type = 0;
+  if (our_type == 0)
+    our_type = g_boxed_type_register_static ("GtkPlotMarker",
+					     (GBoxedCopyFunc) gtk_plot_marker_copy,
+					     (GBoxedFreeFunc) gtk_plot_marker_free);
+  return our_type;
+}
+
+GtkPlotText*
+gtk_plot_text_copy (const GtkPlotText *text)
+{
+    /* FIXME: am I correct? */
+    GtkPlotText *copy;
+    g_return_val_if_fail (text != NULL, NULL);
+    copy = g_new (GtkPlotText, 1);
+    *copy = *text;
+    if(copy->font)
+	copy->font = g_strdup(text->font);
+    if(copy->text)
+	copy->text = g_strdup(text->text);
+    return copy;
+}
+
+void
+gtk_plot_text_free (GtkPlotText *text)
+{
+    /* FIXME: am I correct? */
+    g_return_if_fail (text != NULL);
+    if (text->font)
+	g_free(text->font);
+    if (text->text)
+	g_free(text->text);
+    g_free (text);
+}
+
+#define GTK_TYPE_PLOT_TEXT (gtk_plot_text_get_type ())
+static GType
+gtk_plot_text_get_type (void)
+{
+  static GType our_type = 0;
+
+#if 0 //HACK 
+  if (our_type == 0)
+    our_type = g_pointer_type_register_static ("GtkPlotText");
+#else //Should be something similiar to this
+  if (our_type == 0)
+    our_type = g_boxed_type_register_static ("GtkPlotText",
+					     (GBoxedCopyFunc) gtk_plot_text_copy,
+					     (GBoxedFreeFunc) gtk_plot_text_free);
+#endif
+  return our_type;
+}
+
+#define GTK_TYPE_PLOT_LINE (gtk_plot_line_get_type ())
+static GType
+gtk_plot_line_get_type (void)
+{
+  static GType our_type = 0;
+
+#if 1 //HACK 
+  if (our_type == 0)
+    our_type = g_pointer_type_register_static ("GtkPlotLine");
+#else //Should be something similiar to this
+  if (our_type == 0)
+    our_type = g_boxed_type_register_static ("GtkPlotLine",
+					     (GBoxedCopyFunc) gtk_plot_line_ref,
+					     (GBoxedFreeFunc) gtk_plot_line_unref);
+#endif
+  return our_type;
+}
+
+#define GTK_TYPE_PLOT_DT_NODE (gtk_plot_dt_node_get_type ())
+static GType
+gtk_plot_dt_node_get_type (void)
+{
+  static GType our_type = 0;
+  
+  if (our_type == 0)
+    our_type = g_pointer_type_register_static ("GtkPlotDTnode");
+
+  return our_type;
+}
+
+static GtkSheetRange*
+gtk_sheet_range_new ( gint row0, gint col0, gint rowi, gint coli)
+{
+    GtkSheetRange *p = g_new (GtkSheetRange, 1);
+    if (p) {
+	p->row0 = row0;
+	p->col0 = col0;
+	p->rowi = rowi;
+	p->coli = coli;
+    }
+    return p;
+}
+
+static void
+gtk_plot_draw_text_PY (GtkPlot *plot, GtkPlotText *text)
+{
+    gtk_plot_draw_text(plot, *text); 
+}
+
+static void
+gtk_plot_draw_line_PY (GtkPlot *plot, GtkPlotLine *line, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
+{
+    gtk_plot_draw_line(plot, *line, x1, y1, x2, y2);
+}
+
+static void
+gtk_plot_set_line_attributes_PY (GtkPlot *plot, GtkPlotLine *line)
+{
+    gtk_plot_set_line_attributes (plot, *line);
+}
+
+static gboolean
+gtk_plot_dt_add_node_PY (GtkPlotDT *data, GtkPlotDTnode *node)
+{
+    return gtk_plot_dt_add_node(data, *node);
+}
+
+/* This one is probably an "error" in h2def.py */
+#define GTK_PLOT3_D GTK_PLOT3D
+
+%%
+constants
+%%
+ignore-glob
+  *_get_type
+

@@ -1,0 +1,6395 @@
+;; -*- scheme -*-
+
+;; python ~/gnome-cvs/gnome-python/pygtk/codegen/h2def.py /usr/include/gtkextra-2.0/gtkextra/*.h >gtkextra_.defs
+;; Then merge old defs with new defs with mergedefs.py for fields and default values.
+;; python ~/gnome-cvs/gnome-python/pygtk/codegen/mergedefs.py gtkextra_.defs gtkextra.defs > gtkextra_merged.defs
+;; Then redo include's.
+;;
+;; Another thing is null-ok's on return of points. 
+;; I have added that to many functions, but may have missed some that should have it.
+
+(include "gtkextra-types.defs")
+(include "gtkextra-addons.defs")
+
+(define-function gtk_border_combo_get_type
+  (c-name "gtk_border_combo_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_border_combo_new
+  (is-constructor-of "GtkBorderCombo")
+  (c-name "gtk_border_combo_new")
+  (return-type "GtkWidget*")
+)
+
+(define-function gtk_char_selection_get_type
+  (c-name "gtk_char_selection_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_char_selection_new
+  (is-constructor-of "GtkCharSelection")
+  (c-name "gtk_char_selection_new")
+  (return-type "GtkWidget*")
+)
+
+(define-method set_selection
+  (of-object "GtkCharSelection")
+  (c-name "gtk_char_selection_set_selection")
+  (return-type "none")
+  (parameters
+    '("gint" "selection")
+  )
+)
+
+(define-method get_selection
+  (of-object "GtkCharSelection")
+  (c-name "gtk_char_selection_get_selection")
+  (return-type "gint")
+)
+
+(define-function gtk_check_item_get_type
+  (c-name "gtk_check_item_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_check_item_new
+  (is-constructor-of "GtkCheckItem")
+  (c-name "gtk_check_item_new")
+  (return-type "GtkWidget*")
+)
+
+(define-function gtk_check_item_new_with_label
+  (c-name "gtk_check_item_new_with_label")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "label")
+  )
+)
+
+(define-method construct_with_label
+  (of-object "GtkCheckItem")
+  (c-name "gtk_check_item_construct_with_label")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "label")
+  )
+)
+
+(define-function gtk_color_combo_get_type
+  (c-name "gtk_color_combo_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_color_combo_new
+  (is-constructor-of "GtkColorCombo")
+  (c-name "gtk_color_combo_new")
+  (return-type "GtkWidget*")
+)
+
+(define-function gtk_color_combo_new_with_values
+  (c-name "gtk_color_combo_new_with_values")
+  (return-type "GtkWidget*")
+  (parameters
+    '("gint" "nrows")
+    '("gint" "ncols")
+    '("GdkColor*" "colors")
+  )
+)
+
+(define-method construct
+  (of-object "GtkColorCombo")
+  (c-name "gtk_color_combo_construct")
+  (return-type "none")
+)
+
+(define-method construct_with_values
+  (of-object "GtkColorCombo")
+  (c-name "gtk_color_combo_construct_with_values")
+  (return-type "none")
+  (parameters
+    '("gint" "nrows")
+    '("gint" "ncols")
+    '("GdkColor*" "colors")
+  )
+)
+
+(define-method get_color_at
+  (of-object "GtkColorCombo")
+  (c-name "gtk_color_combo_get_color_at")
+  (return-type "GdkColor")
+  (parameters
+    '("gint" "row")
+    '("gint" "col")
+  )
+)
+
+(define-method find_color
+  (of-object "GtkColorCombo")
+  (c-name "gtk_color_combo_find_color")
+  (return-type "none")
+  (parameters
+    '("GdkColor*" "color")
+    '("gint*" "row")
+    '("gint*" "col")
+  )
+)
+
+(define-method get_selection
+  (of-object "GtkColorCombo")
+  (c-name "gtk_color_combo_get_selection")
+  (return-type "GdkColor")
+)
+
+(define-function gtk_combobutton_get_type
+  (c-name "gtk_combobutton_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_combobutton_new
+  (is-constructor-of "GtkCombobutton")
+  (c-name "gtk_combobutton_new")
+  (return-type "GtkWidget*")
+)
+
+(define-method hide_popdown_window
+  (of-object "GtkCombobutton")
+  (c-name "gtk_combobutton_hide_popdown_window")
+  (return-type "none")
+)
+
+(define-function gtk_dir_tree_get_type
+  (c-name "gtk_dir_tree_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_dir_tree_new
+  (is-constructor-of "GtkDirTree")
+  (c-name "gtk_dir_tree_new")
+  (return-type "GtkWidget*")
+)
+
+(define-method open_dir
+  (of-object "GtkDirTree")
+  (c-name "gtk_dir_tree_open_dir")
+  (return-type "gint")
+  (parameters
+    '("const-gchar*" "path")
+  )
+)
+
+(define-function check_version
+  (c-name "gtkextra_check_version")
+  (return-type "gchar*" (null-ok))
+  (parameters
+    '("guint" "required_major")
+    '("guint" "required_minor")
+    '("guint" "required_micro")
+  )
+)
+
+(define-function gtk_plot_scale_get_type
+  (c-name "gtk_plot_scale_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_symbol_type_get_type
+  (c-name "gtk_plot_symbol_type_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_symbol_style_get_type
+  (c-name "gtk_plot_symbol_style_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_border_style_get_type
+  (c-name "gtk_plot_border_style_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_line_style_get_type
+  (c-name "gtk_plot_line_style_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_connector_get_type
+  (c-name "gtk_plot_connector_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_label_pos_get_type
+  (c-name "gtk_plot_label_pos_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_error_get_type
+  (c-name "gtk_plot_error_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_orientation_get_type
+  (c-name "gtk_plot_orientation_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_axis_pos_get_type
+  (c-name "gtk_plot_axis_pos_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_label_style_get_type
+  (c-name "gtk_plot_label_style_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_ticks_pos_get_type
+  (c-name "gtk_plot_ticks_pos_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_plane_get_type
+  (c-name "gtk_plot_plane_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_side_get_type
+  (c-name "gtk_plot_side_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_bar_units_get_type
+  (c-name "gtk_plot_bar_units_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_projection_get_type
+  (c-name "gtk_plot_projection_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_canvas_action_get_type
+  (c-name "gtk_plot_canvas_action_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_canvas_flag_get_type
+  (c-name "gtk_plot_canvas_flag_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_canvas_arrow_get_type
+  (c-name "gtk_plot_canvas_arrow_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_canvas_selection_get_type
+  (c-name "gtk_plot_canvas_selection_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_canvas_selection_mode_get_type
+  (c-name "gtk_plot_canvas_selection_mode_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_canvas_type_get_type
+  (c-name "gtk_plot_canvas_type_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_canvas_pos_get_type
+  (c-name "gtk_plot_canvas_pos_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_page_size_get_type
+  (c-name "gtk_plot_page_size_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_page_orientation_get_type
+  (c-name "gtk_plot_page_orientation_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_units_get_type
+  (c-name "gtk_plot_units_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_sheet_attr_type_get_type
+  (c-name "gtk_sheet_attr_type_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_file_list_get_type
+  (c-name "gtk_file_list_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_file_list_new
+  (is-constructor-of "GtkFileList")
+  (c-name "gtk_file_list_new")
+  (return-type "GtkWidget*")
+  (parameters
+    '("guint" "icon_width")
+    '("gint" "mode")
+    '("const-gchar*" "path" (default "NULL") (null-ok))
+  )
+)
+
+(define-method construct
+  (of-object "GtkFileList")
+  (c-name "gtk_file_list_construct")
+  (return-type "none")
+  (parameters
+    '("guint" "icon_width")
+    '("gint" "mode")
+    '("const-gchar*" "path")
+  )
+)
+
+(define-method set_filter
+  (of-object "GtkFileList")
+  (c-name "gtk_file_list_set_filter")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "filter" (null-ok))
+  )
+)
+
+(define-method open_dir
+  (of-object "GtkFileList")
+  (c-name "gtk_file_list_open_dir")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "path" (null-ok))
+  )
+)
+
+(define-method get_path
+  (of-object "GtkFileList")
+  (c-name "gtk_file_list_get_path")
+  (return-type "const-gchar*" (null-ok))
+)
+
+(define-method get_filename
+  (of-object "GtkFileList")
+  (c-name "gtk_file_list_get_filename")
+  (return-type "const-gchar*" (null-ok))
+)
+
+(define-method get_filetype
+  (of-object "GtkFileList")
+  (c-name "gtk_file_list_get_filetype")
+  (return-type "gint")
+)
+
+(define-method add_type
+  (of-object "GtkFileList")
+  (c-name "gtk_file_list_add_type")
+  (return-type "gint")
+  (parameters
+    '("const-gchar**" "pixmap_data")
+  )
+)
+
+(define-method add_type_with_pixmap
+  (of-object "GtkFileList")
+  (c-name "gtk_file_list_add_type_with_pixmap")
+  (return-type "gint")
+  (parameters
+    '("GdkPixmap*" "pixmap")
+    '("GdkBitmap*" "mask")
+  )
+)
+
+(define-method add_type_filter
+  (of-object "GtkFileList")
+  (c-name "gtk_file_list_add_type_filter")
+  (return-type "none")
+  (parameters
+    '("gint" "type")
+    '("const-gchar*" "filter")
+  )
+)
+
+(define-function gtk_font_combo_get_type
+  (c-name "gtk_font_combo_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_font_combo_new
+  (is-constructor-of "GtkFontCombo")
+  (c-name "gtk_font_combo_new")
+  (return-type "GtkWidget*")
+)
+
+(define-method select
+  (of-object "GtkFontCombo")
+  (c-name "gtk_font_combo_select")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "family")
+    '("gboolean" "bold")
+    '("gboolean" "italic")
+    '("gint" "height")
+  )
+)
+
+(define-method select_nth
+  (of-object "GtkFontCombo")
+  (c-name "gtk_font_combo_select_nth")
+  (return-type "none")
+  (parameters
+    '("gint" "n")
+    '("gboolean" "bold")
+    '("gboolean" "italic")
+    '("gint" "height")
+  )
+)
+
+(define-method get_font_height
+  (of-object "GtkFontCombo")
+  (c-name "gtk_font_combo_get_font_height")
+  (return-type "gint")
+)
+
+(define-method get_psfont
+  (of-object "GtkFontCombo")
+  (c-name "gtk_font_combo_get_psfont")
+  (return-type "GtkPSFont*" (null-ok))
+)
+
+(define-method get_font_description
+  (of-object "GtkFontCombo")
+  (c-name "gtk_font_combo_get_font_description")
+  (return-type "PangoFontDescription*" (null-ok))
+)
+
+(define-method get_gdkfont
+  (of-object "GtkFontCombo")
+  (c-name "gtk_font_combo_get_gdkfont")
+  (return-type "GdkFont*" (null-ok))
+)
+
+(define-function gtk_icon_file_selection_get_type
+  (c-name "gtk_icon_file_selection_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_icon_file_selection_new
+  (is-constructor-of "GtkIconFileSelection")
+  (c-name "gtk_icon_file_selection_new")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "title")
+  )
+)
+
+(define-method construct
+  (of-object "GtkIconFileSelection")
+  (c-name "gtk_icon_file_selection_construct")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "title")
+  )
+)
+
+(define-method show_tree
+  (of-object "GtkIconFileSelection")
+  (c-name "gtk_icon_file_selection_show_tree")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show")
+  )
+)
+
+(define-method open_dir
+  (of-object "GtkIconFileSelection")
+  (c-name "gtk_icon_file_selection_open_dir")
+  (return-type "gint")
+  (parameters
+    '("const-gchar*" "path")
+  )
+)
+
+(define-method show_hidden
+  (of-object "GtkIconFileSelection")
+  (c-name "gtk_icon_file_selection_show_hidden")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+(define-method set_filter
+  (of-object "GtkIconFileSelection")
+  (c-name "gtk_icon_file_selection_set_filter")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "filter")
+  )
+)
+
+(define-method get_selection
+  (of-object "GtkIconFileSelection")
+  (c-name "gtk_icon_file_selection_get_selection")
+  (return-type "const-gchar*" (null-ok))
+)
+
+(define-function gtk_icon_list_get_type
+  (c-name "gtk_icon_list_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_icon_list_item_get_type
+  (c-name "gtk_icon_list_item_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_icon_list_new
+  (is-constructor-of "GtkIconList")
+  (c-name "gtk_icon_list_new")
+  (return-type "GtkWidget*")
+  (parameters
+    '("guint" "icon_width")
+    '("GtkIconListMode" "mode")
+  )
+)
+
+(define-method construct
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_construct")
+  (return-type "none")
+  (parameters
+    '("guint" "icon_width")
+    '("GtkIconListMode" "mode")
+  )
+)
+
+(define-method set_mode
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_set_mode")
+  (return-type "none")
+  (parameters
+    '("GtkIconListMode" "mode")
+  )
+)
+
+(define-method get_mode
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_get_mode")
+  (return-type "GtkIconListMode")
+)
+
+(define-method set_editable
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_set_editable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "editable")
+  )
+)
+
+(define-method is_editable
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_is_editable")
+  (return-type "gboolean")
+)
+
+(define-method set_row_spacing
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_set_row_spacing")
+  (return-type "none")
+  (parameters
+    '("guint" "spacing")
+  )
+)
+
+(define-method get_row_spacing
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_get_row_spacing")
+  (return-type "guint")
+)
+
+(define-method set_col_spacing
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_set_col_spacing")
+  (return-type "none")
+  (parameters
+    '("guint" "spacing")
+  )
+)
+
+(define-method get_col_spacing
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_get_col_spacing")
+  (return-type "guint")
+)
+
+(define-method set_text_space
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_set_text_space")
+  (return-type "none")
+  (parameters
+    '("guint" "space")
+  )
+)
+
+(define-method get_text_space
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_get_text_space")
+  (return-type "guint")
+)
+
+(define-method set_icon_border
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_set_icon_border")
+  (return-type "none")
+  (parameters
+    '("guint" "space")
+  )
+)
+
+(define-method get_icon_border
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_get_icon_border")
+  (return-type "guint")
+)
+
+(define-method set_icon_width
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_set_icon_width")
+  (return-type "none")
+  (parameters
+    '("guint" "space")
+  )
+)
+
+(define-method get_icon_width
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_get_icon_width")
+  (return-type "guint")
+)
+
+(define-method freeze
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_freeze")
+  (return-type "none")
+)
+
+(define-method thaw
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_thaw")
+  (return-type "none")
+)
+
+(define-method set_background
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_set_background")
+  (return-type "none")
+  (parameters
+    '("GdkColor*" "color")
+  )
+)
+
+(define-method add_from_pixmap
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_add_from_pixmap")
+  (return-type "GtkIconListItem*" (null-ok))
+  (parameters
+    '("GdkPixmap*" "pixmap")
+    '("GdkBitmap*" "bitmap" (default "NULL") (null-ok))
+    '("const-gchar*" "label" (default "NULL") (null-ok))
+    '("gpointer" "link" (default "NULL") (null-ok))
+  )
+)
+
+(define-method add_from_data
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_add_from_data")
+  (return-type "GtkIconListItem*" (null-ok))
+  (parameters
+    '("gchar**" "data")
+    '("const-gchar*" "label" (default "NULL") (null-ok))
+    '("gpointer" "link" (default "NULL") (null-ok))
+  )
+)
+
+(define-method add
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_add")
+  (return-type "GtkIconListItem*" (null-ok))
+  (parameters
+    '("const-gchar*" "pixmap_file")
+    '("const-gchar*" "label" (default "NULL") (null-ok))
+    '("gpointer" "link" (default "NULL") (null-ok))
+  )
+)
+
+(define-method get_nth
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_get_nth")
+  (return-type "GtkIconListItem*" (null-ok))
+  (parameters
+    '("guint" "n")
+  )
+)
+
+(define-method get_index
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_get_index")
+  (return-type "gint")
+  (parameters
+    '("GtkIconListItem*" "item")
+  )
+)
+
+(define-method remove
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_remove")
+  (return-type "none")
+  (parameters
+    '("GtkIconListItem*" "item")
+  )
+)
+
+(define-method set_active_icon
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_set_active_icon")
+  (return-type "none")
+  (parameters
+    '("GtkIconListItem*" "icon")
+  )
+)
+
+(define-method remove_nth
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_remove_nth")
+  (return-type "none")
+  (parameters
+    '("guint" "n")
+  )
+)
+
+(define-method update
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_update")
+  (return-type "none")
+)
+
+(define-method clear
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_clear")
+  (return-type "none")
+)
+
+(define-function gtk_icon_list_link
+  (c-name "gtk_icon_list_link")
+  (return-type "none")
+  (parameters
+    '("GtkIconListItem*" "item")
+    '("gpointer" "data")
+  )
+)
+
+(define-function gtk_icon_list_get_link
+  (c-name "gtk_icon_list_get_link")
+  (return-type "gpointer" (null-ok))
+  (parameters
+    '("GtkIconListItem*" "item")
+  )
+)
+
+(define-method get_icon_from_link
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_get_icon_from_link")
+  (return-type "GtkIconListItem*" (null-ok))
+  (parameters
+    '("gpointer" "data")
+  )
+)
+
+(define-method get_icon_at
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_get_icon_at")
+  (return-type "GtkIconListItem*" (null-ok))
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+  )
+)
+
+(define-method get_active_icon
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_get_active_icon")
+  (return-type "GtkIconListItem*" (null-ok))
+)
+
+;(define-function gtk_icon_list_get_entry
+;  (c-name "gtk_icon_list_get_entry")
+;  (return-type "GtkWidget*" (null-ok))
+;  (parameters
+;    '("GtkIconListItem*" "item")
+;  )
+;)
+
+(define-method get_entry
+  (of-object "GtkIconListItem")
+  (c-name "gtk_icon_list_get_entry")
+  (return-type "GtkWidget*" (null-ok))
+)
+
+;(define-function gtk_icon_list_get_pixmap
+;  (c-name "gtk_icon_list_get_pixmap")
+;  (return-type "GtkWidget*" (null-ok))
+;  (parameters
+;    '("GtkIconListItem*" "item")
+;  )
+;)
+
+(define-method get_pixmap
+  (of-object "GtkIconListItem")
+  (c-name "gtk_icon_list_get_pixmap")
+  (return-type "GtkWidget*" (null-ok))
+)
+
+;(define-function gtk_icon_list_set_pixmap
+;  (c-name "gtk_icon_list_set_pixmap")
+;  (return-type "none")
+;  (parameters
+;    '("GtkIconListItem*" "item")
+;    '("GdkPixmap*" "pixmap")
+;    '("GdkBitmap*" "bitmap")
+;  )
+;)
+
+(define-method set_pixmap
+  (of-object "GtkIconListItem")
+  (c-name "gtk_icon_list_set_pixmap")
+  (return-type "none")
+  (parameters
+   '("GdkPixmap*" "pixmap")
+   '("GdkBitmap*" "bitmap")
+   )
+)
+
+(define-method set_label
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_set_label")
+  (return-type "none")
+  (parameters
+    '("GtkIconListItem*" "item")
+    '("const-gchar*" "label")
+  )
+)
+
+(define-method set_selection_mode
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_set_selection_mode")
+  (return-type "none")
+  (parameters
+    '("gint" "mode")
+  )
+)
+
+(define-method select_icon
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_select_icon")
+  (return-type "none")
+  (parameters
+    '("GtkIconListItem*" "item")
+  )
+)
+
+(define-method unselect_icon
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_unselect_icon")
+  (return-type "none")
+  (parameters
+    '("GtkIconListItem*" "item")
+  )
+)
+
+(define-method unselect_all
+  (of-object "GtkIconList")
+  (c-name "gtk_icon_list_unselect_all")
+  (return-type "none")
+)
+
+(define-function gtk_item_entry_get_type
+  (c-name "gtk_item_entry_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_item_entry_new
+  (is-constructor-of "GtkItemEntry")
+  (c-name "gtk_item_entry_new")
+  (return-type "GtkWidget*")
+)
+
+(define-function gtk_item_entry_new_with_max_length
+  (is-constructor-of "GtkItemEntry")
+  (c-name "gtk_item_entry_new_with_max_length")
+  (return-type "GtkWidget*")
+  (parameters
+    '("gint" "max")
+  )
+)
+
+(define-method set_text
+  (of-object "GtkItemEntry")
+  (c-name "gtk_item_entry_set_text")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "text")
+    '("GtkJustification" "justification")
+  )
+)
+
+(define-method set_justification
+  (of-object "GtkItemEntry")
+  (c-name "gtk_item_entry_set_justification")
+  (return-type "none")
+  (parameters
+    '("GtkJustification" "justification")
+  )
+)
+
+(define-method set_cursor_visible
+  (of-object "GtkItemEntry")
+  (c-name "gtk_item_entry_set_cursor_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+(define-method get_cursor_visible
+  (of-object "GtkItemEntry")
+  (c-name "gtk_item_entry_get_cursor_visible")
+  (return-type "gboolean")
+)
+
+(define-function gtk_plot3d_get_type
+  (c-name "gtk_plot3d_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot3d_new
+  (is-constructor-of "GtkPlot3D")
+  (c-name "gtk_plot3d_new")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GdkDrawable*" "drawable")
+  )
+)
+
+(define-function gtk_plot3d_new_with_size
+  (c-name "gtk_plot3d_new_with_size")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GdkDrawable*" "drawable")
+    '("gdouble" "width")
+    '("gdouble" "height")
+  )
+)
+
+(define-method construct
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_construct")
+  (return-type "none")
+  (parameters
+    '("GdkDrawable*" "drawable")
+  )
+)
+
+(define-method construct_with_size
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_construct_with_size")
+  (return-type "none")
+  (parameters
+    '("GdkDrawable*" "drawable")
+    '("gdouble" "width")
+    '("gdouble" "height")
+  )
+)
+
+(define-method autoscale
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_autoscale")
+  (return-type "none")
+)
+
+(define-method rotate
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_rotate")
+  (return-type "none")
+  (parameters
+    '("gdouble" "angle_x")
+    '("gdouble" "angle_y")
+    '("gdouble" "angle_z")
+  )
+)
+
+(define-method rotate_vector
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_rotate_vector")
+  (return-type "none")
+  (parameters
+    '("GtkPlotVector*" "vector")
+    '("gdouble" "a1")
+    '("gdouble" "a2")
+    '("gdouble" "a3")
+  )
+)
+
+(define-method reset_angles
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_reset_angles")
+  (return-type "none")
+)
+
+(define-method rotate_x
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_rotate_x")
+  (return-type "none")
+  (parameters
+    '("gdouble" "angle")
+  )
+)
+
+(define-method rotate_y
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_rotate_y")
+  (return-type "none")
+  (parameters
+    '("gdouble" "angle")
+  )
+)
+
+(define-method rotate_z
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_rotate_z")
+  (return-type "none")
+  (parameters
+    '("gdouble" "angle")
+  )
+)
+
+(define-method get_pixel
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_get_pixel")
+  (return-type "none")
+  (parameters
+    '("gdouble" "x")
+    '("gdouble" "y")
+    '("gdouble" "z")
+    '("gdouble*" "px")
+    '("gdouble*" "py")
+    '("gdouble*" "pz")
+  )
+)
+
+(define-method set_xrange
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_set_xrange")
+  (return-type "none")
+  (parameters
+    '("gdouble" "min")
+    '("gdouble" "max")
+  )
+)
+
+(define-method set_yrange
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_set_yrange")
+  (return-type "none")
+  (parameters
+    '("gdouble" "min")
+    '("gdouble" "max")
+  )
+)
+
+(define-method set_zrange
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_set_zrange")
+  (return-type "none")
+  (parameters
+    '("gdouble" "min")
+    '("gdouble" "max")
+  )
+)
+
+(define-method set_xfactor
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_set_xfactor")
+  (return-type "none")
+  (parameters
+    '("gdouble" "xfactor")
+  )
+)
+
+(define-method set_yfactor
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_set_yfactor")
+  (return-type "none")
+  (parameters
+    '("gdouble" "yfactor")
+  )
+)
+
+(define-method set_zfactor
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_set_zfactor")
+  (return-type "none")
+  (parameters
+    '("gdouble" "zfactor")
+  )
+)
+
+(define-method get_xfactor
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_get_xfactor")
+  (return-type "gdouble")
+)
+
+(define-method get_yfactor
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_get_yfactor")
+  (return-type "gdouble")
+)
+
+(define-method get_zfactor
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_get_zfactor")
+  (return-type "gdouble")
+)
+
+(define-method plane_set_color
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_plane_set_color")
+  (return-type "none")
+  (parameters
+    '("GtkPlotPlane" "plane")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method plane_set_visible
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_plane_set_visible")
+  (return-type "none")
+  (parameters
+    '("GtkPlotPlane" "plane")
+    '("gboolean" "visible")
+  )
+)
+
+(define-method plane_visible
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_plane_visible")
+  (return-type "gboolean")
+  (parameters
+    '("GtkPlotPlane" "plane")
+  )
+)
+
+(define-method corner_set_visible
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_corner_set_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+(define-method corner_visible
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_corner_visible")
+  (return-type "gboolean")
+)
+
+(define-method corner_set_attributes
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_corner_set_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method corner_get_attributes
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_corner_get_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle*" "style")
+    '("gfloat*" "width")
+    '("GdkColor*" "color")
+  )
+)
+
+(define-method frame_set_attributes
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_frame_set_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method frame_get_attributes
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_frame_get_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle*" "style")
+    '("gfloat*" "width")
+    '("GdkColor*" "color")
+  )
+)
+
+(define-method get_axis
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_get_axis")
+  (return-type "GtkPlotAxis*" (null-ok))
+  (parameters
+    '("GtkPlotOrientation" "orientation")
+  )
+)
+
+(define-method get_side
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_get_side")
+  (return-type "GtkPlotAxis*" (null-ok))
+  (parameters
+    '("GtkPlotSide" "side")
+  )
+)
+
+(define-method show_major_ticks
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_show_major_ticks")
+  (return-type "none")
+  (parameters
+    '("GtkPlotSide" "side")
+    '("gint" "ticks_mask")
+  )
+)
+
+(define-method show_minor_ticks
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_show_minor_ticks")
+  (return-type "none")
+  (parameters
+    '("GtkPlotSide" "side")
+    '("gint" "ticks_mask")
+  )
+)
+
+(define-method show_labels
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_show_labels")
+  (return-type "none")
+  (parameters
+    '("GtkPlotSide" "side")
+    '("gint" "label_mask")
+  )
+)
+
+(define-method show_title
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_show_title")
+  (return-type "none")
+  (parameters
+    '("GtkPlotSide" "side")
+  )
+)
+
+(define-method hide_title
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_hide_title")
+  (return-type "none")
+  (parameters
+    '("GtkPlotSide" "side")
+  )
+)
+
+(define-method set_ticks
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_set_ticks")
+  (return-type "none")
+  (parameters
+    '("GtkPlotOrientation" "axis")
+    '("gdouble" "major_step")
+    '("gint" "nminor")
+  )
+)
+
+(define-method set_major_ticks
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_set_major_ticks")
+  (return-type "none")
+  (parameters
+    '("GtkPlotOrientation" "axis")
+    '("gdouble" "major_step")
+  )
+)
+
+(define-method set_minor_ticks
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_set_minor_ticks")
+  (return-type "none")
+  (parameters
+    '("GtkPlotOrientation" "axis")
+    '("gint" "nminor")
+  )
+)
+
+(define-method set_ticks_length
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_set_ticks_length")
+  (return-type "none")
+  (parameters
+    '("GtkPlotOrientation" "axis")
+    '("gint" "length")
+  )
+)
+
+(define-method set_ticks_width
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_set_ticks_width")
+  (return-type "none")
+  (parameters
+    '("GtkPlotOrientation" "axis")
+    '("gfloat" "width")
+  )
+)
+
+(define-method show_ticks
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_show_ticks")
+  (return-type "none")
+  (parameters
+    '("GtkPlotSide" "side")
+    '("gint" "major_mask")
+    '("gint" "minor_mask")
+  )
+)
+
+(define-method set_titles_offset
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_set_titles_offset")
+  (return-type "none")
+  (parameters
+    '("gint" "offset")
+  )
+)
+
+(define-method get_titles_offset
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_get_titles_offset")
+  (return-type "gint")
+)
+
+(define-method set_scale
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_set_scale")
+  (return-type "none")
+  (parameters
+    '("GtkPlotOrientation" "axis")
+    '("GtkPlotScale" "scale")
+  )
+)
+
+(define-method get_scale
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_get_scale")
+  (return-type "GtkPlotScale")
+  (parameters
+    '("GtkPlotOrientation" "axis")
+  )
+)
+
+(define-method major_grids_set_visible
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_major_grids_set_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "x")
+    '("gboolean" "y")
+    '("gboolean" "z")
+  )
+)
+
+(define-method minor_grids_set_visible
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_minor_grids_set_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "x")
+    '("gboolean" "y")
+    '("gboolean" "z")
+  )
+)
+
+(define-method major_grids_visible
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_major_grids_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean*" "x")
+    '("gboolean*" "y")
+    '("gboolean*" "z")
+  )
+)
+
+(define-method minor_grids_visible
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_minor_grids_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean*" "x")
+    '("gboolean*" "y")
+    '("gboolean*" "z")
+  )
+)
+
+(define-method major_zgrid_set_attributes
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_major_zgrid_set_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method major_zgrid_get_attributes
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_major_zgrid_get_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle*" "style")
+    '("gfloat*" "width")
+    '("GdkColor*" "color")
+  )
+)
+
+(define-method minor_zgrid_set_attributes
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_minor_zgrid_set_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method minor_zgrid_get_attributes
+  (of-object "GtkPlot3D")
+  (c-name "gtk_plot3d_minor_zgrid_get_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle*" "style")
+    '("gfloat*" "width")
+    '("GdkColor*" "color")
+  )
+)
+
+(define-function gtk_plot_bar_get_type
+  (c-name "gtk_plot_bar_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_bar_new
+  (is-constructor-of "GtkPlotBar")
+  (c-name "gtk_plot_bar_new")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GtkOrientation" "orientation")
+  )
+)
+
+(define-method construct
+  (of-object "GtkPlotBar")
+  (c-name "gtk_plot_bar_construct")
+  (return-type "none")
+  (parameters
+    '("GtkOrientation" "orientation")
+  )
+)
+
+(define-method set_width
+  (of-object "GtkPlotBar")
+  (c-name "gtk_plot_bar_set_width")
+  (return-type "none")
+  (parameters
+    '("gdouble" "width")
+  )
+)
+
+(define-method get_width
+  (of-object "GtkPlotBar")
+  (c-name "gtk_plot_bar_get_width")
+  (return-type "gdouble")
+)
+
+(define-function gtk_plot_box_get_type
+  (c-name "gtk_plot_box_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_box_new
+  (is-constructor-of "GtkPlotBox")
+  (c-name "gtk_plot_box_new")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GtkOrientation" "orientation")
+  )
+)
+
+(define-method construct
+  (of-object "GtkPlotBox")
+  (c-name "gtk_plot_box_construct")
+  (return-type "none")
+  (parameters
+    '("GtkOrientation" "orientation")
+  )
+)
+
+(define-function gtk_plot_candle_get_type
+  (c-name "gtk_plot_candle_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_candle_new
+  (is-constructor-of "GtkPlotCandle")
+  (c-name "gtk_plot_candle_new")
+  (return-type "GtkWidget*")
+)
+
+(define-function gtk_plot_canvas_get_type
+  (c-name "gtk_plot_canvas_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_canvas_child_get_type
+  (c-name "gtk_plot_canvas_child_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_canvas_new
+  (is-constructor-of "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_new")
+  (return-type "GtkWidget*")
+  (parameters
+    '("gint" "width")
+    '("gint" "height")
+    '("gdouble" "magnification" (default "1.0"))
+  )
+)
+
+(define-method construct
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_construct")
+  (return-type "none")
+  (parameters
+    '("gint" "width")
+    '("gint" "height")
+    '("gdouble" "magnification")
+  )
+)
+
+(define-method set_pc
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_set_pc")
+  (return-type "none")
+  (parameters
+    '("GtkPlotPC*" "pc")
+  )
+)
+
+(define-method paint
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_paint")
+  (return-type "none")
+)
+
+(define-method refresh
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_refresh")
+  (return-type "none")
+)
+
+(define-method freeze
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_freeze")
+  (return-type "none")
+)
+
+(define-method thaw
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_thaw")
+  (return-type "none")
+)
+
+(define-method grid_set_visible
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_grid_set_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+(define-method grid_set_step
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_grid_set_step")
+  (return-type "none")
+  (parameters
+    '("gdouble" "step")
+  )
+)
+
+(define-method grid_set_attributes
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_grid_set_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gint" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method cancel_action
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_cancel_action")
+  (return-type "none")
+)
+
+(define-method unselect
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_unselect")
+  (return-type "none")
+)
+
+(define-method get_active_item
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_get_active_item")
+  (return-type "GtkPlotCanvasChild*" (null-ok))
+)
+
+(define-method set_size
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_set_size")
+  (return-type "none")
+  (parameters
+    '("gint" "width")
+    '("gint" "height")
+  )
+)
+
+(define-method set_magnification
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_set_magnification")
+  (return-type "none")
+  (parameters
+    '("gdouble" "magnification")
+  )
+)
+
+(define-method set_transparent
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_set_transparent")
+  (return-type "none")
+  (parameters
+    '("gboolean" "transparent")
+  )
+)
+
+(define-method transparent
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_transparent")
+  (return-type "gboolean")
+)
+
+(define-method set_background
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_set_background")
+  (return-type "none")
+  (parameters
+    '("const-GdkColor*" "background")
+  )
+)
+
+(define-method get_pixel
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_get_pixel")
+  (return-type "none")
+  (parameters
+    '("gdouble" "px")
+    '("gdouble" "py")
+    '("gint*" "x")
+    '("gint*" "y")
+  )
+)
+
+(define-method get_position
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_get_position")
+  (return-type "none")
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+    '("gdouble*" "px")
+    '("gdouble*" "py")
+  )
+)
+
+(define-method put_child
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_put_child")
+  (return-type "none")
+  (parameters
+    '("GtkPlotCanvasChild*" "child")
+    '("gdouble" "x1")
+    '("gdouble" "y1")
+    '("gdouble" "x2")
+    '("gdouble" "y2")
+  )
+)
+
+(define-method remove_child
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_remove_child")
+  (return-type "none")
+  (parameters
+    '("GtkPlotCanvasChild*" "child")
+  )
+)
+
+(define-method child_move
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_child_move")
+  (return-type "none")
+  (parameters
+    '("GtkPlotCanvasChild*" "child")
+    '("gdouble" "x1")
+    '("gdouble" "y1")
+  )
+)
+
+(define-method child_move_resize
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_child_move_resize")
+  (return-type "none")
+  (parameters
+    '("GtkPlotCanvasChild*" "child")
+    '("gdouble" "x1")
+    '("gdouble" "y1")
+    '("gdouble" "x2")
+    '("gdouble" "y2")
+  )
+)
+
+(define-method child_get_position
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_child_get_position")
+  (return-type "gboolean")
+  (parameters
+    '("GtkPlotCanvasChild*" "child")
+    '("double*" "x1")
+    '("double*" "y1")
+    '("double*" "x2")
+    '("double*" "y2")
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; GtkPlotCanvasChild
+
+(define-method set_selection
+  (of-object "GtkPlotCanvasChild")
+  (c-name "gtk_plot_canvas_child_set_selection")
+  (return-type "none")
+  (parameters
+    '("GtkPlotCanvasSelection" "selection")
+  )
+)
+
+(define-method set_selection_mode
+  (of-object "GtkPlotCanvasChild")
+  (c-name "gtk_plot_canvas_child_set_selection_mode")
+  (return-type "none")
+  (parameters
+    '("GtkPlotCanvasSelectionMode" "mode")
+  )
+)
+
+;; GtkPlotCanvasEllipse
+
+(define-function gtk_plot_canvas_ellipse_get_type
+  (c-name "gtk_plot_canvas_ellipse_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_canvas_ellipse_new
+  (c-name "gtk_plot_canvas_ellipse_new")
+  (is-constructor-of "GtkPlotCanvasEllipse")
+  (return-type "GtkPlotCanvasChild*")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "fg" (null-ok))
+    '("const-GdkColor*" "bg" (null-ok))
+    '("gboolean" "fill")
+  )
+)
+
+(define-method set_attributes
+  (of-object "GtkPlotCanvasEllipse")
+  (c-name "gtk_plot_canvas_ellipse_set_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gdouble" "width")
+    '("const-GdkColor*" "fg" (null-ok))
+    '("const-GdkColor*" "bg" (null-ok))
+    '("gboolean" "fill")
+  )
+)
+
+;; GtkPlotCanvasLine
+
+(define-function gtk_plot_canvas_line_get_type
+  (c-name "gtk_plot_canvas_line_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_canvas_line_new
+  (c-name "gtk_plot_canvas_line_new")
+  (is-constructor-of "GtkPlotCanvasLine")
+  (return-type "GtkPlotCanvasChild*")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color" (null-ok))
+    '("GtkPlotCanvasArrow" "arrow_mask")
+  )
+)
+
+(define-method set_attributes
+  (of-object "GtkPlotCanvasLine")
+  (c-name "gtk_plot_canvas_line_set_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color" (null-ok))
+  )
+)
+
+(define-method set_arrow
+  (of-object "GtkPlotCanvasLine")
+  (c-name "gtk_plot_canvas_line_set_arrow")
+  (return-type "none")
+  (parameters
+    '("GtkPlotSymbolStyle" "style")
+    '("gfloat" "width")
+    '("gfloat" "length")
+    '("GtkPlotCanvasArrow" "mask")
+  )
+)
+
+;; GtkPlotCanvasPixmap
+
+(define-function gtk_plot_canvas_pixmap_get_type
+  (c-name "gtk_plot_canvas_pixmap_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_canvas_pixmap_new
+  (c-name "gtk_plot_canvas_pixmap_new")
+  (is-constructor-of "GtkPlotCanvasPixmap")
+  (return-type "GtkPlotCanvasChild*")
+  (parameters
+    '("GdkPixmap*" "pixmap" (null-ok))
+    '("GdkBitmap*" "mask" (null-ok))
+  )
+)
+
+
+;; GtkPlotCanvasPlot
+(define-function gtk_plot_canvas_plot_get_type
+  (c-name "gtk_plot_canvas_plot_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_canvas_plot_new
+  (is-constructor-of "GtkPlotCanvasPlot")
+  (c-name "gtk_plot_canvas_plot_new")
+  (return-type "GtkPlotCanvasChild*")
+  (parameters
+    ("GtkPlot*" "plot")
+  )
+)
+
+;; From gtk+extra-2.0.0-h/gtkplotcanvasrectangle.h
+
+(define-function gtk_plot_canvas_rectangle_get_type
+  (c-name "gtk_plot_canvas_rectangle_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_canvas_rectangle_new
+  (c-name "gtk_plot_canvas_rectangle_new")
+  (is-constructor-of "GtkPlotCanvasRectangle")
+  (return-type "GtkPlotCanvasChild*")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "fg")
+    '("const-GdkColor*" "bg")
+    '("GtkPlotBorderStyle" "border")
+    '("gboolean" "fill")
+  )
+)
+
+(define-method set_attributes
+  (of-object "GtkPlotCanvasRectangle")
+  (c-name "gtk_plot_canvas_rectangle_set_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "fg" (null-ok))
+    '("const-GdkColor*" "bg" (null-ok))
+    '("GtkPlotBorderStyle" "border")
+    '("gboolean" "fill")
+  )
+)
+
+;; GtkPlotCanvasText
+
+(define-function gtk_plot_canvas_text_get_type
+  (c-name "gtk_plot_canvas_text_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_canvas_text_new
+  (c-name "gtk_plot_canvas_text_new")
+  (is-constructor-of "GtkPlotCanvasText")
+  (return-type "GtkPlotCanvasChild*")
+  (parameters
+    '("const-gchar*" "font")
+    '("gint" "height")
+    '("gint" "angle")
+    '("const-GdkColor*" "fg" (null-ok))
+    '("const-GdkColor*" "bg" (null-ok))
+    '("gboolean" "transparent")
+    '("GtkJustification" "justification")
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method set_attributes
+  (of-object "GtkPlotCanvasText")
+  (c-name "gtk_plot_canvas_text_set_attributes")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "font" (null-ok))
+    '("gint" "height")
+    '("gint" "angle")
+    '("const-GdkColor*" "fg" (null-ok))
+    '("const-GdkColor*" "bg" (null-ok))
+    '("gboolean" "transparent")
+    '("GtkJustification" "justification")
+    '("const-gchar*" "real_text")
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(define-function gtk_plot_csurface_get_type
+  (c-name "gtk_plot_csurface_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_csurface_new
+  (is-constructor-of "GtkPlotCSurface")
+  (c-name "gtk_plot_csurface_new")
+  (return-type "GtkWidget*")
+)
+
+(define-function gtk_plot_csurface_new_function
+  (c-name "gtk_plot_csurface_new_function")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GtkPlotFunc3D" "function")
+  )
+)
+
+(define-method construct_function
+  (of-object "GtkPlotCSurface")
+  (c-name "gtk_plot_csurface_construct_function")
+  (return-type "none")
+  (parameters
+    '("GtkPlotFunc3D" "function")
+  )
+)
+
+(define-method set_lines_visible
+  (of-object "GtkPlotCSurface")
+  (c-name "gtk_plot_csurface_set_lines_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+(define-method get_lines_visible
+  (of-object "GtkPlotCSurface")
+  (c-name "gtk_plot_csurface_get_lines_visible")
+  (return-type "gboolean")
+)
+
+(define-method set_projection
+  (of-object "GtkPlotCSurface")
+  (c-name "gtk_plot_csurface_set_projection")
+  (return-type "none")
+  (parameters
+    '("GtkPlotProjection" "proj")
+  )
+)
+
+(define-method projection
+  (of-object "GtkPlotCSurface")
+  (c-name "gtk_plot_csurface_projection")
+  (return-type "GtkPlotProjection")
+)
+
+(define-method set_levels_attributes
+  (of-object "GtkPlotCSurface")
+  (c-name "gtk_plot_csurface_set_levels_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method set_sublevels_attributes
+  (of-object "GtkPlotCSurface")
+  (c-name "gtk_plot_csurface_set_sublevels_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method get_levels_attributes
+  (of-object "GtkPlotCSurface")
+  (c-name "gtk_plot_csurface_get_levels_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle*" "style")
+    '("gfloat*" "width")
+    '("GdkColor*" "color")
+  )
+)
+
+(define-method get_sublevels_attributes
+  (of-object "GtkPlotCSurface")
+  (c-name "gtk_plot_csurface_get_sublevels_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle*" "style")
+    '("gfloat*" "width")
+    '("GdkColor*" "color")
+  )
+)
+
+(define-function gtk_plot_data_new
+  (is-constructor-of "GtkPlotData")
+  (c-name "gtk_plot_data_new")
+  (return-type "GtkWidget*")
+)
+
+(define-function gtk_plot_data_new_function
+  (c-name "gtk_plot_data_new_function")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GtkPlotFunc" "function")
+  )
+)
+
+(define-method construct_function
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_construct_function")
+  (return-type "none")
+  (parameters
+    '("GtkPlotFunc" "function")
+  )
+)
+
+(define-function gtk_plot_data_new_iterator
+  (c-name "gtk_plot_data_new_iterator")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GtkPlotIterator" "iter")
+    '("gint" "npoints")
+    '("guint16" "iterator_mask")
+  )
+)
+
+(define-method construct_iterator
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_construct_iterator")
+  (return-type "none")
+  (parameters
+    '("GtkPlotIterator" "iter")
+    '("gint" "npoints")
+    '("guint16" "iterator_mask")
+  )
+)
+
+(define-method clone
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_clone")
+  (return-type "none")
+  (parameters
+    '("GtkPlotData" "copy")
+  )
+)
+
+(define-method paint
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_paint")
+  (return-type "none")
+)
+
+(define-method update
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_update")
+  (return-type "none")
+)
+
+(define-method draw_points
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_draw_points")
+  (return-type "none")
+  (parameters
+    '("gint" "n")
+  )
+)
+
+(define-method draw_symbol
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_draw_symbol")
+  (return-type "none")
+  (parameters
+    '("gdouble" "x")
+    '("gdouble" "y")
+  )
+)
+
+(define-method set_points
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_points")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "x")
+    '("gdouble*" "y")
+    '("gdouble*" "dx")
+    '("gdouble*" "dy")
+    '("gint" "num_points")
+  )
+)
+
+(define-method get_points
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_points")
+  (return-type "none")
+  (parameters
+    '("gdouble**" "x")
+    '("gdouble**" "y")
+    '("gdouble**" "dx")
+    '("gdouble**" "dy")
+    '("gint*" "num_points")
+  )
+)
+
+(define-method get_point
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_point")
+  (return-type "none")
+  (parameters
+    '("gint" "n")
+    '("gdouble*" "x")
+    '("gdouble*" "y")
+    '("gdouble*" "z")
+    '("gdouble*" "a")
+    '("gdouble*" "dx")
+    '("gdouble*" "dy")
+    '("gdouble*" "dz")
+    '("gdouble*" "da")
+    '("gchar**" "label")
+    '("gboolean*" "error")
+  )
+)
+
+(define-method set_x
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_x")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "x")
+  )
+)
+
+(define-method set_y
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_y")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "y")
+  )
+)
+
+(define-method set_z
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_z")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "z")
+  )
+)
+
+(define-method set_a
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_a")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "z")
+  )
+)
+
+(define-method set_dx
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_dx")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "dx")
+  )
+)
+
+(define-method set_dy
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_dy")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "dy")
+  )
+)
+
+(define-method set_dz
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_dz")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "dz")
+  )
+)
+
+(define-method set_da
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_da")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "da")
+  )
+)
+
+(define-method set_a_scale
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_a_scale")
+  (return-type "none")
+  (parameters
+    '("gdouble" "a_scale")
+  )
+)
+
+(define-method set_labels
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_labels")
+  (return-type "none")
+  (parameters
+    '("gchar**" "labels")
+  )
+)
+
+(define-method get_x
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_x")
+  (return-type "gdouble*" (null-ok))
+  (parameters
+    '("gint*" "num_points")
+  )
+)
+
+(define-method get_y
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_y")
+  (return-type "gdouble*" (null-ok))
+  (parameters
+    '("gint*" "num_points")
+  )
+)
+
+(define-method get_z
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_z")
+  (return-type "gdouble*" (null-ok))
+  (parameters
+    '("gint*" "num_points")
+  )
+)
+
+(define-method get_a
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_a")
+  (return-type "gdouble*" (null-ok))
+  (parameters
+    '("gint*" "num_points")
+  )
+)
+
+(define-method get_dx
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_dx")
+  (return-type "gdouble*" (null-ok))
+  (parameters
+    '("gint*" "num_points")
+  )
+)
+
+(define-method get_dy
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_dy")
+  (return-type "gdouble*" (null-ok))
+  (parameters
+    '("gint*" "num_points")
+  )
+)
+
+(define-method get_dz
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_dz")
+  (return-type "gdouble*" (null-ok))
+  (parameters
+    '("gint*" "num_points")
+  )
+)
+
+(define-method get_da
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_da")
+  (return-type "gdouble*" (null-ok))
+  (parameters
+    '("gint*" "num_points")
+  )
+)
+
+(define-method get_a_scale
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_a_scale")
+  (return-type "gdouble")
+)
+
+(define-method get_labels
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_labels")
+  (return-type "gchar**" (null-ok))
+  (parameters
+    '("gboolean*" "show_labels")
+  )
+)
+
+(define-method show_labels
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_show_labels")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show_labels")
+  )
+)
+
+(define-method labels_set_attributes
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_labels_set_attributes")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "font")
+    '("gint" "height")
+    '("gint" "angle")
+    '("const-GdkColor*" "foreground")
+    '("const-GdkColor*" "background")
+  )
+)
+
+(define-method set_numpoints
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_numpoints")
+  (return-type "none")
+  (parameters
+    '("gint" "num_points")
+  )
+)
+
+(define-method get_numpoints
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_numpoints")
+  (return-type "gint")
+)
+
+(define-method set_symbol
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_symbol")
+  (return-type "none")
+  (parameters
+    '("GtkPlotSymbolType" "type")
+    '("GtkPlotSymbolStyle" "style")
+    '("gint" "size")
+    '("gfloat" "line_width")
+    '("const-GdkColor*" "color")
+    '("const-GdkColor*" "border_color")
+  )
+)
+
+(define-method get_symbol
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_symbol")
+  (return-type "none")
+  (parameters
+    '("GtkPlotSymbolType*" "type")
+    '("GtkPlotSymbolStyle*" "style")
+    '("gint*" "size")
+    '("gfloat*" "line_width")
+    '("GdkColor*" "color")
+    '("GdkColor*" "border_color")
+  )
+)
+
+(define-method set_connector
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_connector")
+  (return-type "none")
+  (parameters
+    '("GtkPlotConnector" "connector")
+  )
+)
+
+(define-method get_connector
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_connector")
+  (return-type "gint")
+)
+
+(define-method set_line_attributes
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_line_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("GdkCapStyle" "cap_style")
+    '("GdkJoinStyle" "join_style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method get_line_attributes
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_line_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle*" "style")
+    '("GdkCapStyle*" "cap_style")
+    '("GdkJoinStyle*" "join_style")
+    '("gfloat*" "width")
+    '("GdkColor*" "color")
+  )
+)
+
+(define-method set_x_attributes
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_x_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("GdkCapStyle" "cap_style")
+    '("GdkJoinStyle" "join_style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method set_y_attributes
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_y_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("GdkCapStyle" "cap_style")
+    '("GdkJoinStyle" "join_style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method set_z_attributes
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_z_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("GdkCapStyle" "cap_style")
+    '("GdkJoinStyle" "join_style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method show_xerrbars
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_show_xerrbars")
+  (return-type "none")
+)
+
+(define-method show_yerrbars
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_show_yerrbars")
+  (return-type "none")
+)
+
+(define-method show_zerrbars
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_show_zerrbars")
+  (return-type "none")
+)
+
+(define-method hide_xerrbars
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_hide_xerrbars")
+  (return-type "none")
+)
+
+(define-method hide_yerrbars
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_hide_yerrbars")
+  (return-type "none")
+)
+
+(define-method hide_zerrbars
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_hide_zerrbars")
+  (return-type "none")
+)
+
+(define-method fill_area
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_fill_area")
+  (return-type "none")
+  (parameters
+    '("gboolean" "fill")
+  )
+)
+
+(define-method area_is_filled
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_area_is_filled")
+  (return-type "gboolean")
+)
+
+(define-method show_legend
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_show_legend")
+  (return-type "none")
+)
+
+(define-method hide_legend
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_hide_legend")
+  (return-type "none")
+)
+
+(define-method set_legend
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_legend")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "legend")
+  )
+)
+
+(define-method set_legend_precision
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_legend_precision")
+  (return-type "none")
+  (parameters
+    '("gint" "precision")
+  )
+)
+
+(define-method get_legend_precision
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_legend_precision")
+  (return-type "gint")
+)
+
+(define-method set_name
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_name")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method reset_gradient
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_reset_gradient")
+  (return-type "none")
+)
+
+(define-method reset_gradient_colors
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_reset_gradient_colors")
+  (return-type "none")
+)
+
+(define-method gradient_use_custom_colors
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_gradient_use_custom_colors")
+  (return-type "none")
+  (parameters
+    '("gboolean" "custom")
+  )
+)
+
+(define-method gradient_custom_colors
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_gradient_custom_colors")
+  (return-type "gboolean")
+)
+
+(define-method set_gradient_mask
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_gradient_mask")
+  (return-type "none")
+  (parameters
+    '("gint" "mask")
+  )
+)
+
+(define-method get_gradient_mask
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_gradient_mask")
+  (return-type "gint")
+)
+
+(define-method gradient_set_visible
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_gradient_set_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+(define-method gradient_visible
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_gradient_visible")
+  (return-type "gboolean")
+)
+
+;(define-method draw_gradient
+;  (of-object "GtkPlotData")
+;  (c-name "gtk_plot_data_draw_gradient")
+;  (return-type "none")
+;  (parameters
+;    '("gint" "x")
+;    '("gint" "y")
+;  )
+;)
+
+(define-method gradient_autoscale_a
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_gradient_autoscale_a")
+  (return-type "none")
+)
+
+(define-method gradient_autoscale_da
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_gradient_autoscale_da")
+  (return-type "none")
+)
+
+(define-method gradient_autoscale_z
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_gradient_autoscale_z")
+  (return-type "none")
+)
+
+(define-method set_gradient_colors
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_gradient_colors")
+  (return-type "none")
+  (parameters
+    '("const-GdkColor*" "min")
+    '("const-GdkColor*" "max")
+  )
+)
+
+(define-method get_gradient_colors
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_gradient_colors")
+  (return-type "none")
+  (parameters
+    '("GdkColor*" "min")
+    '("GdkColor*" "max")
+  )
+)
+
+(define-method set_gradient_nth_color
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_gradient_nth_color")
+  (return-type "none")
+  (parameters
+    '("guint" "level")
+    '("GdkColor*" "color")
+  )
+)
+
+(define-method get_gradient_nth_color
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_gradient_nth_color")
+  (return-type "const-GdkColor*" (null-ok))
+  (parameters
+    '("guint" "level")
+  )
+)
+
+(define-method set_gradient_outer_colors
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_gradient_outer_colors")
+  (return-type "none")
+  (parameters
+    '("const-GdkColor*" "min")
+    '("const-GdkColor*" "max")
+  )
+)
+
+(define-method get_gradient_outer_colors
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_gradient_outer_colors")
+  (return-type "none")
+  (parameters
+    '("GdkColor*" "min")
+    '("GdkColor*" "max")
+  )
+)
+
+(define-method set_gradient
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_gradient")
+  (return-type "none")
+  (parameters
+    '("gdouble" "min")
+    '("gdouble" "max")
+    '("gint" "nlevels")
+    '("gint" "nsublevels" (default "0"))
+  )
+)
+
+(define-method get_gradient
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_gradient")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "min")
+    '("gdouble*" "max")
+    '("gint*" "nlevels")
+    '("gint*" "nsublevels")
+  )
+)
+
+(define-method get_gradient_level
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_gradient_level")
+  (return-type "none")
+  (parameters
+    '("gdouble" "level")
+    '("GdkColor*" "color")
+  )
+)
+
+(define-method gradient_set_style
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_gradient_set_style")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLabelStyle" "style")
+    '("gint" "precision")
+  )
+)
+
+(define-method gradient_set_scale
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_gradient_set_scale")
+  (return-type "none")
+  (parameters
+    '("GtkPlotScale" "scale")
+  )
+)
+
+(define-method set_link
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_set_link")
+  (return-type "none")
+  (parameters
+    '("gpointer" "link")
+  )
+)
+
+(define-method get_link
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_get_link")
+  (return-type "gpointer" (null-ok))
+)
+
+(define-method remove_link
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_remove_link")
+  (return-type "none")
+)
+
+(define-method add_marker
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_add_marker")
+  (return-type "GtkPlotMarker*")
+  (parameters
+    '("guint" "point")
+  )
+)
+
+(define-method remove_marker
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_remove_marker")
+  (return-type "gboolean")
+  (parameters
+    '("GtkPlotMarker*" "marker")
+  )
+)
+
+(define-method remove_markers
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_remove_markers")
+  (return-type "none")
+)
+
+(define-method show_markers
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_show_markers")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show")
+  )
+)
+
+(define-method markers_visible
+  (of-object "GtkPlotData")
+  (c-name "gtk_plot_data_markers_visible")
+  (return-type "gboolean")
+)
+
+(define-function gtk_plot_dt_get_type
+  (c-name "gtk_plot_dt_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_dt_new
+  (is-constructor-of "GtkPlotDt")
+  (c-name "gtk_plot_dt_new")
+  (return-type "GtkObject*")
+  (parameters
+    '("gint" "num")
+  )
+)
+
+(define-method set_quadrilateral
+  (of-object "GtkPlotDT")
+  (c-name "gtk_plot_dt_set_quadrilateral")
+  (return-type "none")
+  (parameters
+    '("gboolean" "set")
+  )
+)
+
+(define-method set_subsampling
+  (of-object "GtkPlotDT")
+  (c-name "gtk_plot_dt_set_subsampling")
+  (return-type "none")
+  (parameters
+    '("gboolean" "set")
+  )
+)
+
+(define-method add_node
+  (of-object "GtkPlotDT")
+  (c-name "gtk_plot_dt_add_node_PY")
+  (return-type "gboolean")
+  (parameters
+    '("GtkPlotDTnode" "node")
+  )
+)
+
+(define-method get_node
+  (of-object "GtkPlotDT")
+  (c-name "gtk_plot_dt_get_node")
+  (return-type "GtkPlotDTnode*" (null-ok))
+  (parameters
+    '("gint" "idx")
+  )
+)
+
+(define-method triangulate
+  (of-object "GtkPlotDT")
+  (c-name "gtk_plot_dt_triangulate")
+  (return-type "gboolean")
+)
+
+(define-method clear
+  (of-object "GtkPlotDT")
+  (c-name "gtk_plot_dt_clear")
+  (return-type "none")
+)
+
+(define-function gtk_plot_flux_get_type
+  (c-name "gtk_plot_flux_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_flux_new
+  (is-constructor-of "GtkPlotFlux")
+  (c-name "gtk_plot_flux_new")
+  (return-type "GtkWidget*")
+)
+
+(define-method set_arrow
+  (of-object "GtkPlotFlux")
+  (c-name "gtk_plot_flux_set_arrow")
+  (return-type "none")
+  (parameters
+    '("gint" "arrow_length")
+    '("gint" "arrow_width")
+    '("GtkPlotSymbolStyle" "style")
+  )
+)
+
+(define-method get_arrow
+  (of-object "GtkPlotFlux")
+  (c-name "gtk_plot_flux_get_arrow")
+  (return-type "none")
+  (parameters
+    '("gint*" "arrow_length")
+    '("gint*" "arrow_width")
+    '("GtkPlotSymbolStyle*" "style")
+  )
+)
+
+(define-method center
+  (of-object "GtkPlotFlux")
+  (c-name "gtk_plot_flux_center")
+  (return-type "none")
+  (parameters
+    '("gboolean" "center")
+  )
+)
+
+(define-method is_centered
+  (of-object "GtkPlotFlux")
+  (c-name "gtk_plot_flux_is_centered")
+  (return-type "gboolean")
+)
+
+(define-function gtk_plot_gdk_get_type
+  (c-name "gtk_plot_gdk_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_gdk_new
+  (c-name "gtk_plot_gdk_new")
+  (is-constructor-of "GtkPlotGdk")
+  (return-type "GtkObject*")
+  (parameters
+    '("GtkWidget*" "widget")
+  )
+)
+
+(define-method construct
+  (of-object "GtkPlotGdk")
+  (c-name "gtk_plot_gdk_construct")
+  (return-type "none")
+  (parameters
+    '("GtkWidget*" "widget")
+  )
+)
+
+(define-method set_drawable
+  (of-object "GtkPlotGdk")
+  (c-name "gtk_plot_gdk_set_drawable")
+  (return-type "none")
+  (parameters
+    '("GdkDrawable*" "drawable")
+  )
+)
+
+(define-function gtk_plot_get_type
+  (c-name "gtk_plot_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_new
+  (is-constructor-of "GtkPlot")
+  (c-name "gtk_plot_new")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GdkDrawable*" "drawable" (default "NULL"))
+  )
+)
+
+(define-function gtk_plot_new_with_size
+  (c-name "gtk_plot_new_with_size")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GdkDrawable*" "drawable")
+    '("gdouble" "width")
+    '("gdouble" "height")
+  )
+)
+
+(define-method construct
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_construct")
+  (return-type "none")
+  (parameters
+    '("GdkDrawable*" "drawable")
+  )
+)
+
+(define-method construct_with_size
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_construct_with_size")
+  (return-type "none")
+  (parameters
+    '("GdkDrawable*" "drawable")
+    '("gdouble" "width")
+    '("gdouble" "height")
+  )
+)
+
+(define-method set_drawable
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_drawable")
+  (return-type "none")
+  (parameters
+    '("GdkDrawable*" "drawable")
+  )
+)
+
+(define-method get_drawable
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_get_drawable")
+  (return-type "GdkDrawable*" (null-ok))
+)
+
+(define-method set_pc
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_pc")
+  (return-type "none")
+  (parameters
+    '("GtkPlotPC*" "pc")
+  )
+)
+
+(define-method set_background_pixmap
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_background_pixmap")
+  (return-type "none")
+  (parameters
+    '("GdkPixmap*" "pixmap")
+  )
+)
+
+(define-method set_transparent
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_transparent")
+  (return-type "none")
+  (parameters
+    '("gboolean" "transparent")
+  )
+)
+
+(define-method is_transparent
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_is_transparent")
+  (return-type "gboolean")
+)
+
+(define-method get_position
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_get_position")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "x")
+    '("gdouble*" "y")
+  )
+)
+
+(define-method get_size
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_get_size")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "width")
+    '("gdouble*" "height")
+  )
+)
+
+(define-method get_internal_allocation
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_get_internal_allocation")
+  (return-type "GtkAllocation")
+)
+
+(define-method set_background
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_background")
+  (return-type "none")
+  (parameters
+    '("const-GdkColor*" "background")
+  )
+)
+
+(define-method paint
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_paint")
+  (return-type "none")
+)
+
+(define-method refresh
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_refresh")
+  (return-type "none")
+  (parameters
+    '("GdkRectangle*" "area" (default "NULL") (null-ok))
+  )
+)
+
+(define-method move
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_move")
+  (return-type "none")
+  (parameters
+    '("gdouble" "x")
+    '("gdouble" "y")
+  )
+)
+
+(define-method resize
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_resize")
+  (return-type "none")
+  (parameters
+    '("gdouble" "width")
+    '("gdouble" "height")
+  )
+)
+
+(define-method set_magnification
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_magnification")
+  (return-type "none")
+  (parameters
+    '("gdouble" "magnification")
+  )
+)
+
+(define-method move_resize
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_move_resize")
+  (return-type "none")
+  (parameters
+    '("gdouble" "x")
+    '("gdouble" "y")
+    '("gdouble" "width")
+    '("gdouble" "height")
+  )
+)
+
+(define-method get_pixel
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_get_pixel")
+  (return-type "none")
+  (parameters
+    '("gdouble" "xx")
+    '("gdouble" "yy")
+    '("gdouble*" "x")
+    '("gdouble*" "y")
+  )
+)
+
+(define-method get_point
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_get_point")
+  (return-type "none")
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+    '("gdouble*" "xx")
+    '("gdouble*" "yy")
+  )
+)
+
+(define-method clip_data
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_clip_data")
+  (return-type "none")
+  (parameters
+    '("gboolean" "clip")
+  )
+)
+
+(define-method set_xrange
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_xrange")
+  (return-type "none")
+  (parameters
+    '("gdouble" "xmin")
+    '("gdouble" "xmax")
+  )
+)
+
+(define-method set_yrange
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_yrange")
+  (return-type "none")
+  (parameters
+    '("gdouble" "ymin")
+    '("gdouble" "ymax")
+  )
+)
+
+(define-method set_range
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_range")
+  (return-type "none")
+  (parameters
+    '("gdouble" "xmin")
+    '("gdouble" "xmax")
+    '("gdouble" "ymin")
+    '("gdouble" "ymax")
+  )
+)
+
+(define-method autoscale
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_autoscale")
+  (return-type "none")
+)
+
+(define-method get_xrange
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_get_xrange")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "xmin")
+    '("gdouble*" "xmax")
+  )
+)
+
+(define-method get_yrange
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_get_yrange")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "ymin")
+    '("gdouble*" "ymax")
+  )
+)
+
+(define-method set_xscale
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_xscale")
+  (return-type "none")
+  (parameters
+    '("GtkPlotScale" "scale_type")
+  )
+)
+
+(define-method set_yscale
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_yscale")
+  (return-type "none")
+  (parameters
+    '("GtkPlotScale" "scale_type")
+  )
+)
+
+(define-method get_xscale
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_get_xscale")
+  (return-type "GtkPlotScale")
+)
+
+(define-method get_yscale
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_get_yscale")
+  (return-type "GtkPlotScale")
+)
+
+(define-method reflect_x
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_reflect_x")
+  (return-type "none")
+  (parameters
+    '("gboolean" "reflect")
+  )
+)
+
+(define-method reflect_y
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_reflect_y")
+  (return-type "none")
+  (parameters
+    '("gboolean" "reflect")
+  )
+)
+
+(define-method is_x_reflected
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_is_x_reflected")
+  (return-type "gboolean")
+)
+
+(define-method is_y_reflected
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_is_y_reflected")
+  (return-type "gboolean")
+)
+
+(define-method put_text
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_put_text")
+  (return-type "GtkPlotText*")
+  (parameters
+    '("gdouble" "x")
+    '("gdouble" "y")
+    '("const-gchar*" "font")
+    '("gint" "height")
+    '("gint" "angle")
+    '("const-GdkColor*" "foreground")
+    '("const-GdkColor*" "background")
+    '("gboolean" "transparent")
+    '("GtkJustification" "justification")
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method remove_text
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_remove_text")
+  (return-type "gint")
+  (parameters
+    '("GtkPlotText*" "text")
+  )
+)
+
+(define-function plot_text_get_size
+  (c-name "gtk_plot_text_get_size")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "text")
+    '("gint" "angle")
+    '("const-gchar*" "font_name")
+    '("gint" "font_size")
+    '("gint*" "width")
+    '("gint*" "height")
+    '("gint*" "ascent")
+    '("gint*" "descent")
+  )
+)
+
+(define-function plot_text_get_area
+  (c-name "gtk_plot_text_get_area")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "text")
+    '("gint" "angle")
+    '("GtkJustification" "just")
+    '("const-gchar*" "font_name")
+    '("gint" "font_size")
+    '("gint*" "x")
+    '("gint*" "y")
+    '("gint*" "width")
+    '("gint*" "height")
+  )
+)
+
+(define-method set_attributes
+  (of-object "GtkPlotText")
+  (c-name "gtk_plot_text_set_attributes")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "font")
+    '("gint" "height")
+    '("gint" "angle")
+    '("const-GdkColor*" "fg")
+    '("const-GdkColor*" "bg")
+    '("gboolean" "transparent")
+    '("GtkJustification" "justification")
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method set_border
+  (of-object "GtkPlotText")
+  (c-name "gtk_plot_text_set_border")
+  (return-type "none")
+  (parameters
+    '("GtkPlotBorderStyle" "border")
+    '("gint" "border_space")
+    '("gint" "border_width")
+    '("gint" "shadow_width")
+  )
+)
+
+(define-method draw_line
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_draw_line_PY")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLine" "line")
+    '("gdouble" "x1")
+    '("gdouble" "y1")
+    '("gdouble" "x2")
+    '("gdouble" "y2")
+  )
+)
+
+(define-method draw_text
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_draw_text_PY")
+  (return-type "none")
+  (parameters
+    '("GtkPlotText" "text")
+  )
+)
+
+(define-method set_ticks
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_ticks")
+  (return-type "none")
+  (parameters
+    '("GtkPlotOrientation" "orientation")
+    '("gdouble" "major_step")
+    '("gint" "nminor")
+  )
+)
+
+(define-method set_major_ticks
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_major_ticks")
+  (return-type "none")
+  (parameters
+    '("GtkPlotOrientation" "orientation")
+    '("gdouble" "major_step")
+  )
+)
+
+(define-method set_minor_ticks
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_minor_ticks")
+  (return-type "none")
+  (parameters
+    '("GtkPlotOrientation" "orientation")
+    '("gint" "nminor")
+  )
+)
+
+(define-method set_ticks_limits
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_ticks_limits")
+  (return-type "none")
+  (parameters
+    '("GtkPlotOrientation" "orientation")
+    '("gdouble" "begin")
+    '("gdouble" "end")
+  )
+)
+
+(define-method unset_ticks_limits
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_unset_ticks_limits")
+  (return-type "none")
+  (parameters
+    '("GtkPlotOrientation" "orientation")
+  )
+)
+
+(define-method set_break
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_break")
+  (return-type "none")
+  (parameters
+    '("GtkPlotOrientation" "orient")
+    '("gdouble" "min")
+    '("gdouble" "max")
+    '("gdouble" "step_after")
+    '("gint" "nminor_after")
+    '("GtkPlotScale" "scale_after")
+    '("gdouble" "pos")
+  )
+)
+
+(define-method remove_break
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_remove_break")
+  (return-type "none")
+  (parameters
+    '("GtkPlotOrientation" "orient")
+  )
+)
+
+(define-function gtk_plot_array_get_type
+  (c-name "gtk_plot_array_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_array_new
+  (c-name "gtk_plot_array_new")
+  (is-constructor-of "GtkPlotArray")
+  (return-type "GObject*")
+  (parameters
+    '("const-gchar*" "name")
+    '("gpointer" "array")
+    '("gint" "size")
+    '("GtkType" "type")
+    '("gboolean" "own_data")
+  )
+)
+
+(define-method set
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_set")
+  (return-type "none")
+  (parameters
+    '("gpointer" "data_array")
+    '("gint" "size")
+    '("GtkType" "type")
+  )
+)
+
+(define-method set_label
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_set_label")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "label")
+  )
+)
+
+(define-method set_description
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_set_description")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "desc")
+  )
+)
+
+(define-method set_scale
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_set_scale")
+  (return-type "none")
+  (parameters
+    '("gdouble" "scale")
+  )
+)
+
+(define-method set_required
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_set_required")
+  (return-type "none")
+  (parameters
+    '("gboolean" "required")
+  )
+)
+
+(define-method set_independent
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_set_independent")
+  (return-type "none")
+  (parameters
+    '("gboolean" "independent")
+  )
+)
+
+(define-method get_data_type
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_get_data_type")
+  (return-type "GtkType")
+)
+
+(define-method get_name
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_get_name")
+  (return-type "const-gchar*")
+)
+
+(define-method get_label
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_get_label")
+  (return-type "const-gchar*")
+)
+
+(define-method get_description
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_get_description")
+  (return-type "const-gchar*")
+)
+
+(define-method required
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_required")
+  (return-type "gboolean")
+)
+
+(define-method independent
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_independent")
+  (return-type "gboolean")
+)
+
+(define-method get_scale
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_get_scale")
+  (return-type "gdouble")
+)
+
+(define-method get_size
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_get_size")
+  (return-type "gint")
+)
+
+(define-method get_float
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_get_float")
+  (return-type "gfloat*")
+)
+
+(define-method get_double
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_get_double")
+  (return-type "gdouble*")
+)
+
+(define-method get_int
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_get_int")
+  (return-type "gint*")
+)
+
+(define-method get_bool
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_get_bool")
+  (return-type "gboolean*")
+)
+
+(define-method get_string
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_get_string")
+  (return-type "gchar**")
+)
+
+(define-method get_pointer
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_get_pointer")
+  (return-type "gpointer*")
+)
+
+(define-method free
+  (of-object "GtkPlotArray")
+  (c-name "gtk_plot_array_free")
+  (return-type "none")
+)
+
+(define-function gtk_plot_array_list_get_type
+  (c-name "gtk_plot_array_list_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_plot_array_list_new
+  (c-name "gtk_plot_array_list_new")
+  (is-constructor-of "GtkPlotArrayList")
+  (return-type "GObject*")
+)
+
+(define-method add
+  (of-object "GtkPlotArrayList")
+  (c-name "gtk_plot_array_list_add")
+  (return-type "none")
+  (parameters
+    '("GtkPlotArray*" "array")
+  )
+)
+
+(define-method remove
+  (of-object "GtkPlotArrayList")
+  (c-name "gtk_plot_array_list_remove")
+  (return-type "none")
+  (parameters
+    '("GtkPlotArray*" "array")
+  )
+)
+
+(define-method get
+  (of-object "GtkPlotArrayList")
+  (c-name "gtk_plot_array_list_get")
+  (return-type "GtkPlotArray*")
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method clear
+  (of-object "GtkPlotArrayList")
+  (c-name "gtk_plot_array_list_clear")
+  (return-type "none")
+)
+
+
+(define-function gtk_plot_axis_get_type
+  (c-name "gtk_plot_axis_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_axis_new
+  (is-constructor-of "GtkPlotAxis")
+  (c-name "gtk_plot_axis_new")
+  (return-type "GtkObject*")
+  (parameters
+    '("GtkPlotOrientation" "orientation")
+  )
+)
+
+(define-method construct
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_construct")
+  (return-type "none")
+  (parameters
+    '("GtkPlotOrientation" "orientation")
+  )
+)
+
+(define-method get_axis
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_get_axis")
+  (return-type "GtkPlotAxis*" (null-ok))
+  (parameters
+    '("GtkPlotAxisPos" "axis")
+  )
+)
+
+(define-method set_visible
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+(define-method visible
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_visible")
+  (return-type "gboolean")
+)
+
+(define-method set_title
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_title")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "title")
+  )
+)
+
+(define-method show_title
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_show_title")
+  (return-type "none")
+)
+
+(define-method hide_title
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_hide_title")
+  (return-type "none")
+)
+
+(define-method move_title
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_move_title")
+  (return-type "none")
+  (parameters
+    '("gint" "angle")
+    '("gdouble" "x")
+    '("gdouble" "y")
+  )
+)
+
+(define-method justify_title
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_justify_title")
+  (return-type "none")
+  (parameters
+    '("GtkJustification" "justification")
+  )
+)
+
+(define-method set_attributes
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_attributes")
+  (return-type "none")
+  (parameters
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method get_attributes
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_get_attributes")
+  (return-type "none")
+  (parameters
+    '("gfloat*" "width")
+    '("GdkColor*" "color")
+  )
+)
+
+(define-method set_ticks
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_ticks")
+  (return-type "none")
+  (parameters
+    '("gdouble" "major_step")
+    '("gint" "nminor")
+  )
+)
+
+(define-method set_major_ticks
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_major_ticks")
+  (return-type "none")
+  (parameters
+    '("gdouble" "major_step")
+  )
+)
+
+(define-method set_minor_ticks
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_minor_ticks")
+  (return-type "none")
+  (parameters
+    '("gint" "nminor")
+  )
+)
+
+(define-method set_ticks_length
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_ticks_length")
+  (return-type "none")
+  (parameters
+    '("gint" "length")
+  )
+)
+
+(define-method set_ticks_width
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_ticks_width")
+  (return-type "none")
+  (parameters
+    '("gfloat" "width")
+  )
+)
+
+(define-method show_ticks
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_show_ticks")
+  (return-type "none")
+  (parameters
+    '("gint" "major_mask")
+    '("gint" "minor_mask")
+  )
+)
+
+(define-method set_ticks_limits
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_ticks_limits")
+  (return-type "none")
+  (parameters
+    '("gdouble" "begin")
+    '("gdouble" "end")
+  )
+)
+
+(define-method unset_ticks_limits
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_unset_ticks_limits")
+  (return-type "none")
+)
+
+(define-method set_tick_labels
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_tick_labels")
+  (return-type "none")
+  (parameters
+    '("GtkPlotArray*" "array")
+  )
+)
+
+(define-method set_break
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_break")
+  (return-type "none")
+  (parameters
+    '("gdouble" "min")
+    '("gdouble" "max")
+    '("gdouble" "step_after")
+    '("gint" "nminor_after")
+    '("GtkPlotScale" "scale_after")
+    '("gdouble" "pos")
+  )
+)
+
+(define-method remove_break
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_remove_break")
+  (return-type "none")
+)
+
+(define-method show_labels
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_show_labels")
+  (return-type "none")
+  (parameters
+    '("gint" "labels_mask")
+  )
+)
+
+(define-method title_set_attributes
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_title_set_attributes")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "font")
+    '("gint" "height")
+    '("gint" "angle")
+    '("const-GdkColor*" "foreground")
+    '("const-GdkColor*" "background")
+    '("gboolean" "transparent")
+    '("GtkJustification" "justification")
+  )
+)
+
+(define-method set_labels_attributes
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_labels_attributes")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "font")
+    '("gint" "height")
+    '("gint" "angle")
+    '("const-GdkColor*" "foreground")
+    '("const-GdkColor*" "background")
+    '("gboolean" "transparent")
+    '("GtkJustification" "justification")
+  )
+)
+
+(define-method set_labels_style
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_labels_style")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLabelStyle" "style") ;;new
+    '("gint" "precision")
+  )
+)
+
+(define-method set_labels_offset
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_labels_offset")
+  (return-type "none")
+  (parameters
+    '("gint" "offset")
+  )
+)
+
+(define-method get_labels_offset
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_get_labels_offset")
+  (return-type "gint")
+)
+
+(define-method use_custom_tick_labels
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_use_custom_tick_labels")
+  (return-type "none")
+  (parameters
+    '("gboolean" "use")
+  )
+)
+
+(define-method set_labels_suffix
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_labels_suffix")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method set_labels_prefix
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_set_labels_prefix")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method get_labels_suffix
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_get_labels_suffix")
+  (return-type "gchar*" (null-ok))
+)
+
+(define-method get_labels_prefix
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_get_labels_prefix")
+  (return-type "gchar*" (null-ok))
+)
+
+(define-method ticks_recalc
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_ticks_recalc")
+  (return-type "none")
+)
+
+(define-method ticks_autoscale
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_ticks_autoscale")
+  (return-type "none")
+  (parameters
+    '("gdouble" "xmin")
+    '("gdouble" "xmax")
+    '("gint*" "precision")
+  )
+)
+
+(define-method ticks_transform
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_ticks_transform")
+  (return-type "gdouble")
+  (parameters
+    '("gdouble" "y")
+  )
+)
+
+(define-method ticks_inverse
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_ticks_inverse")
+  (return-type "gdouble")
+  (parameters
+    '("gdouble" "x")
+  )
+)
+
+(define-method parse_label
+  (of-object "GtkPlotAxis")
+  (c-name "gtk_plot_axis_parse_label")
+  (return-type "none")
+  (parameters
+    '("gdouble" "val")
+    '("gint" "precision")
+    '("gint" "style")
+    '("gchar*" "label")
+  )
+)
+
+(define-method x0_set_visible
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_x0_set_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+(define-method x0_visible
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_x0_visible")
+  (return-type "gboolean")
+)
+
+(define-method y0_set_visible
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_y0_set_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+(define-method y0_visible
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_y0_visible")
+  (return-type "gboolean")
+)
+
+(define-method grids_set_on_top
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_grids_set_on_top")
+  (return-type "none")
+  (parameters
+    '("gboolean" "on_top")
+  )
+)
+
+(define-method grids_on_top
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_grids_on_top")
+  (return-type "gboolean")
+)
+
+(define-method grids_set_visible
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_grids_set_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "vmajor")
+    '("gboolean" "vminor")
+    '("gboolean" "hmajor")
+    '("gboolean" "hminor")
+  )
+)
+
+(define-method grids_visible
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_grids_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean*" "vmajor")
+    '("gboolean*" "vminor")
+    '("gboolean*" "hmajor")
+    '("gboolean*" "hminor")
+  )
+)
+
+(define-method y0line_set_attributes
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_y0line_set_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method x0line_set_attributes
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_x0line_set_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method major_vgrid_set_attributes
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_major_vgrid_set_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method minor_vgrid_set_attributes
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_minor_vgrid_set_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method major_hgrid_set_attributes
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_major_hgrid_set_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method minor_hgrid_set_attributes
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_minor_hgrid_set_attributes")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLineStyle" "style")
+    '("gfloat" "width")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method show_legends
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_show_legends")
+  (return-type "none")
+)
+
+(define-method hide_legends
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_hide_legends")
+  (return-type "none")
+)
+
+(define-method set_legends_border
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_legends_border")
+  (return-type "none")
+  (parameters
+    '("GtkPlotBorderStyle" "border")
+    '("gint" "shadow_width")
+  )
+)
+
+(define-method legends_move
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_legends_move")
+  (return-type "none")
+  (parameters
+    '("gdouble" "x")
+    '("gdouble" "y")
+  )
+)
+
+(define-method legends_get_position
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_legends_get_position")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "x")
+    '("gdouble*" "y")
+  )
+)
+
+(define-method legends_get_allocation
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_legends_get_allocation")
+  (return-type "GtkAllocation")
+)
+
+(define-method legends_set_attributes
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_legends_set_attributes")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "font" (default "NULL") (null-ok))
+    '("gint" "height")
+    '("const-GdkColor*" "foreground" (default "NULL") (null-ok))
+    '("const-GdkColor*" "background" (default "NULL") (null-ok))
+  )
+)
+
+(define-method set_line_attributes
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_set_line_attributes_PY")
+  (return-type "none")
+  (parameters
+    '("GtkPlotLine" "line")
+  )
+)
+
+(define-method add_data
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_add_data")
+  (return-type "none")
+  (parameters
+    '("GtkPlotData*" "data")
+  )
+)
+
+(define-method remove_data
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_remove_data")
+  (return-type "gint")
+  (parameters
+    '("GtkPlotData*" "data")
+  )
+)
+
+(define-method add_function
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_add_function")
+  (return-type "GtkPlotData*")
+  (parameters
+    '("GtkPlotFunc" "function")
+  )
+)
+
+(define-function gtk_plot_pc_get_type
+  (c-name "gtk_plot_pc_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_pc_new
+  (is-constructor-of "GtkPlotPc")
+  (c-name "gtk_plot_pc_new")
+  (return-type "GtkObject*")
+)
+
+(define-method init
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_init")
+  (return-type "gboolean")
+)
+
+(define-method leave
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_leave")
+  (return-type "none")
+)
+
+(define-method set_viewport
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_set_viewport")
+  (return-type "none")
+  (parameters
+    '("gdouble" "w")
+    '("gdouble" "h")
+  )
+)
+
+(define-method gsave
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_gsave")
+  (return-type "none")
+)
+
+(define-method grestore
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_grestore")
+  (return-type "none")
+)
+
+(define-method clip
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_clip")
+  (return-type "none")
+  (parameters
+    '("GdkRectangle*" "area")
+  )
+)
+
+(define-method clip_mask
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_clip_mask")
+  (return-type "none")
+  (parameters
+    '("gdouble" "x")
+    '("gdouble" "y")
+    '("GdkBitmap*" "mask")
+  )
+)
+
+(define-method set_color
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_set_color")
+  (return-type "none")
+  (parameters
+    '("GdkColor*" "color")
+  )
+)
+
+(define-method set_lineattr
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_set_lineattr")
+  (return-type "none")
+  (parameters
+    '("gfloat" "line_width")
+    '("GdkLineStyle" "line_style")
+    '("GdkCapStyle" "cap_style")
+    '("GdkJoinStyle" "join_style")
+  )
+)
+
+(define-method set_dash
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_set_dash")
+  (return-type "none")
+  (parameters
+    '("gdouble" "offset_")
+    '("gdouble*" "values")
+    '("gint" "num_values")
+  )
+)
+
+(define-method draw_point
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_draw_point")
+  (return-type "none")
+  (parameters
+    '("gdouble" "x")
+    '("gdouble" "y")
+  )
+)
+
+(define-method draw_line
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_draw_line")
+  (return-type "none")
+  (parameters
+    '("gdouble" "x1")
+    '("gdouble" "y1")
+    '("gdouble" "x2")
+    '("gdouble" "y2")
+  )
+)
+
+(define-method draw_lines
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_draw_lines")
+  (return-type "none")
+  (parameters
+    '("GtkPlotPoint*" "points")
+    '("gint" "numpoints")
+  )
+)
+
+(define-method draw_rectangle
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_draw_rectangle")
+  (return-type "none")
+  (parameters
+    '("gboolean" "filled")
+    '("gdouble" "x")
+    '("gdouble" "y")
+    '("gdouble" "width")
+    '("gdouble" "height")
+  )
+)
+
+(define-method draw_polygon
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_draw_polygon")
+  (return-type "none")
+  (parameters
+    '("gint" "filled")
+    '("GtkPlotPoint*" "points")
+    '("gint" "numpoints")
+  )
+)
+
+(define-method draw_ellipse
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_draw_ellipse")
+  (return-type "none")
+  (parameters
+    '("gboolean" "filled")
+    '("gdouble" "x")
+    '("gdouble" "y")
+    '("gdouble" "width")
+    '("gdouble" "height")
+  )
+)
+
+(define-method draw_circle
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_draw_circle")
+  (return-type "none")
+  (parameters
+    '("gint" "filled")
+    '("gdouble" "x")
+    '("gdouble" "y")
+    '("gdouble" "size")
+  )
+)
+
+(define-method set_font
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_set_font")
+  (return-type "none")
+  (parameters
+    '("GtkPSFont*" "psfont")
+    '("gint" "height")
+  )
+)
+
+(define-method draw_string
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_draw_string")
+  (return-type "none")
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+    '("gint" "angle")
+    '("const-GdkColor*" "fg")
+    '("const-GdkColor*" "bg")
+    '("gboolean" "transparent")
+    '("gint" "border")
+    '("gint" "border_space")
+    '("gint" "border_width")
+    '("gint" "shadow_width")
+    '("const-gchar*" "font")
+    '("gint" "height")
+    '("GtkJustification" "just")
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method draw_pixmap
+  (of-object "GtkPlotPC")
+  (c-name "gtk_plot_pc_draw_pixmap")
+  (return-type "none")
+  (parameters
+    '("GdkPixmap*" "pixmap")
+    '("GdkBitmap*" "mask")
+    '("gint" "xsrc")
+    '("gint" "ysrc")
+    '("gint" "xdest")
+    '("gint" "ydest")
+    '("gint" "width")
+    '("gint" "height")
+    '("gdouble" "scale_x")
+    '("gdouble" "scale_y")
+  )
+)
+
+(define-function gtk_plot_pixmap_get_type
+  (c-name "gtk_plot_pixmap_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_pixmap_new
+  (is-constructor-of "GtkPlotPixmap")
+  (c-name "gtk_plot_pixmap_new")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GdkPixmap*" "pixmap")
+    '("GdkBitmap*" "mask" (default "NULL") (null-ok))
+  )
+)
+
+(define-method construct
+  (of-object "GtkPlotPixmap")
+  (c-name "gtk_plot_pixmap_construct")
+  (return-type "none")
+  (parameters
+    '("GdkPixmap*" "pixmap")
+    '("GdkBitmap*" "mask")
+  )
+)
+
+(define-method get_pixmap
+  (of-object "GtkPlotPixmap")
+  (c-name "gtk_plot_pixmap_get_pixmap")
+  (return-type "GdkPixmap*" (null-ok))
+)
+
+(define-method get_mask
+  (of-object "GtkPlotPixmap")
+  (c-name "gtk_plot_pixmap_get_mask")
+  (return-type "GdkBitmap*" (null-ok))
+)
+
+(define-function gtk_plot_polar_get_type
+  (c-name "gtk_plot_polar_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_polar_new
+  (is-constructor-of "GtkPlotPolar")
+  (c-name "gtk_plot_polar_new")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GdkDrawable*" "drawable" (default "NULL") (null-ok))
+  )
+)
+
+(define-function gtk_plot_polar_new_with_size
+  (c-name "gtk_plot_polar_new_with_size")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GdkDrawable*" "drawable" (default "NULL") (null-ok))
+    '("gdouble" "width")
+    '("gdouble" "height")
+  )
+)
+
+(define-method construct
+  (of-object "GtkPlotPolar")
+  (c-name "gtk_plot_polar_construct")
+  (return-type "none")
+  (parameters
+    '("GdkDrawable*" "drawable")
+  )
+)
+
+(define-method construct_with_size
+  (of-object "GtkPlotPolar")
+  (c-name "gtk_plot_polar_construct_with_size")
+  (return-type "none")
+  (parameters
+    '("GdkDrawable*" "drawable")
+    '("gdouble" "width")
+    '("gdouble" "height")
+  )
+)
+
+(define-method rotate
+  (of-object "GtkPlotPolar")
+  (c-name "gtk_plot_polar_rotate")
+  (return-type "none")
+  (parameters
+    '("gdouble" "angle")
+  )
+)
+
+(define-method get_angle
+  (of-object "GtkPlotPolar")
+  (c-name "gtk_plot_polar_get_angle")
+  (return-type "gdouble")
+)
+
+(define-method export_ps_with_size
+  (of-object "GtkPlot")
+  (c-name "gtk_plot_export_ps_with_size")
+  (return-type "gboolean")
+  (parameters
+    '("char*" "file_name")
+    '("GtkPlotPageOrientation" "orient" (default "GTK_PLOT_PORTRAIT"))
+    '("gboolean" "epsflag" (default "FALSE"))
+    '("GtkPlotUnits" "units" (default "GTK_PLOT_PSPOINTS"))
+    '("gint" "width" (default "GTK_PLOT_LETTER_W"))
+    '("gint" "height" (default "GTK_PLOT_LETTER_H"))
+  )
+)
+
+(define-method export_ps
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_export_ps")
+  (return-type "gboolean")
+  (parameters
+    '("char*" "file_name")
+    '("GtkPlotPageOrientation" "orient" (default "GTK_PLOT_PORTRAIT"))
+    '("gboolean" "epsflag" (default "FALSE"))
+    '("GtkPlotPageSize" "page_size" (default "GTK_PLOT_LETTER"))
+  )
+)
+
+(define-method export_ps_with_size
+  (of-object "GtkPlotCanvas")
+  (c-name "gtk_plot_canvas_export_ps_with_size")
+  (return-type "gboolean")
+  (parameters
+    '("char*" "file_name")
+    '("GtkPlotPageOrientation" "orient" (default "GTK_PLOT_PORTRAIT"))
+    '("gboolean" "epsflag")
+    '("GtkPlotUnits" "units" (default "GTK_PLOT_PSPOINTS"))
+    '("gint" "width" (default "GTK_PLOT_LETTER_W"))
+    '("gint" "height" (default "GTK_PLOT_LETTER_H"))
+  )
+)
+
+(define-function gtk_plot_ps_get_type
+  (c-name "gtk_plot_ps_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_ps_new
+  (is-constructor-of "GtkPlotPS")
+  (c-name "gtk_plot_ps_new")
+  (return-type "GtkObject*")
+  (parameters
+    '("const-gchar*" "psname")
+    '("gint" "orientation")
+    '("gint" "epsflag")
+    '("gint" "page_size")
+    '("gdouble" "scalex")
+    '("gdouble" "scaley")
+  )
+)
+
+(define-function gtk_plot_ps_new_with_size
+  (c-name "gtk_plot_ps_new_with_size")
+  (return-type "GtkObject*")
+  (parameters
+    '("const-gchar*" "psname")
+    '("gint" "orientation")
+    '("gint" "epsflag")
+    '("gint" "units")
+    '("gdouble" "width")
+    '("gdouble" "height")
+    '("gdouble" "scalex")
+    '("gdouble" "scaley")
+  )
+)
+
+(define-method construct
+  (of-object "GtkPlotPS")
+  (c-name "gtk_plot_ps_construct")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "psname")
+    '("gint" "orientation")
+    '("gint" "epsflag")
+    '("gint" "page_size")
+    '("gdouble" "scalex")
+    '("gdouble" "scaley")
+  )
+)
+
+(define-method construct_with_size
+  (of-object "GtkPlotPS")
+  (c-name "gtk_plot_ps_construct_with_size")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "psname")
+    '("gint" "orientation")
+    '("gint" "epsflag")
+    '("gint" "units")
+    '("gdouble" "width")
+    '("gdouble" "height")
+    '("gdouble" "scalex")
+    '("gdouble" "scaley")
+  )
+)
+
+(define-method set_size
+  (of-object "GtkPlotPS")
+  (c-name "gtk_plot_ps_set_size")
+  (return-type "none")
+  (parameters
+    '("gint" "units")
+    '("gdouble" "width")
+    '("gdouble" "height")
+  )
+)
+
+(define-method set_scale
+  (of-object "GtkPlotPS")
+  (c-name "gtk_plot_ps_set_scale")
+  (return-type "none")
+  (parameters
+    '("gdouble" "scalex")
+    '("gdouble" "scaley")
+  )
+)
+
+(define-function gtk_plot_surface_get_type
+  (c-name "gtk_plot_surface_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_plot_surface_new
+  (is-constructor-of "GtkPlotSurface")
+  (c-name "gtk_plot_surface_new")
+  (return-type "GtkWidget*")
+)
+
+(define-function gtk_plot_surface_new_function
+  (c-name "gtk_plot_surface_new_function")
+  (return-type "GtkWidget*")
+  (parameters
+    '("GtkPlotFunc3D" "function")
+  )
+)
+
+(define-method construct_function
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_construct_function")
+  (return-type "none")
+  (parameters
+    '("GtkPlotFunc3D" "function")
+  )
+)
+
+(define-method set_color
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_color")
+  (return-type "none")
+  (parameters
+    '("GdkColor*" "color")
+  )
+)
+
+(define-method set_shadow
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_shadow")
+  (return-type "none")
+  (parameters
+    '("GdkColor*" "color")
+  )
+)
+
+(define-method set_grid_foreground
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_grid_foreground")
+  (return-type "none")
+  (parameters
+    '("GdkColor*" "foreground")
+  )
+)
+
+(define-method set_grid_background
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_grid_background")
+  (return-type "none")
+  (parameters
+    '("GdkColor*" "background")
+  )
+)
+
+(define-method set_grid_visible
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_grid_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+(define-method get_grid_visible
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_get_grid_visible")
+  (return-type "gboolean")
+)
+
+(define-method set_mesh_visible
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_mesh_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+(define-method get_mesh_visible
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_get_mesh_visible")
+  (return-type "gboolean")
+)
+
+(define-method set_light
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_light")
+  (return-type "none")
+  (parameters
+    '("gdouble" "x")
+    '("gdouble" "y")
+    '("gdouble" "z")
+  )
+)
+
+(define-method set_ambient
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_ambient")
+  (return-type "none")
+  (parameters
+    '("gdouble" "ambient")
+  )
+)
+
+(define-method use_height_gradient
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_use_height_gradient")
+  (return-type "none")
+  (parameters
+    '("gboolean" "use_gradient")
+  )
+)
+
+(define-method use_amplitud
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_use_amplitud")
+  (return-type "none")
+  (parameters
+    '("gboolean" "use_amplitud")
+  )
+)
+
+(define-method set_transparent
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_transparent")
+  (return-type "none")
+  (parameters
+    '("gboolean" "transparent")
+  )
+)
+
+(define-method set_points
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_points")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "x")
+    '("gdouble*" "y")
+    '("gdouble*" "z")
+    '("gdouble*" "dx")
+    '("gdouble*" "dy")
+    '("gdouble*" "dz")
+    '("gint" "nx")
+    '("gint" "ny")
+  )
+)
+
+(define-method get_points
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_get_points")
+  (return-type "none")
+  (parameters
+    '("gdouble**" "x")
+    '("gdouble**" "y")
+    '("gdouble**" "z")
+    '("gdouble**" "dx")
+    '("gdouble**" "dy")
+    '("gdouble**" "dz")
+    '("gint*" "nx")
+    '("gint*" "ny")
+  )
+)
+
+(define-method set_x
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_x")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "x")
+  )
+)
+
+(define-method set_y
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_y")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "y")
+  )
+)
+
+(define-method set_z
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_z")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "z")
+  )
+)
+
+(define-method set_dx
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_dx")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "dx")
+  )
+)
+
+(define-method set_dy
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_dy")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "dy")
+  )
+)
+
+(define-method set_dz
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_dz")
+  (return-type "none")
+  (parameters
+    '("gdouble*" "dz")
+  )
+)
+
+(define-method get_x
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_get_x")
+  (return-type "gdouble*" (null-ok))
+  (parameters
+    '("gint*" "nx")
+  )
+)
+
+(define-method get_y
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_get_y")
+  (return-type "gdouble*" (null-ok))
+  (parameters
+    '("gint*" "ny")
+  )
+)
+
+(define-method get_z
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_get_z")
+  (return-type "gdouble*" (null-ok))
+  (parameters
+    '("gint*" "nx")
+    '("gint*" "ny")
+  )
+)
+
+(define-method get_dx
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_get_dx")
+  (return-type "gdouble*" (null-ok))
+)
+
+(define-method get_dy
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_get_dy")
+  (return-type "gdouble*" (null-ok))
+)
+
+(define-method get_dz
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_get_dz")
+  (return-type "gdouble*" (null-ok))
+)
+
+(define-method set_nx
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_nx")
+  (return-type "none")
+  (parameters
+    '("gint" "nx")
+  )
+)
+
+(define-method set_ny
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_ny")
+  (return-type "none")
+  (parameters
+    '("gint" "ny")
+  )
+)
+
+(define-method get_nx
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_get_nx")
+  (return-type "gint")
+)
+
+(define-method get_ny
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_get_ny")
+  (return-type "gint")
+)
+
+(define-method set_xstep
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_xstep")
+  (return-type "none")
+  (parameters
+    '("gdouble" "xstep")
+  )
+)
+
+(define-method set_ystep
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_set_ystep")
+  (return-type "none")
+  (parameters
+    '("gdouble" "ystep")
+  )
+)
+
+(define-method get_xstep
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_get_xstep")
+  (return-type "gdouble")
+)
+
+(define-method get_ystep
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_get_ystep")
+  (return-type "gdouble")
+)
+
+(define-method build_mesh
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_build_mesh")
+  (return-type "none")
+)
+
+(define-method recalc_nodes
+  (of-object "GtkPlotSurface")
+  (c-name "gtk_plot_surface_recalc_nodes")
+  (return-type "none")
+)
+
+(define-function psfont_init
+  (c-name "gtk_psfont_init")
+  (return-type "gint")
+)
+
+(define-function gtk_psfont_unref
+  (c-name "gtk_psfont_unref")
+  (return-type "none")
+)
+
+(define-function psfont_get_by_name
+  (c-name "gtk_psfont_get_by_name")
+  (return-type "GtkPSFont*" (null-ok))
+  (parameters
+    '("const-gchar*" "name")
+  )
+)
+
+(define-function psfont_get_by_family
+  (c-name "gtk_psfont_get_by_family")
+  (return-type "GtkPSFont*" (null-ok))
+  (parameters
+    '("const-gchar*" "family")
+    '("gboolean" "italic")
+    '("gboolean" "bold")
+  )
+)
+
+(define-method get_gdkfont
+  (of-object "GtkPSFont")
+  (c-name "gtk_psfont_get_gdkfont")
+  (return-type "GdkFont*" (null-ok))
+  (parameters
+    '("gint" "height")
+  )
+)
+
+(define-method get_font_description
+  (of-object "GtkPSFont")
+  (c-name "gtk_psfont_get_font_description")
+  (return-type "PangoFontDescription*" (null-ok))
+  (parameters
+    '("gint" "height")
+  )
+)
+
+(define-method get_psfontname
+  (of-object "GtkPSFont")
+  (c-name "gtk_psfont_get_psfontname")
+  (return-type "const-gchar*" (null-ok))
+)
+
+(define-function psfont_add_font
+  (c-name "gtk_psfont_add_font")
+  (return-type "none")
+  (parameters
+    '("const-char*" "fontname")
+    '("const-gchar*" "psname")
+    '("const-gchar*" "family")
+    '("const-gchar*" "pango_string")
+    '("gboolean" "italic")
+    '("gboolean" "bold")
+  )
+)
+
+(define-function psfont_add_i18n_font
+  (c-name "gtk_psfont_add_i18n_font")
+  (return-type "none")
+  (parameters
+    '("const-char*" "fontname")
+    '("const-gchar*" "psname")
+    '("const-gchar*" "family")
+    '("const-gchar*" "i18n_latinfamily")
+    '("const-gchar*" "pango_string")
+    '("gboolean" "italic")
+    '("gboolean" "bold")
+    '("gboolean" "vertical")
+  )
+)
+
+(define-function psfont_get_families
+  (c-name "gtk_psfont_get_families")
+  (return-type "none")
+  (parameters
+    '("GList**" "family")
+    '("gint*" "numf")
+  )
+)
+
+(define-method get_char_size
+  (of-object "GtkPSFont")
+  (c-name "gtk_psfont_get_char_size")
+  (return-type "none")
+  (parameters
+    '("GdkFont*" "font")
+    '("GdkFont*" "latin_font")
+    '("GdkWChar" "wc")
+    '("gint*" "width")
+    '("gint*" "ascent")
+    '("gint*" "descent")
+  )
+)
+
+(define-function gtk_sheet_get_type
+  (c-name "gtk_sheet_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_sheet_range_get_type
+  (c-name "gtk_sheet_range_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_sheet_new
+  (is-constructor-of "GtkSheet")
+  (c-name "gtk_sheet_new")
+  (return-type "GtkWidget*")
+  (parameters
+    '("guint" "rows")
+    '("guint" "columns")
+    '("const-gchar*" "title")
+  )
+)
+
+(define-method construct
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_construct")
+  (return-type "none")
+  (parameters
+    '("guint" "rows")
+    '("guint" "columns")
+    '("const-gchar*" "title")
+  )
+)
+
+(define-function gtk_sheet_new_browser
+  (is-constructor-of "GtkSheet")
+  (c-name "gtk_sheet_new_browser")
+  (return-type "GtkWidget*")
+  (parameters
+    '("guint" "rows")
+    '("guint" "columns")
+    '("const-gchar*" "title")
+  )
+)
+
+(define-method construct_browser
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_construct_browser")
+  (return-type "none")
+  (parameters
+    '("guint" "rows")
+    '("guint" "columns")
+    '("const-gchar*" "title")
+  )
+)
+
+(define-function gtk_sheet_new_with_custom_entry
+  (is-constructor-of "GtkSheet")
+  (c-name "gtk_sheet_new_with_custom_entry")
+  (return-type "GtkWidget*")
+  (parameters
+    '("guint" "rows")
+    '("guint" "columns")
+    '("const-gchar*" "title")
+    '("GtkType" "entry_type")
+  )
+)
+
+(define-method construct_with_custom_entry
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_construct_with_custom_entry")
+  (return-type "none")
+  (parameters
+    '("guint" "rows")
+    '("guint" "columns")
+    '("const-gchar*" "title")
+    '("GtkType" "entry_type")
+  )
+)
+
+(define-method set_hadjustment
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_hadjustment")
+  (return-type "none")
+  (parameters
+    '("GtkAdjustment*" "adjustment")
+  )
+)
+
+(define-method set_vadjustment
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_vadjustment")
+  (return-type "none")
+  (parameters
+    '("GtkAdjustment*" "adjustment")
+  )
+)
+
+(define-method change_entry
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_change_entry")
+  (return-type "none")
+  (parameters
+    '("GtkType" "entry_type")
+  )
+)
+
+(define-method get_entry
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_entry")
+  (return-type "GtkWidget*" (null-ok))
+)
+
+(define-method get_entry_widget
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_entry_widget")
+  (return-type "GtkWidget*" (null-ok))
+)
+
+(define-method get_state
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_state")
+  (return-type "gint")
+)
+
+(define-method get_columns_count
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_columns_count")
+  (return-type "guint")
+)
+
+(define-method get_rows_count
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_rows_count")
+  (return-type "guint")
+)
+
+(define-method get_visible_range
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_visible_range")
+  (return-type "none")
+  (parameters
+    '("GtkSheetRange*" "range")
+  )
+)
+
+(define-method set_selection_mode
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_selection_mode")
+  (return-type "none")
+  (parameters
+    '("gint" "mode")
+  )
+)
+
+(define-method set_autoresize
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_autoresize")
+  (return-type "none")
+  (parameters
+    '("gboolean" "autoresize")
+  )
+)
+
+(define-method autoresize
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_autoresize")
+  (return-type "gboolean")
+)
+
+(define-method set_autoscroll
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_autoscroll")
+  (return-type "none")
+  (parameters
+    '("gboolean" "autoscroll")
+  )
+)
+
+(define-method autoscroll
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_autoscroll")
+  (return-type "gboolean")
+)
+
+(define-method set_clip_text
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_clip_text")
+  (return-type "none")
+  (parameters
+    '("gboolean" "clip_text")
+  )
+)
+
+(define-method clip_text
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_clip_text")
+  (return-type "gboolean")
+)
+
+(define-method set_justify_entry
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_justify_entry")
+  (return-type "none")
+  (parameters
+    '("gboolean" "justify")
+  )
+)
+
+(define-method justify_entry
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_justify_entry")
+  (return-type "gboolean")
+)
+
+(define-method set_locked
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_locked")
+  (return-type "none")
+  (parameters
+    '("gboolean" "lock")
+  )
+)
+
+(define-method locked
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_locked")
+  (return-type "gboolean")
+)
+
+(define-method set_title
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_title")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "title")
+  )
+)
+
+(define-method freeze
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_freeze")
+  (return-type "none")
+)
+
+(define-method thaw
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_thaw")
+  (return-type "none")
+)
+
+(define-method set_background
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_background")
+  (return-type "none")
+  (parameters
+    '("GdkColor*" "bg_color")
+  )
+)
+
+(define-method set_grid
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_grid")
+  (return-type "none")
+  (parameters
+    '("GdkColor*" "grid_color")
+  )
+)
+
+(define-method show_grid
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_show_grid")
+  (return-type "none")
+  (parameters
+    '("gboolean" "show")
+  )
+)
+
+(define-method grid_visible
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_grid_visible")
+  (return-type "gboolean")
+)
+
+(define-method set_column_title
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_column_title")
+  (return-type "none")
+  (parameters
+    '("gint" "column")
+    '("const-gchar*" "title")
+  )
+)
+
+(define-method get_column_title
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_column_title")
+  (return-type "const-gchar*" (null-ok))
+  (parameters
+    '("gint" "column")
+  )
+)
+
+(define-method set_row_title
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_row_title")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("const-gchar*" "title")
+  )
+)
+
+(define-method get_row_title
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_row_title")
+  (return-type "const-gchar*" (null-ok))
+  (parameters
+    '("gint" "row")
+  )
+)
+
+(define-method row_button_add_label
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_row_button_add_label")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("const-gchar*" "label")
+  )
+)
+
+(define-method column_button_add_label
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_column_button_add_label")
+  (return-type "none")
+  (parameters
+    '("gint" "column")
+    '("const-gchar*" "label")
+  )
+)
+
+(define-method row_button_get_label
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_row_button_get_label")
+  (return-type "const-gchar*" (null-ok))
+  (parameters
+    '("gint" "row")
+  )
+)
+
+(define-method column_button_get_label
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_column_button_get_label")
+  (return-type "const-gchar*" (null-ok))
+  (parameters
+    '("gint" "column")
+  )
+)
+
+(define-method row_button_justify
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_row_button_justify")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("GtkJustification" "justification")
+  )
+)
+
+(define-method column_button_justify
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_column_button_justify")
+  (return-type "none")
+  (parameters
+    '("gint" "column")
+    '("GtkJustification" "justification")
+  )
+)
+
+(define-method moveto
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_moveto")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("gint" "column")
+    '("gfloat" "row_align")
+    '("gfloat" "col_align")
+  )
+)
+
+(define-method set_row_titles_width
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_row_titles_width")
+  (return-type "none")
+  (parameters
+    '("guint" "width")
+  )
+)
+
+(define-method set_column_titles_height
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_column_titles_height")
+  (return-type "none")
+  (parameters
+    '("guint" "height")
+  )
+)
+
+(define-method show_column_titles
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_show_column_titles")
+  (return-type "none")
+)
+
+(define-method show_row_titles
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_show_row_titles")
+  (return-type "none")
+)
+
+(define-method hide_column_titles
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_hide_column_titles")
+  (return-type "none")
+)
+
+(define-method hide_row_titles
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_hide_row_titles")
+  (return-type "none")
+)
+
+(define-method column_titles_visible
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_column_titles_visible")
+  (return-type "gboolean")
+)
+
+(define-method row_titles_visible
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_row_titles_visible")
+  (return-type "gboolean")
+)
+
+(define-method column_set_sensitivity
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_column_set_sensitivity")
+  (return-type "none")
+  (parameters
+    '("gint" "column")
+    '("gboolean" "sensitive")
+  )
+)
+
+(define-method columns_set_sensitivity
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_columns_set_sensitivity")
+  (return-type "none")
+  (parameters
+    '("gboolean" "sensitive")
+  )
+)
+
+(define-method columns_set_resizable
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_columns_set_resizable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "resizable")
+  )
+)
+
+(define-method columns_resizable
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_columns_resizable")
+  (return-type "gboolean")
+)
+
+(define-method row_set_sensitivity
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_row_set_sensitivity")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("gboolean" "sensitive")
+  )
+)
+
+(define-method rows_set_sensitivity
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_rows_set_sensitivity")
+  (return-type "none")
+  (parameters
+    '("gboolean" "sensitive")
+  )
+)
+
+(define-method rows_set_resizable
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_rows_set_resizable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "resizable")
+  )
+)
+
+(define-method rows_resizable
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_rows_resizable")
+  (return-type "gboolean")
+)
+
+(define-method column_set_visibility
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_column_set_visibility")
+  (return-type "none")
+  (parameters
+    '("gint" "column")
+    '("gboolean" "visible")
+  )
+)
+
+(define-method column_label_set_visibility
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_column_label_set_visibility")
+  (return-type "none")
+  (parameters
+    '("gint" "column")
+    '("gboolean" "visible")
+  )
+)
+
+(define-method columns_labels_set_visibility
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_columns_labels_set_visibility")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+(define-method row_set_visibility
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_row_set_visibility")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("gboolean" "visible")
+  )
+)
+
+(define-method row_label_set_visibility
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_row_label_set_visibility")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("gboolean" "visible")
+  )
+)
+
+(define-method rows_labels_set_visibility
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_rows_labels_set_visibility")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+(define-method select_row
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_select_row")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+  )
+)
+
+(define-method select_column
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_select_column")
+  (return-type "none")
+  (parameters
+    '("gint" "column")
+  )
+)
+
+(define-method clip_range
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_clip_range")
+  (return-type "none")
+  (parameters
+    '("const-GtkSheetRange*" "range")
+  )
+)
+
+(define-method unclip_range
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_unclip_range")
+  (return-type "none")
+)
+
+(define-method in_clip
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_in_clip")
+  (return-type "gboolean")
+)
+
+(define-method get_vadjustment
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_vadjustment")
+  (return-type "GtkAdjustment*" (null-ok))
+)
+
+(define-method get_hadjustment
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_hadjustment")
+  (return-type "GtkAdjustment*" (null-ok))
+)
+
+(define-method select_range
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_select_range")
+  (return-type "none")
+  (parameters
+    '("const-GtkSheetRange*" "range")
+  )
+)
+
+(define-method unselect_range
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_unselect_range")
+  (return-type "none")
+)
+
+(define-method set_active_cell
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_active_cell")
+  (return-type "gboolean")
+  (parameters
+    '("gint" "row")
+    '("gint" "column")
+  )
+)
+
+(define-method get_active_cell
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_active_cell")
+  (return-type "none")
+  (parameters
+    '("gint*" "row")
+    '("gint*" "column")
+  )
+)
+
+(define-method set_cell
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_cell")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("gint" "col")
+    '("GtkJustification" "justification")
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method set_cell_text
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_cell_text")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("gint" "col")
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method cell_get_text
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_cell_get_text")
+  (return-type "const-gchar*" (null-ok))
+  (parameters
+    '("gint" "row")
+    '("gint" "col")
+  )
+)
+
+(define-method cell_clear
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_cell_clear")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("gint" "col")
+  )
+)
+
+(define-method cell_delete
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_cell_delete")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("gint" "col")
+  )
+)
+
+(define-method range_clear
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_range_clear")
+  (return-type "none")
+  (parameters
+    '("const-GtkSheetRange*" "range")
+  )
+)
+
+(define-method range_delete
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_range_delete")
+  (return-type "none")
+  (parameters
+    '("const-GtkSheetRange*" "range")
+  )
+)
+
+(define-method cell_get_state
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_cell_get_state")
+  (return-type "GtkStateType")
+  (parameters
+    '("gint" "row")
+    '("gint" "col")
+  )
+)
+
+(define-method link_cell
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_link_cell")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("gint" "col")
+    '("gpointer" "link")
+  )
+)
+
+(define-method get_link
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_link")
+  (return-type "gpointer" (null-ok))
+  (parameters
+    '("gint" "row")
+    '("gint" "col")
+  )
+)
+
+(define-method remove_link
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_remove_link")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("gint" "col")
+  )
+)
+
+(define-method get_pixel_info
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_pixel_info")
+  (return-type "gboolean")
+  (parameters
+    '("gint" "x")
+    '("gint" "y")
+    '("gint*" "row")
+    '("gint*" "column")
+  )
+)
+
+(define-method get_cell_area
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_cell_area")
+  (return-type "gboolean")
+  (parameters
+    '("gint" "row")
+    '("gint" "column")
+    '("GdkRectangle*" "area")
+  )
+)
+
+(define-method set_column_width
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_column_width")
+  (return-type "none")
+  (parameters
+    '("gint" "column")
+    '("guint" "width")
+  )
+)
+
+(define-method set_row_height
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_set_row_height")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("guint" "height")
+  )
+)
+
+(define-method add_column
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_add_column")
+  (return-type "none")
+  (parameters
+    '("guint" "ncols")
+  )
+)
+
+(define-method add_row
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_add_row")
+  (return-type "none")
+  (parameters
+    '("guint" "nrows")
+  )
+)
+
+(define-method insert_rows
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_insert_rows")
+  (return-type "none")
+  (parameters
+    '("guint" "row")
+    '("guint" "nrows")
+  )
+)
+
+(define-method insert_columns
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_insert_columns")
+  (return-type "none")
+  (parameters
+    '("guint" "col")
+    '("guint" "ncols")
+  )
+)
+
+(define-method delete_rows
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_delete_rows")
+  (return-type "none")
+  (parameters
+    '("guint" "row")
+    '("guint" "nrows")
+  )
+)
+
+(define-method delete_columns
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_delete_columns")
+  (return-type "none")
+  (parameters
+    '("guint" "col")
+    '("guint" "ncols")
+  )
+)
+
+(define-method range_set_background
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_range_set_background")
+  (return-type "none")
+  (parameters
+    '("const-GtkSheetRange*" "range")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method range_set_foreground
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_range_set_foreground")
+  (return-type "none")
+  (parameters
+    '("const-GtkSheetRange*" "range")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method range_set_justification
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_range_set_justification")
+  (return-type "none")
+  (parameters
+    '("const-GtkSheetRange*" "range")
+    '("GtkJustification" "justification")
+  )
+)
+
+(define-method column_set_justification
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_column_set_justification")
+  (return-type "none")
+  (parameters
+    '("gint" "column")
+    '("GtkJustification" "justification")
+  )
+)
+
+(define-method range_set_editable
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_range_set_editable")
+  (return-type "none")
+  (parameters
+    '("const-GtkSheetRange*" "range")
+    '("gint" "editable")
+  )
+)
+
+(define-method range_set_visible
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_range_set_visible")
+  (return-type "none")
+  (parameters
+    '("const-GtkSheetRange*" "range")
+    '("gboolean" "visible")
+  )
+)
+
+(define-method range_set_border
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_range_set_border")
+  (return-type "none")
+  (parameters
+    '("const-GtkSheetRange*" "range" (null-ok))
+    '("gint" "mask")
+    '("guint" "width")
+    '("gint" "line_style" (default "GDK_LINE_SOLID"))
+  )
+)
+
+(define-method range_set_border_color
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_range_set_border_color")
+  (return-type "none")
+  (parameters
+    '("const-GtkSheetRange*" "range")
+    '("const-GdkColor*" "color")
+  )
+)
+
+(define-method range_set_font
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_range_set_font")
+  (return-type "none")
+  (parameters
+    '("const-GtkSheetRange*" "range")
+    '("PangoFontDescription*" "font")
+  )
+)
+
+(define-method get_attributes
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_attributes")
+  (return-type "gboolean")
+  (parameters
+    '("gint" "row")
+    '("gint" "col")
+    '("GtkSheetCellAttr*" "attributes")
+  )
+)
+
+(define-method put
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_put")
+  (return-type "GtkSheetChild*" (null-ok))
+  (parameters
+    '("GtkWidget*" "widget")
+    '("gint" "x")
+    '("gint" "y")
+  )
+)
+
+(define-method attach_floating
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_attach_floating")
+  (return-type "none")
+  (parameters
+    '("GtkWidget*" "widget")
+    '("gint" "row")
+    '("gint" "col")
+  )
+)
+
+(define-method attach_default
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_attach_default")
+  (return-type "none")
+  (parameters
+    '("GtkWidget*" "widget")
+    '("gint" "row")
+    '("gint" "col")
+  )
+)
+
+(define-method attach
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_attach")
+  (return-type "none")
+  (parameters
+    '("GtkWidget*" "widget")
+    '("gint" "row")
+    '("gint" "col")
+    '("gint" "xoptions")
+    '("gint" "yoptions")
+    '("gint" "xpadding")
+    '("gint" "ypadding")
+  )
+)
+
+(define-method move_child
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_move_child")
+  (return-type "none")
+  (parameters
+    '("GtkWidget*" "widget")
+    '("gint" "x")
+    '("gint" "y")
+  )
+)
+
+(define-method get_child_at
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_get_child_at")
+  (return-type "GtkSheetChild*" (null-ok))
+  (parameters
+    '("gint" "row")
+    '("gint" "col")
+  )
+)
+
+(define-method button_attach
+  (of-object "GtkSheet")
+  (c-name "gtk_sheet_button_attach")
+  (return-type "none")
+  (parameters
+    '("GtkWidget*" "widget")
+    '("gint" "row")
+    '("gint" "col")
+  )
+)
+
+(define-function gtk_toggle_combo_get_type
+  (c-name "gtk_toggle_combo_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_toggle_combo_new
+  (is-constructor-of "GtkToggleCombo")
+  (c-name "gtk_toggle_combo_new")
+  (return-type "GtkWidget*")
+  (parameters
+    '("gint" "nrows")
+    '("gint" "ncols")
+  )
+)
+
+(define-method construct
+  (of-object "GtkToggleCombo")
+  (c-name "gtk_toggle_combo_construct")
+  (return-type "none")
+  (parameters
+    '("gint" "nrows")
+    '("gint" "ncols")
+  )
+)
+
+(define-method get_nrows
+  (of-object "GtkToggleCombo")
+  (c-name "gtk_toggle_combo_get_nrows")
+  (return-type "gint")
+)
+
+(define-method get_ncols
+  (of-object "GtkToggleCombo")
+  (c-name "gtk_toggle_combo_get_ncols")
+  (return-type "gint")
+)
+
+(define-method select
+  (of-object "GtkToggleCombo")
+  (c-name "gtk_toggle_combo_select")
+  (return-type "none")
+  (parameters
+    '("gint" "row")
+    '("gint" "col")
+  )
+)
+
+(define-method get_selection
+  (of-object "GtkToggleCombo")
+  (c-name "gtk_toggle_combo_get_selection")
+  (return-type "none")
+  (parameters
+    '("gint*" "row")
+    '("gint*" "col")
+  )
+)
+

@@ -1,0 +1,8 @@
+LICENSE: GPL
+AUTHOR: Adrian E. Feiguin, Conrad Steenberg 
+URL: http://gtkextra.sourceforge.net/
+
+GtkExtra offers a few useful widgets such as GtkSheet (grid of editable cells),
+GtkPlot (scientific plotting) and GtkIconList (replacement for gnome-icon-list).
+
+NOTE: This extension is currently supported only on the *nix platform.

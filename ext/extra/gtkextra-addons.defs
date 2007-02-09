@@ -1,0 +1,17 @@
+;; Not from any header file
+
+(define-function _set_data_from_pyobject_callback
+  (c-name "_set_data_from_pyobject_callback")
+)
+
+(define-function gtk_sheet_range_new
+  (is-constructor-of "GtkSheetRange")
+  (c-name "gtk_sheet_range_new")
+  (return-type "GtkSheetRange*")
+  (parameters
+    '("gint" "row0" (default "0"))
+    '("gint" "col0" (default "0"))
+    '("gint" "rowi" (default "0"))
+    '("gint" "coli" (default "0"))
+  )
+)
