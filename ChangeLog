@@ -1,3 +1,23 @@
+2007-02-09  Anant Narayanan  <anant@kix.in>
+
+    * ext/extra/config.m4:
+      Make extension not build by default
+
+    * ext/extra/gtkextra.overrides:
+      GtkSheet::get_active_cell by Lars J.
+
+    * ext/extra/Makefile.frag
+      ext/extra/README
+      ext/extra/config.m4
+      ext/extra/gtkextra-addons.defs
+      ext/extra/gtkextra-types.defs
+      ext/extra/gtkextra.defs
+      ext/extra/gtkextra.overrides
+      ext/extra/php_gtkextra.c
+      ext/extra/php_gtkextra.h
+      ext/extra/demos/gtksheet.php:
+      Check in GtkExtra extension
+
 2007-02-07  Anant Narayanan  <anant@kix.in>
 
     * ext/gtk+/gtktextview.overrides:
