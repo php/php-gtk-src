@@ -2864,7 +2864,7 @@ override gdk_window_set_icon_list
 PHP_METHOD
 {
     zval *php_pixbufs = NULL, **php_pixbuf;
-    GList *pixbufs;
+    GList *pixbufs = 0;
 
     NOT_STATIC_METHOD();
 
