@@ -2789,6 +2789,7 @@ static void phpg_file_filter_add_custom_marshal_add_file(const gchar *filename, 
     gchar *fn = NULL;
     gsize cp_len = 0;
     zend_bool free_cp = FALSE;
+    TSRMLS_FETCH();
 
     if (filename && (flags & flag)
     ) {
