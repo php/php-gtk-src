@@ -14,6 +14,12 @@ PATH_PROG('rc', WshShell.Environment("Process").Item("PATH"));
 PATH_PROG('link', WshShell.Environment("Process").Item("PATH"), "LD");
 PATH_PROG('nmake');
 
+// check for grep and sed!
+if (!PATH_PROG('grep', WshShell.Environment("Process").Item("PATH")) ||
+	!PATH_PROG('sed', WshShell.Environment("Process").Item("PATH"))) {
+ 	ERROR("grep and sed are required");
+} 
+
 // we don't want to define LIB, as that will override the default library path set in that env var
 PATH_PROG('lib', null, 'MAKE_LIB');
 PATH_PROG('php');
@@ -56,6 +62,10 @@ if (PHP_GTK_OBJECT_OUT_DIR.length) {
 }
 
 ARG_ENABLE('debug', 'Compile with debugging symbols', "no");
+ARG_ENABLE('debug-pack', 'Release binaries with external debug symbols (--enable-debug must not be specified)', 'no');
+if (PHP_GTK_DEBUG == "yes" && PHP_GTK_DEBUG_PACK == "yes") {
+	ERROR("Use of both --enable-debug and --enable-debug-pack not allowed.");
+}
 
 // Set some debug-specific options
 if (PHP_GTK_DEBUG == "yes") {
@@ -86,6 +96,11 @@ if (PHP_GTK_DEBUG == "yes") {
 
 } else {
 	DEFINE("CFLAGS", "/nologo /MD /W3 /GX /O2 /I . /I ..\\ /I ..\\.. /I main /I ..\\main /I ext /I ..\\ext /I ..\\php5\\main /I ..\\php5\\Zend /I ..\\php5\\TSRM /D ZEND_WIN32 /D ZTS=1 /D ZEND_DEBUG=0 /D PHP_WIN32 /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
+	// Generate external debug files when --enable-debug-pack is specified
+	if (PHP_GTK_DEBUG_PACK == "yes") {
+	 	ADD_FLAG("CFLAGS", "/Zi");
+	 	ADD_FLAG("LDFLAGS", "/incremental:no /debug /opt:ref,icf");
+	 }
 }
 
 if (VCVERS < 14) {
