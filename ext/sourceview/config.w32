@@ -1,0 +1,23 @@
+
+ARG_WITH("sourceview", "for sourceview support", "no");
+
+if (PHP_GTK_SOURCEVIEW != "no" || PHP_GTK_ALL != "no") {
+	if (CHECK_HEADER("gtksourceview\\gtksourceview.h") && CHECK_LIB("gtksourceview-1.0.lib", "sourceview"))
+	{
+		if (FSO.FileExists("win32\\temp.bat")) {
+
+			var temp = FSO.OpenTextFile("win32\\temp.bat", 8);
+			temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_sourceview.log -o ext\\sourceview\\sourceview.overrides -p gtksourceview -r ext\\gtk+\\gtk.defs ext\\sourceview\\sourceview.defs > ext\\sourceview\\gen_sourceview.c");
+                  temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\sourceview\\gen_sourceview.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\sourceview\\gen_sourceview.h');		
+			temp.Close();
+		}
+
+		ADD_FLAG("CFLAGS_SOURCEVIEW", "/I ext\\sourceview /I ..\\ext\\sourceview /D HAVE_SOURCEVIEW=1");
+		EXTENSION("sourceview", "php_sourceview.c gen_sourceview.c", true); // always shared
+		AC_DEFINE("HAVE_SOURCEVIEW", 1, "sorceview enabled");
+
+	} else {
+
+		WARNING("gtksourceview not enabled; libraries and headers not found");
+	}
+}

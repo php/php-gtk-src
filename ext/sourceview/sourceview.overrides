@@ -7,7 +7,6 @@ headers
 #include <gtksourceview/gtksourcelanguage.h>
 #include <gtksourceview/gtksourcelanguagesmanager.h>
 #include <gtksourceview/gtksourcemarker.h>
-#include <gtksourceview/gtksourceprintjob.h>
 #include <gtksourceview/gtksourcestylescheme.h>
 #include <gtksourceview/gtksourcetag.h>
 #include <gtksourceview/gtksourcetagstyle.h>
