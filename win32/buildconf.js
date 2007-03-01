@@ -16,7 +16,7 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: buildconf.js,v 1.7 2005-10-31 11:44:42 sfox Exp $ */
+/* $Id: buildconf.js,v 1.8 2007-03-01 17:19:32 auroraeosrose Exp $ */
 // This generates a configure script for win32 build
 
 var FSO = WScript.CreateObject("Scripting.FileSystemObject");
@@ -78,7 +78,20 @@ function gen_modules() {
 		mod_name = module_names[i];
 		item = MODULES.Item(mod_name);
 		MODULES.Remove(mod_name);
-		output += emit_module(item);
+
+		// TEMPORARY HACK - always make sure gtk+ is written first
+		// STEPH SHOULD FIX THE REAL PROBLEM AT SOME POINT
+		if (mod_name == 'gtk+')
+		{
+			output = emit_module(item) + output;
+		}
+		else
+		{
+			output += emit_module(item);
+		}
+
+		// output += emit_module(item);
+		// END HACK
 	}
 
 	return output;
