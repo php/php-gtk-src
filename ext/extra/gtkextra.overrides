@@ -3,6 +3,7 @@
 headers
 #include <gtkextra/gtkextra.h>
 #include <gtkextra/gtkextratypebuiltins.h>
+#include <gtkextra/gtkplotcandle.h>
 #include "ext/gtk+/php_gtk+.h"
 #include "php_gtk_api.h"
 
@@ -14,7 +15,6 @@ headers
 #define GTK_TYPE_FONT_COMBO (gtk_font_combo_get_type())
 #define GTK_TYPE_PLOT3_D (gtk_plot3d_get_type())
 #define GTK_TYPE_TOGGLE_COMBO (gtk_toggle_combo_get_type())
-#define GTK_TYPE_PLOT_CANDLE (gtk_plot_candle_get_type())
 
 #define GTK_TYPE_PSFONT (gtk_psfont_get_type ())
 static GType

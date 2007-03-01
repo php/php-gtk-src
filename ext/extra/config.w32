@@ -1,0 +1,23 @@
+
+ARG_WITH("extra", "gtkextra support", "no");
+
+if (PHP_GTK_EXTRA != "no" || PHP_GTK_ALL != "no") {
+	if (CHECK_HEADER("gtkextra\\gtkextra.h") && CHECK_LIB("gtkextra-2.0.lib", "extra"))
+	{
+		if (FSO.FileExists("win32\\temp.bat")) {
+
+			var temp = FSO.OpenTextFile("win32\\temp.bat", 8);
+			temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_extra.log -o ext\\extra\\gtkextra.overrides -p gtkextra -r ext\\gtk+\\gtk.defs ext\\extra\\gtkextra.defs > ext\\extra\\gen_gtkextra.c");
+                  temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\extra\\gen_gtkextra.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\extra\\gen_gtkextra.h');		
+			temp.Close();
+		}
+
+		ADD_FLAG("CFLAGS_EXTRA", "/I ext\\extra /I ..\\ext\\extra /D HAVE_GTKEXTRA=1");
+		EXTENSION("extra", "php_gtkextra.c gen_gtkextra.c", true); // always shared
+		AC_DEFINE("HAVE_GTKEXTRA", 1, "gtkextra enabled");
+
+	} else {
+
+		WARNING("gtkextra not enabled; libraries and headers not found");
+	}
+}

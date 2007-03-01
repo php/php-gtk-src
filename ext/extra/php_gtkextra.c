@@ -24,7 +24,7 @@
 
 #if HAVE_GTKEXTRA
 
-#ifdef COMPILE_DL_GTKEXTRA
+#ifdef COMPILE_DL_GTKEXTRA2
 PHP_GTK_GET_EXTENSION(extra)
 #endif
 
@@ -36,7 +36,7 @@ PHP_GTK_XINIT_FUNCTION(extra)
 	return SUCCESS;
 }
 
-php_gtk_ext_entry gtkextra_ext_entry = {
+php_gtk_ext_entry extra_ext_entry = {
 	"extra",
 	PHP_GTK_XINIT(extra),
 	NULL,
