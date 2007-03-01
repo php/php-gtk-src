@@ -1,3 +1,18 @@
+2007-02-28  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/sourceview/config.w32
+      ext/sourceview/sourceview.overrides:
+      gtksourceview support for win32
+
+    * win32/config.w32.in:
+      Add --enable-gd so new_from_gd will work with static gd
+
+    * win32/config.w32.in:
+      Add check for grep and sed and add --enable-debug-pack to windows build
+
+    * ext/gtk+/gtk.overrides:
+      missing TSRMLS_FETCH
+
 2007-02-22  Andrei Zmievski  <andrei@gravitonic.com>
 
     * config.m4:
