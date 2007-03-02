@@ -1,3 +1,18 @@
+2007-03-01  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * win32/buildconf.js:
+      Temporary hack to fix alphabetical order problem with windows build files -
+      php-gtk should always come first - until Steph can fix the underlying
+      problem
+
+    * ext/extra/.cvsignore
+      ext/extra/config.w32
+      ext/extra/gtkextra-addons.defs
+      ext/extra/gtkextra.overrides
+      ext/extra/php_gtkextra.c
+      ext/sourceview/php_sourceview.c:
+      Support for gtkextra on windows
+
 2007-02-28  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/sourceview/config.w32
