@@ -20,6 +20,7 @@ Base Functionality
   register it.
 * Add a generic function to allow i18n support for strings in arrays.
 * Migrate callbacks to use zend_fcall_info and zend_fcall_info_cache (this will also buy us goodies like specifying statis callbacks as 'gtk::main_quit')
+* Remove copy()/free() from boxed classes ?
 
 Classes and Functions
 ~~~~~~~~~~~~~~~~~~~~~
