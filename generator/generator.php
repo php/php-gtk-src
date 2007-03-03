@@ -756,7 +756,7 @@ class Generator {
             }
         } else if ($class->def_type == 'interface') {
             foreach ($method_entries as $me) {
-                $method_defs[] = vsprintf(Templates::abs_method_entry, $me);
+                $method_defs[] = sprintf(Templates::abs_method_entry, $me[1], $me[0], $me[1], $me[2], 'ZEND_ACC_PUBLIC|ZEND_ACC_ABSTRACT');
             }
         }
 
@@ -810,7 +810,11 @@ class Generator {
                                              'ifaces' => join(', ', $iface_entries),
                                              'num_ifaces' => count($iface_entries)));
         }
-        $this->gtype_constants .= sprintf(Templates::gtype_constant, $class->ce, $class->typecode);
+        /* Do not register gtype constants for interfaces, since interfaces will 
+           never be instantiated anyway. */
+        if ($class->def_type != 'interface') {
+            $this->gtype_constants .= sprintf(Templates::gtype_constant, $class->ce, $class->typecode);
+        }
 
         return array('ce' => $class->ce,
                      'class' => $class->in_module . $class->name,

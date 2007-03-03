@@ -473,6 +473,20 @@ PHP_GTK_API void phpg_register_string_constant(zend_class_entry *ce, char *name,
 /* }}} */
 
 /* {{{ phpg_create_class */
+
+static int unset_abstract_flag(zend_function *func, int num_args, va_list args, zend_hash_key *hash_key)
+{
+    zend_class_entry *iface_ce = va_arg(args, zend_class_entry *);
+
+    if (func->type == ZEND_INTERNAL_FUNCTION) {
+        if (zend_hash_quick_exists(&iface_ce->function_table, hash_key->arKey, hash_key->nKeyLength, hash_key->h)) {
+            ((zend_internal_function*)func)->fn_flags &= ~ZEND_ACC_ABSTRACT;
+        }
+    }
+
+    return ZEND_HASH_APPLY_KEEP;
+}
+
 PHP_GTK_API zend_class_entry* phpg_create_class(GType gtype)
 {
     zend_class_entry *parent_ce, *iface_ce, *ce;
@@ -492,6 +506,12 @@ PHP_GTK_API zend_class_entry* phpg_create_class(GType gtype)
         for (i = 0; i < n_ifaces; i++) {
             iface_ce = phpg_class_from_gtype(ifaces[i]);
             zend_class_implements(ce TSRMLS_CC, 1, iface_ce);
+            if (!G_TYPE_IS_INTERFACE(gtype)) {
+                zend_hash_apply_with_arguments(&ce->function_table, (apply_func_args_t) unset_abstract_flag, 1, iface_ce TSRMLS_CC);
+            }
+        }
+        if (!G_TYPE_IS_INTERFACE(gtype)) {
+            ce->ce_flags &= ~ZEND_ACC_IMPLICIT_ABSTRACT_CLASS;
         }
         g_free(ifaces);
     }
