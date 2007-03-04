@@ -1,0 +1,9 @@
+LICENSE: LGPL
+AUTHORS: Christian Hammond, David Trowbridge 
+URL: http://www.chipx86.com/wiki/Libsexy 
+
+libsexy is a collection of GTK+ widgets that extend the functionality of such
+standard widgets as GtkEntry and GtkLabel by subclassing them and working
+around the limitations of the widgets
+
+NOTE: This extension is currently supported only on the *nix platform.

@@ -1,0 +1,307 @@
+;; -*- scheme -*-
+; object definitions ...
+(define-object IconEntry
+  (in-module "Sexy")
+  (parent "GtkEntry")
+  (c-name "SexyIconEntry")
+  (gtype-id "SEXY_TYPE_ICON_ENTRY")
+)
+
+(define-object SpellEntry
+  (in-module "Sexy")
+  (parent "GtkEntry")
+  (c-name "SexySpellEntry")
+  (gtype-id "SEXY_TYPE_SPELL_ENTRY")
+)
+
+(define-object Tooltip
+  (in-module "Sexy")
+  (parent "GtkWindow")
+  (c-name "SexyTooltip")
+  (gtype-id "SEXY_TYPE_TOOLTIP")
+)
+
+(define-object TreeView
+  (in-module "Sexy")
+  (parent "GtkTreeView")
+  (c-name "SexyTreeView")
+  (gtype-id "SEXY_TYPE_TREE_VIEW")
+)
+
+(define-object UrlLabel
+  (in-module "Sexy")
+  (parent "GtkLabel")
+  (c-name "SexyUrlLabel")
+  (gtype-id "SEXY_TYPE_URL_LABEL")
+)
+
+;; Enumerations and flags ...
+
+(define-enum IconEntryPosition
+  (in-module "Sexy")
+  (c-name "SexyIconEntryPosition")
+  (gtype-id "SEXY_TYPE_ICON_ENTRY_POSITION")
+  (values
+    '("primary" "SEXY_ICON_ENTRY_PRIMARY")
+    '("secondary" "SEXY_ICON_ENTRY_SECONDARY")
+  )
+)
+
+(define-enum SpellError
+  (in-module "Sexy")
+  (c-name "SexySpellError")
+  (gtype-id "SEXY_TYPE_SPELL_ERROR")
+  (values
+    '("d" "SEXY_SPELL_ERROR_BACKEND")
+  )
+)
+
+
+;; From sexy-icon-entry.h
+
+(define-function sexy_icon_entry_get_type
+  (c-name "sexy_icon_entry_get_type")
+  (return-type "GType")
+)
+
+(define-function sexy_icon_entry_new
+  (c-name "sexy_icon_entry_new")
+  (is-constructor-of "SexyIconEntry")
+  (return-type "GtkWidget*")
+)
+
+(define-method set_icon
+  (of-object "SexyIconEntry")
+  (c-name "sexy_icon_entry_set_icon")
+  (return-type "none")
+  (parameters
+    '("SexyIconEntryPosition" "position")
+    '("GtkImage*" "icon")
+  )
+)
+
+(define-method set_icon_highlight
+  (of-object "SexyIconEntry")
+  (c-name "sexy_icon_entry_set_icon_highlight")
+  (return-type "none")
+  (parameters
+    '("SexyIconEntryPosition" "position")
+    '("gboolean" "highlight")
+  )
+)
+
+(define-method get_icon
+  (of-object "SexyIconEntry")
+  (c-name "sexy_icon_entry_get_icon")
+  (return-type "GtkImage*")
+  (parameters
+    '("SexyIconEntryPosition" "position")
+  )
+)
+
+(define-method get_icon_highlight
+  (of-object "SexyIconEntry")
+  (c-name "sexy_icon_entry_get_icon_highlight")
+  (return-type "gboolean")
+  (parameters
+    '("SexyIconEntryPosition" "position")
+  )
+)
+
+(define-method add_clear_button
+  (of-object "SexyIconEntry")
+  (c-name "sexy_icon_entry_add_clear_button")
+  (return-type "none")
+)
+
+
+
+;; From sexy-spell-entry.h
+
+(define-function sexy_spell_entry_get_type
+  (c-name "sexy_spell_entry_get_type")
+  (return-type "GType")
+)
+
+(define-function sexy_spell_entry_new
+  (c-name "sexy_spell_entry_new")
+  (is-constructor-of "SexySpellEntry")
+  (return-type "GtkWidget*")
+)
+
+(define-function sexy_spell_error_quark
+  (c-name "sexy_spell_error_quark")
+  (return-type "GQuark")
+)
+
+(define-method get_languages
+  (of-object "SexySpellEntry")
+  (c-name "sexy_spell_entry_get_languages")
+  (return-type "GSList*")
+)
+
+(define-method get_language_name
+  (of-object "SexySpellEntry")
+  (c-name "sexy_spell_entry_get_language_name")
+  (return-type "gchar*")
+  (parameters
+    '("const-gchar*" "lang")
+  )
+)
+
+(define-method language_is_active
+  (of-object "SexySpellEntry")
+  (c-name "sexy_spell_entry_language_is_active")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "lang")
+  )
+)
+
+(define-method activate_language
+  (of-object "SexySpellEntry")
+  (c-name "sexy_spell_entry_activate_language")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "lang")
+    '("GError**" "error")
+  )
+)
+
+(define-method deactivate_language
+  (of-object "SexySpellEntry")
+  (c-name "sexy_spell_entry_deactivate_language")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "lang")
+  )
+)
+
+(define-method set_active_languages
+  (of-object "SexySpellEntry")
+  (c-name "sexy_spell_entry_set_active_languages")
+  (return-type "gboolean")
+  (parameters
+    '("GSList*" "langs")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_active_languages
+  (of-object "SexySpellEntry")
+  (c-name "sexy_spell_entry_get_active_languages")
+  (return-type "GSList*")
+)
+
+(define-method is_checked
+  (of-object "SexySpellEntry")
+  (c-name "sexy_spell_entry_is_checked")
+  (return-type "gboolean")
+)
+
+(define-method set_checked
+  (of-object "SexySpellEntry")
+  (c-name "sexy_spell_entry_set_checked")
+  (return-type "none")
+  (parameters
+    '("gboolean" "checked")
+  )
+)
+
+(define-method activate_default_languages
+  (of-object "SexySpellEntry")
+  (c-name "sexy_spell_entry_activate_default_languages")
+  (return-type "none")
+)
+
+
+
+;; From sexy-url-label.h
+
+(define-function sexy_url_label_get_type
+  (c-name "sexy_url_label_get_type")
+  (return-type "GType")
+)
+
+(define-function sexy_url_label_new
+  (c-name "sexy_url_label_new")
+  (is-constructor-of "SexyUrlLabel")
+  (return-type "GtkWidget*")
+)
+
+(define-method set_markup
+  (of-object "SexyUrlLabel")
+  (c-name "sexy_url_label_set_markup")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "markup")
+  )
+)
+
+
+
+;; From sexy-tooltip.h
+
+(define-function sexy_tooltip_get_type
+  (c-name "sexy_tooltip_get_type")
+  (return-type "GType")
+)
+
+(define-function sexy_tooltip_new
+  (c-name "sexy_tooltip_new")
+  (is-constructor-of "SexyTooltip")
+  (return-type "GtkWidget*")
+)
+
+(define-function sexy_tooltip_new_with_label
+  (c-name "sexy_tooltip_new_with_label")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "text")
+  )
+)
+
+(define-method position_to_widget
+  (of-object "SexyTooltip")
+  (c-name "sexy_tooltip_position_to_widget")
+  (return-type "none")
+  (parameters
+    '("GtkWidget*" "widget")
+  )
+)
+
+(define-method position_to_rect
+  (of-object "SexyTooltip")
+  (c-name "sexy_tooltip_position_to_rect")
+  (return-type "none")
+  (parameters
+    '("GdkRectangle*" "rect")
+    '("GdkScreen*" "screen")
+  )
+)
+
+
+
+;; From sexy-tree-view.h
+
+(define-function sexy_tree_view_get_type
+  (c-name "sexy_tree_view_get_type")
+  (return-type "GType")
+)
+
+(define-function sexy_tree_view_new
+  (c-name "sexy_tree_view_new")
+  (is-constructor-of "SexyTreeView")
+  (return-type "GtkWidget*")
+)
+
+(define-method set_tooltip_label_column
+  (of-object "SexyTreeView")
+  (c-name "sexy_tree_view_set_tooltip_label_column")
+  (return-type "none")
+  (parameters
+    '("guint" "column")
+  )
+)
+
+

@@ -1,0 +1,15 @@
+/* vim: set ft=cpp: */
+%%
+headers
+#include <libsexy/sexy.h>
+#include <libsexy/sexy-enum-types.h>
+#include "ext/gtk+/php_gtk+.h"
+#include "php_gtk_api.h"
+
+%%
+constants
+%%
+ignore-glob
+  *_get_type
+
+
