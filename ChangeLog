@@ -1,3 +1,17 @@
+2007-03-03  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * generator/generator.php
+      generator/templates.php
+      main/phpg_support.c:
+      - Do not register 'gtype' class constants for interfaces.
+      - When creating classes dynamically, unset the abstract flag from
+        methods inherited from interfaces and from the class itself.
+      - Use explicit function entry instead of ZEND_ABSTRACT_ME() to point to
+        default interface method implementation.
+
+    * TODO2:
+      -** empty log message ***
+
 2007-03-01  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * win32/buildconf.js:
