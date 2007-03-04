@@ -1,0 +1,15 @@
+LICENSE: GPL
+
+AUTHORS:
+    Anders Carlsson <andersca@gnu.org> (initial KHTMLW port)
+    Ettore Perazzoli <ettore@ximian.com> (generic hacking, editing)
+    Jonas BorgstrAm <jonas_b@bitsmart.com> (form support)
+    Radek Doulik <rodo@ximian.com> (bug fixes)
+    Larry Ewing <lewing@ximian.com> (bug fixes)
+    Miguel de Icaza <miguel@ximian.com> (HTMLPainter)
+
+URL: http://ftp.gnome.org/pub/GNOME/sources/gtkhtml/3.0/
+
+GtkHTML is a widget that provides HTML rendering and editing capabilities.
+
+NOTE: This extension is currently supported only on the *nix platform.

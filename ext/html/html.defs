@@ -1,0 +1,1028 @@
+;; -*- scheme -*-
+
+; object definitions ...
+
+(define-object HTML
+  (in-module "Gtk")
+  (parent "GtkLayout")
+  (c-name "GtkHTML")
+  (gtype-id "GTK_TYPE_HTML")
+)
+
+(define-object HTMLEmbedded
+  (in-module "Gtk")
+  (parent "GtkBin")
+  (c-name "GtkHTMLEmbedded")
+  (gtype-id "GTK_TYPE_HTML_EMBEDDED")
+)
+
+;; From /opt/local/include/libgtkhtml-3.8/gtkhtml/gtkhtml.h
+
+(define-function gtk_html_get_type
+  (c-name "gtk_html_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_html_new
+  (c-name "gtk_html_new")
+  (is-constructor-of GtkHTML)
+  (return-type "GtkWidget*")
+)
+
+(define-method set_editor_api
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_editor_api")
+  (return-type "none")
+  (parameters
+    '("GtkHTMLEditorAPI*" "api")
+    '("gpointer" "data")
+  )
+)
+
+(define-method set_iframe_parent
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_iframe_parent")
+  (return-type "gint")
+  (parameters
+    '("GtkWidget*" "parent")
+    '("HTMLObject*" "frame")
+  )
+)
+
+(define-method get_top_html
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_top_html")
+  (return-type "GtkHTML*")
+)
+
+(define-method enable_debug
+  (of-object "GtkHTML")
+  (c-name "gtk_html_enable_debug")
+  (return-type "none")
+  (parameters
+    '("gboolean" "debug")
+  )
+)
+
+(define-method allow_selection
+  (of-object "GtkHTML")
+  (c-name "gtk_html_allow_selection")
+  (return-type "none")
+  (parameters
+    '("gboolean" "allow")
+  )
+)
+
+(define-method select_word
+  (of-object "GtkHTML")
+  (c-name "gtk_html_select_word")
+  (return-type "none")
+)
+
+(define-method select_line
+  (of-object "GtkHTML")
+  (c-name "gtk_html_select_line")
+  (return-type "none")
+)
+
+(define-method select_paragraph
+  (of-object "GtkHTML")
+  (c-name "gtk_html_select_paragraph")
+  (return-type "none")
+)
+
+(define-method select_paragraph_extended
+  (of-object "GtkHTML")
+  (c-name "gtk_html_select_paragraph_extended")
+  (return-type "none")
+)
+
+(define-method select_all
+  (of-object "GtkHTML")
+  (c-name "gtk_html_select_all")
+  (return-type "none")
+)
+
+(define-method request_paste
+  (of-object "GtkHTML")
+  (c-name "gtk_html_request_paste")
+  (return-type "int")
+  (parameters
+    '("GdkAtom" "selection")
+    '("gint" "type")
+    '("gint32" "time")
+    '("gboolean" "as_cite")
+  )
+)
+
+(define-method begin
+  (of-object "GtkHTML")
+  (c-name "gtk_html_begin")
+  (return-type "GtkHTMLStream*")
+)
+
+(define-method begin_full
+  (of-object "GtkHTML")
+  (c-name "gtk_html_begin_full")
+  (return-type "GtkHTMLStream*")
+  (parameters
+    '("char*" "target_frame")
+    '("char*" "content_type")
+    '("GtkHTMLBeginFlags" "flags")
+  )
+)
+
+(define-method write
+  (of-object "GtkHTML")
+  (c-name "gtk_html_write")
+  (return-type "none")
+  (parameters
+    '("GtkHTMLStream*" "handle")
+    '("const-gchar*" "buffer")
+    '("size_t" "size")
+  )
+)
+
+(define-method end
+  (of-object "GtkHTML")
+  (c-name "gtk_html_end")
+  (return-type "none")
+  (parameters
+    '("GtkHTMLStream*" "handle")
+    '("GtkHTMLStreamStatus" "status")
+  )
+)
+
+(define-method flush
+  (of-object "GtkHTML")
+  (c-name "gtk_html_flush")
+  (return-type "none")
+)
+
+(define-method stop
+  (of-object "GtkHTML")
+  (c-name "gtk_html_stop")
+  (return-type "none")
+)
+
+(define-method load_from_string
+  (of-object "GtkHTML")
+  (c-name "gtk_html_load_from_string")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "str")
+    '("gint" "len")
+  )
+)
+
+(define-method export
+  (of-object "GtkHTML")
+  (c-name "gtk_html_export")
+  (return-type "gboolean")
+  (parameters
+    '("const-char*" "type")
+    '("GtkHTMLSaveReceiverFn" "receiver")
+    '("gpointer" "data")
+  )
+)
+
+(define-method get_selection_html
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_selection_html")
+  (return-type "char*")
+  (parameters
+    '("int*" "len")
+  )
+)
+
+(define-method set_editable
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_editable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "editable")
+  )
+)
+
+(define-method get_editable
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_editable")
+  (return-type "gboolean")
+)
+
+(define-method set_inline_spelling
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_inline_spelling")
+  (return-type "none")
+  (parameters
+    '("gboolean" "inline_spell")
+  )
+)
+
+(define-method get_inline_spelling
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_inline_spelling")
+  (return-type "gboolean")
+)
+
+(define-method set_magic_links
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_magic_links")
+  (return-type "none")
+  (parameters
+    '("gboolean" "magic_links")
+  )
+)
+
+(define-method get_magic_links
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_magic_links")
+  (return-type "gboolean")
+)
+
+(define-method set_magic_smileys
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_magic_smileys")
+  (return-type "none")
+  (parameters
+    '("gboolean" "magic_smileys")
+  )
+)
+
+(define-method get_magic_smileys
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_magic_smileys")
+  (return-type "gboolean")
+)
+
+(define-method set_caret_mode
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_caret_mode")
+  (return-type "none")
+  (parameters
+    '("gboolean" "caret_mode")
+  )
+)
+
+(define-method get_caret_mode
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_caret_mode")
+  (return-type "gboolean")
+)
+
+(define-method set_animate
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_animate")
+  (return-type "none")
+  (parameters
+    '("gboolean" "animate")
+  )
+)
+
+(define-method get_animate
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_animate")
+  (return-type "gboolean")
+)
+
+; No GnomePrint available yet
+
+;(define-method print_with_header_footer
+;  (of-object "GtkHTML")
+;  (c-name "gtk_html_print_with_header_footer")
+;  (return-type "none")
+;  (parameter (type-and-name GnomePrintContext* print_context))
+;  (parameter (type-and-name gdouble header_height))
+;  (parameter (type-and-name gdouble footer_height))
+;  (parameter (type-and-name GtkHTMLPrintCallback header_print))
+;  (parameter (type-and-name GtkHTMLPrintCallback footer_print))
+;  (parameter (type-and-name gpointer user_data))
+;)
+
+;(define-method print
+;  (of-object "GtkHTML")
+;  (c-name "gtk_html_print")
+;  (return-type "none")
+;  (parameter (type-and-name GnomePrintContext* print_context))
+;)
+
+;(define-method print_get_pages_num
+;  (of-object "GtkHTML")
+;  (c-name "gtk_html_print_get_pages_num")
+;  (return-type "gint")
+;  (parameter (type-and-name GnomePrintContext* print_context))
+;  (parameter (type-and-name gdouble header_height))
+;  (parameter (type-and-name gdouble footer_height))
+;)
+
+;(define-method print_set_master
+;  (of-object "GtkHTML")
+;  (c-name "gtk_html_print_set_master")
+;  (return-type "none")
+;  (parameter (type-and-name GnomePrintJob* print_master))
+;)
+
+(define-method set_title
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_title")
+  (return-type "none")
+  (parameters
+    '("const-char*" "title")
+  )
+)
+
+(define-method jump_to_anchor
+  (of-object "GtkHTML")
+  (c-name "gtk_html_jump_to_anchor")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "anchor")
+  )
+)
+
+(define-method get_paragraph_style
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_paragraph_style")
+  (return-type "GtkHTMLParagraphStyle")
+)
+
+(define-method set_paragraph_style
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_paragraph_style")
+  (return-type "none")
+  (parameters
+    '("GtkHTMLParagraphStyle" "style")
+  )
+)
+
+(define-method set_indent
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_indent")
+  (return-type "none")
+  (parameters
+    '("GByteArray*" "levels")
+  )
+)
+
+(define-method indent_push_level
+  (of-object "GtkHTML")
+  (c-name "gtk_html_indent_push_level")
+  (return-type "none")
+  (parameters
+    '("HTMLListType" "level_type")
+  )
+)
+
+(define-method indent_pop_level
+  (of-object "GtkHTML")
+  (c-name "gtk_html_indent_pop_level")
+  (return-type "none")
+)
+
+(define-method get_paragraph_indentation
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_paragraph_indentation")
+  (return-type "guint")
+)
+
+(define-method set_font_style
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_font_style")
+  (return-type "none")
+  (parameters
+    '("GtkHTMLFontStyle" "and_mask")
+    '("GtkHTMLFontStyle" "or_mask")
+  )
+)
+
+(define-method set_color
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_color")
+  (return-type "none")
+  (parameters
+    '("HTMLColor*" "color")
+  )
+)
+
+(define-method toggle_font_style
+  (of-object "GtkHTML")
+  (c-name "gtk_html_toggle_font_style")
+  (return-type "none")
+  (parameters
+    '("GtkHTMLFontStyle" "style")
+  )
+)
+
+(define-method get_paragraph_alignment
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_paragraph_alignment")
+  (return-type "GtkHTMLParagraphAlignment")
+)
+
+(define-method set_paragraph_alignment
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_paragraph_alignment")
+  (return-type "none")
+  (parameters
+    '("GtkHTMLParagraphAlignment" "alignment")
+  )
+)
+
+(define-method cut
+  (of-object "GtkHTML")
+  (c-name "gtk_html_cut")
+  (return-type "none")
+)
+
+(define-method copy
+  (of-object "GtkHTML")
+  (c-name "gtk_html_copy")
+  (return-type "none")
+)
+
+(define-method paste
+  (of-object "GtkHTML")
+  (c-name "gtk_html_paste")
+  (return-type "none")
+  (parameters 
+    '("gboolean" "as_cite")
+  )
+)
+
+(define-method undo
+  (of-object "GtkHTML")
+  (c-name "gtk_html_undo")
+  (return-type "none")
+)
+
+(define-method redo
+  (of-object "GtkHTML")
+  (c-name "gtk_html_redo")
+  (return-type "none")
+)
+
+(define-method insert_html
+  (of-object "GtkHTML")
+  (c-name "gtk_html_insert_html")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "html_src")
+  )
+)
+
+(define-method insert_gtk_html
+  (of-object "GtkHTML")
+  (c-name "gtk_html_insert_gtk_html")
+  (return-type "none")
+  (parameters
+    '("GtkHTML*" "to_be_destroyed")
+  )
+)
+
+(define-method append_html
+  (of-object "GtkHTML")
+  (c-name "gtk_html_append_html")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "html_src")
+  )
+)
+
+(define-method get_object_by_id
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_object_by_id")
+  (return-type "gpointer")
+  (parameters
+    '("const-gchar*" "id")
+  )
+)
+
+(define-method command
+  (of-object "GtkHTML")
+  (c-name "gtk_html_command")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "command_name")
+  )
+)
+
+(define-method edit_make_cursor_visible
+  (of-object "GtkHTML")
+  (c-name "gtk_html_edit_make_cursor_visible")
+  (return-type "gboolean")
+)
+
+(define-method set_magnification
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_magnification")
+  (return-type "none")
+  (parameters
+    '("gdouble" "magnification")
+  )
+)
+
+(define-method zoom_in
+  (of-object "GtkHTML")
+  (c-name "gtk_html_zoom_in")
+  (return-type "none")
+)
+
+(define-method zoom_out
+  (of-object "GtkHTML")
+  (c-name "gtk_html_zoom_out")
+  (return-type "none")
+)
+
+(define-method zoom_reset
+  (of-object "GtkHTML")
+  (c-name "gtk_html_zoom_reset")
+  (return-type "none")
+)
+
+(define-method update_styles
+  (of-object "GtkHTML")
+  (c-name "gtk_html_update_styles")
+  (return-type "none")
+)
+
+(define-method set_allow_frameset
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_allow_frameset")
+  (return-type "none")
+  (parameters
+    '("gboolean" "allow")
+  )
+)
+
+(define-method get_allow_frameset
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_allow_frameset")
+  (return-type "gboolean")
+)
+
+(define-method set_base
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_base")
+  (return-type "none")
+  (parameters
+    '("const-char*" "url")
+  )
+)
+
+(define-method get_url_base_relative
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_url_base_relative")
+  (return-type "char*")
+  (parameters
+    '("const-char*" "url")
+  )
+)
+
+(define-method get_url_object_relative
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_url_object_relative")
+  (return-type "char*")
+  (parameters
+    '("HTMLObject*" "o")
+    '("const-char*" "url")
+  )
+)
+
+(define-method images_ref
+  (of-object "GtkHTML")
+  (c-name "gtk_html_images_ref")
+  (return-type "none")
+)
+
+(define-method images_unref
+  (of-object "GtkHTML")
+  (c-name "gtk_html_images_unref")
+  (return-type "none")
+)
+
+(define-method image_ref
+  (of-object "GtkHTML")
+  (c-name "gtk_html_image_ref")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "url")
+  )
+)
+
+(define-method image_unref
+  (of-object "GtkHTML")
+  (c-name "gtk_html_image_unref")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "url")
+  )
+)
+
+(define-method image_preload
+  (of-object "GtkHTML")
+  (c-name "gtk_html_image_preload")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "url")
+  )
+)
+
+(define-method set_blocking
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_blocking")
+  (return-type "none")
+  (parameters
+    '("gboolean" "block")
+  )
+)
+
+(define-method set_images_blocking
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_images_blocking")
+  (return-type "none")
+  (parameters
+    '("gboolean" "block")
+  )
+)
+
+(define-method has_undo
+  (of-object "GtkHTML")
+  (c-name "gtk_html_has_undo")
+  (return-type "gboolean")
+)
+
+(define-method drop_undo
+  (of-object "GtkHTML")
+  (c-name "gtk_html_drop_undo")
+  (return-type "none")
+)
+
+(define-method get_url_at
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_url_at")
+  (return-type "char*")
+  (parameters
+    '("int" "x")
+    '("int" "y")
+  )
+)
+
+(define-method get_cursor_url
+  (of-object "GtkHTML")
+  (c-name "gtk_html_get_cursor_url")
+  (return-type "char*")
+)
+
+(define-method set_tokenizer
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_tokenizer")
+  (return-type "none")
+  (parameters
+    '("HTMLTokenizer*" "tokenizer")
+  )
+)
+
+; No GConf yet
+
+;(define-function gtk_html_build_with_gconf
+;  (c-name "gtk_html_build_with_gconf")
+;  (return-type "gboolean")
+;)
+
+(define-method set_default_content_type
+  (of-object "GtkHTML")
+  (c-name "gtk_html_set_default_content_type")
+  (return-type "none")
+  (parameters
+    '("gchar*" "content_type")
+  )
+)
+
+;(define-function gtk_html_new_from_string
+;  (c-name "gtk_html_new_from_string")
+;  (return-type "GtkWidget*")
+;  (parameters
+;    '("const-gchar*" "Astr")
+;    '("gint" "len")
+;  )
+;)
+
+(define-method load_empty
+  (of-object "GtkHTML")
+  (c-name "gtk_html_load_empty")
+  (return-type "none")
+)
+
+(define-method save
+  (of-object "GtkHTML")
+  (c-name "gtk_html_save")
+  (return-type "gboolean")
+  (parameters
+    '("GtkHTMLSaveReceiverFn" "receiver")
+    '("gpointer" "data")
+  )
+)
+
+(define-method begin_content
+  (of-object "GtkHTML")
+  (c-name "gtk_html_begin_content")
+  (return-type "GtkHTMLStream*")
+  (parameters
+    '("gchar*" "content_type")
+  )
+)
+
+(define-method drag_dest_set
+  (of-object "GtkHTML")
+  (c-name "gtk_html_drag_dest_set")
+  (return-type "none")
+)
+
+
+;; From /opt/local/include/libgtkhtml-3.8/gtkhtml/gtkhtml-properties.h
+
+(define-function gtk_html_class_properties_new
+  (c-name "gtk_html_class_properties_new")
+  (return-type "GtkHTMLClassProperties*")
+  (parameters
+    '("GtkWidget*" "widget")
+  )
+)
+
+(define-method destroy
+  (of-object "GtkHTMLClassProperties")
+  (c-name "gtk_html_class_properties_destroy")
+  (return-type "none")
+)
+
+(define-method copy
+  (of-object "GtkHTMLClassProperties")
+  (c-name "gtk_html_class_properties_copy")
+  (return-type "none")
+  (parameters
+    '("GtkHTMLClassProperties*" "p2")
+  )
+)
+
+; No GConf available yet
+
+;(define-method load
+;  (of-object "GtkHTMLClassProperties")
+;  (c-name "gtk_html_class_properties_load")
+;  (return-type "none")
+;  (parameter (type-and-name GConfClient* client))
+;)
+
+;(define-method update
+;  (of-object "GtkHTMLClassProperties")
+;  (c-name "gtk_html_class_properties_update")
+;  (return-type "none")
+;  (parameter (type-and-name GConfClient* client))
+;  (parameter (type-and-name GtkHTMLClassProperties* old))
+;)
+
+(define-function gtk_html_cursor_skip_get_type
+  (c-name "gtk_html_cursor_skip_get_type")
+  (return-type "GtkType")
+)
+
+(define-function gtk_html_command_get_type
+  (c-name "gtk_html_command_get_type")
+  (return-type "GtkType")
+)
+
+
+;; From /opt/local/include/libgtkhtml-3.8/gtkhtml/gtkhtml-embedded.h
+
+(define-function gtk_html_embedded_get_type
+  (c-name "gtk_html_embedded_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_html_embedded_new
+  (c-name "gtk_html_embedded_new")
+  (is-constructor-of GtkHTMLEmbedded)
+  (return-type "GtkWidget*")
+  (parameters
+    '("char*" "classid")
+    '("char*" "name")
+    '("char*" "type")
+    '("char*" "data")
+    '("int" "width")
+    '("int" "height")
+  )
+)
+
+(define-method set_parameter
+  (of-object "GtkHTMLEmbedded")
+  (c-name "gtk_html_embedded_set_parameter")
+  (return-type "none")
+  (parameters
+    '("char*" "param")
+    '("char*" "value")
+  )
+)
+
+(define-method get_parameter
+  (of-object "GtkHTMLEmbedded")
+  (c-name "gtk_html_embedded_get_parameter")
+  (return-type "char*")
+  (parameters
+    '("char*" "param")
+  )
+)
+
+(define-method set_descent
+  (of-object "GtkHTMLEmbedded")
+  (c-name "gtk_html_embedded_set_descent")
+  (return-type "none")
+  (parameters
+    '("int" "descent")
+  )
+)
+
+
+;; From /opt/local/include/libgtkhtml-3.8/gtkhtml/gtkhtml-search.h
+
+(define-method engine_search
+  (of-object "GtkHTML")
+  (c-name "gtk_html_engine_search")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "text")
+    '("gboolean" "case_sensitive")
+    '("gboolean" "forward")
+    '("gboolean" "regular")
+  )
+)
+
+(define-method engine_search_set_forward
+  (of-object "GtkHTML")
+  (c-name "gtk_html_engine_search_set_forward")
+  (return-type "none")
+  (parameters
+    '("gboolean" "forward")
+  )
+)
+
+(define-method engine_search_next
+  (of-object "GtkHTML")
+  (c-name "gtk_html_engine_search_next")
+  (return-type "gboolean")
+)
+
+(define-method engine_search_incremental
+  (of-object "GtkHTML")
+  (c-name "gtk_html_engine_search_incremental")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "text")
+    '("gboolean" "forward")
+  )
+)
+
+
+;; From /opt/local/include/libgtkhtml-3.8/gtkhtml/gtkhtml-stream.h
+
+(define-method stream_new
+  (of-object "GtkHTML")
+  (c-name "gtk_html_stream_new")
+  (return-type "GtkHTMLStream*")
+  (parameters
+    '("GtkHTMLStreamTypesFunc" "type_func")
+    '("GtkHTMLStreamWriteFunc" "write_func")
+    '("GtkHTMLStreamCloseFunc" "close_func")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method write
+  (of-object "GtkHTMLStream")
+  (c-name "gtk_html_stream_write")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "buffer")
+    '("size_t" "size")
+  )
+)
+
+(define-method destroy
+  (of-object "GtkHTMLStream")
+  (c-name "gtk_html_stream_destroy")
+  (return-type "none")
+)
+
+(define-method close
+  (of-object "GtkHTMLStream")
+  (c-name "gtk_html_stream_close")
+  (return-type "none")
+  (parameters
+    '("GtkHTMLStreamStatus" "status")
+  )
+)
+
+(define-method get_types
+  (of-object "GtkHTMLStream")
+  (c-name "gtk_html_stream_get_types")
+  (return-type "char**")
+)
+
+(define-method stream_log_new
+  (of-object "GtkHTML")
+  (c-name "gtk_html_stream_log_new")
+  (return-type "GtkHTMLStream*")
+  (parameters
+    '("GtkHTMLStream*" "stream")
+  )
+)
+
+(define-method vprintf
+  (of-object "GtkHTMLStream")
+  (c-name "gtk_html_stream_vprintf")
+  (return-type "int")
+  (parameters
+    '("const-char*" "format")
+  )
+  (varargs #t)
+)
+
+(define-method printf
+  (of-object "GtkHTMLStream")
+  (c-name "gtk_html_stream_printf")
+  (return-type "int")
+  (parameters
+    '("const-char*" "format")
+  )
+  (varargs #t)
+)
+
+
+
+
+;; From /opt/local/include/libgtkhtml-3.8/gtkhtml/htmldefine-enums.h
+
+
+;; -*- scheme -*-
+; object definitions ...
+;; Enumerations and flags ...
+
+
+;; From /opt/local/include/libgtkhtml-3.8/gtkhtml/htmltokenizer.h
+
+(define-function html_tokenizer_get_type
+  (c-name "html_tokenizer_get_type")
+  (return-type "GType")
+)
+
+(define-function html_tokenizer_new
+  (c-name "html_tokenizer_new")
+  (return-type "HTMLTokenizer*")
+)
+
+(define-method destroy
+  (c-name "html_tokenizer_destroy")
+  (return-type "none")
+)
+
+(define-method begin
+  (c-name "html_tokenizer_begin")
+  (return-type "none")
+  (parameters
+    '("gchar*" "content_type")
+  )
+)
+
+(define-method write
+  (c-name "html_tokenizer_write")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "string")
+    '("size_t" "size")
+  )
+)
+
+(define-method end
+  (c-name "html_tokenizer_end")
+  (return-type "none")
+)
+
+(define-method peek_token
+  (c-name "html_tokenizer_peek_token")
+  (return-type "gchar*")
+)
+
+(define-method next_token
+  (c-name "html_tokenizer_next_token")
+  (return-type "gchar*")
+)
+
+(define-method has_more_tokens
+  (c-name "html_tokenizer_has_more_tokens")
+  (return-type "gboolean")
+)
+
+(define-method clone
+  (c-name "html_tokenizer_clone")
+  (return-type "HTMLTokenizer*")
+)
+

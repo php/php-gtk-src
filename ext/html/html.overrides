@@ -1,0 +1,26 @@
+/* vim: set ft=cpp: */
+%%
+headers
+#include <gtkhtml/gtkhtml.h>
+#include <gtkhtml/gtkhtml-embedded.h>
+#include <gtkhtml/gtkhtml-search.h>
+#include "ext/gtk+/php_gtk+.h"
+#include "php_gtk_api.h"
+%%
+ignore-glob
+  *_get_type
+
+%%
+override gtk_html_load_from_string
+PHP_METHOD
+{
+    char *text;
+
+    NOT_STATIC_METHOD();
+
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(), "s", &text)) {
+        return;
+    }
+
+    gtk_html_load_from_string(GTK_HTML(PHPG_GOBJECT(this_ptr)), text, strlen(text));
+}

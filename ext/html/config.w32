@@ -1,0 +1,23 @@
+
+ARG_WITH("html", "gtkhtml3 support", "no");
+
+if (PHP_GTK_HTML != "no" || PHP_GTK_ALL != "no") {
+	if (CHECK_HEADER("gtkhtml\\gtkhtml.h") && CHECK_LIB("gtkhtml-3.0.lib", "html"))
+	{
+		if (FSO.FileExists("win32\\temp.bat")) {
+
+			var temp = FSO.OpenTextFile("win32\\temp.bat", 8);
+			temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_html.log -o ext\\html\\html.overrides -p gtkhtml -r ext\\gtk+\\gtk.defs ext\\html\\html.defs > ext\\html\\gen_html.c");
+                  temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\html\\gen_html.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\html\\gen_html.h');		
+			temp.Close();
+		}
+
+		ADD_FLAG("CFLAGS_HTML", "/I ext\\html /I ..\\ext\\html /D HAVE_HTML=1");
+		EXTENSION("html", "php_html.c gen_html.c", true); // always shared
+		AC_DEFINE("HAVE_HTML", 1, "gtkhtml3 enabled");
+
+	} else {
+
+		WARNING("gtkhtml3 not enabled; libraries and headers not found");
+	}
+}

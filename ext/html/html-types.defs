@@ -1,0 +1,307 @@
+; define enums and flags ...
+
+(define-enum HTMLButtonType
+  (c-name "HTMLButtonType")
+  (values
+    '("normal" "BUTTON_NORMAL")
+    '("submit" "BUTTON_SUBMIT")
+    '("reset" "BUTTON_RESET")
+  )
+)
+
+(define-flags HTMLChangeFlags
+  (c-name "HTMLChangeFlags")
+  (values
+    '("none" "HTML_CHANGE_NONE")
+    '("min-width" "HTML_CHANGE_MIN_WIDTH")
+    '("pref-width" "HTML_CHANGE_PREF_WIDTH")
+    '("size" "HTML_CHANGE_SIZE")
+    '("recalc-pi" "HTML_CHANGE_RECALC_PI")
+    '("all-calc" "HTML_CHANGE_ALL_CALC")
+    '("all" "HTML_CHANGE_ALL")
+  )
+)
+
+(define-enum HTMLClearType
+  (c-name "HTMLClearType")
+  (values
+    '("none" "HTML_CLEAR_NONE")
+    '("left" "HTML_CLEAR_LEFT")
+    '("right" "HTML_CLEAR_RIGHT")
+    '("all" "HTML_CLEAR_ALL")
+    '("inherit" "HTML_CLEAR_INHERIT")
+  )
+)
+
+(define-enum HTMLClueFlowStyle
+  (c-name "HTMLClueFlowStyle")
+  (values
+    '("style-normal" "HTML_CLUEFLOW_STYLE_NORMAL")
+    '("style-h1" "HTML_CLUEFLOW_STYLE_H1")
+    '("style-h2" "HTML_CLUEFLOW_STYLE_H2")
+    '("style-h3" "HTML_CLUEFLOW_STYLE_H3")
+    '("style-h4" "HTML_CLUEFLOW_STYLE_H4")
+    '("style-h5" "HTML_CLUEFLOW_STYLE_H5")
+    '("style-h6" "HTML_CLUEFLOW_STYLE_H6")
+    '("style-address" "HTML_CLUEFLOW_STYLE_ADDRESS")
+    '("style-pre" "HTML_CLUEFLOW_STYLE_PRE")
+    '("style-list-item" "HTML_CLUEFLOW_STYLE_LIST_ITEM")
+    '("numstyles" "HTML_CLUEFLOW_NUMSTYLES")
+  )
+)
+
+(define-enum HTMLColorId
+  (c-name "HTMLColorId")
+  (values
+    '("bgcolor" "HTMLBgColor")
+    '("textcolor" "HTMLTextColor")
+    '("linkcolor" "HTMLLinkColor")
+    '("vlinkcolor" "HTMLVLinkColor")
+    '("alinkcolor" "HTMLALinkColor")
+    '("highlightcolor" "HTMLHighlightColor")
+    '("highlighttextcolor" "HTMLHighlightTextColor")
+    '("highlightnfcolor" "HTMLHighlightNFColor")
+    '("highlighttextnfcolor" "HTMLHighlightTextNFColor")
+    '("spellerrorcolor" "HTMLSpellErrorColor")
+    '("citecolor" "HTMLCiteColor")
+    '("colors" "HTMLColors")
+  )
+)
+
+(define-enum HTMLDirection
+  (c-name "HTMLDirection")
+  (values
+    '("derived" "HTML_DIRECTION_DERIVED")
+    '("ltr" "HTML_DIRECTION_LTR")
+    '("rtl" "HTML_DIRECTION_RTL")
+  )
+)
+
+(define-enum HTMLEngineCursorMovement
+  (c-name "HTMLEngineCursorMovement")
+  (values
+    '("up" "HTML_ENGINE_CURSOR_UP")
+    '("down" "HTML_ENGINE_CURSOR_DOWN")
+    '("right" "HTML_ENGINE_CURSOR_RIGHT")
+    '("left" "HTML_ENGINE_CURSOR_LEFT")
+    '("home" "HTML_ENGINE_CURSOR_HOME")
+    '("end" "HTML_ENGINE_CURSOR_END")
+    '("pgup" "HTML_ENGINE_CURSOR_PGUP")
+    '("pgdown" "HTML_ENGINE_CURSOR_PGDOWN")
+  )
+)
+
+(define-flags HTMLEngineSetClueFlowStyleMask
+  (c-name "HTMLEngineSetClueFlowStyleMask")
+  (values
+    '("none" "HTML_ENGINE_SET_CLUEFLOW_NONE")
+    '("style" "HTML_ENGINE_SET_CLUEFLOW_STYLE")
+    '("alignment" "HTML_ENGINE_SET_CLUEFLOW_ALIGNMENT")
+    '("indentation" "HTML_ENGINE_SET_CLUEFLOW_INDENTATION")
+    '("indentation-delta" "HTML_ENGINE_SET_CLUEFLOW_INDENTATION_DELTA")
+    '("indentation-all" "HTML_ENGINE_SET_CLUEFLOW_INDENTATION_ALL")
+  )
+)
+
+(define-enum HTMLFitType
+  (c-name "HTMLFitType")
+  (values
+    '("none" "HTML_FIT_NONE")
+    '("partial" "HTML_FIT_PARTIAL")
+    '("complete" "HTML_FIT_COMPLETE")
+  )
+)
+
+(define-enum HTMLGlossaryEntry
+  (c-name "HTMLGlossaryEntry")
+  (values
+    '("l" "HTML_GLOSSARY_DL")
+    '("d" "HTML_GLOSSARY_DD")
+  )
+)
+
+(define-enum HTMLHAlignType
+  (c-name "HTMLHAlignType")
+  (values
+    '("left" "HTML_HALIGN_LEFT")
+    '("center" "HTML_HALIGN_CENTER")
+    '("right" "HTML_HALIGN_RIGHT")
+    '("none" "HTML_HALIGN_NONE")
+  )
+)
+
+(define-enum HTMLListType
+  (c-name "HTMLListType")
+  (values
+    '("unordered" "HTML_LIST_TYPE_UNORDERED")
+    '("ordered-arabic" "HTML_LIST_TYPE_ORDERED_ARABIC")
+    '("ordered-lower-alpha" "HTML_LIST_TYPE_ORDERED_LOWER_ALPHA")
+    '("ordered-upper-alpha" "HTML_LIST_TYPE_ORDERED_UPPER_ALPHA")
+    '("ordered-lower-roman" "HTML_LIST_TYPE_ORDERED_LOWER_ROMAN")
+    '("ordered-upper-roman" "HTML_LIST_TYPE_ORDERED_UPPER_ROMAN")
+    '("menu" "HTML_LIST_TYPE_MENU")
+    '("dir" "HTML_LIST_TYPE_DIR")
+    '("blockquote" "HTML_LIST_TYPE_BLOCKQUOTE")
+    '("blockquote-cite" "HTML_LIST_TYPE_BLOCKQUOTE_CITE")
+    '("glossary-dl" "HTML_LIST_TYPE_GLOSSARY_DL")
+    '("glossary-dd" "HTML_LIST_TYPE_GLOSSARY_DD")
+  )
+)
+
+(define-flags HTMLObjectFlags
+  (c-name "HTMLObjectFlags")
+  (values
+    '("none" "HTML_OBJECT_FLAG_NONE")
+    '("separator" "HTML_OBJECT_FLAG_SEPARATOR")
+    '("selected" "HTML_OBJECT_FLAG_SELECTED")
+    '("allselected" "HTML_OBJECT_FLAG_ALLSELECTED")
+    '("fixedwidth" "HTML_OBJECT_FLAG_FIXEDWIDTH")
+    '("aligned" "HTML_OBJECT_FLAG_ALIGNED")
+    '("printed" "HTML_OBJECT_FLAG_PRINTED")
+    '("hidden" "HTML_OBJECT_FLAG_HIDDEN")
+  )
+)
+
+(define-enum HTMLReplaceQueryAnswer
+  (c-name "HTMLReplaceQueryAnswer")
+  (values
+    '("replace" "RQA_Replace")
+    '("replaceall" "RQA_ReplaceAll")
+    '("next" "RQA_Next")
+    '("cancel" "RQA_Cancel")
+  ) 
+)
+
+(define-enum HTMLType
+  (c-name "HTMLType")
+  (values
+    '("type-none" "HTML_TYPE_NONE")
+    '("type-anchor" "HTML_TYPE_ANCHOR")
+    '("type-bullet" "HTML_TYPE_BULLET")
+    '("type-button" "HTML_TYPE_BUTTON")
+    '("type-checkbox" "HTML_TYPE_CHECKBOX")
+    '("type-clue" "HTML_TYPE_CLUE")
+    '("type-cluealigned" "HTML_TYPE_CLUEALIGNED")
+    '("type-clueflow" "HTML_TYPE_CLUEFLOW")
+    '("type-clueh" "HTML_TYPE_CLUEH")
+    '("type-cluev" "HTML_TYPE_CLUEV")
+    '("type-embedded" "HTML_TYPE_EMBEDDED")
+    '("type-hidden" "HTML_TYPE_HIDDEN")
+    '("type-hspace" "HTML_TYPE_HSPACE")
+    '("type-image" "HTML_TYPE_IMAGE")
+    '("type-imageinput" "HTML_TYPE_IMAGEINPUT")
+    '("type-linktext" "HTML_TYPE_LINKTEXT")
+    '("type-object" "HTML_TYPE_OBJECT")
+    '("type-radio" "HTML_TYPE_RADIO")
+    '("type-rule" "HTML_TYPE_RULE")
+    '("type-select" "HTML_TYPE_SELECT")
+    '("type-table" "HTML_TYPE_TABLE")
+    '("type-tablecell" "HTML_TYPE_TABLECELL")
+    '("type-text" "HTML_TYPE_TEXT")
+    '("type-textarea" "HTML_TYPE_TEXTAREA")
+    '("type-textinput" "HTML_TYPE_TEXTINPUT")
+    '("type-textslave" "HTML_TYPE_TEXTSLAVE")
+    '("type-iframe" "HTML_TYPE_IFRAME")
+    '("type-frame" "HTML_TYPE_FRAME")
+    '("type-frameset" "HTML_TYPE_FRAMESET")
+    '("num-types" "HTML_NUM_TYPES")
+  )
+)
+
+(define-enum HTMLUndoDirection
+  (c-name "HTMLUndoDirection")
+  (values
+    '("undo" "HTML_UNDO_UNDO")
+    '("redo" "HTML_UNDO_REDO")
+    '("end" "HTML_UNDO_END")
+  )
+)
+
+(define-flags HTMLURLDupFlags
+  (c-name "HTMLURLDupFlags")
+  (values
+    '("all" "HTML_URL_DUP_ALL")
+    '("noprotocol" "HTML_URL_DUP_NOPROTOCOL")
+    '("nousername" "HTML_URL_DUP_NOUSERNAME")
+    '("nopassword" "HTML_URL_DUP_NOPASSWORD")
+    '("nohostname" "HTML_URL_DUP_NOHOSTNAME")
+    '("noport" "HTML_URL_DUP_NOPORT")
+    '("nopath" "HTML_URL_DUP_NOPATH")
+    '("noreference" "HTML_URL_DUP_NOREFERENCE")
+    '("nocgiargs" "HTML_URL_DUP_NOCGIARGS")
+  )
+)
+
+(define-enum HTMLVAlignType
+  (c-name "HTMLVAlignType")
+  (values
+    '("top" "HTML_VALIGN_TOP")
+    '("middle" "HTML_VALIGN_MIDDLE")
+    '("bottom" "HTML_VALIGN_BOTTOM")
+    '("none" "HTML_VALIGN_NONE")
+  )
+)
+
+(define-enum HTMLDisplayType
+  (c-name "HTMLDisplayType")
+  (values
+    '("none" "DISPLAY_NONE")
+    '("inline" "DISPLAY_INLINE")
+    '("list-item" "DISPLAY_LIST_ITEM")
+    '("inline-block" "DISPLAY_INLINE_BLOCK")
+    '("block" "DISPLAY_BLOCK")
+    '("marker" "DISPLAY_MARKER")
+    '("run-in" "DISPLAY_RUN_IN")
+    '("compact" "DISPLAY_COMPACT")
+    '("table-row-group" "DISPLAY_TABLE_ROW_GROUP")
+    '("table-column" "DISPLAY_TABLE_COLUMN")
+    '("table-column-group" "DISPLAY_TABLE_COLUMN_GROUP")
+    '("table-header-group" "DISPLAY_TABLE_HEADER_GROUP")
+    '("table-footer-group" "DISPLAY_TABLE_FOOTER_GROUP")
+    '("table-row" "DISPLAY_TABLE_ROW")
+    '("table-cell" "DISPLAY_TABLE_CELL")
+    '("table-caption" "DISPLAY_TABLE_CAPTION")
+    '("inline-table" "DISPLAY_INLINE_TABLE")
+    '("table" "DISPLAY_TABLE")
+    '("document" "DISPLAY_DOCUMENT")
+  )
+)
+
+(define-enum HTMLWhiteSpaceType
+  (c-name "HTMLWhiteSpaceType")
+  (values
+    '("normal" "HTML_WHITE_SPACE_NORMAL")
+    '("pre" "HTML_WHITE_SPACE_PRE")
+    '("nowrap" "HTML_WHITE_SPACE_NOWRAP")
+    '("pre-wrap" "HTML_WHITE_SPACE_PRE_WRAP")
+    '("pre-line" "HTML_WHITE_SPACE_PRE_LINE")
+    '("inherit" "HTML_WHITE_SPACE_INHERIT")
+  )
+)
+
+(define-enum HTMLLengthType
+  (c-name "HTMLLengthType")
+  (values
+    '("pixels" "HTML_LENGTH_TYPE_PIXELS")
+    '("percent" "HTML_LENGTH_TYPE_PERCENT")
+    '("fraction" "HTML_LENGTH_TYPE_FRACTION")
+  )
+)
+
+(define-enum HTMLBorderStyle
+  (c-name "HTMLBorderStyle")
+  (values
+    '("none" "HTML_BORDER_NONE")
+    '("solid" "HTML_BORDER_SOLID")
+    '("inset" "HTML_BORDER_INSET")
+    '("outset" "HTML_BORDER_OUTSET")
+  )
+)
+
+(define-enum HTMLTextSlaveGlyphItemType
+  (c-name "HTMLTextSlaveGlyphItemType")
+  (values
+    '("created" "HTML_TEXT_SLAVE_GLYPH_ITEM_CREATED")
+    '("parental" "HTML_TEXT_SLAVE_GLYPH_ITEM_PARENTAL")
+  )
+)
