@@ -1,3 +1,27 @@
+2007-03-04  Anant Narayanan  <anant@kix.in>
+
+    * ext/libsexy/Makefile.frag
+      ext/libsexy/README
+      ext/libsexy/config.m4
+      ext/libsexy/config.w32
+      ext/libsexy/php_libsexy.c
+      ext/libsexy/php_libsexy.h
+      ext/libsexy/sexy.defs
+      ext/libsexy/sexy.overrides:
+      Checkin libsexy extension
+
+    * ext/html/Makefile.frag
+      ext/html/README
+      ext/html/config.m4
+      ext/html/config.w32
+      ext/html/html-types.defs
+      ext/html/html.defs
+      ext/html/html.overrides
+      ext/html/php_html.c
+      ext/html/php_html.h
+      ext/html/demos/gtkhtml.php:
+      Checkin GtkHTML3 extension
+
 2007-03-03  Andrei Zmievski  <andrei@gravitonic.com>
 
     * generator/generator.php
