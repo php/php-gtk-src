@@ -4,7 +4,7 @@ dnl config.m4 for scintilla module
 define(scintilla_required_version,   0.1.0)
 
 PHP_GTK_ARG_ENABLE(scintilla,for scintilla support,
-[  --enable-scintilla      Enable scintilla support],no)
+[  --enable-scintilla      Enable Scintilla support],no)
 
 if test "$PHP_GTK_SCINTILLA" != "no"; then
   PKG_CHECK_MODULES(SCINTILLA, [GtkScintilla-2.0 >= scintilla_required_version],

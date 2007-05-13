@@ -4,7 +4,7 @@ dnl config.m4 for spell module
 define(spell_required_version,   2.0.0)
 
 PHP_GTK_ARG_ENABLE(spell,for spell support,
-[  --enable-spell      Enable spell support],no)
+[  --enable-spell          Enable GtkSpell support],no)
 
 if test "$PHP_GTK_SPELL" != "no"; then
   PKG_CHECK_MODULES(SPELL, [gtkspell-2.0 >= spell_required_version],

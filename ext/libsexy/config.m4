@@ -4,7 +4,7 @@ dnl config.m4 for libsexy module
 define(libsexy_required_version,   0.1.10)
 
 PHP_GTK_ARG_ENABLE(libsexy,for libsexy support,
-[  --disable-libsexy      Disable libsexy support],yes)
+[  --disable-libsexy       Enable libsexy support],no)
 
 if test "$PHP_GTK_LIBSEXY" != "no"; then
   PKG_CHECK_MODULES(LIBSEXY, [libsexy >= libsexy_required_version], have_libsexy=yes, have_libsexy=no)
