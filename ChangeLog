@@ -1,3 +1,16 @@
+2007-05-13  Anant Narayanan  <anant@kix.in>
+
+    * ext/libsexy/config.m4:
+      Fix small oops
+
+    * ext/extra/config.m4
+      ext/html/config.m4
+      ext/libsexy/config.m4
+      ext/scintilla/config.m4
+      ext/sourceview/config.m4
+      ext/spell/config.m4:
+      Disable extensions from building by default
+
 2007-03-04  Anant Narayanan  <anant@kix.in>
 
     * ext/libsexy/Makefile.frag
