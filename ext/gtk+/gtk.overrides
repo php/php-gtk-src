@@ -6168,3 +6168,5 @@ PHP_METHOD
 %% include gtkstyle.overrides
 %% include gtktextview.overrides
 %% include gtktreeview.overrides
+%% include gtk-2.8.overrides 2.8
+%% include gtk-2.10.overrides 2.10

@@ -1,0 +1,408 @@
+;; -*- scheme -*-
+; object definitions ...
+(define-object PageSetupUnixDialog
+  (in-module "Unixprint")
+  (parent "GtkDialog")
+  (c-name "GtkPageSetupUnixDialog")
+  (gtype-id "GTK_TYPE_PAGE_SETUP_UNIX_DIALOG")
+)
+
+(define-object PrintJob
+  (in-module "Unixprint")
+  (parent "GObject")
+  (c-name "GtkPrintJob")
+  (gtype-id "GTK_TYPE_PRINT_JOB")
+)
+
+(define-object PrintUnixDialog
+  (in-module "Unixprint")
+  (parent "GtkDialog")
+  (c-name "GtkPrintUnixDialog")
+  (gtype-id "GTK_TYPE_PRINT_UNIX_DIALOG")
+)
+
+(define-object Printer
+  (in-module "Unixprint")
+  (parent "GObject")
+  (c-name "GtkPrinter")
+  (gtype-id "GTK_TYPE_PRINTER")
+)
+
+;; Enumerations and flags ...
+
+(define-flags PrintCapabilities
+  (in-module "Unixprint")
+  (c-name "GtkPrintCapabilities")
+  (gtype-id "GTK_TYPE_PRINT_CAPABILITIES")
+  (values
+    '("page-set" "GTK_PRINT_CAPABILITY_PAGE_SET")
+    '("copies" "GTK_PRINT_CAPABILITY_COPIES")
+    '("collate" "GTK_PRINT_CAPABILITY_COLLATE")
+    '("reverse" "GTK_PRINT_CAPABILITY_REVERSE")
+    '("scale" "GTK_PRINT_CAPABILITY_SCALE")
+    '("generate-pdf" "GTK_PRINT_CAPABILITY_GENERATE_PDF")
+    '("generate-ps" "GTK_PRINT_CAPABILITY_GENERATE_PS")
+    '("preview" "GTK_PRINT_CAPABILITY_PREVIEW")
+  )
+)
+
+
+;; From gtkpagesetupunixdialog.h
+
+(define-function gtk_page_setup_unix_dialog_get_type
+  (c-name "gtk_page_setup_unix_dialog_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_page_setup_unix_dialog_new
+  (c-name "gtk_page_setup_unix_dialog_new")
+  (is-constructor-of "GtkPageSetupUnixDialog")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "title" (null-ok) (default "NULL"))
+    '("GtkWindow*" "parent" (null-ok) (default "NULL"))
+  )
+)
+
+(define-method set_page_setup
+  (of-object "GtkPageSetupUnixDialog")
+  (c-name "gtk_page_setup_unix_dialog_set_page_setup")
+  (return-type "none")
+  (parameters
+    '("GtkPageSetup*" "page_setup")
+  )
+)
+
+(define-method get_page_setup
+  (of-object "GtkPageSetupUnixDialog")
+  (c-name "gtk_page_setup_unix_dialog_get_page_setup")
+  (return-type "GtkPageSetup*")
+)
+
+(define-method set_print_settings
+  (of-object "GtkPageSetupUnixDialog")
+  (c-name "gtk_page_setup_unix_dialog_set_print_settings")
+  (return-type "none")
+  (parameters
+    '("GtkPrintSettings*" "print_settings")
+  )
+)
+
+(define-method get_print_settings
+  (of-object "GtkPageSetupUnixDialog")
+  (c-name "gtk_page_setup_unix_dialog_get_print_settings")
+  (return-type "GtkPrintSettings*")
+)
+
+
+;; From gtkprinter.h
+
+(define-function gtk_printer_get_type
+  (c-name "gtk_printer_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_printer_new
+  (c-name "gtk_printer_new")
+  (is-constructor-of "GtkPrinter")
+  (return-type "GtkPrinter*")
+  (parameters
+    '("const-gchar*" "name")
+    '("GtkPrintBackend*" "backend")
+    '("gboolean" "is_virtual")
+  )
+)
+
+(define-method get_backend
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_get_backend")
+  (return-type "GtkPrintBackend*")
+)
+
+(define-method get_name
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_get_name")
+  (return-type "const-gchar*")
+)
+
+(define-method get_state_message
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_get_state_message")
+  (return-type "const-gchar*")
+)
+
+(define-method get_description
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_get_description")
+  (return-type "const-gchar*")
+)
+
+(define-method get_location
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_get_location")
+  (return-type "const-gchar*")
+)
+
+(define-method get_icon_name
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_get_icon_name")
+  (return-type "const-gchar*")
+)
+
+(define-method get_job_count
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_get_job_count")
+  (return-type "gint")
+)
+
+(define-method is_active
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_is_active")
+  (return-type "gboolean")
+)
+
+(define-method is_virtual
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_is_virtual")
+  (return-type "gboolean")
+)
+
+(define-method is_default
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_is_default")
+  (return-type "gboolean")
+)
+
+(define-method accepts_pdf
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_accepts_pdf")
+  (return-type "gboolean")
+)
+
+(define-method accepts_ps
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_accepts_ps")
+  (return-type "gboolean")
+)
+
+(define-method compare
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_compare")
+  (return-type "gint")
+  (parameters
+    '("GtkPrinter*" "b")
+  )
+)
+
+(define-function enumerate_printers
+  (c-name "gtk_enumerate_printers")
+  (return-type "none")
+  (parameters
+    '("GtkPrinterFunc" "func")
+    '("gpointer" "data")
+    '("GDestroyNotify" "destroy")
+    '("gboolean" "wait")
+  )
+)
+ 
+(define-virtual details_acquired
+  (of-object "GtkPrinter")
+  (return-type "none")
+  (parameters
+    '("gboolean" "success")
+  )
+)
+
+
+
+
+;; From gtkprintjob.h
+
+(define-function gtk_print_job_get_type
+  (c-name "gtk_print_job_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_print_job_new
+  (c-name "gtk_print_job_new")
+  (is-constructor-of "GtkPrintJob")
+  (return-type "GtkPrintJob*")
+  (parameters
+    '("const-gchar*" "title")
+    '("GtkPrinter*" "printer")
+    '("GtkPrintSettings*" "settings")
+    '("GtkPageSetup*" "page_setup")
+  )
+)
+
+(define-method get_settings
+  (of-object "GtkPrintJob")
+  (c-name "gtk_print_job_get_settings")
+  (return-type "GtkPrintSettings*")
+)
+
+(define-method get_printer
+  (of-object "GtkPrintJob")
+  (c-name "gtk_print_job_get_printer")
+  (return-type "GtkPrinter*")
+)
+
+(define-method get_title
+  (of-object "GtkPrintJob")
+  (c-name "gtk_print_job_get_title")
+  (return-type "const-gchar*")
+)
+
+(define-method get_status
+  (of-object "GtkPrintJob")
+  (c-name "gtk_print_job_get_status")
+  (return-type "GtkPrintStatus")
+)
+
+(define-method set_source_file
+  (of-object "GtkPrintJob")
+  (c-name "gtk_print_job_set_source_file")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "filename")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_surface
+  (of-object "GtkPrintJob")
+  (c-name "gtk_print_job_get_surface")
+  (return-type "cairo_surface_t*")
+  (parameters
+    '("GError**" "error")
+  )
+)
+
+(define-method set_track_print_status
+  (of-object "GtkPrintJob")
+  (c-name "gtk_print_job_set_track_print_status")
+  (return-type "none")
+  (parameters
+    '("gboolean" "track_status")
+  )
+)
+
+(define-method get_track_print_status
+  (of-object "GtkPrintJob")
+  (c-name "gtk_print_job_get_track_print_status")
+  (return-type "gboolean")
+)
+
+(define-method send
+  (of-object "GtkPrintJob")
+  (c-name "gtk_print_job_send")
+  (return-type "gboolean")
+  (parameters
+    '("GtkPrintJobCompleteFunc" "callback")
+    '("gpointer" "user_data")
+    '("GDestroyNotify" "dnotify")
+    '("GError**" "error")
+  )
+)
+
+(define-function print_capabilities_get_type
+  (c-name "gtk_print_capabilities_get_type")
+  (return-type "GType")
+)
+
+(define-virtual status_changed
+  (of-object "GtkPrintJob")
+  (return-type "none")
+)
+
+
+
+;; From gtkprintunixdialog.h
+
+(define-function gtk_print_unix_dialog_get_type
+  (c-name "gtk_print_unix_dialog_get_type")
+  (return-type "GType")
+)
+
+(define-function gtk_print_unix_dialog_new
+  (c-name "gtk_print_unix_dialog_new")
+  (is-constructor-of "GtkPrintUnixDialog")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "title" (null-ok) (default "NULL"))
+    '("GtkWindow*" "parent" (null-ok) (default "NULL"))
+  )
+)
+
+(define-method set_page_setup
+  (of-object "GtkPrintUnixDialog")
+  (c-name "gtk_print_unix_dialog_set_page_setup")
+  (return-type "none")
+  (parameters
+    '("GtkPageSetup*" "page_setup")
+  )
+)
+
+(define-method get_page_setup
+  (of-object "GtkPrintUnixDialog")
+  (c-name "gtk_print_unix_dialog_get_page_setup")
+  (return-type "GtkPageSetup*")
+)
+
+(define-method set_current_page
+  (of-object "GtkPrintUnixDialog")
+  (c-name "gtk_print_unix_dialog_set_current_page")
+  (return-type "none")
+  (parameters
+    '("gint" "current_page")
+  )
+)
+
+(define-method get_current_page
+  (of-object "GtkPrintUnixDialog")
+  (c-name "gtk_print_unix_dialog_get_current_page")
+  (return-type "gint")
+)
+
+(define-method set_settings
+  (of-object "GtkPrintUnixDialog")
+  (c-name "gtk_print_unix_dialog_set_settings")
+  (return-type "none")
+  (parameters
+    '("GtkPrintSettings*" "settings" (null-ok) (default "NULL"))
+  )
+)
+
+(define-method get_settings
+  (of-object "GtkPrintUnixDialog")
+  (c-name "gtk_print_unix_dialog_get_settings")
+  (return-type "GtkPrintSettings*")
+)
+
+(define-method get_selected_printer
+  (of-object "GtkPrintUnixDialog")
+  (c-name "gtk_print_unix_dialog_get_selected_printer")
+  (return-type "GtkPrinter*")
+)
+
+(define-method add_custom_tab
+  (of-object "GtkPrintUnixDialog")
+  (c-name "gtk_print_unix_dialog_add_custom_tab")
+  (return-type "none")
+  (parameters
+    '("GtkWidget*" "child")
+    '("GtkWidget*" "tab_label")
+  )
+)
+
+(define-method set_manual_capabilities
+  (of-object "GtkPrintUnixDialog")
+  (c-name "gtk_print_unix_dialog_set_manual_capabilities")
+  (return-type "none")
+  (parameters
+    '("GtkPrintCapabilities" "capabilities")
+  )
+)
+
+
+

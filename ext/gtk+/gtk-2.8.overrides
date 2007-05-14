@@ -1,0 +1,287 @@
+%% {{{ ignores
+
+%%
+restore
+    GtkPlug
+    GtkSocket
+%% }}}
+
+%% {{{ GtkIconView
+
+%%
+add-arginfo GtkIconView enable_model_drag_source
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, sbmask)
+    ZEND_ARG_INFO(0, targets)
+    ZEND_ARG_INFO(0, actions)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_icon_view_enable_model_drag_source
+PHP_METHOD
+{
+	zval *php_sbmask, *php_targets, *php_actions;
+	GdkModifierType sbmask;
+	GdkDragAction actions;
+	GtkTargetEntry *entries;
+	int n;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "VaV", &php_sbmask, &php_targets, &php_actions)) {
+		return;
+    }
+
+	if (phpg_gvalue_get_flags(GDK_TYPE_MODIFIER_TYPE, php_sbmask, (gint *)&sbmask) == FAILURE) {
+		return;
+    }
+
+	if (phpg_gvalue_get_flags(GDK_TYPE_DRAG_ACTION, php_actions, (gint *)&actions) == FAILURE) {
+        return;
+    }
+
+	entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
+	gtk_icon_view_enable_model_drag_source(GTK_ICON_VIEW(PHPG_GOBJECT(this_ptr)), sbmask, entries, n, actions);
+	efree(entries);
+}
+
+%%
+add-arginfo GtkIconView enable_model_drag_dest
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, targets)
+    ZEND_ARG_INFO(0, actions)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_icon_view_enable_model_drag_dest
+PHP_METHOD
+{
+	zval *php_targets, *php_actions;
+	GdkDragAction actions;
+	GtkTargetEntry *entries;
+	int n;
+
+	NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "aV", &php_targets, &php_actions)) {
+		return;
+	}
+
+	if (phpg_gvalue_get_flags(GDK_TYPE_DRAG_ACTION, php_actions, (gint *)&actions) == FAILURE) {
+		return;
+	}
+
+	entries = phpg_parse_target_entries(php_targets, &n TSRMLS_CC);
+	gtk_icon_view_enable_model_drag_dest(GTK_ICON_VIEW(PHPG_GOBJECT(this_ptr)), entries, n, actions);
+	efree(entries);
+}
+%%
+override gtk_icon_view_get_cursor
+PHP_METHOD
+{
+    GtkTreePath *path = NULL;
+    GtkCellRenderer *cell = NULL;
+    zval *php_path = NULL, *php_cell = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    gtk_icon_view_get_cursor(GTK_ICON_VIEW(PHPG_GOBJECT(this_ptr)), &path, &cell);
+
+    array_init(return_value);
+
+    if (path) {
+        phpg_tree_path_to_zval(path, &php_path TSRMLS_CC);
+    } else {
+        ALLOC_INIT_ZVAL(php_path);
+    }
+
+    if (cell) {
+        phpg_gobject_new(&php_cell, (GObject*)cell TSRMLS_CC);
+    } else {
+        ALLOC_INIT_ZVAL(php_cell);
+    }
+
+    php_gtk_build_value(&return_value, "(NN)", php_path, php_cell);
+}
+
+%%
+add-arginfo GtkIconView get_dest_item_at_pos
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, x)
+    ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_icon_view_get_dest_item_at_pos
+PHP_METHOD
+{
+    gint x, y;
+    GtkTreePath *path;
+    GtkIconViewDropPosition pos;
+    zval *php_path = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &x, &y)) {
+        return;
+    }
+
+    if (!gtk_icon_view_get_dest_item_at_pos(GTK_ICON_VIEW(PHPG_GOBJECT(this_ptr)), x, y, &path,
+                                       &pos)) {
+        return;
+    }
+
+    array_init(return_value);
+
+    if (path) {
+        phpg_tree_path_to_zval(path, &php_path TSRMLS_CC);
+    } else {
+        MAKE_STD_ZVAL(php_path);
+    }
+    add_next_index_zval(return_value, php_path);
+
+    add_next_index_long(return_value, pos);
+}
+%%
+add-arginfo GtkIconView get_item_at_pos
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, x)
+    ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_icon_view_get_item_at_pos
+PHP_METHOD
+{
+    gint x, y;
+    GtkTreePath *path;
+    GtkCellRenderer *renderer;
+    zval *php_path = NULL, *php_renderer = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "ii", &x, &y)) {
+        return;
+    }
+
+    if (!gtk_icon_view_get_item_at_pos(GTK_ICON_VIEW(PHPG_GOBJECT(this_ptr)), x, y, &path,
+                                       &renderer)) {
+        return;
+    }
+
+    array_init(return_value);
+
+    if (path) {
+        phpg_tree_path_to_zval(path, &php_path TSRMLS_CC);
+    } else {
+        MAKE_STD_ZVAL(php_path);
+    }
+    add_next_index_zval(return_value, php_path);
+
+    phpg_gobject_new(&php_renderer, (GObject*)renderer TSRMLS_CC);
+    add_next_index_zval(return_value, php_renderer);
+}
+%%
+override gtk_icon_view_get_visible_range
+PHP_METHOD
+{
+    GtkTreePath *start_path, *end_path;
+	zval *php_start = NULL, *php_end = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    if (!gtk_icon_view_get_visible_range(GTK_ICON_VIEW(PHPG_GOBJECT(this_ptr)), &start_path, &end_path))
+	{
+        return;
+    }
+
+    array_init(return_value);
+	if (start_path) {
+        phpg_tree_path_to_zval(start_path, &php_start TSRMLS_CC);
+    } else {
+        MAKE_STD_ZVAL(php_start);
+    }
+	add_next_index_zval(return_value, php_start);
+
+	if (end_path) {
+        phpg_tree_path_to_zval(end_path, &php_end TSRMLS_CC);
+    } else {
+        MAKE_STD_ZVAL(php_end);
+    }
+	add_next_index_zval(return_value, php_end);
+}
+%%
+override gtk_icon_view_get_drag_dest_item
+PHP_METHOD
+{
+    GtkTreePath *path;
+    GtkIconViewDropPosition pos;
+	zval *php_path = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    gtk_icon_view_get_drag_dest_item(GTK_ICON_VIEW(PHPG_GOBJECT(this_ptr)), &path, &pos);
+
+   array_init(return_value);
+
+    if (path) {
+        phpg_tree_path_to_zval(path, &php_path TSRMLS_CC);
+    } else {
+        MAKE_STD_ZVAL(php_path);
+    }
+    add_next_index_zval(return_value, php_path);
+
+    add_next_index_long(return_value, pos);
+}
+%% }}}
+%% {{{ GtkTreeView
+%%
+override gtk_tree_view_get_visible_range
+PHP_METHOD
+{
+    GtkTreePath *start_path, *end_path;
+	zval *php_start = NULL, *php_end = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+
+    if (!gtk_tree_view_get_visible_range(GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), &start_path, &end_path))
+	{
+        return;
+    }
+
+    array_init(return_value);
+	if (start_path) {
+        phpg_tree_path_to_zval(start_path, &php_start TSRMLS_CC);
+    } else {
+        MAKE_STD_ZVAL(php_start);
+    }
+	add_next_index_zval(return_value, php_start);
+
+	if (end_path) {
+        phpg_tree_path_to_zval(end_path, &php_end TSRMLS_CC);
+    } else {
+        MAKE_STD_ZVAL(php_end);
+    }
+	add_next_index_zval(return_value, php_end);
+}
+%% }}}
