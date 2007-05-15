@@ -1,3 +1,19 @@
+2007-05-14  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gdk-2.10.defs
+      ext/gtk+/gtk-2.10-types.defs
+      ext/gtk+/gtk-2.10.defs
+      ext/gtk+/gtk-2.10.overrides
+      ext/gtk+/gtk-2.8-types.defs
+      ext/gtk+/gtk-2.8.defs
+      ext/gtk+/gtk-2.8.overrides
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtkunixprint.defs:
+      Defs and overrides for 2.8 and 2.10 - uses generator's versioning ability,
+      these will be ignored until build system is updated - for now they do
+      nothing
+
 2007-05-13  Anant Narayanan  <anant@kix.in>
 
     * ext/libsexy/config.m4:
