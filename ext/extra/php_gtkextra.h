@@ -29,8 +29,8 @@
 
 #include <gtkextra/gtkextra.h>
 
-extern php_gtk_ext_entry gtkextra_ext_entry;
-#define php_gtk_ext_extra_ptr &gtkextra_ext_entry
+extern php_gtk_ext_entry extra_ext_entry;
+#define php_gtk_ext_extra_ptr &extra_ext_entry
 
 void phpg_gtkextra_register_classes(void);
 void phpg_gtkextra_register_constants(const char *strip_prefix);
