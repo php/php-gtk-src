@@ -422,9 +422,9 @@ class Defs_Parser {
     {
         $include_file = $this->file_path . "/" . $arg[0];
         // check for gtk lib version
-        if (isset($arg[1]) && version_compare($arg[1], $this->gtkversion, '<='))
+        if (isset($arg[1]) && version_compare($arg[1], $this->gtkversion, '>'))
         {
-            error_log("Ignoring \"$include_file\". - needs version {$arg[1]}");
+            error_log("Ignoring \"$include_file\". - needs version {$arg[1]} and current version is {$this->gtkversion}");
         }
         else
         {
