@@ -335,6 +335,8 @@ AC_ARG_ENABLE(gtktest,
            sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
     gtk_config_micro_version=`$PKG_CONFIG --modversion gtk+-2.0 | \
            sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
+    GTK_VERSION=`$PKG_CONFIG --modversion gtk+-2.0 | \
+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1.\2/'`
     if test "x$enable_gtktest" = "xyes" ; then
       ac_save_CFLAGS="$CFLAGS"
       ac_save_LIBS="$LIBS"
@@ -463,6 +465,7 @@ main ()
   fi
   AC_SUBST(GTK_CFLAGS)
   AC_SUBST(GTK_LIBS)
+  AC_SUBST(GTK_VERSION)
   rm -f conf.gtktest
 ])
 

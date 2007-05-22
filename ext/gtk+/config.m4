@@ -12,9 +12,10 @@ PHP_EVAL_INCLINE($GLIB_CFLAGS)
 PHP_EVAL_LIBLINE($GLIB_LIBS, PHP_GTK2_SHARED_LIBADD)
 
 dnl Check for Gtk+
-AM_PATH_GTK_2_0(gtk_required_version,,[AC_MSG_ERROR(PHP-GTK 2.x requires GTK+ gtk_required_version or higher)])
+AM_PATH_GTK_2_0(gtk_required_version,GTK_LIBVERSION=$GTK_VERSION,[AC_MSG_ERROR(PHP-GTK 2.x requires GTK+ gtk_required_version or higher)])
 PHP_EVAL_INCLINE($GTK_CFLAGS)
 PHP_EVAL_LIBLINE($GTK_LIBS, PHP_GTK2_SHARED_LIBADD)
+PHP_SUBST(GTK_LIBVERSION)
 
 dnl Check for atk
 PKG_CHECK_MODULES(ATK,[atk >= atk_required_version],,[AC_MSG_ERROR(PHP-GTK 2.x requires ATK atk_required_version or higher)])

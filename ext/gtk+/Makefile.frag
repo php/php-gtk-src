@@ -27,5 +27,6 @@ gen_%.c : %.defs
         -o $*.overrides \
         -p $(*F) \
         -f $@ $*.defs \
+		-v $(GTK_LIBVERSION) \
      && grep -h "^PHP_GTK_EXPORT_CE" $@ | sed -e "s!^!extern !" > $(@D)/gen_$(*F).h \
 	)
