@@ -1,3 +1,32 @@
+2007-05-22  Anant Narayanan  <anant@kix.in>
+
+    * ext/extra/config.m4
+      ext/extra/php_gtkextra.h:
+      Fix GtkExtra build
+
+    * ext/extra/config.m4:
+      Some consistency in configure options
+
+    * php_gtk.m4
+      ext/gtk+/Makefile.frag
+      ext/gtk+/config.m4:
+      Allow building 2.8/2.10 on *nix
+
+2007-05-22  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gdk.defs
+      ext/gtk+/gtk-2.10.defs
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/html/config.w32
+      ext/html/html.overrides
+      ext/mozembed/php_mozembed.c
+      generator/arg_types.php
+      generator/generator.php
+      generator/scheme.php:
+      whitespace in html extension and type juggling comparison bugs in generator
+      (2.10 was becoming 2.1) also first round of new types
+
 2007-05-14  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/gdk-2.10.defs
