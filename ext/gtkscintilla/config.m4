@@ -3,8 +3,8 @@ dnl config.m4 for gtkscintilla module
 
 define(gtkscintilla_required_version,   0.1.0)
 
-PHP_GTK_ARG_ENABLE(gtkscintilla,for gtkscintilla support,
-[  --enable-gtkscintilla   Enable GtkScintilla support],no)
+PHP_GTK_ARG_WITH(gtkscintilla,for gtkscintilla support,
+[  --with-gtkscintilla     Enable GtkScintilla support],no)
 
 if test "$PHP_GTK_GTKSCINTILLA" != "no"; then
   PKG_CHECK_MODULES(GTKSCINTILLA, [GtkScintilla-2.0 >= gtkscintilla_required_version],

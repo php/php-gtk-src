@@ -4,8 +4,8 @@ dnl config.m4 for mozembed module
 define(firefox_required_version, 1.5.0)
 define(mozilla_required_version, 1.7.0)
 
-PHP_GTK_ARG_ENABLE(mozembed,for GtkMozEmbed support,
-[  --enable-mozembed       Enable GtkMozEmbed support],no)
+PHP_GTK_ARG_WITH(mozembed,for GtkMozEmbed support,
+[  --with-mozembed         Enable GtkMozEmbed support],no)
 
 dnl first check for firefox, then mozilla
 if test "$PHP_GTK_MOZEMBED" != "no"; then

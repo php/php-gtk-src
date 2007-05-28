@@ -3,8 +3,8 @@ dnl config.m4 for libglade module
 
 define(libglade_required_version,   2.4.0)
 
-PHP_GTK_ARG_ENABLE(libglade,for libglade support,
-[  --disable-libglade      Disable libglade support],yes)
+PHP_GTK_ARG_WITH(libglade,for libglade support,
+[  --without-libglade      Disable libglade support],yes)
 
 if test "$PHP_GTK_LIBGLADE" != "no"; then
   PKG_CHECK_MODULES(LIBGLADE, [libglade-2.0 >= libglade_required_version], have_libglade=yes, have_libglade=no)

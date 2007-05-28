@@ -3,8 +3,8 @@ dnl config.m4 for sourceview module
 
 define(sourceview_required_version,   1.2.0)
 
-PHP_GTK_ARG_ENABLE(sourceview,for sourceview support,
-[  --enable-sourceview     Enable SourceView support],no)
+PHP_GTK_ARG_WITH(sourceview,for sourceview support,
+[  --with-sourceview       Enable SourceView support],no)
 
 if test "$PHP_GTK_SOURCEVIEW" != "no"; then
   PKG_CHECK_MODULES(SOURCEVIEW, [gtksourceview-1.0 >= sourceview_required_version],

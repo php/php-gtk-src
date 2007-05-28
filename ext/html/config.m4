@@ -3,8 +3,8 @@ dnl config.m4 for html module
 
 define(html_required_version,   3.10.0)
 
-PHP_GTK_ARG_ENABLE(html,for html support,
-[  --enable-html           Enable GtkHtml support],no)
+PHP_GTK_ARG_WITH(html,for html support,
+[  --with-html             Enable GtkHtml support],no)
 
 if test "$PHP_GTK_HTML" != "no"; then
   PKG_CHECK_MODULES(HTML, [libgtkhtml-3.8 >= html_required_version],

@@ -3,8 +3,8 @@ dnl config.m4 for gtkextra module
 
 define(gtkextra_required_version,   2.1.1)
 
-PHP_GTK_ARG_ENABLE(extra,for gtkextra support,
-[  --enable-extra          Enable GtkExtra support],no)
+PHP_GTK_ARG_WITH(extra,for gtkextra support,
+[  --with-extra            Enable GtkExtra support],no)
 
 if test "$PHP_GTK_EXTRA" != "no"; then
   PKG_CHECK_MODULES(GTKEXTRA, [gtkextra-2.0 >= gtkextra_required_version],
