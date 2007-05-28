@@ -20,25 +20,25 @@
  
 /* $Id$ */
 
-#ifndef PHP_SCINTILLA_H
-#define PHP_SCINTILLA_H
+#ifndef PHP_GTKSCINTILLA_H
+#define PHP_GTKSCINTILLA_H
 
 #include "php_gtk.h"
 
-#if HAVE_SCINTILLA
+#if HAVE_GTKSCINTILLA
 
 #include <gtkscintilla2/gtkscintilla.h>
 
-extern php_gtk_ext_entry scintilla_ext_entry;
-#define php_gtk_ext_scintilla_ptr &scintilla_ext_entry
+extern php_gtk_ext_entry gtkscintilla_ext_entry;
+#define php_gtk_ext_gtkscintilla_ptr &gtkscintilla_ext_entry
 
 void phpg_gtkscintilla_register_classes(void);
 void phpg_gtkscintilla_register_constants(const char *strip_prefix);
 
 #else
 
-#define php_gtk_ext_scintilla_ptr NULL
+#define php_gtk_ext_gtkscintilla_ptr NULL
 
-#endif	/* HAVE_SCINTILLA */
+#endif	/* HAVE_GTKSCINTILLA */
 
-#endif	/* PHP_SCINTILLA_H */
+#endif	/* PHP_GTKSCINTILLA_H */
