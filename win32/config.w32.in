@@ -52,6 +52,7 @@ STDOUT.WriteBlankLines(1);
 ARG_WITH('php-build', 'Path to where you extracted http://www.php.net/extra/win32build.zip. Assumes that it is a sibling of this source dir (..\\php_build) if not specified', 'no');
 ARG_WITH('cygwin', 'Path to cygwin utilities on your system', '\\cygwin');
 ARG_ENABLE('gd', 'Php has static gd', 'no');
+ARG_ENABLE('zts', 'Enable thread safety', 'yes');
 
 // stick objects somewhere outside of the source tree
 ARG_ENABLE('object-out-dir', 'Alternative location for binary objects during build', '');
@@ -68,11 +69,23 @@ if (PHP_GTK_DEBUG == "yes" && PHP_GTK_DEBUG_PACK == "yes") {
 	ERROR("Use of both --enable-debug and --enable-debug-pack not allowed.");
 }
 
-// Set some debug-specific options
-if (PHP_GTK_DEBUG == "yes") {
+// Compile directory
+if (PHP_GTK_DEBUG == "yes" && PHP_GTK_ZTS == "yes") {
+	DEFINE("BUILD_DIR", PHP_GTK_OBJECT_OUT_DIR + "Debug_TS");
+	DEFINE("PHP_LIB", "php5ts_debug.lib");
+	PHP_LIB = "php5ts_debug.lib";
+} else if (PHP_GTK_DEBUG == "yes") {
 	DEFINE("BUILD_DIR", PHP_GTK_OBJECT_OUT_DIR + "Debug");
+	DEFINE("PHP_LIB", "php5_debug.lib");
+	PHP_LIB = "php5_debug.lib";
+} else if (PHP_GTK_ZTS == "yes") {
+	DEFINE("BUILD_DIR", PHP_GTK_OBJECT_OUT_DIR + "Release_TS");
+	DEFINE("PHP_LIB", "php5ts.lib");
+	PHP_LIB = "php5ts.lib";
 } else {
 	DEFINE("BUILD_DIR", PHP_GTK_OBJECT_OUT_DIR + "Release");
+	DEFINE("PHP_LIB", "php5.lib");
+	PHP_LIB = "php5.lib";
 }
 
 ARG_IS('all', 'Configure all available extensions', 'no');
@@ -92,17 +105,21 @@ DEFINE("PHP_GTK_LDFLAGS", "$(DLL_LDFLAGS)");
 DEFINE("LIBS", "kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib");
 
 if (PHP_GTK_DEBUG == "yes") {
-	DEFINE("CFLAGS", "/nologo /LDd /MDd /Gm /ZI /GZ /I . /I ..\\ /I ..\\.. /I main /I ..\\main /I ext /I ..\\ext /I ..\\php5\\main /I ..\\php5\\Zend /I ..\\php5\\TSRM /D ZEND_WIN32 /D ZTS=1 /D ZEND_DEBUG=1 /D PHP_WIN32 /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
+	DEFINE("CFLAGS", "/nologo /LDd /MDd /Gm /ZI /GZ /I . /I ..\\ /I ..\\.. /I main /I ..\\main /I ext /I ..\\ext /I ..\\php5\\main /I ..\\php5\\Zend /I ..\\php5\\TSRM /D ZEND_WIN32 /D ZEND_DEBUG=1 /D PHP_WIN32 /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
 	ADD_FLAG("LDFLAGS", "/debug");
 
 } else {
-	DEFINE("CFLAGS", "/nologo /MD /W3 /GX /O2 /I . /I ..\\ /I ..\\.. /I main /I ..\\main /I ext /I ..\\ext /I ..\\php5\\main /I ..\\php5\\Zend /I ..\\php5\\TSRM /D ZEND_WIN32 /D ZTS=1 /D ZEND_DEBUG=0 /D PHP_WIN32 /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
+	DEFINE("CFLAGS", "/nologo /MD /W3 /GX /O2 /I . /I ..\\ /I ..\\.. /I main /I ..\\main /I ext /I ..\\ext /I ..\\php5\\main /I ..\\php5\\Zend /I ..\\php5\\TSRM /D ZEND_WIN32 /D ZEND_DEBUG=0 /D PHP_WIN32 /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
 	// Generate external debug files when --enable-debug-pack is specified
 	if (PHP_GTK_DEBUG_PACK == "yes") {
 	 	ADD_FLAG("CFLAGS", "/Zi");
 	 	ADD_FLAG("LDFLAGS", "/incremental:no /debug /opt:ref,icf");
 	 }
 }
+
+if (PHP_GTK_ZTS == "yes") {
+	 	ADD_FLAG("CFLAGS", "/D ZTS=1");
+	 }
 
 if (VCVERS < 14) {
 	// Enable automatic precompiled headers
