@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.19 2006-07-17 17:00:09 sfox Exp $
+// $Id: confutils.js,v 1.20 2007-05-29 12:40:22 auroraeosrose Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -49,6 +49,47 @@ extension_include_code = "";
 extension_module_ptrs = "";
 
 /* functions */
+
+function get_gtk_libversion()
+{
+	var env, i, file, vin, major, minor;
+	var found = false;
+
+	env = WshShell.Environment("Process").Item('INCLUDE');
+	env = env.split(";");
+	for (i = 0; i < env.length; i++) {
+		file = glob(env[i] + "\\gtk\\gtkversion.h");
+		if (file) {
+			found = true;
+			break;
+		}
+	}
+
+	if (found == true) {
+		STDOUT.WriteLine("	<in default path>");
+		vin = file_get_contents(file);
+
+		regex = new RegExp("GTK_MAJOR_VERSION\\s+\\(([0-9]+)\\)");
+		regex.exec(vin);
+		major = RegExp.$1;
+		if (major < 2)
+			major = 2;
+	
+		regex = new RegExp("GTK_MINOR_VERSION\\s+\\(([0-9]+)\\)");
+		regex.exec(vin);
+		minor = RegExp.$1;
+		if (minor < 6)
+			minor = 6;
+	
+		PHP_GTK_LIBVERSION = major + '.' + minor;
+	} else {
+		STDOUT.WriteLine("	<not found>");
+		PHP_GTK_LIBVERSION = '2.6';
+	}
+
+	STDOUT.Write("Library definitions for " + PHP_GTK_LIBVERSION + " will be used");
+	STDERR.WriteBlankLines(1);
+}
 
 function count_generated_files() {
 
@@ -301,10 +342,6 @@ function conf_process_args() {
 			STDOUT.WriteLine("  " + arg.arg + pad + word_wrap_and_indent(max_width + 5, arg.helptext));
 		}
 		WScript.Quit(1);
-
-	} else { // not --help
-
-		generate_source();
 	}
 
 	// Now set any defaults we might have missed out earlier
@@ -650,7 +687,7 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 
 	if (dllname == null) {
 		if (extname == 'php-gtk') {
-			dllname = extname + "2.dll";
+			dllname = "php_gtk2.dll";
 			resname = generate_version_info_resource(dllname, configure_module_dirname);
 			res_var = " $(PHPGTKDLL_RES)";
 		} else {
@@ -937,6 +974,7 @@ function generate_files() {
 			FSO.CreateFolder(bd);
 		}
 	}
+	generate_source();
 
 	STDOUT.WriteLine("Generating source files - this may take a few seconds");
 	WScript.Sleep(3500);

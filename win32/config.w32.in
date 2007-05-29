@@ -90,9 +90,12 @@ if (PHP_GTK_DEBUG == "yes" && PHP_GTK_ZTS == "yes") {
 
 ARG_IS('all', 'Configure all available extensions', 'no');
 
-DEFINE("PHPGTKDLL", "php-gtk2.dll");
-DEFINE("PHPGTKLIB", "php-gtk2.lib");
+DEFINE("PHPGTKDLL", "php_gtk2.dll");
+DEFINE("PHPGTKLIB", "php_gtk2.lib");
 get_version_numbers();
+/* pick up the version from gtk/gtkversion.h */
+STDOUT.Write("Checking for gtk\\gtkversion.h ... ");
+get_gtk_libversion();
 
 // General link flags
 DEFINE("LDFLAGS", "/nologo");
