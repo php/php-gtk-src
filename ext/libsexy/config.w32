@@ -1,23 +1,19 @@
-
 ARG_WITH("libsexy", "naughty things with widgets", "no");
-
-if (PHP_GTK_LIBSEXY != "no" || PHP_GTK_ALL != "no") {
+if (PHP_GTK_LIBSEXY != "no" || PHP_GTK_ALL != "no")
+{ 
 	if (CHECK_HEADER("libsexy\\sexy.h") && CHECK_LIB("libsexy.lib", "libsexy"))
 	{
-		if (FSO.FileExists("win32\\temp.bat")) {
-
+		if (FSO.FileExists("win32\\temp.bat"))
+		{ 
 			var temp = FSO.OpenTextFile("win32\\temp.bat", 8);
 			temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_libsexy.log -o ext\\libsexy\\sexy.overrides -p sexy -r ext\\gtk+\\gtk.defs ext\\libsexy\\sexy.defs > ext\\libsexy\\gen_libsexy.c");
-                  temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\libsexy\\gen_libsexy.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\libsexy\\gen_libsexy.h');		
-			temp.Close();
+			temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\libsexy\\gen_libsexy.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\libsexy\\gen_libsexy.h');
+ 			temp.Close(); 		
 		}
-
-		ADD_FLAG("CFLAGS_LIBSEXY", "/I ext\\libsexy /I ..\\ext\\libsexy /D HAVE_LIBSEXY=1");
-		EXTENSION("libsexy", "php_libsexy.c gen_libsexy.c", true); // always shared
-		AC_DEFINE("HAVE_LIBSEXY", 1, "libsexy enabled");
-
-	} else {
-
-		WARNING("libsexy not enabled; libraries and headers not found");
-	}
-}
+  		ADD_FLAG("CFLAGS_LIBSEXY", "/I ext\\libsexy /I ..\\ext\\libsexy /D HAVE_LIBSEXY=1");
+ 		EXTENSION("libsexy", "php_libsexy.c gen_libsexy.c", true); // always shared
+ 		AC_DEFINE("HAVE_LIBSEXY", 1, "libsexy enabled");
+  	} else {
+  		WARNING("libsexy not enabled; libraries and headers not found"); 	
+	} 
+} 
