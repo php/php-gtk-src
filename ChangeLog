@@ -1,3 +1,26 @@
+2007-05-28  Anant Narayanan  <anant@kix.in>
+
+    * ext/extra/config.m4
+      ext/html/config.m4
+      ext/libglade/config.m4
+      ext/libsexy/config.m4
+      ext/mozembed/config.m4
+      ext/sourceview/config.m4
+      ext/spell/config.m4:
+      Fall in with the --with convention instead of --enable
+
+    * ext/scintilla/Makefile.frag
+      ext/scintilla/README
+      ext/scintilla/config.m4
+      ext/scintilla/php_scintilla.c
+      ext/scintilla/php_scintilla.h
+      ext/scintilla/scintilla.defs
+      ext/scintilla/scintilla.overrides
+      ext/scintilla/v1.scintilla.defs
+      ext/scintilla/v1.scintilla.overrides:
+      Rename old Scintilla extension to GtkScintilla and make way for the newer
+      Scintilla.
+
 2007-05-26  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/extra/php_gtkextra.c:
