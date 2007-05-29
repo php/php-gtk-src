@@ -1,0 +1,435 @@
+#include "php_gtk.h"
+#include "php_gtk_api.h"
+
+#if HAVE_SCINTILLA
+#include "gtkscintilla.h"
+#include "ext/gtk+/php_gtk+.h"
+
+PHP_GTK_EXPORT_CE(scintilla_ce);
+
+#ifdef DOUBLE_CLICK
+#undef DOUBLE_CLICK
+#endif
+enum {
+	STYLE_NEEDED,
+	CHAR_ADDED,
+	SAVE_POINT_REACHED,
+	SAVE_POINT_LEFT,
+	MODIFY_ATTEMPT_RO,
+	KEY,
+	DOUBLE_CLICK,
+	UPDATE_UI,
+	MODIFIED,
+	MACRO_RECORD,
+	MARGIN_CLICK,
+	NEED_SHOWN,
+	PAINTED,
+	USER_LIST_SELECTION,
+	URI_DROPPED,
+	DWELL_START,
+	DWELL_END,
+	ZOOM,
+	LAST_SIGNAL
+};
+
+static void gtk_scintilla_class_init (GtkScintillaClass *klass);
+static void gtk_scintilla_init       (GtkScintilla      *sci);
+static void gtk_scintilla_destroy    (GtkObject         *object);
+static void notify_cb                (GtkWidget         *w,
+																		gint               param,
+																		gpointer           notif,
+																		gpointer           data);
+static void pass_throug_key          (GtkScintilla      *sci,
+																		gint               ch,
+																		gint               modifiers);
+
+static gpointer parent_class;
+static guint signals[LAST_SIGNAL] = { 0 };
+
+GType gtk_scintilla_get_type(void) {
+	static GType our_type = 0;
+	
+	if(!our_type) {
+			static const GTypeInfo our_info =
+			{
+					sizeof(GtkScintillaClass),
+					NULL,               /* base_init */
+					NULL,               /* base_finalize */
+					(GClassInitFunc) gtk_scintilla_class_init,
+					NULL,               /* class_finalize */
+					NULL,               /* class_data */
+					sizeof(GtkScintilla),
+					0,                  /* n_preallocs */
+					(GInstanceInitFunc) gtk_scintilla_init,
+			};
+
+			our_type = g_type_register_static(GTK_TYPE_FRAME, "GtkScintilla",
+																				 &our_info, 0);
+	}
+	
+	return our_type;
+}
+
+static void gtk_scintilla_class_init(GtkScintillaClass *klass) {
+	GtkObjectClass *object_class;
+	
+	object_class = (GtkObjectClass *) klass;
+	parent_class = g_type_class_peek_parent(klass);
+
+	object_class->destroy = gtk_scintilla_destroy;
+	
+	signals[STYLE_NEEDED] =
+			g_signal_new("style_needed",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, style_needed),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 1,
+										G_TYPE_INT);
+
+	signals[CHAR_ADDED] =
+			g_signal_new("char_added",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, char_added),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__UINT,
+										G_TYPE_NONE, 1,
+										G_TYPE_INT);
+
+	signals[SAVE_POINT_REACHED] =
+			g_signal_new("save_point_reached",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, save_point_reached),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 0);
+
+	signals[SAVE_POINT_LEFT] =
+			g_signal_new("save_point_left",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, save_point_left),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 0);
+
+	signals[MODIFY_ATTEMPT_RO] =
+			g_signal_new("modify_attempt_ro",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, modify_attempt_ro),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 0);
+
+	signals[KEY] =
+			g_signal_new("key",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, key),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 2,
+										G_TYPE_INT, G_TYPE_INT);
+
+	signals[DOUBLE_CLICK] =
+			g_signal_new("double_click",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, double_click),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 0);
+
+	signals[UPDATE_UI] =
+			g_signal_new("update_ui",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, update_ui),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 0);
+
+	signals[MODIFIED] =
+			g_signal_new("modified",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, modified),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 8,
+										G_TYPE_INT, G_TYPE_INT, G_TYPE_STRING,
+										G_TYPE_INT, G_TYPE_INT, G_TYPE_INT,
+										G_TYPE_INT, G_TYPE_INT);
+
+	signals[MACRO_RECORD] =
+			g_signal_new("macro_record",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, macro_record),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 3,
+										G_TYPE_INT, G_TYPE_ULONG, G_TYPE_LONG);
+
+	signals[MARGIN_CLICK] =
+			g_signal_new("margin_click",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, margin_click),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 3,
+										G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
+
+	signals[NEED_SHOWN] =
+			g_signal_new("need_shown",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, need_shown),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 2,
+										G_TYPE_INT, G_TYPE_INT);
+
+	signals[PAINTED] =
+			g_signal_new("painted",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, painted),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 0);
+
+	signals[USER_LIST_SELECTION] =
+			g_signal_new("user_list_selection",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, user_list_selection),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 2,
+										G_TYPE_INT, G_TYPE_STRING);
+
+	signals[URI_DROPPED] =
+			g_signal_new("uri_dropped",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, uri_dropped),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 1,
+										G_TYPE_STRING);
+
+	signals[DWELL_START] =
+			g_signal_new("dwell_start",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, dwell_start),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 1,
+										G_TYPE_INT);
+
+	signals[DWELL_END] =
+			g_signal_new("dwell_end",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, dwell_end),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 1,
+										G_TYPE_INT);
+
+	signals[ZOOM] =
+			g_signal_new("zoom",
+										G_OBJECT_CLASS_TYPE(object_class),
+										G_SIGNAL_RUN_FIRST,
+										G_STRUCT_OFFSET(GtkScintillaClass, zoom),
+										NULL, NULL,
+										g_cclosure_marshal_VOID__VOID,
+										G_TYPE_NONE, 0);
+}
+
+static void gtk_scintilla_init(GtkScintilla *sci) {
+	sci->scintilla = GTK_WIDGET(scintilla_new());
+	g_signal_connect(G_OBJECT(sci->scintilla), "sci-notify",
+										G_CALLBACK(notify_cb), GTK_WIDGET(sci));
+	
+	gtk_container_add(GTK_CONTAINER(sci), sci->scintilla);
+	
+	gtk_widget_set(GTK_WIDGET(sci->scintilla),
+									"visible", TRUE, NULL);
+	
+	gtk_widget_show(GTK_WIDGET(sci->scintilla));
+	gtk_widget_show_all(GTK_WIDGET(sci));
+	sci->pSciMsg = (SciFnDirect) scintilla_send_message(SCINTILLA (sci->scintilla), SCI_GETDIRECTFUNCTION, 0, 0);
+	sci->pSciWndData = (sptr_t) scintilla_send_message(SCINTILLA (sci->scintilla), SCI_GETDIRECTPOINTER, 0, 0);
+	
+}
+
+static void gtk_scintilla_destroy(GtkObject *object) {
+	g_return_if_fail(object != NULL);
+	g_return_if_fail(GTK_IS_SCINTILLA(object));
+}
+
+GtkWidget *gtk_scintilla_new(void) {
+	GtkScintilla *scintilla;
+	
+	scintilla = (GtkScintilla *) gtk_type_new(gtk_scintilla_get_type());
+	
+	return GTK_WIDGET(scintilla);
+}
+
+static void notify_cb(GtkWidget *w, gint param, gpointer notif, gpointer data) {
+	struct SCNotification *notification =(struct SCNotification *) notif;
+	
+	switch(notification->nmhdr.code) {
+			case SCN_STYLENEEDED:
+					g_signal_emit(G_OBJECT(data),
+												 signals[STYLE_NEEDED], 0,
+												(gint) notification->position);
+					break;
+			case SCN_UPDATEUI:
+					g_signal_emit(G_OBJECT(data),
+												 signals[UPDATE_UI], 0);
+					break;
+			case SCN_CHARADDED:
+					g_signal_emit(G_OBJECT(data),
+												 signals[CHAR_ADDED], 0,
+												(gint) notification->ch);
+					break;
+			case SCN_SAVEPOINTREACHED:
+					g_signal_emit(G_OBJECT(data),
+												 signals[SAVE_POINT_REACHED], 0);
+					break;
+			case SCN_SAVEPOINTLEFT:
+					g_signal_emit(G_OBJECT(data),
+												 signals[SAVE_POINT_LEFT], 0);
+					break;
+			case SCN_MODIFYATTEMPTRO:
+					g_signal_emit(G_OBJECT(data),
+												 signals[MODIFY_ATTEMPT_RO], 0);
+					break;
+			case SCN_KEY:
+					pass_throug_key(GTK_SCINTILLA(data),
+													(gint) notification->ch,
+													(gint) notification->modifiers);
+					g_signal_emit(G_OBJECT(data),
+												 signals[KEY], 0,
+												(gint) notification->ch,
+												(gint) notification->modifiers);
+					break;
+			case SCN_DOUBLECLICK:
+					g_signal_emit(G_OBJECT(data),
+												 signals[DOUBLE_CLICK], 0);
+					break;
+			case SCN_MODIFIED:
+					g_signal_emit(G_OBJECT(data),
+												 signals[MODIFIED], 0,
+												(gint) notification->position,
+												(gint) notification->modificationType,
+												(gchar *)notification->text,
+												(gint) notification->length,
+												(gint) notification->linesAdded,
+												(gint) notification->line,
+												(gint) notification->foldLevelNow,
+												(gint) notification->foldLevelPrev);
+					break;
+			case SCN_MACRORECORD:
+					g_signal_emit(G_OBJECT(data),
+												 signals[MACRO_RECORD], 0,
+												(gint) notification->message,
+												(gulong) notification->wParam,
+												(glong) notification->lParam);
+					break;
+			case SCN_MARGINCLICK:
+					g_signal_emit(G_OBJECT(data),
+												 signals[MARGIN_CLICK], 0,
+												(gint) notification->modifiers,
+												(gint) notification->position,
+												(gint) notification->margin);
+					break;
+			case SCN_NEEDSHOWN:
+					g_signal_emit(G_OBJECT(data),
+												 signals[NEED_SHOWN], 0,
+												(gint) notification->position,
+												(gint) notification->length);
+					break;
+			case SCN_PAINTED:
+					g_signal_emit(G_OBJECT(data),
+												 signals[PAINTED], 0);
+					break;
+			case SCN_USERLISTSELECTION:
+					g_signal_emit(G_OBJECT(data),
+												 signals[USER_LIST_SELECTION], 0,
+												(gint) notification->listType,
+												(gchar *) notification->text);
+					break;
+			case SCN_URIDROPPED:
+					g_signal_emit(G_OBJECT(data),
+												 signals[URI_DROPPED], 0,
+												(gchar *) notification->text);
+					break;
+			case SCN_DWELLSTART:
+					g_signal_emit(G_OBJECT(data),
+												 signals[DWELL_START], 0,
+												(gint) notification->position);
+					break;
+			case SCN_DWELLEND:
+					g_signal_emit(G_OBJECT(data),
+												 signals[DWELL_END], 0,
+												(gint) notification->position);
+					break;
+			case SCN_ZOOM:
+					g_signal_emit(G_OBJECT(data),
+												 signals[ZOOM], 0);
+					break;
+			default:
+					//g_warning("GtkScintilla2: Notification code %d not handled!\n",
+					//          (gint) notification->nmhdr.code);
+					break;
+	}
+}
+
+void pass_throug_key(GtkScintilla *sci, gint ch, gint modifiers) {
+	
+	gint mods = 0;
+	
+	if(modifiers & SCMOD_SHIFT)
+			mods |= GDK_SHIFT_MASK;
+	if(modifiers & SCMOD_CTRL)
+			mods |= GDK_CONTROL_MASK;
+	if(modifiers & SCMOD_ALT)
+			mods |= GDK_MOD1_MASK;
+	
+	if(sci->accel_group) {
+			gtk_accel_groups_activate(G_OBJECT(sci->accel_group),
+																 ch,(GdkModifierType) mods);
+	}
+}
+
+//	Start of PHP functions
+
+static PHP_METHOD(Scintilla, __construct) {
+
+	GObject *wrapped_obj;
+  
+	GType gtype = phpg_gtype_from_zval(this_ptr); 
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+    php_error(E_ERROR, "php-gtk-scintilla: Wrong args");  
+        //PHPG_THROW_CONSTRUCT_EXCEPTION(Scintilla);
+	}
+	
+	wrapped_obj =(GObject *) gtk_scintilla_new();
+
+	if(!wrapped_obj) {
+    php_error(E_ERROR, "php-gtk-scintilla: Could not wrap object");  
+        //PHPG_THROW_CONSTRUCT_EXCEPTION(Scintilla);
+	}
+	phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+	
+}

@@ -1,0 +1,26 @@
+
+ARG_WITH("scintilla", "Scintilla support", "no");
+
+if (PHP_GTK_SCINTILLA != "no" || PHP_GTK_ALL != "no") {
+
+	if (CHECK_HEADER("scintilla\\Scintilla.h") && CHECK_LIB("Scintilla-static.lib", "scintilla")) {
+
+		if (FSO.FileExists("win32\\temp.bat")) {
+
+			var temp = FSO.OpenTextFile("win32\\temp.bat", 8);
+			temp.WriteLine("php -q ext\\scintilla\\sci_generator.php -i ext\\scintilla\\libscintilla");
+			temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\scintilla\\gen_scintilla.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\scintilla\\gen_scintilla.h');
+			temp.Close();
+
+		}
+
+		ADD_FLAG("CFLAGS_SCINTILLA", "$(CFLAGS_PHP_GTK) /I ext\\scintilla /I ..\\ext\\scintilla /I scintilla /D HAVE_SCINTILLA=1");
+		EXTENSION("scintilla", "php_scintilla.c gen_scintilla.c", true);
+		AC_DEFINE("HAVE_SCINTILLA", 1, "scintilla enabled");
+
+	} else {
+
+		WARNING("scintilla not enabled; libraries and headers not found");
+	}
+
+}
