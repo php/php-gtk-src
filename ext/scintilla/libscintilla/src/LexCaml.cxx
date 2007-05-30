@@ -49,10 +49,6 @@ static const int baseT[24] = {
 #include "WindowAccessor.h"
 #include "ExternalLexer.h"
 
-#if PLAT_WIN
-#include <windows.h>
-#endif
-
 static void ColouriseCamlDoc(
 	unsigned int startPos, int length,
 	int initStyle,

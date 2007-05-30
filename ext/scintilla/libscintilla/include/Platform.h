@@ -14,7 +14,7 @@
 // PLAT_WIN = Win32 API on Win32 OS
 // PLAT_WX is wxWindows on any supported platform
 
-#define PLAT_GTK 0
+#define PLAT_GTK 1
 #define PLAT_GTK_WIN32 0
 #define PLAT_WIN 0
 #define PLAT_WX  0
