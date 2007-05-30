@@ -1,3 +1,174 @@
+2007-05-29  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/config.w32
+      win32/buildconf.js
+      win32/config.w32.in
+      win32/confutils.js
+      win32/php-cli.ini
+      win32/php.ini:
+      This adds library versioning support for windows - notice, if you build
+      against older libraries nothing will change (win95/8/gtk2.6 will not even
+      notice)
+
+    * .cvsignore
+      cvsclean.bat
+      ext/gtk+/config.w32
+      win32/config.w32.in
+      win32/cvsclean.js:
+      -** empty log message ***
+
+    * ext/html/.cvsignore
+      ext/html/README
+      ext/libsexy/.cvsignore
+      ext/libsexy/config.w32:
+      Whitespace fix for html config and added missing cvsignore files
+
+2007-05-29  Anant Narayanan  <anant@kix.in>
+
+    * ext/scintilla/libscintilla/Converter.h
+      ext/scintilla/libscintilla/PlatGTK.cxx
+      ext/scintilla/libscintilla/ScintillaGTK.cxx
+      ext/scintilla/libscintilla/deps.mak
+      ext/scintilla/libscintilla/makefile
+      ext/scintilla/libscintilla/scintilla-marshal.c
+      ext/scintilla/libscintilla/scintilla-marshal.h
+      ext/scintilla/libscintilla/scintilla-marshal.list:
+      Add some files essential for scintilla build on *nix
+
+    * ext/scintilla/libscintilla/VERSION:
+      Version for bundled libscintilla
+
+2007-05-29  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/scintilla/config.w32
+      ext/scintilla/gtkscintilla.h
+      ext/scintilla/php_scintilla.c
+      ext/scintilla/php_scintilla.h
+      ext/scintilla/sci_generator.php
+      ext/scintilla/scintilla.in
+      ext/scintilla/libscintilla/include/Accessor.h
+      ext/scintilla/libscintilla/include/Face.py
+      ext/scintilla/libscintilla/include/HFacer.py
+      ext/scintilla/libscintilla/include/KeyWords.h
+      ext/scintilla/libscintilla/include/Platform.h
+      ext/scintilla/libscintilla/include/PropSet.h
+      ext/scintilla/libscintilla/include/SString.h
+      ext/scintilla/libscintilla/include/SciLexer.h
+      ext/scintilla/libscintilla/include/Scintilla.h
+      ext/scintilla/libscintilla/include/Scintilla.iface
+      ext/scintilla/libscintilla/include/ScintillaWidget.h
+      ext/scintilla/libscintilla/include/WindowAccessor.h
+      ext/scintilla/libscintilla/src/AutoComplete.cxx
+      ext/scintilla/libscintilla/src/AutoComplete.h
+      ext/scintilla/libscintilla/src/CallTip.cxx
+      ext/scintilla/libscintilla/src/CallTip.h
+      ext/scintilla/libscintilla/src/CellBuffer.cxx
+      ext/scintilla/libscintilla/src/CellBuffer.h
+      ext/scintilla/libscintilla/src/CharClassify.cxx
+      ext/scintilla/libscintilla/src/CharClassify.h
+      ext/scintilla/libscintilla/src/ContractionState.cxx
+      ext/scintilla/libscintilla/src/ContractionState.h
+      ext/scintilla/libscintilla/src/Document.cxx
+      ext/scintilla/libscintilla/src/Document.h
+      ext/scintilla/libscintilla/src/DocumentAccessor.cxx
+      ext/scintilla/libscintilla/src/DocumentAccessor.h
+      ext/scintilla/libscintilla/src/Editor.cxx
+      ext/scintilla/libscintilla/src/Editor.h
+      ext/scintilla/libscintilla/src/ExternalLexer.cxx
+      ext/scintilla/libscintilla/src/ExternalLexer.h
+      ext/scintilla/libscintilla/src/Indicator.cxx
+      ext/scintilla/libscintilla/src/Indicator.h
+      ext/scintilla/libscintilla/src/KeyMap.cxx
+      ext/scintilla/libscintilla/src/KeyMap.h
+      ext/scintilla/libscintilla/src/KeyWords.cxx
+      ext/scintilla/libscintilla/src/LexAPDL.cxx
+      ext/scintilla/libscintilla/src/LexAU3.cxx
+      ext/scintilla/libscintilla/src/LexAVE.cxx
+      ext/scintilla/libscintilla/src/LexAda.cxx
+      ext/scintilla/libscintilla/src/LexAsm.cxx
+      ext/scintilla/libscintilla/src/LexAsn1.cxx
+      ext/scintilla/libscintilla/src/LexBaan.cxx
+      ext/scintilla/libscintilla/src/LexBash.cxx
+      ext/scintilla/libscintilla/src/LexBasic.cxx
+      ext/scintilla/libscintilla/src/LexBullant.cxx
+      ext/scintilla/libscintilla/src/LexCLW.cxx
+      ext/scintilla/libscintilla/src/LexCPP.cxx
+      ext/scintilla/libscintilla/src/LexCSS.cxx
+      ext/scintilla/libscintilla/src/LexCaml.cxx
+      ext/scintilla/libscintilla/src/LexCmake.cxx
+      ext/scintilla/libscintilla/src/LexConf.cxx
+      ext/scintilla/libscintilla/src/LexCrontab.cxx
+      ext/scintilla/libscintilla/src/LexCsound.cxx
+      ext/scintilla/libscintilla/src/LexD.cxx
+      ext/scintilla/libscintilla/src/LexEScript.cxx
+      ext/scintilla/libscintilla/src/LexEiffel.cxx
+      ext/scintilla/libscintilla/src/LexErlang.cxx
+      ext/scintilla/libscintilla/src/LexFlagship.cxx
+      ext/scintilla/libscintilla/src/LexForth.cxx
+      ext/scintilla/libscintilla/src/LexFortran.cxx
+      ext/scintilla/libscintilla/src/LexGen.py
+      ext/scintilla/libscintilla/src/LexGui4Cli.cxx
+      ext/scintilla/libscintilla/src/LexHTML.cxx
+      ext/scintilla/libscintilla/src/LexHaskell.cxx
+      ext/scintilla/libscintilla/src/LexInno.cxx
+      ext/scintilla/libscintilla/src/LexKix.cxx
+      ext/scintilla/libscintilla/src/LexLisp.cxx
+      ext/scintilla/libscintilla/src/LexLout.cxx
+      ext/scintilla/libscintilla/src/LexLua.cxx
+      ext/scintilla/libscintilla/src/LexMMIXAL.cxx
+      ext/scintilla/libscintilla/src/LexMPT.cxx
+      ext/scintilla/libscintilla/src/LexMSSQL.cxx
+      ext/scintilla/libscintilla/src/LexMatlab.cxx
+      ext/scintilla/libscintilla/src/LexMetapost.cxx
+      ext/scintilla/libscintilla/src/LexNsis.cxx
+      ext/scintilla/libscintilla/src/LexOpal.cxx
+      ext/scintilla/libscintilla/src/LexOthers.cxx
+      ext/scintilla/libscintilla/src/LexPB.cxx
+      ext/scintilla/libscintilla/src/LexPOV.cxx
+      ext/scintilla/libscintilla/src/LexPS.cxx
+      ext/scintilla/libscintilla/src/LexPascal.cxx
+      ext/scintilla/libscintilla/src/LexPerl.cxx
+      ext/scintilla/libscintilla/src/LexPython.cxx
+      ext/scintilla/libscintilla/src/LexRebol.cxx
+      ext/scintilla/libscintilla/src/LexRuby.cxx
+      ext/scintilla/libscintilla/src/LexSQL.cxx
+      ext/scintilla/libscintilla/src/LexScriptol.cxx
+      ext/scintilla/libscintilla/src/LexSmalltalk.cxx
+      ext/scintilla/libscintilla/src/LexSpecman.cxx
+      ext/scintilla/libscintilla/src/LexSpice.cxx
+      ext/scintilla/libscintilla/src/LexTADS3.cxx
+      ext/scintilla/libscintilla/src/LexTCL.cxx
+      ext/scintilla/libscintilla/src/LexTeX.cxx
+      ext/scintilla/libscintilla/src/LexVB.cxx
+      ext/scintilla/libscintilla/src/LexVHDL.cxx
+      ext/scintilla/libscintilla/src/LexVerilog.cxx
+      ext/scintilla/libscintilla/src/LexYAML.cxx
+      ext/scintilla/libscintilla/src/LineMarker.cxx
+      ext/scintilla/libscintilla/src/LineMarker.h
+      ext/scintilla/libscintilla/src/Partitioning.h
+      ext/scintilla/libscintilla/src/PropSet.cxx
+      ext/scintilla/libscintilla/src/RESearch.cxx
+      ext/scintilla/libscintilla/src/RESearch.h
+      ext/scintilla/libscintilla/src/SVector.h
+      ext/scintilla/libscintilla/src/SciTE.properties
+      ext/scintilla/libscintilla/src/ScintillaBase.cxx
+      ext/scintilla/libscintilla/src/ScintillaBase.h
+      ext/scintilla/libscintilla/src/SplitVector.h
+      ext/scintilla/libscintilla/src/Style.cxx
+      ext/scintilla/libscintilla/src/Style.h
+      ext/scintilla/libscintilla/src/StyleContext.cxx
+      ext/scintilla/libscintilla/src/StyleContext.h
+      ext/scintilla/libscintilla/src/UniConversion.cxx
+      ext/scintilla/libscintilla/src/UniConversion.h
+      ext/scintilla/libscintilla/src/ViewStyle.cxx
+      ext/scintilla/libscintilla/src/ViewStyle.h
+      ext/scintilla/libscintilla/src/WindowAccessor.cxx
+      ext/scintilla/libscintilla/src/XPM.cxx
+      ext/scintilla/libscintilla/src/XPM.h:
+      Bundle scintilla library (1.73 - only builds statically) and add "new"
+      scintilla extension  which uses scintilla natively instead of relying on
+      gtkscintilla wrapper
+
 2007-05-28  Anant Narayanan  <anant@kix.in>
 
     * ext/extra/config.m4
