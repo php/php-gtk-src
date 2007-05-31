@@ -1,3 +1,16 @@
+2007-05-30  Anant Narayanan  <anant@kix.in>
+
+    * ext/scintilla/Makefile.frag
+      ext/scintilla/config.m4
+      ext/scintilla/gtkscintilla.h
+      ext/scintilla/libscintilla/include/Platform.h
+      ext/scintilla/libscintilla/src/ExternalLexer.h
+      ext/scintilla/libscintilla/src/LexCaml.cxx:
+      Rudimentary support for *nix, doesn't work yet.
+
+    * ext/scintilla/sci_generator.php:
+      Fix unwanted notices.
+
 2007-05-29  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/config.w32
