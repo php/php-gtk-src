@@ -1,3 +1,16 @@
+Version 2.0.0beta "extension extravaganza" : xx-xxx-2007
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - custom tree models, clipboard support, enhanced gobject construction
+      (Andrei)
+    - drag and drop support for gtktreeview (Christian)
+    - gtkspell, gtkextra, gtkhtml3, libsexy and scintilla extensions for *nix 
+      (Anant)
+    - lots of unit tests (Christian, Scott)
+    - win32 support for gtksourceview, gtkextra, gtkhtml3, libsexy and scintilla
+      (Elizabeth)
+    - support for gtk+ 2.8 and 2.10 (Elizabeth)
+    - more api coverage, bunch of bug fixes (Andrei, et al )
+    
 Version 2.0.0alpha "renaissance redux": 15-July-2006
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - first test release of the new architecture

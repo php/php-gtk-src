@@ -9,7 +9,10 @@ Christian Weiske <cweiske@cweiske.de>
 	reflection support, patches, documentation
 
 Anant Narayanan <anant@kix.in>
-	mozembed, scintilla, sourceview extensions, patches
+	Extensions, patches, documentation
+
+Elizabeth Smith <emsmith@elizabethmariesmith.com>
+    Win32 extensions, patches, documentation    
 
 Frank Kromann <fmk@php.net>
     Win32 compilation and some code generator work
