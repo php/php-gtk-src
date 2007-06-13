@@ -15,7 +15,7 @@ function fixFunctionName($name){
 		$char = $name[$x];
 		switch($state){
 			case 'start':
-				if($char >='A' && $char <=Z){
+				if($char >='A' && $char <= 'Z'){
 					$r .= ($x)? '_'.strtolower($char): strtolower($char);
 					$state = 'name';
 				}else{
