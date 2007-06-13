@@ -1,11 +1,16 @@
 dnl $Id$
 dnl config.m4 for scintilla module
 
+define(gthread_required_version, 2.6.0)
+
 PHP_GTK_ARG_ENABLE(scintilla,for scintilla support,
 [  --enable-scintilla          Enable Scintilla support],no)
 
 if test "$PHP_GTK_SCINTILLA" != "no"; then
   AC_DEFINE(HAVE_SCINTILLA, 1, [scintilla support])
+  AM_PATH_GLIB_2_0(gthread_required_version,,[AC_MSG_ERROR(The scintilla extension requires GThread gthread_required_version or higher)],gthread)
+  PHP_EVAL_INCLINE($GLIB_CFLAGS)
+  PHP_EVAL_LIBLINE($GLIB_LIBS, PHP_GTK2_SHARED_LIBADD)
   PHP_REQUIRE_CXX()
 
   scintilla_lib_srcs="libscintilla/src/AutoComplete.cxx \
@@ -95,6 +100,6 @@ libscintilla/src/XPM.cxx"
   scintilla_srcs="libscintilla/PlatGTK.cxx \
 libscintilla/ScintillaGTK.cxx"
 
-  PHP_GTK_EXTENSION(scintilla, $php_gtk_ext_shared, $scintilla_lib_srcs $scintilla_srcs php_scintilla.c, gen_scintilla.c, -I@ext_srcdir@ -I@ext_srcdir@/libscintilla -I@ext_srcdir@/libscintilla/include -I@ext_srcdir@/libscintilla/src)
+  PHP_GTK_EXTENSION(scintilla, $php_gtk_ext_shared, $scintilla_lib_srcs $scintilla_srcs php_scintilla.c libscintilla/scintilla-marshal.c, gen_scintilla.c, -I@ext_srcdir@ -I@ext_srcdir@/libscintilla -I@ext_srcdir@/libscintilla/include -I@ext_srcdir@/libscintilla/src)
   PHP_ADD_BUILD_DIR($ext_builddir/libscintilla/src)
 fi
