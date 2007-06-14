@@ -1,3 +1,41 @@
+2007-06-13  Anant Narayanan  <anant@kix.in>
+
+    * main/php_gtk.h:
+      Back to -dev
+
+    * (php_gtk_2_0_0beta)
+      main/php_gtk.h:
+      Tagging beta release!
+
+    * (php_gtk_2_0_0beta)
+      ext/extension_list
+      ext/gtkscintilla/Makefile.frag
+      ext/gtkscintilla/README
+      ext/gtkscintilla/config.m4
+      ext/gtkscintilla/gtkscintilla.defs
+      ext/gtkscintilla/gtkscintilla.overrides
+      ext/gtkscintilla/php_gtkscintilla.c
+      ext/gtkscintilla/php_gtkscintilla.h:
+      The GtkScintilla extension is no longer required.
+
+    * (php_gtk_2_0_0beta)
+      AUTHORS
+      NEWS:
+      Prepare for beta release
+
+    * (php_gtk_2_0_0beta)
+      ext/scintilla/sci_generator.php:
+      Small oops.
+
+    * (php_gtk_2_0_0beta)
+      ext/scintilla/Makefile.frag
+      ext/scintilla/config.m4
+      ext/scintilla/gen_scintilla.c
+      ext/scintilla/gen_scintilla.h
+      ext/scintilla/sci_generator.php
+      ext/scintilla/libscintilla/scintilla-marshal.h:
+      Make scintilla compile on *nix. FINALLY!
+
 2007-05-30  Anant Narayanan  <anant@kix.in>
 
     * ext/scintilla/Makefile.frag
