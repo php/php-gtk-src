@@ -6,8 +6,9 @@ Version 2.0.0beta "extension extravaganza" : xx-xxx-2007
     - gtkspell, gtkextra, gtkhtml3, libsexy and scintilla extensions for *nix 
       (Anant)
     - lots of unit tests (Christian, Scott)
-    - win32 support for gtksourceview, gtkextra, gtkhtml3, libsexy and scintilla
+    - win32 support for gtksourceview, gtkextra, gtkhtml3, and libsexy
       (Elizabeth)
+    - win32 support for scintilla (Tom)
     - support for gtk+ 2.8 and 2.10 (Elizabeth)
     - more api coverage, bunch of bug fixes (Andrei, et al )
     

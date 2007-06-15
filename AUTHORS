@@ -1,18 +1,21 @@
 Andrei Zmievski <andrei@php.net>
-	Project lead and architect, main body of code, some documentation
+    Project lead and architect, main body of code, some documentation
 
 Steph Fox <steph@zend.com>
-	Win32 compilation and binary distributions, Glade support,
-	miscellaneous code, documentation editor
+    Win32 compilation and binary distributions, Glade support,
+    miscellaneous code, documentation editor
 
 Christian Weiske <cweiske@cweiske.de>
-	reflection support, patches, documentation
+    reflection support, patches, documentation
 
 Anant Narayanan <anant@kix.in>
-	Extensions, patches, documentation
+    Extensions, patches, documentation
 
 Elizabeth Smith <emsmith@elizabethmariesmith.com>
     Win32 extensions, patches, documentation    
+
+Tom Rogers <trogers@kwikin.com>
+    Scintilla extension and generator
 
 Frank Kromann <fmk@php.net>
     Win32 compilation and some code generator work
