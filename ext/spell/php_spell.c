@@ -95,7 +95,7 @@ void phpg_gtkspell_register_classes(void)
 {
 	TSRMLS_FETCH();
 
-	gtkspell_ce = phpg_register_class("GtkSpell", gtkspell_methods, gtktextview_ce, 0, NULL, NULL, GTK_TYPE_TEXT_BUFFER TSRMLS_CC);
+	gtkspell_ce = phpg_register_class("GtkSpell", gtkspell_methods, gobject_ce, 0, NULL, NULL, 0 TSRMLS_CC);
 }
 
 void phpg_gtkspell_register_constants(const char *strip_prefix)
@@ -105,7 +105,7 @@ void phpg_gtkspell_register_constants(const char *strip_prefix)
 
     /* register gtype constants for all classes */
 
-	phpg_register_int_constant(gtkspell_ce, "gtype", sizeof("gtype")-1, GTK_TYPE_TEXT_BUFFER);
+	phpg_register_int_constant(gtkspell_ce, "gtype", sizeof("gtype")-1, 0);
 
 }
 #endif /* HAVE_PHP_GTK */
