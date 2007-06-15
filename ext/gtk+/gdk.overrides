@@ -2198,6 +2198,58 @@ PHP_METHOD
 }
 
 %%
+override gdk_pixbuf_get_formats
+PHP_METHOD
+{
+    GSList *list, *tmp;
+    zval *item, *mimes;
+    gchar *sval, **aval;
+    gint i;
+    GdkPixbufFormat *format;
+
+    list = gdk_pixbuf_get_formats();
+    array_init(return_value);
+    for (tmp = list; tmp != NULL; tmp = tmp->next) {
+        format = tmp->data;
+
+        MAKE_STD_ZVAL(item);
+        array_init(item);
+
+        sval = gdk_pixbuf_format_get_name(format);
+        add_assoc_string(item, "name", sval, 1);
+        g_free(sval);
+
+        sval = gdk_pixbuf_format_get_description(format);
+        add_assoc_string(item, "description", sval, 1);
+        g_free(sval);
+
+        aval = gdk_pixbuf_format_get_mime_types(format);
+        MAKE_STD_ZVAL(mimes);
+        array_init(mimes);
+        for (i = 0; aval[i] != NULL; i++) {
+            add_next_index_string(mimes, aval[i], 1);
+        }
+        add_assoc_zval(item, "description", mimes);
+        g_strfreev(aval);
+
+        aval = gdk_pixbuf_format_get_extensions(format);
+        MAKE_STD_ZVAL(mimes);
+        array_init(mimes);
+        for (i = 0; aval[i] != NULL; i++) {
+            add_next_index_string(mimes, aval[i], 1);
+        }
+        add_assoc_zval(item, "extensions", mimes);
+        g_strfreev(aval);
+
+        add_assoc_long(item, "is_writable", gdk_pixbuf_format_is_writable(format));
+        add_assoc_long(item, "is_scalable", gdk_pixbuf_format_is_scalable(format));
+
+        add_next_index_zval(return_value, item);
+    }
+    g_slist_free(list);
+}
+
+%%
 add-arginfo GdkPixbuf fill
 static
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
