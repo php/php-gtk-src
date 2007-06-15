@@ -1,7 +1,7 @@
 <?php
 $row = 0;
-require "generator/Getopt.php";
-require "generator/lineoutput.php";
+require dirname(__FILE__) . "/../../generator/Getopt.php";
+require dirname(__FILE__) . "/../../generator/lineoutput.php";
 
 function fixFunctionName($name){
 	$len = strlen($name);
@@ -47,7 +47,7 @@ foreach ($opts as $opt) {
 			$path = $opt_arg;
 	}
 }
-$savefile = "ext/scintilla/gen_scintilla.c";
+$savefile = dirname(__FILE__) . "/gen_scintilla.c";
 
 if($sfp = new LineOutput(fopen($savefile, 'w'), $savefile)){
 	if($handle = fopen("ext/scintilla/scintilla.in", "r")){
