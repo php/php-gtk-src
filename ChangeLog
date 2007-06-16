@@ -1,3 +1,26 @@
+2007-06-15  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/libsexy/.cvsignore
+      ext/scintilla/sci_generator.php:
+      Absolute paths for the scintilla generator, cvsignore fixed
+
+2007-06-15  Anant Narayanan  <anant@kix.in>
+
+    * AUTHORS
+      NEWS:
+      Credits for Tom.
+
+2007-06-15  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gdk.overrides:
+      Gdkpixbuf::get_formats() override - returns information about available
+      pixbuf loaders
+
+2007-06-15  Anant Narayanan  <anant@kix.in>
+
+    * ext/spell/php_spell.c:
+      Make GtkSpell extend from GObject and give a GType of 0.
+
 2007-06-13  Anant Narayanan  <anant@kix.in>
 
     * main/php_gtk.h:
