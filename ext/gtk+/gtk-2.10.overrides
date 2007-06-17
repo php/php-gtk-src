@@ -104,15 +104,14 @@ ZEND_END_ARG_INFO();
 override gtk_status_icon_position_menu
 PHP_METHOD
 {
-    zval *menu, *statusicon;
+    zval *menu = NULL, *statusicon = NULL;
     gint x, y;
     gboolean push_in;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OO", &menu, gtkmenu_ce, &statusicon, gtkstatusicon_ce))
         return;
 
-    gtk_status_icon_position_menu(GTK_MENU(PHPG_GOBJECT(menu)), &x, &y, &push_in,
-                PHPG_GPOINTER(statusicon));
+    gtk_status_icon_position_menu(GTK_MENU(PHPG_GOBJECT(menu)), &x, &y, &push_in, PHPG_GOBJECT(statusicon));
 
     php_gtk_build_value(&return_value, "(iii)", x, y, push_in);
 }
