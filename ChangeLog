@@ -1,3 +1,13 @@
+2007-06-16  Anant Narayanan  <anant@kix.in>
+
+    * main/php_gtk.h:
+      beta -> dev
+
+    * (php_gtk_2_0_0beta)
+      NEWS
+      main/php_gtk.h:
+      Retag beta
+
 2007-06-15  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/libsexy/.cvsignore
