@@ -1,3 +1,19 @@
+2007-06-17  Anant Narayanan  <anant@kix.in>
+
+    * main/php_gtk.h
+      main/php_gtk.h:
+      -** empty log message ***
+
+    * main/php_gtk.h:
+      beta -> dev
+
+    * main/php_gtk.h:
+      One last fix, last time we tag (I Hope!)
+
+    * (php_gtk_2_0_0beta)
+      ext/gtk+/gtk-2.10.overrides:
+      Fix segfault, patch by Bob Majdak
+
 2007-06-16  Anant Narayanan  <anant@kix.in>
 
     * main/php_gtk.h:
