@@ -2703,7 +2703,7 @@ PHP_METHOD
 {
     GtkTreePath *path;
     GtkTreeViewDropPosition pos;
-	zval *php_path = NULL;
+    zval *php_path = NULL;
 
     NOT_STATIC_METHOD();
 
@@ -2713,16 +2713,13 @@ PHP_METHOD
 
     gtk_tree_view_get_drag_dest_row(GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), &path, &pos);
 
-   array_init(return_value);
-
     if (path) {
         phpg_tree_path_to_zval(path, &php_path TSRMLS_CC);
+        gtk_tree_path_free(path);
+        php_gtk_build_value(&return_value, "(Ni)", php_path, (gint)pos);
     } else {
-        MAKE_STD_ZVAL(php_path);
+        RETURN_FALSE;
     }
-    add_next_index_zval(return_value, php_path);
-
-    add_next_index_long(return_value, pos);
 }
 
 %%
