@@ -1055,6 +1055,47 @@ void phpg_gobject_register_self(TSRMLS_D)
 
     gobject_ce = phpg_register_class("GObject", gobject_methods, NULL, 0, gobject_props_info, NULL, G_TYPE_OBJECT TSRMLS_CC);
     phpg_register_int_constant(gobject_ce, "gtype", sizeof("gtype")-1, G_TYPE_OBJECT);
+
+	/* Fundamental GTypes */
+    phpg_register_int_constant(gobject_ce, "TYPE_INVALID", sizeof("TYPE_INVALID")-1, G_TYPE_INVALID);
+    phpg_register_int_constant(gobject_ce, "TYPE_NONE", sizeof("TYPE_NONE")-1, G_TYPE_NONE);
+    phpg_register_int_constant(gobject_ce, "TYPE_INTERFACE", sizeof("TYPE_INTERFACE")-1, G_TYPE_INTERFACE);
+    phpg_register_int_constant(gobject_ce, "TYPE_CHAR", sizeof("TYPE_CHAR")-1, G_TYPE_CHAR);
+    phpg_register_int_constant(gobject_ce, "TYPE_BOOLEAN", sizeof("TYPE_BOOLEAN")-1, G_TYPE_BOOLEAN);
+    phpg_register_int_constant(gobject_ce, "TYPE_LONG", sizeof("TYPE_LONG")-1, G_TYPE_LONG);
+    phpg_register_int_constant(gobject_ce, "TYPE_ENUM", sizeof("TYPE_ENUM")-1, G_TYPE_ENUM);
+    phpg_register_int_constant(gobject_ce, "TYPE_FLAGS", sizeof("TYPE_FLAGS")-1, G_TYPE_FLAGS);
+    phpg_register_int_constant(gobject_ce, "TYPE_DOUBLE", sizeof("TYPE_DOUBLE")-1, G_TYPE_DOUBLE);
+    phpg_register_int_constant(gobject_ce, "TYPE_STRING", sizeof("TYPE_STRING")-1, G_TYPE_STRING);
+    phpg_register_int_constant(gobject_ce, "TYPE_POINTER", sizeof("TYPE_POINTER")-1, G_TYPE_POINTER);
+    phpg_register_int_constant(gobject_ce, "TYPE_BOXED", sizeof("TYPE_BOXED")-1, G_TYPE_BOXED);
+    phpg_register_int_constant(gobject_ce, "TYPE_PARAM", sizeof("TYPE_PARAM")-1, G_TYPE_PARAM);
+    phpg_register_int_constant(gobject_ce, "TYPE_OBJECT", sizeof("TYPE_OBJECT")-1, G_TYPE_OBJECT);
+    phpg_register_int_constant(gobject_ce, "TYPE_PHP_VALUE", sizeof("TYPE_PHP_VALUE")-1, G_TYPE_PHP_VALUE);
+
+	/* Priority Constants */
+    phpg_register_int_constant(gobject_ce, "PRIORITY_HIGH", sizeof("PRIORITY_HIGH")-1, G_PRIORITY_HIGH);
+    phpg_register_int_constant(gobject_ce, "PRIORITY_DEFAULT", sizeof("PRIORITY_DEFAULT")-1, G_PRIORITY_DEFAULT);
+    phpg_register_int_constant(gobject_ce, "PRIORITY_HIGH_IDLE", sizeof("PRIORITY_HIGH_IDLE")-1, G_PRIORITY_HIGH_IDLE);
+    phpg_register_int_constant(gobject_ce, "PRIORITY_DEFAULT_IDLE", sizeof("PRIORITY_DEFAULT_IDLE")-1, G_PRIORITY_DEFAULT_IDLE);
+    phpg_register_int_constant(gobject_ce, "PRIORITY_LOW", sizeof("PRIORITY_LOW")-1, G_PRIORITY_LOW);
+
+    /* IO Condition Constants */
+    phpg_register_int_constant(gobject_ce, "IO_IN", sizeof("IO_IN")-1, G_IO_IN);
+    phpg_register_int_constant(gobject_ce, "IO_OUT", sizeof("IO_OUT")-1, G_IO_OUT);
+    phpg_register_int_constant(gobject_ce, "IO_PRI", sizeof("IO_PRI")-1, G_IO_PRI);
+    phpg_register_int_constant(gobject_ce, "IO_ERR", sizeof("IO_ERR")-1, G_IO_ERR);
+    phpg_register_int_constant(gobject_ce, "IO_HUP", sizeof("IO_HUP")-1, G_IO_HUP);
+    phpg_register_int_constant(gobject_ce, "IO_NVAL", sizeof("IO_NVAL")-1, G_IO_NVAL);
+
+	/* signal type constants */
+	phpg_register_int_constant(gobject_ce, "SIGNAL_RUN_FIRST", sizeof("SIGNAL_RUN_FIRST")-1, G_SIGNAL_RUN_FIRST);
+    phpg_register_int_constant(gobject_ce, "SIGNAL_RUN_LAST", sizeof("SIGNAL_RUN_LAST")-1, G_SIGNAL_RUN_LAST);
+    phpg_register_int_constant(gobject_ce, "SIGNAL_RUN_CLEANUP", sizeof("SIGNAL_RUN_CLEANUP")-1, G_SIGNAL_RUN_CLEANUP);
+    phpg_register_int_constant(gobject_ce, "SIGNAL_NO_RECURSE", sizeof("SIGNAL_NO_RECURSE")-1, G_SIGNAL_NO_RECURSE);
+    phpg_register_int_constant(gobject_ce, "SIGNAL_DETAILED", sizeof("SIGNAL_DETAILED")-1, G_SIGNAL_DETAILED);
+    phpg_register_int_constant(gobject_ce, "SIGNAL_ACTION", sizeof("SIGNAL_ACTION")-1, G_SIGNAL_ACTION);
+    phpg_register_int_constant(gobject_ce, "SIGNAL_NO_HOOKS", sizeof("SIGNAL_NO_HOOKS")-1, G_SIGNAL_NO_HOOKS);
 }
 
 #endif /* HAVE_PHP_GTK */
