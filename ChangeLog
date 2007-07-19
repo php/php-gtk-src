@@ -1,3 +1,10 @@
+2007-07-18  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gtk.overrides
+      main/phpg_gobject.c:
+      Added signal gobject constants, moved types, IO, and priority constants
+      from gtk to gobject (as per andrei's request) - this is very BC breaking!
+
 2007-06-22  Anant Narayanan  <anant@kix.in>
 
     * ext/gtk+/gtktreeview.overrides:
