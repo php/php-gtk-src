@@ -1344,7 +1344,37 @@ class Generator {
                                  'GdkWindowTypeHint'    => 'int',
                                  'GdkWMDecoration'      => 'int',
                                  'GdkWMFunction'        => 'int',
-                                 
+
+                                 // libsexy enums
+                                 'SexyIconEntryPosition' => 'int',
+                                 'SexySpellError'        => 'int',
+
+                                 // gtkextra enums
+                                 'GtkIconListMode'            => 'int',
+                                 'GtkPlotPlane'               => 'int',
+                                 'GtkPlotBarUnits'            => 'int',
+                                 'GtkPlotCanvasAction'        => 'int',
+                                 'GtkPlotCanvasSelection'     => 'int',
+                                 'GtkPlotCanvasPos'           => 'int',
+                                 'GtkPlotCanvasSelectionMode' => 'int',
+                                 'GtkPlotCanvasPlotPos'       => 'int',
+                                 'GtkPlotProjection'          => 'int',
+                                 'GtkPlotScale'               => 'int',
+                                 'GtkPlotSymbolType'          => 'int',
+                                 'GtkPlotSymbolStyle'         => 'int',
+                                 'GtkPlotBorderStyle'         => 'int',
+                                 'GtkPlotLineStyle'           => 'int',
+                                 'GtkPlotConnector'           => 'int',
+                                 'GtkPlotError'               => 'int',
+                                 'GtkPlotOrientation'         => 'int',
+                                 'GtkPlotAxisPos'             => 'int',
+                                 'GtkPlotLabelStyle'          => 'int',
+                                 'GtkPlotScale'               => 'int',
+                                 'GtkPlotPageSize'            => 'int',
+                                 'GtkPlotPageOrientation'     => 'int',
+                                 'GtkPlotUnits'               => 'int',
+                                 'GtkSheetAttrType'           => 'int',
+
                                  //Pango enums
                                  'PangoAlignment'       => 'int',
                                  'PangoDirection'       => 'int',
