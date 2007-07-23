@@ -40,7 +40,7 @@ class ImgBrowser extends GtkWindow
         $paned->set_position(200);
 
         //filename, markup-filename, fullpath, is_dir, preview image
-        $mFile = new GtkListStore(Gtk::TYPE_STRING, Gtk::TYPE_STRING, Gtk::TYPE_STRING, Gtk::TYPE_BOOLEAN, GdkPixbuf::gtype);
+        $mFile = new GtkListStore(GObject::TYPE_STRING, GObject::TYPE_STRING, GObject::TYPE_STRING, GObject::TYPE_BOOLEAN, GdkPixbuf::gtype);
         $mFile->set_sort_column_id(0, Gtk::SORT_ASCENDING);
 
         $vFile = new GtkTreeView($mFile);

@@ -125,7 +125,7 @@ class StockItemBrowserDemo extends GtkWindow {
 
 	private function create_model()
 	{
-		$store = new GtkListStore(Gtk::TYPE_PHP_VALUE, Gtk::TYPE_STRING);
+		$store = new GtkListStore(GObject::TYPE_PHP_VALUE, GObject::TYPE_STRING);
 
 		$ids = Gtk::stock_list_ids();
 		sort($ids);

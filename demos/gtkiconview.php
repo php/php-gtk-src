@@ -26,7 +26,7 @@ class IconView extends GtkWindow
     {
         $iv = new GtkIconView();
         
-        $model = new GtkListStore(GdkPixbuf::gtype, Gtk::TYPE_STRING);
+        $model = new GtkListStore(GdkPixbuf::gtype, GObject::TYPE_STRING);
         $iv->set_model($model);
         $iv->set_columns(1);
         

@@ -51,7 +51,7 @@ class PHPGtk2Demo extends GtkWindow
     {
         $this->load_demos();
 
-        $model = new GtkListStore(Gtk::TYPE_PHP_VALUE, Gtk::TYPE_STRING);
+        $model = new GtkListStore(GObject::TYPE_PHP_VALUE, GObject::TYPE_STRING);
 //		$model->append(array("asd", "aswdasd"));//???????
 
         foreach ($this->demos as $demo) {
