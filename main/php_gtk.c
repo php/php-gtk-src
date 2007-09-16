@@ -182,13 +182,15 @@ PHP_RINIT_FUNCTION(gtk)
 	 * Initialize the type system and the GType wrapper class.
 	 */
 	g_type_init();
+
+	G_TYPE_PHP_VALUE = g_boxed_type_register_static("PhpValue", php_object_copy, php_object_release);
+
 	phpg_gtype_register_self(TSRMLS_C);
 	phpg_gobject_register_self(TSRMLS_C);
 	phpg_gboxed_register_self(TSRMLS_C);
 	phpg_gpointer_register_self(TSRMLS_C);
 	phpg_gdkatom_register_self(TSRMLS_C);
-
-	G_TYPE_PHP_VALUE = g_boxed_type_register_static("PhpValue", php_object_copy, php_object_release);
+	phpg_paramspec_register_self(TSRMLS_C);
 
 	if (php_gtk_startup_all_extensions(module_number) == FAILURE) {
 		php_error(E_WARNING, "Unable to start internal extensions");

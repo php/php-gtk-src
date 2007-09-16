@@ -136,6 +136,12 @@ typedef struct {
 	GdkAtom atom;
 } phpg_gdkatom_t;
 
+typedef struct {
+	PHPG_OBJ_HEADER
+	GParamSpec *pspec;
+} phpg_paramspec_t;
+
+
 typedef int (*boxed_from_zval_t)(const zval *value, GValue *gvalue TSRMLS_DC);
 typedef int (*boxed_to_zval_t)(const GValue *gvalue, zval **value TSRMLS_DC);
 typedef struct {
@@ -163,6 +169,8 @@ enum {
 #define PHPG_GPOINTER(zobj) phpg_gpointer_get(zobj TSRMLS_CC)->pointer
 
 #define PHPG_GDKATOM(zobj) ((phpg_gdkatom_t*)PHPG_GET(zobj))->atom
+
+#define PHPG_GPARAMSPEC(zobj) phpg_gparamspec_get(zobj TSRMLS_CC)->pspec
 
 
 /*
@@ -296,6 +304,7 @@ PHP_GTK_API int php_gtk_parse_args_quiet(int argc, char *format, ...);
 PHP_GTK_API int php_gtk_parse_varargs(int argc, int min_args, zval **varargs, char *format, ...);
 PHP_GTK_API int php_gtk_parse_args_hash(zval *hash, char *format, ...);
 PHP_GTK_API int php_gtk_parse_args_hash_quiet(zval *hash, char *format, ...);
+PHP_GTK_API int php_gtk_parse_varargs_hash(zval *hash, int min_args, zval **varargs, char *format, ...);
 PHP_GTK_API int php_gtk_check_class(zval *wrapper, zend_class_entry *expected_ce);
 PHP_GTK_API void php_gtk_invalidate(zval *wrapper);
 zend_bool php_gtk_is_callable(zval *callable, zend_bool syntax_only, char **callable_name);
@@ -425,14 +434,14 @@ PHP_GTK_API void phpg_register_string_constant(zend_class_entry *ce, char *name,
 void phpg_gtype_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gtype_new(zval *zobj, GType type TSRMLS_DC);
 PHP_GTK_API GType phpg_gtype_from_zval(zval *value);
-PHP_GTK_API GType phpg_gtype_from_class(zend_class_entry *ce);
+PHP_GTK_API GType phpg_gtype_from_class(zend_class_entry *ce TSRMLS_DC);
 
 
 /* GValue */
 PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool copy_boxed, zend_bool do_utf8 TSRMLS_DC);
-PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval *value, zend_bool do_utf8 TSRMLS_DC);
+PHP_GTK_API int phpg_gvalue_from_zval(GValue *gval, zval **value, zend_bool do_utf8 TSRMLS_DC);
 PHP_GTK_API int phpg_param_gvalue_to_zval(const GValue *gval, zval **value, zend_bool copy_boxed, const GParamSpec *pspec TSRMLS_DC);
-PHP_GTK_API int phpg_param_gvalue_from_zval(GValue *gval, zval *value, const GParamSpec *pspec TSRMLS_DC);
+PHP_GTK_API int phpg_param_gvalue_from_zval(GValue *gval, zval **value, const GParamSpec *pspec TSRMLS_DC);
 PHP_GTK_API zval *phpg_gvalues_to_array(const GValue *values, uint n_values);
 PHP_GTK_API int phpg_gvalue_get_enum(GType enum_type, zval *enum_val, gint *result);
 PHP_GTK_API int phpg_gvalue_get_flags(GType flags_type, zval *flags_val, gint *result);
@@ -494,6 +503,17 @@ void phpg_gdkatom_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gdkatom_new(zval **zobj, GdkAtom atom TSRMLS_DC);
 PHP_GTK_API GdkAtom phpg_gdkatom_from_zval(zval *value TSRMLS_DC);
 
+/* GParamSpec */
+PHP_GTK_API void phpg_paramspec_new(zval **zobj, GParamSpec *pspec TSRMLS_DC);
+static inline phpg_paramspec_t* phpg_gparamspec_get(zval *zobj TSRMLS_DC)
+{
+    phpg_paramspec_t *pobj = zend_object_store_get_object(zobj TSRMLS_CC);
+    if (pobj->pspec == NULL) {
+        php_error(E_ERROR, "Internal object missing in %s wrapper", Z_OBJCE_P(zobj)->name);
+    }
+    return pobj;
+}
+
 /* Closures */
 PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, int connect_type, zval *replace_object TSRMLS_DC);
 PHP_GTK_API void phpg_watch_closure(zval *obj, GClosure *closure TSRMLS_DC);
@@ -503,6 +523,7 @@ PHP_GTK_API extern PHP_GTK_EXPORT_CE(gobject_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gboxed_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gpointer_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gdkatom_ce);
+PHP_GTK_API extern PHP_GTK_EXPORT_CE(gparamspec_ce);
 
 #endif /* HAVE_PHP_GTK */
 

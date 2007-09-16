@@ -345,6 +345,10 @@ PHP_GTK_API zend_class_entry* phpg_register_interface(const char *iface_name,
 {
 	zend_class_entry ce, *real_ce;
 
+	if (!phpg_class_key) {
+		phpg_class_key = g_quark_from_static_string(phpg_class_id);
+	}
+
     memset(&ce, 0, sizeof(ce));
     ce.name = strdup(iface_name);
     ce.name_length = strlen(iface_name);
@@ -600,7 +604,7 @@ PHP_GTK_API zend_bool phpg_parse_ctor_props(GType gtype, zval **php_args, GParam
         params[i].name = prop_names[i];
         g_value_init(&params[i].value, spec->value_type);
 
-        if (phpg_gvalue_from_zval(&params[i].value, php_args[i], FALSE TSRMLS_CC) == FAILURE) {
+        if (phpg_gvalue_from_zval(&params[i].value, &php_args[i], FALSE TSRMLS_CC) == FAILURE) {
             php_error(E_WARNING, "Could not convert value for parameter '%s' of type '%s'",
                       prop_names[i], g_type_name(spec->value_type));
             g_type_class_unref(klass);

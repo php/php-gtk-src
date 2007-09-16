@@ -57,7 +57,7 @@ inline char *php_gtk_zval_type_name(zval *arg)
 	}
 }
 
-static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int as_zval TSRMLS_DC)
+static char *parse_arg_impl(int arg_num, zval **arg, va_list *va, char **spec, char *buf, int as_zval TSRMLS_DC)
 {
 	char *spec_walk = *spec;
 	char c = *spec_walk++;
@@ -351,6 +351,44 @@ static char *parse_arg_impl(zval **arg, va_list *va, char **spec, char *buf, int
 			}
 			break;
 
+		case 'C':
+			{
+				zend_class_entry **lookup, **pce = va_arg(*va, zend_class_entry **);
+				zend_class_entry *ce_base = *pce;
+
+				if (return_null && Z_TYPE_PP(arg) == IS_NULL) {
+					*pce = NULL;
+					break;
+				}
+				convert_to_string_ex(arg);
+				if (zend_lookup_class(Z_STRVAL_PP(arg), Z_STRLEN_PP(arg), &lookup TSRMLS_CC) == FAILURE) {
+					*pce = NULL;
+				} else {
+					*pce = *lookup;
+				}
+				if (ce_base) {
+					if ((!*pce || !instanceof_function(*pce, ce_base TSRMLS_CC)) && !return_null) {
+						char *space;
+						char *class_name = get_active_class_name(&space TSRMLS_CC);
+						zend_error(E_WARNING, "%s%s%s() expects parameter %d to be a class name derived from %s, '%s' given",
+							   class_name, space, get_active_function_name(TSRMLS_C),
+							   arg_num, ce_base->name, Z_STRVAL_PP(arg));
+						*pce = NULL;
+						return "";
+					}
+				}
+				if (!*pce) {
+					char *space;
+					char *class_name = get_active_class_name(&space TSRMLS_CC);
+					zend_error(E_WARNING, "%s%s%s() expects parameter %d to be a valid class name, '%s' given",
+						   class_name, space, get_active_function_name(TSRMLS_C),
+						   arg_num, Z_STRVAL_PP(arg));
+					return "";
+				}
+				break;
+
+			}
+			break;
 		case 'V':
 ret_zval:
 			{
@@ -374,9 +412,9 @@ static int parse_arg(int arg_num, zval **arg, va_list *va, char **spec, int as_z
 	char buf[1024];
 	char errorbuf[1024];
 
-	expected_type = parse_arg_impl(arg, va, spec, errorbuf, as_zval TSRMLS_CC);
+	expected_type = parse_arg_impl(arg_num, arg, va, spec, errorbuf, as_zval TSRMLS_CC);
 	if (expected_type) {
-		if (!quiet) {
+		if (!quiet && *expected_type) {
 			sprintf(buf, "%s::%s() expects argument %d to be %s, %s given",
 					get_active_class_name(NULL TSRMLS_CC),
 					get_active_function_name(TSRMLS_C), arg_num, expected_type,
@@ -411,7 +449,7 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 
 			case 'i': case 'h': case 'l': case 'c':
 			case 's': case 'd': case 'b': case 'u':
-			case 'a': case 'N': case 'r':
+			case 'a': case 'N': case 'r': case 'C':
 			case 'O': case 'o': case 'V':
 				max_argc++;
 				break;
@@ -571,6 +609,30 @@ static int php_gtk_parse_args_hash_impl(zval *hash, char *format, va_list *va, i
 	return retval;
 }
 
+static int php_gtk_parse_varargs_hash_impl(zval *hash, int min_args, zval **varargs, char *format, va_list *va, int quiet)
+{
+	zval ***args;
+	int retval;
+	int argc = zend_hash_num_elements(Z_ARRVAL_P(hash));
+	TSRMLS_FETCH();
+
+	if (argc < min_args) {
+		php_error(E_WARNING, "%s::%s() requires at least %d arguments, %d given",
+				  get_active_class_name(NULL TSRMLS_CC),
+				  get_active_function_name(TSRMLS_C), min_args, argc);
+		return 0;
+	}
+
+	args = php_gtk_hash_as_array(hash);
+	retval = parse_va_args(min_args, args, format, va, quiet TSRMLS_CC);
+	if (varargs) {
+		*varargs = php_gtk_array_as_hash(args, argc, min_args, argc-min_args);
+	}
+	efree(args);
+
+	return retval;
+}
+
 PHP_GTK_API int php_gtk_parse_args_hash(zval *hash, char *format, ...)
 {
 	va_list va;
@@ -590,6 +652,18 @@ PHP_GTK_API int php_gtk_parse_args_hash_quiet(zval *hash, char *format, ...)
 
 	va_start(va, format);
 	retval = php_gtk_parse_args_hash_impl(hash, format, &va, 1);
+	va_end(va);
+
+	return retval;
+}
+
+PHP_GTK_API int php_gtk_parse_varargs_hash(zval *hash, int min_args, zval **varargs, char *format, ...)
+{
+	va_list va;
+	int retval;
+
+	va_start(va, format);
+	retval = php_gtk_parse_varargs_hash_impl(hash, min_args, varargs, format, &va, 0);
 	va_end(va);
 
 	return retval;

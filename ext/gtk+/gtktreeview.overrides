@@ -451,7 +451,7 @@ PHP_METHOD
 
             g_value_init(&values[i], gtk_tree_model_get_column_type(model, i));
 
-            if (phpg_gvalue_from_zval(&values[i], *item, TRUE TSRMLS_CC) == FAILURE) {
+            if (phpg_gvalue_from_zval(&values[i], item, TRUE TSRMLS_CC) == FAILURE) {
                 php_error(E_WARNING, "Cannot set row: type of element %d does not match the model", i);
                 for ( ; i >= 0; i--) {
                     g_value_unset(&values[i]);
@@ -516,7 +516,7 @@ PHP_METHOD
 
             g_value_init(&value, gtk_tree_model_get_column_type(model, i));
 
-            if (phpg_gvalue_from_zval(&value, *item, TRUE TSRMLS_CC) == FAILURE) {
+            if (phpg_gvalue_from_zval(&value, item, TRUE TSRMLS_CC) == FAILURE) {
                 php_error(E_WARNING, "Cannot set row: type of element %d does not match the model", i);
                 g_value_unset(&value);
                 return;
@@ -567,7 +567,7 @@ PHP_METHOD
 
             g_value_init(&value, gtk_tree_model_get_column_type(model, i));
 
-            if (phpg_gvalue_from_zval(&value, *item, TRUE TSRMLS_CC) == FAILURE) {
+            if (phpg_gvalue_from_zval(&value, item, TRUE TSRMLS_CC) == FAILURE) {
                 php_error(E_WARNING, "Cannot set row: type of element %d does not match the model", i);
                 g_value_unset(&value);
                 return;
@@ -647,7 +647,7 @@ static void phpg_store_set_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool is_tree)
 
         g_value_init(&value, gtk_tree_model_get_column_type(model, column));
 
-        if (phpg_gvalue_from_zval(&value, zvalue, TRUE TSRMLS_CC) == FAILURE) {
+        if (phpg_gvalue_from_zval(&value, &zvalue, TRUE TSRMLS_CC) == FAILURE) {
             php_error(E_WARNING, "%s::%s(): argument %d is of the wrong type for column %d",
                       get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C),
                       i+1, column);

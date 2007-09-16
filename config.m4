@@ -70,7 +70,7 @@ PHP_SUBST(PHP_GTK_GEN_SOURCES)
 PHP_NEW_EXTENSION(php_gtk2, main/php_gtk.c main/phpg_support.c main/phpg_gtype.c \
                             main/phpg_exceptions.c main/php_gtk_util.c main/phpg_gvalue.c \
                             main/phpg_closure.c main/phpg_gboxed.c main/phpg_gpointer.c \
-                            main/phpg_atom.c main/phpg_gobject.c,
+                            main/phpg_atom.c main/phpg_paramspec.c main/phpg_gobject.c,
                             $ext_shared,, -I@ext_srcdir@/main)
 
 PHP_ADD_SOURCES_X(/main, php_gtk_ext.c,, shared_objects_php_gtk2)

@@ -433,7 +433,7 @@ int phpg_model_set_row(GtkTreeModel *model, GtkTreeIter *iter, zval *items TSRML
          zend_hash_move_forward(Z_ARRVAL_P(items)), i++) {
         GValue value = { 0, };
         g_value_init(&value, gtk_tree_model_get_column_type(model, i));
-        if (phpg_gvalue_from_zval(&value, *item, TRUE TSRMLS_CC) == FAILURE) {
+        if (phpg_gvalue_from_zval(&value, item, TRUE TSRMLS_CC) == FAILURE) {
             php_error(E_WARNING, "Cannot set row: type of element %d does not match the model", i);
             return FAILURE;
         }
@@ -1015,7 +1015,7 @@ static void treemodelrow_write_dimension(zval *object, zval *offset, zval *value
     }
 
     g_value_init(&gvalue, gtk_tree_model_get_column_type(row->model, column));
-    if (phpg_gvalue_from_zval(&gvalue, value, TRUE TSRMLS_CC) == FAILURE) {
+    if (phpg_gvalue_from_zval(&gvalue, &value, TRUE TSRMLS_CC) == FAILURE) {
         php_error(E_WARNING, "Cannot set cell: the type of value does not match the model column");
         return;
     }

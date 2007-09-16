@@ -19,6 +19,7 @@
  */
 
 #include "php_gtk.h"
+#include "zend_interfaces.h"
 
 #if HAVE_PHP_GTK
 
@@ -269,8 +270,7 @@ zend_bool phpg_gobject_construct(zval *this_ptr, GType object_type, zval *props 
     }
 
     if ((klass = g_type_class_ref(object_type)) == NULL) {
-        PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_construct_exception,
-                                         "Could not get a reference to type class", 0);
+        PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_construct_exception, "Could not get a reference to type class", 0);
     }
 
     if (props) {
@@ -299,7 +299,7 @@ zend_bool phpg_gobject_construct(zval *this_ptr, GType object_type, zval *props 
             }
 
             g_value_init(&params[n_params].value, G_PARAM_SPEC_VALUE_TYPE(pspec));
-            if (phpg_gvalue_from_zval(&params[n_params].value, *value, TRUE TSRMLS_CC) == FAILURE) {
+            if (phpg_gvalue_from_zval(&params[n_params].value, value, TRUE TSRMLS_CC) == FAILURE) {
                 snprintf(buf, 128, "Could not convert value for property '%s'", key);
                 zend_throw_exception(phpg_construct_exception, buf, 0 TSRMLS_CC);
                 goto cleanup;
@@ -513,13 +513,13 @@ static PHP_METHOD(GObject, get_property)
     obj = PHPG_GOBJECT(this_ptr);
     pspec = g_object_class_find_property(G_OBJECT_GET_CLASS(obj), property);
     if (pspec == NULL) {
-        php_error(E_WARNING, "Class '%s' does not support property '%s'",
-                  g_type_name(G_TYPE_FROM_INSTANCE(obj)), property);
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "class '%s' does not support property '%s'",
+                         g_type_name(G_TYPE_FROM_INSTANCE(obj)), property);
         return;
     }
 
     if (!(pspec->flags & G_PARAM_READABLE)) {
-        php_error(E_WARNING, "Property '%s' is not readable", property);
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "property '%s' is not readable", property);
         return;
     }
 
@@ -545,20 +545,19 @@ static PHP_METHOD(GObject, set_property)
     obj = PHPG_GOBJECT(this_ptr);
     pspec = g_object_class_find_property(G_OBJECT_GET_CLASS(obj), property);
     if (pspec == NULL) {
-        php_error(E_WARNING, "Class '%s' does not support property '%s'",
-                  g_type_name(G_TYPE_FROM_INSTANCE(obj)), property);
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "class '%s' does not support property '%s'",
+                         g_type_name(G_TYPE_FROM_INSTANCE(obj)), property);
         return;
     }
 
     if (!(pspec->flags & G_PARAM_WRITABLE)) {
-        php_error(E_WARNING, "Property '%s' is not writable", property);
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "property '%s' is not writable", property);
         return;
     }
 
     g_value_init(&value, G_PARAM_SPEC_VALUE_TYPE(pspec));
-    if (phpg_param_gvalue_from_zval(&value, php_value, pspec TSRMLS_CC) == FAILURE) {
-        php_error(E_WARNING, "%s::%s(): could not convert value to property type",
-                  get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+    if (phpg_param_gvalue_from_zval(&value, &php_value, pspec TSRMLS_CC) == FAILURE) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "could not convert value to property type");
         return;
     }
     g_object_set_property(obj, property, &value);
@@ -680,6 +679,7 @@ static PHP_METHOD(GObject, stop_emission)
 }
 /* }}} */
 
+/* {{{ GObject::emit */
 static PHP_METHOD(GObject, emit)
 {
     char *signal;
@@ -721,7 +721,7 @@ static PHP_METHOD(GObject, emit)
         {
             g_value_init(&params[i], query.param_types[i-1] & ~G_SIGNAL_TYPE_STATIC_SCOPE);
 
-            if (phpg_gvalue_from_zval(&params[i], *item, TRUE TSRMLS_CC) == FAILURE) {
+            if (phpg_gvalue_from_zval(&params[i], item, TRUE TSRMLS_CC) == FAILURE) {
                 php_error_docref(NULL TSRMLS_CC, E_WARNING,
                                  "could not convert value to %s for parameter %d",
                                  g_type_name(G_VALUE_TYPE(&params[i])), i-1);
@@ -750,6 +750,7 @@ cleanup:
         zval_ptr_dtor(&extra);
     }
 }
+/* }}} */
 
 /* {{{ GObject::signal_list_ids/names */
 static void phpg_signal_list_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool list_names)
@@ -886,6 +887,447 @@ signal_query_done:
 }
 /* }}} */
 
+static PHP_METHOD(GObject, list_properties)
+{
+    GParamSpec **specs;
+    guint n_specs;
+    zval *php_type;
+    GType type;
+    GObjectClass *oclass;
+    guint i;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_type)) {
+        return;
+    }
+
+    if ((type = phpg_gtype_from_zval(php_type)) == 0) {
+        return;
+    }
+
+    if (!g_type_is_a(type, G_TYPE_OBJECT)) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "type must be derived from GObject");
+        return;
+    }
+
+    oclass = g_type_class_ref(type);
+    if (!oclass) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "couuld not get a reference to type class");
+        return;
+    }
+
+    specs = g_object_class_list_properties(oclass, &n_specs);
+    array_init(return_value);
+    for (i = 0; i < n_specs; i++) {
+        zval *item = NULL;
+        phpg_paramspec_new(&item, specs[i] TSRMLS_CC);
+        add_next_index_zval(return_value, item);
+    }
+
+    g_free(specs);
+    g_type_class_unref(oclass);
+}
+
+/* {{{ GObject::register_type */
+
+static void phpg_object_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+{
+    zval *php_object = NULL;
+    zval *php_pspec = NULL;
+    zval *retval = NULL;
+
+    phpg_gobject_new(&php_object, object TSRMLS_CC);
+    phpg_paramspec_new(&php_pspec, pspec TSRMLS_CC);
+
+    zend_call_method_with_1_params(&php_object, Z_OBJCE_P(php_object), NULL, "do_get_property", &retval, php_pspec);
+    SEPARATE_ZVAL(&retval);
+
+    if (retval) {
+        if (phpg_gvalue_from_zval(value, &retval, TRUE TSRMLS_CC) == FAILURE) {
+            php_error(E_WARNING, "phpg_object_get_property: could not convert PHP value to GValue");
+        }
+        zval_ptr_dtor(&retval);
+    } else {
+        php_error(E_WARNING, "phpg_object_get_property: error invoking do_get_property");
+    }
+    zval_ptr_dtor(&php_object);
+    zval_ptr_dtor(&php_pspec);
+}
+
+static void phpg_object_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+{
+    zval *php_object = NULL;
+    zval *php_pspec = NULL;
+    zval *php_value = NULL;
+    zval *retval = NULL;
+
+    if (phpg_gvalue_to_zval(value, &php_value, TRUE, TRUE TSRMLS_CC) == FAILURE) {
+        php_error(E_WARNING, "phpg_object_set_property: could not convert GValue to PHP value");
+        zval_ptr_dtor(&php_value);
+        return;
+    }
+
+    phpg_gobject_new(&php_object, object TSRMLS_CC);
+    phpg_paramspec_new(&php_pspec, pspec TSRMLS_CC);
+
+    zend_call_method_with_2_params(&php_object, Z_OBJCE_P(php_object), NULL, "do_set_property", &retval, php_pspec, php_value);
+
+    if (retval) {
+        zval_ptr_dtor(&retval);
+    }
+    zval_ptr_dtor(&php_object);
+    zval_ptr_dtor(&php_pspec);
+    zval_ptr_dtor(&php_value);
+}
+
+static void phpg_object_class_init(GObjectClass *class, zend_class_entry *ce)
+{
+    class->get_property = phpg_object_get_property;
+    class->set_property = phpg_object_set_property;
+}
+
+static GParamSpec* phpg_create_property(const char *prop_name, GType prop_type, const char *nick, const char *blurb, zval *type_args, GParamFlags flags)
+{
+    GParamSpec *pspec = NULL;
+
+    switch (G_TYPE_FUNDAMENTAL(prop_type)) {
+        case G_TYPE_CHAR:
+        {
+            gchar minimum, maximum, default_val;
+            if (!php_gtk_parse_args_hash(type_args, "ccc", &minimum, &maximum, &default_val)) {
+                return NULL;
+            }
+            pspec = g_param_spec_char(prop_name, nick, blurb, minimum, maximum, default_val, flags);
+        }
+        break;
+
+        case G_TYPE_UCHAR:
+        {
+            gchar minimum, maximum, default_val;
+            if (!php_gtk_parse_args_hash(type_args, "ccc", &minimum, &maximum, &default_val)) {
+                return NULL;
+            }
+            pspec = g_param_spec_uchar(prop_name, nick, blurb, minimum, maximum, default_val, flags);
+        }
+        break;
+
+        case G_TYPE_BOOLEAN:
+        {
+            zend_bool default_val;
+            if (!php_gtk_parse_args_hash(type_args, "b", &default_val)) {
+                return NULL;
+            }
+            pspec = g_param_spec_boolean(prop_name, nick, blurb, (gboolean)default_val, flags);
+        }
+        break;
+
+        case G_TYPE_INT:
+        {
+            int minimum, maximum, default_val;
+            if (!php_gtk_parse_args_hash(type_args, "iii", &minimum, &maximum, &default_val)) {
+                return NULL;
+            }
+            pspec = g_param_spec_int(prop_name, nick, blurb, (gint)minimum, (gint)maximum, (gint)default_val, flags);
+        }
+        break;
+
+        case G_TYPE_UINT:
+        {
+            int minimum, maximum, default_val;
+            if (!php_gtk_parse_args_hash(type_args, "iii", &minimum, &maximum, &default_val)) {
+                return NULL;
+            }
+            pspec = g_param_spec_uint(prop_name, nick, blurb, (guint)minimum, (guint)maximum, (guint)default_val, flags);
+        }
+        break;
+
+        case G_TYPE_LONG:
+        {
+            long minimum, maximum, default_val;
+            if (!php_gtk_parse_args_hash(type_args, "lll", &minimum, &maximum, &default_val)) {
+                return NULL;
+            }
+            pspec = g_param_spec_long(prop_name, nick, blurb, (glong)minimum, (glong)maximum, (glong)default_val, flags);
+        }
+        break;
+
+        case G_TYPE_ULONG:
+        {
+            long minimum, maximum, default_val;
+            if (!php_gtk_parse_args_hash(type_args, "lll", &minimum, &maximum, &default_val)) {
+                return NULL;
+            }
+            pspec = g_param_spec_ulong(prop_name, nick, blurb, (gulong)minimum, (gulong)maximum, (gulong)default_val, flags);
+        }
+        break;
+
+        case G_TYPE_ENUM:
+        {
+            long default_val;
+            if (!php_gtk_parse_args_hash(type_args, "l", &default_val)) {
+                return NULL;
+            }
+            pspec = g_param_spec_enum(prop_name, nick, blurb, prop_type, default_val, flags);
+        }
+        break;
+
+        case G_TYPE_FLAGS:
+        {
+            long default_val;
+            if (!php_gtk_parse_args_hash(type_args, "l", &default_val)) {
+                return NULL;
+            }
+            pspec = g_param_spec_flags(prop_name, nick, blurb, prop_type, default_val, flags);
+        }
+        break;
+
+        case G_TYPE_FLOAT:
+        {
+            double minimum, maximum, default_val;
+            if (!php_gtk_parse_args_hash(type_args, "ddd", &minimum, &maximum, &default_val)) {
+                return NULL;
+            }
+            pspec = g_param_spec_float(prop_name, nick, blurb, (float)minimum,
+                                       (float)maximum, (float)default_val, flags);
+        }
+        break;
+
+        case G_TYPE_DOUBLE:
+        {
+            double minimum, maximum, default_val;
+            if (!php_gtk_parse_args_hash(type_args, "ddd", &minimum, &maximum, &default_val)) {
+                return NULL;
+            }
+            pspec = g_param_spec_double(prop_name, nick, blurb, minimum, maximum, default_val, flags);
+        }
+        break;
+
+        case G_TYPE_STRING:
+        {
+            char *default_val;
+            zend_bool free_default_val = FALSE;
+
+            if (!php_gtk_parse_args_hash(type_args, "u", &default_val, &free_default_val)) {
+                return NULL;
+            }
+            pspec = g_param_spec_string(prop_name, nick, blurb, default_val, flags);
+            if (free_default_val) g_free(default_val);
+        }
+        break;
+
+        case G_TYPE_PARAM:
+        {
+            pspec = g_param_spec_param(prop_name, nick, blurb, prop_type, flags);
+        }
+        break;
+
+        case G_TYPE_BOXED:
+        {
+            pspec = g_param_spec_boxed(prop_name, nick, blurb, prop_type, flags);
+        }
+        break;
+
+        case G_TYPE_POINTER:
+        {
+            pspec = g_param_spec_pointer(prop_name, nick, blurb, flags);
+        }
+        break;
+
+        case G_TYPE_OBJECT:
+        {
+            pspec = g_param_spec_object(prop_name, nick, blurb, prop_type, flags);
+        }
+        break;
+
+        default:
+            /* unhandled pspec type */
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "could not create param spec for type '%s'", g_type_name(prop_type));
+            return NULL;
+
+    }
+
+    return pspec;
+}
+
+static int phpg_register_properties(GType type, zval *properties)
+{
+    GObjectClass *oclass;
+    GParamFlags flags;
+    GParamSpec *pspec;
+    GType prop_type;
+    char *str_key;
+    const char *nick, *blurb;
+    int data_len;
+    int retval = SUCCESS;
+    uint str_key_len;
+    ulong num_key;
+    zval **data;
+    zval *type_args = NULL;
+    zval *php_prop_type;
+
+    oclass = g_type_class_ref(type);
+    if (!oclass) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "couuld not get a reference to type class");
+        return FAILURE;
+    }
+
+    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(properties));
+         zend_hash_get_current_data(Z_ARRVAL_P(properties), (void**)&data) == SUCCESS;
+            zend_hash_move_forward(Z_ARRVAL_P(properties))) {
+
+        if (zend_hash_get_current_key_ex(Z_ARRVAL_P(properties), &str_key, &str_key_len,
+                                         &num_key, 0, NULL) != HASH_KEY_IS_STRING) {
+            continue;
+        }
+        
+        if (Z_TYPE_PP(data) != IS_ARRAY) {
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "property specs have to be arrays");
+            retval = FAILURE;
+            break;
+        }
+
+        if ((data_len = zend_hash_num_elements(Z_ARRVAL_PP(data))) < 4) {
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "property specs must have at least 4 elements");
+            retval = FAILURE;
+            break;
+        }
+
+        if (!php_gtk_parse_varargs_hash(*data, 4, &type_args, "Vssi", &php_prop_type, &nick, &blurb, &flags)) {
+            retval = FAILURE;
+            break;
+        }
+
+        prop_type = phpg_gtype_from_zval(php_prop_type);
+        if (prop_type == 0) {
+            retval = FAILURE;
+            break;
+        }
+        if (type_args == NULL &&
+            (prop_type != G_TYPE_PARAM   &&
+             prop_type != G_TYPE_BOXED   &&
+             prop_type != G_TYPE_POINTER &&
+             prop_type != G_TYPE_OBJECT)) {
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "property specs require type-specific args");
+            retval = FAILURE;
+            break;
+        }
+        
+        pspec = phpg_create_property(str_key, prop_type, nick, blurb, type_args, flags);
+        if (pspec) {
+            g_object_class_install_property(oclass, 1, pspec);
+        } else {
+            retval = FAILURE;
+            break;
+        }
+
+        if (type_args) {
+            zval_ptr_dtor(&type_args);
+        }
+    }
+
+    if (type_args) {
+        zval_ptr_dtor(&type_args);
+    }
+    g_type_class_unref(oclass);
+    return retval;
+}
+
+static PHP_METHOD(GObject, register_type)
+{
+    zend_class_entry *class = gobject_ce;
+    GType parent_type, new_type;
+    GTypeQuery query;
+    const char *type_name;
+    zval **prop_decls;
+
+    GTypeInfo type_info = {
+        0,    /* class_size */
+
+        (GBaseInitFunc) NULL,
+        (GBaseFinalizeFunc) NULL,
+
+        (GClassInitFunc) phpg_object_class_init,
+        (GClassFinalizeFunc) NULL,
+        NULL, /* class_data */
+
+        0,    /* instance_size */
+        0,    /* n_preallocs */
+        (GInstanceInitFunc) NULL
+    };
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "C", &class)) {
+        return;
+    }
+
+    parent_type = phpg_gtype_from_class(class);
+    if (!parent_type) {
+        return;
+    }
+
+    type_name = class->name;
+    if (g_type_from_name(type_name) != 0) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "type '%s' already exists?", type_name);
+        return;
+    }
+
+    type_info.class_data = class;
+    g_type_query(parent_type, &query);
+    type_info.class_size = query.class_size;
+    type_info.instance_size = query.instance_size;
+
+    new_type = g_type_register_static(parent_type, type_name, &type_info, 0);
+    if (new_type == 0) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "could not create new GType");
+        return;
+    }
+
+	if (!phpg_class_key) {
+		phpg_class_key = g_quark_from_static_string(phpg_class_id);
+	}
+
+    g_type_set_qdata(new_type, phpg_class_key, class);
+    zend_declare_class_constant_long(class, "gtype", sizeof("gtype")-1, new_type);
+
+    zend_update_class_constants(class TSRMLS_CC);
+
+    /* register properties */
+    if (zend_hash_find(&class->default_properties, "__gproperties", sizeof("__gproperties"), (void**)&prop_decls) == SUCCESS) {
+        if (Z_TYPE_PP(prop_decls) != IS_ARRAY) {
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "__gproperties variable has to be an array");
+            return;
+        }
+        if (phpg_register_properties(new_type, *prop_decls TSRMLS_CC) == FAILURE) {
+            return;
+        }
+        zend_hash_del(&class->default_properties, "__gproperties", sizeof("__gproperties"));
+    }
+
+    /* register signals */
+
+    /*TODO interface registration */
+#if 0
+    if (class->num_interfaces > 0) {
+        int i;
+        GType itype;
+        zend_classs_entry *iface;
+        const GInterfaceInfo *iinfo;
+        
+        for (i = 0; i < class->num_interfaces; i++) {
+
+            /* TODO might have to create GInterface type and check if interface class
+             * inherits from it
+             */
+            itype = phpg_gtype_from_class(class->interfaces[i]);
+            /* TODO get interface info */
+        }
+    }
+#endif
+
+    /* run class init */
+    /* TODO virtual method stuff */
+
+    RETURN_TRUE;
+}
+/* }}} */
 
 /* {{{ GObject reflection info */
 static
@@ -994,8 +1436,18 @@ ZEND_BEGIN_ARG_INFO(arginfo_gobject_unblock, 0)
 ZEND_END_ARG_INFO();
 
 static
+ZEND_BEGIN_ARG_INFO(arginfo_gobject_list_properties, 0)
+    ZEND_ARG_INFO(0, gtype)
+ZEND_END_ARG_INFO();
+
+static
 ZEND_BEGIN_ARG_INFO(arginfo_gobject_stop_emission, 0)
     ZEND_ARG_INFO(0, signal)
+ZEND_END_ARG_INFO();
+
+static
+ZEND_BEGIN_ARG_INFO(arginfo_gobject_register_type, 0)
+    ZEND_ARG_INFO(0, class)
 ZEND_END_ARG_INFO();
 
 /* }}} */
@@ -1023,6 +1475,8 @@ static zend_function_entry gobject_methods[] = {
     PHP_ME(GObject, is_connected,         arginfo_gobject_is_connected          , ZEND_ACC_PUBLIC)
     PHP_ME(GObject, signal_query,         arginfo_gobject_signal_query          , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, stop_emission,        arginfo_gobject_stop_emission         , ZEND_ACC_PUBLIC)
+    PHP_ME(GObject, register_type,        arginfo_gobject_register_type         , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+    PHP_ME(GObject, list_properties,      arginfo_gobject_list_properties       , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, signal_list_ids,      arginfo_gobject_signal_list_ids       , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_ME(GObject, signal_list_names,    arginfo_gobject_signal_list_names     , ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
     PHP_MALIAS(GObject, emit_stop_by_name, stop_emission, arginfo_gobject_stop_emission, ZEND_ACC_PUBLIC)
@@ -1056,7 +1510,7 @@ void phpg_gobject_register_self(TSRMLS_D)
     gobject_ce = phpg_register_class("GObject", gobject_methods, NULL, 0, gobject_props_info, NULL, G_TYPE_OBJECT TSRMLS_CC);
     phpg_register_int_constant(gobject_ce, "gtype", sizeof("gtype")-1, G_TYPE_OBJECT);
 
-	/* Fundamental GTypes */
+    /* Fundamental GTypes */
     phpg_register_int_constant(gobject_ce, "TYPE_INVALID", sizeof("TYPE_INVALID")-1, G_TYPE_INVALID);
     phpg_register_int_constant(gobject_ce, "TYPE_NONE", sizeof("TYPE_NONE")-1, G_TYPE_NONE);
     phpg_register_int_constant(gobject_ce, "TYPE_INTERFACE", sizeof("TYPE_INTERFACE")-1, G_TYPE_INTERFACE);
@@ -1088,7 +1542,7 @@ void phpg_gobject_register_self(TSRMLS_D)
     phpg_register_int_constant(gobject_ce, "IO_HUP", sizeof("IO_HUP")-1, G_IO_HUP);
     phpg_register_int_constant(gobject_ce, "IO_NVAL", sizeof("IO_NVAL")-1, G_IO_NVAL);
 
-	/* signal type constants */
+	/* Signal type constants */
 	phpg_register_int_constant(gobject_ce, "SIGNAL_RUN_FIRST", sizeof("SIGNAL_RUN_FIRST")-1, G_SIGNAL_RUN_FIRST);
     phpg_register_int_constant(gobject_ce, "SIGNAL_RUN_LAST", sizeof("SIGNAL_RUN_LAST")-1, G_SIGNAL_RUN_LAST);
     phpg_register_int_constant(gobject_ce, "SIGNAL_RUN_CLEANUP", sizeof("SIGNAL_RUN_CLEANUP")-1, G_SIGNAL_RUN_CLEANUP);
@@ -1096,6 +1550,14 @@ void phpg_gobject_register_self(TSRMLS_D)
     phpg_register_int_constant(gobject_ce, "SIGNAL_DETAILED", sizeof("SIGNAL_DETAILED")-1, G_SIGNAL_DETAILED);
     phpg_register_int_constant(gobject_ce, "SIGNAL_ACTION", sizeof("SIGNAL_ACTION")-1, G_SIGNAL_ACTION);
     phpg_register_int_constant(gobject_ce, "SIGNAL_NO_HOOKS", sizeof("SIGNAL_NO_HOOKS")-1, G_SIGNAL_NO_HOOKS);
+    
+    /* Paramspec constants */
+    phpg_register_int_constant(gobject_ce, "PARAM_READABLE", sizeof("PARAM_READABLE")-1, G_PARAM_READABLE);
+    phpg_register_int_constant(gobject_ce, "PARAM_WRITABLE", sizeof("PARAM_WRITABLE")-1, G_PARAM_WRITABLE);
+    phpg_register_int_constant(gobject_ce, "PARAM_CONSTRUCT", sizeof("PARAM_CONSTRUCT")-1, G_PARAM_CONSTRUCT);
+    phpg_register_int_constant(gobject_ce, "PARAM_CONSTRUCT_ONLY", sizeof("PARAM_CONSTRUCT_ONLY")-1, G_PARAM_CONSTRUCT_ONLY);
+    phpg_register_int_constant(gobject_ce, "PARAM_LAX_VALIDATION", sizeof("PARAM_LAX_VALIDATION")-1, G_PARAM_LAX_VALIDATION);
+    phpg_register_int_constant(gobject_ce, "PARAM_READWRITE", sizeof("PARAM_READWRITE")-1, G_PARAM_READWRITE);
 }
 
 #endif /* HAVE_PHP_GTK */

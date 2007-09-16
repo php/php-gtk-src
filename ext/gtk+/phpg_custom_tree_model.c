@@ -377,7 +377,7 @@ static void phpg_custom_tree_model_get_value(GtkTreeModel*tree_model,
 	if (call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 2, args, 0, NULL TSRMLS_CC) == SUCCESS
 		&& retval) {
 		if (Z_TYPE_P(retval) != IS_NULL) {
-			if (phpg_gvalue_from_zval(value, retval, 1 TSRMLS_CC) == FAILURE) {
+			if (phpg_gvalue_from_zval(value, &retval, 1 TSRMLS_CC) == FAILURE) {
 				php_error(E_WARNING, "Could not convert return value to appropriate type");
 			}
 		}

@@ -31,6 +31,9 @@ typedef struct {
 	GType type;
 } phpg_gtype_t;
 
+PHP_GTK_EXPORT_CE(gtype_ce) = NULL;
+static zend_object_handlers phpg_gtype_handlers;
+
 static PHP_METHOD(GType, __construct);
 PHPG_PROP_READER(GType, type);
 PHPG_PROP_READER(GType, name);
@@ -46,8 +49,6 @@ static prop_info_t gtype_props_info[] = {
 	{ "name", PHPG_PROP_READ_FN(GType, name), NULL },
 	{ NULL, NULL, NULL },
 };
-
-PHP_GTK_EXPORT_CE(gtype_ce) = NULL;
 
 static void gtype_free_object_storage(phpg_gtype_t *object TSRMLS_DC)
 {
@@ -74,6 +75,34 @@ static zend_object_value gtype_create_object(zend_class_entry *ce TSRMLS_DC)
 	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) gtype_free_object_storage, NULL TSRMLS_CC);
 
 	return zov;
+}
+
+static int phpg_gtype_cast_object(zval *readobj, zval *writeobj, int type TSRMLS_DC)
+{
+	phpg_gtype_t *pobj = zend_object_store_get_object(readobj TSRMLS_CC);
+
+	if (type == IS_LONG) {
+		INIT_PZVAL(writeobj);
+		ZVAL_LONG(writeobj, pobj->type);
+		return SUCCESS;
+	}
+
+	/*
+	 * XXX doesn't work, since ZEND_ECHO opcode calls zend_std_object_cast_to_string()
+	 * which invokes __toString() instead
+	 */
+	if (type == IS_STRING) {
+		char *buf;
+		int buf_len;
+		const char *name = g_type_name(pobj->type);
+
+		buf_len = spprintf(&buf, 128, "[GType %s (%lu)]", name ? name : "invalid", pobj->type);
+		INIT_PZVAL(writeobj);
+		ZVAL_STRINGL(writeobj, buf, buf_len, 0);
+		return SUCCESS;
+	}
+
+	return FAILURE;
 }
 
 static PHP_METHOD(GType, __construct) {}
@@ -201,6 +230,9 @@ PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
 void phpg_gtype_register_self(TSRMLS_D)
 {
 	if (gtype_ce) return;
+
+	phpg_gtype_handlers = php_gtk_handlers;
+	phpg_gtype_handlers.cast_object = phpg_gtype_cast_object;
 
 	gtype_ce = phpg_register_class("GType", gtype_methods, NULL, 0, gtype_props_info, gtype_create_object, 0 TSRMLS_CC);
 }
