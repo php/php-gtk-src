@@ -1,3 +1,24 @@
+2007-09-16  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * config.m4
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtktreeview.overrides
+      ext/gtk+/php_gtk+_types.c
+      ext/gtk+/phpg_custom_tree_model.c
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_util.c
+      main/phpg_closure.c
+      main/phpg_gobject.c
+      main/phpg_gtype.c
+      main/phpg_gvalue.c
+      main/phpg_paramspec.c
+      main/phpg_support.c:
+      First step in the implementation of custom GType's in PHP userland.
+      Signals and interfaces are not implemented yet. See
+      demos/examples/properties.php for an example on how to register a custom
+      type with your own properties.
+
 2007-08-17  Andrei Zmievski  <andrei@gravitonic.com>
 
     * config.m4:
