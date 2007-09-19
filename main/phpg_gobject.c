@@ -935,6 +935,7 @@ static void phpg_object_get_property(GObject *object, guint property_id, GValue 
     zval *php_pspec = NULL;
     zval *retval = NULL;
 
+	TSRMLS_FETCH();
     phpg_gobject_new(&php_object, object TSRMLS_CC);
     phpg_paramspec_new(&php_pspec, pspec TSRMLS_CC);
 
@@ -960,6 +961,7 @@ static void phpg_object_set_property(GObject *object, guint property_id, const G
     zval *php_value = NULL;
     zval *retval = NULL;
 
+	TSRMLS_FETCH();
     if (phpg_gvalue_to_zval(value, &php_value, TRUE, TRUE TSRMLS_CC) == FAILURE) {
         php_error(E_WARNING, "phpg_object_set_property: could not convert GValue to PHP value");
         zval_ptr_dtor(&php_value);
@@ -988,6 +990,7 @@ static void phpg_object_class_init(GObjectClass *class, zend_class_entry *ce)
 static GParamSpec* phpg_create_property(const char *prop_name, GType prop_type, const char *nick, const char *blurb, zval *type_args, GParamFlags flags)
 {
     GParamSpec *pspec = NULL;
+	TSRMLS_FETCH();
 
     switch (G_TYPE_FUNDAMENTAL(prop_type)) {
         case G_TYPE_CHAR:
@@ -1164,6 +1167,8 @@ static int phpg_register_properties(GType type, zval *properties)
     zval *type_args = NULL;
     zval *php_prop_type;
 
+	TSRMLS_FETCH();
+
     oclass = g_type_class_ref(type);
     if (!oclass) {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "couuld not get a reference to type class");
@@ -1258,7 +1263,7 @@ static PHP_METHOD(GObject, register_type)
         return;
     }
 
-    parent_type = phpg_gtype_from_class(class);
+    parent_type = phpg_gtype_from_class(class TSRMLS_CC);
     if (!parent_type) {
         return;
     }
@@ -1285,7 +1290,7 @@ static PHP_METHOD(GObject, register_type)
 	}
 
     g_type_set_qdata(new_type, phpg_class_key, class);
-    zend_declare_class_constant_long(class, "gtype", sizeof("gtype")-1, new_type);
+    zend_declare_class_constant_long(class, "gtype", sizeof("gtype")-1, new_type TSRMLS_CC);
 
     zend_update_class_constants(class TSRMLS_CC);
 
@@ -1295,7 +1300,7 @@ static PHP_METHOD(GObject, register_type)
             php_error_docref(NULL TSRMLS_CC, E_WARNING, "__gproperties variable has to be an array");
             return;
         }
-        if (phpg_register_properties(new_type, *prop_decls TSRMLS_CC) == FAILURE) {
+        if (phpg_register_properties(new_type, *prop_decls) == FAILURE) {
             return;
         }
         zend_hash_del(&class->default_properties, "__gproperties", sizeof("__gproperties"));

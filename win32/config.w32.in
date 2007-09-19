@@ -154,5 +154,5 @@ var php_usual_lib_suspects = "..\\php_build\\lib;..\\win32build\\lib";
 
 probe_basic_headers();
 
-ADD_SOURCES("main", "php_gtk.c php_gtk_ext.w32.c php_gtk_util.c phpg_closure.c phpg_exceptions.c phpg_gboxed.c phpg_gobject.c phpg_gpointer.c phpg_gtype.c phpg_gvalue.c phpg_atom.c phpg_support.c", "php-gtk");
+ADD_SOURCES("main", "php_gtk.c php_gtk_ext.w32.c php_gtk_util.c phpg_closure.c phpg_exceptions.c phpg_gboxed.c phpg_gobject.c phpg_gpointer.c phpg_gtype.c phpg_gvalue.c phpg_atom.c phpg_support.c phpg_paramspec.c", "php-gtk");
 

@@ -504,6 +504,7 @@ PHP_GTK_API void phpg_gdkatom_new(zval **zobj, GdkAtom atom TSRMLS_DC);
 PHP_GTK_API GdkAtom phpg_gdkatom_from_zval(zval *value TSRMLS_DC);
 
 /* GParamSpec */
+void phpg_paramspec_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_paramspec_new(zval **zobj, GParamSpec *pspec TSRMLS_DC);
 static inline phpg_paramspec_t* phpg_gparamspec_get(zval *zobj TSRMLS_DC)
 {

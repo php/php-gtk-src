@@ -103,7 +103,7 @@ static PHP_METHOD(GParamSpec, __tostring)
 /* {{{ GParamSpec properties */
 PHPG_PROP_READER(GParamSpec, gtype)
 {
-	phpg_gtype_new(return_value, G_PARAM_SPEC_TYPE(((phpg_paramspec_t *)object)->pspec));
+	phpg_gtype_new(return_value, G_PARAM_SPEC_TYPE(((phpg_paramspec_t *)object)->pspec) TSRMLS_CC);
     return SUCCESS;
 }
 
@@ -148,13 +148,13 @@ PHPG_PROP_READER(GParamSpec, flags)
 
 PHPG_PROP_READER(GParamSpec, owner_type)
 {
-	phpg_gtype_new(return_value, ((phpg_paramspec_t *)object)->pspec->owner_type);
+	phpg_gtype_new(return_value, ((phpg_paramspec_t *)object)->pspec->owner_type TSRMLS_CC);
     return SUCCESS;
 }
 
 PHPG_PROP_READER(GParamSpec, value_type)
 {
-	phpg_gtype_new(return_value, ((phpg_paramspec_t *)object)->pspec->value_type);
+	phpg_gtype_new(return_value, ((phpg_paramspec_t *)object)->pspec->value_type TSRMLS_CC);
     return SUCCESS;
 }
 
