@@ -1,3 +1,13 @@
+2007-09-19  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gtk.overrides
+      main/php_gtk.h
+      main/phpg_gobject.c
+      main/phpg_paramspec.c
+      win32/config.w32.in:
+      Fixes for TSRM stuff for windows build - the 2.10 in overrides needs to be
+      quoted or it's seen as 2.1 and version_compare loses its mind
+
 2007-09-16  Andrei Zmievski  <andrei@gravitonic.com>
 
     * config.m4
