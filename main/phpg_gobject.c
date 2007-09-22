@@ -400,6 +400,7 @@ static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int connect_t
     obj = PHPG_GOBJECT(this_ptr);
     if (!g_signal_parse_name(signal, G_OBJECT_TYPE(obj), &signal_id, &detail, TRUE)) {
         php_error(E_WARNING, "%s(): unknown signal name '%s'", get_active_function_name(TSRMLS_C), signal);
+        if (extra) zval_ptr_dtor(&extra);
         return;
     }
 
@@ -700,12 +701,14 @@ static PHP_METHOD(GObject, emit)
     obj = PHPG_GOBJECT(this_ptr);
     if (!g_signal_parse_name(signal, G_OBJECT_TYPE(obj), &signal_id, &detail, TRUE)) {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "unknown signal name '%s'", signal);
+        if (extra) zval_ptr_dtor(&extra);
         return;
     }
 
     g_signal_query(signal_id, &query);
     if (extra && zend_hash_num_elements(Z_ARRVAL_P(extra)) != query.n_params) {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "%d parameters needed for signal '%s', %d given", query.n_params, signal, zend_hash_num_elements(Z_ARRVAL_P(extra)));
+        zval_ptr_dtor(&extra);
         return;
     }
 
@@ -724,7 +727,7 @@ static PHP_METHOD(GObject, emit)
             if (phpg_gvalue_from_zval(&params[i], item, TRUE TSRMLS_CC) == FAILURE) {
                 php_error_docref(NULL TSRMLS_CC, E_WARNING,
                                  "could not convert value to %s for parameter %d",
-                                 g_type_name(G_VALUE_TYPE(&params[i])), i-1);
+                                 g_type_name(G_VALUE_TYPE(&params[i])), i);
                 goto cleanup;
             }
         }
@@ -939,7 +942,7 @@ static void phpg_object_get_property(GObject *object, guint property_id, GValue 
     phpg_gobject_new(&php_object, object TSRMLS_CC);
     phpg_paramspec_new(&php_pspec, pspec TSRMLS_CC);
 
-    zend_call_method_with_1_params(&php_object, Z_OBJCE_P(php_object), NULL, "do_get_property", &retval, php_pspec);
+    zend_call_method_with_1_params(&php_object, Z_OBJCE_P(php_object), NULL, "__get_gproperty", &retval, php_pspec);
     SEPARATE_ZVAL(&retval);
 
     if (retval) {
@@ -971,7 +974,7 @@ static void phpg_object_set_property(GObject *object, guint property_id, const G
     phpg_gobject_new(&php_object, object TSRMLS_CC);
     phpg_paramspec_new(&php_pspec, pspec TSRMLS_CC);
 
-    zend_call_method_with_2_params(&php_object, Z_OBJCE_P(php_object), NULL, "do_set_property", &retval, php_pspec, php_value);
+    zend_call_method_with_2_params(&php_object, Z_OBJCE_P(php_object), NULL, "__set_gproperty", &retval, php_pspec, php_value);
 
     if (retval) {
         zval_ptr_dtor(&retval);
@@ -1236,13 +1239,115 @@ static int phpg_register_properties(GType type, zval *properties)
     return retval;
 }
 
+static int phpg_override_signal(GType type, const char *signal_name)
+{
+    guint signal_id;
+
+    signal_id = g_signal_lookup(signal_name, type);
+    if (!signal_id) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "could not find signal '%s'", signal_name);
+        return FAILURE;
+    }
+
+    g_signal_override_class_closure(signal_id, type, phpg_get_signal_class_closure());
+    return SUCCESS;
+}
+
+static int phpg_create_signal(GType type, const char *signal_name, zval *data)
+{
+    long signal_flags;
+    zval *php_return_type;
+    zval *php_param_types;
+    GType return_type;
+    GType *param_types;
+    guint n_params, i, signal_id;
+    zval **item;
+
+    if (!php_gtk_parse_args_hash(data, "lVa", &signal_flags, &php_return_type, &php_param_types)) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "incorrect format for '%s' signal spec", signal_name);
+        return FAILURE;
+    }
+
+    return_type = phpg_gtype_from_zval(php_return_type);
+    if (0 == return_type) {
+        return FAILURE;
+    }
+
+    n_params = zend_hash_num_elements(Z_ARRVAL_P(php_param_types));
+    param_types = safe_emalloc(n_params, sizeof(GType), 0);
+    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_param_types)), i = 0;
+         zend_hash_get_current_data(Z_ARRVAL_P(php_param_types), (void**)&item) == SUCCESS;
+         zend_hash_move_forward(Z_ARRVAL_P(php_param_types)), i++) {
+
+        param_types[i] = phpg_gtype_from_zval(*item);
+        if (0 == param_types[i]) {
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "could not get type of param #%d gor signal '%s'", i+1, signal_name);
+            efree(param_types);
+            return FAILURE;
+        }
+    }
+
+    signal_id = g_signal_newv(signal_name, type, signal_flags, phpg_get_signal_class_closure(), 
+                              (GSignalAccumulator)0, NULL, (GSignalCMarshaller)0,
+                              return_type, n_params, param_types);
+    efree(param_types);
+
+    if (0 == signal_id) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "could not create signal '%s'", signal_name);
+        return FAILURE;
+    }
+
+    return SUCCESS;
+}
+
+static int phpg_register_signals(GType type, zval *signals)
+{
+    GObjectClass *oclass;
+    zval **data;
+    char *str_key;
+    uint str_key_len;
+    ulong num_key;
+    int retval = SUCCESS;
+
+    oclass = g_type_class_ref(type);
+    if (!oclass) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "couuld not get a reference to type class");
+        return FAILURE;
+    }
+
+    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(signals));
+         zend_hash_get_current_data(Z_ARRVAL_P(signals), (void**)&data) == SUCCESS;
+         zend_hash_move_forward(Z_ARRVAL_P(signals))) {
+
+        if (zend_hash_get_current_key_ex(Z_ARRVAL_P(signals), &str_key, &str_key_len,
+                                         &num_key, 0, NULL) != HASH_KEY_IS_STRING) {
+            continue;
+        }
+
+        if (Z_TYPE_PP(data) == IS_NULL ||
+            (Z_TYPE_PP(data) == IS_STRING &&
+             !strcmp(Z_STRVAL_PP(data), "override"))) {
+            retval = phpg_override_signal(type, str_key);
+        } else {
+            retval = phpg_create_signal(type, str_key, *data);
+        }
+
+        if (retval == FAILURE) {
+            break;
+        }
+    }
+
+    g_type_class_unref(oclass);
+    return retval;
+}
+
 static PHP_METHOD(GObject, register_type)
 {
     zend_class_entry *class = gobject_ce;
     GType parent_type, new_type;
     GTypeQuery query;
     const char *type_name;
-    zval **prop_decls;
+    zval **prop_decls, **signal_decls;
 
     GTypeInfo type_info = {
         0,    /* class_size */
@@ -1307,6 +1412,16 @@ static PHP_METHOD(GObject, register_type)
     }
 
     /* register signals */
+    if (zend_hash_find(&class->default_properties, "__gsignals", sizeof("__gsignals"), (void**)&signal_decls) == SUCCESS) {
+        if (Z_TYPE_PP(signal_decls) != IS_ARRAY) {
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "__gsignals variable has to be an array");
+            return;
+        }
+        if (phpg_register_signals(new_type, *signal_decls TSRMLS_CC) == FAILURE) {
+            return;
+        }
+        zend_hash_del(&class->default_properties, "__gsignals", sizeof("__gsignals"));
+    }
 
     /*TODO interface registration */
 #if 0

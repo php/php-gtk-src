@@ -518,6 +518,7 @@ static inline phpg_paramspec_t* phpg_gparamspec_get(zval *zobj TSRMLS_DC)
 /* Closures */
 PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, int connect_type, zval *replace_object TSRMLS_DC);
 PHP_GTK_API void phpg_watch_closure(zval *obj, GClosure *closure TSRMLS_DC);
+PHP_GTK_API GClosure* phpg_get_signal_class_closure();
 
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtype_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gobject_ce);

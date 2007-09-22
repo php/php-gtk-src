@@ -198,6 +198,129 @@ PHP_GTK_API void phpg_cb_data_destroy(gpointer data)
     efree(cbd);
 }
 
+static void phpg_signal_class_closure_marshal(GClosure     *closure,
+                                              GValue       *return_value,
+                                              guint         n_param_values,
+                                              const GValue *param_values,
+                                              gpointer      invocation_hint,
+                                              gpointer      marshal_data)
+{
+    GObject *object;
+    GSignalInvocationHint *hint = (GSignalInvocationHint *)invocation_hint;
+    zval *php_object = NULL;
+    gchar *method_name, *tmp, *lc_method_name;
+    gsize method_name_len;
+    zval ***params = NULL;
+    zval *retval = NULL;
+    zval *item, z_method_name;
+    phpg_gboxed_t *boxed_item;
+    int i, k;
+
+    phpg_return_if_fail(invocation_hint != NULL);
+    /* verify that first parameter is an object */
+    object = g_value_get_object(&param_values[0]);
+    phpg_return_if_fail(object != NULL && G_IS_OBJECT(object));
+
+    /* create wrapper for the object */
+    phpg_gobject_new(&php_object, object TSRMLS_CC);
+    if (Z_TYPE_P(php_object) == IS_NULL) {
+        zval_ptr_dtor(&php_object);
+        return;
+    }
+
+    method_name = g_strconcat("__do_", g_signal_name(hint->signal_id), NULL);
+    for (tmp = method_name; *tmp != '\0'; tmp++) {
+        if (*tmp == '-') *tmp = '_';
+    }
+
+    method_name_len = strlen(method_name);
+    lc_method_name = g_ascii_strdown(method_name, method_name_len);
+    if (!zend_hash_exists(&Z_OBJCE_P(php_object)->function_table, lc_method_name, method_name_len+1)) {
+        union _zend_function *func = NULL;
+
+        g_free(lc_method_name);
+        
+        if (Z_OBJ_HT_P(php_object)->get_method != NULL
+            && (func = Z_OBJ_HT_P(php_object)->get_method(&php_object, method_name, method_name_len TSRMLS_CC)) != NULL) {
+            if (func->type == ZEND_INTERNAL_FUNCTION
+                && ((zend_internal_function*)func)->handler == zend_std_call_user_call
+               ) {
+                efree(((zend_internal_function*)func)->function_name);
+                efree(func);
+                zval_ptr_dtor(&php_object);
+                return;
+            }
+        }
+        zval_ptr_dtor(&php_object);
+        return;
+    }
+    g_free(lc_method_name);
+
+	params = (zval ***)emalloc((n_param_values-1) * sizeof(zval **));
+    for (i = 0; i < n_param_values-1; i++) {
+        params[i] = (zval **) emalloc(sizeof(zval *));
+        *(params[i]) = NULL;
+        if (phpg_gvalue_to_zval(&param_values[i+1], params[i], FALSE, TRUE TSRMLS_CC) != SUCCESS) {
+            goto err_class_closure_marshal;
+        }
+    }
+
+    ZVAL_STRINGL(&z_method_name, method_name, method_name_len, 0);
+    call_user_function_ex(EG(function_table), &php_object, &z_method_name,
+                          &retval, n_param_values-1, params, 0, NULL TSRMLS_CC);
+
+
+    for (k = 0; k < i; k++) {
+        item = *params[k];
+        if (Z_TYPE_P(item) == IS_OBJECT &&
+            instanceof_function(Z_OBJCE_P(item), gboxed_ce TSRMLS_CC) &&
+            item->refcount > 1) {
+            boxed_item = phpg_gboxed_get(item TSRMLS_CC);
+            if (!boxed_item->free_on_destroy) {
+                boxed_item->boxed = g_boxed_copy(boxed_item->gtype, boxed_item->boxed);
+                boxed_item->free_on_destroy = TRUE;
+            }
+        }
+    }
+
+	if (retval) {
+		if (return_value) {
+			if (phpg_gvalue_from_zval(return_value, &retval, TRUE TSRMLS_CC) == FAILURE) {
+                php_error(E_WARNING, "Could not convert return value of custom signal action '%s' to '%s'",
+                          method_name, g_type_name(G_VALUE_TYPE(return_value)));
+            }
+        }
+		zval_ptr_dtor(&retval);
+	}
+
+    i--; // adjust for cleanup
+
+err_class_closure_marshal:
+    for ( ; i >= 0; i--) {
+        zval_ptr_dtor(params[i]);
+        efree(params[i]);
+    }
+    efree(params);
+    g_free(method_name);
+    zval_ptr_dtor(&php_object);
+}
+
+
+PHP_GTK_API GClosure* phpg_get_signal_class_closure()
+{
+    static GClosure *closure = NULL;
+
+    if (closure == NULL) {
+        closure = g_closure_new_simple(sizeof(GClosure), NULL);
+        g_closure_set_marshal(closure, phpg_signal_class_closure_marshal);
+
+        g_closure_ref(closure);
+        g_closure_sink(closure);
+    }
+
+    return closure;
+}
+
 #endif /* HAVE_PHP_GTK */
 
 /* vim: set fdm=marker et sts=4: */
