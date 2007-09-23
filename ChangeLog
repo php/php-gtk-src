@@ -1,3 +1,11 @@
+2007-09-22  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * demos/examples/signals.php
+      main/php_gtk.h
+      main/phpg_closure.c
+      main/phpg_gobject.c:
+      Custom signals support. See demos/examples/signals.php for an example.
+
 2007-09-19  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/gtk.overrides
