@@ -1243,6 +1243,8 @@ static int phpg_override_signal(GType type, const char *signal_name)
 {
     guint signal_id;
 
+	TSRMLS_FETCH();
+
     signal_id = g_signal_lookup(signal_name, type);
     if (!signal_id) {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "could not find signal '%s'", signal_name);
@@ -1262,6 +1264,8 @@ static int phpg_create_signal(GType type, const char *signal_name, zval *data)
     GType *param_types;
     guint n_params, i, signal_id;
     zval **item;
+
+	TSRMLS_FETCH();
 
     if (!php_gtk_parse_args_hash(data, "lVa", &signal_flags, &php_return_type, &php_param_types)) {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "incorrect format for '%s' signal spec", signal_name);
@@ -1308,6 +1312,8 @@ static int phpg_register_signals(GType type, zval *signals)
     uint str_key_len;
     ulong num_key;
     int retval = SUCCESS;
+
+	TSRMLS_FETCH();
 
     oclass = g_type_class_ref(type);
     if (!oclass) {

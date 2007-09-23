@@ -216,6 +216,8 @@ static void phpg_signal_class_closure_marshal(GClosure     *closure,
     phpg_gboxed_t *boxed_item;
     int i, k;
 
+	TSRMLS_FETCH();
+
     phpg_return_if_fail(invocation_hint != NULL);
     /* verify that first parameter is an object */
     object = g_value_get_object(&param_values[0]);
