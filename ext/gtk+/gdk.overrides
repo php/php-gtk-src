@@ -1851,10 +1851,60 @@ ZEND_END_ARG_INFO();
 %%
 add GdkPixbuf new_from_gd ZEND_ACC_PUBLIC|ZEND_ACC_STATIC
 
-#if HAVE_GD_BUNDLED
-#include "ext/gd/php_gd.h"
-#include "ext/gd/libgd/gd.h"
-#endif
+/* Avoid needing gd headers when building */
+
+#define gdMaxColors 256
+#define gdTrueColorGetAlpha(c) (((c) & 0x7F000000) >> 24)
+#define gdTrueColorGetRed(c) (((c) & 0xFF0000) >> 16)
+#define gdTrueColorGetGreen(c) (((c) & 0x00FF00) >> 8)
+#define gdTrueColorGetBlue(c) ((c) & 0x0000FF)
+typedef struct gdImageStruct {
+	unsigned char ** pixels;
+	int sx;
+	int sy;
+	int colorsTotal;
+	int red[gdMaxColors];
+	int green[gdMaxColors];
+	int blue[gdMaxColors];
+	int open[gdMaxColors];
+	int transparent;
+	int *polyInts;
+	int polyAllocated;
+	struct gdImageStruct *brush;
+	struct gdImageStruct *tile;
+	int brushColorMap[gdMaxColors];
+	int tileColorMap[gdMaxColors];
+	int styleLength;
+	int stylePos;
+	int *style;
+	int interlace;
+	int thick;
+	int alpha[gdMaxColors];
+	int trueColor;
+	int ** tpixels;
+	int alphaBlendingFlag;
+	int antialias;
+	int saveAlphaFlag;
+	int AA;
+	int AA_color;
+	int AA_dont_blend;
+	unsigned char **AA_opacity;
+	int AA_polygon;
+	int AAL_x1;
+	int AAL_y1;
+	int AAL_x2;
+	int AAL_y2;
+	int AAL_Bx_Ax;
+	int AAL_By_Ay;
+	int AAL_LAB_2;
+	float AAL_LAB;
+	int cx1;
+	int cy1;
+	int cx2;
+	int cy2;
+} gdImage;
+
+typedef gdImage * gdImagePtr;
 
 void phpg_free_pixbuf_data(guchar *pixels, gpointer data)
 {
@@ -1863,23 +1913,74 @@ void phpg_free_pixbuf_data(guchar *pixels, gpointer data)
 
 PHP_METHOD
 {
-#if HAVE_GD_BUNDLED
     zval *php_gd;
     gdImagePtr gd;
     guint *data;
     guint pixel;
     GdkPixbuf *pixbuf;
     int x, y, c, alpha;
+    struct _zend_module_entry *module;
+    
+#ifdef WIN32
+	int (__stdcall *phpi_get_le_gd)(void);
+	BOOL (__stdcall *EnumProcessModules)(HANDLE hProcess, HMODULE* lphModule, DWORD cb, LPDWORD lpcbNeeded);
+#else
+	int (*phpi_get_le_gd)(void);
+#endif
+
+	if (zend_hash_find(&module_registry, "gd", sizeof("gd"), (void **)&module) == FAILURE) {
+        php_error(E_ERROR, "The php gd extension must be loaded to use this method");
+        return;
+    }
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "r", &php_gd)) {
         return;
     }
 
-    if (!zend_hash_exists(&module_registry, "gd", sizeof("gd")) ||
-        !zend_hash_exists(EG(function_table), "imagesavealpha", sizeof("imagesavealpha"))) {
-        php_error(E_ERROR, "Extension 'gd' not available or uses GD library version below 2.0");
-        return;
-    }
+#ifdef WIN32
+	if (module->handle == NULL)
+	{
+		/* Decidedly evil hack to be able to GetProcAddress with NULL handle properly */
+		HANDLE cur_proc;
+		HMODULE *modules;
+		DWORD needed, i;
+	    
+	    	HMODULE psapi = LoadLibrary("psapi.dll");
+		if (!psapi)
+		{
+			php_error(E_ERROR, "Could not load gd functions");
+			return;
+		}
+		EnumProcessModules = GetProcAddress(psapi, "EnumProcessModules");
+		if (!EnumProcessModules)
+		{
+			php_error(E_ERROR, "Could not load gd functions");
+			return;
+		}
+		cur_proc = GetCurrentProcess();
+		EnumProcessModules(cur_proc, NULL, 0, &needed);
+		modules = (HMODULE*)alloca(needed);
+		EnumProcessModules(cur_proc, modules, needed, &needed);
+		for (i=0; i < needed/sizeof(HMODULE); i++)
+		{
+			if ((phpi_get_le_gd = (void*)GetProcAddress(modules[i], "phpi_get_le_gd")))
+			break;	
+		}
+		free(modules);
+	}
+	else
+	{
+		phpi_get_le_gd = DL_FETCH_SYMBOL(module->handle, "phpi_get_le_gd");
+	}
+#else
+	phpi_get_le_gd = DL_FETCH_SYMBOL(module->handle, "phpi_get_le_gd");
+#endif
+
+	if (!phpi_get_le_gd)
+	{
+		php_error(E_ERROR, "Could not load gd functions");
+		return;
+	}
 
     ZEND_FETCH_RESOURCE(gd, gdImagePtr, &php_gd, -1, "Image", phpi_get_le_gd());
 
@@ -1940,9 +2041,6 @@ PHP_METHOD
 
     phpg_gobject_new(&return_value, (GObject *)pixbuf TSRMLS_CC);
     g_object_unref(pixbuf); /* phpg_gobject_new() increments reference count */
-#else
-    php_error(E_ERROR, "PHP-GTK was not compiled against PHP with bundled GD library");
-#endif
 }
 
 %%

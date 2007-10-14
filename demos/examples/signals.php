@@ -3,7 +3,7 @@
 class NewType extends GtkButton {
 	public $__gsignals = array(
 		'clicked' => 'override',
-		'mashed'  => array(GObject::SIGNAL_RUN_LAST, GObject::TYPE_BOOLEAN, array(GObject::TYPE_INT, GtkRequisition::gtype)),
+		'mashed'  => array(GObject::SIGNAL_RUN_LAST, GObject::TYPE_BOOLEAN, array(GObject::TYPE_LONG, GtkRequisition::gtype)),
 		);
 
 	function __construct()
