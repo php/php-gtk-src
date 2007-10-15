@@ -1,3 +1,10 @@
+2007-10-14  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * demos/examples/signals.php
+      ext/gtk+/gdk.overrides:
+      Typo in the demo and the long awaited gd fix - we no longer have to or even
+      want to link against gd but can still use it if available
+
 2007-09-23  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * main/phpg_closure.c
