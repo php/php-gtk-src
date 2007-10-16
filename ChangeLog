@@ -1,3 +1,8 @@
+2007-10-15  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * generator/generator.php:
+      GtkPackDirection is an int enum
+
 2007-10-14  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * demos/examples/signals.php
