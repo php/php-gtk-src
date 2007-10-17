@@ -280,3 +280,101 @@ PHP_METHOD
     g_strfreev(apps);
 }
 %% }}}
+
+%% {{{ GtkRecentChooser
+
+%%
+add-arginfo GtkRecentChooser set_sort_func
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_recent_chooser_set_sort_func
+
+static gint
+phpg_recent_chooser_sort_func_marshal(GtkRecentInfo *a, GtkRecentInfo *b, gpointer data)
+{
+    char *callback;
+    int argc = 0, status = 0;
+    zval ***argv = NULL, *retval = NULL; 
+    zval *zinfo_a = NULL, *zinfo_b = NULL;
+    phpg_cb_data_t *calldata = (phpg_cb_data_t *)data;
+    
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(calldata->callback, 0, &callback)) {
+        php_error(
+            E_WARNING,
+            "Unable to invoke callback '%s' specified in %s on line %ld",
+            callback,
+            calldata->src_filename,
+            calldata->src_lineno
+        );
+        
+        efree(callback);
+        return 0;
+    }
+
+    phpg_gboxed_new(&zinfo_a,GTK_TYPE_RECENT_INFO,a,TRUE,TRUE TSRMLS_CC);
+    phpg_gboxed_new(&zinfo_b,GTK_TYPE_RECENT_INFO,b,TRUE,TRUE TSRMLS_CC);
+
+    argv = php_gtk_hash_as_array_offset(calldata->user_args,2,&argc);
+    argv[0] = &zinfo_a;
+    argv[1] = &zinfo_b;
+
+    call_user_function_ex(
+        EG(function_table),
+        NULL,
+        calldata->callback,
+        &retval,
+        argc,
+        argv,
+        0,
+        NULL TSRMLS_CC
+    );
+
+    zval_ptr_dtor(&zinfo_a);
+    zval_ptr_dtor(&zinfo_b);
+
+    if(retval) {
+        convert_to_long(retval);
+        status = Z_LVAL_P(retval);
+        zval_ptr_dtor(&retval);
+    } else {
+        status = 0;
+    }
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
+    efree(callback);
+    efree(argv);
+
+    return status;
+}
+
+PHP_METHOD
+{
+    zval *callback, *vararg;
+    phpg_cb_data_t *calldata;
+
+    NOT_STATIC_METHOD();
+
+    if(!php_gtk_parse_varargs(ZEND_NUM_ARGS(),1,&vararg,"V",&callback)) {
+        return;
+    }
+
+    zval_add_ref(&callback);
+    calldata = phpg_cb_data_new(callback,vararg TSRMLS_CC);
+
+    gtk_recent_chooser_set_sort_func(
+        GTK_RECENT_CHOOSER(PHPG_GOBJECT(this_ptr)),
+        (GtkRecentSortFunc)phpg_recent_chooser_sort_func_marshal,
+        calldata,
+        phpg_cb_data_destroy
+    );
+}
+
+%% }}}
+
