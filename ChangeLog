@@ -1,3 +1,8 @@
+2007-10-17  Anant Narayanan  <anant@kix.in>
+
+    * ext/gtk+/gtk-2.10.overrides:
+      GtkRecentChooser::set_sort_func(), patch by Bob Majdak Jr.
+
 2007-10-15  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * generator/generator.php:
