@@ -378,3 +378,91 @@ PHP_METHOD
 
 %% }}}
 
+%% {{{ GtkAssistant
+
+%%
+add-arginfo GtkAssistant set_forward_page_func
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_assistant_set_forward_page_func
+
+static gint
+phpg_assistant_forward_page_func_marshal(gint cur, gpointer data)
+{
+    char *callback;
+    int argc = 0, status = 0;
+    zval ***argv = NULL, *retval = NULL;
+    zval *zcur;
+    phpg_cb_data_t *calldata = (phpg_cb_data_t *)data;
+    
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(calldata->callback, 0, &callback)) {
+        php_error(
+            E_WARNING,
+            "Unable to invoke callback '%s' specified in %s on line %ld",
+            callback,
+            calldata->src_filename,
+            calldata->src_lineno
+        );
+        
+        efree(callback);
+        return 0;
+    }
+
+    MAKE_STD_ZVAL(zcur);
+    ZVAL_LONG(zcur,cur);
+
+    argv = php_gtk_hash_as_array_offset(calldata->user_args,1,&argc);
+    argv[0] = &zcur;
+
+    call_user_function_ex(
+        EG(function_table),
+        NULL,
+        calldata->callback,
+        &retval,
+        argc,
+        argv,
+        0,
+        NULL TSRMLS_CC
+    );
+
+    convert_to_long(retval);
+    status = Z_LVAL_P(retval);
+    zval_ptr_dtor(&retval);
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
+    efree(callback);
+    efree(argv);
+
+    return status;
+}
+
+PHP_METHOD
+{
+    zval *callback, *vararg;
+    phpg_cb_data_t *calldata;
+
+    NOT_STATIC_METHOD();
+
+    if(!php_gtk_parse_varargs(ZEND_NUM_ARGS(),1,&vararg,"V",&callback)) {
+        return;
+    }
+
+    zval_add_ref(&callback);
+    calldata = phpg_cb_data_new(callback,vararg TSRMLS_CC);
+
+    gtk_assistant_set_forward_page_func(
+        GTK_ASSISTANT(PHPG_GOBJECT(this_ptr)),
+        (GtkAssistantPageFunc)phpg_assistant_forward_page_func_marshal,
+        calldata,
+        phpg_cb_data_destroy
+    );
+}
+
+%% }}}
