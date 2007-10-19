@@ -1,3 +1,8 @@
+2007-10-18  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gtk-2.10.overrides:
+      GtkAssistant setforwardpagefunc thanks to Bob Majdak Jr.
+
 2007-10-17  Anant Narayanan  <anant@kix.in>
 
     * ext/gtk+/gtk-2.10.overrides:
