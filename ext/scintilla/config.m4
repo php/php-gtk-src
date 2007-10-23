@@ -10,7 +10,7 @@ if test "$PHP_GTK_SCINTILLA" != "no"; then
   AC_DEFINE(HAVE_SCINTILLA, 1, [scintilla support])
   AM_PATH_GLIB_2_0(gthread_required_version,,[AC_MSG_ERROR(The scintilla extension requires GThread gthread_required_version or higher)],gthread)
   PHP_EVAL_INCLINE($GLIB_CFLAGS)
-  PHP_EVAL_LIBLINE($GLIB_LIBS, PHP_GTK2_SHARED_LIBADD)
+  PHP_EVAL_LIBLINE($GLIB_LIBS -lstdc++, PHP_GTK2_SHARED_LIBADD)
   PHP_REQUIRE_CXX()
 
   scintilla_lib_srcs="libscintilla/src/AutoComplete.cxx \
