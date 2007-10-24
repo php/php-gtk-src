@@ -13,9 +13,6 @@ if test "$PHP_GTK_SCINTILLA" != "no"; then
   PHP_EVAL_LIBLINE($GLIB_LIBS -lstdc++, PHP_GTK2_SHARED_LIBADD)
   PHP_REQUIRE_CXX()
 
-  CFLAGS="$CFLAGS -DSCI_LEXER"
-  CXXFLAGS="$CXXFLAGS -DSCI_LEXER"
-
   scintilla_lib_srcs="libscintilla/src/AutoComplete.cxx \
 libscintilla/src/CallTip.cxx \
 libscintilla/src/CellBuffer.cxx \

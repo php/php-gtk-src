@@ -1,4 +1,6 @@
 
+EXTRA_CXXFLAGS = $(CXXFLAGS) -DSCI_LEXER
+
 $(builddir)/gen_scintilla.c: 
 	( \
      $(PHP) ext/scintilla/sci_generator.php \
