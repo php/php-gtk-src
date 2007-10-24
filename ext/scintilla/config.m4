@@ -13,6 +13,9 @@ if test "$PHP_GTK_SCINTILLA" != "no"; then
   PHP_EVAL_LIBLINE($GLIB_LIBS -lstdc++, PHP_GTK2_SHARED_LIBADD)
   PHP_REQUIRE_CXX()
 
+  CFLAGS="$CFLAGS -DSCI_LEXER"
+  CXXFLAGS="$CXXFLAGS -DSCI_LEXER"
+
   scintilla_lib_srcs="libscintilla/src/AutoComplete.cxx \
 libscintilla/src/CallTip.cxx \
 libscintilla/src/CellBuffer.cxx \
@@ -102,4 +105,5 @@ libscintilla/ScintillaGTK.cxx"
 
   PHP_GTK_EXTENSION(scintilla, $php_gtk_ext_shared, $scintilla_lib_srcs $scintilla_srcs php_scintilla.c libscintilla/scintilla-marshal.c, gen_scintilla.c, -I@ext_srcdir@ -I@ext_srcdir@/libscintilla -I@ext_srcdir@/libscintilla/include -I@ext_srcdir@/libscintilla/src)
   PHP_ADD_BUILD_DIR($ext_builddir/libscintilla/src)
+
 fi
