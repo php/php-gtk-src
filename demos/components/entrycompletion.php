@@ -58,7 +58,7 @@ class EntryCompletion extends GtkWindow
     
     function __create_completion_model()
     {
-        $store = new GtkListStore(Gtk::TYPE_STRING);
+        $store = new GtkListStore(GObject::TYPE_STRING);
         
         $iter = $store->append();
         $store->set($iter, 0, 'GNOME');
