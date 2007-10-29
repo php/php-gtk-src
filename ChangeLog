@@ -1,3 +1,8 @@
+2007-10-28  Anant Narayanan  <anant@kix.in>
+
+    * demos/components/entrycompletion.php:
+      Fixed demo to use GObject class, Thanks Bob.
+
 2007-10-24  Anant Narayanan  <anant@kix.in>
 
     * ext/scintilla/Makefile.frag
