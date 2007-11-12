@@ -151,23 +151,34 @@ PHP_METHOD
 override gtk_recent_manager_get_items
 PHP_METHOD
 {
-    GtkRecentInfo *info;
-    GList *items;
-    guint count, i;
-    zval *php_info = NULL;
+    GList *list = NULL, *element = NULL;
+    zval *current = NULL;
 
     NOT_STATIC_METHOD();
 
-    items = gtk_recent_manager_get_items(GTK_RECENT_MANAGER(PHPG_GOBJECT(this_ptr)));
-    count = g_list_length(items);
-    array_init(return_value);
-    for (i = 0; i < count; i++) {
-        info = g_list_nth_data(items, i);
-        phpg_gboxed_new(&php_info, GTK_TYPE_RECENT_INFO, &info, TRUE, TRUE TSRMLS_CC);
-        add_next_index_zval(return_value, php_info);
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"")) {
+        return;
     }
-    g_list_foreach(items, (GFunc) gtk_recent_info_unref, NULL);
-    g_list_free(items);
+
+    list = gtk_recent_manager_get_items(GTK_RECENT_MANAGER(PHPG_GOBJECT(this_ptr)));
+
+    array_init(return_value);
+
+    for(element = list; element; element = element->next) {
+        MAKE_STD_ZVAL(current);
+        phpg_gboxed_new(
+            &current,
+            GTK_TYPE_RECENT_INFO,
+            element->data,
+            TRUE,
+            TRUE TSRMLS_CC
+        );
+
+        add_next_index_zval(return_value,current);
+    }
+
+    g_list_foreach(list,(GFunc)gtk_recent_info_unref,NULL);
+    g_list_free(list);
 }
 
 %% }}}
@@ -375,6 +386,97 @@ PHP_METHOD
         phpg_cb_data_destroy
     );
 }
+
+%%
+override gtk_recent_chooser_get_items
+PHP_METHOD
+{
+    GList *list = NULL, *element = NULL;
+    zval *current = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"")) {
+        return;
+    }
+
+    list = gtk_recent_chooser_get_items(GTK_RECENT_CHOOSER(PHPG_GOBJECT(this_ptr)));
+
+    array_init(return_value);
+
+    for(element = list; element; element = element->next) {
+        MAKE_STD_ZVAL(current);
+        phpg_gboxed_new(
+            &current,
+            GTK_TYPE_RECENT_INFO,
+            element->data,
+            TRUE,
+            TRUE TSRMLS_CC
+        );
+
+        add_next_index_zval(return_value,current);
+    }
+
+    g_list_foreach(list,(GFunc)gtk_recent_info_unref,NULL);
+    g_list_free(list);
+}
+
+%%
+override gtk_recent_chooser_get_uris
+PHP_METHOD
+{
+    gchar **list;
+    gsize size, iter;
+
+    NOT_STATIC_METHOD();
+
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"")) {
+        return;
+    }
+
+    list = gtk_recent_chooser_get_uris(
+        GTK_RECENT_CHOOSER(PHPG_GOBJECT(this_ptr)),
+        &size
+    );
+
+    array_init(return_value);
+
+    iter = 0;
+    while(iter < size) {
+        add_next_index_string(return_value,list[iter++],1);
+    }
+
+    g_strfreev(list);	
+}
+
+%%
+override gtk_recent_chooser_list_filters
+PHP_METHOD
+{
+    GSList *list, *element;
+    zval *current;
+
+    NOT_STATIC_METHOD();
+
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"")) {
+        return;
+    }
+
+    list = gtk_recent_chooser_list_filters(
+        GTK_RECENT_CHOOSER(PHPG_GOBJECT(this_ptr))
+    );
+
+    array_init(return_value);
+
+    for(element = list; element; element = element->next) {
+        MAKE_STD_ZVAL(current);
+        phpg_gobject_new(&current,element->data);
+        add_next_index_zval(return_value,current);
+    }	
+
+    g_slist_free(list);
+}
+
 
 %% }}}
 
