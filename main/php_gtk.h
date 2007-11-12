@@ -36,6 +36,24 @@
 #undef lookup
 #endif
 
+/* macro changes in 5.3 */
+#ifndef Z_ADDREF_P
+#define Z_ADDREF_P(x) (x)->refcount++
+#endif
+#ifndef Z_UNSET_ISREF_P
+#define Z_UNSET_ISREF_P(x) (x)->is_ref = 0
+#endif
+#ifndef Z_ADDREF_P
+#define Z_ADDREF_P(x) ZVAL_ADDREF(x)
+#endif
+#ifndef Z_SET_REFCOUNT_P
+#define Z_SET_REFCOUNT_P(x, y) (x)->refcount = (y)
+#endif
+#ifndef Z_REFCOUNT_P
+#define Z_REFCOUNT_P(x) (x)->refcount
+#endif
+
+
 #if HAVE_PHP_GTK
 
 #include "zend_objects_API.h"

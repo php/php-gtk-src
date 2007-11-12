@@ -187,8 +187,8 @@ static zval* style_helper_read_dimension(zval *object, zval *offset, int type TS
 
 	MAKE_STD_ZVAL(result);
 	ZVAL_NULL(result);
-	result->refcount = 0;
-	result->is_ref = 0;
+    Z_SET_REFCOUNT_P(result, 0);
+	Z_UNSET_ISREF_P(result);
 
     switch (sh->type) {
         case STYLE_COLOR_ARRAY:
@@ -491,8 +491,8 @@ PHP_GTK_API zval* phpg_gtktreemodel_read_dimension_handler(zval *object, zval *o
 
     MAKE_STD_ZVAL(result);
     ZVAL_NULL(result);
-    result->refcount = 0;
-    result->is_ref = 0;
+    Z_SET_REFCOUNT_P(result, 0);
+	Z_UNSET_ISREF_P(result);
 
     if (phpg_gboxed_check(offset, GTK_TYPE_TREE_ITER, TRUE TSRMLS_CC)) {
         phpg_modelrow_new(&result, GTK_TREE_MODEL(PHPG_GOBJECT(object)), (GtkTreeIter *)
@@ -914,8 +914,7 @@ zend_object_iterator* phpg_modelrowiter_get_iterator(zend_class_entry *ce, zval 
 #endif
 
     iter_obj = (phpg_modelrowiter_t *) zend_object_store_get_object(object TSRMLS_CC);
-
-    ZVAL_ADDREF(object);
+    Z_ADDREF_P(object);
 	iter_obj->ziter.data  = (void *) object;
 	iter_obj->ziter.funcs = &treemodelrow_iter_funcs;
 
@@ -974,8 +973,8 @@ static zval* treemodelrow_read_dimension(zval *object, zval *offset, int type TS
 
 	MAKE_STD_ZVAL(value);
 	ZVAL_NULL(value);
-	value->refcount = 0;
-	value->is_ref = 0;
+    Z_SET_REFCOUNT_P(value, 0);
+	Z_UNSET_ISREF_P(value);
 
     gtk_tree_model_get_value(row->model, &row->iter, column, &gvalue);
     phpg_gvalue_to_zval(&gvalue, &value, TRUE, TRUE TSRMLS_CC);

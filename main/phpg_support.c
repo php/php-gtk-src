@@ -57,8 +57,8 @@ zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 			ALLOC_ZVAL(result_ptr);
 			*result_ptr = result;
             //INIT_PZVAL(result_ptr);
-            result_ptr->refcount = 0;
-            result_ptr->is_ref = 0;
+			Z_SET_REFCOUNT_P(result_ptr, 0);
+			Z_UNSET_ISREF_P(result_ptr);
         } else {
             result_ptr = EG(uninitialized_zval_ptr);
         }

@@ -1127,8 +1127,8 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
     }
 
     if (result) {
-        result->refcount = 0;
-        result->is_ref = 0;
+		Z_SET_REFCOUNT_P(result, 0);
+		Z_UNSET_ISREF_P(result);
     } else {
         result = zend_get_std_object_handlers()->read_property(object, member, type TSRMLS_CC);
     }
@@ -3073,4 +3073,3 @@ PHP_METHOD
     }
     phpg_gdkatom_new(&return_value, php_atom TSRMLS_CC);
 }
-

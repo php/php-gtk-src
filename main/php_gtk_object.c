@@ -60,7 +60,7 @@ static inline zval* invoke_getter(zval *object, char *property)
 	if (found == SUCCESS) {
 		ALLOC_ZVAL(result_ptr);
 		*result_ptr = result;
-		result_ptr->refcount = 0;
+        Z_SET_REFCOUNT_P(result_ptr, 0);
 		//INIT_PZVAL(result_ptr);
 	}
 

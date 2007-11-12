@@ -275,8 +275,7 @@ static void phpg_signal_class_closure_marshal(GClosure     *closure,
     for (k = 0; k < i; k++) {
         item = *params[k];
         if (Z_TYPE_P(item) == IS_OBJECT &&
-            instanceof_function(Z_OBJCE_P(item), gboxed_ce TSRMLS_CC) &&
-            item->refcount > 1) {
+            instanceof_function(Z_OBJCE_P(item), gboxed_ce TSRMLS_CC) && Z_REFCOUNT_P(item) > 1) {
             boxed_item = phpg_gboxed_get(item TSRMLS_CC);
             if (!boxed_item->free_on_destroy) {
                 boxed_item->boxed = g_boxed_copy(boxed_item->gtype, boxed_item->boxed);
