@@ -1,3 +1,24 @@
+2007-11-12  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gdk.overrides
+      ext/gtk+/php_gtk+_types.c
+      main/php_gtk.h
+      main/php_gtk_object.c
+      main/phpg_closure.c
+      main/phpg_gobject.c
+      main/phpg_support.c:
+      Change to use 5.3 refcount macros, define them in the header so the 5.2.x
+      branch doesn't break
+
+2007-11-12  Bob Majdak Jr  <bob@kateos.org>
+
+    * ext/gtk+/gtk-2.10.overrides:
+      One bugfix to GtkRecentManager::get_items()
+      Three new methods:
+      	GtkRecentChooser::get_items()
+      	GtkRecentChooser::get_uris()
+      	GtkRecentChooser::list_filters()
+
 <<<<<<< ChangeLog
 2007-11-06  Bob Majdak Jr  <bob@kateos.org>
 
