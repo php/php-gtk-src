@@ -194,6 +194,30 @@
   )
 )
 
+(define-method get_capabilities
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_get_capabilities")
+  (return-type "GtkPrintCapabilities")
+)
+
+(define-method has_details
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_has_details")
+  (return-type "gboolean")
+)
+
+(define-method list_papers
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_list_papers")
+  (return-type "GList*")
+)
+
+(define-method request_details
+  (of-object "GtkPrinter")
+  (c-name "gtk_printer_request_details")
+  (return-type "none")
+)
+
 (define-function enumerate_printers
   (c-name "gtk_enumerate_printers")
   (return-type "none")

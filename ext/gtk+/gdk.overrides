@@ -3073,3 +3073,7 @@ PHP_METHOD
     }
     phpg_gdkatom_new(&return_value, php_atom TSRMLS_CC);
 }
+
+%% }}}
+
+%% include gdk-2.12.overrides "2.12"
