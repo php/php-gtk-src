@@ -1,3 +1,17 @@
+2007-11-14  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gdk-2.12.defs
+      ext/gtk+/gdk-2.12.overrides
+      ext/gtk+/gdk.defs
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtk-2.12-types.defs
+      ext/gtk+/gtk-2.12.defs
+      ext/gtk+/gtk-2.12.overrides
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtkunixprint.defs:
+      2.12 defs and beginning of overrides added, a lot more overrides needed
+
 2007-11-12  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/gdk.overrides
