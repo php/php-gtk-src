@@ -470,7 +470,7 @@ PHP_METHOD
 
     for(element = list; element; element = element->next) {
         MAKE_STD_ZVAL(current);
-        phpg_gobject_new(&current,element->data);
+        phpg_gobject_new(&current,element->data TSRMLS_CC);
         add_next_index_zval(return_value,current);
     }	
 
