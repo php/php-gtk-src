@@ -1,3 +1,8 @@
+2007-11-24  Bob Majdak Jr  <bob@kateos.org>
+
+    * ext/gtk+/gtk-2.10.overrides:
+      Fix a compile error for those with threading, simple TSRMLS oversight.
+
 2007-11-14  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/gdk-2.12.defs
