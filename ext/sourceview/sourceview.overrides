@@ -286,3 +286,99 @@ PHP_METHOD
 }
 
 %%}}}
+
+%% {{{ GtkSourceView
+
+%%
+override gtk_source_iter_forward_search
+PHP_METHOD
+{
+	zval *php_iter = NULL, *php_limit = NULL;
+	zval *php_start = NULL, *php_stop = NULL;
+	gchar *str = NULL;
+	gint flags;
+	GtkTextIter start, stop, *limit;
+	gboolean found;
+
+	TSRMLS_FETCH();
+
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"Osi|N",
+		&php_iter, gboxed_ce,
+		&str,
+		&flags,
+		&php_limit, gboxed_ce)) {
+		
+		return;
+	}
+	
+	if(php_limit) {
+		limit = (GtkTextIter *)PHPG_GBOXED(php_limit);
+	} else {
+		limit = NULL;
+	}
+
+	found = gtk_source_iter_forward_search(
+		(GtkTextIter *)PHPG_GBOXED(php_iter),
+		str,
+		flags,
+		&start,
+		&stop,
+		limit
+	);
+	
+	if(found) {
+		phpg_gboxed_new(&php_start, GTK_TYPE_TEXT_ITER, &start, TRUE, TRUE TSRMLS_CC);
+		phpg_gboxed_new(&php_stop, GTK_TYPE_TEXT_ITER, &stop, TRUE, TRUE TSRMLS_CC);
+		php_gtk_build_value(&return_value,"(NN)",php_start,php_stop);
+	} else {
+		php_gtk_build_value(&return_value,"b",FALSE);
+	}
+}
+
+%%
+override gtk_source_iter_backward_search
+PHP_METHOD
+{
+	zval *php_iter = NULL, *php_limit = NULL;
+	zval *php_start = NULL, *php_stop = NULL;
+	gchar *str = NULL;
+	gint flags;
+	GtkTextIter start, stop, *limit;
+	gboolean found;
+
+	TSRMLS_FETCH();
+
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"Osi|N",
+		&php_iter, gboxed_ce,
+		&str,
+		&flags,
+		&php_limit, gboxed_ce)) {
+		
+		return;
+	}
+	
+	if(php_limit) {
+		limit = (GtkTextIter *)PHPG_GBOXED(php_limit);
+	} else {
+		limit = NULL;
+	}
+
+	found = gtk_source_iter_backward_search(
+		(GtkTextIter *)PHPG_GBOXED(php_iter),
+		str,
+		flags,
+		&start,
+		&stop,
+		limit
+	);
+	
+	if(found) {
+		phpg_gboxed_new(&php_start, GTK_TYPE_TEXT_ITER, &start, TRUE, TRUE TSRMLS_CC);
+		phpg_gboxed_new(&php_stop, GTK_TYPE_TEXT_ITER, &stop, TRUE, TRUE TSRMLS_CC);
+		php_gtk_build_value(&return_value,"(NN)",php_start,php_stop);
+	} else {
+		php_gtk_build_value(&return_value,"b",FALSE);
+	}
+}
+
+%%}}}
