@@ -22,7 +22,7 @@ if (CHECK_HEADER("main/php.h") && CHECK_LIB(PHP_LIB) &&
 		/* Create the file if it doesn't exist */
 		var temp = FSO.OpenTextFile("win32\\temp.bat", 8);
 		/* generate source and header files for exported PHP-GTK functions */
-		temp.WriteLine("/* usage: php generator.php [-l logfile] [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] [-f savefile] defsfile */");
+		temp.WriteLine("/* usage: php generator.php [-l logfile] [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] [-f savefile] [-v gtklibversion] defsfile */");
 		temp.WriteLine("mkdir win32\\logs");
 		temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_atk.log -o ext\\gtk+\\atk.overrides -p atk ext\\gtk+\\atk.defs -v " + PHP_GTK_LIBVERSION + " > ext\\gtk+\\gen_atk.c");
 		temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_pango.log -o ext\\gtk+\\pango.overrides -p pango ext\\gtk+\\pango.defs -v " + PHP_GTK_LIBVERSION + " > ext\\gtk+\\gen_pango.c");

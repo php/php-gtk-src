@@ -52,7 +52,7 @@ STDOUT.WriteBlankLines(1);
 ARG_WITH('php-build', 'Path to where you extracted http://www.php.net/extra/win32build.zip. Assumes that it is a sibling of this source dir (..\\php_build) if not specified', 'no');
 ARG_WITH('cygwin', 'Path to cygwin utilities on your system', '\\cygwin');
 ARG_ENABLE('gd', 'Php has static gd', 'no');
-ARG_ENABLE('zts', 'Enable thread safety', 'yes');
+ARG_ENABLE('zts', 'Disable thread safety', 'yes');
 
 // stick objects somewhere outside of the source tree
 ARG_ENABLE('object-out-dir', 'Alternative location for binary objects during build', '');

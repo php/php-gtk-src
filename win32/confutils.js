@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.20 2007-05-29 12:40:22 auroraeosrose Exp $
+// $Id: confutils.js,v 1.21 2008-01-21 06:46:07 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -561,7 +561,7 @@ function CHECK_HEADER(header_name, path_to_check) {
 	var path = search_paths(header_name, path_to_check, "INCLUDE");
 
 	if (!path) {
-		ERROR("Aborting configure process");
+		ERROR("	" + header_name + " not found - aborting configure process");
 	}
 
 	return path;
