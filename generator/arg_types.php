@@ -121,7 +121,7 @@ class Wrapper_Info {
     Purpose:  Base class for argument type handlers
 \*======================================================================*/
 class Arg_Type {
-    function write_param($type, $name, $default, $null_ok, $info, $in_constructor)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         throw new Exception("write_param() not implemented for " . get_class($this));
     }
@@ -155,7 +155,7 @@ class None_Arg extends Arg_Type {
 
 /* {{{ String_Arg */
 class String_Arg extends Arg_Type {
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         if (isset($default)) {
             if ($default != 'NULL')
@@ -214,7 +214,7 @@ class String_Arg extends Arg_Type {
 
 /* {{{ Char_Arg */
 class Char_Arg extends Arg_Type {
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         if (isset($default))
             $info->var_list->add('char', $name . ' = \'' . $default . '\'');
@@ -234,7 +234,7 @@ class Char_Arg extends Arg_Type {
 
 /* {{{ Int_Arg */
 class Int_Arg extends Arg_Type {
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         if (isset($default))
             $info->var_list->add('long', $name . ' = ' . $default);
@@ -268,7 +268,7 @@ class Int_Arg extends Arg_Type {
 
 /* {{{ Bool_Arg */
 class Bool_Arg extends Arg_Type {
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         if (isset($default))
             $info->var_list->add('zend_bool', $name . ' = ' . $default);
@@ -302,7 +302,7 @@ class Bool_Arg extends Arg_Type {
 
 /* {{{ Double_Arg */
 class Double_Arg extends Arg_Type {
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         if (isset($default))
             $info->var_list->add('double', $name . ' = ' . $default);
@@ -351,7 +351,7 @@ class Enum_Arg extends Arg_Type {
         $this->typecode = $typecode;
     }
 
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         if (isset($default))
             $info->var_list->add($this->enum_name, $name . ' = ' . $default);
@@ -386,7 +386,7 @@ class Flags_Arg extends Arg_Type {
         $this->typecode = $typecode;
     }
 
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         if (isset($default))
             $info->var_list->add($this->flag_name, $name . ' = ' . $default);
@@ -422,7 +422,7 @@ class Struct_Arg extends Arg_Type {
                                     "       %sreturn;\n" .
                                     "   }\n\n";
     }
-
+/*
     function write_param($type, $name, $default, $null_ok, &$var_list,
                          &$parse_list, &$arg_list, &$extra_pre_code, &$extra_post_code, $in_constructor)
     {
@@ -451,6 +451,7 @@ class Struct_Arg extends Arg_Type {
         return  "   *return_value = *php_{$typename}_new(" . ((substr($type, -1) != '*') ? '&' : '') . "%s);\n" .
                 "   return;";
     }
+*/
 }
 /* }}} */
 
@@ -484,7 +485,7 @@ class Pointer_Arg extends Arg_Type {
         $this->typecode = $typecode;
     }
 
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         if ($null_ok) {
             $info->var_list->add($this->type, '*' . $name . ' = NULL');
@@ -545,7 +546,7 @@ class Object_Arg extends Arg_Type {
         //$this->gtk_object_descendant = $gtk_object_descendant;
     }
 
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         if ($null_ok) {
             if (isset($default)) {
@@ -648,7 +649,7 @@ class Boxed_Arg extends Arg_Type {
         $this->typecode     = $typecode;
     }
 
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         if ($null_ok) {
             if (isset($default)) {
@@ -734,7 +735,7 @@ class Atom_Arg extends Int_Arg {
         }
     }\n";
 
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         if (isset($default)) {
             $info->var_list->add('GdkAtom', $name . ' = ' . $default);
@@ -764,7 +765,7 @@ class Atom_Arg extends Int_Arg {
    write_return(). */
 class Drawable_Arg extends Arg_Type {
     var $type = 'GdkDrawable';
-
+/*
     function write_param($type, $name, $default, $null_ok, &$var_list,
                          &$parse_list, &$arg_list, &$extra_code, $in_constructor)
     {
@@ -846,6 +847,7 @@ class Drawable_Arg extends Arg_Type {
                "    *return_value = *ret;\n" .
                "    return;";
     }
+*/
 }
 /* }}} */
 
@@ -878,7 +880,7 @@ class GdkRectanglePtr_Arg extends Arg_Type {
     function __construct($type = 'GdkRectangle') {
         $this->classtype = $type;
     }
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         if ($null_ok) {
             $info->var_list->add($this->classtype, $name . '_arg = { 0, 0, 0, 0 }');
@@ -902,7 +904,7 @@ class GdkRectanglePtr_Arg extends Arg_Type {
 
 /* {{{ GType_Arg */
 class GType_Arg extends Arg_Type {
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         $info->var_list->add('GType', $name);
         $info->var_list->add('zval', '*php_' . $name . ' = NULL');
@@ -923,7 +925,7 @@ class GType_Arg extends Arg_Type {
 
 /* {{{ GError_Arg */
 class GError_Arg extends Arg_Type {
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         $info->var_list->add('GError', '*' . $name . ' = NULL');
         $info->arg_list[] = '&' . $name;
@@ -952,7 +954,7 @@ class GtkTreePath_Arg extends Arg_Type {
     if (%(name))
         gtk_tree_path_free(%(name));\n";
 
-    function write_param($type, $name, $default, $null_ok, $info)
+    function write_param($type, $name, $default, $null_ok, $info, $in_constructor=null)
     {
         if ($null_ok) {
             $info->var_list->add('GtkTreePath', '*' . $name . ' = NULL');

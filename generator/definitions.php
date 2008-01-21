@@ -36,7 +36,7 @@ abstract class Definition {
             $this->caller_owns_return = false;
     }
 
-    function merge()
+    function merge($old, $merge_params=null)
     {
     }
 }
@@ -133,7 +133,7 @@ class Object_Def extends Definition {
         $this->ce = strtolower($this->c_name) . '_ce';
     }
 
-    function merge($old)
+    function merge($old, $merge_params=null)
     {
         $this->fields = $old->fields;
         $this->implements = $old->implements;
@@ -223,7 +223,7 @@ class Method_Def extends Definition {
         }
     }
 
-    function merge($old, $merge_params)
+    function merge($old, $merge_params=null)
     {
         $this->caller_owns_return = $old->caller_owns_return;
         $this->is_constructor_of = $old->is_constructor_of;
@@ -358,7 +358,7 @@ class Function_Def extends Definition {
         }
     }
 
-    function merge($old, $merge_params)
+    function merge($old, $merge_params=null)
     {
         $this->caller_owns_return = $old->caller_owns_return;
         $this->varargs = $old->varargs;
@@ -486,7 +486,7 @@ class Boxed_Def extends Definition {
         $this->ce = strtolower($this->c_name) . '_ce';
     }
 
-    function merge($old)
+    function merge($old, $merge_params=null)
     {
         $this->fields = $old->fields;
     }
