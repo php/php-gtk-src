@@ -60,10 +60,9 @@ class Overrides {
 
     private function _set_file_version($file_name, $gtkversion)
     {
-        while (substr($gtkversion, 2) > 6) {
+        while (version_compare($gtkversion, '2.6', '>')) {
 
             $split = explode('.', $file_name);
-            $point = substr($gtkversion, 2);
             $try   = $split[0].'-'.$gtkversion.'.'.$split[1];
 
             if (file_exists($try)) {
@@ -71,6 +70,7 @@ class Overrides {
                 break;
             }
 
+            $point = substr($gtkversion, 2);
             $gtkversion = '2.'.($point - 2);
             $this->_set_file_version($file_name, $gtkversion);
         }

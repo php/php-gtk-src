@@ -122,8 +122,8 @@ class Defs_Parser {
 
         switch (gettype($arg)) {
             case 'string':
-                $this->file_name = $arg;
                 $this->file_path = dirname($arg);
+                $this->_set_file_version($arg, $this->gtkversion);
                 $this->_parse_or_load();
                 break;
 
@@ -135,6 +135,25 @@ class Defs_Parser {
                 trigger_error('Constructor argument must be filename or array');
                 break;
         }
+    }
+
+    private function _set_file_version($file_name, $gtkversion)
+    {
+        while (version_compare($gtkversion, '2.6', '>')) {
+
+            $split = explode('.', $file_name);
+            $try   = $split[0].'-'.$gtkversion.'.'.$split[1];
+
+            if (file_exists($try)) {
+                $file_name = $try;
+                break;
+            }
+
+            $point = substr($gtkversion, 2);
+            $gtkversion = '2.'.($point - 2);
+            $this->_set_file_version($file_name, $gtkversion);
+        }
+        $this->file_name = $file_name;
     }
 
     private function _parse_or_load()
@@ -422,17 +441,9 @@ class Defs_Parser {
     function handle_include($arg)
     {
         $include_file = $this->file_path . DIRECTORY_SEPARATOR . $arg[0];
-        // check for gtk lib version
-        if (isset($arg[1]) && version_compare($arg[1], $this->gtkversion, '>'))
-        {
-            error_log("Ignoring '$include_file' - needs version {$arg[1]} and current version is {$this->gtkversion}");
-        }
-        else
-        {
-            error_log("Parsing file '$include_file'.");
-            $include_tree = parse($include_file, 'r');
-            $this->start_parsing($include_tree);
-        }
+        error_log("Parsing file '$include_file'.");
+        $include_tree = parse($include_file, 'r');
+        $this->start_parsing($include_tree);
     }
 
     function handle_define_virtual($arg)

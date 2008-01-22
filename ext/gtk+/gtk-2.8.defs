@@ -1,4 +1,5 @@
 (include "gtk-2.8-types.defs")
+(include "gtk.defs")
 
 (define-method get_wrap_license
   (of-object "GtkAboutDialog")

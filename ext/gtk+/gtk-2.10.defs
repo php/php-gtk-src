@@ -1,6 +1,6 @@
 ;; -*- scheme -*-
-
 (include "gtk-2.10-types.defs")
+(include "gtk-2.8.defs")
 
 ;; From gtkaboutdialog.h
 

@@ -1,8 +1,5 @@
 (include "gtk-extrafuncs.defs")
 (include "gtk-types.defs")
-(include "gtk-2.8.defs" "2.8")
-(include "gtk-2.10.defs" "2.10")
-(include "gtk-2.12.defs" "2.12")
 
 ;; Functions, constructors, and methods ...
 

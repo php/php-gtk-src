@@ -1,3 +1,5 @@
+(include "gdk-2.10.defs")
+
 ;; From gdkcolor.h
 
 (define-method to_string
