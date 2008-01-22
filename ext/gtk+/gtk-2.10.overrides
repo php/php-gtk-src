@@ -1,4 +1,6 @@
 /* vim: set et ft=cpp fdm=marker: */
+%% include gtk-2.8.overrides
+
 %%
 headers
 static void phpg_link_button_set_uri_hook_func_marshal(GtkLinkButton *button, const gchar *link, gpointer data);

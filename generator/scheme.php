@@ -110,18 +110,21 @@ class Defs_Parser {
     var $boxed          = array();  // boxed types
     var $pointers       = array();  // pointers
     var $c_name         = array();  // C names of entities
-    var $gtkversion     = null; // gtk lib version
+    var $gtkversion     = null;     // gtk lib version
 
-    function Defs_Parser($arg, $gtkversion = 0)
+    public function __construct($arg, $gtkversion = 0)
     {
-        if (version_compare($gtkversion, '2.6', '<'))
-        {
+        if (version_compare($gtkversion, '2.6', '<')) {
             $gtkversion = '2.6';
         }
+
         $this->gtkversion = $gtkversion;
+
         switch (gettype($arg)) {
             case 'string':
-                $this->_parse_or_load($arg);
+                $this->file_name = $arg;
+                $this->file_path = dirname($arg);
+                $this->_parse_or_load();
                 break;
 
             case 'array':
@@ -134,20 +137,18 @@ class Defs_Parser {
         }
     }
 
-    function _parse_or_load($defs_file)
+    private function _parse_or_load()
     {
-        $cache_file = $defs_file.'.cache';
+        $cache_file = $this->file_name.'.cache';
         if (@is_file($cache_file) &&
-            filemtime($cache_file) > filemtime($defs_file)) {
-            error_log('Loading cache "'. basename($cache_file) .'"');
+            filemtime($cache_file) > filemtime($this->file_name)) {
+            error_log("Loading cache '". basename($cache_file) ."'");
             $fp = fopen($cache_file, 'r');
             $this->parse_cache = fread($fp, filesize($cache_file));
             fclose($fp);
         } else {
-            $this->file_name = basename($defs_file);
-            $this->file_path = dirname($defs_file);
-            error_log("Parsing file \"$this->file_name\".");
-            $this->parse_tree = parse($defs_file, 'r');
+            error_log("Parsing file '$this->file_name'.");
+            $this->parse_tree = parse($this->file_name, 'r');
         }
     }
 
@@ -184,7 +185,7 @@ class Defs_Parser {
             $this->objects = $objects;
 
             if (is_writeable($this->file_path)) {
-                $cache_file = $this->file_path . '/' . $this->file_name . '.cache';
+                $cache_file = $this->file_name . '.cache';
                 $fp = fopen($cache_file, 'w');
                 fwrite($fp, $this->serialize());
                 fclose($fp);
@@ -420,15 +421,15 @@ class Defs_Parser {
 
     function handle_include($arg)
     {
-        $include_file = $this->file_path . "/" . $arg[0];
+        $include_file = $this->file_path . DIRECTORY_SEPARATOR . $arg[0];
         // check for gtk lib version
         if (isset($arg[1]) && version_compare($arg[1], $this->gtkversion, '>'))
         {
-            error_log("Ignoring \"$include_file\". - needs version {$arg[1]} and current version is {$this->gtkversion}");
+            error_log("Ignoring '$include_file' - needs version {$arg[1]} and current version is {$this->gtkversion}");
         }
         else
         {
-            error_log("Parsing file \"$include_file\".");
+            error_log("Parsing file '$include_file'.");
             $include_tree = parse($include_file, 'r');
             $this->start_parsing($include_tree);
         }

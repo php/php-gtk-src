@@ -1,4 +1,6 @@
 /* vim: set et ft=cpp fdm=marker: */
+%% include gdk.overrides
+
 %%
 ignore-win32
    gdk_x11_display_get_startup_notification_id 

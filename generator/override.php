@@ -39,19 +39,42 @@ class Overrides {
     var $lineinfo             = array();
     var $top_dir              = '';
     var $gtkversion           = null; // gtk lib version
+    var $file_name            = null;
 
-    function Overrides($file_name = null, $gtkversion = null)
+    public function __construct($file_name = null, $gtkversion = null)
     {
-        if (version_compare($gtkversion, '2.6', '<'))
-        {
+        if (version_compare($gtkversion, '2.6', '<')) {
             $gtkversion = '2.6';
         }
-        $this->gtkversion = $gtkversion;
-        if (!isset($file_name))
-            return;
 
+        $this->gtkversion = $gtkversion;
+
+        if (!isset($file_name)) {
+            return;
+        }
+
+        $this->_set_file_version($file_name, $gtkversion);
         $this->top_dir = getcwd();
-        $this->read_file($file_name);
+        $this->read_file($this->file_name);
+    }
+
+    private function _set_file_version($file_name, $gtkversion)
+    {
+        while (substr($gtkversion, 2) > 6) {
+
+            $split = explode('.', $file_name);
+            $point = substr($gtkversion, 2);
+            $try   = $split[0].'-'.$gtkversion.'.'.$split[1];
+
+            if (file_exists($try)) {
+                $file_name = $try;
+                break;
+            }
+
+            $gtkversion = '2.'.($point - 2);
+            $this->_set_file_version($file_name, $gtkversion);
+        }
+        $this->file_name = $file_name;
     }
 
     function read_file($file_name)
@@ -190,14 +213,7 @@ class Overrides {
 
             case 'include':
                 $file_name = $words[0];
-                // check for gtk lib version
-                if (!isset($words[1]) || version_compare($words[1], $this->gtkversion, '<='))
-                {
-                    $this->read_file($file_name);
-                }
-                foreach (preg_split(',\s+,', $rest, -1, PREG_SPLIT_NO_EMPTY) as $file_name) {
-                    $this->read_file($file_name);
-                }
+                $this->read_file($file_name);
                 break;
 
             case 'add':

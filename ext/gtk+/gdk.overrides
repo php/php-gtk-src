@@ -3075,5 +3075,3 @@ PHP_METHOD
 }
 
 %% }}}
-
-%% include gdk-2.12.overrides "2.12"
