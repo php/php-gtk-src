@@ -112,7 +112,7 @@ void phpg_gtkspell_register_constants(const char *strip_prefix)
 
 #if HAVE_SPELL
 
-#ifdef COMPILE_DL_SPELL2
+#ifdef PHP_GTK_COMPILE_DL_SPELL
 PHP_GTK_GET_EXTENSION(spell)
 #endif
 

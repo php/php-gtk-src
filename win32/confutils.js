@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.21 2008-01-21 06:46:07 sfox Exp $
+// $Id: confutils.js,v 1.22 2008-01-22 23:49:07 sfox Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -673,7 +673,11 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 
 	STDOUT.WriteLine("Enabling extension " + extname_for_printing);
 
-	cflags = "/D COMPILE_DL_" + EXT + "2 /D " + EXT + "_EXPORTS=1" + cflags;
+	if (extname == 'php-gtk') {
+		cflags = "/D COMPILE_DL_" + EXT + "2 /D " + EXT + "_EXPORTS=1" + cflags;
+	} else {
+		cflags = "/D PHP_GTK_COMPILE_DL_" + EXT + " /D " + EXT + "_EXPORTS=1" + cflags;
+	}
 
 	MFO.WriteBlankLines(1);
 	MFO.WriteLine("# objects for EXT " + extname);
@@ -683,7 +687,7 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 
 	MFO.WriteBlankLines(1);
 
-	// PHP-GTK and its extensions are always built as shared
+	// PHP-GTK and its extensions are always built as shared for now
 
 	if (dllname == null) {
 		if (extname == 'php-gtk') {

@@ -24,7 +24,7 @@
 
 #if HAVE_HTML
 
-#ifdef COMPILE_DL_HTML2
+#ifdef PHP_GTK_COMPILE_DL_HTML
 PHP_GTK_GET_EXTENSION(html)
 #endif
 
