@@ -1,3 +1,22 @@
+2008-01-21  Bob Majdak Jr  <bob@kateos.org>
+
+    * ext/sourceview/sourceview.defs
+      ext/sourceview/sourceview.overrides:
+      commiting patch adding GtkSourceView search methods and flags.
+      http://www.nabble.com/-patch--GtkSourceView-Searching-td14988080.html
+
+2008-01-21  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/gtk+/config.w32
+      win32/config.w32.in
+      win32/confutils.js:
+      Minor tidying before the heavy stuff starts
+
+    * generator/arg_types.php
+      generator/definitions.php:
+      Put the E-STRICT house in order before we start messing around with
+      versioning.
+
 2007-11-24  Bob Majdak Jr  <bob@kateos.org>
 
     * ext/gtk+/gtk-2.10.overrides:
