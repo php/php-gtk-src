@@ -1,3 +1,40 @@
+2008-01-22  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/extra/php_gtkextra.c
+      ext/html/php_html.c
+      ext/libglade/php_libglade.c
+      ext/libsexy/php_libsexy.c
+      ext/mozembed/php_mozembed.c
+      ext/scintilla/php_scintilla.c
+      ext/sourceview/php_sourceview.c
+      ext/spell/php_spell.c
+      win32/confutils.js:
+      Theoretically, *nix shared extension builds should work now. Please let me
+      know if they needed a '2' on the end...
+
+    * ext/gtk+/gdk-2.10.defs
+      ext/gtk+/gdk-2.12.defs
+      ext/gtk+/gdk.defs
+      ext/gtk+/gtk-2.10.defs
+      ext/gtk+/gtk-2.12.defs
+      ext/gtk+/gtk-2.8.defs
+      ext/gtk+/gtk.defs
+      generator/override.php
+      generator/scheme.php:
+      Defs should only include the previous version .defs file and the current
+      types.defs file, if one exists. Note that def caches are now versioned.
+
+    * ext/gtk+/gdk-2.12.overrides
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtk-2.10.overrides
+      ext/gtk+/gtk-2.12.overrides
+      ext/gtk+/gtk-2.8.overrides
+      ext/gtk+/gtk.overrides
+      generator/override.php
+      generator/scheme.php:
+      This works fine, but I forgot to move the defs to the new scheme.  (Cue
+      much confusion here - until now.)
+
 2008-01-21  Bob Majdak Jr  <bob@kateos.org>
 
     * ext/sourceview/sourceview.defs
