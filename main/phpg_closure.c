@@ -259,7 +259,7 @@ static void phpg_signal_class_closure_marshal(GClosure     *closure,
     g_free(lc_method_name);
 
 	params = (zval ***)emalloc((n_param_values-1) * sizeof(zval **));
-    for (i = 0; i < n_param_values-1; i++) {
+    for (i = 0; i < (int)n_param_values-1; i++) {
         params[i] = (zval **) emalloc(sizeof(zval *));
         *(params[i]) = NULL;
         if (phpg_gvalue_to_zval(&param_values[i+1], params[i], FALSE, TRUE TSRMLS_CC) != SUCCESS) {

@@ -706,7 +706,7 @@ static PHP_METHOD(GObject, emit)
     }
 
     g_signal_query(signal_id, &query);
-    if (extra && zend_hash_num_elements(Z_ARRVAL_P(extra)) != query.n_params) {
+    if (extra && zend_hash_num_elements(Z_ARRVAL_P(extra)) != (int)query.n_params) {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "%d parameters needed for signal '%s', %d given", query.n_params, signal, zend_hash_num_elements(Z_ARRVAL_P(extra)));
         zval_ptr_dtor(&extra);
         return;
@@ -1423,7 +1423,7 @@ static PHP_METHOD(GObject, register_type)
             php_error_docref(NULL TSRMLS_CC, E_WARNING, "__gsignals variable has to be an array");
             return;
         }
-        if (phpg_register_signals(new_type, *signal_decls TSRMLS_CC) == FAILURE) {
+        if (phpg_register_signals(new_type, *signal_decls) == FAILURE) {
             return;
         }
         zend_hash_del(&class->default_properties, "__gsignals", sizeof("__gsignals"));

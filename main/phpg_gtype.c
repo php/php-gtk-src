@@ -132,7 +132,7 @@ PHP_GTK_API void phpg_gtype_new(zval *zobj, GType type TSRMLS_DC)
 	object->type = type;
 }
 
-PHP_GTK_API GType phpg_gtype_from_class(zend_class_entry *ce)
+PHP_GTK_API GType phpg_gtype_from_class(zend_class_entry *ce TSRMLS_DC)
 {
 	zval **gtype;
 

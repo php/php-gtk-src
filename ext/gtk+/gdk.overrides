@@ -1944,14 +1944,15 @@ PHP_METHOD
 		HANDLE cur_proc;
 		HMODULE *modules;
 		DWORD needed, i;
-	    
-	    	HMODULE psapi = LoadLibrary("psapi.dll");
+
+		HMODULE psapi = LoadLibrary("psapi.dll");
+
 		if (!psapi)
 		{
 			php_error(E_ERROR, "Could not load gd functions");
 			return;
 		}
-		EnumProcessModules = GetProcAddress(psapi, "EnumProcessModules");
+		EnumProcessModules = (GetProcAddress(psapi, "EnumProcessModules"), NULL, 0, 0);
 		if (!EnumProcessModules)
 		{
 			php_error(E_ERROR, "Could not load gd functions");
@@ -1964,13 +1965,13 @@ PHP_METHOD
 		for (i=0; i < needed/sizeof(HMODULE); i++)
 		{
 			if ((phpi_get_le_gd = (void*)GetProcAddress(modules[i], "phpi_get_le_gd")))
-			break;	
+			break;
 		}
 		free(modules);
 	}
 	else
 	{
-		phpi_get_le_gd = DL_FETCH_SYMBOL(module->handle, "phpi_get_le_gd");
+		phpi_get_le_gd = (void*)GetProcAddress(module->handle, "phpi_get_le_gd");
 	}
 #else
 	phpi_get_le_gd = DL_FETCH_SYMBOL(module->handle, "phpi_get_le_gd");
@@ -1991,7 +1992,7 @@ PHP_METHOD
         for (y = 0; y < gd->sy; y++) {
             for (x = 0; x < gd->sx; x++) {
                 pixel = gd->tpixels[y][x];
-                if (pixel == gd->transparent) {
+                if (pixel == (uint)gd->transparent) {
                     alpha = 0;
                 } else {
                     alpha = 127 - gdTrueColorGetAlpha(pixel);
@@ -2010,7 +2011,7 @@ PHP_METHOD
         for (y = 0; y < gd->sy; y++) {
             for (x = 0; x < gd->sx; x++) {
                 pixel = gd->pixels[y][x];
-                if (pixel == gd->transparent) {
+                if (pixel == (uint)gd->transparent) {
                     alpha = 0;
                 } else {
                     alpha = 127 - gd->alpha[pixel];

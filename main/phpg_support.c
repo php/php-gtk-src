@@ -389,7 +389,7 @@ PHP_GTK_API void phpg_register_enum(GType gtype, const char *strip_prefix, zend_
         val = (zval *)malloc(sizeof(zval));
         INIT_PZVAL(val);
         ZVAL_LONG(val, eclass->values[i].value);
-        enum_name = eclass->values[i].value_name;
+        enum_name = (char *)eclass->values[i].value_name;
         if (strip_prefix) {
             for (j = prefix_len; j >= 0; j--) {
                 if (g_ascii_isalpha(enum_name[j]) || enum_name[j] == '_') {
@@ -429,7 +429,7 @@ PHP_GTK_API void phpg_register_flags(GType gtype, const char *strip_prefix, zend
         val = (zval *)malloc(sizeof(zval));
         INIT_PZVAL(val);
         ZVAL_LONG(val, eclass->values[i].value);
-        enum_name = eclass->values[i].value_name;
+        enum_name = (char *)eclass->values[i].value_name;
         if (strip_prefix) {
             for (j = prefix_len; j >= 0; j--) {
                 if (g_ascii_isalpha(enum_name[j]) || enum_name[j] == '_') {
