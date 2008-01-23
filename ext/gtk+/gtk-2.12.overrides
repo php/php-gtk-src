@@ -1,1 +1,121 @@
 %% include gtk-2.10.overrides
+
+%% {{{ GtkScaleButton
+
+%%
+headers
+static void phpg_scale_button_set_icons_assist(GtkScaleButton *, zval *);
+
+%%
+add-arginfo GtkScaleButton __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, iconsize)
+    ZEND_ARG_INFO(0, min)
+    ZEND_ARG_INFO(0, max)
+    ZEND_ARG_INFO(0, step)
+    ZEND_ARG_INFO(0, iconlist)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_scale_button_new
+PHP_METHOD
+{
+    gint iconsize;
+    gdouble min, max, step;
+    GObject *obj;
+    zval *iconlist = NULL;
+    
+    GtkAdjustment *adj;
+
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"iddd|a",&iconsize,&min,&max,&step,&iconlist)) {
+        return;
+    }
+
+    obj = (GObject *)g_object_newv(phpg_gtype_from_zval(this_ptr),0,NULL);
+        if(!obj) { PHPG_THROW_CONSTRUCT_EXCEPTION(GtkScaleButton); }
+        adj = (GtkAdjustment *)gtk_adjustment_new(min,min,max,step,step,0);
+        gtk_scale_button_set_adjustment(GTK_SCALE_BUTTON(obj),GTK_ADJUSTMENT(adj));
+       
+    if(iconlist) {
+        phpg_scale_button_set_icons_assist(
+            GTK_SCALE_BUTTON(obj),
+            iconlist        
+        );
+    }
+
+    phpg_gobject_set_wrapper(
+        this_ptr,
+        G_OBJECT(obj) TSRMLS_CC
+    );
+}
+
+%%
+override gtk_scale_button_set_icons
+static void
+phpg_scale_button_set_icons_assist(GtkScaleButton *button, zval *iconlist)
+{
+	zval **iconname;
+	int listlen,iter;
+	gchar **list = NULL;
+
+	if(iconlist)
+		listlen = zend_hash_num_elements(Z_ARRVAL_P(iconlist));
+	else
+		listlen = 0;
+
+	if(listlen > 0) {
+		list = g_malloc0(sizeof(gchar *) * (listlen + 2));
+		//. space for not overwriting the head pointer and leaving a null on
+		//. the tail end.
+		
+		iter = 1;
+
+		//. indexing the array string pointers into a pointer array for the
+		//. set_icons function.
+		zend_hash_internal_pointer_reset(Z_ARRVAL_P(iconlist));
+		while(zend_hash_get_current_data(Z_ARRVAL_P(iconlist),(void **)&iconname) == SUCCESS) {
+			if(Z_TYPE_PP(iconname) == IS_STRING) {
+				list[iter++] = (gchar *)Z_ARRVAL_PP(iconname);
+			} else {
+				php_error_docref(
+					NULL TSRMLS_CC,
+					E_WARNING,
+					"each item in icon array is to be a string"
+				);
+			}
+			
+			zend_hash_move_forward(Z_ARRVAL_P(iconlist));
+		} list[iter] = NULL;
+	}
+	
+	else {
+		list = NULL;
+	}
+
+	gtk_scale_button_set_icons(
+		GTK_SCALE_BUTTON(button),
+		(const gchar **)(list+1)
+	);
+
+	if(list) {
+		g_strfreev(list);
+	}
+}
+
+PHP_METHOD
+{
+    zval *iconlist = NULL;
+
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"a",&iconlist)) {
+        return;
+    }
+
+    phpg_scale_button_set_icons_assist(
+        GTK_SCALE_BUTTON(PHPG_GOBJECT(this_ptr)),
+        iconlist
+    );
+}
+
+%% }}}
+
