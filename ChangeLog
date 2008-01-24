@@ -1,3 +1,20 @@
+2008-01-23  Bob Majdak Jr  <bob@kateos.org>
+
+    * ext/gtk+/gtk-2.12.overrides:
+      added GtkScaleButton constructor and set_icons() method, also enabling the
+      GtkVolumeButton class. A 2 for 1!
+      http://www.nabble.com/-patch--GtkScaleButton-Methods-td15011551.html
+
+2008-01-23  Steph Fox  <steph.fox@virgin.net>
+
+    * ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides
+      main/phpg_closure.c
+      main/phpg_gobject.c
+      main/phpg_gtype.c
+      main/phpg_support.c:
+      MSVC 6 compiler warnings squashed.
+
 2008-01-22  Steph Fox  <steph.fox@virgin.net>
 
     * ext/extra/php_gtkextra.c
