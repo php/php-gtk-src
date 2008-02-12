@@ -40,7 +40,7 @@ PHP_METHOD
     if(iconlist) {
         phpg_scale_button_set_icons_assist(
             GTK_SCALE_BUTTON(obj),
-            iconlist        
+            iconlist TSRMLS_CC
         );
     }
 
@@ -113,7 +113,7 @@ PHP_METHOD
 
     phpg_scale_button_set_icons_assist(
         GTK_SCALE_BUTTON(PHPG_GOBJECT(this_ptr)),
-        iconlist
+        iconlist TSRMLS_CC
     );
 }
 
