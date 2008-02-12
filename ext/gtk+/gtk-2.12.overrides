@@ -4,7 +4,7 @@
 
 %%
 headers
-static void phpg_scale_button_set_icons_assist(GtkScaleButton *, zval *);
+static void phpg_scale_button_set_icons_assist(GtkScaleButton *, zval * TSRMLS_DC);
 
 %%
 add-arginfo GtkScaleButton __construct
@@ -53,7 +53,7 @@ PHP_METHOD
 %%
 override gtk_scale_button_set_icons
 static void
-phpg_scale_button_set_icons_assist(GtkScaleButton *button, zval *iconlist)
+phpg_scale_button_set_icons_assist(GtkScaleButton *button, zval *iconlist TSRMLS_DC)
 {
 	zval **iconname;
 	int listlen,iter;
