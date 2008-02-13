@@ -73,6 +73,8 @@ PHP_NEW_EXTENSION(php_gtk2, main/php_gtk.c main/phpg_support.c main/phpg_gtype.c
                             main/phpg_atom.c main/phpg_paramspec.c main/phpg_gobject.c,
                             $ext_shared,, -I@ext_srcdir@/main)
 
+PHP_MODULES="$PHP_MODULES $PHP_GTK_MODULES"
+
 PHP_ADD_SOURCES_X(/main, php_gtk_ext.c,, shared_objects_php_gtk2)
 PHP_ADD_MAKEFILE_FRAGMENT($abs_srcdir/main/Makefile.frag, $abs_srcdir/main, main)
 

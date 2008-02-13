@@ -497,7 +497,7 @@ dnl ---------------------------------------------- Shared module
     # shared module
 	ifelse($3,,,PHP_ADD_SOURCES_X($php_gtk_ext_builddir,$3,$ac_extra,[shared_objects_]translit($1,a-z-+,A-Z__),yes))
 	ifelse($4,,,PHP_ADD_SOURCES_X(/ext/$1,$4,$ac_extra,[shared_objects_]translit($1,a-z-+,A-Z__),yes))
-	PHP_SHARED_MODULE($1,[shared_objects_]translit($1,a-z-+,A-Z__), $php_gtk_ext_builddir)
+	PHP_GTK_SHARED_MODULE($1,[shared_objects_]translit($1,a-z-+,A-Z__), $php_gtk_ext_builddir)
 	AC_DEFINE_UNQUOTED([PHP_GTK_COMPILE_DL_]translit($1,a-z-+,A-Z__), 1, Whether to build $1 as dynamic module)
   fi
 
@@ -506,6 +506,43 @@ dnl ---------------------------------------------- Shared module
   done
   PHP_ADD_MAKEFILE_FRAGMENT($abs_srcdir/ext/$1/Makefile.frag, $abs_srcdir/ext/$1, ext/$1)
   PHP_ADD_BUILD_DIR($ext_builddir/ext/$1)
+])
+
+
+dnl
+dnl PHP_GTK_SHARED_MODULE(module-name, object-var, build-dir, cxx)
+dnl
+dnl Basically sets up the link-stage for building module-name
+dnl from object_var in build-dir.
+dnl
+AC_DEFUN([PHP_GTK_SHARED_MODULE],[
+  install_modules="install-modules"
+
+  case $host_alias in
+    *aix*[)]
+      suffix=so
+      link_cmd='$(LIBTOOL) --mode=link ifelse($4,,[$(CC)],[$(CXX)]) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS) $(LDFLAGS) -Wl,-G -o '$3'/$1.la -export-dynamic -avoid-version -prefer-pic -module -rpath $(phplibdir) $(EXTRA_LDFLAGS) $($2) $(translit($1,a-z_-,A-Z__)_SHARED_LIBADD) && mv -f '$3'/.libs/$1.so '$3'/$1.so'
+      ;;
+    *netware*[)]
+      suffix=nlm
+      link_cmd='$(LIBTOOL) --mode=link ifelse($4,,[$(CC)],[$(CXX)]) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS) $(LDFLAGS) -o [$]@ -shared -export-dynamic -avoid-version -prefer-pic -module -rpath $(phplibdir) $(EXTRA_LDFLAGS) $($2) ifelse($1, php5lib, , -L$(top_builddir)/netware -lphp5lib) $(translit(ifelse($1, php5lib, $1, m4_substr($1, 3)),a-z_-,A-Z__)_SHARED_LIBADD)'
+      ;;
+    *[)]
+      suffix=la
+      link_cmd='$(LIBTOOL) --mode=link ifelse($4,,[$(CC)],[$(CXX)]) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS) $(LDFLAGS) -o [$]@ -export-dynamic -avoid-version -prefer-pic -module -rpath $(phplibdir) $(EXTRA_LDFLAGS) $($2) $(translit($1,a-z_-,A-Z__)_SHARED_LIBADD)'
+      ;;
+  esac
+
+  PHP_GTK_MODULES="$PHP_GTK_MODULES \$(phplibdir)/$1.$suffix"
+  PHP_SUBST($2)
+  cat >>Makefile.objects<<EOF
+\$(phplibdir)/$1.$suffix: $3/$1.$suffix
+	\$(LIBTOOL) --mode=install cp $3/$1.$suffix \$(phplibdir)
+
+$3/$1.$suffix: \$($2) \$(translit($1,a-z_-,A-Z__)_SHARED_DEPENDENCIES)
+	$link_cmd
+
+EOF
 ])
 
 
