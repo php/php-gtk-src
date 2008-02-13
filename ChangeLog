@@ -1,3 +1,11 @@
+2008-02-12  Bob Majdak Jr  <bob@kateos.org>
+
+    * ext/gtk+/gtk-2.12.overrides:
+      and then actually passing TS data in use too
+
+    * ext/gtk+/gtk-2.12.overrides:
+      should compile with thread saftey enabled now. oops.
+
 2008-01-23  Bob Majdak Jr  <bob@kateos.org>
 
     * ext/gtk+/gtk-2.12.overrides:
