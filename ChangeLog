@@ -1,3 +1,10 @@
+2008-02-13  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * config.m4
+      php_gtk.m4:
+      A hacky workaround to get php_gtk2.la to come first in PHP_MODULES. I'm
+      sure it can be done better, but this works.
+
 2008-02-12  Bob Majdak Jr  <bob@kateos.org>
 
     * ext/gtk+/gtk-2.12.overrides:
