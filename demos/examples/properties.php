@@ -16,9 +16,9 @@ class NewType extends GtkLabel {
 		$this->foo = 'abcdef';
 	}
 
-	function do_get_property($spec)
+	function __get_gproperty($spec)
 	{
-		echo "do_get_property called for $spec\n";
+		echo "__get_gproperty called for $spec\n";
 		if ($spec->name == 'foo') {
 			return $this->foo;
 		} else if ($spec->name == 'bar') {
@@ -30,9 +30,9 @@ class NewType extends GtkLabel {
 		}
 	}
 
-	function do_set_property($spec, $value)
+	function __set_gproperty($spec, $value)
 	{
-		echo "do_set_property called for $spec = $value\n";
+		echo "__set_gproperty called for $spec = $value\n";
 		if ($spec->name == 'foo') {
 			$this->foo = $value;
 		} else if ($spec->name == 'bar') {
