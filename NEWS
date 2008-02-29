@@ -1,5 +1,14 @@
+Version 2.0.0 "leap day special" 29-February-2008
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - API coverage improved
+    - GTK+ 2.12 support
+    - Custom GTypes, signals and properties support (see demos/examples)
+    - Shared extensions are now prefixed with "php_gtk_"
+    - Some constants moved to GObject:: class
+
+
 Version 2.0.0beta "extension extravaganza" : 17-June-2007
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - custom tree models, clipboard support, enhanced gobject construction
       (Andrei)
     - drag and drop support for gtktreeview (Christian)
@@ -11,9 +20,10 @@ Version 2.0.0beta "extension extravaganza" : 17-June-2007
     - win32 support for scintilla (Tom)
     - support for gtk+ 2.8 and 2.10 (Elizabeth)
     - more api coverage, bunch of bug fixes (Andrei, et al )
+
     
 Version 2.0.0alpha "renaissance redux": 15-July-2006
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - first test release of the new architecture
     - make PHP 5, ZE 2, and 1.5 gajillion little and big pieces work, basically.
       (Andrei, et al )
