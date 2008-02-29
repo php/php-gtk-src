@@ -131,18 +131,6 @@
       	GtkRecentChooser::get_uris()
       	GtkRecentChooser::list_filters()
 
-<<<<<<< ChangeLog
-2007-11-06  Bob Majdak Jr  <bob@kateos.org>
-
-    * ChangeLog
-      ext/gtk+/gtk-2.10.overrides:
-      - ext/gtk+/gtk-2.10.overrides:
-        Added a NULL test in GtkAssistant::set_forward_page_func().
-      
-      * ext/gtk+/gtk-2.10.overrides:
-        Addition of GtkRecentChooserDialog::__construct().
-
-=======
 2007-11-06  Bob Majdak Jr  <bob@kateos.org>
 
     * ext/gtk+/gtk-2.10.overrides:
@@ -151,7 +139,6 @@
     * ext/gtk+/gtk-2.10.overrides:
 	 Addition of GtkRecentChooserDialog::__construct().
 
->>>>>>> 1.563
 2007-10-28  Anant Narayanan  <anant@kix.in>
 
     * demos/components/entrycompletion.php:
