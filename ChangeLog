@@ -1,3 +1,72 @@
+2008-02-29  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * demos/examples/properties.php:
+      Updated demo to reflect updated magic method name
+
+2008-02-29  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * (php_gtk_2_0_0)
+      ext/extra/php_gtkextra.c
+      ext/extra/php_gtkextra.h
+      ext/gtk+/php_gdk.c
+      ext/gtk+/php_gtk+.c
+      ext/gtk+/php_gtk+.h
+      ext/gtk+/php_gtk+_types.c
+      ext/gtk+/phpg_custom_tree_model.c
+      ext/gtk+/phpg_custom_tree_model.h
+      ext/html/php_html.c
+      ext/html/php_html.h
+      ext/libglade/php_libglade.c
+      ext/libglade/php_libglade.h
+      ext/libsexy/php_libsexy.c
+      ext/libsexy/php_libsexy.h
+      ext/mozembed/php_mozembed.c
+      ext/mozembed/php_mozembed.h
+      ext/scintilla/php_scintilla.c
+      ext/scintilla/php_scintilla.h
+      ext/skeleton/php_skeleton.c
+      ext/skeleton/php_skeleton.h
+      ext/sourceview/php_sourceview.c
+      ext/sourceview/php_sourceview.h
+      ext/spell/php_spell.c
+      ext/spell/php_spell.h
+      generator/arg_types.php
+      generator/definitions.php
+      generator/doc_templates.php
+      generator/docgen.php
+      generator/generator.php
+      generator/lineoutput.php
+      generator/override.php
+      generator/scheme.php
+      generator/templates.php
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_ext.c.in
+      main/php_gtk_ext.w32.c
+      main/php_gtk_module.h
+      main/php_gtk_object.c
+      main/php_gtk_util.c
+      main/phpg_atom.c
+      main/phpg_closure.c
+      main/phpg_exceptions.c
+      main/phpg_gboxed.c
+      main/phpg_gobject.c
+      main/phpg_gpointer.c
+      main/phpg_gtype.c
+      main/phpg_gvalue.c
+      main/phpg_paramspec.c
+      main/phpg_support.c:
+      Update Copyright year.
+
+    * (php_gtk_2_0_0)
+      NEWS
+      README.KNOWN-ISSUES:
+      Update for 2.0.0 release.
+
+    * (php_gtk_2_0_0)
+      ChangeLog:
+      Fix conflicts.
+
 2008-02-23  Andrei Zmievski  <andrei@gravitonic.com>
 
     * php_gtk.m4:
