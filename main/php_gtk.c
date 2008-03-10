@@ -175,6 +175,7 @@ PHP_RINIT_FUNCTION(gtk)
 	php_gtk_handlers.write_property = phpg_write_property;
 	php_gtk_handlers.get_properties = phpg_get_properties;
 	php_gtk_handlers.get_property_ptr_ptr = phpg_get_property_ptr_ptr;
+	php_gtk_handlers.clone_obj = NULL;
 
 	phpg_register_exceptions();
 
