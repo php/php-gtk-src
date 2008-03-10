@@ -1,6 +1,6 @@
 
 if (CHECK_HEADER("main/php.h") && CHECK_LIB(PHP_LIB) &&
-	CHECK_HEADER("iconv.h") && CHECK_LIB("iconv.lib", "php-gtk") &&
+	(PHP_GTK_LIBVERSION > 2.11 || (CHECK_HEADER("iconv.h") && CHECK_LIB("iconv.lib", "php-gtk"))) &&
 	CHECK_HEADER("libintl.h") && CHECK_LIB("intl.lib", "php-gtk") &&
 	CHECK_HEADER("atk/atk.h") && CHECK_LIB("atk-1.0.lib", "php-gtk") &&
 	CHECK_HEADER("glib.h") && CHECK_LIB("glib-2.0.lib", "php-gtk") &&
