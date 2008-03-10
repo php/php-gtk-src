@@ -158,6 +158,7 @@ ignore
     gtk_menu_item_new_with_mnemonic
     gtk_menu_item_set_accel_path
     gtk_menu_set_accel_path
+    gtk_menu_get_for_attach_widget
     gtk_message_dialog_new_with_markup
     gtk_object_add_arg_type
     gtk_object_arg_get
@@ -5753,6 +5754,27 @@ PHP_METHOD
     gtk_selection_add_targets(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), selection, targets, n_targets);
     efree(targets);
     RETURN_TRUE;
+}
+
+%%
+add GtkWidget get_for_attach_widget
+PHP_METHOD
+{
+	 GList *list, *item;
+	
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+	list = gtk_menu_get_for_attach_widget(GTK_WIDGET(PHPG_GOBJECT(this_ptr)));
+	
+	array_init(return_value);
+	for (item = list; item; item = item->next) {
+        zval *php_item = NULL;
+        phpg_gobject_new(&php_item, G_OBJECT(item->data) TSRMLS_CC);
+        add_next_index_zval(return_value, php_item);
+    }
 }
 
 %% }}}
