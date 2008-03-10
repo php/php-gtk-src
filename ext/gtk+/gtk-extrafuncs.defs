@@ -36,20 +36,6 @@
   (return-type "GList*")
 )
 
-(define-method set_all
-  (of-object "GtkAdjustment")
-  (c-name "gtk_adjustment_set_all")
-  (return-type "none")
-  (parameters
-    '("gfloat" "value")
-    '("gfloat" "lower")
-    '("gfloat" "upper")
-    '("gfloat" "step_increment")
-    '("gfloat" "page_increment")
-    '("gfloat" "page_size")
-  )
-)
-
 ;; PhpGtkCustomTreeModel
 
 (define-object CustomTreeModel

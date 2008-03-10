@@ -1191,13 +1191,6 @@ PHP_METHOD
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
 
-%%
-override gtk_adjustment_set_all
-PHP_METHOD
-{
-    /* TODO */
-}
-
 %% }}}
 
 %% {{{ GtkAlignment
