@@ -1,3 +1,27 @@
+2008-03-10  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gtk.overrides:
+      I still think this is a stupid name - but get_for_attach_widget retrieves
+      an array of menu objects attached to a widget
+
+    * main/php_gtk.c:
+      Makes zend engine error when a clone is attempted for any and all gtk
+      objects - also avoids segfaults when cloning is attempted
+
+    * ext/gtk+/gtk-extrafuncs.defs
+      ext/gtk+/gtk.overrides:
+      This is an extra function created by pygtk (and not present in other
+      bindings) that doesn't use the getters and setters but manually
+      manipulates properties and then emits a changed signal, not really a good
+      thing to be doing, all these can be set initially in the constructor or
+      changed one at a time using the proper API calls - that and a big TODO in
+      the overrides isn't very helpful
+
+    * ext/gtk+/config.w32:
+      GTK decided to compile iconv as a static lib starting with the 2.12 stuff
+      (2.11 was never released for windows) - this fixes the configure for those
+      libs
+
 2008-02-29  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * demos/examples/properties.php:
