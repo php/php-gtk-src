@@ -6137,6 +6137,33 @@ PHP_METHOD
 
     RETURN_FALSE;
 }
+%% }}}
+
+%% {{{ GtkTooltips
+
+%%
+override-prop GtkTooltips tips_data_list
+PHPG_PROP_READER
+{
+	GtkTooltips *tooltips;
+	GList *data, *current;
+
+	tooltips = GTK_TOOLTIPS(((phpg_gobject_t *)object)->obj);
+    array_init(return_value);
+    
+    data = tooltips->tips_data_list;
+    for (current = data; current; current = current->next) {
+		zval *data_array, *item, *tool_widget, *widget;
+		GtkTooltipsData *tooltip = (GtkTooltipsData*)current->data;
+		MAKE_STD_ZVAL(data_array);
+		array_init(data_array);
+		phpg_gobject_new(&tool_widget, (GObject *) tooltip->tooltips TSRMLS_CC);
+		phpg_gobject_new(&widget, (GObject *) tooltip->widget TSRMLS_CC);
+		php_gtk_build_value(&item, "(NNss)", tool_widget, widget, tooltip->tip_text, tooltip->tip_private);
+        add_next_index_zval(return_value, data_array);
+    }
+	return SUCCESS;
+}
 
 %% }}}
 
