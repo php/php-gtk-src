@@ -249,6 +249,11 @@ class Generator {
             $dict['parse_list'] = $info->get_parse_list();
             $dict['pre_code'] = '';
             $dict['post_code'] = '';
+
+            // Replace any removed deprecation messages
+            if (isset($callable->deprecated)) {
+                $dict['pre_code'] = sprintf(Templates::deprecation_msg, $callable->deprecated ? '"'.$callable->deprecated.'"' : 'NULL');
+            }
         }
 
         return aprintf($template, $dict);
@@ -305,6 +310,9 @@ class Generator {
                     $method_entries[$method_name] = array($object->in_module . $object->name,
                                                           $method_name, $reflection_func, $flags ?  $flags : ($method->static ? 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC' : 'ZEND_ACC_PUBLIC'));
                 } else {
+                    if ($this->overrides->is_deprecated($method->c_name)) {
+                        $method->deprecated = $this->overrides->get_deprecated($method->c_name);
+                    }
                     if ($method->static) {
                         $code = $this->write_callable($method, Templates::function_body, true, false, $dict);
                         $flags = 'ZEND_ACC_PUBLIC|ZEND_ACC_STATIC';
@@ -378,6 +386,9 @@ class Generator {
             $first = 1;
 
             foreach ($ctors as $ctor) {
+                if ($this->overrides->is_deprecated($ctor->c_name)) {
+                    $ctor->deprecated = $this->overrides->get_deprecated($ctor->c_name);
+                }
                 $ctor_name = $ctor->c_name;
                 if ($first) {
                     $ctor_fe_name = '__construct';

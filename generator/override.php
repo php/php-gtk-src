@@ -23,6 +23,7 @@
 
 class Overrides {
     var $ignores              = array();
+    var $deprecated           = array();
     var $unignores            = array();
     var $glob_ignores         = array();
     var $overrides            = array();
@@ -173,6 +174,11 @@ class Overrides {
                 }
                 break;
 
+            case 'deprecate':
+                $func_cname = $words[0];
+                $this->deprecated[$func_cname] = trim($rest);
+                break;
+
             case 'override':
                 $func_cname = $words[0];
                 if (isset($words[1])) 
@@ -283,6 +289,16 @@ class Overrides {
     function get_override($name)
     {
         return $this->overrides[$name];
+    }
+
+    function is_deprecated($name)
+    {
+        return isset($this->deprecated[$name]);
+    }
+
+    function get_deprecated($name)
+    {
+        return $this->deprecated[$name];
     }
 
     function is_prop_overriden($class, $name)
