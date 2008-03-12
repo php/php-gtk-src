@@ -1,3 +1,9 @@
+2008-03-11  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gtk.overrides:
+      reader for GtkTooltips->tips_data_list - this tooltips api is deprecated in
+      2.10+ and you'll always get an empty array with 2.10 or higher libs
+
 2008-03-10  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/gtk.overrides:
