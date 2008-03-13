@@ -1,3 +1,13 @@
+2008-03-12  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * generator/generator.php
+      generator/override.php
+      generator/templates.php
+      main/php_gtk_util.c:
+      Deprecation fixes - use new E_DEPRECATED for 5.3+, allow deprecating
+      previously def'd stuff from overrides, fix constructors to display
+      deprecated messages
+
 2008-03-11  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/gtk.overrides:
