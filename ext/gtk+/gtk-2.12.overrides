@@ -1,5 +1,79 @@
 %% include gtk-2.10.overrides
 
+%% {{{ GtkIconView
+
+%%
+add-arginfo GtkIconView get_tooltip_context
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, x)
+    ZEND_ARG_INFO(0, y)
+    ZEND_ARG_INFO(0, keyboard_mode)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_icon_view_get_tooltip_context
+PHP_METHOD
+{
+	zval *php_model = NULL, *php_iter = NULL, *php_path = NULL;
+	gint x, y;
+	gboolean keyboard_mode;
+    GtkTreeModel *model = NULL;
+	GtkTreePath *path = NULL;
+	GtkTreeIter iter = {0, };
+
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"iii", &x, &y, &keyboard_mode)) {
+        return;
+    }
+
+	if (!gtk_icon_view_get_tooltip_context (GTK_ICON_VIEW(PHPG_GOBJECT(this_ptr)),
+		&x, &y, keyboard_mode, &model, &path, &iter))
+	RETURN_FALSE;
+
+	phpg_gobject_new(&php_model, (GObject *) model TSRMLS_CC);
+	phpg_gboxed_new(&php_iter, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+	phpg_tree_path_to_zval(path, &php_path TSRMLS_CC);
+	php_gtk_build_value(&return_value, "(NNN)", php_model, php_path, php_iter);
+}
+%% }}}
+
+%% {{{ GtkTreeView
+
+%%
+add-arginfo GtkTreeView get_tooltip_context
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, x)
+    ZEND_ARG_INFO(0, y)
+    ZEND_ARG_INFO(0, keyboard_mode)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_get_tooltip_context
+PHP_METHOD
+{
+	zval *php_model = NULL, *php_iter = NULL, *php_path = NULL;
+	gint x, y;
+	gboolean keyboard_mode;
+    GtkTreeModel *model = NULL;
+	GtkTreePath *path = NULL;
+	GtkTreeIter iter = {0, };
+
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"iii", &x, &y, &keyboard_mode)) {
+        return;
+    }
+
+	if (!gtk_tree_view_get_tooltip_context (GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)),
+		&x, &y, keyboard_mode, &model, &path, &iter))
+    RETURN_FALSE;
+
+	phpg_gobject_new(&php_model, (GObject *) model TSRMLS_CC);
+	phpg_gboxed_new(&php_iter, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
+	phpg_tree_path_to_zval(path, &php_path TSRMLS_CC);
+	php_gtk_build_value(&return_value, "(NNN)", php_model, php_path, php_iter);
+}
+%% }}}
+
 %% {{{ GtkScaleButton
 
 %%
@@ -66,13 +140,13 @@ phpg_scale_button_set_icons_assist(GtkScaleButton *button, zval *iconlist TSRMLS
 
 	if(listlen > 0) {
 		list = g_malloc0(sizeof(gchar *) * (listlen + 2));
-		//. space for not overwriting the head pointer and leaving a null on
-		//. the tail end.
+		/* space for not overwriting the head pointer and leaving a null on
+		 the tail end. */
 		
 		iter = 1;
 
-		//. indexing the array string pointers into a pointer array for the
-		//. set_icons function.
+		/* indexing the array string pointers into a pointer array for the
+		   set_icons function. */
 		zend_hash_internal_pointer_reset(Z_ARRVAL_P(iconlist));
 		while(zend_hash_get_current_data(Z_ARRVAL_P(iconlist),(void **)&iconname) == SUCCESS) {
 			if(Z_TYPE_PP(iconname) == IS_STRING) {
@@ -118,4 +192,68 @@ PHP_METHOD
 }
 
 %% }}}
+
+%%
+deprecate gtk_tooltips_enable
+since GTK+ 2.12, please use new GtkTooltip API
+
+%%
+deprecate gtk_tooltips_disable
+since GTK+ 2.12, please use new GtkTooltip API
+
+%%
+deprecate gtk_tooltips_forcewindow
+since GTK+ 2.12, please use new GtkTooltip API
+
+%%
+deprecate gtk_tooltips_get_info_from_tip_window
+since GTK+ 2.12, please use new GtkTooltip API
+
+%%
+deprecate gtk_tooltips_new
+since GTK+ 2.12, please use new GtkTooltip API
+
+%%
+deprecate gtk_tooltips_set_delay
+since GTK+ 2.12, please use new GtkTooltip API
+
+%%
+deprecate gtk_tooltips_set_tip
+since GTK+ 2.12, please use new GtkTooltip API
+
+%%
+deprecate gtk_about_dialog_get_name
+since GTK+ 2.12, please use GtkAboutDialog::get_program_name()
+
+%%
+deprecate gtk_about_dialog_set_name
+since GTK+ 2.12, please use GtkAboutDialog::set_program_name()
+
+%%
+deprecate gtk_notebook_set_group_id
+since GTK+ 2.12, please use GtkNotebook::set_group()
+
+%%
+deprecate gtk_notebook_get_group_id
+since GTK+ 2.12, please use GtkNotebook::get_group()
+
+%%
+deprecate gtk_menu_tool_button_set_arrow_tooltip
+since GTK+ 2.12, please use GtkMenuToolButton::set_arrow_tooltip_text()
+
+%%
+deprecate gtk_tool_item_set_tooltip
+since GTK+ 2.12, please use GtkToolItem::set_tooltip_text()
+
+%%
+deprecate gtk_menu_item_remove_submenu
+since GTK+ 2.12, please use GtkMenuItem::set_submenu(null);
+
+%%
+deprecate gtk_tree_view_tree_to_widget_coords
+since GTK+ 2.12, please use GtkTreeView::convert_bin_window_to_widget_coords()
+
+%%
+deprecate gtk_tree_view_widget_to_tree_coords
+since GTK+ 2.12, please use GtkTreeView::convert_widget_to_bin_window_coords()
 

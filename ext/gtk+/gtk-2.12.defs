@@ -955,11 +955,22 @@
   )
 )
 
-(define-function tooltip_trigger_tooltip_query
+(define-method trigger_tooltip_query
+  (of-object "GtkTooltip")
   (c-name "gtk_tooltip_trigger_tooltip_query")
   (return-type "none")
+  (static #t)
   (parameters
     '("GdkDisplay*" "display")
+  )
+)
+
+(define-method set_tip_area
+  (of-object "GtkTooltip")
+  (c-name "gtk_tooltip_set_tip_area")
+  (return-type "none")
+  (parameters
+    '("GdkRectangle*" "rect")
   )
 )
 
@@ -1271,6 +1282,16 @@
   (of-object "GtkWidget")
   (c-name "gtk_widget_get_has_tooltip")
   (return-type "gboolean")
+)
+
+(define-method set_has_tooltip
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_set_has_tooltip")
+  (return-type "none")
+  (parameters
+    '("gboolean" "has_tooltip")
+  )
+
 )
 
 
