@@ -6165,6 +6165,28 @@ PHPG_PROP_READER
 	return SUCCESS;
 }
 
+%%
+override-prop GtkTooltips active_tips_data
+PHPG_PROP_READER
+{
+	GtkTooltips *tooltips;
+	GtkTooltipsData *data;
+    zval *tool_widget, *widget;
+
+	tooltips = GTK_TOOLTIPS(((phpg_gobject_t *)object)->obj);
+    data = (GtkTooltipsData*)tooltips->active_tips_data;
+
+    if (data == NULL) {
+        RETVAL_NULL();
+    } else {
+        phpg_gobject_new(&tool_widget, (GObject *) data->tooltips TSRMLS_CC);
+        phpg_gobject_new(&widget, (GObject *) data->widget TSRMLS_CC);
+        php_gtk_build_value(&return_value, "(NNss)", tool_widget, widget, data->tip_text, data->tip_private);
+    }
+
+	return SUCCESS;
+}
+
 %% }}}
 
 %% include gtkclipboard.overrides

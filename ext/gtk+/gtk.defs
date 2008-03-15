@@ -1945,6 +1945,7 @@
 (define-method editing_canceled
   (of-object "GtkCellRenderer")
   (c-name "gtk_cell_renderer_editing_canceled")
+  (deprecated "since GTK+ 2.6, please use GtkCellRenderer::stop_editing()")
   (return-type "none")
 )
 
@@ -16721,6 +16722,7 @@
   (is-constructor-of "GtkTipsQuery")
   (c-name "gtk_tips_query_new")
   (caller-owns-return #t)
+  (deprecated "don't use this")
   (return-type "GtkWidget*")
 )
 
@@ -16728,6 +16730,7 @@
   (of-object "GtkTipsQuery")
   (c-name "gtk_tips_query_set_caller")
   (return-type "none")
+  (deprecated "don't use this")
   (parameters
     '("GtkWidget*" "caller")
   )
@@ -16737,6 +16740,7 @@
   (of-object "GtkTipsQuery")
   (c-name "gtk_tips_query_set_labels")
   (return-type "none")
+  (deprecated "don't use this")
   (parameters
     '("const-gchar*" "label_inactive")
     '("const-gchar*" "label_no_tip")
@@ -16745,12 +16749,14 @@
 
 (define-method start_query
   (of-object "GtkTipsQuery")
+  (deprecated "don't use this")
   (c-name "gtk_tips_query_start_query")
   (return-type "none")
 )
 
 (define-method stop_query
   (of-object "GtkTipsQuery")
+  (deprecated "don't use this")
   (c-name "gtk_tips_query_stop_query")
   (return-type "none")
 )
