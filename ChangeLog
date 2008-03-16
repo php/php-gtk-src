@@ -1,3 +1,20 @@
+2008-03-15  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * demos/examples/old_tooltips_api.php
+      ext/gtk+/gtk-types.defs
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides:
+      alphabetized objects in gtk defs to allow for easier diffing between our
+      defs and pygtk's defs, added support for gtktipsquery and finished
+      overrides for old gtktooltips api - added example
+
+    * demos/examples/new_tooltips_api.php
+      ext/gtk+/gtk-2.12.defs
+      ext/gtk+/gtk-2.12.overrides:
+      Additional GTK 2.12 defs that were missed added, old tooltips api (and some
+      other deprecated items) marked, all of new gtk 2.12 tooltips API working -
+      example of using new API added to demo/examples
+
 2008-03-12  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * generator/generator.php
