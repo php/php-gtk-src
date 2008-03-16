@@ -1,0 +1,14 @@
+<interface>
+    <object class="GtkNotebook" id="mynotebook">
+      <child>
+        <object class="GtkLabel" id="notebook-content">
+          <property name="label">Content</property>
+        </object>
+      </child>
+      <child type="tab">
+        <object class="GtkLabel" id="notebook-tab">
+          <property name="label">Tab</property>
+        </object>
+      </child>
+    </object>
+</interface>
