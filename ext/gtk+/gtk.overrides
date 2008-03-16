@@ -1148,6 +1148,36 @@ PHP_METHOD
     gtk_about_dialog_set_url_hook(callback, cb_data, phpg_cb_data_destroy);
 }
 
+%%
+add-arginfo GtkAboutDialog set_website_label
+static
+ZEND_BEGIN_ARG_INFO(arginfo_gtk_gtkaboutdialog_set_website_label, 0)
+    ZEND_ARG_INFO(0, website_label)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_about_dialog_set_website_label
+PHP_METHOD
+{
+	const gchar *php_retval = NULL;
+	char *website_label;
+	zend_bool free_website_label = FALSE;
+
+      NOT_STATIC_METHOD();
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u", &website_label, &free_website_label))
+		return;
+
+	php_retval = gtk_about_dialog_get_website(GTK_ABOUT_DIALOG(PHPG_GOBJECT(this_ptr)));
+      
+	gtk_about_dialog_set_website_label(GTK_ABOUT_DIALOG(PHPG_GOBJECT(this_ptr)), website_label);
+	
+	/* Fix for bug #393335 - we can't check for a website hook so instead we try to set the website too */
+	if(!php_retval || strlen(php_retval) < 1) {
+		gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(PHPG_GOBJECT(this_ptr)), website_label);
+	}
+	if (free_website_label) g_free(website_label);
+}
 %% }}}
 
 %% {{{ GtkAdjustment
