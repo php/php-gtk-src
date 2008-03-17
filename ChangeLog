@@ -1,3 +1,16 @@
+2008-03-16  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gtk.overrides:
+      fix for #39335 - if GtkAboutDialog::set_website_label is used and
+      set_website is empty, the website_label text is used for set_website as
+      well
+
+    * demos/examples/gtkbuilder_api.php
+      demos/examples/notebook.xml
+      ext/gtk+/gtk-2.12.overrides:
+      GtkBuilder (built into GTK+ libglade replacement) is now wrapped and
+      working - thanks to original libglade override author(s)
+
 2008-03-15  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * demos/examples/old_tooltips_api.php
