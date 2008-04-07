@@ -11,11 +11,17 @@ typedef struct {
 #endif
 } phpg_gtkbuilder_t;
 
+%% {{{ ignores
+
 %%
 ignore
+gtk_builder_error_quark
 gtk_builder_value_from_string
 gtk_builder_value_from_string_type
 gtk_builder_connect_signals_full
+gtk_rc_parse_color_full
+
+%% }}}
 
 %% {{{ GtkBuilder
 
@@ -269,7 +275,7 @@ PHP_METHOD
 %%
 add-arginfo GtkIconView get_tooltip_context
 static
-ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 3)
     ZEND_ARG_INFO(0, x)
     ZEND_ARG_INFO(0, y)
     ZEND_ARG_INFO(0, keyboard_mode)
@@ -308,7 +314,7 @@ PHP_METHOD
 %%
 add-arginfo GtkTreeView get_tooltip_context
 static
-ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 3)
     ZEND_ARG_INFO(0, x)
     ZEND_ARG_INFO(0, y)
     ZEND_ARG_INFO(0, keyboard_mode)

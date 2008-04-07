@@ -1183,6 +1183,8 @@
 (define-function paper_size_new_from_ppd
   (c-name "gtk_paper_size_new_from_ppd")
   (return-type "GtkPaperSize*")
+  (is-constructor-of "GtkPaperSize")
+  (caller-owns-return #t)
   (parameters
     '("const-gchar*" "ppd_name")
     '("const-gchar*" "ppd_display_name")
@@ -1194,6 +1196,8 @@
 (define-function paper_size_new_custom
   (c-name "gtk_paper_size_new_custom")
   (return-type "GtkPaperSize*")
+  (is-constructor-of "GtkPaperSize")
+  (caller-owns-return #t)
   (parameters
     '("const-gchar*" "name")
     '("const-gchar*" "display_name")
@@ -1313,8 +1317,10 @@
   )
 )
 
-(define-function paper_size_get_default
+(define-method get_default
   (c-name "gtk_paper_size_get_default")
+  (of-object "GtkPaperSize")
+  (static #t)
   (return-type "const-gchar*")
 )
 
@@ -1588,9 +1594,11 @@
   (return-type "none")
 )
 
-(define-function print_run_page_setup_dialog
+(define-method run_dialog
   (c-name "gtk_print_run_page_setup_dialog")
   (return-type "GtkPageSetup*")
+  (of-object "GtkPageSetup")
+  (static #t)
   (parameters
     '("GtkWindow*" "parent" (null-ok))
     '("GtkPageSetup*" "page_setup" (null-ok))
@@ -1598,9 +1606,11 @@
   )
 )
 
-(define-function print_run_page_setup_dialog_async
+(define-method run_dialog_async
   (c-name "gtk_print_run_page_setup_dialog_async")
   (return-type "none")
+  (static #t)
+  (of-object "GtkPageSetup")
   (parameters
     '("GtkWindow*" "parent")
     '("GtkPageSetup*" "page_setup")

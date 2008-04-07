@@ -569,6 +569,8 @@
 
 (define-function page_setup_new_from_file
   (c-name "gtk_page_setup_new_from_file")
+  (is-constructor-of "GtkPageSetup")
+  (caller-owns-return #t)
   (return-type "GtkPageSetup*")
   (parameters
     '("const-gchar*" "file_name")
@@ -578,6 +580,8 @@
 
 (define-function page_setup_new_from_key_file
   (c-name "gtk_page_setup_new_from_key_file")
+  (is-constructor-of "GtkPageSetup")
+  (caller-owns-return #t)
   (return-type "GtkPageSetup*")
   (parameters
     '("GKeyFile*" "key_file")
@@ -610,8 +614,10 @@
 
 ;; From gtkpapersize.h
 
-(define-function paper_size_get_paper_sizes
+(define-method paper_size_get_paper_sizes
   (c-name "gtk_paper_size_get_paper_sizes")
+  (of-object "GtkPaperSize")
+  (static #t)
   (return-type "GList*")
   (parameters
     '("gboolean" "include_custom")
@@ -620,6 +626,8 @@
 
 (define-function paper_size_new_from_key_file
   (c-name "gtk_paper_size_new_from_key_file")
+  (is-constructor-of "GtkPaperSize")
+  (caller-owns-return #t)
   (return-type "GtkPaperSize*")
   (parameters
     '("GKeyFile*" "key_file")
@@ -644,6 +652,8 @@
 
 (define-function print_settings_new_from_file
   (c-name "gtk_print_settings_new_from_file")
+  (is-constructor-of "GtkPrintSettings")
+  (caller-owns-return #t)
   (return-type "GtkPrintSettings*")
   (parameters
     '("const-gchar*" "file_name")
@@ -663,6 +673,8 @@
 
 (define-function print_settings_new_from_key_file
   (c-name "gtk_print_settings_new_from_key_file")
+  (is-constructor-of "GtkPrintSettings")
+  (caller-owns-return #t)
   (return-type "GtkPrintSettings*")
   (parameters
     '("GKeyFile*" "key_file")
@@ -767,6 +779,8 @@
 
 (define-function recent_action_new_for_manager
   (c-name "gtk_recent_action_new_for_manager")
+  (is-constructor-of "GtkRecentAction")
+  (caller-owns-return #t)
   (return-type "GtkAction*")
   (parameters
     '("const-gchar*" "name")
