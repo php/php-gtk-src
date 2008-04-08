@@ -1,3 +1,12 @@
+2008-04-07  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gtk-2.10.defs
+      ext/gtk+/gtk-2.10.overrides
+      ext/gtk+/gtk-2.12.defs
+      ext/gtk+/gtk-2.12.overrides:
+      Fixes for 2.10 and 2.12 coverage - some static methods and constructors
+      def'd properly and ignores added
+
 2008-03-16  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/gtk.overrides:
