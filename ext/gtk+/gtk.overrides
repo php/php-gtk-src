@@ -12,6 +12,7 @@ static gboolean phpg_file_filter_add_custom_marshal(GtkFileFilterInfo *filter_in
 static gboolean phpg_tree_view_row_separator_func_marshal (GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
 static void phpg_icon_view_foreach_func_marshal (GtkIconView *icon_view, GtkTreePath *path, gpointer data);
 static gboolean phpg_toolbar_signal_func_marshal(GtkWidget *widget, gpointer data);
+static void phpg_color_selection_change_palette_with_screen_func_marshal(GdkScreen *screen, const GdkColor *colors, gint n_colors);
 
 /* forward declaration */
 static PHP_METHOD(GtkImage, get_image);
@@ -26,6 +27,7 @@ ignore-glob
     *_ref
     *_unref
     *_get_type
+    *_free
     gtk_arg_*
     gtk_args_*
     gtk_check_button_new_*
@@ -36,41 +38,17 @@ ignore-glob
     gtk_radio_tool_button_new_*
     gtk_rc_property_parse_*
     gtk_signal_*
-    gtk_target_list_*
     gtk_timeout_add_*
     gtk_toggle_button_new_*
 %%
 ignore
-    gtk_accel_group_activate
-    gtk_accel_group_add
-    gtk_accel_group_attach
-    gtk_accel_group_connect
-    gtk_accel_group_create_add
-    gtk_accel_group_create_remove
-    gtk_accel_group_detach
-    gtk_accel_group_disconnect
-    gtk_accel_group_entries_from_object
-    gtk_accel_group_from_accel_closure
-    gtk_accel_group_get_entry
-    gtk_accel_group_handle_add
-    gtk_accel_group_handle_remove
-    gtk_accel_group_lock_entry
-    gtk_accel_group_new
-    gtk_accel_group_query
     gtk_accel_group_ref
-    gtk_accel_group_remove
-    gtk_accel_group_unlock_entry
     gtk_accel_group_unref
-    gtk_accel_groups_activate
     gtk_accel_label_set_accel_closure
-    gtk_accel_map_foreach
-    gtk_accel_map_foreach_unfiltered
-    gtk_accel_map_get
     gtk_accel_map_load_scanner
     gtk_action_group_add_actions_full
     gtk_action_group_add_toggle_actions_full
     gtk_action_group_add_radio_actions_full
-    gtk_action_group_set_translate_func
     gtk_binding_entry_add_signall
     gtk_binding_entry_clear
     gtk_binding_parse_binding
@@ -87,13 +65,12 @@ ignore
     gtk_clist_set_row_data_full
     gtk_color_button_new
     gtk_color_selection_set_change_palette_hook
-    gtk_color_selection_set_change_palette_with_screen_hook
     gtk_combo_box_get_row_separator_func
     gtk_combo_box_new_with_model
+    gtk_combo_box_entry_new_with_model
     gtk_ctree_is_ancestor
     gtk_ctree_new_with_titles
     gtk_dialog_new
-    gtk_dialog_set_alternative_button_order
     gtk_dialog_set_alternative_button_order_from_array
     gtk_draw_hline
     gtk_draw_vline
@@ -159,7 +136,6 @@ ignore
     gtk_menu_item_set_accel_path
     gtk_menu_set_accel_path
     gtk_menu_get_for_attach_widget
-    gtk_message_dialog_new_with_markup
     gtk_object_add_arg_type
     gtk_object_arg_get
     gtk_object_arg_get_info
@@ -215,6 +191,7 @@ ignore
     gtk_settings_set_property_value
     gtk_statusbar_remove
     gtk_stock_add_static
+    gtk_show_about_dialog
     gtk_toolbar_get_style
     gtk_toolbar_set_style
     gtk_trace_referencing
@@ -223,7 +200,6 @@ ignore
     gtk_type_check_object_cast
     gtk_type_register_enum
     gtk_type_register_flags
-    gtk_widget_class_find_style_property
     gtk_widget_class_install_style_property_parser
     gtk_widget_destroyed
     gtk_widget_get
@@ -232,7 +208,6 @@ ignore
     gtk_widget_newv
     gtk_widget_set
     gtk_widget_setv
-    gtk_widget_style_get
     gtk_widget_style_get_valist
     gtk_window_add_embedded_xid
     gtk_window_remove_embedded_xid
@@ -775,6 +750,12 @@ PHP_METHOD
 }
 
 %%
+add-arginfo Gtk accel_groups_from_object
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_OBJ_INFO(0, object, GObject, 1)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_accel_groups_from_object
 PHP_METHOD
 {
@@ -794,6 +775,91 @@ PHP_METHOD
         phpg_gobject_new(&item, G_OBJECT(tmp->data) TSRMLS_CC);
         add_next_index_zval(return_value, item);
     }
+}
+
+%% }}}
+
+%% {{{ GtkAccelGroup
+
+%%
+add-arginfo GtkAccelGroup find
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_accel_group_find
+static gboolean phpg_accelgroup_find_func_marshal(GtkAccelKey *key, GClosure *closure, gpointer data)
+{
+    phpg_cb_data_t *cbd = (phpg_cb_data_t *) data;
+    zval ***args = NULL;
+    int n_args = 0;
+    char *callback_name;
+    zval *php_key = NULL, *retval = NULL;
+    gboolean return_value;
+
+    TSRMLS_FETCH();
+
+    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+        php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
+        efree(callback_name);
+        return (gboolean) 0;
+    }
+    /* TODO - check closure to see if it's invalidated? If so error and return false? */
+    
+    /* Make the key useable */
+    MAKE_STD_ZVAL(php_key);
+    array_init(php_key);
+    add_next_index_long(php_key, key->accel_key);
+    add_next_index_long(php_key, key->accel_mods);
+
+    args = php_gtk_hash_as_array_offset(cbd->user_args, 1, &n_args);
+    args[0] = &php_key;
+
+    call_user_function_ex(EG(function_table), NULL, cbd->callback, &retval, n_args, args, 0, NULL TSRMLS_CC);
+
+    zval_ptr_dtor(&php_key);
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
+    efree(callback_name);
+    efree(args);
+    
+    convert_to_boolean(retval);
+    return_value = Z_BVAL_P(retval);
+    zval_ptr_dtor(&retval);
+    return return_value;
+}
+
+PHP_METHOD
+{
+    zval *php_callback, *extra;
+    phpg_cb_data_t *cb_data;
+    GtkAccelGroupFindFunc callback;
+    GtkAccelKey *result;
+
+	NOT_STATIC_METHOD();
+ 
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 1, &extra, "V", &php_callback))
+        return;
+
+    if (Z_TYPE_P(php_callback) == IS_NULL) {
+        cb_data  = NULL;
+        callback = NULL;
+    } else {
+        zval_add_ref(&php_callback);
+        cb_data  = phpg_cb_data_new(php_callback, extra TSRMLS_CC);
+        callback = (GtkAccelGroupFindFunc)phpg_accelgroup_find_func_marshal;
+    }
+
+    result = gtk_accel_group_find(GTK_ACCEL_GROUP(PHPG_GOBJECT(this_ptr)), callback, cb_data);
+    /* only if we have a result */
+    if (result) {
+		array_init(return_value);
+		add_next_index_long(return_value, result->accel_key);
+		add_next_index_long(return_value, result->accel_mods);
+	}
 }
 
 %% }}}
@@ -1943,6 +2009,79 @@ PHP_METHOD
     efree(colors);
 }
 
+%%
+add-arginfo GtkColorSelection set_change_palette_with_screen_hook
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_color_selection_set_change_palette_with_screen_hook
+static void phpg_color_selection_change_palette_with_screen_func_marshal(GdkScreen *screen, const GdkColor *colors, gint n_colors)
+{
+
+    phpg_cb_data_t *cbd;
+    zval *retval = NULL;
+    zval ***args = NULL;
+    int n_args = 0;
+    char *callback_name;
+    zval *php_screen = NULL, *php_colors = NULL;
+
+    TSRMLS_FETCH();
+
+    cbd = GTK_G(color_selection_palette_callback);
+
+    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+        php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
+        efree(callback_name);
+        return;
+    }
+
+    phpg_gobject_new(&php_screen, (GObject*)screen TSRMLS_CC);
+    phpg_gboxed_new(&php_colors, GDK_TYPE_COLOR, (gpointer) colors, TRUE, TRUE TSRMLS_CC);
+
+    args = php_gtk_hash_as_array_offset(cbd->user_args, 2, &n_args);
+    args[0] = &php_screen;
+    args[1] = &php_colors;
+
+    call_user_function_ex(EG(function_table), NULL, cbd->callback, &retval, n_args, args, 0, NULL TSRMLS_CC);
+
+    zval_ptr_dtor(&php_screen);
+    zval_ptr_dtor(&php_colors);
+
+    if (retval) {
+        zval_ptr_dtor(&retval);
+    }
+
+    phpg_handle_marshaller_exception(TSRMLS_C);
+
+    efree(callback_name);
+    efree(args);
+}
+
+PHP_METHOD
+{
+    zval *php_callback, *extra;
+    GtkColorSelectionChangePaletteWithScreenFunc callback;
+
+    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 1, &extra, "V", &php_callback))
+        return;
+
+    if (Z_TYPE_P(php_callback) == IS_NULL) {
+        /* set the global var to null */
+        GTK_G(color_selection_palette_callback) = NULL;
+        callback = NULL;
+    } else {
+        /* set the global var to our callback struct */
+        zval_add_ref(&php_callback);
+        GTK_G(color_selection_palette_callback) = phpg_cb_data_new(php_callback, extra TSRMLS_CC);
+        callback = (GtkColorSelectionChangePaletteWithScreenFunc)phpg_color_selection_change_palette_with_screen_func_marshal;
+    }
+
+    gtk_color_selection_set_change_palette_with_screen_hook(callback);
+}
+
 %% }}}
 
 %% {{{ GtkCombo
@@ -1996,6 +2135,13 @@ PHP_METHOD
 %% }}}
 
 %% {{{ GtkComboBox
+
+%%
+add-arginfo GtkComboBox __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, model)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_combo_box_new
@@ -2072,6 +2218,45 @@ PHP_METHOD
     gtk_combo_box_set_row_separator_func(GTK_COMBO_BOX(PHPG_GOBJECT(this_ptr)),
                                                            callback,
                                                            cb_data, phpg_cb_data_destroy);
+}
+
+%% }}}
+
+%% {{{ GtkComboBoxEntry
+
+%%
+add-arginfo GtkComboBoxEntry __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, model)
+    ZEND_ARG_INFO(0, text_column)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_combo_box_new
+PHP_METHOD
+{
+	zval *model;
+	long text_column = 0;
+	GObject *wrapped_obj;
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|Oi", &model, gtktreemodel_ce, &text_column)) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkComboBoxEntry);
+	}
+
+    if (model && Z_TYPE_P(model) != IS_NULL) {
+        wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), "model",
+                                              GTK_TREE_MODEL(PHPG_GOBJECT(model)),
+                                              "text-column", text_column, NULL);
+    } else {
+        wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
+    }
+
+    if (!wrapped_obj) {
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkComboBox);
+    }
+
+    phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }
 
 %% }}}
@@ -3455,6 +3640,96 @@ PHP_METHOD
 %% {{{ GtkIconTheme
 
 %%
+add-arginfo GtkIconTheme set_search_path
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+    ZEND_ARG_ARRAY_INFO(0, search_paths, 0)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_icon_theme_set_search_path
+PHP_METHOD
+{
+	zval *php_paths, **path;
+	gchar **paths;
+	int i;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &php_paths))
+        return;
+        
+    paths = g_new(gchar *, zend_hash_num_elements(Z_ARRVAL_P(php_paths)));
+
+	for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(php_paths)), i = 0;
+         zend_hash_get_current_data(Z_ARRVAL_P(php_paths), (void **)&path) == SUCCESS;
+         zend_hash_move_forward(Z_ARRVAL_P(php_paths)), i++) {
+
+         gchar *utf8 = NULL;
+         gsize utf8_len = 0;
+         zend_bool free_utf8 = 0;
+         
+         convert_to_string_ex(path);
+         utf8 = phpg_to_utf8(Z_STRVAL_PP(path), Z_STRLEN_PP(path), &utf8_len, &free_utf8 TSRMLS_CC);
+
+        if (!utf8) {
+            g_free(paths);
+            php_error(E_WARNING, "%s::%s() Could not convert path string to UTF-8",
+                    get_active_class_name(NULL TSRMLS_CC),
+                    get_active_function_name(TSRMLS_C));
+            return;
+        }
+
+        if (free_utf8) {
+            paths[i] = utf8;
+        } else {
+            /* Use GTK+ memory function here since gtk will own this */
+            paths[i] = g_strdup(utf8);
+        }
+   }
+        
+	gtk_icon_theme_set_search_path(GTK_ICON_THEME(PHPG_GOBJECT(this_ptr)),
+				   (const gchar **)paths, i);
+
+    g_free(paths);
+}
+
+%%
+override gtk_icon_theme_get_search_path
+PHP_METHOD
+{
+    gchar **paths;
+    gint n_items = 0;
+    int i;
+    
+    NOT_STATIC_METHOD();
+    
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+    
+    gtk_icon_theme_get_search_path(GTK_ICON_THEME(PHPG_GOBJECT(this_ptr)),
+				   &paths, &n_items);
+
+    array_init(return_value);
+    for (i = 0; i < n_items; i++)
+    {
+		gchar *string;
+		gsize len;
+		zend_bool free_result;
+        string = phpg_from_utf8(paths[i], strlen(paths[i]), &len, &free_result TSRMLS_CC);
+        if (string) {
+            add_next_index_stringl(return_value,(char *)string, len, 1);
+        } else {
+            php_error(E_WARNING, "%s::%s(): could not convert return value from UTF-8", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        }
+        if (free_result)
+            g_free(string);
+    }
+
+    g_strfreev(paths);
+}
+
+%%
 override gtk_icon_theme_list_icons
 PHP_METHOD
 {
@@ -4361,6 +4636,14 @@ PHP_METHOD
 %% {{{ GtkPlug
 
 %%
+add-arginfo GtkPlug __construct
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+    ZEND_ARG_INFO(0, socket_id)
+    ZEND_ARG_OBJ_INFO(0, display, GdkDisplay, 1)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_plug_new
 PHP_METHOD
 {
@@ -4826,6 +5109,13 @@ PHP_METHOD
         add_next_index_zval(return_value, item);
     }
 }
+
+%%
+add-arginfo GtkRadioToolButton set_group
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+    ZEND_ARG_OBJ_INFO(0, group, GtkRadioToolButton, 1)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_radio_tool_button_set_group
@@ -5726,6 +6016,13 @@ PHP_METHOD
 
     RETURN_BOOL(visible);
 }
+
+%%
+add-arginfo GtkWidget style_get_property
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, property_name)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_widget_style_get_property

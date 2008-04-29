@@ -3,6 +3,10 @@
 %% {{{ ignores
 
 %%
+ignore
+  gtk_action_get_accel_closure
+
+%%
 restore
     GtkPlug
     GtkSocket

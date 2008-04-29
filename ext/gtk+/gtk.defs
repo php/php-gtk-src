@@ -420,8 +420,10 @@
   )
 )
 
-(define-function accel_map_add_entry
+(define-method add_entry
   (c-name "gtk_accel_map_add_entry")
+  (of-object "GtkAccelMap")
+  (static #t)
   (return-type "none")
   (parameters
     '("const-gchar*" "accel_path")
@@ -430,16 +432,20 @@
   )
 )
 
-(define-function accel_map_add_filter
+(define-method add_filter
   (c-name "gtk_accel_map_add_filter")
+  (of-object "GtkAccelMap")
+  (static #t)
   (return-type "none")
   (parameters
     '("const-gchar*" "filter_pattern")
   )
 )
 
-(define-function accel_map_change_entry
+(define-method change_entry
   (c-name "gtk_accel_map_change_entry")
+  (of-object "GtkAccelMap")
+  (static #t)
   (return-type "gboolean")
   (parameters
     '("const-gchar*" "accel_path")
@@ -449,26 +455,32 @@
   )
 )
 
-(define-function accel_map_foreach
+(define-method foreach
   (c-name "gtk_accel_map_foreach")
   (return-type "none")
+  (of-object "GtkAccelMap")
+  (static #t)
   (parameters
     '("gpointer" "data")
     '("GtkAccelMapForeach" "foreach_func")
   )
 )
 
-(define-function accel_map_foreach_unfiltered
+(define-method foreach_unfiltered
   (c-name "gtk_accel_map_foreach_unfiltered")
   (return-type "none")
+  (of-object "GtkAccelMap")
+  (static #t)
   (parameters
     '("gpointer" "data")
     '("GtkAccelMapForeach" "foreach_func")
   )
 )
 
-(define-function accel_map_get
+(define-method get
   (c-name "gtk_accel_map_get")
+  (of-object "GtkAccelMap")
+  (static #t)
   (return-type "GtkAccelMap*")
 )
 
@@ -477,66 +489,82 @@
   (return-type "GType")
 )
 
-(define-function accel_map_load
+(define-method load
   (c-name "gtk_accel_map_load")
   (return-type "none")
+  (of-object "GtkAccelMap")
+  (static #t)
   (parameters
     '("const-gchar*" "file_name")
   )
 )
 
-(define-function accel_map_load_fd
+(define-method load_fd
   (c-name "gtk_accel_map_load_fd")
   (return-type "none")
+  (of-object "GtkAccelMap")
+  (static #t)
   (parameters
     '("gint" "fd")
   )
 )
 
-(define-function accel_map_load_scanner
+(define-method load_scanner
   (c-name "gtk_accel_map_load_scanner")
+  (of-object "GtkAccelMap")
+  (static #t)
   (return-type "none")
   (parameters
     '("GScanner*" "scanner")
   )
 )
 
-(define-function accel_map_lock_path
+(define-method lock_path
   (c-name "gtk_accel_map_lock_path")
+  (of-object "GtkAccelMap")
+  (static #t)
   (return-type "none")
   (parameters
     '("const-gchar*" "accel_path")
   )
 )
 
-(define-function accel_map_lookup_entry
+(define-method lookup_entry
   (c-name "gtk_accel_map_lookup_entry")
   (return-type "gboolean")
+  (of-object "GtkAccelMap")
+  (static #t)
   (parameters
     '("const-gchar*" "accel_path")
     '("GtkAccelKey*" "key")
   )
 )
 
-(define-function accel_map_save
+(define-method save
   (c-name "gtk_accel_map_save")
+  (of-object "GtkAccelMap")
+  (static #t)
   (return-type "none")
   (parameters
     '("const-gchar*" "file_name")
   )
 )
 
-(define-function accel_map_save_fd
+(define-method save_fd
   (c-name "gtk_accel_map_save_fd")
   (return-type "none")
+  (of-object "GtkAccelMap")
+  (static #t)
   (parameters
     '("gint" "fd")
   )
 )
 
-(define-function accel_map_unlock_path
+(define-method unlock_path
   (c-name "gtk_accel_map_unlock_path")
   (return-type "none")
+  (of-object "GtkAccelMap")
+  (static #t)
   (parameters
     '("const-gchar*" "accel_path")
   )
@@ -2146,7 +2174,7 @@
   (return-type "GtkWidget*")
 )
 
-(define-method new_with_markup
+(define-function new_with_markup
   (is-constructor-of "GtkCellView")
   (c-name "gtk_cell_view_new_with_markup")
   (return-type "GtkWidget*")
@@ -2346,10 +2374,22 @@
   )
 )
 
-(define-method clear
-  (of-object "GtkClipboard")
-  (c-name "gtk_clipboard_clear")
-  (return-type "none")
+;; From /opt/gtk2/include/gtk-2.0/gtk/gtkclipboard.h
+
+(define-function gtk_clipboard_get_type
+  (c-name "gtk_clipboard_get_type")
+  (return-type "GType")
+)
+
+(define-function clipboard_get_for_display 
+  (c-name "gtk_clipboard_get_for_display")
+  (is-constructor-of "GtkClipboard")
+  (caller-owns-return #f)
+  (return-type "GtkClipboard*")
+  (parameters
+    '("GdkDisplay*" "display" (default "gdk_display_get_default()"))
+    '("GdkAtom" "selection" (default "GDK_SELECTION_CLIPBOARD"))
+  )
 )
 
 (define-method get
@@ -2366,79 +2406,6 @@
   (of-object "GtkClipboard")
   (c-name "gtk_clipboard_get_display")
   (return-type "GdkDisplay*")
-)
-
-(define-function clipboard_get_for_display
-  (is-constructor-of "GtkClipboard")
-  (c-name "gtk_clipboard_get_for_display")
-  (return-type "GtkClipboard*")
-  (caller-owns-return #f)
-  (parameters
-    '("GdkDisplay*" "display" (default "gdk_display_get_default()"))
-    '("GdkAtom" "selection" (default "GDK_SELECTION_CLIPBOARD"))
-  )
-)
-
-(define-method get_owner
-  (of-object "GtkClipboard")
-  (c-name "gtk_clipboard_get_owner")
-  (return-type "GObject*")
-)
-
-(define-function gtk_clipboard_get_type
-  (c-name "gtk_clipboard_get_type")
-  (return-type "GType")
-)
-
-(define-method request_contents
-  (of-object "GtkClipboard")
-  (c-name "gtk_clipboard_request_contents")
-  (return-type "none")
-  (parameters
-    '("GdkAtom" "target")
-    '("GtkClipboardReceivedFunc" "callback")
-    '("gpointer" "user_data")
-  )
-)
-
-(define-method request_targets
-  (of-object "GtkClipboard")
-  (c-name "gtk_clipboard_request_targets")
-  (return-type "none")
-  (parameters
-    '("GtkClipboardTargetsReceivedFunc" "callback")
-    '("gpointer" "user_data")
-  )
-)
-
-(define-method request_text
-  (of-object "GtkClipboard")
-  (c-name "gtk_clipboard_request_text")
-  (return-type "none")
-  (parameters
-    '("GtkClipboardTextReceivedFunc" "callback")
-    '("gpointer" "user_data")
-  )
-)
-
-(define-method set_can_store
-  (of-object "GtkClipboard")
-  (c-name "gtk_clipboard_set_can_store")
-  (return-type "none")
-  (parameters
-    '("const-GtkTargetEntry*" "targets")
-    '("gint" "n_targets")
-  )
-)
-
-(define-method set_text
-  (of-object "GtkClipboard")
-  (c-name "gtk_clipboard_set_text")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "text")
-    '("gint" "len" (default "-1"))
-  )
 )
 
 (define-method set_with_data
@@ -2467,10 +2434,57 @@
   )
 )
 
-(define-method store
+(define-method get_owner
   (of-object "GtkClipboard")
-  (c-name "gtk_clipboard_store")
+  (c-name "gtk_clipboard_get_owner")
+  (return-type "GObject*")
+)
+
+(define-method clear
+  (of-object "GtkClipboard")
+  (c-name "gtk_clipboard_clear")
   (return-type "none")
+)
+
+(define-method set_text
+  (of-object "GtkClipboard")
+  (c-name "gtk_clipboard_set_text")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "text")
+    '("gint" "len" (default "-1"))
+  )
+)
+
+(define-method request_contents
+  (of-object "GtkClipboard")
+  (c-name "gtk_clipboard_request_contents")
+  (return-type "none")
+  (parameters
+    '("GdkAtom" "target")
+    '("GtkClipboardReceivedFunc" "callback")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method request_text
+  (of-object "GtkClipboard")
+  (c-name "gtk_clipboard_request_text")
+  (return-type "none")
+  (parameters
+    '("GtkClipboardTextReceivedFunc" "callback")
+    '("gpointer" "user_data")
+  )
+)
+
+(define-method request_targets
+  (of-object "GtkClipboard")
+  (c-name "gtk_clipboard_request_targets")
+  (return-type "none")
+  (parameters
+    '("GtkClipboardTargetsReceivedFunc" "callback")
+    '("gpointer" "user_data")
+  )
 )
 
 (define-method wait_for_contents
@@ -2480,6 +2494,19 @@
   (parameters
     '("GdkAtom" "target")
   )
+)
+
+(define-method wait_for_text
+  (of-object "GtkClipboard")
+  (c-name "gtk_clipboard_wait_for_text")
+  (caller-owns-return #t)
+  (return-type "gchar*")
+)
+
+(define-method wait_is_text_available
+  (of-object "GtkClipboard")
+  (c-name "gtk_clipboard_wait_is_text_available")
+  (return-type "gboolean")
 )
 
 (define-method wait_for_targets
@@ -2492,12 +2519,60 @@
   )
 )
 
-(define-method wait_for_text
+(define-method request_image
   (of-object "GtkClipboard")
-  (c-name "gtk_clipboard_wait_for_text")
-  (caller-owns-return #t)
-  (return-type "gchar*")
+  (c-name "gtk_clipboard_request_image")
+  (return-type "none")
+  (parameters
+    '("GtkClipboardImageReceivedFunc" "callback")
+    '("gpointer" "user_data")
+  )
 )
+
+(define-method wait_for_image
+  (of-object "GtkClipboard")
+  (c-name "gtk_clipboard_wait_for_image")
+  (return-type "GdkPixbuf*")
+)
+
+(define-method set_image
+  (of-object "GtkClipboard")
+  (c-name "gtk_clipboard_set_image")
+  (return-type "none")
+  (parameters
+    '("GdkPixbuf*" "pixbuf")
+  )
+)
+
+(define-method wait_is_image_available
+  (of-object "GtkClipboard")
+  (c-name "gtk_clipboard_wait_is_image_available")
+  (return-type "gboolean")
+)
+
+(define-method set_can_store
+  (of-object "GtkClipboard")
+  (c-name "gtk_clipboard_set_can_store")
+  (return-type "none")
+  (parameters
+    '("const-GtkTargetEntry*" "targets")
+    '("gint" "n_targets")
+  )
+)
+
+
+
+
+
+(define-method store
+  (of-object "GtkClipboard")
+  (c-name "gtk_clipboard_store")
+  (return-type "none")
+)
+
+
+
+
 
 (define-method wait_is_target_available
   (of-object "GtkClipboard")
@@ -2508,10 +2583,12 @@
   )
 )
 
-(define-method wait_is_text_available
-  (of-object "GtkClipboard")
-  (c-name "gtk_clipboard_wait_is_text_available")
-  (return-type "gboolean")
+
+
+(define-method clear
+  (of-object "GtkCList")
+  (c-name "gtk_clist_clear")
+  (return-type "none")
 )
 
 (define-method append
@@ -2523,11 +2600,7 @@
   )
 )
 
-(define-method clear
-  (of-object "GtkCList")
-  (c-name "gtk_clist_clear")
-  (return-type "none")
-)
+
 
 (define-method column_title_active
   (of-object "GtkCList")
@@ -5015,6 +5088,14 @@
   (parameters
     '("gint" "n_params")
     '("gint*" "new_order")
+  )
+)
+
+(define-function alternative_dialog_button_order
+  (c-name "gtk_alternative_dialog_button_order")
+  (return-type "gboolean")
+  (parameters
+    '("GdkScreen*" "screen" (null-ok) (default "NULL"))
   )
 )
 
@@ -9161,11 +9242,11 @@
   )
 )
 
-(define-method new_from_icon_name
+(define-function image_new_from_icon_name
   (c-name "gtk_image_new_from_icon_name")
-  (of-object "GtkImage")
+  (is-constructor-of "GtkImage")
+  (caller-owns-return #t)
   (return-type "GtkWidget*")
-  (static #t)
   (parameters
     '("const-gchar*" "icon_name")
     '("GtkIconSize" "size")
@@ -14650,11 +14731,11 @@
   )
 )
 
-(define-function target_list_add_image_targets
+(define-method add_image_targets
   (c-name "gtk_target_list_add_image_targets")
+  (of-object "GtkTargetList")
   (return-type "none")
   (parameters
-    '("GtkTargetList*" "list")
     '("guint" "info")
     '("gboolean" "writable")
   )
@@ -14670,20 +14751,20 @@
   )
 )
 
-(define-function target_list_add_text_targets
+(define-method add_text_targets
   (c-name "gtk_target_list_add_text_targets")
+  (of-object "GtkTargetList")
   (return-type "none")
   (parameters
-    '("GtkTargetList*" "list")
     '("guint" "info")
   )
 )
 
-(define-function target_list_add_uri_targets
+(define-method add_uri_targets
   (c-name "gtk_target_list_add_uri_targets")
+  (of-object "GtkTargetList")
   (return-type "none")
   (parameters
-    '("GtkTargetList*" "list")
     '("guint" "info")
   )
 )

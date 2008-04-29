@@ -3231,8 +3231,9 @@
 
 ;; From gtkselection.h
 
-(define-function target_list_add_rich_text_targets
+(define-method add_rich_text_targets
   (c-name "gtk_target_list_add_rich_text_targets")
+  (of-object "GtkTargetList")
   (return-type "none")
   (parameters
     '("guint" "info")

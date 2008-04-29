@@ -216,6 +216,8 @@ PHP_RSHUTDOWN_FUNCTION(gtk)
 
 	/* more clean-ups after Gtk+ */
 	gtk_about_dialog_set_url_hook(NULL, NULL, NULL);
+	gtk_about_dialog_set_email_hook(NULL, NULL, NULL);
+	gtk_color_selection_set_change_palette_with_screen_hook(NULL);
 
 	return SUCCESS;
 }

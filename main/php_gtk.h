@@ -72,6 +72,13 @@
 # define PHP_GTK_API
 #endif
 
+typedef struct {
+	zval *callback;
+	zval *user_args;
+	char *src_filename;
+	long src_lineno;
+} phpg_cb_data_t;
+
 #include "php_gtk_module.h"
 
 #define PANGO_ENABLE_BACKEND
@@ -100,13 +107,6 @@
 #define PHP_GTK_EXPORT_FUNC(func) func
 
 typedef void (*phpg_dtor_t)(void *);
-
-typedef struct {
-	zval *callback;
-	zval *user_args;
-	char *src_filename;
-	long src_lineno;
-} phpg_cb_data_t;
 
 static inline phpg_cb_data_t* phpg_cb_data_new(zval *callback, zval *user_args TSRMLS_DC)
 {

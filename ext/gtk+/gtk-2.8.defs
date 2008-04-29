@@ -24,8 +24,10 @@
     '("GtkWidget*" "widget")
   )
 )
-(define-function drag_set_icon_name
+(define-method drag_set_icon_name
   (c-name "gtk_drag_set_icon_name")
+  (of-object "GtkWidget")
+  (static #t)
   (return-type "none")
   (parameters
     '("GdkDragContext*" "context")

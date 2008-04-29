@@ -300,7 +300,7 @@ PHP_METHOD
 	GtkTextIter start, stop, *limit;
 	gboolean found;
 
-	TSRMLS_FETCH();
+	NOT_STATIC_METHOD();
 
 	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"Osi|N",
 		&php_iter, gboxed_ce,
@@ -346,7 +346,7 @@ PHP_METHOD
 	GtkTextIter start, stop, *limit;
 	gboolean found;
 
-	TSRMLS_FETCH();
+	NOT_STATIC_METHOD();
 
 	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"Osi|N",
 		&php_iter, gboxed_ce,

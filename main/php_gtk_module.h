@@ -40,6 +40,7 @@ PHP_MINFO_FUNCTION(gtk);
 ZEND_BEGIN_MODULE_GLOBALS(gtk)
    char *codepage;
    zend_bool is_utf8;
+   phpg_cb_data_t *color_selection_palette_callback;
 ZEND_END_MODULE_GLOBALS(gtk)
 
 #ifdef ZTS
