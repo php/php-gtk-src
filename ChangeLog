@@ -1,3 +1,17 @@
+2008-04-29  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gtk-2.10.defs
+      ext/gtk+/gtk-2.8.defs
+      ext/gtk+/gtk-2.8.overrides
+      ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/sourceview/sourceview.overrides
+      main/php_gtk.c
+      main/php_gtk.h
+      main/php_gtk_module.h:
+      A bunch of new overrides, ignore fixes, def fixes and missing defs, and a
+      sourceview override fix for TS mode
+
 2008-04-07  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/gtk-2.10.defs
