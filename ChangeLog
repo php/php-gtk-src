@@ -1,3 +1,9 @@
+2008-05-01  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * (php_gtk_2_0_1)
+      main/php_gtk.h:
+      Roll 2.0.1.
+
 2008-04-29  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/gtk-2.10.defs
