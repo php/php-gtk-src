@@ -30,6 +30,7 @@ ignore-glob
     *_free
     gtk_arg_*
     gtk_args_*
+    gtk_binding*
     gtk_check_button_new_*
     gtk_init_add_*
     gtk_marshal_*
@@ -42,20 +43,12 @@ ignore-glob
     gtk_toggle_button_new_*
 %%
 ignore
-    gtk_accel_group_ref
-    gtk_accel_group_unref
+    gtk_accel_group_from_accel_closure
     gtk_accel_label_set_accel_closure
     gtk_accel_map_load_scanner
     gtk_action_group_add_actions_full
     gtk_action_group_add_toggle_actions_full
     gtk_action_group_add_radio_actions_full
-    gtk_binding_entry_add_signall
-    gtk_binding_entry_clear
-    gtk_binding_parse_binding
-    gtk_binding_set_by_class
-    gtk_binding_set_clear
-    gtk_binding_set_find
-    gtk_binding_set_new
     gtk_button_new_with_label
     gtk_button_new_with_mnemonic
     gtk_check_menu_item_new_with_label
@@ -714,6 +707,13 @@ PHP_METHOD
 }
 
 %%
+add-arginfo Gtk accelerator_parse
+static
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, accel_string)
+ZEND_END_ARG_INFO();
+
+%%
 override gtk_accelerator_parse
 PHP_METHOD
 {
@@ -731,6 +731,12 @@ PHP_METHOD
 
     php_gtk_build_value(&return_value, "(ii)", keyval, modifier);
 }
+
+%%
+add-arginfo GtkAccelMap lookup_entry
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, accel_path)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_accel_map_lookup_entry
@@ -1964,6 +1970,13 @@ PHP_METHOD
 
     gtk_color_selection_set_color(GTK_COLOR_SELECTION(PHPG_GOBJECT(this_ptr)), value);
 }
+
+%%
+add-arginfo GtkColorSelection palette_to_string
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
+    ZEND_ARG_ARRAY_INFO(0, colors, 0)
+ZEND_END_ARG_INFO();
 
 %%
 override gtk_color_selection_palette_to_string

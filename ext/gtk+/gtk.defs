@@ -3775,6 +3775,12 @@
   )
 )
 
+(define-method get_add_tearoffs
+  (of-object "GtkComboBox")
+  (c-name "gtk_combo_box_get_add_tearoffs")
+  (return-type "gboolean")
+)
+
 (define-method set_column_span_column
   (of-object "GtkComboBox")
   (c-name "gtk_combo_box_set_column_span_column")
