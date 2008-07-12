@@ -90,27 +90,6 @@
   )
 )
 
-
-;; From gdkx.h
-
-(define-function x11_display_get_startup_notification_id
-  (c-name "gdk_x11_display_get_startup_notification_id")
-  (return-type "const-gchar*")
-  (parameters
-    '("GdkDisplay*" "display")
-  )
-)
-
-(define-function x11_display_broadcast_startup_message
-  (c-name "gdk_x11_display_broadcast_startup_message")
-  (return-type "none")
-  (parameters
-    '("GdkDisplay*" "display")
-    '("const-char*" "message_type")
-  )
-  (varargs #t)
-)
-
 ;; From gdk.h
 
 (define-function threads_add_idle_full
@@ -152,5 +131,13 @@
     '("guint" "interval")
     '("GSourceFunc" "function")
     '("gpointer" "data")
+  )
+)
+
+(define-function notify_startup_complete_with_id
+  (c-name "gdk_notify_startup_complete_with_id")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "startup_id")
   )
 )
