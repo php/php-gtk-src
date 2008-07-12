@@ -2,6 +2,9 @@
 %% include gdk.overrides
 
 %%
+ignore-glob
+    gdk_threads_*
+%%
 ignore-win32
-   gdk_x11_display_get_startup_notification_id 
+   gdk_x11_*
 %% }}}

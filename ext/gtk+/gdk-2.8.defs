@@ -1,0 +1,265 @@
+(include "gdk-2.8-types.defs")
+(include "gdk.defs")
+
+;; From /home/jdahlin/dev/gtk-2.8/gtk+/gdk/gdkpango.h
+
+(define-function gdk_pango_renderer_get_type
+  (c-name "gdk_pango_renderer_get_type")
+  (return-type "GType")
+)
+
+(define-function pango_renderer_new
+  (c-name "gdk_pango_renderer_new")
+  (is-constructor-of "GdkPangoRenderer")
+  (return-type "PangoRenderer*")
+  (parameters
+    '("GdkScreen*" "screen")
+  )
+)
+
+(define-function pango_renderer_get_default
+  (c-name "gdk_pango_renderer_get_default")
+  (return-type "PangoRenderer*")
+  (parameters
+    '("GdkScreen*" "screen")
+  )
+)
+
+(define-method set_drawable
+  (of-object "GdkPangoRenderer")
+  (c-name "gdk_pango_renderer_set_drawable")
+  (return-type "none")
+  (parameters
+    '("GdkDrawable*" "drawable" (null-ok))
+  )
+)
+
+(define-method set_gc
+  (of-object "GdkPangoRenderer")
+  (c-name "gdk_pango_renderer_set_gc")
+  (return-type "none")
+  (parameters
+    '("GdkGC*" "gc"(null-ok))
+  )
+)
+
+(define-method set_stipple
+  (of-object "GdkPangoRenderer")
+  (c-name "gdk_pango_renderer_set_stipple")
+  (return-type "none")
+  (parameters
+    '("PangoRenderPart" "part")
+    '("GdkBitmap*" "stipple"(null-ok))
+  )
+)
+
+(define-method set_override_color
+  (of-object "GdkPangoRenderer")
+  (c-name "gdk_pango_renderer_set_override_color")
+  (return-type "none")
+  (parameters
+    '("PangoRenderPart" "part")
+    '("const-GdkColor*" "color"(null-ok))
+  )
+)
+
+(define-function pango_context_get_for_screen
+  (c-name "gdk_pango_context_get_for_screen")
+  (return-type "PangoContext*")
+  (parameters
+    '("GdkScreen*" "screen")
+  )
+)
+
+(define-function pango_context_get
+  (c-name "gdk_pango_context_get")
+  (return-type "PangoContext*")
+)
+
+(define-function pango_context_set_colormap
+  (c-name "gdk_pango_context_set_colormap")
+  (return-type "none")
+  (parameters
+    '("PangoContext*" "context")
+    '("GdkColormap*" "colormap")
+  )
+)
+
+(define-function pango_layout_line_get_clip_region
+  (c-name "gdk_pango_layout_line_get_clip_region")
+  (return-type "GdkRegion*")
+  (caller-owns-return #t)
+  (parameters
+    '("PangoLayoutLine*" "line")
+    '("gint" "x_origin")
+    '("gint" "y_origin")
+    '("gint*" "index_ranges")
+    '("gint" "n_ranges")
+  )
+)
+
+(define-function pango_layout_get_clip_region
+  (c-name "gdk_pango_layout_get_clip_region")
+  (return-type "GdkRegion*")
+  (caller-owns-return #t)
+  (parameters
+    '("PangoLayout*" "layout")
+    '("gint" "x_origin")
+    '("gint" "y_origin")
+    '("gint*" "index_ranges")
+    '("gint" "n_ranges")
+  )
+)
+
+(define-function pango_attr_stipple_new
+  (c-name "gdk_pango_attr_stipple_new")
+  (is-constructor-of "GdkPangoAttrStipple")
+  (return-type "PangoAttribute*")
+  (parameters
+    '("GdkBitmap*" "stipple")
+  )
+)
+
+(define-function pango_attr_embossed_new
+  (c-name "gdk_pango_attr_embossed_new")
+  (is-constructor-of "GdkPangoAttrEmbossed")
+  (return-type "PangoAttribute*")
+  (parameters
+    '("gboolean" "embossed")
+  )
+)
+
+;; From gdk-pixbuf-simple-anim.h
+ 
+(define-function pixbuf_simple_anim_get_type
+  (c-name "gdk_pixbuf_simple_anim_get_type")
+  (return-type "GType")
+)
+ 
+(define-function pixbuf_simple_anim_iter_get_type
+  (c-name "gdk_pixbuf_simple_anim_iter_get_type")
+  (return-type "GType")
+)
+ 
+(define-function pixbuf_simple_anim_new
+  (c-name "gdk_pixbuf_simple_anim_new")
+  (is-constructor-of "GdkPixbufSimpleAnim")
+  (return-type "GdkPixbufSimpleAnim*")
+  (parameters
+    '("gint" "width")
+    '("gint" "height")
+    '("gfloat" "rate")
+  )
+)
+ 
+(define-method add_frame
+  (of-object "GdkPixbufSimpleAnim")
+  (c-name "gdk_pixbuf_simple_anim_add_frame")
+  (return-type "none")
+  (parameters
+    '("GdkPixbuf*" "pixbuf")
+  )
+)
+
+;; From /opt/gnome-devel/include/gtk-2.0/gdk/gdkcairo.h
+
+(define-method cairo_create
+  (of-object "GdkDrawable")
+  (c-name "gdk_cairo_create")
+  (return-type "cairo_t*"))
+
+(define-function cairo_set_source_color
+  (c-name "gdk_cairo_set_source_color")
+  (return-type "none")
+  (parameters
+    '("cairo_t*" "cr")
+    '("GdkColor*" "color")
+  )
+)
+
+(define-function cairo_set_source_pixbuf
+  (c-name "gdk_cairo_set_source_pixbuf")
+  (return-type "none")
+  (parameters
+    '("cairo_t*" "cr")
+    '("GdkPixbuf*" "pixbuf")
+    '("double" "pixbuf_x")
+    '("double" "pixbuf_y")
+  )
+)
+
+(define-function cairo_rectangle
+  (c-name "gdk_cairo_rectangle")
+  (return-type "none")
+  (parameters
+    '("cairo_t*" "cr")
+    '("GdkRectangle*" "rectangle")
+  )
+)
+
+(define-function cairo_region
+  (c-name "gdk_cairo_region")
+  (return-type "none")
+  (parameters
+    '("cairo_t*" "cr")
+    '("GdkRegion*" "region")
+  )
+)
+
+(define-method get_image
+  (of-object "GdkCursor")
+  (c-name "gdk_cursor_get_image")
+  (return-type "GdkPixbuf*")
+)
+
+(define-function cursor_new_from_name
+  (c-name "gdk_cursor_new_from_name")
+  (return-type "GdkCursor*")
+  (parameters
+    '("GdkDisplay*" "display")
+    '("const-gchar*" "name")
+  )
+)
+
+(define-method warp_pointer
+  (of-object "GdkDisplay")
+  (c-name "gdk_display_warp_pointer")
+  (return-type "none")
+  (parameters
+    '("GdkScreen*" "screen")
+    '("gint" "x")
+    '("gint" "y")
+  )
+)
+
+(define-method get_rgba_colormap
+  (of-object "GdkScreen")
+  (c-name "gdk_screen_get_rgba_colormap")
+  (return-type "GdkColormap*")
+)
+
+(define-method get_rgba_visual
+  (of-object "GdkScreen")
+  (c-name "gdk_screen_get_rgba_visual")
+  (return-type "GdkVisual*")
+)
+
+(define-method move_region
+  (of-object "GdkWindow")
+  (c-name "gdk_window_move_region")
+  (return-type "none")
+  (parameters
+    '("GdkRegion*" "region")
+    '("gint" "dx")
+    '("gint" "dy")
+  )
+)
+
+(define-method set_urgency_hint
+  (of-object "GdkWindow")
+  (c-name "gdk_window_set_urgency_hint")
+  (return-type "none")
+  (parameters
+    '("gboolean" "urgent")
+  )
+)

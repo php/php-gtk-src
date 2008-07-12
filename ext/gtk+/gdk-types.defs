@@ -906,6 +906,18 @@
   )
 )
 
+(define-enum PixbufRotation
+  (in-module "Gdk")
+  (c-name "GdkPixbufRotation")
+  (gtype-id "GDK_TYPE_PIXBUF_ROTATION")
+  (values
+    '("none" "GDK_PIXBUF_ROTATE_NONE")
+    '("counterclockwise" "GDK_PIXBUF_ROTATE_COUNTERCLOCKWISE")
+    '("upsidedown" "GDK_PIXBUF_ROTATE_UPSIDEDOWN")
+    '("clockwise" "GDK_PIXBUF_ROTATE_CLOCKWISE")
+  )
+)
+
 (define-enum InterpType
   (in-module "Gdk")
   (c-name "GdkInterpType")
@@ -915,5 +927,16 @@
     '("tiles" "GDK_INTERP_TILES")
     '("bilinear" "GDK_INTERP_BILINEAR")
     '("hyper" "GDK_INTERP_HYPER")
+  )
+)
+
+(define-enum OwnerChange
+  (in-module "Gdk")
+  (c-name "GdkOwnerChange")
+  (gtype-id "GDK_TYPE_OWNER_CHANGE")
+  (values
+    '("new-owner" "GDK_OWNER_CHANGE_NEW_OWNER")
+    '("destroy" "GDK_OWNER_CHANGE_DESTROY")
+    '("close" "GDK_OWNER_CHANGE_CLOSE")
   )
 )

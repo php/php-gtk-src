@@ -1,0 +1,12 @@
+(define-object PangoRenderer
+  (in-module "Gdk")
+  (parent "PangoRenderer")
+  (c-name "GdkPangoRenderer")
+  (gtype-id "GDK_TYPE_PANGO_RENDERER")
+)
+(define-object PixbufSimpleAnim
+  (in-module "Gdk")
+  (parent "GdkPixbufAnimation")
+  (c-name "GdkPixbufSimpleAnim")
+  (gtype-id "GDK_TYPE_PIXBUF_SIMPLE_ANIM")
+)

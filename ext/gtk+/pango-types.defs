@@ -299,3 +299,10 @@
   (gtype-id "PANGO_TYPE_LAYOUT")
 )
 
+(define-object Renderer
+  (in-module "Pango")
+  (parent "GObject")
+  (c-name "PangoRenderer")
+  (gtype-id "PANGO_TYPE_RENDERER")
+)
+
