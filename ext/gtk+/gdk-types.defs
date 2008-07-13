@@ -221,6 +221,12 @@
   )
 )
 
+(define-boxed Region
+  (in-module "Gdk")
+  (c-name "GdkRegion")
+  (gtype-id "GDK_TYPE_REGION")
+)
+
 ;; Enumerations and flags ...
 
 (define-enum Colorspace

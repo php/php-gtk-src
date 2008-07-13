@@ -18,6 +18,24 @@ headers
 
 #define MAX_INTENSITY 65535
 
+#ifndef GDK_TYPE_REGION
+GType phpg_region_get_type (void) {
+	static GType our_type = 0;
+
+	if (our_type == 0)
+      	our_type = g_boxed_type_register_static ("GdkRegion",
+      		(GBoxedCopyFunc)gdk_region_copy,
+			(GBoxedFreeFunc)gdk_region_destroy);
+	return our_type;
+}
+#define GDK_TYPE_REGION (phpg_region_get_type())
+#endif
+
+#ifndef GDK_TYPE_PIXBUF_SIMPLE_ANIM_ITER
+GType gtk_print_capabilites_get_type (void) G_GNUC_CONST;
+#define GDK_TYPE_PIXBUF_SIMPLE_ANIM_ITER (gdk_pixbuf_simple_anim_iter_get_type())
+#endif
+
 /* Forward declaration, since gen_gtk.h is generated later. */
 extern PHP_GTK_EXPORT_CE(gtkwidget_ce);
 
@@ -34,6 +52,7 @@ static ZEND_METHOD(GdkColormap, alloc_color);
 %%
 ignore-glob
     *_get_type
+    *ref
 
 %%
 ignore
@@ -56,6 +75,7 @@ ignore
     gdk_pixmap_colormap_create_from_xpm_d
     gdk_string_extents
     gdk_window_peek_children
+    gdk_window_invalidate_maybe_recurse
 
 /* }}} */
 

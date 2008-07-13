@@ -1,0 +1,2 @@
+/* vim: set et ft=cpp fdm=marker: */
+%% include gdk.overrides

@@ -20,6 +20,11 @@ static PHP_METHOD(GtkImage, get_image);
 #undef GDK_DISPLAY
 #define GDK_DISPLAY(object) (GDK_DISPLAY_OBJECT(object))
 
+#ifndef GDK_TYPE_REGION
+extern phpg_region_get_type();
+#define GDK_TYPE_REGION (phpg_region_get_type())
+#endif
+
 %% {{{ ignores [confirmed]
 
 %%

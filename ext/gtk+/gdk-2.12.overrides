@@ -1,5 +1,5 @@
 /* vim: set et ft=cpp fdm=marker: */
-%% include gdk.overrides
+%% include gdk-2.8.overrides
 
 %%
 ignore-glob
