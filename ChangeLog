@@ -1,3 +1,26 @@
+2008-07-12  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gdk-2.12.overrides
+      ext/gtk+/gdk-2.8-types.defs
+      ext/gtk+/gdk-2.8.defs
+      ext/gtk+/gdk-types.defs
+      ext/gtk+/gdk.defs
+      ext/gtk+/pango-types.defs:
+      major overhaul of gdk defs, they are now synced to gtk and 2.8 defs that
+      were missing were added, including cairo support - the pango definition is
+      temporary until I get pango versioning working properly
+
+    * ext/gtk+/gtk.defs
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtkclipboard.overrides:
+      Missing arginfo added and a missing def fixed, ignores adjusted
+
+    * ext/gtk+/gdk-2.10.defs
+      ext/gtk+/gdk-2.12.defs
+      main/php_gtk.c:
+      Fixed issue with zend_unset_timeout after conversation about the best way
+      to handle disabling the timeout
+
 2008-05-11  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/php_gtk.h:
