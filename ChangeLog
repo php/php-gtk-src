@@ -1,3 +1,15 @@
+2008-07-13  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gdk-2.12.overrides
+      ext/gtk+/gdk-2.8-types.defs
+      ext/gtk+/gdk-2.8.defs
+      ext/gtk+/gdk-2.8.overrides
+      ext/gtk+/gdk-types.defs
+      ext/gtk+/gdk.defs
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtk.overrides:
+      more overrides and gdk fixes
+
 2008-07-12  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/gdk-2.12.overrides
