@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.22 2008-01-22 23:49:07 sfox Exp $
+// $Id: confutils.js,v 1.23 2008-07-30 19:34:26 auroraeosrose Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -81,6 +81,9 @@ function get_gtk_libversion()
 		if (minor < 6)
 			minor = 6;
 	
+		if (major >= 2 && minor >=8) {
+			ENABLE_CAIRO = 1;
+		}
 		PHP_GTK_LIBVERSION = major + '.' + minor;
 	} else {
 		STDOUT.WriteLine("	<not found>");
@@ -601,10 +604,10 @@ function GREP_HEADER(header_name, regex, path_to_check) {
 	return false;
 }
 
-function CHECK_HEADER_ADD_INCLUDE(header_name, flag_name, path_to_check, use_env, add_dir_part, add_to_flag_only) {
-
+function CHECK_HEADER_ADD_INCLUDE(header_name, flag_name, path_to_check, use_env, add_dir_part, add_to_flag_only)
+{
 	var dir_part_to_add = "";
-
+	
 	if (use_env == null) {
 		use_env = true;
 	}
@@ -622,7 +625,7 @@ function CHECK_HEADER_ADD_INCLUDE(header_name, flag_name, path_to_check, use_env
 	} else {
 		path_to_check += ";" + php_usual_include_suspects;
 	}
-
+	
 	var p = search_paths(header_name, path_to_check, use_env ? "INCLUDE" : null);
 	var have = 0;
 	var sym;
@@ -636,13 +639,13 @@ function CHECK_HEADER_ADD_INCLUDE(header_name, flag_name, path_to_check, use_env
 	sym = header_name.toUpperCase();
 	sym = sym.replace(new RegExp("[\\\\/\.-]", "g"), "_");
 
-	if (typeof(add_to_flag_only) == "undefined" &&
+	if (typeof(add_to_flag_only) == undefined &&
 			flag_name.match(new RegExp("^CFLAGS_(.*)$"))) {
 		add_to_flag_only = true;
 	}
 
-	if (typeof(add_to_flag_only) != "undefined") {
-		ADD_FLAG(flag_name, "/D HAVE_" + sym + "=" + have);
+	if (typeof(add_to_flag_only) != undefined) {
+		ADD_FLAG(flag_name, "/DHAVE_" + sym + "=" + have);
 	} else {
 		AC_DEFINE("HAVE_" + sym, have, "have the " + header_name + " header file");
 	}

@@ -30,6 +30,9 @@
 #endif
 #include "php.h"
 #include "php_ini.h"
+#ifdef HAVE_CAIRO
+#include "ext/cairo/php_cairo_api.h"
+#endif
 
 /* workaround for expat-related declaration in PHP compat file */
 #ifdef lookup

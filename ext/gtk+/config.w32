@@ -13,11 +13,16 @@ if (CHECK_HEADER("main/php.h") && CHECK_LIB(PHP_LIB) &&
 	CHECK_HEADER("gdk/gdk.h") && CHECK_LIB("gdk-win32-2.0.lib", "php-gtk") &&
 	CHECK_HEADER("gtk/gtk.h") && CHECK_LIB("gtk-win32-2.0.lib", "php-gtk")) {
 
+	if (!ENABLE_CAIRO || (ENABLE_CAIRO && CHECK_HEADER_ADD_INCLUDE("ext/cairo/php_cairo_api.h") && CHECK_LIB("php_cairo.lib"))) {
+	
 		ADD_FLAG("CFLAGS_PHP_GTK", "/I ext\\gtk+ /I ..\\ext\\gtk+ /D HAVE_PHP_GTK=1");
 
 		EXTENSION("php-gtk", "gen_atk.c gen_gdk.c gen_gtk.c gen_pango.c php_gdk.c php_gtk+.c php_gtk+_types.c phpg_custom_tree_model.c", true); // always shared
 
 		AC_DEFINE("HAVE_PHP_GTK", 1, "PHP-GTK enabled");
+		if (ENABLE_CAIRO) {
+			ADD_FLAG("CFLAGS_PHP_GTK", "/D HAVE_CAIRO");
+		}
 
 		/* Create the file if it doesn't exist */
 		var temp = FSO.OpenTextFile("win32\\temp.bat", 8);
@@ -33,4 +38,5 @@ if (CHECK_HEADER("main/php.h") && CHECK_LIB(PHP_LIB) &&
 		temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\gtk+\\gen_gdk.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\gtk+\\gen_gdk.h');
 		temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\gtk+\\gen_gtk.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\gtk+\\gen_gtk.h');
 		temp.Close();
+	}
 }
