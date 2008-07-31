@@ -455,7 +455,7 @@
   )
 )
 
-(define-method foreach
+(define-method for_each
   (c-name "gtk_accel_map_foreach")
   (return-type "none")
   (of-object "GtkAccelMap")
@@ -4061,7 +4061,7 @@
   )
 )
 
-(define-method foreach
+(define-method for_each
   (of-object "GtkContainer")
   (c-name "gtk_container_foreach")
   (return-type "none")
@@ -16218,7 +16218,7 @@
   )
 )
 
-(define-method foreach
+(define-method for_each
   (of-object "GtkTextTagTable")
   (c-name "gtk_text_tag_table_foreach")
   (return-type "none")
@@ -17900,7 +17900,7 @@
   )
 )
 
-(define-method foreach
+(define-method for_each
   (of-object "GtkTreeModel")
   (c-name "gtk_tree_model_foreach")
   (return-type "none")

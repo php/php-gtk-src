@@ -1,5 +1,5 @@
 /* vim: set et ft=cpp fdm=marker: */
-%% include gdk-2.8.overrides
+%% include gdk-2.10.overrides
 
 %%
 ignore-glob
@@ -7,4 +7,22 @@ ignore-glob
 %%
 ignore-win32
    gdk_x11_*
-%% }}}
+%%
+
+%%
+override gtk_print_context_get_cairo_context
+PHP_METHOD
+{
+    zend_class_entry *ce;
+    context_object *cont
+    zval *print = NULL, *statusicon = NULL;
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+            return;
+    }
+	ce = get_CairoContext_ce_ptr();
+	object_init_ex(return_value, ce);
+	cont = (context_object *)zend_objects_get_address(return_value TSRMLS_CC); 
+	cont->context = gtk_print_context_get_cairo_context(GTK_PRINT_CONTEXT(PHPG_GOBJECT(this_ptr)));
+	cairo_reference(cont->context);
+}
+

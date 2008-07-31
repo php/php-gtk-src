@@ -1,2 +1,125 @@
 /* vim: set et ft=cpp fdm=marker: */
 %% include gdk.overrides
+
+%%
+override gdk_cairo_create
+PHP_METHOD
+{
+    zval *cobj = NULL;
+    zval *rect = NULL;
+    GdkDrawable *drawable;
+    context_object *cont;
+	zend_class_entry *ce;
+
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"")) {
+        return;
+   }
+	ce = get_CairoContext_ce_ptr();
+	object_init_ex(return_value,ce);
+    cont = (context_object *)zend_objects_get_address(return_value TSRMLS_CC);
+    drawable = GDK_DRAWABLE(PHPG_GOBJECT(this_ptr));
+	cont->context = gdk_cairo_create(drawable);
+}
+
+%%
+add-arginfo Gdk cairo_set_source_color
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME,0,0,2)
+    ZEND_ARG_OBJ_INFO(0,cobj, CairoContext, 1)
+	ZEND_ARG_OBJ_INFO(0,color, GdkColor, 1)
+	ZEND_END_ARG_INFO();
+
+%%
+override gdk_cairo_set_source_color
+PHP_METHOD
+{
+/* TODO - GDK_COLOR is a boxed type
+	zval *cobj = NULL;
+	zval *color = NULL;
+    GdkColor *col;
+    context_object *cont;
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"OO", &cobj, &color)) {
+		return;
+	}
+	cont = (context_object *)zend_objects_get_address(cobj TSRMLS_CC);
+	col = GDK_COLOR(PHPG_GOBJECT(color));
+	gdk_cairo_set_source_color(cont->context, col); */
+}
+
+%%
+add-arginfo Gdk cairo_set_source_pixbuf
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME,0,0,4)
+    ZEND_ARG_OBJ_INFO(0,cobj, CairoContext, 1)
+    ZEND_ARG_OBJ_INFO(0,pbuf, GdkPixbuf, 1)
+	ZEND_ARG_INFO(0, pixbuf_x)
+	ZEND_ARG_INFO(0, pixbuf_y)
+    ZEND_END_ARG_INFO();
+
+%%
+override gdk_cairo_set_source_pixbuf
+PHP_METHOD
+{
+    zval *cobj = NULL;
+    zval *pbuf = NULL;
+	gdouble pixbuf_x = 0;
+	gdouble pixbuf_y = 0;
+    GdkPixbuf *pixbuf;
+    context_object *cont;
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"OOdd", &cobj, &pbuf, &pixbuf_x, &pixbuf_y)) {
+        return;
+    }
+    cont = (context_object *)zend_objects_get_address(cobj TSRMLS_CC);
+    pixbuf = GDK_PIXBUF(PHPG_GOBJECT(pbuf));
+	gdk_cairo_set_source_pixbuf(cont->context, pixbuf, pixbuf_x, pixbuf_y);
+}
+
+%%
+add-arginfo Gdk cairo_region
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME,0,0,2)
+    ZEND_ARG_OBJ_INFO(0,cobj, CairoContext, 1)
+    ZEND_ARG_OBJ_INFO(0,reg, GdkRegion, 1)
+    ZEND_END_ARG_INFO();
+
+%%
+override gdk_cairo_region
+PHP_METHOD
+{
+/* TODO - GDK_REGION is a boxed type
+    zval *cobj = NULL;
+    zval *reg = NULL;
+    GdkRegion *region;
+    context_object *cont;
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"OO", &cobj, &reg)) {
+        return;
+    }
+    cont = (context_object *)zend_objects_get_address(cobj TSRMLS_CC);
+    region = GDK_REGION(PHPG_GOBJECT(reg));
+	gdk_cairo_region(cont->context, region); */
+}
+
+%%
+add-arginfo Gdk cairo_rectangle
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME,0,0,2)
+    ZEND_ARG_OBJ_INFO(0,cobj, CairoContext, 1)
+	ZEND_ARG_OBJ_INFO(0,reg, GdkRectangle, 1)
+ZEND_END_ARG_INFO();
+
+%%
+override gdk_cairo_rectangle
+PHP_METHOD
+{
+/* TODO - GDK_RECTANGLE is a boxed type
+    zval *cobj = NULL;
+    zval *rect = NULL;
+    GdkRectangle *rectangle;
+    context_object *cont;
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"OO", &cobj, &rect)) {
+        return;
+    }
+    cont = (context_object *)zend_objects_get_address(cobj TSRMLS_CC);
+    rectangle = GDK_RECTANGLE(PHPG_GOBJECT(rect));
+	gdk_cairo_rectangle(cont->context, rectangle); */
+}

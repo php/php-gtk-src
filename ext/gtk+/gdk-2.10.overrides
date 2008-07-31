@@ -1,0 +1,71 @@
+%% include gdk-2.8.overrides
+
+%%
+add-arginfo GdkScreen set_font_options
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME,0,0,1)
+	ZEND_ARG_OBJ_INFO(0,obj, CairoFontOptions, 1)
+ZEND_END_ARG_INFO();
+
+%%
+override gdk_screen_set_font_options
+PHP_METHOD
+{
+	zval *obj=NULL;
+	fontoptions_object *fobj;
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"O", &obj)) {
+	        return;
+	}
+	
+	fobj = (fontoptions_object *)zend_object_store_get_object(obj TSRMLS_CC);
+
+	gdk_screen_set_font_options(GDK_SCREEN(PHPG_GOBJECT(this_ptr)), fobj->fontoptions);
+}
+
+%%
+override gdk_screen_get_font_options
+PHP_METHOD
+{
+	const cairo_font_options_t *fo;
+	zend_class_entry *ce;
+	fontoptions_object *fobj;
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"")) {
+	            return;
+	}
+	fo = gdk_screen_get_font_options(GDK_SCREEN(PHPG_GOBJECT(this_ptr)));
+	ce = get_CairoFontOptions_ce_ptr();
+
+	object_init_ex(return_value, ce);
+    fobj = (fontoptions_object *)zend_object_store_get_object(return_value TSRMLS_CC);
+    /* I don't want to have to link to cairo.dll as well, this should be fixed! 
+	fobj->fontoptions = cairo_font_options_copy(fo);*/
+}
+
+%%
+add-arginfo Gdk cairo_set_source_pixmap
+static
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME,0,0,4)
+    ZEND_ARG_OBJ_INFO(0,cobj, CairoContext, 1)
+    ZEND_ARG_OBJ_INFO(0,pmap, GdkPixmap, 1)
+	ZEND_ARG_INFO(0, pixmap_x)
+	ZEND_ARG_INFO(0, pixmap_y)
+ZEND_END_ARG_INFO();
+
+%%
+override gdk_cairo_set_source_pixmap
+PHP_METHOD
+{
+    zval *cobj = NULL;
+    zval *pmap = NULL;
+    GdkPixmap *pixmap;
+	gdouble pixmap_x = 0;
+	gdouble pixmap_y = 0;
+	context_object *cont;
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"OOdd", &cobj, &pmap, &pixmap_x, &pixmap_y)) {
+        return;
+    }
+    cont = (context_object *)zend_objects_get_address(cobj TSRMLS_CC);
+    pixmap = GDK_PIXMAP(PHPG_GOBJECT(pmap));
+	gdk_cairo_set_source_pixmap(cont->context, pixmap, pixmap_x, pixmap_y);
+}
+
