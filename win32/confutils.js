@@ -17,7 +17,7 @@
   +----------------------------------------------------------------------+
 */
 
-// $Id: confutils.js,v 1.23 2008-07-30 19:34:26 auroraeosrose Exp $
+// $Id: confutils.js,v 1.24 2008-08-01 14:34:43 auroraeosrose Exp $
 
 /* set vars */
 var STDOUT = WScript.StdOut;
@@ -83,6 +83,8 @@ function get_gtk_libversion()
 	
 		if (major >= 2 && minor >=8) {
 			ENABLE_CAIRO = 1;
+		} else {
+			ENABLE_CAIRO = 0;
 		}
 		PHP_GTK_LIBVERSION = major + '.' + minor;
 	} else {

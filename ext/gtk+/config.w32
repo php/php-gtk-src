@@ -38,5 +38,7 @@ if (CHECK_HEADER("main/php.h") && CHECK_LIB(PHP_LIB) &&
 		temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\gtk+\\gen_gdk.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\gtk+\\gen_gdk.h');
 		temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\gtk+\\gen_gtk.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\gtk+\\gen_gtk.h');
 		temp.Close();
+	} else {
+		ERROR("The cairo extension is required for gtk 2.8+");
 	}
 }
