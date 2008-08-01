@@ -1,3 +1,18 @@
+2008-07-31  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * demos/examples/cairo_support.php:
+      Cairo example complete - ticking clock in PHP-GTK
+
+    * demos/examples/cairo_support.php
+      demos/examples/notebook.php
+      demos/examples/printing_example.php
+      ext/gtk+/gdk-2.10.overrides
+      ext/gtk+/gdk-2.12.overrides
+      ext/gtk+/gdk-2.8.overrides
+      ext/gtk+/gtk.defs:
+      Inital cairo support - some of the methods may not work yet, also foreach
+      to for_each in defs to work around reserved words in PHP
+
 2008-07-30  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/config.w32
