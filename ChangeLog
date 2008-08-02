@@ -1,3 +1,9 @@
+2008-08-01  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/config.w32
+      win32/confutils.js:
+      Bail if cairo is not found for gtk 2.8+
+
 2008-07-31  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * demos/examples/cairo_support.php:
