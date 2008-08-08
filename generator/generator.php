@@ -40,13 +40,13 @@ if (strstr(PHP_OS, 'WIN')) {
 	define('WIN_OS', false);
 }
 
-require "Getopt.php";
-require "override.php";
-require "arg_types.php";
-require "scheme.php";
-require "templates.php";
-require "array_printf.php";
-require "lineoutput.php";
+require dirname(__FILE__) . "/Getopt.php";
+require dirname(__FILE__) . "/override.php";
+require dirname(__FILE__) . "/arg_types.php";
+require dirname(__FILE__) . "/scheme.php";
+require dirname(__FILE__) . "/templates.php";
+require dirname(__FILE__) . "/array_printf.php";
+require dirname(__FILE__) . "/lineoutput.php";
 
 class Generator {
     var $parser             = null;
