@@ -383,7 +383,7 @@ static void phpg_custom_tree_model_get_value(GtkTreeModel*tree_model,
 		}
 		zval_ptr_dtor(&retval);
 	} else {
-		php_error(E_WARNING, "Could not invoke on_get_path handler");
+		php_error(E_WARNING, "Could not invoke on_get_value handler");
 	}
 
 	zval_ptr_dtor(&wrapper);
@@ -632,7 +632,7 @@ static gboolean phpg_custom_tree_model_iter_nth_child(GtkTreeModel *tree_model,
 			zval_ptr_dtor(&retval);
 		}
 	} else {
-		php_error(E_WARNING, "Could not invoke on_nth_child handler");
+		php_error(E_WARNING, "Could not invoke on_iter_nth_child handler");
 		iter->user_data = NULL;
 	}
 	zval_ptr_dtor(&wrapper);
