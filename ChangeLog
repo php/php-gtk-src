@@ -1,3 +1,8 @@
+2008-08-18  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/phpg_custom_tree_model.c:
+      Incorrect error messages
+
 2008-08-08  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * generator/generator.php:
