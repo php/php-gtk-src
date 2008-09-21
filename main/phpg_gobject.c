@@ -124,7 +124,7 @@ void phpg_gobject_del_ref(zval *zobject TSRMLS_DC)
     struct _store_object *stored = &EG(objects_store).object_buckets[handle].bucket.obj;
     phpg_gobject_t *pobj = (phpg_gobject_t *) stored->object;
 
-    if (EG(objects_store).object_buckets[handle].valid && Z_REFCOUNT_P(stored) == 1) {	
+    if (EG(objects_store).object_buckets[handle].valid && stored->refcount == 1) {	
         if (pobj->obj && pobj->obj->ref_count > 1) {
             pobj->is_owned = TRUE;
             g_object_set_qdata_full(pobj->obj, gobject_wrapper_owned_key, (void *)handle, phpg_unref_by_handle);
