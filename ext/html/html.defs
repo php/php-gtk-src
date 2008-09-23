@@ -103,18 +103,6 @@
   (return-type "none")
 )
 
-(define-method request_paste
-  (of-object "GtkHTML")
-  (c-name "gtk_html_request_paste")
-  (return-type "int")
-  (parameters
-    '("GdkAtom" "selection")
-    '("gint" "type")
-    '("gint32" "time")
-    '("gboolean" "as_cite")
-  )
-)
-
 (define-method begin
   (of-object "GtkHTML")
   (c-name "gtk_html_begin")
