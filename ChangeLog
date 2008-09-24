@@ -1,3 +1,11 @@
+2008-09-23  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * ext/html/html.defs:
+      Fix bug #45844
+
+    * config.m4:
+      Use php-config to look for PHP executable.
+
 2008-09-21  Andrei Zmievski  <andrei@gravitonic.com>
 
     * main/phpg_gobject.c:
