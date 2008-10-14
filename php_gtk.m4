@@ -497,7 +497,7 @@ dnl ---------------------------------------------- Shared module
     # shared module
 	ifelse($3,,,PHP_ADD_SOURCES_X($php_gtk_ext_builddir,$3,$ac_extra,[shared_objects_]translit($1,a-z-+,A-Z__),yes))
 	ifelse($4,,,PHP_ADD_SOURCES_X(/ext/$1,$4,$ac_extra,[shared_objects_]translit($1,a-z-+,A-Z__),yes))
-	PHP_GTK_SHARED_MODULE(php_gtk_$1,[shared_objects_]translit($1,a-z-+,A-Z__), $php_gtk_ext_builddir)
+	PHP_GTK_SHARED_MODULE(php_gtk2_$1,[shared_objects_]translit($1,a-z-+,A-Z__), $php_gtk_ext_builddir)
 	AC_DEFINE_UNQUOTED([PHP_GTK_COMPILE_DL_]translit($1,a-z-+,A-Z__), 1, Whether to build $1 as dynamic module)
   fi
 
