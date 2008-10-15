@@ -1,3 +1,17 @@
+2008-10-14  Andrei Zmievski  <andrei@gravitonic.com>
+
+    * php_gtk.m4
+      ext/extra/config.m4
+      ext/html/config.m4
+      ext/libglade/config.m4
+      ext/libsexy/config.m4
+      ext/mozembed/config.m4
+      ext/sourceview/config.m4
+      ext/spell/config.m4:
+      Fixed shared extensions linking in Unix.
+      
+      Patch from foutrelis@gmail.com.
+
 2008-09-23  Andrei Zmievski  <andrei@gravitonic.com>
 
     * ext/html/html.defs:
