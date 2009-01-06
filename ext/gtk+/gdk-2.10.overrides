@@ -4,7 +4,7 @@
 add-arginfo GdkScreen set_font_options
 static
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME,0,0,1)
-	ZEND_ARG_OBJ_INFO(0,obj, Cairocairo_fontoptions, 1)
+	ZEND_ARG_OBJ_INFO(0,obj, CairoFontOptions, 1)
 ZEND_END_ARG_INFO();
 
 %%
@@ -33,7 +33,7 @@ PHP_METHOD
 	            return;
 	}
 	fo = gdk_screen_get_font_options(GDK_SCREEN(PHPG_GOBJECT(this_ptr)));
-	ce = get_Cairocairo_fontoptions_ce_ptr();
+	ce = get_CairoFontOptions_ce_ptr();
 
 	object_init_ex(return_value, ce);
     fobj = (cairo_fontoptions_object *)zend_object_store_get_object(return_value TSRMLS_CC);
