@@ -8,7 +8,7 @@ PHP_METHOD
     zval *cobj = NULL;
     zval *rect = NULL;
     GdkDrawable *drawable;
-    context_object *cont;
+    cairo_context_object *cont;
 	zend_class_entry *ce;
 
     if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"")) {
@@ -16,7 +16,7 @@ PHP_METHOD
    }
 	ce = get_CairoContext_ce_ptr();
 	object_init_ex(return_value,ce);
-    cont = (context_object *)zend_objects_get_address(return_value TSRMLS_CC);
+    cont = (cairo_context_object *)zend_objects_get_address(return_value TSRMLS_CC);
     drawable = GDK_DRAWABLE(PHPG_GOBJECT(this_ptr));
 	cont->context = gdk_cairo_create(drawable);
 }
@@ -37,11 +37,11 @@ PHP_METHOD
 	zval *cobj = NULL;
 	zval *color = NULL;
     GdkColor *col;
-    context_object *cont;
+    cairo_context_object *cont;
 	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"OO", &cobj, &color)) {
 		return;
 	}
-	cont = (context_object *)zend_objects_get_address(cobj TSRMLS_CC);
+	cont = (cairo_context_object *)zend_objects_get_address(cobj TSRMLS_CC);
 	col = GDK_COLOR(PHPG_GOBJECT(color));
 	gdk_cairo_set_source_color(cont->context, col); */
 }
@@ -65,11 +65,11 @@ PHP_METHOD
 	gdouble pixbuf_x = 0;
 	gdouble pixbuf_y = 0;
     GdkPixbuf *pixbuf;
-    context_object *cont;
+    cairo_context_object *cont;
     if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"OOdd", &cobj, &pbuf, &pixbuf_x, &pixbuf_y)) {
         return;
     }
-    cont = (context_object *)zend_objects_get_address(cobj TSRMLS_CC);
+    cont = (cairo_context_object *)zend_objects_get_address(cobj TSRMLS_CC);
     pixbuf = GDK_PIXBUF(PHPG_GOBJECT(pbuf));
 	gdk_cairo_set_source_pixbuf(cont->context, pixbuf, pixbuf_x, pixbuf_y);
 }
@@ -90,11 +90,11 @@ PHP_METHOD
     zval *cobj = NULL;
     zval *reg = NULL;
     GdkRegion *region;
-    context_object *cont;
+    cairo_context_object *cont;
     if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"OO", &cobj, &reg)) {
         return;
     }
-    cont = (context_object *)zend_objects_get_address(cobj TSRMLS_CC);
+    cont = (cairo_context_object *)zend_objects_get_address(cobj TSRMLS_CC);
     region = GDK_REGION(PHPG_GOBJECT(reg));
 	gdk_cairo_region(cont->context, region); */
 }
@@ -115,11 +115,12 @@ PHP_METHOD
     zval *cobj = NULL;
     zval *rect = NULL;
     GdkRectangle *rectangle;
-    context_object *cont;
+    cairo_context_object *cont;
     if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"OO", &cobj, &rect)) {
         return;
     }
-    cont = (context_object *)zend_objects_get_address(cobj TSRMLS_CC);
+    cont = (cairo_context_object *)zend_objects_get_address(cobj TSRMLS_CC);
     rectangle = GDK_RECTANGLE(PHPG_GOBJECT(rect));
 	gdk_cairo_rectangle(cont->context, rectangle); */
 }
+ 
