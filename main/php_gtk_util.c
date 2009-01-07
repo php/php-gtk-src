@@ -419,7 +419,7 @@ static int parse_arg(int arg_num, zval **arg, va_list *va, char **spec, int as_z
 					get_active_class_name(NULL TSRMLS_CC),
 					get_active_function_name(TSRMLS_C), arg_num, expected_type,
 					php_gtk_zval_type_name(*arg));
-			php_error(E_WARNING, buf);
+			php_error(E_WARNING, "%s", buf);
 		}
 		return 0;
 	}
@@ -479,7 +479,7 @@ static int parse_va_args(int argc, zval ***args, char *format, va_list *va, int 
 					argc < min_argc ? min_argc : max_argc,
 					(argc < min_argc ? min_argc : max_argc) == 1 ? "" : "s",
 					argc);
-			php_error(E_WARNING, buf);
+			php_error(E_WARNING, "%s", buf);
 		}
 		return 0;
 	}
