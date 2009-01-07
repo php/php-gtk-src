@@ -1,3 +1,13 @@
+2009-01-06  Bob Majdak Jr  <bob@kateos.org>
+
+    * ext/gtk+/gdk-2.10.overrides:
+      rampant regex fix
+
+    * ext/gtk+/gdk-2.10.overrides
+      ext/gtk+/gdk-2.8.overrides:
+      step one in the fixing of cvs. source will now at least compile:
+      ./cvsclean && ./buildconf && CFLAGS=-DHAVE_CAIRO ./configure && make
+
 2008-10-14  Andrei Zmievski  <andrei@gravitonic.com>
 
     * php_gtk.m4
