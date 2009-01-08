@@ -1,3 +1,14 @@
+2009-01-07  Bob Majdak Jr  <bob@kateos.org>
+
+    * main/php_gtk_util.c:
+      for http://bugs.php.net/bug.php?id=46999: applied oden's patch for
+      compiling with -Werror=format-security
+
+    * ext/mozembed/README
+      ext/mozembed/config.m4:
+      for http://bugs.php.net/bug.php?id=44921: applied keisial's patch for the
+      mozembed config. the m4 chunk failed i had to manually merge it.
+
 2009-01-06  Bob Majdak Jr  <bob@kateos.org>
 
     * ext/gtk+/gdk-2.10.overrides:
