@@ -25,7 +25,7 @@ ignore
 
 %%
 add-arginfo PangoFontDescription __construct
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
     ZEND_ARG_INFO(0, str)
 ZEND_END_ARG_INFO();

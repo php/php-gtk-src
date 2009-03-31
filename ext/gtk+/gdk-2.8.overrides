@@ -23,7 +23,7 @@ PHP_METHOD
 
 %%
 add-arginfo Gdk cairo_set_source_color
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME,0,0,2)
     ZEND_ARG_OBJ_INFO(0,cobj, CairoContext, 1)
 	ZEND_ARG_OBJ_INFO(0,color, GdkColor, 1)
@@ -48,7 +48,7 @@ PHP_METHOD
 
 %%
 add-arginfo Gdk cairo_set_source_pixbuf
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME,0,0,4)
     ZEND_ARG_OBJ_INFO(0,cobj, CairoContext, 1)
     ZEND_ARG_OBJ_INFO(0,pbuf, GdkPixbuf, 1)
@@ -76,7 +76,7 @@ PHP_METHOD
 
 %%
 add-arginfo Gdk cairo_region
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME,0,0,2)
     ZEND_ARG_OBJ_INFO(0,cobj, CairoContext, 1)
     ZEND_ARG_OBJ_INFO(0,reg, GdkRegion, 1)
@@ -101,7 +101,7 @@ PHP_METHOD
 
 %%
 add-arginfo Gdk cairo_rectangle
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME,0,0,2)
     ZEND_ARG_OBJ_INFO(0,cobj, CairoContext, 1)
 	ZEND_ARG_OBJ_INFO(0,reg, GdkRectangle, 1)

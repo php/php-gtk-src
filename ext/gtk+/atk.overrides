@@ -14,7 +14,7 @@ ignore-glob
 
 %%
 add-arginfo AtkRelation __construct
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, targets)
     ZEND_ARG_INFO(0, relationship)

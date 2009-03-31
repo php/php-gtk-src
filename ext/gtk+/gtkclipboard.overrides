@@ -4,7 +4,7 @@
 
 %%
 add-arginfo GtkClipboard request_contents
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, target)
     ZEND_ARG_INFO(0, callback)
@@ -86,7 +86,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkClipboard request_targets
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, callback)
 ZEND_END_ARG_INFO();
@@ -170,7 +170,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkClipboard request_text
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, callback)
 ZEND_END_ARG_INFO();
@@ -261,7 +261,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkClipboard set_with_data
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, targets)
     ZEND_ARG_INFO(0, get_callback)
@@ -443,7 +443,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkClipboard set_can_store
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, targets)
 ZEND_END_ARG_INFO();

@@ -20,7 +20,7 @@ ignore
 
 %%
 add-arginfo GtkLinkButton set_uri_hook
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, callback)
 ZEND_END_ARG_INFO();
@@ -107,7 +107,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkStatusIcon position_menu
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_OBJ_INFO(0, menu, GtkMenu, 1)
     ZEND_ARG_OBJ_INFO(0, statusicon, GtkStatusIcon, 1)
@@ -225,7 +225,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkRecentInfo get_application_info
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, app_name)
 ZEND_END_ARG_INFO();
@@ -309,7 +309,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkRecentChooser set_sort_func
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, callback)
 ZEND_END_ARG_INFO();
@@ -497,7 +497,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkRecentChooserDialog __construct
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
     ZEND_ARG_INFO(0, title)
     ZEND_ARG_OBJ_INFO(0, parent, GtkWindow, 1)
@@ -571,7 +571,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkAssistant set_forward_page_func
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, callback)
 ZEND_END_ARG_INFO();

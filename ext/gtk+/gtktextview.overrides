@@ -86,7 +86,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextBuffer get_iter_at_line
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, line_number)
 ZEND_END_ARG_INFO();
@@ -140,7 +140,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextBuffer get_iter_at_line_offset
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, line_number)
     ZEND_ARG_INFO(0, char_offset)
@@ -163,7 +163,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextBuffer get_iter_at_line_index
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, line_number)
     ZEND_ARG_INFO(0, byte_offset)
@@ -186,7 +186,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextBuffer get_iter_at_offset
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, char_offset)
 ZEND_END_ARG_INFO();
@@ -208,7 +208,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextBuffer set_text
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, text)
 ZEND_END_ARG_INFO();
@@ -377,7 +377,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextIter forward_find_char 
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, callback)
     ZEND_ARG_OBJ_INFO(0, iter, GtkTextIter, 1)
@@ -471,7 +471,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextIter backward_find_char 
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_OBJ_INFO(0, iter, GtkTextIter, 1)
     ZEND_ARG_INFO(0, callback)
@@ -544,7 +544,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextTagTable foreach
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, callback)
 ZEND_END_ARG_INFO();
@@ -613,7 +613,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextView buffer_to_window_coords
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, window_type)
     ZEND_ARG_INFO(0, buffer_x)
@@ -643,7 +643,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextView get_iter_at_location
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, x)
     ZEND_ARG_INFO(0, y)
@@ -669,7 +669,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextView get_iter_at_position
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, x)
     ZEND_ARG_INFO(0, y)
@@ -698,7 +698,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextView get_iter_location
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_OBJ_INFO(0, iter, GtkTextIter, 0)
 ZEND_END_ARG_INFO();
@@ -727,7 +727,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextView get_line_at_y
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, y)
 ZEND_END_ARG_INFO();
@@ -755,7 +755,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextView get_line_yrange
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_OBJ_INFO(0, iter, GtkTextIter, 0)
 ZEND_END_ARG_INFO();
@@ -798,7 +798,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTextView window_to_buffer_coords
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, window_type)
     ZEND_ARG_INFO(0, window_x)

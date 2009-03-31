@@ -35,7 +35,7 @@ ignore
 
 %%
 add-arginfo GladeXML __construct
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
     ZEND_ARG_INFO(0, filename)
     ZEND_ARG_INFO(0, root)
@@ -69,7 +69,7 @@ PHP_METHOD
 
 %%
 add-arginfo GladeXML new_from_buffer
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
     ZEND_ARG_INFO(0, buffer)
     ZEND_ARG_INFO(0, root)
@@ -100,7 +100,7 @@ PHP_METHOD
 
 %%
 add-arginfo GladeXML get_widget_prefix
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, prefix)
 ZEND_END_ARG_INFO();
@@ -335,7 +335,7 @@ PHP_METHOD
 
 %%
 add-arginfo GladeXML signal_autoconnect_instance
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, object)
 ZEND_END_ARG_INFO();

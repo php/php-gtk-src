@@ -7,7 +7,7 @@ static GtkTargetEntry* phpg_parse_target_entries(zval *php_targets, int *n_targe
 
 %%
 add-arginfo GtkWidget drag_dest_set
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, flags)
     ZEND_ARG_INFO(0, targets)
@@ -71,7 +71,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkWidget drag_begin
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, targets)
     ZEND_ARG_INFO(0, actions)
@@ -146,7 +146,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkWidget drag_dest_set_target_list
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, targets)
 ZEND_END_ARG_INFO();
@@ -176,7 +176,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkWidget drag_dest_find_target
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
     ZEND_ARG_OBJ_INFO(0, context, GdkDragContext, 1)
     ZEND_ARG_INFO(0, targets)
@@ -219,7 +219,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkWidget drag_source_set
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, sbmask)
     ZEND_ARG_INFO(0, targets)
@@ -289,7 +289,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkWidget drag_source_set_target_list
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, targets)
 ZEND_END_ARG_INFO();

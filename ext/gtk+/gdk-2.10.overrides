@@ -2,7 +2,7 @@
 
 %%
 add-arginfo GdkScreen set_font_options
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME,0,0,1)
 	ZEND_ARG_OBJ_INFO(0,obj, CairoFontOptions, 1)
 ZEND_END_ARG_INFO();
@@ -43,7 +43,7 @@ PHP_METHOD
 
 %%
 add-arginfo Gdk cairo_set_source_pixmap
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME,0,0,4)
     ZEND_ARG_OBJ_INFO(0,cobj, CairoContext, 1)
     ZEND_ARG_OBJ_INFO(0,pmap, GdkPixmap, 1)

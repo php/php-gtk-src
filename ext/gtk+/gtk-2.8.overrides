@@ -16,7 +16,7 @@ restore
 
 %%
 add-arginfo GtkIconView enable_model_drag_source
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, sbmask)
     ZEND_ARG_INFO(0, targets)
@@ -54,7 +54,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkIconView enable_model_drag_dest
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, targets)
     ZEND_ARG_INFO(0, actions)
@@ -118,7 +118,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkIconView get_dest_item_at_pos
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, x)
     ZEND_ARG_INFO(0, y)
@@ -157,7 +157,7 @@ PHP_METHOD
 }
 %%
 add-arginfo GtkIconView get_item_at_pos
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, x)
     ZEND_ARG_INFO(0, y)

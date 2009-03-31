@@ -56,6 +56,12 @@
 #define Z_REFCOUNT_P(x) (x)->refcount
 #endif
 
+/* Arg info static changes in PHP 5.2.9 and higher */
+#if PHP_VERSION_ID >= 50209
+# define PHPGTK_ARG_INFO_STATIC
+#else
+# define PHPGTK_ARG_INFO_STATIC static
+#endif
 
 #if HAVE_PHP_GTK
 

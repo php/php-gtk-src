@@ -36,7 +36,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkContainer set_focus_chain
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, widgets)
 ZEND_END_ARG_INFO();

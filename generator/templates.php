@@ -301,11 +301,11 @@ void phpg_%s_register_constants(const char *strip_prefix)
 const register_enum = "\tphpg_register_%s(%s, strip_prefix, %s);\n";
 
 const reflection_arginfo_begin = "
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(%s, 0)
 ";
 const reflection_arginfoex_begin = "
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(%s, 0, 0, %d)
 ";
 const reflection_arginfo_end = "ZEND_END_ARG_INFO();
