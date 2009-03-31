@@ -46,7 +46,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkBuilder add_from_string
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
     ZEND_ARG_INFO(0, string)
 ZEND_END_ARG_INFO();
@@ -86,7 +86,7 @@ static void phpg_gtkbuilder_connect_signals_func(GtkBuilder *builder, GObject *o
 {
 #ifdef ZTS
 	TSRMLS_D;
-#endif;
+#endif
     zval *callback = NULL, *php_object = NULL, *user_args = NULL;
     zval **callback_data = NULL, **callback_ptr = NULL;
     GClosure *closure = NULL;
@@ -238,7 +238,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkBuilder connect_signals_instance
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, object)
 ZEND_END_ARG_INFO();
@@ -274,7 +274,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkIconView get_tooltip_context
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 3)
     ZEND_ARG_INFO(0, x)
     ZEND_ARG_INFO(0, y)
@@ -313,7 +313,7 @@ PHP_METHOD
 
 %%
 add-arginfo GtkTreeView get_tooltip_context
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 3)
     ZEND_ARG_INFO(0, x)
     ZEND_ARG_INFO(0, y)
@@ -356,7 +356,7 @@ static void phpg_scale_button_set_icons_assist(GtkScaleButton *, zval * TSRMLS_D
 
 %%
 add-arginfo GtkScaleButton __construct
-static
+PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
     ZEND_ARG_INFO(0, iconsize)
     ZEND_ARG_INFO(0, min)
