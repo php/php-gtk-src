@@ -1,3 +1,34 @@
+2009-03-31  Derick Rethans  <php@derickrethans.nl>
+
+    * ext/gtk+/atk.overrides
+      ext/gtk+/gdk-2.10.overrides
+      ext/gtk+/gdk-2.8.overrides
+      ext/gtk+/gdk.overrides
+      ext/gtk+/gtk-2.10.overrides
+      ext/gtk+/gtk-2.8.overrides
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtkclipboard.overrides
+      ext/gtk+/gtkcontainer.overrides
+      ext/gtk+/gtkdrag.overrides
+      ext/gtk+/gtktextview.overrides
+      ext/gtk+/gtktreeview.overrides
+      ext/gtk+/pango.overrides
+      ext/libglade/libglade.overrides
+      ext/sourceview/sourceview.overrides
+      generator/reflection.php
+      generator/templates.php
+      main/php_gtk.h
+      main/phpg_gobject.c:
+      - Fixed compilation with latest PHP 5.2 and PHP 5.3, due to the change
+        in the PHP API that added "static" as part of the ZEND_ARG_INFO_BEGIN
+      macro.
+
+    * ext/gtk+/gtk-2.12.overrides:
+      - Fixed typo error.
+
+    * ext/mozembed/config.m4:
+      - Fixed Windows line endings.
+
 2009-01-07  Bob Majdak Jr  <bob@kateos.org>
 
     * main/php_gtk_util.c:
