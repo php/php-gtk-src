@@ -1,3 +1,9 @@
+2009-04-16  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gdk-2.12.overrides
+      ext/gtk+/gdk-2.8.overrides:
+      Use correct calls for php cairo helper functions
+
 2009-03-31  Derick Rethans  <php@derickrethans.nl>
 
     * ext/gtk+/atk.overrides
