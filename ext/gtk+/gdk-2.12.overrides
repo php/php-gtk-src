@@ -23,6 +23,6 @@ PHP_METHOD
 	object_init_ex(return_value, ce);
 	cont = (context_object *)zend_objects_get_address(return_value TSRMLS_CC); 
 	cont->context = gtk_print_context_get_cairo_context(GTK_PRINT_CONTEXT(PHPG_GOBJECT(this_ptr)));
-	cairo_reference(cont->context);
+	php_cairo_context_reference(cont->context);
 }
 

@@ -17,7 +17,7 @@ PHP_METHOD
 	        return;
 	}
 	
-	fobj = (cairo_fontoptions_object *)zend_object_store_get_object(obj TSRMLS_CC);
+	fobj = (cairo_fontoptions_object *)cairo_fontoptions_object_get(obj TSRMLS_CC);
 
 	gdk_screen_set_font_options(GDK_SCREEN(PHPG_GOBJECT(this_ptr)), fobj->fontoptions);
 }
@@ -33,12 +33,11 @@ PHP_METHOD
 	            return;
 	}
 	fo = gdk_screen_get_font_options(GDK_SCREEN(PHPG_GOBJECT(this_ptr)));
-	ce = get_CairoFontOptions_ce_ptr();
+	ce = php_cairo_get_fontoptions_ce();
 
 	object_init_ex(return_value, ce);
     fobj = (cairo_fontoptions_object *)zend_object_store_get_object(return_value TSRMLS_CC);
-    /* I don't want to have to link to cairo.dll as well, this should be fixed! 
-	fobj->cairo_fontoptions = cairo_font_options_copy(fo);*/
+    fobj->fontoptions = php_cairo_font_options_copy(fo);
 }
 
 %%
@@ -64,7 +63,7 @@ PHP_METHOD
     if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"OOdd", &cobj, &pmap, &pixmap_x, &pixmap_y)) {
         return;
     }
-    cont = (cairo_context_object *)zend_objects_get_address(cobj TSRMLS_CC);
+    cont = (cairo_context_object *)cairo_context_object_get(cobj TSRMLS_CC);
     pixmap = GDK_PIXMAP(PHPG_GOBJECT(pmap));
 	gdk_cairo_set_source_pixmap(cont->context, pixmap, pixmap_x, pixmap_y);
 }
