@@ -511,7 +511,11 @@ PHP_GTK_API zend_class_entry* phpg_create_class(GType gtype)
             iface_ce = phpg_class_from_gtype(ifaces[i]);
             zend_class_implements(ce TSRMLS_CC, 1, iface_ce);
             if (!G_TYPE_IS_INTERFACE(gtype)) {
-                zend_hash_apply_with_arguments(&ce->function_table, (apply_func_args_t) unset_abstract_flag, 1, iface_ce TSRMLS_CC);
+#if defined(PHP_VERSION_ID) && PHP_VERSION_ID >= 50300 && ZTS
+                zend_hash_apply_with_arguments(&ce->function_table TSRMLS_CC, (apply_func_args_t) unset_abstract_flag, 1, iface_ce TSRMLS_CC);
+#else
+				zend_hash_apply_with_arguments(&ce->function_table, (apply_func_args_t) unset_abstract_flag, 1, iface_ce TSRMLS_CC);
+#endif
             }
         }
         if (!G_TYPE_IS_INTERFACE(gtype)) {
@@ -562,7 +566,7 @@ gboolean phpg_handler_marshal(gpointer user_data)
     zend_hash_index_find(Z_ARRVAL_P(callback_data), 2, (void **)&callback_filename);
     zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_lineno);
 
-    if (!zend_is_callable(*callback, 0, &callback_name)) {
+	if (!zend_is_callable(*callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke handler callback '%s' specified in %s on line %ld", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
         efree(callback_name);
         return 0;

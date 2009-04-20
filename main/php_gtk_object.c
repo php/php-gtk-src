@@ -256,7 +256,7 @@ PHP_GTK_API void php_gtk_callback_marshal(GtkObject *o, gpointer data, guint nar
 		zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&callback_lineno);
 	}
 
-	if (!zend_is_callable(*callback, 0, &callback_name)) {
+	if (!zend_is_callable(*callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
 		if (callback_filename)
 			php_error(E_WARNING, "Unable to call signal callback '%s' specified in %s on line %ld", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
 		else

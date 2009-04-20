@@ -1388,7 +1388,7 @@ gboolean phpg_tree_model_foreach_marshal(GtkTreeModel *model,
     gboolean ret;
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return TRUE;
@@ -1688,7 +1688,7 @@ static gboolean phpg_tree_model_filter_visible_func_marshal(GtkTreeModel *model,
     gboolean show = TRUE;
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return 0;
@@ -1895,7 +1895,7 @@ static void phpg_tree_selection_foreach_func_marshal (GtkTreeModel *model, GtkTr
 
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return;
@@ -1969,7 +1969,7 @@ static gboolean phpg_tree_selection_func_marshal(GtkTreeSelection *selection,
     gboolean allow_toggle = TRUE;
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return 0;
@@ -2109,7 +2109,7 @@ static gint phpg_tree_iter_compare_func_marshal(GtkTreeModel *model, GtkTreeIter
     gint compared = 0;
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return 0;
@@ -2281,7 +2281,7 @@ static gboolean phpg_tree_view_column_drop_func_marshal (GtkTreeView *tree_view,
     gboolean may_drop = FALSE;
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return 0;
@@ -2368,7 +2368,7 @@ static gboolean phpg_tree_view_row_separator_func_marshal(GtkTreeModel *model, G
     gboolean is_separator = FALSE;
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return 0;
@@ -2450,7 +2450,7 @@ static void phpg_cell_data_func_marshal(GtkCellLayout *cell_layout, GtkCellRende
     zval *php_cell_layout = NULL, *php_renderer = NULL, *php_model = NULL, *php_iter = NULL;
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return;
@@ -2761,7 +2761,7 @@ static gboolean phpg_tree_view_search_equal_func_marshal (GtkTreeModel *model, g
     zend_bool free_result;
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return 0;

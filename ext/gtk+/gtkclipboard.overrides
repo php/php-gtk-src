@@ -27,7 +27,7 @@ static void phpg_clipboard_request_contents_marshal(GtkClipboard *clipboard,
     
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return;
@@ -111,7 +111,7 @@ static void phpg_clipboard_request_targets_marshal(GtkClipboard *clipboard,
     
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return;
@@ -195,7 +195,7 @@ static void phpg_clipboard_request_text_marshal(GtkClipboard *clipboard,
     
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return;
@@ -291,7 +291,7 @@ static void phpg_clipboard_get_func_marshal(GtkClipboard *clipboard,
 
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(set_info->get_cb_data->callback, 0, &callback_name)) {
+    if (!zend_is_callable(set_info->get_cb_data->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, set_info->get_cb_data->src_filename, set_info->get_cb_data->src_lineno);
         efree(callback_name);
         return;
@@ -335,7 +335,7 @@ static void phpg_clipboard_clear_func_marshal(GtkClipboard *clipboard,
 
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(set_info->clear_cb_data->callback, 0, &callback_name)) {
+    if (!zend_is_callable(set_info->clear_cb_data->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, set_info->clear_cb_data->src_filename, set_info->clear_cb_data->src_lineno);
         efree(callback_name);
         return;

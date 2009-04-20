@@ -41,7 +41,7 @@ static void phpg_link_button_set_uri_hook_func_marshal(GtkLinkButton *button, co
 
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return;
@@ -328,7 +328,7 @@ phpg_recent_chooser_sort_func_marshal(GtkRecentInfo *a, GtkRecentInfo *b, gpoint
     
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(calldata->callback, 0, &callback)) {
+    if (!zend_is_callable(calldata->callback, 0, &callback PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(
             E_WARNING,
             "Unable to invoke callback '%s' specified in %s on line %ld",
@@ -590,7 +590,7 @@ phpg_assistant_forward_page_func_marshal(gint cur, gpointer data)
     
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(calldata->callback, 0, &callback)) {
+    if (!zend_is_callable(calldata->callback, 0, &callback PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(
             E_WARNING,
             "Unable to invoke callback '%s' specified in %s on line %ld",

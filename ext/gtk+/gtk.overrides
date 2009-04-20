@@ -431,7 +431,7 @@ static gboolean phpg_iowatch_marshal(GIOChannel *source, GIOCondition condition,
     zend_hash_index_find(Z_ARRVAL_P(callback_data), 3, (void **)&callback_filename);
     zend_hash_index_find(Z_ARRVAL_P(callback_data), 4, (void **)&callback_lineno);
 
-    if (!zend_is_callable(*callback, 0, &callback_name)) {
+    if (!zend_is_callable(*callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke handler callback '%s' specified in %s on line %ld", callback_name, Z_STRVAL_PP(callback_filename), Z_LVAL_PP(callback_lineno));
         efree(callback_name);
         return 0;
@@ -812,7 +812,7 @@ static gboolean phpg_accelgroup_find_func_marshal(GtkAccelKey *key, GClosure *cl
 
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return (gboolean) 0;
@@ -1134,7 +1134,7 @@ static void phpg_about_dialog_activate_link_func_marshal(GtkAboutDialog *about, 
 
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return;
@@ -2050,7 +2050,7 @@ static void phpg_color_selection_change_palette_with_screen_func_marshal(GdkScre
 
     cbd = GTK_G(color_selection_palette_callback);
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return;
@@ -2885,7 +2885,7 @@ static gboolean phpg_entry_completion_match_func_marshal (GtkEntryCompletion *co
     zend_bool free_result;
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return 0;
@@ -3011,7 +3011,7 @@ static gboolean phpg_file_filter_add_custom_marshal(GtkFileFilterInfo *filter_in
 
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return 0;
@@ -3882,7 +3882,7 @@ static void phpg_icon_view_foreach_func_marshal(GtkIconView *icon_view, GtkTreeP
 
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return;
@@ -4360,7 +4360,7 @@ static void php_gtk_menu_position(GtkMenu *menu, int *x, int *y, int *push_in, g
     int n_args = 0;
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "unable to call menu position callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return;
@@ -5506,7 +5506,7 @@ static gboolean phpg_toolbar_signal_func_marshal(GtkWidget *widget, gpointer dat
 
     TSRMLS_FETCH();
 
-    if (!zend_is_callable(cbd->callback, 0, &callback_name)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
         efree(callback_name);
         return 0;

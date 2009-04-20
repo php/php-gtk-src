@@ -135,7 +135,7 @@ static void phpg_gtkbuilder_connect_signals_func(GtkBuilder *builder, GObject *o
              * methods at runtime (unless you decide to stab yourself in the foot with
              * runkit).
              */ 
-            if (!zend_is_callable(callback, 0, NULL)) {
+            if (!zend_is_callable(callback, 0, NULL PHPGTK_ZEND_IS_CALLABLE)) {
                 php_error(E_NOTICE, "Unable to auto-connect handler '%s': no such method in the specified object of class '%s'", handler_name, Z_OBJCE_P(data->instance)->name);
                 return;
             }
@@ -154,7 +154,7 @@ static void phpg_gtkbuilder_connect_signals_func(GtkBuilder *builder, GObject *o
              */
             if (data->extra && zend_hash_find(Z_ARRVAL_P(data->extra), (char *)handler_name, strlen(handler_name) + 1, (void **)&callback_data) == SUCCESS) {
                 /* Check if the value is callable. */
-                if (zend_is_callable(*callback_data, 0, NULL)) {
+                if (zend_is_callable(*callback_data, 0, NULL PHPGTK_ZEND_IS_CALLABLE)) {
                     zval_add_ref(callback_data);
                     callback = *callback_data;
                 } else {

@@ -71,7 +71,7 @@ static void phpg_closure_marshal(GClosure *closure,
     uint n_params = 0, i;
 	TSRMLS_FETCH();
 
-	if (!zend_is_callable(phpg_closure->callback, 0, &callback_name)) {
+	if (!zend_is_callable(phpg_closure->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
 		if (phpg_closure->src_filename)
             php_error(E_WARNING,
                       "Unable to invoke signal callback '%s' specified in %s on line %d",
