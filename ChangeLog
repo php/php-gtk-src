@@ -1,3 +1,24 @@
+2009-04-20  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * ext/gtk+/gtk-2.10.overrides
+      ext/gtk+/gtk-2.12.overrides
+      ext/gtk+/gtk.overrides
+      ext/gtk+/gtkclipboard.overrides
+      ext/gtk+/gtktextview.overrides
+      ext/gtk+/gtktreeview.overrides
+      ext/libglade/libglade.overrides
+      main/php_gtk.h
+      main/php_gtk_object.c
+      main/phpg_closure.c
+      main/phpg_support.c:
+      Fixes for zend_is_callable and zend_apply_hash_with_arguments changes in
+      5.3 in ZTS mode
+
+    * ext/gtk+/gdk-2.10.overrides
+      ext/gtk+/gdk-2.12.overrides
+      ext/gtk+/gdk-2.8.overrides:
+      additional cairo compilation fixes, finished overrides with boxed types
+
 2009-04-16  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/gdk-2.12.overrides
