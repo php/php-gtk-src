@@ -1353,6 +1353,7 @@ static PHP_METHOD(GObject, register_type)
     GType parent_type, new_type;
     GTypeQuery query;
     const char *type_name;
+	char *class_name_copy;
     zval **prop_decls, **signal_decls;
 
     GTypeInfo type_info = {
@@ -1380,6 +1381,10 @@ static PHP_METHOD(GObject, register_type)
     }
 
     type_name = class->name;
+	/* If this is a namespaced class we will have issues, since \ is not allowed, so copy and replace \ with _ */
+	class_name_copy = g_strdup(class->name);
+	type_name = g_strdelimit(class_name_copy, "\\", '__');
+
     if (g_type_from_name(type_name) != 0) {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "type '%s' already exists?", type_name);
         return;
