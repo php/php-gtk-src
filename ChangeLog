@@ -1,3 +1,11 @@
+2009-04-24  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
+
+    * main/phpg_gobject.c:
+      Change \ to __ in PHP names before registering gtype to avoid "invalid
+      character" issues when using namespaces in 5.3 - note, this means you
+      can't have \My\Class\Name and My__Class__Name and register both as gtypes
+      in the same application.
+
 2009-04-20  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/gtk-2.10.overrides
