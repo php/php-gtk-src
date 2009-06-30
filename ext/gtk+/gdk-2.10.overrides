@@ -12,14 +12,14 @@ override gdk_screen_set_font_options
 PHP_METHOD
 {
 	zval *obj=NULL;
-	cairo_fontoptions_object *fobj;
+	cairo_font_options_object *fobj;
     if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"O", &obj)) {
 	        return;
 	}
 	
-	fobj = (cairo_fontoptions_object *)cairo_fontoptions_object_get(obj TSRMLS_CC);
+	fobj = (cairo_font_options_object *)cairo_font_options_object_get(obj TSRMLS_CC);
 
-	gdk_screen_set_font_options(GDK_SCREEN(PHPG_GOBJECT(this_ptr)), fobj->fontoptions);
+	gdk_screen_set_font_options(GDK_SCREEN(PHPG_GOBJECT(this_ptr)), fobj->font_options);
 }
 
 %%
@@ -28,7 +28,7 @@ PHP_METHOD
 {
 	const cairo_font_options_t *fo;
 	zend_class_entry *ce;
-	cairo_fontoptions_object *fobj;
+	cairo_font_options_object *fobj;
 	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"")) {
 	            return;
 	}
@@ -36,8 +36,8 @@ PHP_METHOD
 	ce = php_cairo_get_fontoptions_ce();
 
 	object_init_ex(return_value, ce);
-    fobj = (cairo_fontoptions_object *)zend_object_store_get_object(return_value TSRMLS_CC);
-    fobj->fontoptions = php_cairo_font_options_copy(fo);
+    fobj = (cairo_font_options_object *)zend_object_store_get_object(return_value TSRMLS_CC);
+    fobj->font_options = php_cairo_font_options_copy(fo);
 }
 
 %%
