@@ -103,7 +103,7 @@ function find_config_w32(dirname) {
 		 * if we have, don't include it here */
 		n = FSO.GetFileName(fc.item());
 
-		if (n == 'CVS' || n == 'tests')
+		if (n == 'CVS' || n == 'tests' || n == '.svn')
 			continue;
 
 		WScript.StdOut.Write("Checking " + dirname + "/" + n);

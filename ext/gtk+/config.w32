@@ -1,20 +1,20 @@
 
 if (CHECK_HEADER("main/php.h") && CHECK_LIB(PHP_LIB) &&
-	(PHP_GTK_LIBVERSION > 2.11 || (CHECK_HEADER("iconv.h") && CHECK_LIB("iconv.lib", "php-gtk"))) &&
-	CHECK_HEADER("libintl.h") && CHECK_LIB("intl.lib", "php-gtk") &&
-	CHECK_HEADER("atk/atk.h") && CHECK_LIB("atk-1.0.lib", "php-gtk") &&
-	CHECK_HEADER("glib.h") && CHECK_LIB("glib-2.0.lib", "php-gtk") &&
-	CHECK_HEADER("gmodule.h") && CHECK_LIB("gmodule-2.0.lib", "php-gtk") &&
-	CHECK_HEADER("glib/gthread.h") && CHECK_LIB("gthread-2.0.lib", "php-gtk") &&
-	CHECK_HEADER("glib-object.h") && CHECK_LIB("gobject-2.0.lib", "php-gtk") &&
-	CHECK_HEADER("pango/pango.h") && CHECK_LIB("pango-1.0.lib", "php-gtk") &&
-	CHECK_HEADER("pango/pangowin32.h") && CHECK_LIB("pangowin32-1.0.lib", "php-gtk") &&
-	CHECK_HEADER("gdk-pixbuf/gdk-pixbuf.h") && CHECK_LIB("gdk_pixbuf-2.0.lib", "php-gtk") &&
-	CHECK_HEADER("gdk/gdk.h") && CHECK_LIB("gdk-win32-2.0.lib", "php-gtk") &&
-	CHECK_HEADER("gtk/gtk.h") && CHECK_LIB("gtk-win32-2.0.lib", "php-gtk")) {
+	(PHP_GTK_LIBVERSION > 2.11 || (CHECK_HEADER_ADD_INCLUDE("iconv.h") && CHECK_LIB("iconv.lib", "php-gtk"))) &&
+	CHECK_HEADER_ADD_INCLUDE("libintl.h") && CHECK_LIB("intl.lib", "php-gtk") &&
+	CHECK_HEADER_ADD_INCLUDE("atk/atk.h") && CHECK_LIB("atk-1.0.lib", "php-gtk") &&
+	CHECK_HEADER_ADD_INCLUDE("glib.h", 'CFLAGS_PHP_GTK', null, true) && CHECK_LIB("glib-2.0.lib", "php-gtk") &&
+	CHECK_HEADER_ADD_INCLUDE("gmodule.h") && CHECK_LIB("gmodule-2.0.lib", "php-gtk") &&
+	CHECK_HEADER_ADD_INCLUDE("glib/gthread.h") && CHECK_LIB("gthread-2.0.lib", "php-gtk") &&
+	CHECK_HEADER_ADD_INCLUDE("glib-object.h") && CHECK_LIB("gobject-2.0.lib", "php-gtk") &&
+	CHECK_HEADER_ADD_INCLUDE("pango/pango.h") && CHECK_LIB("pango-1.0.lib", "php-gtk") &&
+	CHECK_HEADER_ADD_INCLUDE("pango/pangowin32.h") && CHECK_LIB("pangowin32-1.0.lib", "php-gtk") &&
+	CHECK_HEADER_ADD_INCLUDE("gdk-pixbuf/gdk-pixbuf.h") && CHECK_LIB("gdk_pixbuf-2.0.lib", "php-gtk") &&
+	CHECK_HEADER_ADD_INCLUDE("gdk/gdk.h") && CHECK_LIB("gdk-win32-2.0.lib", "php-gtk") &&
+	CHECK_HEADER_ADD_INCLUDE("gtk/gtk.h") && CHECK_LIB("gtk-win32-2.0.lib", "php-gtk")) {
 
-	if (!ENABLE_CAIRO || (ENABLE_CAIRO && CHECK_HEADER_ADD_INCLUDE("ext/cairo/php_cairo_api.h") && CHECK_LIB("php_cairo.lib"))) {
-	
+	if (!ENABLE_CAIRO || (ENABLE_CAIRO && CHECK_HEADER_ADD_INCLUDE("cairo/cairo.h", 'CFLAGS', null, true, true) &&
+	CHECK_HEADER_ADD_INCLUDE("php_cairo_api.h", 'CFLAGS', null, true) && CHECK_LIB("php_cairo.lib"))) {
 		ADD_FLAG("CFLAGS_PHP_GTK", "/I ext\\gtk+ /I ..\\ext\\gtk+ /D HAVE_PHP_GTK=1");
 
 		EXTENSION("php-gtk", "gen_atk.c gen_gdk.c gen_gtk.c gen_pango.c php_gdk.c php_gtk+.c php_gtk+_types.c phpg_custom_tree_model.c", true); // always shared

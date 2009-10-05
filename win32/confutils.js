@@ -52,22 +52,14 @@ extension_module_ptrs = "";
 
 function get_gtk_libversion()
 {
-	var env, i, file, vin, major, minor;
+	var env, i, vin, major, minor;
 	var found = false;
 
-	env = WshShell.Environment("Process").Item('INCLUDE');
-	env = env.split(";");
-	for (i = 0; i < env.length; i++) {
-		file = glob(env[i] + "\\gtk\\gtkversion.h");
-		if (file) {
-			found = true;
-			break;
-		}
-	}
+	found = CHECK_HEADER("gtk/gtkversion.h");
 
-	if (found == true) {
+	if (found) {
 		STDOUT.WriteLine("	<in default path>");
-		vin = file_get_contents(file);
+		vin = file_get_contents(found + "\\gtk\\gtkversion.h");
 
 		regex = new RegExp("GTK_MAJOR_VERSION\\s+\\(([0-9]+)\\)");
 		regex.exec(vin);
@@ -562,6 +554,9 @@ function CHECK_LIB(libnames, target, path_to_check, common_name) {
 }
 
 function CHECK_HEADER(header_name, path_to_check) {
+	if (!path_to_check) {
+		path_to_check = php_usual_include_suspects;
+	}
 
 	var path = search_paths(header_name, path_to_check, "INCLUDE");
 
@@ -606,10 +601,10 @@ function GREP_HEADER(header_name, regex, path_to_check) {
 	return false;
 }
 
-function CHECK_HEADER_ADD_INCLUDE(header_name, flag_name, path_to_check, use_env, add_dir_part, add_to_flag_only)
-{
+function CHECK_HEADER_ADD_INCLUDE(header_name, flag_name, path_to_check, use_env, add_dir_part, add_to_flag_only) {
+
 	var dir_part_to_add = "";
-	
+
 	if (use_env == null) {
 		use_env = true;
 	}
@@ -627,7 +622,7 @@ function CHECK_HEADER_ADD_INCLUDE(header_name, flag_name, path_to_check, use_env
 	} else {
 		path_to_check += ";" + php_usual_include_suspects;
 	}
-	
+
 	var p = search_paths(header_name, path_to_check, use_env ? "INCLUDE" : null);
 	var have = 0;
 	var sym;
@@ -646,8 +641,8 @@ function CHECK_HEADER_ADD_INCLUDE(header_name, flag_name, path_to_check, use_env
 		add_to_flag_only = true;
 	}
 
-	if (typeof(add_to_flag_only) != undefined) {
-		ADD_FLAG(flag_name, "/DHAVE_" + sym + "=" + have);
+	if (typeof(add_to_flag_only) != "undefined") {
+		ADD_FLAG(flag_name, "/D HAVE_" + sym + "=" + have);
 	} else {
 		AC_DEFINE("HAVE_" + sym, have, "have the " + header_name + " header file");
 	}
@@ -713,7 +708,7 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 	make_builds[make_builds.length] = extname + ": $(BUILD_DIR)\\" + dllname;
 
 	MFO.WriteLine("$(BUILD_DIR)\\" + dllname + ": $(" + EXT + "_GLOBAL_OBJS)" + res_var);
-	MFO.WriteLine("\t" + ld + " /out:$(BUILD_DIR)\\" + dllname + " $(" + EXT + "_LDFLAGS)" + dllflags + " $(LDFLAGS) $(" + EXT + "_GLOBAL_OBJS) $(LIBS_" + EXT + ")" + dep_libs + " $(LIBS)" + res_var);
+	MFO.WriteLine("\t" + ld + " /out:$(BUILD_DIR)\\" + dllname + " $(LDFLAGS_" + EXT + ")" + dllflags + " $(LDFLAGS) $(" + EXT + "_GLOBAL_OBJS) $(LIBS_" + EXT + ")" + dep_libs + " $(LIBS)" + res_var);
 
 	MFO.WriteBlankLines(1);
 	MFO.WriteLine(dllname + ": $(BUILD_DIR)\\" + dllname);
@@ -1237,17 +1232,19 @@ function probe_basic_headers()
 {
 	var p;
 
-	if (PHP_GTK_PHP_BUILD != "no") {
-		php_usual_include_suspects += ";" + PHP_GTK_PHP_BUILD + "\\include";
-		php_usual_lib_suspects += ";" + PHP_GTK_PHP_BUILD + "\\lib";
-	}
-
 	// hack to catch common location of libs
 	if (typeof(p) == "string") {
 		p = p.replace(new RegExp("include$"), "lib");
 		ADD_FLAG("LDFLAGS", '/libpath:"' + p + '" ');
 		php_usual_lib_suspects += ";" + p;
 	}
+
+	// Make sure that tsrm, main and ZEND get added to the includes
+	var php_dir = CHECK_HEADER('Zend/zend.h');
+	ADD_FLAG('CFLAGS', '/I "' + php_dir + '" ');
+	ADD_FLAG('CFLAGS', '/I "' + php_dir + '\\TSRM" ');
+	ADD_FLAG('CFLAGS', '/I "' + php_dir + '\\main" ');
+	ADD_FLAG('CFLAGS', '/I "' + php_dir + '\\Zend" ');
 }
 
 /* non-functions */

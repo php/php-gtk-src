@@ -87,6 +87,18 @@ if (PHP_GTK_DEBUG == "yes" && PHP_GTK_ZTS == "yes") {
 	DEFINE("PHP_LIB", "php5.lib");
 	PHP_LIB = "php5.lib";
 }
+if (PHP_GTK_PHP_BUILD == 'no') {
+	if (FSO.FolderExists("..\\php_build")) {
+		PHP_GTK_PHP_BUILD = "..\\php_build";
+	} else if (FSO.FolderExists("..\\win32build")) {
+		PHP_GTK_PHP_BUILD = "..\\win32build";
+	} else if (FSO.FolderExists("..\\php-win32-dev\\php_build")) {
+		PHP_GTK_PHP_BUILD = "..\\php-win32-dev\\php_build";
+	}
+}
+
+var php_usual_include_suspects = PHP_GTK_PHP_BUILD;
+var php_usual_lib_suspects = PHP_GTK_PHP_BUILD;
 
 ARG_IS('all', 'Configure all available extensions', 'no');
 
@@ -94,7 +106,6 @@ DEFINE("PHPGTKDLL", "php_gtk2.dll");
 DEFINE("PHPGTKLIB", "php_gtk2.lib");
 get_version_numbers();
 /* pick up the version from gtk/gtkversion.h */
-STDOUT.Write("Checking for gtk\\gtkversion.h ... ");
 get_gtk_libversion();
 
 // General link flags
@@ -102,17 +113,17 @@ DEFINE("LDFLAGS", "/nologo");
 // General DLL link flags
 DEFINE("DLL_LDFLAGS", "/dll /machine:I386");
 // PHP-GTK DLL link flags
-DEFINE("PHP_GTK_LDFLAGS", "$(DLL_LDFLAGS)");
+DEFINE("LDFLAGS_PHP_GTK", "$(DLL_LDFLAGS)");
 
 // General libs
 DEFINE("LIBS", "kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib");
 
 if (PHP_GTK_DEBUG == "yes") {
-	DEFINE("CFLAGS", "/nologo /LDd /MDd /Gm /ZI /GZ /I . /I ..\\ /I ..\\.. /I main /I ..\\main /I ext /I ..\\ext /I ..\\php5\\main /I ..\\php5\\Zend /I ..\\php5\\TSRM /D ZEND_WIN32 /D ZEND_DEBUG=1 /D PHP_WIN32 /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
+	DEFINE("CFLAGS", "/nologo /LDd /MDd /Gm /ZI /GZ /I . /I ..\\ /I ..\\.. /I main /I ..\\main /I ext /I ..\\ext /D ZEND_WIN32 /D ZEND_DEBUG=1 /D PHP_WIN32 /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
 	ADD_FLAG("LDFLAGS", "/debug");
 
 } else {
-	DEFINE("CFLAGS", "/nologo /MD /W3 /GX /O2 /I . /I ..\\ /I ..\\.. /I main /I ..\\main /I ext /I ..\\ext /I ..\\php5\\main /I ..\\php5\\Zend /I ..\\php5\\TSRM /D ZEND_WIN32 /D ZEND_DEBUG=0 /D PHP_WIN32 /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
+	DEFINE("CFLAGS", "/nologo /MD /W3 /GX /O2 /I . /I ..\\ /I ..\\.. /I main /I ..\\main /I ext /I ..\\ext /D ZEND_WIN32 /D ZEND_DEBUG=0 /D PHP_WIN32 /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
 	// Generate external debug files when --enable-debug-pack is specified
 	if (PHP_GTK_DEBUG_PACK == "yes") {
 	 	ADD_FLAG("CFLAGS", "/Zi");
@@ -138,19 +149,6 @@ if (VCVERS >= 14) {
 if (PHP_GTK_GD == "yes") {
 	ADD_FLAG('CFLAGS', '/D HAVE_GD_BUNDLED=1'); 
 }
-
-if (PHP_GTK_PHP_BUILD == 'no') {
-	if (FSO.FolderExists("..\\php_build")) {
-		PHP_GTK_PHP_BUILD = "..\\php_build";
-	} else if (FSO.FolderExists("..\\win32build")) {
-		PHP_GTK_PHP_BUILD = "..\\win32build";
-	} else if (FSO.FolderExists("..\\php-win32-dev\\php_build")) {
-		PHP_GTK_PHP_BUILD = "..\\php-win32-dev\\php_build";
-	}
-}
-
-var php_usual_include_suspects = "..\\php_build\\include;..\\win32build\\include";
-var php_usual_lib_suspects = "..\\php_build\\lib;..\\win32build\\lib";
 
 probe_basic_headers();
 
