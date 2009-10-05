@@ -8,6 +8,10 @@
 #ifndef SCINTILLABASE_H
 #define SCINTILLABASE_H
 
+#ifdef SCI_NAMESPACE
+namespace Scintilla {
+#endif
+
 /**
  */
 class ScintillaBase : public Editor {
@@ -37,7 +41,6 @@ protected:
 	CallTip ct;
 
 	int listType;			///< 0 is an autocomplete list
-	SString listSelected;	///< Receives listbox selected string
 	int maxListWidth;		/// Maximum width of list, in average character widths
 
 	bool performingStyle;	///< Prevent reentrance
@@ -45,7 +48,7 @@ protected:
 #ifdef SCI_LEXER
 	int lexLanguage;
 	const LexerModule *lexCurrent;
-	PropSet props;
+	PropSetSimple props;
 	enum {numWordLists=KEYWORDSET_MAX+1};
 	WordList *keyWordLists[numWordLists+1];
 	void SetLexer(uptr_t wParam);
@@ -89,5 +92,9 @@ public:
 	// Public so scintilla_send_message can use it
 	virtual sptr_t WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam);
 };
+
+#ifdef SCI_NAMESPACE
+}
+#endif
 
 #endif

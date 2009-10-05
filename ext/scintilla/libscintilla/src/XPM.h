@@ -8,11 +8,15 @@
 #ifndef XPM_H
 #define XPM_H
 
+#ifdef SCI_NAMESPACE
+namespace Scintilla {
+#endif
+
 /**
  * Hold a pixmap in XPM format.
  */
 class XPM {
-	int id;		// Assigned by container
+	int pid;		// Assigned by container
 	int height;
 	int width;
 	int nColours;
@@ -38,8 +42,8 @@ public:
 	/// Decompose image into runs and use FillRectangle for each run
 	void Draw(Surface *surface, PRectangle &rc);
 	char **InLinesForm() { return lines; }
-	void SetId(int id_) { id = id_; }
-	int GetId() { return id; }
+	void SetId(int pid_) { pid = pid_; }
+	int GetId() { return pid; }
 	int GetHeight() { return height; }
 	int GetWidth() { return width; }
 	static const char **LinesFormFromTextForm(const char *textForm);
@@ -68,5 +72,9 @@ public:
 	/// Give the largest width of the set.
 	int GetWidth();
 };
+
+#ifdef SCI_NAMESPACE
+}
+#endif
 
 #endif

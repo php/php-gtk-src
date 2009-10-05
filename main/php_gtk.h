@@ -31,7 +31,7 @@
 #include "php.h"
 #include "php_ini.h"
 #ifdef HAVE_CAIRO
-#include "ext/cairo/php_cairo_api.h"
+#include "php_cairo_api.h"
 #endif
 
 /* workaround for expat-related declaration in PHP compat file */
@@ -76,7 +76,7 @@
 #include "zend_exceptions.h"
 #include "zend_extensions.h"
 
-#define PHP_GTK_VERSION "2.0.1-dev"
+#define PHP_GTK_VERSION "2.0.2-dev"
 
 #ifdef PHP_WIN32
 # ifdef GTK_SHARED

@@ -6,10 +6,15 @@
 // Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+#ifdef SCI_NAMESPACE
+namespace Scintilla {
+#endif
+
 class Document;
 
 /**
  */
+
 class DocumentAccessor : public Accessor {
 	// Private so DocumentAccessor objects can not be copied
 	DocumentAccessor(const DocumentAccessor &source) : Accessor(), props(source.props) {}
@@ -17,7 +22,7 @@ class DocumentAccessor : public Accessor {
 
 protected:
 	Document *pdoc;
-	PropSet &props;
+	PropertyGet &props;
 	WindowID id;
 	int lenDoc;
 
@@ -33,7 +38,7 @@ protected:
 	void Fill(int position);
 
 public:
-	DocumentAccessor(Document *pdoc_, PropSet &props_, WindowID id_=0) : 
+	DocumentAccessor(Document *pdoc_, PropertyGet &props_, WindowID id_=0) : 
 		Accessor(), pdoc(pdoc_), props(props_), id(id_),
 		lenDoc(-1), validLen(0), chFlags(0), chWhile(0), 
 		startSeg(0), startPosStyling(0),
@@ -64,4 +69,9 @@ public:
 	void ColourTo(unsigned int pos, int chAttr);
 	void SetLevel(int line, int level);
 	int IndentAmount(int line, int *flags, PFNIsCommentLeader pfnIsCommentLeader = 0);
+	void IndicatorFill(int start, int end, int indicator, int value);
 };
+
+#ifdef SCI_NAMESPACE
+}
+#endif

@@ -11,8 +11,12 @@
 
 #include "Platform.h"
 
-#include "PropSet.h"
+#include "CharClassify.h"
 #include "AutoComplete.h"
+
+#ifdef SCI_NAMESPACE
+using namespace Scintilla;
+#endif
 
 AutoComplete::AutoComplete() :
 	active(false),

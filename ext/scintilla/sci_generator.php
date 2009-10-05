@@ -184,7 +184,7 @@ if($sfp = new LineOutput(fopen($savefile, 'w'), $savefile)){
 						}
 						
 						$x++;
-						//print_r($var);						
+						//print_r($var);
 					}
 					$arginfo[$fname]['name'] = "arginfo_scintilla_$fname";
 				break;
@@ -497,7 +497,7 @@ if($sfp = new LineOutput(fopen($savefile, 'w'), $savefile)){
 			}else{
 				$function_entry[$fname] = "PHP_ME(Scintilla, $fname, NULL, ZEND_ACC_PUBLIC)";
 			}
-			$sfp->write("static\nPHP_METHOD(Scintilla, $fname)\n{\n");
+			$sfp->write("PHP_METHOD(Scintilla, $fname)\n{\n");
 			foreach($functions[$fname]['decl'] as $decl){
 				$sfp->write("\t$decl\n");
 			}
@@ -535,7 +535,7 @@ if($sfp = new LineOutput(fopen($savefile, 'w'), $savefile)){
 		foreach($arginfo as $info){
 			if(isset($info['vars']) && count($info['vars'])>0){
 				$name = $info['name'];
-				$sfp->write("\nstatic\nZEND_BEGIN_ARG_INFO($name, 0)\n");
+				$sfp->write("\nZEND_BEGIN_ARG_INFO($name, 0)\n");
 				foreach($info['vars'] as $var){
 					$sfp->write("\t$var\n");
 				}

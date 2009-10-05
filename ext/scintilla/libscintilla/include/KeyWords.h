@@ -5,6 +5,33 @@
 // Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+#ifdef SCI_NAMESPACE
+namespace Scintilla {
+#endif
+
+/**
+ */
+class WordList {
+public:
+	// Each word contains at least one character - a empty word acts as sentinel at the end.
+	char **words;
+	char *list;
+	int len;
+	bool onlyLineEnds;	///< Delimited by any white space or only line ends
+	bool sorted;
+	int starts[256];
+	WordList(bool onlyLineEnds_ = false) :
+		words(0), list(0), len(0), onlyLineEnds(onlyLineEnds_),
+		sorted(false)
+		{}
+	~WordList() { Clear(); }
+	operator bool() { return len ? true : false; }
+	void Clear();
+	void Set(const char *s);
+	bool InList(const char *s);
+	bool InListAbbreviated(const char *s, const char marker);
+};
+
 typedef void (*LexerFunction)(unsigned int startPos, int lengthDoc, int initStyle,
                   WordList *keywordlists[], Accessor &styler);
                   
@@ -50,6 +77,10 @@ public:
 	static const LexerModule *Find(int language);
 	static const LexerModule *Find(const char *languageName);
 };
+
+#ifdef SCI_NAMESPACE
+}
+#endif
 
 /**
  * Check if a character is a space.

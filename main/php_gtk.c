@@ -47,21 +47,21 @@ GType G_TYPE_PHP_VALUE = 0;
 
 ZEND_DECLARE_MODULE_GLOBALS(gtk);
 
-#ifdef HAVE_CAIRO
-static const zend_module_dep gtk_cairo_deps[] = {
-	ZEND_MOD_REQUIRED("cairo")
-	{NULL, NULL, NULL}
-};
-#endif
+//#ifdef HAVE_CAIRO
+//static const zend_module_dep gtk_cairo_deps[] = {
+//	ZEND_MOD_REQUIRED("cairo")
+//	{NULL, NULL, NULL}
+//};
+//#endif
 
 zend_module_entry gtk_module_entry = {
 	STANDARD_MODULE_HEADER_EX,
 	NULL,  /* no ini entries */
-#ifdef HAVE_CAIRO
-	gtk_cairo_deps,
-#else
+//#ifdef HAVE_CAIRO_0
+//	gtk_cairo_deps,
+//#else
 	NULL,
-#endif
+//#endif
  	"php-gtk",
  	NULL,
  	PHP_MINIT(gtk),

@@ -8,33 +8,17 @@
 #ifndef CELLBUFFER_H
 #define CELLBUFFER_H
 
-/**
- * This holds the marker identifier and the marker type to display.
- * MarkerHandleNumbers are members of lists.
- */
-struct MarkerHandleNumber {
-	int handle;
-	int number;
-	MarkerHandleNumber *next;
-};
+#ifdef SCI_NAMESPACE
+namespace Scintilla {
+#endif
 
-/**
- * A marker handle set contains any number of MarkerHandleNumbers.
- */
-class MarkerHandleSet {
-	MarkerHandleNumber *root;
-
+// Interface to per-line data that wants to see each line insertion and deletion
+class PerLine {
 public:
-	MarkerHandleSet();
-	~MarkerHandleSet();
-	int Length() const;
-	int NumberFromHandle(int handle) const;
-	int MarkValue() const;	///< Bit set of marker numbers.
-	bool Contains(int handle) const;
-	bool InsertHandle(int handle, int markerNum);
-	void RemoveHandle(int handle);
-	bool RemoveNumber(int markerNum);
-	void CombineWith(MarkerHandleSet *other);
+	virtual ~PerLine() {}
+	virtual void Init()=0;
+	virtual void InsertLine(int)=0;
+	virtual void RemoveLine(int)=0;
 };
 
 /**
@@ -43,31 +27,24 @@ public:
 class LineVector {
 
 	Partitioning starts;
-	SplitVector<MarkerHandleSet *> markers;
-	SplitVector<int> levels;
-	/// Handles are allocated sequentially and should never have to be reused as 32 bit ints are very big.
-	int handleCurrent;
+	PerLine *perLine;
 
 public:
 
 	LineVector();
 	~LineVector();
 	void Init();
-
-	void ExpandLevels(int sizeNew=-1);
-	void ClearLevels();
-	int SetLevel(int line, int level);
-	int GetLevel(int line);
+	void SetPerLine(PerLine *pl);
 
 	void InsertText(int line, int delta);
 	void InsertLine(int line, int position);
 	void SetLineStart(int line, int position);
 	void RemoveLine(int line);
-	int Lines() {
+	int Lines() const {
 		return starts.Partitions();
 	}
-	int LineFromPosition(int pos);
-	int LineStart(int line) {
+	int LineFromPosition(int pos) const;
+	int LineStart(int line) const {
 		return starts.PositionFromPartition(line);
 	}
 
@@ -77,9 +54,18 @@ public:
 	void DeleteMark(int line, int markerNum, bool all);
 	void DeleteMarkFromHandle(int markerHandle);
 	int LineFromHandle(int markerHandle);
+
+	void ClearLevels();
+	int SetLevel(int line, int level);
+	int GetLevel(int line);
+
+	int SetLineState(int line, int state);
+	int GetLineState(int line);
+	int GetMaxLineState();
+
 };
 
-enum actionType { insertAction, removeAction, startAction };
+enum actionType { insertAction, removeAction, startAction, containerAction };
 
 /**
  * Actions are used to store all the information required to perform one undo/redo step.
@@ -116,7 +102,7 @@ public:
 	UndoHistory();
 	~UndoHistory();
 
-	void AppendAction(actionType at, int position, char *data, int length, bool &startSequence);
+	void AppendAction(actionType at, int position, char *data, int length, bool &startSequence, bool mayCoalesce=true);
 
 	void BeginUndoAction();
 	void EndUndoAction();
@@ -156,23 +142,25 @@ private:
 
 	LineVector lv;
 
-	SVector lineStates;
-
 public:
 
 	CellBuffer();
 	~CellBuffer();
 
 	/// Retrieving positions outside the range of the buffer works and returns 0
-	char CharAt(int position);
+	char CharAt(int position) const;
 	void GetCharRange(char *buffer, int position, int lengthRetrieve);
 	char StyleAt(int position);
+	const char *BufferPointer();
 
-	int Length();
+	int Length() const;
 	void Allocate(int newSize);
-	int Lines();
-	int LineStart(int line);
-	int LineFromPosition(int pos) { return lv.LineFromPosition(pos); }
+	void SetPerLine(PerLine *pl);
+	int Lines() const;
+	int LineStart(int line) const;
+	int LineFromPosition(int pos) const { return lv.LineFromPosition(pos); }
+	void InsertLine(int line, int position);
+	void RemoveLine(int line);
 	const char *InsertString(int position, const char *s, int insertLength, bool &startSequence);
 
 	/// Setting styles for positions outside the range of the buffer is safe and has no effect.
@@ -190,14 +178,6 @@ public:
 	void SetSavePoint();
 	bool IsSavePoint();
 
-	/// Line marker functions
-	int AddMark(int line, int markerNum);
-	void DeleteMark(int line, int markerNum);
-	void DeleteMarkFromHandle(int markerHandle);
-	int GetMark(int line);
-	void DeleteAllMarks(int markerNum);
-	int LineFromHandle(int markerHandle);
-
 	/// Actions without undo
 	void BasicInsertString(int position, const char *s, int insertLength);
 	void BasicDeleteChars(int position, int deleteLength);
@@ -206,6 +186,7 @@ public:
 	bool IsCollectingUndo();
 	void BeginUndoAction();
 	void EndUndoAction();
+	void AddUndoAction(int token, bool mayCoalesce);
 	void DeleteUndoHistory();
 
 	/// To perform an undo, StartUndo is called to retrieve the number of steps, then UndoStep is
@@ -218,14 +199,10 @@ public:
 	int StartRedo();
 	const Action &GetRedoStep() const;
 	void PerformRedoStep();
-
-	int SetLineState(int line, int state);
-	int GetLineState(int line);
-	int GetMaxLineState();
-
-	int SetLevel(int line, int level);
-	int GetLevel(int line);
-	void ClearLevels();
 };
+
+#ifdef SCI_NAMESPACE
+}
+#endif
 
 #endif

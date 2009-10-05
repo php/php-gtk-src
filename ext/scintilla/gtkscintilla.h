@@ -5,15 +5,9 @@
 
 #define PLAT_GTK 2
 
-#ifdef WIN32
-#include "scintilla/Scintilla.h"
-#include "scintilla/ScintillaWidget.h"
-#include "scintilla/SciLexer.h"
-#else
 #include "libscintilla/include/Scintilla.h"
 #include "libscintilla/include/ScintillaWidget.h"
 #include "libscintilla/include/SciLexer.h"
-#endif
 
 #ifdef __cplusplus
 extern "C" {

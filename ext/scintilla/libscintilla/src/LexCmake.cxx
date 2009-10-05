@@ -13,12 +13,16 @@
 
 #include "Platform.h"
 
+#include "CharClassify.h"
 #include "PropSet.h"
 #include "Accessor.h"
 #include "KeyWords.h"
 #include "Scintilla.h"
 #include "SciLexer.h"
 
+#ifdef SCI_NAMESPACE
+using namespace Scintilla;
+#endif
 
 static bool isCmakeNumber(char ch)
 {

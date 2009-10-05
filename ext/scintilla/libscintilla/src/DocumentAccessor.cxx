@@ -13,15 +13,20 @@
 #include "Platform.h"
 
 #include "PropSet.h"
-#include "SVector.h"
 #include "Accessor.h"
 #include "DocumentAccessor.h"
 #include "SplitVector.h"
 #include "Partitioning.h"
+#include "RunStyles.h"
 #include "CellBuffer.h"
 #include "Scintilla.h"
 #include "CharClassify.h"
+#include "Decoration.h"
 #include "Document.h"
+
+#ifdef SCI_NAMESPACE
+using namespace Scintilla;
+#endif
 
 DocumentAccessor::~DocumentAccessor() {
 }
@@ -188,3 +193,7 @@ int DocumentAccessor::IndentAmount(int line, int *flags, PFNIsCommentLeader pfnI
 		return indent;
 }
 
+void DocumentAccessor::IndicatorFill(int start, int end, int indicator, int value) {
+	pdoc->decorations.SetCurrentIndicator(indicator);
+	pdoc->DecorationFillRange(start, value, end - start);
+}

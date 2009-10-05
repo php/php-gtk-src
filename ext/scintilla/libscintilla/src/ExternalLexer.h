@@ -7,7 +7,16 @@
 
 #ifndef EXTERNALLEXER_H
 #define EXTERNALLEXER_H
+
+#if PLAT_WIN
+#define EXT_LEXER_DECL __stdcall
+#else
 #define EXT_LEXER_DECL
+#endif
+
+#ifdef SCI_NAMESPACE
+namespace Scintilla {
+#endif
 
 // External Lexer function definitions...
 typedef void (EXT_LEXER_DECL *ExtLexerFunction)(unsigned int lexer, unsigned int startPos, int length, int initStyle,
@@ -59,7 +68,7 @@ public:
 	void Release();
 	
 	LexerLibrary	*next;
-	SString			m_sModuleName;
+	std::string			m_sModuleName;
 };
 
 /// LexerManager manages external lexers, contains LexerLibrarys.
@@ -86,5 +95,9 @@ class LMMinder {
 public:
 	~LMMinder();
 };
+
+#ifdef SCI_NAMESPACE
+}
+#endif
 
 #endif

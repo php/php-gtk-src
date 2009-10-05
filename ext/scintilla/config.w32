@@ -3,24 +3,38 @@ ARG_WITH("scintilla", "Scintilla support", "no");
 
 if (PHP_GTK_SCINTILLA != "no" || PHP_GTK_ALL != "no") {
 
-	if (CHECK_HEADER("scintilla\\Scintilla.h") && CHECK_LIB("Scintilla-static.lib", "scintilla")) {
+	if (FSO.FileExists("win32\\temp.bat")) {
 
-		if (FSO.FileExists("win32\\temp.bat")) {
+		var temp = FSO.OpenTextFile("win32\\temp.bat", 8);
+		temp.WriteLine("php -q ext\\scintilla\\sci_generator.php -i ext\\scintilla\\libscintilla");
+		temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\scintilla\\gen_scintilla.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\scintilla\\gen_scintilla.h');
+		temp.Close();
 
-			var temp = FSO.OpenTextFile("win32\\temp.bat", 8);
-			temp.WriteLine("php -q ext\\scintilla\\sci_generator.php -i ext\\scintilla\\libscintilla");
-			temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\scintilla\\gen_scintilla.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\scintilla\\gen_scintilla.h');
-			temp.Close();
-
-		}
-
-		ADD_FLAG("CFLAGS_SCINTILLA", "$(CFLAGS_PHP_GTK) /I ext\\scintilla /I ..\\ext\\scintilla /I scintilla /D HAVE_SCINTILLA=1");
-		EXTENSION("scintilla", "php_scintilla.c gen_scintilla.c", true);
-		AC_DEFINE("HAVE_SCINTILLA", 1, "scintilla enabled");
-
-	} else {
-
-		WARNING("scintilla not enabled; libraries and headers not found");
 	}
+
+	CHECK_LIB("intl.lib", "scintilla");
+	ADD_FLAG("CFLAGS_SCINTILLA", "$(CFLAGS_PHP_GTK) /I ext\\scintilla /I ..\\ext\\scintilla /I scintilla /I ext\\scintilla\\libscintilla\\src /I ext\\scintilla\\libscintilla\\include /D HAVE_SCINTILLA=1 /D SCI_LEXER /D STATIC_BUILD /D GTK");
+
+	ADD_SOURCES("ext\\scintilla\\libscintilla\\src", "AutoComplete.cxx CallTip.cxx CellBuffer.cxx CharClassify.cxx ContractionState.cxx Decoration.cxx \
+Document.cxx DocumentAccessor.cxx Editor.cxx ExternalLexer.cxx Indicator.cxx KeyMap.cxx KeyWords.cxx LexAbaqus.cxx LexAda.cxx LexAPDL.cxx \
+LexAsm.cxx LexAsn1.cxx LexASY.cxx LexAU3.cxx LexAVE.cxx LexBaan.cxx LexBash.cxx LexBasic.cxx LexBullant.cxx \
+LexCLW.cxx LexCPP.cxx LexCSS.cxx LexCOBOL.cxx LexCaml.cxx LexCmake.cxx LexConf.cxx LexCrontab.cxx \
+LexCsound.cxx LexD.cxx LexEScript.cxx LexEiffel.cxx LexErlang.cxx LexFlagship.cxx LexForth.cxx LexFortran.cxx \
+LexGAP.cxx LexGui4Cli.cxx LexHTML.cxx LexHaskell.cxx \
+LexInno.cxx LexKix.cxx LexLisp.cxx LexLout.cxx LexLua.cxx LexMagik.cxx LexMatlab.cxx \
+LexMetapost.cxx LexMMIXAL.cxx LexMPT.cxx LexMSSQL.cxx LexMySQL.cxx LexNimrod.cxx \
+LexNsis.cxx LexOpal.cxx LexOthers.cxx LexPascal.cxx LexPB.cxx LexPerl.cxx LexPLM.cxx \
+LexPOV.cxx LexPowerPro.cxx LexPowerShell.cxx LexProgress.cxx LexPS.cxx LexPython.cxx \
+LexR.cxx LexRebol.cxx LexRuby.cxx LexScriptol.cxx LexSmalltalk.cxx \
+LexSML.cxx LexSpecman.cxx LexSorcus.cxx LexSpice.cxx LexSQL.cxx LexTACL.cxx LexTADS3.cxx \
+LexTAL.cxx LexTCL.cxx LexTeX.cxx LexVB.cxx LexVerilog.cxx LexVHDL.cxx LexYAML.cxx \
+LineMarker.cxx PerLine.cxx PositionCache.cxx PropSet.cxx RESearch.cxx RunStyles.cxx \
+ScintillaBase.cxx Selection.cxx Style.cxx StyleContext.cxx UniConversion.cxx \
+ViewStyle.cxx WindowAccessor.cxx XPM.cxx", "scintilla");
+
+	ADD_SOURCES("ext\\scintilla\\libscintilla", "PlatGTK.cxx ScintillaGTK.cxx", "scintilla");
+
+	EXTENSION("scintilla", "php_scintilla.c gen_scintilla.c libscintilla/scintilla-marshal.c", true, "-Iext\\scintilla\\libscintilla");
+	AC_DEFINE("HAVE_SCINTILLA", 1, "scintilla enabled");
 
 }

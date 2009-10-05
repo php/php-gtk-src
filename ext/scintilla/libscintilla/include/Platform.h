@@ -3,7 +3,7 @@
  ** Interface to platform facilities. Also includes some basic utilities.
  ** Implemented in PlatGTK.cxx for GTK+/Linux, PlatWin.cxx for Windows, and PlatWX.cxx for wxWindows.
  **/
-// Copyright 1998-2003 by Neil Hodgson <neilh@scintilla.org>
+// Copyright 1998-2009 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
 #ifndef PLATFORM_H
@@ -14,8 +14,9 @@
 // PLAT_WIN = Win32 API on Win32 OS
 // PLAT_WX is wxWindows on any supported platform
 
-#define PLAT_GTK 1
+#define PLAT_GTK 0
 #define PLAT_GTK_WIN32 0
+#define PLAT_MACOSX 0
 #define PLAT_WIN 0
 #define PLAT_WX  0
 #define PLAT_FOX 0
@@ -32,10 +33,15 @@
 #undef PLAT_GTK
 #define PLAT_GTK 1
 
-#ifdef _MSC_VER
+#if defined(__WIN32__) || defined(_MSC_VER)
 #undef PLAT_GTK_WIN32
 #define PLAT_GTK_WIN32 1
 #endif
+
+#elif defined(__APPLE__)
+
+#undef PLAT_MACOSX
+#define PLAT_MACOSX 1
 
 #else
 #undef PLAT_WIN
@@ -43,6 +49,9 @@
 
 #endif
 
+#ifdef SCI_NAMESPACE
+namespace Scintilla {
+#endif
 
 // Underlying the implementation of the platform classes are platform specific types.
 // Sometimes these need to be passed around by client code so they are defined here
@@ -114,6 +123,9 @@ public:
 	}
 	int Width() { return right - left; }
 	int Height() { return bottom - top; }
+	bool Empty() {
+		return (Height() <= 0) || (Width() <= 0);
+	}
 };
 
 /**
@@ -271,13 +283,13 @@ public:
  */
 class Font {
 protected:
-	FontID id;
+	FontID fid;
 #if PLAT_WX
 	int ascent;
 #endif
 	// Private so Font objects can not be copied
 	Font(const Font &) {}
-	Font &operator=(const Font &) { id=0; return *this; }
+	Font &operator=(const Font &) { fid=0; return *this; }
 public:
 	Font();
 	virtual ~Font();
@@ -286,9 +298,9 @@ public:
 		bool bold, bool italic, bool extraFontFlag=false);
 	virtual void Release();
 
-	FontID GetID() { return id; }
+	FontID GetID() { return fid; }
 	// Alias another font - caller guarantees not to Release
-	void SetID(FontID id_) { id = id_; }
+	void SetID(FontID fid_) { fid = fid_; }
 	friend class Surface;
         friend class SurfaceImpl;
 };
@@ -359,17 +371,31 @@ typedef void (*CallBackAction)(void*);
  */
 class Window {
 protected:
-	WindowID id;
+	WindowID wid;
+#if PLAT_MACOSX
+	void *windowRef;
+	void *control;
+#endif
 public:
-	Window() : id(0), cursorLast(cursorInvalid) {}
-	Window(const Window &source) : id(source.id), cursorLast(cursorInvalid) {}
+	Window() : wid(0), cursorLast(cursorInvalid) {
+#if PLAT_MACOSX
+	  windowRef = 0;
+	  control = 0;
+#endif
+	}
+	Window(const Window &source) : wid(source.wid), cursorLast(cursorInvalid) {
+#if PLAT_MACOSX
+	  windowRef = 0;
+	  control = 0;
+#endif
+	}
 	virtual ~Window();
-	Window &operator=(WindowID id_) {
-		id = id_;
+	Window &operator=(WindowID wid_) {
+		wid = wid_;
 		return *this;
 	}
-	WindowID GetID() const { return id; }
-	bool Created() const { return id != 0; }
+	WindowID GetID() const { return wid; }
+	bool Created() const { return wid != 0; }
 	void Destroy();
 	bool HasFocus();
 	PRectangle GetPosition();
@@ -383,6 +409,11 @@ public:
 	enum Cursor { cursorInvalid, cursorText, cursorArrow, cursorUp, cursorWait, cursorHoriz, cursorVert, cursorReverseArrow, cursorHand };
 	void SetCursor(Cursor curs);
 	void SetTitle(const char *s);
+	PRectangle GetMonitorRect(Point pt);
+#if PLAT_MACOSX
+	void SetWindow(void *ref) { windowRef = ref; };
+	void SetControl(void *_control) { control = _control; };
+#endif
 private:
 	Cursor cursorLast;
 };
@@ -421,10 +452,10 @@ public:
  * Menu management.
  */
 class Menu {
-	MenuID id;
+	MenuID mid;
 public:
 	Menu();
-	MenuID GetID() { return id; }
+	MenuID GetID() { return mid; }
 	void CreatePopUp();
 	void Destroy();
 	void Show(Point pt, Window &w);
@@ -506,7 +537,15 @@ public:
 #ifdef  NDEBUG
 #define PLATFORM_ASSERT(c) ((void)0)
 #else
+#ifdef SCI_NAMESPACE
+#define PLATFORM_ASSERT(c) ((c) ? (void)(0) : Scintilla::Platform::Assert(#c, __FILE__, __LINE__))
+#else
 #define PLATFORM_ASSERT(c) ((c) ? (void)(0) : Platform::Assert(#c, __FILE__, __LINE__))
+#endif
+#endif
+
+#ifdef SCI_NAMESPACE
+}
 #endif
 
 // Shut up annoying Visual C++ warnings:
