@@ -4,8 +4,8 @@
 headers
 
 typedef struct {
-    zval *instance;
-    zval *extra;
+	zval *instance;
+	zval *extra;
 #ifdef ZTS
 	TSRMLS_D;
 #endif
@@ -38,8 +38,8 @@ PHP_METHOD
 	for (current = list; current; current = current->next)
 	{
 		zval *item = NULL;
-        phpg_gobject_new(&item, G_OBJECT(current->data) TSRMLS_CC);
-        add_next_index_zval(return_value, item);
+		phpg_gobject_new(&item, G_OBJECT(current->data) TSRMLS_CC);
+		add_next_index_zval(return_value, item);
 	}
 	g_slist_free(list);
 }
@@ -48,223 +48,223 @@ PHP_METHOD
 add-arginfo GtkBuilder add_from_string
 PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 1)
-    ZEND_ARG_INFO(0, string)
+	ZEND_ARG_INFO(0, string)
 ZEND_END_ARG_INFO();
 
 %%
 override gtk_builder_add_from_string
 PHP_METHOD
 {
-    char *buffer;
-    zend_bool free_buffer;
-    int buffer_len;
-    GError **error = NULL;
+	char *buffer;
+	zend_bool free_buffer;
+	int buffer_len;
+	GError **error = NULL;
 	guint retval;
 
 	NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u#", &buffer, &buffer_len, &free_buffer)) {
-        return;
-    }
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u#", &buffer, &buffer_len, &free_buffer)) {
+		return;
+	}
 
-    retval = gtk_builder_add_from_string(GTK_BUILDER(PHPG_GOBJECT(this_ptr)), buffer, buffer_len, error);
+	retval = gtk_builder_add_from_string(GTK_BUILDER(PHPG_GOBJECT(this_ptr)), buffer, buffer_len, error);
 
 	if (phpg_handle_gerror(error TSRMLS_CC)) {
-        return;
-    }
+		return;
+	}
 
-    if (free_buffer) g_free(buffer);
+	if (free_buffer) g_free(buffer);
 	RETURN_BOOL(retval);
 }
 
 %%
 override gtk_builder_connect_signals
 static void phpg_gtkbuilder_connect_signals_func(GtkBuilder *builder, GObject *object,
-                                                  const gchar *signal_name, const gchar *handler_name,
-                                                  GObject *connect_object, GConnectFlags flags,
+												  const gchar *signal_name, const gchar *handler_name,
+												  GObject *connect_object, GConnectFlags flags,
 												  phpg_gtkbuilder_t *data)
 {
 #ifdef ZTS
 	TSRMLS_D;
 #endif
-    zval *callback = NULL, *php_object = NULL, *user_args = NULL;
-    zval **callback_data = NULL, **callback_ptr = NULL;
-    GClosure *closure = NULL;
-    int handler_id, len = 0, connect_normal = 1;
-    char *php_class = NULL, *php_method = NULL;
-    zend_class_entry *ce = NULL, **pce;
+	zval *callback = NULL, *php_object = NULL, *user_args = NULL;
+	zval **callback_data = NULL, **callback_ptr = NULL;
+	GClosure *closure = NULL;
+	int handler_id, len = 0, connect_normal = 1;
+	char *php_class = NULL, *php_method = NULL;
+	zend_class_entry *ce = NULL, **pce;
 #ifdef ZTS
 	TSRMLS_C = data->TSRMLS_C;
 #endif
 
-    /*
-     * First, check if the handler represents a static method. This can be used to invoke
-     * Gtk/Gdk functions, such as Gtk::main_quit(). It may refer to a user class, of
-     * course, but those connections are much less useful.
-     */
-    if (strstr(handler_name, "::")) {
-        len = strcspn(handler_name, ":");
-        php_class = safe_estrndup(handler_name, len);
-        php_method = strstr(handler_name, "::") + 2;
-        if (zend_lookup_class(php_class, strlen(php_class), &pce TSRMLS_CC) == SUCCESS) {
-            ce = *pce;
-            if (ce->type == ZEND_INTERNAL_CLASS) {
-                connect_normal = 0;
-            }
-        }
-        MAKE_STD_ZVAL(callback);
-        array_init(callback);
-        add_next_index_string(callback, php_class, 1);
-        add_next_index_string(callback, php_method, 1);
-        efree(php_class);
-    } else {
-        /*
-         * Secondly, check if we are supposed to connect handlers to methods of the
-         * specified object - connect_signals_instance.
-         */
-        if (data->instance) {
-            MAKE_STD_ZVAL(callback);
-            array_init(callback);
-            zval_add_ref(&data->instance);
-            add_next_index_zval(callback, data->instance);
-            add_next_index_string(callback, (char *)handler_name, 1);
-            user_args = data->extra;
+	/*
+	 * First, check if the handler represents a static method. This can be used to invoke
+	 * Gtk/Gdk functions, such as Gtk::main_quit(). It may refer to a user class, of
+	 * course, but those connections are much less useful.
+	 */
+	if (strstr(handler_name, "::")) {
+		len = strcspn(handler_name, ":");
+		php_class = safe_estrndup(handler_name, len);
+		php_method = strstr(handler_name, "::") + 2;
+		if (zend_lookup_class(php_class, strlen(php_class), &pce TSRMLS_CC) == SUCCESS) {
+			ce = *pce;
+			if (ce->type == ZEND_INTERNAL_CLASS) {
+				connect_normal = 0;
+			}
+		}
+		MAKE_STD_ZVAL(callback);
+		array_init(callback);
+		add_next_index_string(callback, php_class, 1);
+		add_next_index_string(callback, php_method, 1);
+		efree(php_class);
+	} else {
+		/*
+		 * Secondly, check if we are supposed to connect handlers to methods of the
+		 * specified object - connect_signals_instance.
+		 */
+		if (data->instance) {
+			MAKE_STD_ZVAL(callback);
+			array_init(callback);
+			zval_add_ref(&data->instance);
+			add_next_index_zval(callback, data->instance);
+			add_next_index_string(callback, (char *)handler_name, 1);
+			user_args = data->extra;
 
-            /*
-             * We verify callability right away, because classes cannot acquire new
-             * methods at runtime (unless you decide to stab yourself in the foot with
-             * runkit).
-             */ 
-            if (!zend_is_callable(callback, 0, NULL PHPGTK_ZEND_IS_CALLABLE)) {
-                php_error(E_NOTICE, "Unable to auto-connect handler '%s': no such method in the specified object of class '%s'", handler_name, Z_OBJCE_P(data->instance)->name);
-                return;
-            }
-        } else {
-            /*
-             * Thirdly, if we have no object, we must have a map representing non-default
-             * handler mappings of the form:
-             *
-             *   array('handler' => <callback>)
-             *   array('handler' => array(<callback> [, $arg1, $arg2, ...]))
-             *   array('handler' => array(null [, $arg1, $arg2, ...]))
-             *
-             * where <callback> is the standard PHP callback form. If null is specified
-             * instead of callback, the connection will be made to the function of the
-             * same name as the handler.
-             */
-            if (data->extra && zend_hash_find(Z_ARRVAL_P(data->extra), (char *)handler_name, strlen(handler_name) + 1, (void **)&callback_data) == SUCCESS) {
-                /* Check if the value is callable. */
-                if (zend_is_callable(*callback_data, 0, NULL PHPGTK_ZEND_IS_CALLABLE)) {
-                    zval_add_ref(callback_data);
-                    callback = *callback_data;
-                } else {
-                    /*
-                     * If not, check that it is an array with at least one entry, which is
-                     * assumed to be the callback reference.
-                     */ 
-                    if (Z_TYPE_PP(callback_data) != IS_ARRAY ||
-                        zend_hash_index_find(Z_ARRVAL_PP(callback_data), 0, (void **)&callback_ptr) == FAILURE) {
-                        php_error(E_NOTICE, "Unable to auto-connect handler '%s': invalid callback data structure", handler_name);
-                        return; 
-                    }
-                    if (Z_TYPE_PP(callback_ptr) != IS_NULL) {
-                        zval_add_ref(callback_ptr);
-                        callback = *callback_ptr;
-                    }
+			/*
+			 * We verify callability right away, because classes cannot acquire new
+			 * methods at runtime (unless you decide to stab yourself in the foot with
+			 * runkit).
+			 */ 
+			if (!zend_is_callable(callback, 0, NULL PHPGTK_ZEND_IS_CALLABLE)) {
+				php_error(E_NOTICE, "Unable to auto-connect handler '%s': no such method in the specified object of class '%s'", handler_name, Z_OBJCE_P(data->instance)->name);
+				return;
+			}
+		} else {
+			/*
+			 * Thirdly, if we have no object, we must have a map representing non-default
+			 * handler mappings of the form:
+			 *
+			 *   array('handler' => <callback>)
+			 *   array('handler' => array(<callback> [, $arg1, $arg2, ...]))
+			 *   array('handler' => array(null [, $arg1, $arg2, ...]))
+			 *
+			 * where <callback> is the standard PHP callback form. If null is specified
+			 * instead of callback, the connection will be made to the function of the
+			 * same name as the handler.
+			 */
+			if (data->extra && zend_hash_find(Z_ARRVAL_P(data->extra), (char *)handler_name, strlen(handler_name) + 1, (void **)&callback_data) == SUCCESS) {
+				/* Check if the value is callable. */
+				if (zend_is_callable(*callback_data, 0, NULL PHPGTK_ZEND_IS_CALLABLE)) {
+					zval_add_ref(callback_data);
+					callback = *callback_data;
+				} else {
+					/*
+					 * If not, check that it is an array with at least one entry, which is
+					 * assumed to be the callback reference.
+					 */ 
+					if (Z_TYPE_PP(callback_data) != IS_ARRAY ||
+						zend_hash_index_find(Z_ARRVAL_PP(callback_data), 0, (void **)&callback_ptr) == FAILURE) {
+						php_error(E_NOTICE, "Unable to auto-connect handler '%s': invalid callback data structure", handler_name);
+						return; 
+					}
+					if (Z_TYPE_PP(callback_ptr) != IS_NULL) {
+						zval_add_ref(callback_ptr);
+						callback = *callback_ptr;
+					}
 
-                    /* Shift callback data - the rest are extra user arguments. */
-                    zend_hash_index_del(Z_ARRVAL_PP(callback_data), 0);
-                    user_args = *callback_data;
-                }
-            }
-        }
-    }
+					/* Shift callback data - the rest are extra user arguments. */
+					zend_hash_index_del(Z_ARRVAL_PP(callback_data), 0);
+					user_args = *callback_data;
+				}
+			}
+		}
+	}
 
-    /*
-     * Make a simple function callback if everything else failed. 
-     */
-    if (callback == NULL) {
-        MAKE_STD_ZVAL(callback);
-        ZVAL_STRING(callback, (char *)handler_name, 1);
-    }
+	/*
+	 * Make a simple function callback if everything else failed. 
+	 */
+	if (callback == NULL) {
+		MAKE_STD_ZVAL(callback);
+		ZVAL_STRING(callback, (char *)handler_name, 1);
+	}
 
-    /*
-     * If we have a swapped connection object, make a PHP wrapper for it and use it with
-     * 'replace' type of connection.
-     */
-    if (connect_object) {
-        zval *php_connect_object = NULL;
-        phpg_gobject_new(&php_connect_object, (GObject*)connect_object TSRMLS_CC);
-        closure = phpg_closure_new(callback, user_args, PHPG_CONNECT_REPLACE, php_connect_object TSRMLS_CC);
-        /* it's okay to decrement the only reference to the wrapper here - the GObject will save it! */
-        zval_ptr_dtor(&php_connect_object);
-    } else if (!connect_normal) {
-        closure = phpg_closure_new(callback, user_args, PHPG_CONNECT_SIMPLE, NULL TSRMLS_CC);
-    } else {
-        closure = phpg_closure_new(callback, user_args, PHPG_CONNECT_NORMAL, NULL TSRMLS_CC);
-    }
+	/*
+	 * If we have a swapped connection object, make a PHP wrapper for it and use it with
+	 * 'replace' type of connection.
+	 */
+	if (connect_object) {
+		zval *php_connect_object = NULL;
+		phpg_gobject_new(&php_connect_object, (GObject*)connect_object TSRMLS_CC);
+		closure = phpg_closure_new(callback, user_args, PHPG_CONNECT_REPLACE, php_connect_object TSRMLS_CC);
+		/* it's okay to decrement the only reference to the wrapper here - the GObject will save it! */
+		zval_ptr_dtor(&php_connect_object);
+	} else if (!connect_normal) {
+		closure = phpg_closure_new(callback, user_args, PHPG_CONNECT_SIMPLE, NULL TSRMLS_CC);
+	} else {
+		closure = phpg_closure_new(callback, user_args, PHPG_CONNECT_NORMAL, NULL TSRMLS_CC);
+	}
 
-    phpg_gobject_new(&php_object, (GObject*)object TSRMLS_CC);
-    phpg_gobject_watch_closure(php_object, closure TSRMLS_CC);
-    handler_id = g_signal_connect_closure(object, signal_name, closure, flags);
+	phpg_gobject_new(&php_object, (GObject*)object TSRMLS_CC);
+	phpg_gobject_watch_closure(php_object, closure TSRMLS_CC);
+	handler_id = g_signal_connect_closure(object, signal_name, closure, flags);
 
-    /* same as above - okay to decrement the reference here */
-    zval_ptr_dtor(&php_object);
-    zval_ptr_dtor(&callback);
-    if (user_args) {
-        zval_ptr_dtor(&user_args);
-    }
+	/* same as above - okay to decrement the reference here */
+	zval_ptr_dtor(&php_object);
+	zval_ptr_dtor(&callback);
+	if (user_args) {
+		zval_ptr_dtor(&user_args);
+	}
 }
 
 PHP_METHOD
 {
-    zval *map = NULL;
-    phpg_gtkbuilder_t data;
+	zval *map = NULL;
+	phpg_gtkbuilder_t data;
 
-    NOT_STATIC_METHOD();
+	NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|a", &map))
-        return;
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|a", &map))
+		return;
 
-    data.instance = NULL;
-    data.extra = map;
+	data.instance = NULL;
+	data.extra = map;
 #ifdef ZTS
 	data.TSRMLS_C = TSRMLS_C;
 #endif
 	gtk_builder_connect_signals_full(GTK_BUILDER(PHPG_GOBJECT(this_ptr)),
-                                     (GtkBuilderConnectFunc)phpg_gtkbuilder_connect_signals_func,
-                                     &data);
+									 (GtkBuilderConnectFunc)phpg_gtkbuilder_connect_signals_func,
+									 &data);
 }
 
 %%
 add-arginfo GtkBuilder connect_signals_instance
 PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
-    ZEND_ARG_INFO(0, object)
+	ZEND_ARG_INFO(0, object)
 ZEND_END_ARG_INFO();
 
 %%
 add GtkBuilder connect_signals_instance
 PHP_METHOD
 {
-    zval *instance = NULL;
-    zval *extra = NULL;
-    phpg_gtkbuilder_t data;
+	zval *instance = NULL;
+	zval *extra = NULL;
+	phpg_gtkbuilder_t data;
 
-    NOT_STATIC_METHOD();
+	NOT_STATIC_METHOD();
 
-    if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 1, &extra, "o", &instance))
-        return;
+	if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 1, &extra, "o", &instance))
+		return;
 
-    data.instance = instance;
-    data.extra = extra;
+	data.instance = instance;
+	data.extra = extra;
 #ifdef ZTS
 	data.TSRMLS_C = TSRMLS_C;
 #endif
 
 	gtk_builder_connect_signals_full(GTK_BUILDER(PHPG_GOBJECT(this_ptr)),
-                                     (GtkBuilderConnectFunc)phpg_gtkbuilder_connect_signals_func,
-                                     &data);
+									 (GtkBuilderConnectFunc)phpg_gtkbuilder_connect_signals_func,
+									 &data);
 }
 
 %% }}}
@@ -274,45 +274,45 @@ PHP_METHOD
 add-arginfo GtkNotebook set_group
 PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
-    ZEND_ARG_INFO(0, value)
+	ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
 
 %%
 override gtk_notebook_set_group
 PHP_METHOD
 {
-    zval *php_pointer = NULL;
+	zval *php_pointer = NULL;
 
-    NOT_STATIC_METHOD();
+	NOT_STATIC_METHOD();
 
-    /* Check for a gtknotebook instance first */
-    if (php_gtk_parse_args_quiet(ZEND_NUM_ARGS(),"O", &php_pointer, gtknotebook_ce)) {
+	/* Check for a gtknotebook instance first */
+	if (php_gtk_parse_args_quiet(ZEND_NUM_ARGS(),"O", &php_pointer, gtknotebook_ce)) {
 	gtk_notebook_set_group(GTK_NOTEBOOK(PHPG_GOBJECT(this_ptr)), (gpointer) gtk_notebook_get_group(GTK_NOTEBOOK(PHPG_GOBJECT(php_pointer))));
 	return;
-    }
+	}
 
-    /* Otherwise we want any other zval or null to "turn off" the group */
-    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"|V", &php_pointer)) {
-        return;
-    }
+	/* Otherwise we want any other zval or null to "turn off" the group */
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"|V", &php_pointer)) {
+		return;
+	}
 
-    gtk_notebook_set_group(GTK_NOTEBOOK(PHPG_GOBJECT(this_ptr)), (gpointer) php_pointer);
+	gtk_notebook_set_group(GTK_NOTEBOOK(PHPG_GOBJECT(this_ptr)), (gpointer) php_pointer);
 }
 
 %%
 override gtk_notebook_get_group
 PHP_METHOD
 {
-    zval *php_pointer = NULL;
+	zval *php_pointer = NULL;
 
-    NOT_STATIC_METHOD();
+	NOT_STATIC_METHOD();
 
-    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"")) {
-        return;
-    }
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"")) {
+		return;
+	}
 
-    php_pointer = (zval *)gtk_notebook_get_group(GTK_NOTEBOOK(PHPG_GOBJECT(this_ptr)));
-    RETURN_LONG(php_pointer);
+	php_pointer = (zval *)gtk_notebook_get_group(GTK_NOTEBOOK(PHPG_GOBJECT(this_ptr)));
+	RETURN_LONG(php_pointer);
 }
 
 %% }}}
@@ -323,9 +323,9 @@ PHP_METHOD
 add-arginfo GtkIconView get_tooltip_context
 PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 3)
-    ZEND_ARG_INFO(0, x)
-    ZEND_ARG_INFO(0, y)
-    ZEND_ARG_INFO(0, keyboard_mode)
+	ZEND_ARG_INFO(0, x)
+	ZEND_ARG_INFO(0, y)
+	ZEND_ARG_INFO(0, keyboard_mode)
 ZEND_END_ARG_INFO();
 
 %%
@@ -335,19 +335,20 @@ PHP_METHOD
 	zval *php_model = NULL, *php_iter = NULL, *php_path = NULL;
 	gint x, y;
 	gboolean keyboard_mode;
-    GtkTreeModel *model = NULL;
+	GtkTreeModel *model = NULL;
 	GtkTreePath *path = NULL;
 	GtkTreeIter iter = {0, };
 
 	NOT_STATIC_METHOD();
 
-    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"iii", &x, &y, &keyboard_mode)) {
-        return;
-    }
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"iii", &x, &y, &keyboard_mode)) {
+		return;
+	}
 
 	if (!gtk_icon_view_get_tooltip_context (GTK_ICON_VIEW(PHPG_GOBJECT(this_ptr)),
-		&x, &y, keyboard_mode, &model, &path, &iter))
-	RETURN_FALSE;
+		&x, &y, keyboard_mode, &model, &path, &iter)) {
+		RETURN_FALSE;
+	}
 
 	phpg_gobject_new(&php_model, (GObject *) model TSRMLS_CC);
 	phpg_gboxed_new(&php_iter, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
@@ -362,9 +363,9 @@ PHP_METHOD
 add-arginfo GtkTreeView get_tooltip_context
 PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 3)
-    ZEND_ARG_INFO(0, x)
-    ZEND_ARG_INFO(0, y)
-    ZEND_ARG_INFO(0, keyboard_mode)
+	ZEND_ARG_INFO(0, x)
+	ZEND_ARG_INFO(0, y)
+	ZEND_ARG_INFO(0, keyboard_mode)
 ZEND_END_ARG_INFO();
 
 %%
@@ -374,25 +375,183 @@ PHP_METHOD
 	zval *php_model = NULL, *php_iter = NULL, *php_path = NULL;
 	gint x, y;
 	gboolean keyboard_mode;
-    GtkTreeModel *model = NULL;
+	GtkTreeModel *model = NULL;
 	GtkTreePath *path = NULL;
 	GtkTreeIter iter = {0, };
 
 	NOT_STATIC_METHOD();
 
-    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"iii", &x, &y, &keyboard_mode)) {
-        return;
-    }
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"iii", &x, &y, &keyboard_mode)) {
+		return;
+	}
 
 	if (!gtk_tree_view_get_tooltip_context (GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)),
-		&x, &y, keyboard_mode, &model, &path, &iter))
-    RETURN_FALSE;
+		&x, &y, keyboard_mode, &model, &path, &iter)) {
+		RETURN_FALSE;
+	}
 
 	phpg_gobject_new(&php_model, (GObject *) model TSRMLS_CC);
 	phpg_gboxed_new(&php_iter, GTK_TYPE_TREE_ITER, &iter, TRUE, TRUE TSRMLS_CC);
 	phpg_tree_path_to_zval(path, &php_path TSRMLS_CC);
 	php_gtk_build_value(&return_value, "(NNN)", php_model, php_path, php_iter);
 }
+
+%%
+add-arginfo GtkTreeView convert_bin_window_to_tree_coords
+PHPGTK_ARG_INFO_STATIC
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+	ZEND_ARG_INFO(0, x)
+	ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_convert_bin_window_to_tree_coords
+PHP_METHOD
+{
+	gint x, y, wx, wy;
+
+	NOT_STATIC_METHOD();
+
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"ii", &x, &y)) {
+		return;
+	}
+
+	gtk_tree_view_convert_bin_window_to_tree_coords(
+		GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), x, y, &wx, &wy);
+
+	php_gtk_build_value(&return_value, "(ii)", wx, wy);
+}
+
+%%
+add-arginfo GtkTreeView convert_bin_window_to_widget_coords
+PHPGTK_ARG_INFO_STATIC
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+	ZEND_ARG_INFO(0, x)
+	ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_convert_bin_window_to_widget_coords
+PHP_METHOD
+{
+	gint x, y, wx, wy;
+
+	NOT_STATIC_METHOD();
+
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"ii", &x, &y)) {
+		return;
+	}
+
+	gtk_tree_view_convert_bin_window_to_widget_coords(
+		GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), x, y, &wx, &wy);
+
+	php_gtk_build_value(&return_value, "(ii)", wx, wy);
+}
+
+%%
+add-arginfo GtkTreeView convert_tree_to_bin_window_coords
+PHPGTK_ARG_INFO_STATIC
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+	ZEND_ARG_INFO(0, x)
+	ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_convert_tree_to_bin_window_coords
+PHP_METHOD
+{
+	gint x, y, wx, wy;
+
+	NOT_STATIC_METHOD();
+
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"ii", &x, &y)) {
+		return;
+	}
+
+	gtk_tree_view_convert_tree_to_bin_window_coords(
+		GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), x, y, &wx, &wy);
+
+	php_gtk_build_value(&return_value, "(ii)", wx, wy);
+}
+
+%%
+add-arginfo GtkTreeView convert_tree_to_widget_coords
+PHPGTK_ARG_INFO_STATIC
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+	ZEND_ARG_INFO(0, x)
+	ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_convert_tree_to_widget_coords
+PHP_METHOD
+{
+	gint x, y, wx, wy;
+
+	NOT_STATIC_METHOD();
+
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"ii", &x, &y)) {
+		return;
+	}
+
+	gtk_tree_view_convert_tree_to_widget_coords(
+		GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), x, y, &wx, &wy);
+
+	php_gtk_build_value(&return_value, "(ii)", wx, wy);
+}
+
+%%
+add-arginfo GtkTreeView convert_widget_to_bin_window_coords
+PHPGTK_ARG_INFO_STATIC
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+	ZEND_ARG_INFO(0, x)
+	ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_convert_widget_to_bin_window_coords
+PHP_METHOD
+{
+	gint x, y, wx, wy;
+
+	NOT_STATIC_METHOD();
+
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"ii", &x, &y)) {
+		return;
+	}
+
+	gtk_tree_view_convert_widget_to_bin_window_coords(
+		GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), x, y, &wx, &wy);
+
+	php_gtk_build_value(&return_value, "(ii)", wx, wy);
+}
+
+%%
+add-arginfo GtkTreeView convert_widget_to_tree_coords
+PHPGTK_ARG_INFO_STATIC
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+	ZEND_ARG_INFO(0, x)
+	ZEND_ARG_INFO(0, y)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_tree_view_convert_widget_to_tree_coords
+PHP_METHOD
+{
+	gint x, y, wx, wy;
+
+	NOT_STATIC_METHOD();
+
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"ii", &x, &y)) {
+		return;
+	}
+
+	gtk_tree_view_convert_widget_to_tree_coords(
+		GTK_TREE_VIEW(PHPG_GOBJECT(this_ptr)), x, y, &wx, &wy);
+
+	php_gtk_build_value(&return_value, "(ii)", wx, wy);
+}
+
 %% }}}
 
 %% {{{ GtkScaleButton
@@ -405,46 +564,46 @@ static void phpg_scale_button_set_icons_assist(GtkScaleButton *, zval * TSRMLS_D
 add-arginfo GtkScaleButton __construct
 PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
-    ZEND_ARG_INFO(0, iconsize)
-    ZEND_ARG_INFO(0, min)
-    ZEND_ARG_INFO(0, max)
-    ZEND_ARG_INFO(0, step)
-    ZEND_ARG_INFO(0, iconlist)
+	ZEND_ARG_INFO(0, iconsize)
+	ZEND_ARG_INFO(0, min)
+	ZEND_ARG_INFO(0, max)
+	ZEND_ARG_INFO(0, step)
+	ZEND_ARG_INFO(0, iconlist)
 ZEND_END_ARG_INFO();
 
 %%
 override gtk_scale_button_new
 PHP_METHOD
 {
-    gint iconsize;
-    gdouble min, max, step;
-    GObject *obj;
-    zval *iconlist = NULL;
-    
-    GtkAdjustment *adj;
+	gint iconsize;
+	gdouble min, max, step;
+	GObject *obj;
+	zval *iconlist = NULL;
+	
+	GtkAdjustment *adj;
 
 	NOT_STATIC_METHOD();
 
-    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"iddd|a",&iconsize,&min,&max,&step,&iconlist)) {
-        return;
-    }
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"iddd|a",&iconsize,&min,&max,&step,&iconlist)) {
+		return;
+	}
 
-    obj = (GObject *)g_object_newv(phpg_gtype_from_zval(this_ptr),0,NULL);
-        if(!obj) { PHPG_THROW_CONSTRUCT_EXCEPTION(GtkScaleButton); }
-        adj = (GtkAdjustment *)gtk_adjustment_new(min,min,max,step,step,0);
-        gtk_scale_button_set_adjustment(GTK_SCALE_BUTTON(obj),GTK_ADJUSTMENT(adj));
-       
-    if(iconlist) {
-        phpg_scale_button_set_icons_assist(
-            GTK_SCALE_BUTTON(obj),
-            iconlist TSRMLS_CC
-        );
-    }
+	obj = (GObject *)g_object_newv(phpg_gtype_from_zval(this_ptr),0,NULL);
+		if(!obj) { PHPG_THROW_CONSTRUCT_EXCEPTION(GtkScaleButton); }
+		adj = (GtkAdjustment *)gtk_adjustment_new(min,min,max,step,step,0);
+		gtk_scale_button_set_adjustment(GTK_SCALE_BUTTON(obj),GTK_ADJUSTMENT(adj));
+	   
+	if(iconlist) {
+		phpg_scale_button_set_icons_assist(
+			GTK_SCALE_BUTTON(obj),
+			iconlist TSRMLS_CC
+		);
+	}
 
-    phpg_gobject_set_wrapper(
-        this_ptr,
-        G_OBJECT(obj) TSRMLS_CC
-    );
+	phpg_gobject_set_wrapper(
+		this_ptr,
+		G_OBJECT(obj) TSRMLS_CC
+	);
 }
 
 %%
@@ -502,18 +661,18 @@ phpg_scale_button_set_icons_assist(GtkScaleButton *button, zval *iconlist TSRMLS
 
 PHP_METHOD
 {
-    zval *iconlist = NULL;
+	zval *iconlist = NULL;
 
 	NOT_STATIC_METHOD();
 
-    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"a",&iconlist)) {
-        return;
-    }
+	if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"a",&iconlist)) {
+		return;
+	}
 
-    phpg_scale_button_set_icons_assist(
-        GTK_SCALE_BUTTON(PHPG_GOBJECT(this_ptr)),
-        iconlist TSRMLS_CC
-    );
+	phpg_scale_button_set_icons_assist(
+		GTK_SCALE_BUTTON(PHPG_GOBJECT(this_ptr)),
+		iconlist TSRMLS_CC
+	);
 }
 
 %% }}}
