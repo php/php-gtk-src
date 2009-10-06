@@ -510,6 +510,16 @@ class Generator {
             if ($this->overrides->have_post_registration($interface->c_name)) {
                 $register_classes .= $this->overrides->get_post_registration($interface->c_name);
             }
+
+            /* size check goes here */
+            if ($this->fp->check_size()) {
+                // we hit size too big, write out end
+                $this->fp->write(sprintf(Templates::register_classes,
+                                  $this->lprefix . $this->fp->get_current(),
+                                  $register_classes));
+                $register_classes = '';
+                $this->fp->new_file();
+            }
         }
         if (!$this->parser->interfaces) {
             $this->log_print("  -- none --  ");
@@ -528,6 +538,15 @@ class Generator {
             if ($this->overrides->have_post_registration($object->c_name)) {
                 $register_classes .= $this->overrides->get_post_registration($object->c_name);
             }
+            /* size check goes here */
+            if ($this->fp->check_size()) {
+                // we hit size too big, write out end
+                $this->fp->write(sprintf(Templates::register_classes,
+                                  $this->lprefix . $this->fp->get_current(),
+                                  $register_classes));
+                $register_classes = '';
+                $this->fp->new_file();
+            }
         }
         if (!$this->parser->objects) {
             $this->log_print("  -- none --  ");
@@ -540,6 +559,15 @@ class Generator {
             $register_classes .= aprintf(Templates::register_boxed, $reg_info);
             if ($this->overrides->have_post_registration($boxed->c_name)) {
                 $register_classes .= $this->overrides->get_post_registration($boxed->c_name);
+            }
+            /* size check goes here */
+            if ($this->fp->check_size()) {
+                // we hit size too big, write out end
+                $this->fp->write(sprintf(Templates::register_classes,
+                                  $this->lprefix . $this->fp->get_current(),
+                                  $register_classes));
+                $register_classes = '';
+                $this->fp->new_file();
             }
         }
         if (!$this->parser->boxed) {
@@ -554,15 +582,38 @@ class Generator {
             if ($this->overrides->have_post_registration($pointer->c_name)) {
                 $register_classes .= $this->overrides->get_post_registration($pointer->c_name);
             }
+            /* size check goes here */
+            if ($this->fp->check_size()) {
+                // we hit size too big, write out end
+                $this->fp->write(sprintf(Templates::register_classes,
+                                  $this->lprefix . $this->fp->get_current(),
+                                  $register_classes));
+                $register_classes = '';
+                $this->fp->new_file();
+            }
         }
         if (!$this->parser->pointers) {
             $this->log_print("  -- none --  ");
         }
 
         /* register all classes */
+        if ($register_classes !== '') {
+                $this->fp->write(sprintf(Templates::register_classes,
+                                          $this->lprefix . $this->fp->get_current(),
+                                          $register_classes));
+        }
+
+        $register_classes = '';
+        $total = $this->fp->get_total();
+        $current = 0;
+        while($current < $total) {
+                $register_classes .= '	phpg_' . $this->lprefix . $current . "_register_classes();\n";
+                $current++;
+        }
+        /* write the "meta" register class */
         $this->fp->write(sprintf(Templates::register_classes,
-                                  $this->lprefix,
-                                  $register_classes));
+                                          $this->lprefix,
+                                          $register_classes));
 
     }
     
@@ -987,25 +1038,25 @@ class Generator {
     {
         $this->fp->write("\n");
         foreach ($this->parser->interfaces as $interface) {
-            $this->fp->write(sprintf(Templates::class_entry, $interface->ce));
+            $this->fp->write_header(sprintf(Templates::class_entry, $interface->ce));
         }
 
         foreach ($this->parser->objects as $object) {
             if (!$this->overrides->is_ignored($object->c_name)) {
-                $this->fp->write(sprintf(Templates::class_entry, $object->ce));
+                $this->fp->write_header(sprintf(Templates::class_entry, $object->ce));
             }
         }
 
         foreach ($this->parser->boxed as $boxed) {
-            $this->fp->write(sprintf(Templates::class_entry, $boxed->ce));
+            $this->fp->write_header(sprintf(Templates::class_entry, $boxed->ce));
         }
 
         foreach ($this->parser->pointers as $pointer) {
-            $this->fp->write(sprintf(Templates::class_entry, $pointer->ce));
+            $this->fp->write_header(sprintf(Templates::class_entry, $pointer->ce));
         }
 
         if ($this->parser->functions || $this->parser->enums) {
-            $this->fp->write(sprintf(Templates::class_entry, $this->lprefix . '_ce'));
+            $this->fp->write_header(sprintf(Templates::class_entry, $this->lprefix . '_ce'));
         }
     }
 
@@ -1020,17 +1071,19 @@ class Generator {
 
     function write_source($savefile)
     {
-        $this->not_generated_list = array();;
+        $this->not_generated_list = array();
         $this->log_print($this->make_header("$this->prefix Summary"));
 
-        $this->fp = new LineOutput(fopen($savefile, 'w'), $savefile);
-        $this->fp->write("#include \"php_gtk.h\"\n");
-        $this->fp->write("\n#if HAVE_PHP_GTK\n");
-        $this->fp->write($this->overrides->get_headers());
+        $this->fp = new LineOutput($savefile);
+        $this->fp->write_header("#include \"php_gtk.h\"\n");
+        $this->fp->write_header("\n#if HAVE_PHP_GTK\n");
+        $this->fp->write_header($this->overrides->get_headers());
         $this->write_class_entries();
         $this->write_classes();
         $this->write_constants();
-        $this->fp->write("\n#endif /* HAVE_PHP_GTK */\n");
+        $this->fp->write_all("\n#endif /* HAVE_PHP_GTK */\n");
+
+        $this->fp->save();
 
         $this->log("\n\n");
         $this->log($this->make_header("$this->prefix Generated Items"));
@@ -1450,7 +1503,7 @@ function fatal_error($message) {
     \n\n\n\n");
     fclose($fh);
     exit(1);
-}   
+}
 
 
 $old_error_reporting = error_reporting(E_ALL);
@@ -1480,7 +1533,7 @@ $prefix = 'Gtk';
 $function_class = null;
 $overrides = null;
 $register_defs = array();
-$savefile = 'php://stdout';
+$savefile = 'tmp.c';
 $logfile = 'php://stderr';
 $gtkversion = '2.6';
 

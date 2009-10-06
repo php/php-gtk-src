@@ -26,6 +26,12 @@ var dir = FSO.GetFolder("ext/gtk+");
 if (FSO.FileExists('configure.js')) {
 	FSO.DeleteFile('configure.js');
 }
+if (FSO.FileExists('sources.temp')) {
+	FSO.DeleteFile('sources.temp');
+}
+if (FSO.FileExists('sources_complete.txt')) {
+	FSO.DeleteFile('sources_complete.txt');
+}
 
 var C = FSO.CreateTextFile("configure.js", true);
 var temp = FSO.CreateTextFile("win32/temp.bat", true);

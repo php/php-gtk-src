@@ -9,7 +9,7 @@ if (PHP_GTK_LIBGLADE != "no" || PHP_GTK_ALL != "no") {
 
 			var temp = FSO.OpenTextFile("win32\\temp.bat", 8);
 
-			temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_glade.log -o ext\\libglade\\libglade.overrides -p glade -r ext\\gtk+\\gtk.defs ext\\libglade\\libglade.defs > ext\\libglade\\gen_libglade.c");
+			temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_glade.log -o ext\\libglade\\libglade.overrides -p glade -r ext\\gtk+\\gtk.defs ext\\libglade\\libglade.defs -f ext\\libglade\\gen_libglade.c");
 
 			temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\libglade\\gen_libglade.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\libglade\\gen_libglade.h');
 

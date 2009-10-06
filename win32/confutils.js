@@ -25,6 +25,7 @@ var STDERR = WScript.StdErr;
 var WshShell = WScript.CreateObject("WScript.Shell");
 var FSO = WScript.CreateObject("Scripting.FileSystemObject");
 var MFO = null;
+var MFE = null;
 var SYSTEM_DRIVE = WshShell.Environment("Process").Item("SystemDrive");
 var PROGRAM_FILES = WshShell.Environment("Process").Item("ProgramFiles");
 
@@ -88,32 +89,16 @@ function get_gtk_libversion()
 	STDERR.WriteBlankLines(1);
 }
 
-function count_generated_files() {
-
-	var dir = FSO.GetFolder("ext/gtk+");
-	var count = 0;
-
-	iter = new Enumerator(dir.Files);
-	name = "";
-
-	for (; !iter.atEnd(); iter.moveNext()) {
-		name = FSO.GetFileName(iter.item());
-		if (name.match(new RegExp("gen_"))) {
-			count++;
-		}
-	}
-	return count;
-}
-
 function generate_source() {
 
-	var count = count_generated_files();
-
-	if (count < 8) {
+	if (!FSO.FileExists("ext\\gtk+\\complete.txt")) {
 		if (!FSO.FileExists("win32\\temp.bat")) {
 			STDERR.WriteLine("Run buildconf first - the source file generator is missing");
 			WScript.Quit(10);
 		} else {
+			var temp = FSO.OpenTextFile("win32\\temp.bat", 8);
+			temp.WriteLine("@echo off > source_complete.txt");
+			temp.Close();
 			WshShell.Run("win32\\temp", 0);
 		}
 	}
@@ -122,9 +107,7 @@ function generate_source() {
 
 function check_generation() {
 
-	var count = count_generated_files();
-
-	if (count < 8) {
+	if (!FSO.FileExists("source_complete.txt")) {
 		STDOUT.WriteLine("Waiting for source files to generate...");
 		WScript.Sleep(3500);
 		check_generation();
@@ -353,6 +336,7 @@ function conf_process_args() {
 	}
 
 	MFO = FSO.CreateTextFile("Makefile.objects", true);
+	MFE = FSO.CreateTextFile("Makefile.extensions", true);
 
 	STDOUT.WriteBlankLines(1);
 	STDOUT.WriteLine("Saving configure options to configure.bat");
@@ -657,6 +641,7 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 	var EXT = extname.toUpperCase().replace(new RegExp("-", "g"), "_");
 	var extname_for_printing;
 	var res_var = "";
+	var file;
 
 	if (cflags == null) {
 		cflags = "";
@@ -675,17 +660,19 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 
 	if (extname == 'php-gtk') {
 		cflags = "/D COMPILE_DL_" + EXT + "2 /D " + EXT + "_EXPORTS=1" + cflags;
+		file = MFO;
 	} else {
 		cflags = "/D PHP_GTK_COMPILE_DL_" + EXT + " /D " + EXT + "_EXPORTS=1" + cflags;
+		file = MFE;
 	}
 
-	MFO.WriteBlankLines(1);
-	MFO.WriteLine("# objects for EXT " + extname);
-	MFO.WriteBlankLines(1);
+	file.WriteBlankLines(1);
+	file.WriteLine("# objects for EXT " + extname);
+	file.WriteBlankLines(1);
 
 	ADD_SOURCES(configure_module_dirname, file_list, extname, obj_dir);
 
-	MFO.WriteBlankLines(1);
+	file.WriteBlankLines(1);
 
 	// PHP-GTK and its extensions are always built as shared for now
 
@@ -707,13 +694,13 @@ function EXTENSION(extname, file_list, shared, cflags, dllname, obj_dir) {
 	ADD_FLAG("EXT_TARGETS", "$(BUILD_DIR)\\" + dllname);
 	make_builds[make_builds.length] = extname + ": $(BUILD_DIR)\\" + dllname;
 
-	MFO.WriteLine("$(BUILD_DIR)\\" + dllname + ": $(" + EXT + "_GLOBAL_OBJS)" + res_var);
-	MFO.WriteLine("\t" + ld + " /out:$(BUILD_DIR)\\" + dllname + " $(LDFLAGS_" + EXT + ")" + dllflags + " $(LDFLAGS) $(" + EXT + "_GLOBAL_OBJS) $(LIBS_" + EXT + ")" + dep_libs + " $(LIBS)" + res_var);
+	file.WriteLine("$(BUILD_DIR)\\" + dllname + ": $(" + EXT + "_GLOBAL_OBJS)" + res_var);
+	file.WriteLine("\t" + ld + " /out:$(BUILD_DIR)\\" + dllname + " $(LDFLAGS_" + EXT + ")" + dllflags + " $(LDFLAGS) $(" + EXT + "_GLOBAL_OBJS) $(LIBS_" + EXT + ")" + dep_libs + " $(LIBS)" + res_var);
 
-	MFO.WriteBlankLines(1);
-	MFO.WriteLine(dllname + ": $(BUILD_DIR)\\" + dllname);
-	MFO.WriteLine("\t@echo EXT " + extname + " build complete");
-	MFO.WriteBlankLines(1);
+	file.WriteBlankLines(1);
+	file.WriteLine(dllname + ": $(BUILD_DIR)\\" + dllname);
+	file.WriteLine("\t@echo EXT " + extname + " build complete");
+	file.WriteBlankLines(1);
 
 	ADD_FLAG("CFLAGS_" + EXT, cflags);
 }
@@ -724,6 +711,7 @@ function ADD_SOURCES(dir, file_list, target, obj_dir) {
 	var tv;
 	var src, obj, sym, flags;
 	var core_cflags = "";
+	var file;
 
 	sym = target.toUpperCase().replace(new RegExp("-", "g"), "_") + "_GLOBAL_OBJS";
 	flags = "CFLAGS_" + target.toUpperCase().replace(new RegExp("-", "g"), "_");
@@ -735,7 +723,10 @@ function ADD_SOURCES(dir, file_list, target, obj_dir) {
 	}
 
 	if (target != "php-gtk") {
+		file = MFE;
 		core_cflags = "$(CFLAGS_PHP_GTK) ";
+	} else {
+		file = MFO;
 	}
 
 	file_list = file_list.split(new RegExp("\\s+"));
@@ -785,8 +776,8 @@ function ADD_SOURCES(dir, file_list, target, obj_dir) {
 		obj = src.replace(re, ".obj");
 		tv += " " + sub_build + obj;
 
-		MFO.WriteLine(sub_build + obj + ": " + dir + "\\" + src);
-		MFO.WriteLine("\t@$(CC) $(" + flags + ") " + core_cflags + "$(CFLAGS) $(" + bd_flags_name + ") /c " + dir + "\\" + src + " /Fo" + sub_build + obj);
+		file.WriteLine(sub_build + obj + ": " + dir + "\\" + src);
+		file.WriteLine("\t@$(CC) $(" + flags + ") " + core_cflags + "$(CFLAGS) $(" + bd_flags_name + ") /c " + dir + "\\" + src + " /Fo" + sub_build + obj);
 	}
 
 	DEFINE(sym, tv);
@@ -804,7 +795,7 @@ function ADD_FLAG(name, flags, target) {
 			return;
 		}
 
-		flags = curr_flags + " " + flags;
+		flags = flags + " " + curr_flags;
 		configure_subst.Remove(name);
 	}
 	configure_subst.Add(name, flags);
@@ -957,6 +948,17 @@ function generate_files() {
 
 	var i, dir, bd, last;
 
+	generate_source();
+
+	STDOUT.WriteLine("Generating source files - this may take a few seconds");
+	WScript.Sleep(3500);
+	check_generation();
+
+	// Check to see if we have additional objects to add
+	var sources = file_get_contents("sources.temp");
+	configure_module_dirname = condense_path("ext\\gtk+\\");
+	EXTENSION("php-gtk", php_gtk_files + sources, true);
+
 	STDOUT.WriteBlankLines(1);
 	STDOUT.WriteLine("Creating build dirs...");
 	dir = get_define("BUILD_DIR");
@@ -978,11 +980,7 @@ function generate_files() {
 			FSO.CreateFolder(bd);
 		}
 	}
-	generate_source();
 
-	STDOUT.WriteLine("Generating source files - this may take a few seconds");
-	WScript.Sleep(3500);
-	check_generation();
 	generate_makefile();
 
 	STDOUT.WriteLine("Done.");
@@ -993,6 +991,7 @@ function generate_files() {
 
 function generate_makefile() {
 
+	MFE.Close(); // Makefile.extensions is now complete
 	MFO.Close(); // Makefile.objects is now complete
 	var MF = FSO.CreateTextFile("Makefile", true);
 	STDOUT.WriteLine("Generating Makefile");
@@ -1013,8 +1012,8 @@ function generate_makefile() {
 	MF.WriteBlankLines(1);
 	MF.WriteLine("all: $(EXT_TARGETS)");
 
-	for (i = 0; i < make_builds.length; i++) {
-		if (i == 1) {
+	for (i = make_builds.length; i >= 0; i--) {
+		if (i == make_builds.length) {
 			MF.WriteLine("!IF EXIST($(BUILD_DIR)\\$(PHPGTKLIB))");
 		}
 		MF.WriteLine(make_builds[i]);
@@ -1033,9 +1032,14 @@ function generate_makefile() {
 	MF.Write(TF.ReadAll());
 	TF.Close();
 
+	TF = FSO.OpenTextFile("Makefile.extensions", 1);
+	MF.Write(TF.ReadAll());
+	TF.Close();
+
 	MF.Close();
 
 	FSO.DeleteFile("Makefile.objects");
+	FSO.DeleteFile("Makefile.extensions");
 }
 
 function copy_and_subst(srcname, destname, subst_array) {

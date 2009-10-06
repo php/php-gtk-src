@@ -20,15 +20,28 @@
  */
 
 class LineOutput {
-    var $fp       = null;
-    var $filename = null;
-    var $line     = null;
+    const MAX = 60000;
+    protected $filename = null;
+    protected $line     = array();
+    protected $header = '';
+    protected $body = array();
+    protected $current = 0;
 
-    function LineOutput($fp, $filename)
+    function LineOutput($filename)
     {
-        $this->fp = $fp;
+        $this->body[0] = '';
         $this->filename = $filename;
-        $this->line = 1;
+        $this->line[0] = 0;
+    }
+
+    function get_total()
+    {
+        return count($this->line);
+    }
+
+    function get_current()
+    {
+        return $this->current;
     }
 
     function set_line($line, $filename)
@@ -42,13 +55,61 @@ class LineOutput {
 
     function reset_line()
     {
-        $this->set_line($this->line + 1, $this->filename);
+        $this->set_line($this->line[$this->current] + 1, $this->filename);
+    }
+
+    function save()
+    {
+        $files = '';
+        foreach($this->body as $id => $data) {
+            if ($id == 0) {
+                $string = '';
+            } else {
+                $string =  '-' . $id;
+            }
+            $filename = substr($this->filename, 0, -2) . $string . '.c';
+            $files .= ' ' . basename($filename);
+            file_put_contents($filename, $this->header . $this->body[$id]);
+        }
+        file_put_contents('php://stdout', $files, FILE_APPEND);
     }
 
     function write($string)
     {
-        fwrite($this->fp, $string);
-        $this->line += substr_count($string, "\n");
+        $this->body[$this->current] .= $string;
+        $this->line[$this->current] += substr_count($string, "\n");
+    }
+
+    function write_header($string)
+    {
+        $this->header .= $string;
+        $increase = substr_count($string, "\n");
+        foreach($this->line as $id => $value) {
+            $this->line[$id] += $increase;
+        }
+    }
+
+    function write_all($string)
+    {
+        foreach($this->body as $id => $value) {
+            $this->body[$id] .= $string;
+            $this->line[$id] += substr_count($string, "\n");
+        }
+    }
+
+    function check_size()
+    {
+        if ($this->line[$this->current] >= self::MAX) {
+            return true;
+        }
+        return false;
+    }
+
+    function new_file()
+    {
+        $this->current++;
+        $this->body[$this->current] = '';
+        $this->line[$this->current] = 0;
     }
 }
 
