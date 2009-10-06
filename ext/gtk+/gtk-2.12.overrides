@@ -269,6 +269,53 @@ PHP_METHOD
 
 %% }}}
 
+%% {{{ GtkNotebook
+%%
+add-arginfo GtkNotebook set_group
+PHPGTK_ARG_INFO_STATIC
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
+    ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO()
+
+%%
+override gtk_notebook_set_group
+PHP_METHOD
+{
+    zval *php_pointer = NULL;
+
+    NOT_STATIC_METHOD();
+
+    /* Check for a gtknotebook instance first */
+    if (php_gtk_parse_args_quiet(ZEND_NUM_ARGS(),"O", &php_pointer, gtknotebook_ce)) {
+	gtk_notebook_set_group(GTK_NOTEBOOK(PHPG_GOBJECT(this_ptr)), (gpointer) gtk_notebook_get_group(GTK_NOTEBOOK(PHPG_GOBJECT(php_pointer))));
+	return;
+    }
+
+    /* Otherwise we want any other zval or null to "turn off" the group */
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"|V", &php_pointer)) {
+        return;
+    }
+
+    gtk_notebook_set_group(GTK_NOTEBOOK(PHPG_GOBJECT(this_ptr)), (gpointer) php_pointer);
+}
+
+%%
+override gtk_notebook_get_group
+PHP_METHOD
+{
+    zval *php_pointer = NULL;
+
+    NOT_STATIC_METHOD();
+
+    if(!php_gtk_parse_args(ZEND_NUM_ARGS(),"")) {
+        return;
+    }
+
+    php_pointer = (zval *)gtk_notebook_get_group(GTK_NOTEBOOK(PHPG_GOBJECT(this_ptr)));
+    RETURN_LONG(php_pointer);
+}
+
+%% }}}
 
 %% {{{ GtkIconView
 
