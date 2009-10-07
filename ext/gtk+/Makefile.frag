@@ -11,6 +11,7 @@ GTK_OVERRIDES = \
 	$(srcdir)/gtktreeview.overrides \
 	$(srcdir)/gtkdrag.overrides
 
+$(builddir)/gen_gtk-1.c: $(srcdir)/gtk.defs $(COMMONDEFS) $(srcdir)/gtk-extrafuncs.defs $(GTK_OVERRIDES)
 $(builddir)/gen_gtk.c: $(srcdir)/gtk.defs $(COMMONDEFS) $(srcdir)/gtk-extrafuncs.defs $(GTK_OVERRIDES)
 $(builddir)/gen_gdk.c: $(srcdir)/gdk.defs $(COMMONDEFS) $(srcdir)/gdk.overrides
 $(builddir)/gen_atk.c: $(COMMONDEFS) $(srcdir)/atk.overrides
