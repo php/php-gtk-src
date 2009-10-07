@@ -30,6 +30,15 @@
   (return-type "GtkAllocation")
 )
 
+(define-method set_visible
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_set_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
 (define-method get_selection
   (of-object "GtkList")
   (c-name "gtk_list_get_selection")

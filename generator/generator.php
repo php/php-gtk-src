@@ -608,6 +608,7 @@ class Generator {
         $current = 0;
         while($current < $total) {
                 $register_classes .= '	phpg_' . $this->lprefix . $current . "_register_classes();\n";
+                $this->fp->write_header('	void phpg_' . $this->lprefix . $current . "_register_classes(void);\n");
                 $current++;
         }
         /* write the "meta" register class */

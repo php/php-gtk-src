@@ -1,0 +1,145 @@
+%% include gtk-2.12.overrides
+
+%% {{{ GtkWidget
+
+%%
+override gtk_widget_get_allocation
+PHP_METHOD
+{
+    GtkAllocation allocation;
+
+    NOT_STATIC_METHOD();
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_widget_get_allocation(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), &allocation);
+
+    phpg_gboxed_new(&return_value, GDK_TYPE_RECTANGLE, &allocation, TRUE, TRUE TSRMLS_CC);
+}
+
+%%
+override gtk_widget_set_visible
+PHP_METHOD
+{
+    zend_bool visible;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "b", &visible)) {
+        return;
+    }
+
+    gtk_widget_set_visible(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), visible);
+}
+
+%%
+add GtkWidget is_visible
+PHP_METHOD
+{
+    zend_bool visible;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
+        return;
+    }
+    phpg_warn_deprecated("since GTK+ 2.18, please use GtkWidget::get_visible()" TSRMLS_CC);
+
+    visible = GTK_WIDGET_VISIBLE(GTK_WIDGET(PHPG_GOBJECT(this_ptr)));
+
+    RETURN_BOOL(visible);
+}
+
+%%
+add-arginfo GtkWidget set_allocation
+PHPGTK_ARG_INFO_STATIC
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, allocation)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_widget_set_allocation
+PHP_METHOD
+{
+    zval *php_allocation;
+    GtkAllocation *allocation, allocation_arg = { 0, 0, 0, 0 };
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_allocation)) {
+        return;
+    }
+
+    if (Z_TYPE_P(php_allocation) == IS_NULL) {
+        allocation = &allocation_arg;
+    } else if (phpg_rectangle_from_zval(php_allocation, (GtkAllocation*)&allocation_arg TSRMLS_CC) == SUCCESS) {
+        allocation = &allocation_arg;
+    } else {
+        php_error(E_WARNING, "%s::%s() expects allocation argument to be a 4-element array, a GdkRectangle object, or null", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    gtk_widget_set_allocation(GTK_WIDGET(PHPG_GOBJECT(this_ptr)), allocation);
+}
+
+%% }}}
+
+%% {{{ GtkCellView
+
+%%
+override gtk_cell_view_get_cell_renderers
+PHP_METHOD
+{
+    GList *list, *item;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    phpg_warn_deprecated("since GTK+ 2.18, please use GtkCellLayout::get_cells()" TSRMLS_CC);
+
+    list = gtk_cell_view_get_cell_renderers(GTK_CELL_VIEW(PHPG_GOBJECT(this_ptr)));
+
+    array_init(return_value);
+    for (item = list; item; item = item->next) {
+        zval *php_item = NULL;
+        GtkWidget *renderer = item->data;
+        phpg_gobject_new(&php_item, G_OBJECT(renderer) TSRMLS_CC);
+        add_next_index_zval(return_value, php_item);
+    }
+
+    g_list_free(list);
+}
+
+%% }}}
+
+%% {{{ GtkTreeViewColumn
+
+%%
+override gtk_tree_view_column_get_cell_renderers
+PHP_METHOD
+{
+    GList *list, *item;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    phpg_warn_deprecated("since GTK+ 2.18, please use GtkCellLayout::get_cells()" TSRMLS_CC);
+
+    list = gtk_tree_view_column_get_cell_renderers(GTK_TREE_VIEW_COLUMN(PHPG_GOBJECT(this_ptr)));
+
+    array_init(return_value);
+    for (item = list; item; item = item->next) {
+        zval *php_item = NULL;
+        GtkWidget *renderer = item->data;
+        phpg_gobject_new(&php_item, G_OBJECT(renderer) TSRMLS_CC);
+        add_next_index_zval(return_value, php_item);
+    }
+
+    g_list_free(list);
+}
+
+%% }}}

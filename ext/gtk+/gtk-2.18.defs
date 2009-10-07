@@ -1,0 +1,479 @@
+;; -*- scheme -*-
+(include "gtk-2.12.defs")
+(include "gtk-2.18-types.defs")
+
+;; From gtkcellrenderer.h
+
+(define-method get_alignment
+  (of-object "GtkCellRenderer")
+  (c-name "gtk_cell_renderer_get_alignment")
+  (return-type "none")
+  (parameters
+    '("gfloat*" "xalign" (null-ok))
+    '("gfloat*" "yalign" (null-ok))
+  )
+)
+
+(define-method get_padding
+  (of-object "GtkCellRenderer")
+  (c-name "gtk_cell_renderer_get_padding")
+  (return-type "none")
+  (parameters
+    '("gfloat*" "xpad" (null-ok))
+    '("gfloat*" "ypad" (null-ok))
+  )
+)
+
+(define-method get_sensitive
+  (of-object "GtkCellRenderer")
+  (c-name "gtk_cell_renderer_get_sensitive")
+  (return-type "gboolean")
+)
+
+(define-method get_visible
+  (of-object "GtkCellRenderer")
+  (c-name "gtk_cell_renderer_get_visible")
+  (return-type "gboolean")
+)
+
+(define-method set_alignment
+  (of-object "GtkCellRenderer")
+  (c-name "gtk_cell_renderer_set_alignment")
+  (return-type "none")
+  (parameters
+    '("gfloat*" "xalign")
+    '("gfloat*" "yalign")
+  )
+)
+
+(define-method set_padding
+  (of-object "GtkCellRenderer")
+  (c-name "gtk_cell_renderer_set_padding")
+  (return-type "none")
+  (parameters
+    '("gfloat*" "xpad")
+    '("gfloat*" "ypad")
+  )
+)
+
+(define-method set_sensitive
+  (of-object "GtkCellRenderer")
+  (c-name "gtk_cell_renderer_set_sensitive")
+  (return-type "none")
+  (parameters
+    '("gboolean" "sensitive")
+  )
+)
+
+(define-method set_visible
+  (of-object "GtkCellRenderer")
+  (c-name "gtk_cell_renderer_set_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "visible")
+  )
+)
+
+
+
+;; From gtkiconview.h
+
+(define-method set_item_padding
+  (of-object "GtkIconView")
+  (c-name "gtk_icon_view_set_item_padding")
+  (return-type "none")
+  (parameters
+    '("gint" "item_padding")
+  )
+)
+
+(define-method get_item_padding
+  (of-object "GtkIconView")
+  (c-name "gtk_icon_view_get_item_padding")
+  (return-type "gint")
+)
+
+;; From gtkinfobar.h
+
+(define-method add_action_widget
+  (of-object "GtkInfoBar")
+  (c-name "gtk_info_bar_add_action_widget")
+  (return-type "none")
+  (parameters
+    '("GtkWidget*" "child")
+    '("gint" "response_id")
+  )
+)
+
+(define-method add_button
+  (of-object "GtkInfoBar")
+  (c-name "gtk_info_bar_add_button")
+  (return-type "GtkWidget*")
+  (parameters
+    '("const-gchar*" "button_text")
+    '("gint" "response_id")
+  )
+)
+
+(define-method add_buttons
+  (of-object "GtkInfoBar")
+  (c-name "gtk_info_bar_add_buttons")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "first_button_text")
+  )
+  (varargs #t)
+)
+
+(define-method get_action_area
+  (of-object "GtkInfoBar")
+  (c-name "gtk_info_bar_get_action_area")
+  (return-type "GtkWidget*")
+)
+
+(define-method get_content_area
+  (of-object "GtkInfoBar")
+  (c-name "gtk_info_bar_get_content_area")
+  (return-type "GtkWidget*")
+)
+
+(define-method get_message_type
+  (of-object "GtkInfoBar")
+  (c-name "gtk_info_bar_get_message_type")
+  (return-type "GtkMessageType")
+)
+
+(define-function bar_new
+  (c-name "gtk_info_bar_new")
+  (is-constructor-of "GtkInfoBar")
+  (caller-owns-return #t)
+  (return-type "GtkWidget*")
+)
+
+(define-method bar_response
+  (of-object "GtkInfoBar")
+  (c-name "gtk_info_bar_response")
+  (return-type "none")
+  (parameters
+    '("gint" "response_id")
+  )
+)
+
+(define-method set_default_response
+  (of-object "GtkInfoBar")
+  (c-name "gtk_info_bar_set_default_response")
+  (return-type "none")
+  (parameters
+    '("gint" "response_id")
+  )
+)
+
+(define-method set_message_type
+  (of-object "GtkInfoBar")
+  (c-name "gtk_info_bar_set_message_type")
+  (return-type "none")
+  (parameters
+    '("GtkMessageType" "message_type")
+  )
+)
+
+(define-method set_response_sensitive
+  (of-object "GtkInfoBar")
+  (c-name "gtk_info_bar_set_response_sensitive")
+  (return-type "none")
+  (parameters
+    '("gint" "response_id")
+    '("gboolean" "sensitive")
+  )
+)
+
+;; From gtklabel.h
+
+(define-method get_current_uri
+  (of-object "GtkLabel")
+  (c-name "gtk_label_get_current_uri")
+  (return-type "const-gchar*")
+)
+
+(define-method set_track_visited_links
+  (of-object "GtkLabel")
+  (c-name "gtk_label_set_track_visited_links")
+  (return-type "none")
+  (parameters
+    '("gboolean" "track_visited_links")
+  )
+)
+
+(define-method get_track_visited_links
+  (of-object "GtkLabel")
+  (c-name "gtk_label_get_track_visited_links")
+  (return-type "gboolean")
+)
+
+;; From gtkmenu.h
+
+(define-method get_reserve_toggle_size
+  (of-object "GtkMenu")
+  (c-name "gtk_menu_get_reserve_toggle_size")
+  (return-type "gboolean")
+)
+
+(define-method set_reserve_toggle_size
+  (of-object "GtkMenu")
+  (c-name "gtk_menu_set_reserve_toggle_size")
+  (return-type "none")
+  (parameters
+    '("gboolean" "reserve_toggle_size")
+  )
+)
+
+;; From gtkprintoperation.h
+
+(define-method get_embed_page_setup
+  (of-object "GtkPrintOperation")
+  (c-name "gtk_print_operation_get_embed_page_setup")
+  (return-type "gboolean")
+)
+
+(define-method get_has_selection
+  (of-object "GtkPrintOperation")
+  (c-name "gtk_print_operation_get_has_selection")
+  (return-type "gboolean")
+)
+
+(define-method get_n_pages_to_print
+  (of-object "GtkPrintOperation")
+  (c-name "gtk_print_operation_get_n_pages_to_print")
+  (return-type "gint")
+)
+
+(define-method get_support_selection
+  (of-object "GtkPrintOperation")
+  (c-name "gtk_print_operation_get_support_selection")
+  (return-type "gboolean")
+)
+
+(define-method set_embed_page_setup
+  (of-object "GtkPrintOperation")
+  (c-name "gtk_print_operation_set_embed_page_setup")
+  (return-type "none")
+  (parameters
+    '("gboolean" "embed")
+  )
+)
+
+(define-method set_has_selection
+  (of-object "GtkPrintOperation")
+  (c-name "gtk_print_operation_set_has_selection")
+  (return-type "none")
+  (parameters
+    '("gboolean" "has_selection")
+  )
+)
+
+(define-method set_support_selection
+  (of-object "GtkPrintOperation")
+  (c-name "gtk_print_operation_set_support_selection")
+  (return-type "none")
+  (parameters
+    '("gboolean" "support_selection")
+  )
+)
+
+;; From gtkrange.h
+
+(define-method get_flippable
+  (of-object "GtkRange")
+  (c-name "gtk_range_get_flippable")
+  (return-type "gboolean")
+)
+
+(define-method set_flippable
+  (of-object "GtkRange")
+  (c-name "gtk_range_set_flippable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "flippable")
+  )
+)
+
+;; From gtkstatusicon.h
+
+(define-method get_title
+  (of-object "GtkStatusIcon")
+  (c-name "gtk_status_icon_get_title")
+  (return-type "const-gchar*")
+)
+
+(define-method set_title
+  (of-object "GtkStatusIcon")
+  (c-name "gtk_status_icon_set_title")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "title")
+  )
+)
+
+;; From gtkwidget.h
+
+; NOTE: this is commented out, because there is an alternative implemented
+; in extrafuncs for pre 2.18, but we re-override it to use the new call
+;(define-method get_allocation
+;  (of-object "GtkWidget")
+;  (c-name "gtk_widget_get_allocation")
+;  (return-type "GtkAllocation")
+;)
+
+(define-method get_app_paintable
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_get_app_paintable")
+  (return-type "gboolean")
+)
+
+(define-method get_can_default
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_get_can_default")
+  (return-type "gboolean")
+)
+
+(define-method get_can_focus
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_get_can_focus")
+  (return-type "gboolean")
+)
+
+(define-method get_double_buffered
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_get_double_buffered")
+  (return-type "gboolean")
+)
+
+(define-method get_has_window
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_get_has_window")
+  (return-type "gboolean")
+)
+
+(define-method get_receives_default
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_get_receives_default")
+  (return-type "gboolean")
+)
+
+(define-method get_sensitive
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_get_sensitive")
+  (return-type "gboolean")
+)
+
+(define-method get_state
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_get_state")
+  (return-type "GtkStateType")
+)
+
+(define-method get_visible
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_get_visible")
+  (return-type "gboolean")
+)
+
+(define-method has_default
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_has_default")
+  (return-type "gboolean")
+)
+
+(define-method has_focus
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_has_focus")
+  (return-type "gboolean")
+)
+
+(define-method has_grab
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_has_grab")
+  (return-type "gboolean")
+)
+
+(define-method is_drawable
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_is_drawable")
+  (return-type "gboolean")
+)
+
+(define-method is_sensitive
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_is_sensitive")
+  (return-type "gboolean")
+)
+
+(define-method is_toplevel
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_is_toplevel")
+  (return-type "gboolean")
+)
+
+(define-method set_allocation
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_set_allocation")
+  (return-type "none")
+  (parameters
+    '("const GtkAllocation*" "allocation")
+  )
+)
+
+(define-method set_can_default
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_set_can_default")
+  (return-type "none")
+  (parameters
+    '("gboolean" "can_default")
+  )
+)
+
+(define-method set_can_focus
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_set_can_focus")
+  (return-type "none")
+  (parameters
+    '("gboolean" "can_focus")
+  )
+)
+
+(define-method set_has_window
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_set_has_window")
+  (return-type "none")
+  (parameters
+    '("gboolean" "has_window")
+  )
+)
+
+(define-method set_receives_default
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_set_receives_default")
+  (return-type "none")
+  (parameters
+    '("gboolean" "receives_default")
+  )
+)
+
+; also has "fake" definition for pre-2.18 versions
+;(define-method set_visible
+;  (of-object "GtkWidget")
+;  (c-name "gtk_widget_set_visible")
+;  (return-type "none")
+;  (parameters
+;    '("gboolean" "visible")
+;  )
+;)
+
+(define-method set_window
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_set_window")
+  (return-type "none")
+  (parameters
+    '("GdkWindow*" "window")
+  )
+)

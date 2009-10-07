@@ -543,14 +543,14 @@ PHP_METHOD
 %% {{{ GtkTextTagTable
 
 %%
-add-arginfo GtkTextTagTable foreach
+add-arginfo GtkTextTagTable for_each
 PHPGTK_ARG_INFO_STATIC
 ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
     ZEND_ARG_INFO(0, callback)
 ZEND_END_ARG_INFO();
 
 %%
-override gtk_text_tag_table_foreach
+add GtkTextTagTable for_each
 static void phpg_text_tag_table_foreach_func_marshal(GtkTextTagTable *table, gpointer data)
 {
     phpg_cb_data_t *cbd = (phpg_cb_data_t *) data;
