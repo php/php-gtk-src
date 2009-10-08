@@ -24,7 +24,7 @@ PHP_METHOD
 override gtk_cell_renderer_get_padding
 PHP_METHOD
 {
-    gfloat xpad = 0, ypad = 0;
+    gint xpad = 0, ypad = 0;
 
     NOT_STATIC_METHOD();
 
@@ -34,8 +34,8 @@ PHP_METHOD
     gtk_cell_renderer_get_padding(GTK_CELL_RENDERER(PHPG_GOBJECT(this_ptr)), &xpad, &ypad);
 
     array_init(return_value);
-    add_next_index_double(return_value, xpad);
-    add_next_index_double(return_value, ypad);
+    add_next_index_long(return_value, xpad);
+    add_next_index_long(return_value, ypad);
 }
 
 %% }}}

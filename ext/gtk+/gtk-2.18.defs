@@ -19,8 +19,8 @@
   (c-name "gtk_cell_renderer_get_padding")
   (return-type "none")
   (parameters
-    '("gfloat*" "xpad" (null-ok))
-    '("gfloat*" "ypad" (null-ok))
+    '("gint*" "xpad" (null-ok))
+    '("gint*" "ypad" (null-ok))
   )
 )
 
@@ -51,8 +51,8 @@
   (c-name "gtk_cell_renderer_set_padding")
   (return-type "none")
   (parameters
-    '("gfloat" "xpad")
-    '("gfloat" "ypad")
+    '("gint" "xpad")
+    '("gint" "ypad")
   )
 )
 

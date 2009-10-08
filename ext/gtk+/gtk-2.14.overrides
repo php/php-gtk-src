@@ -1,0 +1,29 @@
+%% include gtk-2.12.overrides
+
+%%
+deprecate gtk_box_pack_end_defaults
+since GTK+ 2.14, use GtkBox::pack_end() instead
+
+%%
+deprecate gtk_box_pack_start_defaults
+since GTK+ 2.14, use GtkBox::pack_start() instead
+
+%%
+deprecate gtk_file_chooser_button_new_with_backend
+since GTK+ 2.14, Use GtkFileChooserButton::__construct() instead
+
+%%
+deprecate gtk_file_chooser_dialog_new_with_backend
+since GTK+ 2.14, Use GtkFileChooserDialog::__construct() instead
+
+%%
+deprecate gtk_file_chooser_widget_new_with_backend
+since GTK+ 2.14, Use GtkFileChooserWidget::__construct() instead
+
+%%
+deprecate gtk_toolbar_set_tooltips
+since GTK+ 2.14, The toolkit-wide \"gtk-enable-tooltips\" property is now used instead.
+
+%%
+deprecate gtk_toolbar_get_tooltips
+since GTK+ 2.14, The toolkit-wide \"gtk-enable-tooltips\" property is now used instead.
