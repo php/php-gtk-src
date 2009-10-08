@@ -41,8 +41,8 @@
   (c-name "gtk_cell_renderer_set_alignment")
   (return-type "none")
   (parameters
-    '("gfloat*" "xalign")
-    '("gfloat*" "yalign")
+    '("gfloat" "xalign")
+    '("gfloat" "yalign")
   )
 )
 
@@ -51,8 +51,8 @@
   (c-name "gtk_cell_renderer_set_padding")
   (return-type "none")
   (parameters
-    '("gfloat*" "xpad")
-    '("gfloat*" "ypad")
+    '("gfloat" "xpad")
+    '("gfloat" "ypad")
   )
 )
 
@@ -86,7 +86,7 @@
 (define-method get_activatable
   (of-object "GtkCellRendererToggle")
   (c-name "gtk_cell_renderer_toggle_get_activatable")
-  (return-type "boolean")
+  (return-type "gboolean")
 )
 
 ;; From gtkentrybuffer.h
@@ -125,7 +125,7 @@
 (define-method get_bytes
   (of-object "GtkEntryBuffer")
   (c-name "gtk_entry_buffer_get_bytes")
-  (return-type "gsize")
+  (return-type "guint")
 )
 
 (define-method get_length
@@ -224,7 +224,7 @@
 (define-method get_create_folders
   (of-object "GtkFileChooser")
   (c-name "gtk_file_chooser_get_create_folders")
-  (return-type "boolean")
+  (return-type "gboolean")
 )
 
 ;; From gtkiconview.h

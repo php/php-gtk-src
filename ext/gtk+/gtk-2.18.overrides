@@ -1,5 +1,93 @@
 %% include gtk-2.12.overrides
 
+%% {{{ GtkCellRenderer
+
+%%
+override gtk_cell_renderer_get_alignment
+PHP_METHOD
+{
+    gfloat xalign = 0, yalign = 0;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_cell_renderer_get_alignment(GTK_CELL_RENDERER(PHPG_GOBJECT(this_ptr)), &xalign, &yalign);
+
+    array_init(return_value);
+    add_next_index_double(return_value, xalign);
+    add_next_index_double(return_value, yalign);
+}
+
+%%
+override gtk_cell_renderer_get_padding
+PHP_METHOD
+{
+    gfloat xpad = 0, ypad = 0;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_cell_renderer_get_padding(GTK_CELL_RENDERER(PHPG_GOBJECT(this_ptr)), &xpad, &ypad);
+
+    array_init(return_value);
+    add_next_index_double(return_value, xpad);
+    add_next_index_double(return_value, ypad);
+}
+
+%% }}}
+
+%% {{{ GtkInfoBar
+
+%%
+add-arginfo GtkInfoBar add_buttons
+PHPGTK_ARG_INFO_STATIC
+ZEND_BEGIN_ARG_INFO(ARGINFO_NAME, 0)
+    ZEND_ARG_INFO(0, buttons)
+ZEND_END_ARG_INFO();
+
+%%
+override gtk_info_bar_add_buttons
+PHP_METHOD
+{
+    zval *buttons = NULL;
+    zval **text, **response;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "a", &buttons))
+        return;
+
+
+    if (zend_hash_num_elements(Z_ARRVAL_P(buttons)) % 2) {
+        php_error(E_WARNING,
+                    "%s::%s(): button list has to contain pairs of items",
+                        get_active_class_name(NULL TSRMLS_CC),
+                            get_active_function_name(TSRMLS_C));
+        return;
+    }
+
+    zend_hash_internal_pointer_reset(Z_ARRVAL_P(buttons));
+    while (zend_hash_get_current_data(Z_ARRVAL_P(buttons), (void **)&text) == SUCCESS) {
+        zend_hash_move_forward(Z_ARRVAL_P(buttons));
+        zend_hash_get_current_data(Z_ARRVAL_P(buttons), (void **)&response); /* safe */
+        zend_hash_move_forward(Z_ARRVAL_P(buttons));
+
+        if (Z_TYPE_PP(text) != IS_STRING || Z_TYPE_PP(response) != IS_LONG) {
+            php_error(E_WARNING, "%s::%s(): each pair in button list has to be string/number",
+                        get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
+            return;
+        }
+
+        gtk_info_bar_add_button(GTK_INFO_BAR(PHPG_GOBJECT(this_ptr)), Z_STRVAL_PP(text), Z_LVAL_PP(response));
+    }
+}
+
+%% }}}
+
 %% {{{ GtkWidget
 
 %%
