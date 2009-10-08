@@ -394,6 +394,9 @@ static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int connect_t
     NOT_STATIC_METHOD();
 
     if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 2, &extra, "sV", &signal, &callback)) {
+        if (extra) {
+            zval_ptr_dtor(&extra);
+        }			
         return;
     }
 
