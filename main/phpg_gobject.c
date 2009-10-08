@@ -1355,7 +1355,7 @@ static PHP_METHOD(GObject, register_type)
     zend_class_entry *class = gobject_ce;
     GType parent_type, new_type;
     GTypeQuery query;
-    const char *type_name;
+    gchar *type_name;
     zval **prop_decls, **signal_decls;
     gchar **split_name;
     int free_name = 0;
