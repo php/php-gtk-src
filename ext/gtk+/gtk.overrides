@@ -2798,7 +2798,7 @@ PHP_METHOD
 {
     gunichar ichar;
     gint len;
-    gchar *ret = safe_emalloc(6, sizeof(gchar *), 0);
+    gchar ret[8];
     gchar *cp_ret;
     gsize cp_len;
     zend_bool free_result = FALSE;
@@ -2812,10 +2812,11 @@ PHP_METHOD
 
     if (ichar) {
         len = g_unichar_to_utf8(ichar, ret);
+        ret[len] = '\0';
         cp_ret = phpg_from_utf8(ret, len, &cp_len, &free_result TSRMLS_CC);
 
         if (cp_ret) {
-            RETVAL_STRINGL((char *)cp_ret, cp_len, 1);
+             RETVAL_STRINGL((char *)ret, len, 1);
         } else {
             php_error(E_WARNING, "%s::%s(): could not convert return value from UTF-8", get_active_class_name(NULL TSRMLS_CC), get_active_function_name(TSRMLS_C));
         }
@@ -2827,8 +2828,6 @@ PHP_METHOD
     } else {
         RETVAL_NULL();
     }
-
-    efree(ret);
 }
 
 %%
@@ -2855,7 +2854,7 @@ PHP_METHOD
     gtk_entry_set_invisible_char(GTK_ENTRY(PHPG_GOBJECT(this_ptr)), setchar);
 
     if (free_char)
-        efree(getchar);
+        g_free(getchar);
 }
 
 %% }}}
