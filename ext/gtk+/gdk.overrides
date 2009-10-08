@@ -233,6 +233,9 @@ PHP_METHOD
 override-prop GdkColor red
 PHPG_PROP_READER
 {
+	if (((phpg_gboxed_t *)object)->boxed == NULL) {
+		return FAILURE;
+	}
 	RETVAL_LONG(((GdkColor *)((phpg_gboxed_t *)object)->boxed)->red);
     return SUCCESS;
 }
@@ -240,6 +243,9 @@ PHPG_PROP_READER
 override-prop GdkColor green
 PHPG_PROP_READER
 {
+	if (((phpg_gboxed_t *)object)->boxed == NULL) {
+		return FAILURE;
+	}
 	RETVAL_LONG(((GdkColor *)((phpg_gboxed_t *)object)->boxed)->green);
     return SUCCESS;
 }
@@ -247,6 +253,9 @@ PHPG_PROP_READER
 override-prop GdkColor blue
 PHPG_PROP_READER
 {
+	if (((phpg_gboxed_t *)object)->boxed == NULL) {
+		return FAILURE;
+	}
 	RETVAL_LONG(((GdkColor *)((phpg_gboxed_t *)object)->boxed)->blue);
     return SUCCESS;
 }
@@ -254,6 +263,9 @@ PHPG_PROP_READER
 override-prop GdkColor pixel
 PHPG_PROP_READER
 {
+	if (((phpg_gboxed_t *)object)->boxed == NULL) {
+		return FAILURE;
+	}
 	RETVAL_LONG(((GdkColor *)((phpg_gboxed_t *)object)->boxed)->pixel);
     return SUCCESS;
 }
