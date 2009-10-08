@@ -190,7 +190,7 @@ class PHPGtk2Demo extends GtkWindow
                 if ($GLOBALS['class'] === null) {
                     continue;
                 }
-                $this->demos[$file]					= null;
+                $this->demos[$file]					= new stdClass;
                 $this->demos[$file]->classname		= $GLOBALS['class'];
                 $this->demos[$file]->description	= $GLOBALS['description'];
                 $this->demos[$file]->file			= $file;
