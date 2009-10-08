@@ -1617,6 +1617,10 @@ static zend_function_entry gobject_methods[] = {
 
 PHPG_PROP_READER(GObject, gtype)
 {
+	if (((phpg_gobject_t *)object)->obj == NULL) {
+		return FAILURE;
+	}
+
     ZVAL_LONG(return_value, G_OBJECT_TYPE(((phpg_gobject_t *)object)->obj));
     return SUCCESS;
 }

@@ -64,7 +64,7 @@
 #endif
 
 /* zend_is_callable had TSRMLS added to the end in 5.3 */
-#if PHP_VERSION_ID <= 50300
+#if PHP_VERSION_ID >= 50300
 # define PHPGTK_ZEND_IS_CALLABLE TSRMLS_CC
 #else
 # define PHPGTK_ZEND_IS_CALLABLE

@@ -280,6 +280,10 @@ const prop_reader = "
 PHPG_PROP_READER(%(class), %(name))
 {
 %(var_list)
+    if (((phpg_gobject_t *)object)->obj == NULL) {
+        return FAILURE;
+    }
+
     php_retval = %(prop_access);
 %(post_code)
     return SUCCESS;
