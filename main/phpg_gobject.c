@@ -1353,8 +1353,9 @@ static PHP_METHOD(GObject, register_type)
     GType parent_type, new_type;
     GTypeQuery query;
     const char *type_name;
-	char *class_name_copy;
     zval **prop_decls, **signal_decls;
+    gchar **split_name;
+    int free_name = 0;
 
     GTypeInfo type_info = {
         0,    /* class_size */
@@ -1381,12 +1382,19 @@ static PHP_METHOD(GObject, register_type)
     }
 
     type_name = class->name;
-	/* If this is a namespaced class we will have issues, since \ is not allowed, so copy and replace \ with _ */
-	class_name_copy = g_strdup(class->name);
-	type_name = g_strdelimit(class_name_copy, "\\", '__');
+	/* If this is a namespaced class we will have issues, since \ is not allowed, so copy and replace \ with _ */	
+    if (split_name = g_strsplit(class->name, "\\", 0)) {
+        free_name = 1;
+        type_name = g_strjoinv("__", split_name);
+        g_strfreev(split_name);		
+    }
 
     if (g_type_from_name(type_name) != 0) {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "type '%s' already exists?", type_name);
+        
+        if (free_name) {
+            g_free(type_name);
+        }
         return;
     }
 
@@ -1398,6 +1406,10 @@ static PHP_METHOD(GObject, register_type)
     new_type = g_type_register_static(parent_type, type_name, &type_info, 0);
     if (new_type == 0) {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "could not create new GType");
+        
+        if (free_name) {
+            g_free(type_name);
+        }
         return;
     }
 
@@ -1414,9 +1426,15 @@ static PHP_METHOD(GObject, register_type)
     if (zend_hash_find(&class->default_properties, "__gproperties", sizeof("__gproperties"), (void**)&prop_decls) == SUCCESS) {
         if (Z_TYPE_PP(prop_decls) != IS_ARRAY) {
             php_error_docref(NULL TSRMLS_CC, E_WARNING, "__gproperties variable has to be an array");
+            if (free_name) {
+                g_free(type_name);
+            }
             return;
         }
         if (phpg_register_properties(new_type, *prop_decls) == FAILURE) {
+            if (free_name) {
+                g_free(type_name);
+            }
             return;
         }
         zend_hash_del(&class->default_properties, "__gproperties", sizeof("__gproperties"));
@@ -1426,12 +1444,22 @@ static PHP_METHOD(GObject, register_type)
     if (zend_hash_find(&class->default_properties, "__gsignals", sizeof("__gsignals"), (void**)&signal_decls) == SUCCESS) {
         if (Z_TYPE_PP(signal_decls) != IS_ARRAY) {
             php_error_docref(NULL TSRMLS_CC, E_WARNING, "__gsignals variable has to be an array");
+            if (free_name) {
+                g_free(type_name);
+            }
             return;
         }
         if (phpg_register_signals(new_type, *signal_decls) == FAILURE) {
+            if (free_name) {
+                g_free(type_name);
+            }
             return;
         }
         zend_hash_del(&class->default_properties, "__gsignals", sizeof("__gsignals"));
+    }
+    
+    if (free_name) {
+        g_free(type_name);
     }
 
     /*TODO interface registration */
