@@ -79,6 +79,9 @@ PHP_METHOD
 
     gtk_clipboard_request_contents(GTK_CLIPBOARD(PHPG_GOBJECT(this_ptr)), target,
                                    phpg_clipboard_request_contents_marshal, cbd);
+
+    phpg_cb_data_destroy(cbd);
+    
     RETURN_TRUE;
 }
 

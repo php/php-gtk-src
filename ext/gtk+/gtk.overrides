@@ -871,6 +871,10 @@ PHP_METHOD
 		add_next_index_long(return_value, result->accel_key);
 		add_next_index_long(return_value, result->accel_mods);
 	}
+	
+	if (cb_data) {
+		phpg_cb_data_destroy(cb_data);
+	}
 }
 
 %% }}}
