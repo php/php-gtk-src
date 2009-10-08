@@ -20,7 +20,7 @@
  */
 
 class LineOutput {
-    const MAX = 60000;
+    const MAX = 65000;
     protected $filename = null;
     protected $line     = array();
     protected $header = '';

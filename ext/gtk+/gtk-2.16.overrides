@@ -1,0 +1,44 @@
+%% include gtk-2.12.overrides
+
+%% {{{ ignores
+
+%%
+ignore
+gtk_toolbar_set_orientation
+gtk_toolbar_get_orientation
+gtk_scale_button_get_orientation
+gtk_scale_button_set_orientation
+
+%% }}}
+
+%%
+deprecate gtk_action_unblock_activate_from
+since GTK+ 2.16, GtkActivatables are now responsible for activating the action directly
+
+%%
+deprecate gtk_action_disconnect_proxy
+since GTK+ 2.16, Use GtkActivatable::set_related_action() instead
+
+%%
+deprecate gtk_action_connect_proxy
+since GTK+ 2.16, Use GtkActivatable::set_related_action() instead
+
+%%
+deprecate gtk_action_block_activate_from
+since GTK+ 2.16, GtkActivatables are now responsible for activating the action directly
+
+%%
+deprecate gtk_action_block_activate_from
+since GTK+ 2.16, GtkActivatables are now responsible for activating the action directly
+
+%%
+deprecate gtk_widget_get_action
+since GTK+ 2.16, Use GtkActivatable::set_related_action() instead
+
+%%
+deprecate gtk_status_icon_set_tooltip
+since GTK+ 2.16, Use GtkStatusIcon::set_tooltip_text() instead
+
+%%
+deprecate gtk_font_selection_dialog_get_apply_button
+since GTK+ 2.16, Don't use this function

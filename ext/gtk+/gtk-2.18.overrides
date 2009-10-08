@@ -1,4 +1,4 @@
-%% include gtk-2.12.overrides
+%% include gtk-2.16.overrides
 
 %% {{{ GtkCellRenderer
 
