@@ -1,4 +1,4 @@
-Version 2.0.2 "and then there was none" 29-February-2008
+Version 2.0.2 "and then there was none" 07-March-2010
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - API coverage improved, specifically for 2.14, 2.16 and 2.18 gtk+ additions
     - Lots of bugfixes and segfault prevents (Thank you Felipe Pena)
@@ -13,6 +13,13 @@ Version 2.0.1 "you knew this was coming" 16-May-2008
     - Prevent segfaults when clone is used
     - Miscellaneous bug fixes, and support for PHP 5.3+ features
 
+Version 2.0.0 "leap day special" 29-February-2008
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - API coverage improved
+    - GTK+ 2.12 support
+    - Custom GTypes, signals and properties support (see demos/examples)
+    - Shared extensions are now prefixed with "php_gtk_"
+    - Some constants moved to GObject:: class
 
 Version 2.0.0beta "extension extravaganza" : 17-June-2007
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
