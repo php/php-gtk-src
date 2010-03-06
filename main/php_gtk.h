@@ -76,7 +76,7 @@
 #include "zend_exceptions.h"
 #include "zend_extensions.h"
 
-#define PHP_GTK_VERSION "2.0.2-dev"
+#define PHP_GTK_VERSION "2.0.2"
 
 #ifdef PHP_WIN32
 # ifdef GTK_SHARED
