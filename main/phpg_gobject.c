@@ -1386,7 +1386,7 @@ static PHP_METHOD(GObject, register_type)
 
     type_name = class->name;
 	/* If this is a namespaced class we will have issues, since \ is not allowed, so copy and replace \ with _ */	
-    if (split_name = g_strsplit(class->name, "\\", 0)) {
+    if ((split_name = g_strsplit(class->name, "\\", 0))) {
         free_name = 1;
         type_name = g_strjoinv("__", split_name);
         g_strfreev(split_name);		

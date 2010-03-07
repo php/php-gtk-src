@@ -5,8 +5,6 @@
 override gdk_cairo_create
 PHP_METHOD
 {
-    zval *cobj = NULL;
-    zval *rect = NULL;
     GdkDrawable *drawable;
     cairo_context_object *cont;
 	zend_class_entry *ce;
