@@ -612,7 +612,10 @@ PHP_METHOD(gtk_rc_get_default_files)
         while (*ret) {
             cp_str = phpg_from_utf8(*ret, strlen(*ret), &cp_len, &free_cp_str TSRMLS_CC);
             if (cp_str) {
-                add_next_index_stringl(return_value, cp_str, cp_len, !free_cp_str);
+                add_next_index_stringl(return_value, cp_str, cp_len, 1);
+                if (free_cp_str) {
+                    g_free(cp_str);
+                }
             } else {
                 zval_dtor(return_value);
                 RETURN_NULL();
@@ -732,7 +735,7 @@ PHP_METHOD
 
     gtk_accelerator_parse((const gchar *)accel, &keyval, &modifier);
     if (free_accel)
-        efree(accel);
+        g_free(accel);
 
     php_gtk_build_value(&return_value, "(ii)", keyval, modifier);
 }
