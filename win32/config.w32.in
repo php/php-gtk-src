@@ -2,6 +2,15 @@
 // $Id$
 // "Master" config file; think of it as a configure.in equivalent.
 
+// MSVC version table
+var MSVCVERS = [];
+MSVCVERS[1200] = 'MSVC6 (Visual C++ 6.0)';
+MSVCVERS[1300] = 'MSVC7 (Visual C++ 2002)';
+MSVCVERS[1310] = 'MSVC7.1 (Visual C++ 2003)';
+MSVCVERS[1400] = 'MSVC8 (Visual C++ 2005)';
+MSVCVERS[1500] = 'MSVC9 (Visual C++ 2008)';
+MSVCVERS[1600] = 'MSVC10 (Visual C++ 2010)';
+
 STDOUT.WriteBlankLines(1);
 
 CL = PATH_PROG('cl');
@@ -27,23 +36,15 @@ PATH_PROG('php');
 STDOUT.WriteBlankLines(1);
 
 if (CL) {
+	var VCVERS = probe_msvc_compiler_version(CL);
 
-	VCVERS = probe_msvc_compiler_version(CL);
-	var msversion = "unknown";
-
-	if (VCVERS == 12) {
-		msversion = "Microsoft Visual C++ 6.0";
-	}
-	if (VCVERS == 13) {
-		msversion = "Microsoft VS.NET 2003";
-	}
-	if (VCVERS == 14) {
-		msversion = "Microsoft VS.NET 2005";
-	}
-	STDOUT.WriteLine("Detected compiler version:  " + msversion);
-
+	if (typeof(MSVCVERS[VCVERS]) == undefined) {
+		// Lets just bail out if we dont know the MSVC version
+		ERROR("MS C++ compiler is required -- unable to detect version");
+	} else {
+		STDOUT.WriteLine("Detected compiler version: " + MSVCVERS[VCVERS]);
+ 	}
 } else {
-
 	ERROR("MS C++ compiler is required");
 }
 
@@ -88,7 +89,9 @@ if (PHP_GTK_DEBUG == "yes" && PHP_GTK_ZTS == "yes") {
 	PHP_LIB = "php5.lib";
 }
 if (PHP_GTK_PHP_BUILD == 'no') {
-	if (FSO.FolderExists("..\\php_build")) {
+	if (FSO.FolderExists("..\\php_gtk_build")) {
+		PHP_GTK_PHP_BUILD = "..\\php_gtk_build";
+	} else if (FSO.FolderExists("..\\php_build")) {
 		PHP_GTK_PHP_BUILD = "..\\php_build";
 	} else if (FSO.FolderExists("..\\win32build")) {
 		PHP_GTK_PHP_BUILD = "..\\win32build";
@@ -135,12 +138,10 @@ if (PHP_GTK_ZTS == "yes") {
 	 	ADD_FLAG("CFLAGS", "/D ZTS=1");
 	 }
 
-if (VCVERS < 14) {
+if (VCVERS < 1400) {
 	// Enable automatic precompiled headers
 	ADD_FLAG('CFLAGS', '/YX /c');
-}
-
-if (VCVERS >= 14) {
+} else {
 	// fun stuff: MS deprecated ANSI stdio and similar functions - disable warnings
 	// GS hardens the binary against buffer overruns
 	ADD_FLAG('CFLAGS', '/GS /wd4996 ');

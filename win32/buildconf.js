@@ -159,6 +159,8 @@ if (FSO.FileExists('Makefile')) {
 	FSO.DeleteFile('Makefile');
 }
 
+var F = FSO.CreateTextFile("configure.bat", true);
+
 iter = new Enumerator(dir.Files);
 name = "";
 for (; !iter.atEnd(); iter.moveNext()) {
@@ -204,5 +206,8 @@ C.Write(modules);
 C.WriteBlankLines(1);
 C.Write("generate_files();");
 
+// Generate configure.bat utility
+F.Write("@ECHO OFF\r\ncscript /nologo configure.js %*");
+
 WScript.StdOut.WriteBlankLines(1);
-WScript.StdOut.WriteLine("Now run 'cscript /nologo configure.js --help'");
+WScript.StdOut.WriteLine("Now run 'configure --help'");

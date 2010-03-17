@@ -1,3 +1,7 @@
+Version 2.0.3 "???" XX-XXX-201X
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - Fixed bug #50888 (Detection of Microsoft VS.NET 2008) (Kalle)
+
 Version 2.0.2 "and then there was none" 07-March-2010
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - API coverage improved, specifically for 2.14, 2.16 and 2.18 gtk+ additions

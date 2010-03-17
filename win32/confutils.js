@@ -808,6 +808,7 @@ function get_define(name) {
 
 function ERROR(msg) {
 
+    STDERR.WriteBlankLines(2);
 	STDERR.WriteLine("ERROR: " + msg);
 	WScript.Quit(3);
 }
@@ -1221,13 +1222,13 @@ function execute(command_line) {
 
 // Which version of the compiler do we have?
 function probe_msvc_compiler_version(CL) {
+	var command = 'cmd /c ""' + CL + '" -v"';
+	var version = execute(command + '" 2>&1"');
 
-	// tricky escapes to get stderr redirection to work
-	var banner = execute('cmd /c ""' + CL + '" 2>&1"');
-
-	if (banner.match(/(\d+)\.(\d+)\.(\d+)(\.(\d+))?/)) {
-		return RegExp.$1;
+	if (version.match(/(\d+\.\d+)/)) {
+		return RegExp.$1.split(".").join("");
 	}
+
 	return 0;
 }
 
