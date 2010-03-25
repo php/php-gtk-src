@@ -992,6 +992,7 @@ function generate_files() {
 
 function generate_makefile() {
 
+    MFE.WriteLine(""); // To avoid error if MFE will be complete
 	MFE.Close(); // Makefile.extensions is now complete
 	MFO.Close(); // Makefile.objects is now complete
 	var MF = FSO.CreateTextFile("Makefile", true);
@@ -1023,9 +1024,9 @@ function generate_makefile() {
 	if (make_builds.length > 1) {
 		MF.WriteLine("!ELSE");
 		MF.WriteLine("!MESSAGE Note: $(PHPGTKLIB) must be created before PHP-GTK extensions can be built");
-		MF.WriteLine("!ENDIF");
 	}
-
+	
+	MF.WriteLine("!ENDIF");
 	MF.WriteLine("build_dirs: $(BUILD_DIR) $(BUILD_DIRS_SUB)");
 	MF.WriteBlankLines(1);
 
