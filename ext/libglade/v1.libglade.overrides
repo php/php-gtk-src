@@ -159,6 +159,9 @@ static void glade_signal_autoconnect_impl(INTERNAL_FUNCTION_PARAMETERS, int pass
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|a", &map))
 		return;
 
+	if (map)
+		zval_copy_ctor(map);
+
 	ac_data = (php_gtk_autoconnect_data *)emalloc(sizeof(php_gtk_autoconnect_data));
 	ac_data->map = map;
 	ac_data->pass_object = pass_object;

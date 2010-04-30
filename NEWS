@@ -1,5 +1,7 @@
 Version 2.0.3 "the evergreen you never heard" XX-XXX-201X
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - Fixed bug #51093 (segfault with signal_autoconnect function of class 
+      GladeXML) (Kalle, jboffel at gmail dot com)
     - Fixed bug #50889 (Fixes to confutils.js) 
       (Kalle, thomas dot worm at thomas-worm dot de)
     - Fixed bug #50888 (Detection of Microsoft VS.NET 2008) (Kalle)
