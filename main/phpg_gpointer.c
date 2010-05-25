@@ -27,7 +27,7 @@
  */
 PHP_GTK_EXPORT_CE(gpointer_ce) = NULL;
 
-static function_entry gpointer_methods[] = {
+static zend_function_entry gpointer_methods[] = {
 #if ZEND_EXTENSION_API_NO > 220051025
     PHP_ME_MAPPING(__construct, no_direct_constructor, NULL, 0)
 #else
@@ -51,7 +51,7 @@ static void phpg_free_gpointer_storage(phpg_gpointer_t *object TSRMLS_DC)
 
 /* {{{ PHP_GTK_API phpg_register_pointer() */
 PHP_GTK_API zend_class_entry* phpg_register_pointer(const char *class_name,
-                                                  function_entry *class_methods,
+                                                  zend_function_entry *class_methods,
                                                   create_object_func_t create_obj_func,
                                                   GType gtype TSRMLS_DC)
 {
