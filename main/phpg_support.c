@@ -63,7 +63,7 @@ zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
             result_ptr = EG(uninitialized_zval_ptr);
         }
 	} else {
-		result_ptr = zend_get_std_object_handlers()->read_property(object, member, type TSRMLS_CC);
+		result_ptr = zend_get_std_object_handlers()->read_property(object, member, type, NULL TSRMLS_CC);
 	}
 
 	if (member == &tmp_member) {
@@ -102,7 +102,7 @@ void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
             php_error(E_NOTICE, "PHP-GTK: ignoring write attempt to the read only property");
         }
     } else {
-		zend_get_std_object_handlers()->write_property(object, member, value TSRMLS_CC);
+		zend_get_std_object_handlers()->write_property(object, member, value, NULL TSRMLS_CC);
     }
 
 	if (member == &tmp_member) {
@@ -144,7 +144,7 @@ zval **phpg_get_property_ptr_ptr(zval *object, zval *member TSRMLS_DC)
          */
         result = NULL;
     } else {
-        result = zend_get_std_object_handlers()->get_property_ptr_ptr(object, member TSRMLS_CC);
+        result = zend_get_std_object_handlers()->get_property_ptr_ptr(object, member, NULL TSRMLS_CC);
     }
 
     if (member == &tmp_member) {
@@ -278,7 +278,7 @@ PHP_GTK_API void phpg_init_object(void *object, zend_class_entry *ce)
 
 /* {{{ phpg_register_class() */
 PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
-                                                  function_entry *class_methods,
+                                                  zend_function_entry *class_methods,
                                                   zend_class_entry *parent,
                                                   zend_uint ce_flags,
                                                   prop_info_t *prop_info,
@@ -340,7 +340,7 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 
 /* {{{ phpg_register_interface() */
 PHP_GTK_API zend_class_entry* phpg_register_interface(const char *iface_name,
-                                                      function_entry *iface_methods,
+                                                      zend_function_entry *iface_methods,
                                                       GType gtype TSRMLS_DC)
 {
 	zend_class_entry ce, *real_ce;

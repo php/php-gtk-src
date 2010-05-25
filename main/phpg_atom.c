@@ -29,7 +29,7 @@ PHP_GTK_EXPORT_CE(gdkatom_ce) = NULL;
 
 static zend_object_handlers phpg_gdkatom_handlers;
 
-static function_entry gdkatom_methods[] = {
+static zend_function_entry gdkatom_methods[] = {
 #if ZEND_EXTENSION_API_NO > 220051025
     PHP_ME_MAPPING(__construct, no_direct_constructor, NULL, 0)
 #else

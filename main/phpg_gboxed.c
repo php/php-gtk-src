@@ -90,7 +90,7 @@ PHP_GTK_API zend_object_value phpg_create_gboxed(zend_class_entry *ce TSRMLS_DC)
 
 /* {{{ PHP_GTK_API phpg_register_boxed() */
 PHP_GTK_API zend_class_entry* phpg_register_boxed(const char *class_name,
-                                                  function_entry *class_methods,
+                                                  zend_function_entry *class_methods,
                                                   prop_info_t *prop_info,
                                                   create_object_func_t create_obj_func,
                                                   GType gtype TSRMLS_DC)
