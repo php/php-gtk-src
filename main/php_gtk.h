@@ -320,8 +320,8 @@ PHP_GTK_API int php_gtk_set_property(zend_property_reference *property_reference
 void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference *property_reference);
 */
 
-PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name, function_entry *class_functions, zend_class_entry *parent, zend_uint ce_flags, prop_info_t *prop_info, create_object_func_t create_obj_func, GType gtype TSRMLS_DC);
-PHP_GTK_API zend_class_entry* phpg_register_interface(const char *iface_name, function_entry *iface_methods, GType gtype TSRMLS_DC);
+PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name, zend_function_entry *class_functions, zend_class_entry *parent, zend_uint ce_flags, prop_info_t *prop_info, create_object_func_t create_obj_func, GType gtype TSRMLS_DC);
+PHP_GTK_API zend_class_entry* phpg_register_interface(const char *iface_name, zend_function_entry *iface_methods, GType gtype TSRMLS_DC);
 PHP_GTK_API zend_class_entry* phpg_create_class(GType gtype);
 PHP_GTK_API void phpg_init_object(void *pobj, zend_class_entry *ce);
 PHP_GTK_API zend_bool phpg_parse_ctor_props(GType gtype, zval **php_args, GParameter *params, guint *n_params, char **prop_names TSRMLS_DC);
@@ -503,7 +503,7 @@ void phpg_gboxed_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gboxed_register_custom(GType type, boxed_from_zval_t from_func, boxed_to_zval_t to_func);
 PHP_GTK_API phpg_gboxed_marshal_t* phpg_gboxed_lookup_custom(GType type);
 PHP_GTK_API void phpg_gboxed_new(zval **zobj, GType gtype, gpointer boxed, gboolean copy, gboolean own_ref TSRMLS_DC);
-PHP_GTK_API zend_class_entry* phpg_register_boxed(const char *class_name, function_entry *class_methods, prop_info_t *prop_info, create_object_func_t create_obj_func, GType gtype TSRMLS_DC);
+PHP_GTK_API zend_class_entry* phpg_register_boxed(const char *class_name, zend_function_entry *class_methods, prop_info_t *prop_info, create_object_func_t create_obj_func, GType gtype TSRMLS_DC);
 PHP_GTK_API zend_object_value phpg_create_gboxed(zend_class_entry *ce TSRMLS_DC);
 PHP_GTK_API zend_bool phpg_gboxed_check(zval *zobj, GType gtype, zend_bool full_check TSRMLS_DC);
 
@@ -519,7 +519,7 @@ static inline phpg_gboxed_t* phpg_gboxed_get(zval *zobj TSRMLS_DC)
 /* GPointer */
 void phpg_gpointer_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gpointer_new(zval **zobj, GType gtype, gpointer pointer TSRMLS_DC);
-PHP_GTK_API zend_class_entry* phpg_register_pointer(const char *class_name, function_entry *class_methods, create_object_func_t create_obj_func, GType gtype TSRMLS_DC);
+PHP_GTK_API zend_class_entry* phpg_register_pointer(const char *class_name, zend_function_entry *class_methods, create_object_func_t create_obj_func, GType gtype TSRMLS_DC);
 PHP_GTK_API zend_object_value phpg_create_gpointer(zend_class_entry *ce TSRMLS_DC);
 PHP_GTK_API zend_bool phpg_gpointer_check(zval *zobj, GType gtype, zend_bool full_check TSRMLS_DC);
 
