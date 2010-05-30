@@ -63,7 +63,7 @@ zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
             result_ptr = EG(uninitialized_zval_ptr);
         }
 	} else {
-		result_ptr = zend_get_std_object_handlers()->read_property(object, member, type, NULL TSRMLS_CC);
+		result_ptr = zend_get_std_object_handlers()->read_property(object, member, type, TSRMLS_CC);
 	}
 
 	if (member == &tmp_member) {
@@ -102,7 +102,7 @@ void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
             php_error(E_NOTICE, "PHP-GTK: ignoring write attempt to the read only property");
         }
     } else {
-		zend_get_std_object_handlers()->write_property(object, member, value, NULL TSRMLS_CC);
+		zend_get_std_object_handlers()->write_property(object, member, value, TSRMLS_CC);
     }
 
 	if (member == &tmp_member) {
@@ -144,7 +144,7 @@ zval **phpg_get_property_ptr_ptr(zval *object, zval *member TSRMLS_DC)
          */
         result = NULL;
     } else {
-        result = zend_get_std_object_handlers()->get_property_ptr_ptr(object, member, NULL TSRMLS_CC);
+        result = zend_get_std_object_handlers()->get_property_ptr_ptr(object, member, TSRMLS_CC);
     }
 
     if (member == &tmp_member) {
