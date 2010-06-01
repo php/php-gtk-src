@@ -243,7 +243,11 @@ static void phpg_signal_class_closure_marshal(GClosure     *closure,
         g_free(lc_method_name);
         
         if (Z_OBJ_HT_P(php_object)->get_method != NULL
+		#if PHP_VERSION_ID < 50399
             && (func = Z_OBJ_HT_P(php_object)->get_method(&php_object, method_name, method_name_len TSRMLS_CC)) != NULL) {
+		#else
+            && (func = Z_OBJ_HT_P(php_object)->get_method(&php_object, method_name, method_name_len, NULL TSRMLS_CC)) != NULL) {
+		#endif			
             if (func->type == ZEND_INTERNAL_FUNCTION
                 && ((zend_internal_function*)func)->handler == zend_std_call_user_call
                ) {

@@ -1162,7 +1162,11 @@ static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int
 		Z_SET_REFCOUNT_P(result, 0);
 		Z_UNSET_ISREF_P(result);
     } else {
-        result = zend_get_std_object_handlers()->read_property(object, member, type TSRMLS_CC);
+	#if PHP_VERSION_ID < 50399		
+        result = zend_get_std_object_handlers()->read_property(object, member, type, TSRMLS_CC);
+	#else
+        result = zend_get_std_object_handlers()->read_property(object, member, type, NULL TSRMLS_CC);
+	#endif
     }
 
 	if (member == &tmp_member) {
