@@ -69,7 +69,17 @@ class LineOutput {
             }
             $filename = substr($this->filename, 0, -2) . $string . '.c';
             $files .= ' ' . basename($filename);
-            file_put_contents($filename, $this->header . $this->body[$id]);
+            
+            $header = $this->header;
+            
+			// this is a cheeky fix for the link sysem failing on MacOS when these
+			// files get broken into multiple files.
+			// bob - 20100625			
+			if(PHP_OS == "Darwin" && $id > 0) {
+				$header = preg_replace('/^PHP_GTK_EXPORT_CE\(.+?\);$/ms','',$header);
+			}
+            
+            file_put_contents($filename, $header . $this->body[$id]);
         }
         file_put_contents('php://stdout', $files, FILE_APPEND);
     }
