@@ -78,6 +78,11 @@ PHP_NEW_EXTENSION(php_gtk2, main/php_gtk.c main/phpg_support.c main/phpg_gtype.c
 
 PHP_MODULES="$PHP_MODULES $PHP_GTK_MODULES"
 
+EXT_PHPGTK_HEADERS="main/php_gtk_api.h"
+ifdef([PHP_INSTALL_HEADERS], [
+	PHP_INSTALL_HEADERS(ext/php_gtk2, $EXT_PHPGTK_HEADERS)
+])
+
 PHP_ADD_SOURCES_X(/main, php_gtk_ext.c,, shared_objects_php_gtk2)
 PHP_ADD_MAKEFILE_FRAGMENT($abs_srcdir/main/Makefile.frag, $abs_srcdir/main, main)
 
