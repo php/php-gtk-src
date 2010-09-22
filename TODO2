@@ -81,3 +81,12 @@ Thoughts on reference counting and wrappers
   - in progress
 ]
 NTRVNRP - needs to return value not require parameter
+
+Misc
+~~~~
+
+The config files need to use the PHP_INSTALL_HEADERS macro, a la PECL/Cairo,
+so that other extensions can make use of it. For some reason, a setup similar
+to that of PECL/Cairo does not work - I'm guessing it has something to do with
+PHP-GTK's build system.
+
