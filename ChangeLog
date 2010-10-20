@@ -1,3 +1,7 @@
+2010-10-20  Mark Gregory Skilbeck <markskilbeck@php.net>
+    * ext/gtk+/gdk-2.8.overrides:
+      Gdk::cairo_set_source_color is now static
+
 2009-06-30  Elizabeth Marie Smith  <emsmith@elizabethmariesmith.com>
 
     * ext/gtk+/gdk-2.10.overrides:
