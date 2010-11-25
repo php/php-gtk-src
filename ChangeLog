@@ -1,7 +1,11 @@
 2010-11-25  Mark Gregory Skilbeck <markskilbeck@php.net>
+
 	* ext/gtk+/gdk-2.14.defs
 	  ext/gtk+/gdk-2.14-types.defs:
 	  Added defs for GDK 2.14
+
+	* ext/gtk+/gdk-2.16.defs:
+	  Added defs for GDK 2.16
 
 2010-10-20  Mark Gregory Skilbeck <markskilbeck@php.net>
     * ext/gtk+/gdk-2.8.overrides:
