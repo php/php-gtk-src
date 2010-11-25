@@ -1,3 +1,8 @@
+2010-11-25  Mark Gregory Skilbeck <markskilbeck@php.net>
+	* ext/gtk+/gdk-2.14.defs
+	  ext/gtk+/gdk-2.14-types.defs:
+	  Added defs for GDK 2.14
+
 2010-10-20  Mark Gregory Skilbeck <markskilbeck@php.net>
     * ext/gtk+/gdk-2.8.overrides:
       Gdk::cairo_set_source_color is now static
