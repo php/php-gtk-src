@@ -1,0 +1,6 @@
+(define-object AppLaunchContext
+  (in-module "Gdk")
+  (parent "GObject")
+  (c-name "GdkAppLaunchContext")
+  (gtype-id "GDK_TYPE_APP_LAUNCH_CONTEXT")
+)
