@@ -1,0 +1,26 @@
+%% include gdk-2.12.overrides
+
+%%
+add-arginfo Gdk cairo_reset_clip
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 2)
+    ZEND_ARG_OBJ_INFO(0, context,  CairoContext, 1)
+    ZEND_ARG_OBJ_INFO(0, drawable, GdkDrawable,  1)
+ZEND_END_ARG_INFO()
+
+%%
+override gdk_cairo_reset_clip
+PHP_METHOD
+{
+    zval *drawable_zval, *context_zval;
+    GdkDrawable *drawable;
+    cairo_context_object *context;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "OO", &context_zval, php_cairo_get_context_ce(),
+            &drawable_zval, gdkdrawable_ce))
+    {
+        return;
+    }
+
+    drawable = (GdkDrawable *) PHPG_GBOXED(drawable_zval);
+    gdk_cairo_reset_clip(context->context, drawable);
+}

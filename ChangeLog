@@ -1,3 +1,9 @@
+2010-11-26  Mark Gregory Skilbeck <markskilbeck@php.net>
+
+	* ext/gtk+/gdk-2.18.defs
+	  ext/gtk+/gdk-2.18.overrides:
+	  Added defs for GDK 2.18
+
 2010-11-25  Mark Gregory Skilbeck <markskilbeck@php.net>
 
 	* ext/gtk+/gdk-2.14.defs
