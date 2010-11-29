@@ -659,3 +659,51 @@ PHP_METHOD
 }
 
 %% }}}
+
+%% {{{ GtkPrintContext 
+
+%%
+override gtk_print_context_get_cairo_context
+
+PHP_METHOD
+{
+    cairo_context_object *context;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    object_init_ex(return_value, php_cairo_get_context_ce());
+    context = zend_object_store_get_object(return_value TSRMLS_CC);
+    context->context = gtk_print_context_get_cairo_context(GTK_PRINT_CONTEXT(PHPG_GOBJECT(this_ptr)));
+}
+
+%%
+add-arginfo GtkPrintContext set_cairo_context
+
+ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, ZEND_SEND_BY_VAL, ZEND_RETURN_VAL, 3)
+    ZEND_ARG_OBJ_INFO(0, context, CairoContext, 0)
+    ZEND_ARG_INFO(0, dpi_x)
+    ZEND_ARG_INFO(0, dpi_y)
+ZEND_END_ARG_INFO()
+
+%%
+override gtk_print_context_set_cairo_context
+
+PHP_METHOD
+{
+    double dpi_x, dpi_y;
+    zval *context_zval;
+    cairo_context_object *context;
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "Odd", &context_zval, php_cairo_get_context_ce(), 
+                            &dpi_x, &dpi_y))
+        return;
+    
+    context = zend_object_store_get_object(context_zval TSRMLS_CC);
+
+    gtk_print_context_set_cairo_context(GTK_PRINT_CONTEXT(PHPG_GOBJECT(this_ptr)),
+        context->context, dpi_x, dpi_y);
+}
+
+%% }}}
+
