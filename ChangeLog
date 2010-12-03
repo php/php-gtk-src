@@ -1,5 +1,10 @@
 2010-12-03  Mark Gregory Skilbeck
 
+	* ext/gtk+/gtk-2.20.defs
+	  ext/gtk+/gtk-2.20-types.defs
+	  ext/gtk+/gtk-2.20.overrides:
+	  Added defs and overrides for GTK 2.20
+	
 	* ext/gtk+/gdk-2.20.defs:
 	  Added defs for GDK 2.20
 

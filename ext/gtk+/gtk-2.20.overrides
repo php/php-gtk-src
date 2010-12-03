@@ -1,0 +1,49 @@
+%% include gtk-2.18.overrides
+
+%% {{{ GtkRange
+
+%%
+override gtk_range_get_slider_range
+PHP_METHOD
+{
+	gint slider_start, slider_end;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_range_get_slider_range(GTK_RANGE(PHPG_GOBJECT(this_ptr)), &slider_start,
+            &slider_end);
+
+    array_init(return_value);
+    add_next_index_long(return_value, slider_start);
+    add_next_index_long(return_value, slider_end);
+}
+
+%% }}}
+
+%% {{{ GtkPrintContext
+
+%%
+override gtk_print_context_get_hard_margins
+PHP_METHOD
+{
+    gdouble top, bottom, left, right;
+
+    NOT_STATIC_METHOD();
+
+    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), ""))
+        return;
+
+    gtk_print_context_get_hard_margins(GTK_PRINT_CONTEXT(PHPG_GOBJECT(this_ptr)),
+            &top, &bottom, &left, &right);
+
+    array_init(return_value);
+    add_next_index_long(return_value, top);
+    add_next_index_long(return_value, bottom);
+    add_next_index_long(return_value, left);
+    add_next_index_long(return_value, right);
+}
+
+%% }}}
