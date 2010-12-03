@@ -1,3 +1,8 @@
+2010-12-03  Mark Gregory Skilbeck
+
+	* ext/gtk+/gdk-2.20.defs:
+	  Added defs for GDK 2.20
+
 2010-11-26  Mark Gregory Skilbeck <markskilbeck@php.net>
 
 	* ext/gtk+/gdk-2.18.defs
