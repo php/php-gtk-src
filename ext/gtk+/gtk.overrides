@@ -2258,7 +2258,7 @@ ZEND_BEGIN_ARG_INFO_EX(ARGINFO_NAME, 0, 0, 0)
 ZEND_END_ARG_INFO();
 
 %%
-override gtk_combo_box_new
+override gtk_combo_box_entry_new
 PHP_METHOD
 {
 	zval *model;
