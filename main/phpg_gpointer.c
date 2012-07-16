@@ -66,7 +66,7 @@ PHP_GTK_API zend_object_value phpg_create_gpointer(zend_class_entry *ce TSRMLS_D
 	phpg_gpointer_t *object;
 
 	object = emalloc(sizeof(phpg_gpointer_t));
-	phpg_init_object(object, ce);
+	phpg_init_object(object, ce TSRMLS_CC);
 
 	object->pointer = NULL;
 	object->gtype = 0;

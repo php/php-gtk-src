@@ -323,7 +323,7 @@ void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference
 PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name, zend_function_entry *class_functions, zend_class_entry *parent, zend_uint ce_flags, prop_info_t *prop_info, create_object_func_t create_obj_func, GType gtype TSRMLS_DC);
 PHP_GTK_API zend_class_entry* phpg_register_interface(const char *iface_name, zend_function_entry *iface_methods, GType gtype TSRMLS_DC);
 PHP_GTK_API zend_class_entry* phpg_create_class(GType gtype);
-PHP_GTK_API void phpg_init_object(void *pobj, zend_class_entry *ce);
+PHP_GTK_API void phpg_init_object(void *pobj, zend_class_entry *ce TSRMLS_DC);
 PHP_GTK_API zend_bool phpg_parse_ctor_props(GType gtype, zval **php_args, GParameter *params, guint *n_params, char **prop_names TSRMLS_DC);
 
 PHP_GTK_API void phpg_register_prop_getter(zend_class_entry *ce, prop_getter_t getter);

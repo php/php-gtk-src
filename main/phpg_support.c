@@ -261,19 +261,23 @@ PHP_GTK_API void phpg_destroy_notify(gpointer data)
 /* }}} */
 
 /* {{{ phpg_init_object() */
-PHP_GTK_API void phpg_init_object(void *object, zend_class_entry *ce)
+PHP_GTK_API void phpg_init_object(void *object, zend_class_entry *ce TSRMLS_DC)
 {
 	zval *tmp;
 	zend_class_entry *prop_ce;
 	phpg_head_t *poh = (phpg_head_t *) object;
 
-	poh->zobj.ce = ce;
-	poh->zobj.guards = NULL;
+	zend_object_std_init(&poh->zobj, ce TSRMLS_CC);
+
 	poh->pi_hash = NULL;
 
-	ALLOC_HASHTABLE(poh->zobj.properties);
-	zend_hash_init(poh->zobj.properties, 0, NULL, ZVAL_PTR_DTOR, 0);
-	zend_hash_copy(poh->zobj.properties, &ce->default_properties, (copy_ctor_func_t) zval_add_ref, (void *) &tmp, sizeof(zval *));
+#if PHP_VERSION_ID < 50399	
+	zend_hash_copy(poh->zobj.properties, &(ce->default_properties),
+	              (copy_ctor_func_t)zval_add_ref, (void *)(&tmp),
+	               sizeof(zval *));
+#else
+	object_properties_init(&(poh->zobj), ce);
+#endif
 
 	/*
 	 * Find the nearest internal parent class and use its property handler
@@ -300,7 +304,7 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 {
 	zend_class_entry ce, *real_ce;
 	HashTable pi_hash;
-    HashTable *parent_pi_hash = NULL;
+	HashTable *parent_pi_hash = NULL;
 	prop_info_t *pi;
 
 	if (!phpg_class_key) {
@@ -315,36 +319,36 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 
 	real_ce = zend_register_internal_class_ex(&ce, parent, NULL TSRMLS_CC);
 
-    real_ce->ce_flags = ce_flags;
+	real_ce->ce_flags = ce_flags;
 	if (create_obj_func) {
 		real_ce->create_object = create_obj_func;
 	} else {
 		real_ce->create_object = phpg_create_gobject;
 	}
 
-    zend_hash_init(&pi_hash, 1, NULL, NULL, 1);
-    if (prop_info) {
-        pi = prop_info;
-        /*
-         * Only register properties with reader functions.
-         */
-        while (pi->name && pi->read) {
-            zend_hash_update(&pi_hash, (char *)pi->name, strlen(pi->name)+1, pi, sizeof(prop_info_t), NULL);
-            pi++;
-        }
-    }
+	zend_hash_init(&pi_hash, 1, NULL, NULL, 1);
+	if (prop_info) {
+		pi = prop_info;
+		/*
+		 * Only register properties with reader functions.
+		 */
+		while (pi->name && pi->read) {
+			zend_hash_update(&pi_hash, (char *)pi->name, strlen(pi->name)+1, pi, sizeof(prop_info_t), NULL);
+			pi++;
+		}
+	}
 
-    /*
-     * Merge in parent's properties.
-     */
-    if (parent && zend_hash_find(&phpg_prop_info, parent->name, parent->name_length+1, (void **)&parent_pi_hash) == SUCCESS) {
-        zend_hash_merge(&pi_hash, parent_pi_hash, NULL, NULL, sizeof(prop_info_t), 0);
-    }
-    zend_hash_add(&phpg_prop_info, ce.name, ce.name_length+1, &pi_hash, sizeof(HashTable), NULL);
+	/*
+	 * Merge in parent's properties.
+	 */
+	if (parent && zend_hash_find(&phpg_prop_info, parent->name, parent->name_length+1, (void **)&parent_pi_hash) == SUCCESS) {
+		zend_hash_merge(&pi_hash, parent_pi_hash, NULL, NULL, sizeof(prop_info_t), 0);
+	}
+	zend_hash_add(&phpg_prop_info, ce.name, ce.name_length+1, &pi_hash, sizeof(HashTable), NULL);
 
-    if (gtype) {
-        g_type_set_qdata(gtype, phpg_class_key, real_ce);
-    }
+	if (gtype) {
+		g_type_set_qdata(gtype, phpg_class_key, real_ce);
+	}
 
 	return real_ce;
 }

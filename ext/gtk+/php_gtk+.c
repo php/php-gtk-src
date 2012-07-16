@@ -36,7 +36,7 @@ extern zend_class_entry *gdk_ce;
 void phpg_gdk_register_keysyms();
 
 /* TODO check pygtk version */
-static void init_gtk(void)
+static void init_gtk(TSRMLS_C)
 {
 	HashTable *symbol_table;
 	zval **z_argv = NULL, **z_argc = NULL, **entry;
@@ -44,7 +44,6 @@ static void init_gtk(void)
 	char **argv = NULL;
 	int argc, i;
 	zend_bool no_argc = 0;
-	TSRMLS_FETCH();
 
 	/*
 	 * Grab the argc/argv values from $_SERVER array.
@@ -206,16 +205,16 @@ PHP_GTK_XINIT_FUNCTION(gtk_plus)
 {
 	//register_exception(TSRMLS_C);
 
-	init_gtk();
-	phpg_gtk_register_classes();
-	phpg_gdk_register_classes();
-	phpg_atk_register_classes();
-	phpg_pango_register_classes();
+	init_gtk(TSRMLS_C);
+	phpg_gtk_register_classes(TSRMLS_C);
+	phpg_gdk_register_classes(TSRMLS_C);
+	phpg_atk_register_classes(TSRMLS_C);
+	phpg_pango_register_classes(TSRMLS_C);
 
-	phpg_atk_register_constants("ATK_");
-	phpg_pango_register_constants("PANGO_");
-	phpg_gdk_register_constants("GDK_");
-	phpg_gtk_register_constants("GTK_");
+	phpg_atk_register_constants("ATK_" TSRMLS_CC);
+	phpg_pango_register_constants("PANGO_" TSRMLS_CC);
+	phpg_gdk_register_constants("GDK_" TSRMLS_CC);
+	phpg_gtk_register_constants("GTK_" TSRMLS_CC);
 
 	phpg_register_stock_constants();
 	phpg_gdk_register_keysyms();

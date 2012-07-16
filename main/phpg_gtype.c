@@ -67,7 +67,7 @@ static zend_object_value gtype_create_object(zend_class_entry *ce TSRMLS_DC)
 	phpg_gtype_t *object;
 
 	object = emalloc(sizeof(phpg_gtype_t));
-	phpg_init_object(object, ce);
+	phpg_init_object(object, ce TSRMLS_CC);
 
 	object->type = 0;
 

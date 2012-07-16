@@ -747,7 +747,7 @@ static zend_object_value phpg_modelrow_create_object(zend_class_entry *ce TSRMLS
 
 	object = emalloc(sizeof(phpg_modelrow_t));
     memset(object, 0, sizeof(phpg_modelrow_t));
-	phpg_init_object(object, ce);
+	phpg_init_object(object, ce TSRMLS_CC);
 
 	zov.handlers = &gtktreemodelrow_handlers;
 	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_modelrow_free_object_storage, NULL TSRMLS_CC);
@@ -812,7 +812,7 @@ static zend_object_value phpg_modelrowiter_create_object(zend_class_entry *ce TS
 
 	object = emalloc(sizeof(phpg_modelrowiter_t));
     memset(object, 0, sizeof(phpg_modelrowiter_t));
-	phpg_init_object(object, ce);
+	phpg_init_object(object, ce TSRMLS_CC);
 
 	zov.handlers = &php_gtk_handlers;
 	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_modelrowiter_free_object_storage, NULL TSRMLS_CC);

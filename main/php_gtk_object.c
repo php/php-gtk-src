@@ -95,7 +95,7 @@ static zend_object_value phpg_create_object(zend_class_entry *ce TSRMLS_DC)
 	prop_desc_t *prop_desc;
 
 	object = emalloc(sizeof(phpg_gobject_t));
-	phpg_init_object(object, ce);
+	phpg_init_object(object, ce TSRMLS_CC);
 	object->obj  = NULL;
 	object->dtor = NULL;
 
