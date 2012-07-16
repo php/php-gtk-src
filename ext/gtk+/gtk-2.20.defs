@@ -88,7 +88,7 @@
   (return-type "none")
 )
 
-(define-method set_style
+(define-method set_toolbar_style
   (of-object "GtkToolPalette")
   (c-name "gtk_tool_palette_set_style")
   (return-type "none")
@@ -97,7 +97,7 @@
   )
 )
 
-(define-method unset_style
+(define-method unset_toolbar_style
   (of-object "GtkToolPalette")
   (c-name "gtk_tool_palette_unset_style")
   (return-type "none")
