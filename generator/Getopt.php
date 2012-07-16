@@ -62,7 +62,7 @@ class Console_Getopt {
      * @access public
      *
      */
-    function getopt($args, $short_options, $long_options = null)
+    static public function getopt($args, $short_options, $long_options = null)
     {
         $opts     = array();
         $non_opts = array();
@@ -100,7 +100,7 @@ class Console_Getopt {
      * @access private
      *
      */
-    function _parseShortOption($arg, $short_options, &$opts, &$args)
+    static private function _parseShortOption($arg, $short_options, &$opts, &$args)
     {
         for ($i = 0; $i < strlen($arg); $i++) {
             $opt = $arg{$i};
@@ -142,7 +142,7 @@ class Console_Getopt {
      * @access private
      *
      */
-    function _parseLongOption($arg, $long_options, &$opts, &$args)
+    static private function _parseLongOption($arg, $long_options, &$opts, &$args)
     {
         list($opt, $opt_arg) = explode('=', $arg);
         $opt_len = strlen($opt);
@@ -184,5 +184,3 @@ class Console_Getopt {
         return false;
     }
 }
-
-?>

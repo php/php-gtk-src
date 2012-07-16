@@ -607,8 +607,8 @@ class Generator {
         $total = $this->fp->get_total();
         $current = 0;
         while($current < $total) {
-                $register_classes .= '	phpg_' . $this->lprefix . $current . "_register_classes();\n";
-                $this->fp->write_header('	void phpg_' . $this->lprefix . $current . "_register_classes(void);\n");
+                $register_classes .= '	phpg_' . $this->lprefix . $current . "_register_classes(TSRMLS_C);\n";
+                $this->fp->write_header('void phpg_' . $this->lprefix . $current . "_register_classes(TSRMLS_D);\n");
                 $current++;
         }
         /* write the "meta" register class */
@@ -921,7 +921,7 @@ class Generator {
         
         $function_arginfos = '';
         
-        $object = null;
+        $object = new stdclass;
         $object->in_module = $this->prefix;
         $object->c_name = $this->prefix;
 
@@ -1189,6 +1189,7 @@ class Generator {
     function getReflectionFuncName($method, $class, $det_method_name = null)
     {
         if ($method === null) {
+            $method = new stdclass;
             $method->name = $det_method_name;
         }
         return 'arginfo_' . strtolower($class->in_module) . '_' . strtolower($class->c_name) . '_'. $method->name;
