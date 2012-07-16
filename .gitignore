@@ -1,0 +1,55 @@
+# OS Specific
+*~
+*.swp
+
+# Object files
+*.o
+*.lo
+
+# Libraries
+*.lib
+*.la
+*.a
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+
+# Executables
+*.exe
+*.out
+
+# Makefiles
+Makefile*
+
+# autotools
+config.*
+configure
+configure.*
+acinclude.m4
+aclocal.m4
+autom4te.cache/
+.deps
+.libs/
+mkinstalldirs
+missing
+libtool
+install-sh
+ltmain.sh
+build/
+!config.m4
+
+# Test specific Ignores
+tests/*.diff
+tests/*.out
+tests/*.php
+tests/*.exp
+tests/*.log
+tests/*.sh
+run-tests.php
+
+# GTK generator ignores
+*.defs.cache
+gen_*
+build2/generated_lists
+main/php_gtk_ext.c
