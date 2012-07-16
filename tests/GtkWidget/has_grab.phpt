@@ -8,6 +8,7 @@ if(!method_exists('GtkWidget', 'has_grab')) die('skip - GtkWidget->has_grab not 
 --FILE--
 <?php
 $window = new GtkWindow();
+$window->realize();
 var_dump($window->has_grab());
 
 $window->grab_add();
