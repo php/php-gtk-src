@@ -40,12 +40,7 @@ static inline void phpg_free_gobject_storage(phpg_gobject_t *object, zend_object
 {
     GSList *tmp;
 
-    zend_hash_destroy(object->zobj.properties);
-    FREE_HASHTABLE(object->zobj.properties);
-    if (object->zobj.guards) {
-        zend_hash_destroy(object->zobj.guards);
-        FREE_HASHTABLE(object->zobj.guards);     
-    }
+    zend_object_std_dtor(&object->zobj TSRMLS_CC);
 
     /*
      * Remove cached handle information, since the object wrapper is going away.

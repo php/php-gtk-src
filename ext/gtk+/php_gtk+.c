@@ -36,7 +36,7 @@ extern zend_class_entry *gdk_ce;
 void phpg_gdk_register_keysyms();
 
 /* TODO check pygtk version */
-static void init_gtk(TSRMLS_C)
+static void init_gtk(TSRMLS_D)
 {
 	HashTable *symbol_table;
 	zval **z_argv = NULL, **z_argc = NULL, **entry;

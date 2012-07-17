@@ -730,12 +730,7 @@ static prop_info_t gtktreemodelrow_prop_info[] = {
 
 static void phpg_modelrow_free_object_storage(phpg_modelrow_t *object TSRMLS_DC)
 {
-	zend_hash_destroy(object->zobj.properties);
-	FREE_HASHTABLE(object->zobj.properties);
-    if (object->zobj.guards) {
-        zend_hash_destroy(object->zobj.guards);
-        FREE_HASHTABLE(object->zobj.guards);     
-    }
+	zend_object_std_dtor(&object->zobj TSRMLS_CC);
     g_object_unref(object->model);
 	efree(object);
 }
@@ -792,12 +787,7 @@ static void phpg_modelrowiter_new(zval **zobj, GtkTreeModel *model, GtkTreeIter 
 
 static void phpg_modelrowiter_free_object_storage(phpg_modelrowiter_t *object TSRMLS_DC)
 {
-	zend_hash_destroy(object->zobj.properties);
-	FREE_HASHTABLE(object->zobj.properties);
-    if (object->zobj.guards) {
-        zend_hash_destroy(object->zobj.guards);
-        FREE_HASHTABLE(object->zobj.guards);     
-    }
+	zend_object_std_dtor(&object->zobj TSRMLS_CC);
     if (object->current) {
         zval_ptr_dtor(&object->current);
     }
