@@ -1419,7 +1419,7 @@ static PHP_METHOD(GObject, register_type)
     zend_declare_class_constant_long(class, "gtype", sizeof("gtype")-1, new_type TSRMLS_CC);
 
     zend_update_class_constants(class TSRMLS_CC);
-
+#if PHP_VERSION_ID < 50399
     /* register properties */
     if (zend_hash_find(&class->default_properties, "__gproperties", sizeof("__gproperties"), (void**)&prop_decls) == SUCCESS) {
         if (Z_TYPE_PP(prop_decls) != IS_ARRAY) {
@@ -1455,7 +1455,7 @@ static PHP_METHOD(GObject, register_type)
         }
         zend_hash_del(&class->default_properties, "__gsignals", sizeof("__gsignals"));
     }
-    
+#endif
     if (free_name) {
         g_free(type_name);
     }

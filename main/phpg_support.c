@@ -271,7 +271,7 @@ PHP_GTK_API void phpg_init_object(void *object, zend_class_entry *ce TSRMLS_DC)
 
 	poh->pi_hash = NULL;
 
-#if PHP_VERSION_ID < 50399	
+#if PHP_VERSION_ID < 50399
 	zend_hash_copy(poh->zobj.properties, &(ce->default_properties),
 	              (copy_ctor_func_t)zval_add_ref, (void *)(&tmp),
 	               sizeof(zval *));
@@ -288,7 +288,7 @@ PHP_GTK_API void phpg_init_object(void *object, zend_class_entry *ce TSRMLS_DC)
 		prop_ce = prop_ce->parent;
 	}
 
-    zend_hash_find(&phpg_prop_info, prop_ce->name, prop_ce->name_length+1, (void **) &poh->pi_hash);
+    //zend_hash_find(&phpg_prop_info, prop_ce->name, prop_ce->name_length+1, (void **) &poh->pi_hash);
 }
 /* }}} */
 
@@ -311,11 +311,7 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 		phpg_class_key = g_quark_from_static_string(phpg_class_id);
 	}
 
-	memset(&ce, 0, sizeof(ce));
-
-	ce.name = strdup(class_name);
-	ce.name_length = strlen(class_name);
-	ce.builtin_functions = class_methods;
+	INIT_CLASS_ENTRY_EX(ce, strdup(class_name), strlen(class_name), class_methods);
 
 	real_ce = zend_register_internal_class_ex(&ce, parent, NULL TSRMLS_CC);
 
@@ -365,10 +361,7 @@ PHP_GTK_API zend_class_entry* phpg_register_interface(const char *iface_name,
 		phpg_class_key = g_quark_from_static_string(phpg_class_id);
 	}
 
-    memset(&ce, 0, sizeof(ce));
-    ce.name = strdup(iface_name);
-    ce.name_length = strlen(iface_name);
-    ce.builtin_functions = iface_methods;
+	INIT_CLASS_ENTRY_EX(ce, strdup(iface_name), strlen(iface_name), iface_methods);
 
     real_ce = zend_register_internal_interface(&ce TSRMLS_CC);
 
