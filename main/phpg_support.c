@@ -178,9 +178,11 @@ HashTable* phpg_get_properties(zval *object TSRMLS_DC)
 
 	poh = (phpg_head_t *) zend_object_store_get_object(object TSRMLS_CC);
 
+#if PHP_VERSION_ID > 50399
 	if (!poh->zobj.properties) {
 		rebuild_object_properties(&poh->zobj);
 	}
+#endif
 
 	if (poh->pi_hash) {
 		pi_hash = poh->pi_hash;
@@ -295,7 +297,7 @@ PHP_GTK_API void phpg_init_object(void *object, zend_class_entry *ce TSRMLS_DC)
 		prop_ce = prop_ce->parent;
 	}
 
-    //zend_hash_find(&phpg_prop_info, prop_ce->name, prop_ce->name_length+1, (void **) &poh->pi_hash);
+	zend_hash_find(&phpg_prop_info, prop_ce->name, prop_ce->name_length+1, (void **) &poh->pi_hash);
 }
 /* }}} */
 
