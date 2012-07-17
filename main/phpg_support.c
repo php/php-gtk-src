@@ -177,19 +177,26 @@ HashTable* phpg_get_properties(zval *object TSRMLS_DC)
 	int ret;
 
 	poh = (phpg_head_t *) zend_object_store_get_object(object TSRMLS_CC);
-    pi_hash = poh->pi_hash;
-    for (zend_hash_internal_pointer_reset(pi_hash);
-         zend_hash_get_current_data(pi_hash, (void **)&pi) == SUCCESS;
-         zend_hash_move_forward(pi_hash)) {
 
-        ret = pi->read(poh, &result TSRMLS_CC);
-        if (ret == SUCCESS) {
-            ALLOC_ZVAL(result_ptr);
-            *result_ptr = result;
-            INIT_PZVAL(result_ptr);
-            zend_hash_update(poh->zobj.properties, (char *)pi->name, strlen(pi->name)+1, &result_ptr, sizeof(zval *), NULL);
-        }
-    }
+	if (!poh->zobj.properties) {
+		rebuild_object_properties(&poh->zobj);
+	}
+
+	if (poh->pi_hash) {
+		pi_hash = poh->pi_hash;
+		for (zend_hash_internal_pointer_reset(pi_hash);
+			 zend_hash_get_current_data(pi_hash, (void **)&pi) == SUCCESS;
+			 zend_hash_move_forward(pi_hash)) {
+	
+			ret = pi->read(poh, &result TSRMLS_CC);
+			if (ret == SUCCESS) {
+				ALLOC_ZVAL(result_ptr);
+				*result_ptr = result;
+				INIT_PZVAL(result_ptr);
+				zend_hash_update(poh->zobj.properties, (char *)pi->name, strlen(pi->name)+1, &result_ptr, sizeof(zval *), NULL);
+			}
+		}
+	}
 
 	return poh->zobj.properties;
 }
