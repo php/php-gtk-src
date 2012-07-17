@@ -740,8 +740,7 @@ static zend_object_value phpg_modelrow_create_object(zend_class_entry *ce TSRMLS
 	zend_object_value zov;
 	phpg_modelrow_t *object;
 
-	object = emalloc(sizeof(phpg_modelrow_t));
-    memset(object, 0, sizeof(phpg_modelrow_t));
+	object = ecalloc(1, sizeof(phpg_modelrow_t));
 	phpg_init_object(object, ce TSRMLS_CC);
 
 	zov.handlers = &gtktreemodelrow_handlers;
@@ -800,8 +799,8 @@ static zend_object_value phpg_modelrowiter_create_object(zend_class_entry *ce TS
 	zend_object_value zov;
 	phpg_modelrowiter_t *object;
 
-	object = emalloc(sizeof(phpg_modelrowiter_t));
-    memset(object, 0, sizeof(phpg_modelrowiter_t));
+	object = ecalloc(1, sizeof(phpg_modelrowiter_t));
+
 	phpg_init_object(object, ce TSRMLS_CC);
 
 	zov.handlers = &php_gtk_handlers;
