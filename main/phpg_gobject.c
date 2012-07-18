@@ -30,6 +30,7 @@
 static GQuark gobject_wrapper_handle_key    = 0;
 static GQuark gobject_wrapper_handlers_key  = 0;
 static GQuark gobject_wrapper_owned_key     = 0;
+static GQuark gobject_wrapper_zts_key     = 0;
 
 PHP_GTK_API zend_object_handlers phpg_gobject_handlers;
 
@@ -165,6 +166,9 @@ PHP_GTK_API void phpg_gobject_set_wrapper(zval *zobj, GObject *obj TSRMLS_DC)
     pobj->is_owned = FALSE;
     g_object_set_qdata(pobj->obj, gobject_wrapper_handle_key, (void*)Z_OBJ_HANDLE_P(zobj));
     g_object_set_qdata(pobj->obj, gobject_wrapper_handlers_key, (void*)Z_OBJ_HT_P(zobj));
+#ifdef ZTS
+    g_object_set_qdata(pobj->obj, gobject_wrapper_zts_key, (void*)TSRMLS_C);
+#endif
 }
 /* }}} */
 
@@ -221,6 +225,9 @@ PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC)
         pobj->is_owned = FALSE;
         g_object_set_qdata(obj, gobject_wrapper_handle_key, (void*)Z_OBJ_HANDLE_PP(zobj));
         g_object_set_qdata(obj, gobject_wrapper_handlers_key, (void*)Z_OBJ_HT_PP(zobj));
+#ifdef ZTS
+        g_object_set_qdata(obj, gobject_wrapper_zts_key, (void*)TSRMLS_C);
+#endif
     }
 }
 /* }}} */
@@ -936,7 +943,10 @@ static void phpg_object_get_property(GObject *object, guint property_id, GValue 
     zval *php_pspec = NULL;
     zval *retval = NULL;
 
-	TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = g_object_get_qdata(object, gobject_wrapper_zts_key);
+#endif
+
     phpg_gobject_new(&php_object, object TSRMLS_CC);
     phpg_paramspec_new(&php_pspec, pspec TSRMLS_CC);
 
@@ -962,7 +972,10 @@ static void phpg_object_set_property(GObject *object, guint property_id, const G
     zval *php_value = NULL;
     zval *retval = NULL;
 
-	TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = g_object_get_qdata(object, gobject_wrapper_zts_key);
+#endif
+    
     if (phpg_gvalue_to_zval(value, &php_value, TRUE, TRUE TSRMLS_CC) == FAILURE) {
         php_error(E_WARNING, "phpg_object_set_property: could not convert GValue to PHP value");
         zval_ptr_dtor(&php_value);
@@ -988,10 +1001,9 @@ static void phpg_object_class_init(GObjectClass *class, zend_class_entry *ce)
     class->set_property = phpg_object_set_property;
 }
 
-static GParamSpec* phpg_create_property(const char *prop_name, GType prop_type, const char *nick, const char *blurb, zval *type_args, GParamFlags flags)
+static GParamSpec* phpg_create_property(const char *prop_name, GType prop_type, const char *nick, const char *blurb, zval *type_args, GParamFlags flags TSRMLS_DC)
 {
     GParamSpec *pspec = NULL;
-	TSRMLS_FETCH();
 
     switch (G_TYPE_FUNDAMENTAL(prop_type)) {
         case G_TYPE_CHAR:
@@ -1152,7 +1164,7 @@ static GParamSpec* phpg_create_property(const char *prop_name, GType prop_type, 
     return pspec;
 }
 
-static int phpg_register_properties(GType type, zval *properties)
+static int phpg_register_properties(GType type, zval *properties TSRMLS_DC)
 {
     GObjectClass *oclass;
     GParamFlags flags;
@@ -1167,8 +1179,6 @@ static int phpg_register_properties(GType type, zval *properties)
     zval **data;
     zval *type_args = NULL;
     zval *php_prop_type;
-
-	TSRMLS_FETCH();
 
     oclass = g_type_class_ref(type);
     if (!oclass) {
@@ -1217,7 +1227,7 @@ static int phpg_register_properties(GType type, zval *properties)
             break;
         }
         
-        pspec = phpg_create_property(str_key, prop_type, nick, blurb, type_args, flags);
+        pspec = phpg_create_property(str_key, prop_type, nick, blurb, type_args, flags TSRMLS_CC);
         if (pspec) {
             g_object_class_install_property(oclass, 1, pspec);
         } else {
@@ -1434,7 +1444,7 @@ static PHP_METHOD(GObject, register_type)
 			}
 			return;
 		}
-		if (phpg_register_properties(new_type, *prop_decls) == FAILURE) {
+		if (phpg_register_properties(new_type, *prop_decls TSRMLS_CC) == FAILURE) {
 			if (free_name) {
 				g_free(type_name);
 			}
@@ -1475,7 +1485,7 @@ static PHP_METHOD(GObject, register_type)
 				}
 				return;
 			}
-			if (phpg_register_properties(new_type, property) == FAILURE) {
+			if (phpg_register_properties(new_type, property TSRMLS_CC) == FAILURE) {
 				if (free_name) {
 					g_free(type_name);
 				}
@@ -1717,6 +1727,9 @@ void phpg_gobject_register_self(TSRMLS_D)
     gobject_wrapper_handle_key   = g_quark_from_static_string("phpg-wrapper-handle");
     gobject_wrapper_handlers_key = g_quark_from_static_string("phpg-wrapper-handlers");
     gobject_wrapper_owned_key    = g_quark_from_static_string("phpg-wrapper-owned");
+#ifdef ZTS
+    gobject_wrapper_zts_key    = g_quark_from_static_string("phpg-wrapper-zts");
+#endif
 
     phpg_gobject_handlers = php_gtk_handlers;
     phpg_gobject_handlers.del_ref = phpg_gobject_del_ref;

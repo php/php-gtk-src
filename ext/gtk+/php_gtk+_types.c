@@ -1334,11 +1334,10 @@ static function_entry php_gdk_event_functions[] = {
 	{NULL, NULL, NULL}
 };
 
-zval *php_gdk_event_new(GdkEvent *event)
+zval *php_gdk_event_new(GdkEvent *event TSRMLS_DC)
 {
 	zval *result;
 	zval *value;
-	TSRMLS_FETCH();
 
 	MAKE_STD_ZVAL(result);
 

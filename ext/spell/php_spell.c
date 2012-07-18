@@ -91,18 +91,14 @@ static function_entry gtkspell_methods[] = {
 	{ NULL, NULL, NULL }
 };
 
-void phpg_gtkspell_register_classes(void)
+void phpg_gtkspell_register_classes(TSRMLS_D)
 {
-	TSRMLS_FETCH();
 
 	gtkspell_ce = phpg_register_class("GtkSpell", gtkspell_methods, gobject_ce, 0, NULL, NULL, 0 TSRMLS_CC);
 }
 
 void phpg_gtkspell_register_constants(const char *strip_prefix)
 {
-    TSRMLS_FETCH();
-
-
     /* register gtype constants for all classes */
 
 	phpg_register_int_constant(gtkspell_ce, "gtype", sizeof("gtype")-1, 0);
@@ -118,7 +114,7 @@ PHP_GTK_GET_EXTENSION(spell)
 
 PHP_GTK_XINIT_FUNCTION(spell)
 {
-	phpg_gtkspell_register_classes();
+	phpg_gtkspell_register_classes(TSRMLS_C);
     phpg_gtkspell_register_constants("SPELL_");
 
 	return SUCCESS;
