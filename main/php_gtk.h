@@ -70,6 +70,13 @@
 # define PHPGTK_ZEND_IS_CALLABLE
 #endif
 
+/* read_property, write_property and get_property_ptr_ptr all have literal at the end now */
+#if PHP_VERSION_ID < 50399
+# define PHPGTK_PROPERTY_END TSRMLS_DC
+#else
+# define PHPGTK_PROPERTY_END , const zend_literal *key TSRMLS_DC
+#endif
+
 #if HAVE_PHP_GTK
 
 #include "zend_objects_API.h"
@@ -293,9 +300,9 @@ extern PHP_GTK_API zend_object_handlers phpg_gobject_handlers;
 int php_gtk_startup_all_extensions(int module_number);
 int php_gtk_startup_extensions(php_gtk_ext_entry **ext, int ext_count, int module_number);
 
-zval *phpg_read_property(zval *object, zval *member, int type TSRMLS_DC);
-void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC);
-zval **phpg_get_property_ptr_ptr(zval *object, zval *member TSRMLS_DC);
+zval *phpg_read_property(zval *object, zval *member, int type PHPGTK_PROPERTY_END);
+void phpg_write_property(zval *object, zval *member, zval *value PHPGTK_PROPERTY_END);
+zval **phpg_get_property_ptr_ptr(zval *object, zval *member PHPGTK_PROPERTY_END);
 HashTable* phpg_get_properties(zval *object TSRMLS_DC);
 PHP_GTK_API void phpg_get_properties_helper(zval *object, HashTable *ht TSRMLS_DC, ...);
 
@@ -552,7 +559,7 @@ static inline phpg_paramspec_t* phpg_gparamspec_get(zval *zobj TSRMLS_DC)
 /* Closures */
 PHP_GTK_API GClosure* phpg_closure_new(zval *callback, zval *user_args, int connect_type, zval *replace_object TSRMLS_DC);
 PHP_GTK_API void phpg_watch_closure(zval *obj, GClosure *closure TSRMLS_DC);
-PHP_GTK_API GClosure* phpg_get_signal_class_closure();
+PHP_GTK_API GClosure* phpg_get_signal_class_closure(TSRMLS_D);
 
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gtype_ce);
 PHP_GTK_API extern PHP_GTK_EXPORT_CE(gobject_ce);

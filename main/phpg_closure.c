@@ -227,8 +227,7 @@ static void phpg_signal_class_closure_marshal(GClosure     *closure,
 	phpg_gboxed_t *boxed_item;
 	int i, k;
 #ifdef ZTS
-	phpg_closure_t *phpg_closure = (phpg_closure_t *)closure;
-	TSRMLS_D = phpg_closure->TSRMLS_C;
+	TSRMLS_D = closure->data;
 #endif;
 
 	phpg_return_if_fail(invocation_hint != NULL);
@@ -260,7 +259,7 @@ static void phpg_signal_class_closure_marshal(GClosure     *closure,
 			&& (func = Z_OBJ_HT_P(php_object)->get_method(&php_object, method_name, method_name_len TSRMLS_CC)) != NULL) {
 		#else
 			&& (func = Z_OBJ_HT_P(php_object)->get_method(&php_object, method_name, method_name_len, NULL TSRMLS_CC)) != NULL) {
-		#endif			
+		#endif
 			if (func->type == ZEND_INTERNAL_FUNCTION
 				&& ((zend_internal_function*)func)->handler == zend_std_call_user_call
 			   ) {
@@ -324,18 +323,22 @@ err_class_closure_marshal:
 }
 
 
-PHP_GTK_API GClosure* phpg_get_signal_class_closure()
+PHP_GTK_API GClosure* phpg_get_signal_class_closure(TSRMLS_D)
 {
 	static GClosure *closure = NULL;
-	
+
 	if (closure == NULL) {
+#ifdef ZTS
+		closure = g_closure_new_simple(sizeof(GClosure) + sizeof(TSRMLS_C), TSRMLS_C);
+#else
 		closure = g_closure_new_simple(sizeof(GClosure), NULL);
+#endif
 		g_closure_set_marshal(closure, phpg_signal_class_closure_marshal);
-	
+
 		g_closure_ref(closure);
 		g_closure_sink(closure);
 	}
-	
+
 	return closure;
 }
 

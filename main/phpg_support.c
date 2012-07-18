@@ -27,7 +27,7 @@
  */
 
 /* {{{ phpg_read_property() */
-zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
+zval* phpg_read_property(zval *object, zval *member, int type PHPGTK_PROPERTY_END)
 {
 	phpg_head_t *poh = NULL;
 	zval tmp_member;
@@ -79,7 +79,7 @@ zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 /* }}} */
 
 /* {{{ phpg_write_property() */
-void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
+void phpg_write_property(zval *object, zval *member, zval *value PHPGTK_PROPERTY_END)
 {
 	phpg_head_t *poh = NULL;
 	zval tmp_member;
@@ -120,7 +120,7 @@ void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
 /* }}} */
 
 /* {{{ phpg_get_property_ptr_ptr() */
-zval **phpg_get_property_ptr_ptr(zval *object, zval *member TSRMLS_DC)
+zval **phpg_get_property_ptr_ptr(zval *object, zval *member PHPGTK_PROPERTY_END)
 {
     phpg_head_t *poh = NULL;
     zval tmp_member;
@@ -248,7 +248,8 @@ PHP_GTK_API void phpg_get_properties_helper(zval *object, HashTable *ht TSRMLS_D
 #endif
     while ((prop = va_arg(va, char *)) != NULL) {
         prop_len = va_arg(va, int);
-        result = zend_read_property(ce, object, prop, prop_len, 1 TSRMLS_CC);
+		result = zend_read_property(ce, object, prop, prop_len, 1 TSRMLS_CC);
+
         /*
          * zend_read_property will return a temporary zval, so we need to
          * initialize it in order to keep it around.
