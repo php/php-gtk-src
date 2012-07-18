@@ -535,7 +535,7 @@ PHP_METHOD
         }
     }
 
-    wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
+    wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr TSRMLS_CC), NULL);
     if(!wrapped_obj) { PHPG_THROW_CONSTRUCT_EXCEPTION(GtkRecentChooserDialog); }    
 
     if(buttons) {

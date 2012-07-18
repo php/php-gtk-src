@@ -153,9 +153,9 @@ static PHP_METHOD(%(class), %(name))
     GParameter params[%(n_params)];
 	zval *php_args[%(n_args)] = { NULL, };
 	char *prop_names[] = { %(props) NULL };
-	GType gtype = phpg_gtype_from_zval(this_ptr);
     GObject *wrapped_obj;
     guint i, n_params;
+	GType gtype = phpg_gtype_from_zval(this_ptr TSRMLS_CC);
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));

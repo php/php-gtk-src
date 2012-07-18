@@ -261,11 +261,11 @@ zend_bool phpg_gobject_construct(zval *this_ptr, GType object_type, zval *props 
 
     if (G_TYPE_IS_ABSTRACT(object_type)) {
         snprintf(buf, 128, "Cannot instantiate abstract class %s", g_type_name(object_type));
-        PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_construct_exception, buf, 0 TSRMLS_CC);
+        PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_construct_exception, buf, 0);
     }
 
     if ((klass = g_type_class_ref(object_type)) == NULL) {
-        PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_construct_exception, "Could not get a reference to type class", 0 TSRMLS_CC);
+        PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_construct_exception, "Could not get a reference to type class", 0);
     }
 
     if (props) {

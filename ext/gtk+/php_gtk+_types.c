@@ -1414,7 +1414,7 @@ zval *php_gdk_event_new(GdkEvent *event)
 		case GDK_ENTER_NOTIFY:
 		case GDK_LEAVE_NOTIFY:
 			if (event->crossing.subwindow) {
-				value = php_gdk_window_new(event->crossing.subwindow TSRMLS_CC));
+				value = php_gdk_window_new(event->crossing.subwindow TSRMLS_CC);
 				add_property_zval(result, "subwindow", value);
 			} else
 				add_property_null(result, "subwindow");
@@ -2055,10 +2055,10 @@ static void gdk_window_get_property(zval *return_value, zval *object, char *prop
 		} else if (!strcmp(prop_name, "parent")) {
 			GdkWindow *parent = gdk_window_get_parent(win);
 			if (parent)
-				*return_value = *php_gdk_window_new(parent TSRMLS_CC));
+				*return_value = *php_gdk_window_new(parent TSRMLS_CC);
 			return;
 		} else if (!strcmp(prop_name, "toplevel")) {
-			*return_value = *php_gdk_window_new(gdk_window_get_toplevel(win) TSRMLS_CC));
+			*return_value = *php_gdk_window_new(gdk_window_get_toplevel(win) TSRMLS_CC);
 			return;
 		} else if (!strcmp(prop_name, "children")) {
 			GList *children, *tmp;
@@ -2066,7 +2066,7 @@ static void gdk_window_get_property(zval *return_value, zval *object, char *prop
 			children = gdk_window_get_children(win);
 			array_init(return_value);
 			for (tmp = children; tmp; tmp = tmp->next) {
-				child = php_gdk_window_new(tmp->data TSRMLS_CC));
+				child = php_gdk_window_new(tmp->data TSRMLS_CC);
 				zend_hash_next_index_insert(Z_ARRVAL_P(return_value), &child, sizeof(zval *), NULL);
 			}
 			g_list_free(children);
@@ -2933,11 +2933,11 @@ static void gdk_drag_context_get_property(zval *return_value, zval *object, char
 		RETURN_BOOL(context->is_source);
 	} else if (!strcmp(prop_name, "source_window")) {
 		if (context->source_window)
-			*return_value = *php_gdk_window_new(context->source_window TSRMLS_CC));
+			*return_value = *php_gdk_window_new(context->source_window TSRMLS_CC);
 		return;
 	} else if (!strcmp(prop_name, "dest_window")) {
 		if (context->dest_window)
-			*return_value = *php_gdk_window_new(context->dest_window TSRMLS_CC));
+			*return_value = *php_gdk_window_new(context->dest_window TSRMLS_CC);
 		return;
 	} else if (!strcmp(prop_name, "targets")) {
 		GList *tmp;

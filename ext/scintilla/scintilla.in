@@ -418,7 +418,7 @@ static PHP_METHOD(Scintilla, __construct) {
 
 	GObject *wrapped_obj;
   
-	GType gtype = phpg_gtype_from_zval(this_ptr); 
+	GType gtype = phpg_gtype_from_zval(this_ptr TSRMLS_CC); 
 	if(!php_gtk_parse_args(ZEND_NUM_ARGS(), "")) {
     php_error(E_ERROR, "php-gtk-scintilla: Wrong args");  
         //PHPG_THROW_CONSTRUCT_EXCEPTION(Scintilla);

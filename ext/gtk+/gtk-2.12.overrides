@@ -588,7 +588,7 @@ PHP_METHOD
 		return;
 	}
 
-	obj = (GObject *)g_object_newv(phpg_gtype_from_zval(this_ptr),0,NULL);
+	obj = (GObject *)g_object_newv(phpg_gtype_from_zval(this_ptr TSRMLS_CC),0,NULL);
 		if(!obj) { PHPG_THROW_CONSTRUCT_EXCEPTION(GtkScaleButton); }
 		adj = (GtkAdjustment *)gtk_adjustment_new(min,min,max,step,step,0);
 		gtk_scale_button_set_adjustment(GTK_SCALE_BUTTON(obj),GTK_ADJUSTMENT(adj));
