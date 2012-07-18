@@ -188,7 +188,7 @@ static PHP_METHOD(%(class), %(name))
     }
 
 %(pre_code)
-    wrapped_obj = (GObject *) g_object_newv(phpg_gtype_from_zval(this_ptr), 0, NULL);
+    wrapped_obj = (GObject *) g_object_newv(phpg_gtype_from_zval(this_ptr TSRMLS_CC), 0, NULL);
 %(post_code)
     if (!wrapped_obj) {
         PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));

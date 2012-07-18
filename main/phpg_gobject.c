@@ -209,7 +209,7 @@ PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC)
             zend_objects_store_add_ref(*zobj TSRMLS_CC);
         }
     } else {
-        ce = phpg_class_from_gtype(G_OBJECT_TYPE(obj));
+        ce = phpg_class_from_gtype(G_OBJECT_TYPE(obj) TSRMLS_CC);
         object_init_ex(*zobj, ce);
 
         g_object_ref(obj);
@@ -261,11 +261,11 @@ zend_bool phpg_gobject_construct(zval *this_ptr, GType object_type, zval *props 
 
     if (G_TYPE_IS_ABSTRACT(object_type)) {
         snprintf(buf, 128, "Cannot instantiate abstract class %s", g_type_name(object_type));
-        PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_construct_exception, buf, 0);
+        PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_construct_exception, buf, 0 TSRMLS_CC);
     }
 
     if ((klass = g_type_class_ref(object_type)) == NULL) {
-        PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_construct_exception, "Could not get a reference to type class", 0);
+        PHPG_THROW_EXCEPTION_WITH_RETURN(phpg_construct_exception, "Could not get a reference to type class", 0 TSRMLS_CC);
     }
 
     if (props) {
@@ -349,9 +349,9 @@ static PHP_METHOD(GObject, __construct)
     }
 
     if (php_type) {
-        my_type = phpg_gtype_from_zval(php_type);
+        my_type = phpg_gtype_from_zval(php_type TSRMLS_CC);
     } else {
-        my_type = phpg_gtype_from_zval(this_ptr);
+        my_type = phpg_gtype_from_zval(this_ptr TSRMLS_CC);
     }
 
     phpg_gobject_construct(this_ptr, my_type, php_props TSRMLS_CC);
@@ -764,7 +764,7 @@ static void phpg_signal_list_impl(INTERNAL_FUNCTION_PARAMETERS, zend_bool list_n
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "V", &php_type))
         return;
 
-    type = phpg_gtype_from_zval(php_type);
+    type = phpg_gtype_from_zval(php_type TSRMLS_CC);
     if (!type)
         return;
 
@@ -830,7 +830,7 @@ static PHP_METHOD(GObject, signal_query)
         return;
     }
 
-    gtype = phpg_gtype_from_zval(php_type);
+    gtype = phpg_gtype_from_zval(php_type TSRMLS_CC);
     if (!gtype)
         return;
 
@@ -901,7 +901,7 @@ static PHP_METHOD(GObject, list_properties)
         return;
     }
 
-    if ((type = phpg_gtype_from_zval(php_type)) == 0) {
+    if ((type = phpg_gtype_from_zval(php_type TSRMLS_CC)) == 0) {
         return;
     }
 
@@ -1202,7 +1202,7 @@ static int phpg_register_properties(GType type, zval *properties)
             break;
         }
 
-        prop_type = phpg_gtype_from_zval(php_prop_type);
+        prop_type = phpg_gtype_from_zval(php_prop_type TSRMLS_CC);
         if (prop_type == 0) {
             retval = FAILURE;
             break;
@@ -1266,7 +1266,7 @@ static int phpg_create_signal(GType type, const char *signal_name, zval *data TS
         return FAILURE;
     }
 
-    return_type = phpg_gtype_from_zval(php_return_type);
+    return_type = phpg_gtype_from_zval(php_return_type TSRMLS_CC);
     if (0 == return_type) {
         return FAILURE;
     }
@@ -1277,7 +1277,7 @@ static int phpg_create_signal(GType type, const char *signal_name, zval *data TS
          zend_hash_get_current_data(Z_ARRVAL_P(php_param_types), (void**)&item) == SUCCESS;
          zend_hash_move_forward(Z_ARRVAL_P(php_param_types)), i++) {
 
-        param_types[i] = phpg_gtype_from_zval(*item);
+        param_types[i] = phpg_gtype_from_zval(*item TSRMLS_CC);
         if (0 == param_types[i]) {
             php_error_docref(NULL TSRMLS_CC, E_WARNING, "could not get type of param #%d gor signal '%s'", i+1, signal_name);
             efree(param_types);

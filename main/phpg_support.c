@@ -510,16 +510,15 @@ static int unset_abstract_flag(zend_function *func, int num_args, va_list args, 
     return ZEND_HASH_APPLY_KEEP;
 }
 
-PHP_GTK_API zend_class_entry* phpg_create_class(GType gtype)
+PHP_GTK_API zend_class_entry* phpg_create_class(GType gtype TSRMLS_DC)
 {
     zend_class_entry *parent_ce, *iface_ce, *ce;
     gchar* gtype_name;
     GType parent_type, *ifaces;
     guint i, n_ifaces = 0;
-    TSRMLS_FETCH();
 
     parent_type = g_type_parent(gtype);
-    parent_ce = phpg_class_from_gtype(parent_type);
+    parent_ce = phpg_class_from_gtype(parent_type TSRMLS_CC);
 
     gtype_name = (gchar *) g_type_name(gtype);
     ce = phpg_register_class(gtype_name, NULL, parent_ce, 0, NULL, NULL, gtype TSRMLS_CC);
@@ -527,7 +526,7 @@ PHP_GTK_API zend_class_entry* phpg_create_class(GType gtype)
     ifaces = g_type_interfaces(gtype, &n_ifaces);
     if (n_ifaces) {
         for (i = 0; i < n_ifaces; i++) {
-            iface_ce = phpg_class_from_gtype(ifaces[i]);
+            iface_ce = phpg_class_from_gtype(ifaces[i] TSRMLS_CC);
             zend_class_implements(ce TSRMLS_CC, 1, iface_ce);
             if (!G_TYPE_IS_INTERFACE(gtype)) {
 #if defined(PHP_VERSION_ID) && PHP_VERSION_ID >= 50300 && ZTS

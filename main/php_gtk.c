@@ -189,7 +189,7 @@ PHP_RINIT_FUNCTION(gtk)
 	php_gtk_handlers.get_property_ptr_ptr = phpg_get_property_ptr_ptr;
 	php_gtk_handlers.clone_obj = NULL;
 
-	phpg_register_exceptions();
+	phpg_register_exceptions(TSRMLS_C);
 
 	/*
 	 * Initialize the type system and the GType wrapper class.

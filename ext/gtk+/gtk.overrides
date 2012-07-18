@@ -1294,13 +1294,13 @@ PHP_METHOD
                             &step_incr, &page_incr, &page_size))
         return;
 
-    wrapped_obj = g_object_new(phpg_gtype_from_zval(this_ptr),
+    wrapped_obj = g_object_new(phpg_gtype_from_zval(this_ptr TSRMLS_CC),
                                "value", value, "lower", lower,
                                "upper", upper, "step_increment", step_incr,
                                "page_increment", page_incr, "page_size", page_size, NULL);
 
     if (!wrapped_obj) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkAdjustment);
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkAdjustment TSRMLS_CC);
     }
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
@@ -1376,20 +1376,20 @@ PHP_METHOD
     zend_bool free_text = FALSE, use_underline = 1;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton);
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton TSRMLS_CC);
     }
 
     if (text) {
-        wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), "label",
+        wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr TSRMLS_CC), "label",
                                               text, "use-underline", use_underline, NULL);
     } else {
-        wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
+        wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr TSRMLS_CC), NULL);
     }
 
     if (free_text) g_free(text);
 
     if (!wrapped_obj) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton);
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton TSRMLS_CC);
     }
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
@@ -1411,7 +1411,7 @@ PHP_METHOD
     zend_bool free_stock_id;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "u", &stock_id, &free_stock_id)) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton);
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton TSRMLS_CC);
     }
 
     wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_class(EG(scope) TSRMLS_CC), "label", stock_id,
@@ -1420,7 +1420,7 @@ PHP_METHOD
     if (free_stock_id) g_free(stock_id);
 
     if (!wrapped_obj) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton);
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkButton TSRMLS_CC);
     }
 
     phpg_gobject_new(&return_value, wrapped_obj TSRMLS_CC);
@@ -1520,20 +1520,20 @@ PHP_METHOD
     zend_bool free_text = FALSE, use_underline = 1;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCheckButton);
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCheckButton TSRMLS_CC);
     }
 
     if (text) {
-        wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), "label",
+        wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr TSRMLS_CC), "label",
                                               text, "use-underline", use_underline, NULL);
     } else {
-        wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
+        wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr TSRMLS_CC), NULL);
     }
 
     if (free_text) g_free(text);
 
     if (!wrapped_obj) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCheckButton);
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkCheckButton TSRMLS_CC);
     }
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
@@ -1558,10 +1558,10 @@ PHP_METHOD
     zend_bool free_text = FALSE, use_underline = 1;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMenuItem);
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMenuItem TSRMLS_CC);
     }
 
-    wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
+    wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr TSRMLS_CC), NULL);
     if (text) {
         GtkWidget *accel_label;
         accel_label = g_object_new(GTK_TYPE_ACCEL_LABEL, NULL);
@@ -1578,7 +1578,7 @@ PHP_METHOD
     if (free_text) g_free(text);
 
     if (!wrapped_obj) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMenuItem);
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkMenuItem TSRMLS_CC);
     }
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
@@ -5464,20 +5464,20 @@ PHP_METHOD
     zend_bool free_text = FALSE, use_underline = 1;
 
     if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "|ub", &text, &free_text, &use_underline)) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkToggleButton);
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkToggleButton TSRMLS_CC);
     }
 
     if (text) {
-        wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), "label",
+        wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr TSRMLS_CC), "label",
                                               text, "use-underline", use_underline, NULL);
     } else {
-        wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
+        wrapped_obj = (GObject *)g_object_new(phpg_gtype_from_zval(this_ptr TSRMLS_CC), NULL);
     }
 
     if (free_text) g_free(text);
 
     if (!wrapped_obj) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkToggleButton);
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkToggleButton TSRMLS_CC);
     }
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);

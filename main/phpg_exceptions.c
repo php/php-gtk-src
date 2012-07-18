@@ -27,10 +27,9 @@ PHP_GTK_API zend_class_entry *phpg_construct_exception = NULL;
 PHP_GTK_API zend_class_entry *phpg_type_exception = NULL;
 PHP_GTK_API zend_class_entry *phpg_gerror_exception = NULL;
 
-void phpg_register_exceptions()
+void phpg_register_exceptions(TSRMLS_D)
 {
 	zend_class_entry ce;
-	TSRMLS_FETCH();
 
 	INIT_CLASS_ENTRY(ce, "PhpGtkException", NULL);
 #if ZEND_EXTENSION_API_NO > 220051025

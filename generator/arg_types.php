@@ -910,7 +910,7 @@ class GType_Arg extends Arg_Type {
         $info->var_list->add('zval', '*php_' . $name . ' = NULL');
         $info->arg_list[] = $name;
         $info->add_parse_list('V', '&php_' . $name);
-        $info->pre_code[] = "    if (($name = phpg_gtype_from_zval(php_$name)) == 0) {\n" .
+        $info->pre_code[] = "    if (($name = phpg_gtype_from_zval(php_$name TSRMLS_CC)) == 0) {\n" .
                             "        $info->error_action;\n" .
                             "    }\n";
     }

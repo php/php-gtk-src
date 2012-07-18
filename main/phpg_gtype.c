@@ -140,10 +140,9 @@ PHP_GTK_API GType phpg_gtype_from_class(zend_class_entry *ce TSRMLS_DC)
 }
 
 /* TODO add support for boxed types */
-PHP_GTK_API GType phpg_gtype_from_zval(zval *value)
+PHP_GTK_API GType phpg_gtype_from_zval(zval *value TSRMLS_DC)
 {
 	GType type;
-	TSRMLS_FETCH();
 
 	if (!value) {
 		php_error(E_WARNING, "PHP-GTK internal error: could not get typecode from value");
