@@ -180,6 +180,9 @@ PHP_MSHUTDOWN_FUNCTION(gtk)
 
 PHP_RINIT_FUNCTION(gtk)
 {
+	zend_module_entry *temp_module = EG(current_module);
+	EG(current_module) = phpext_php_gtk_ptr;
+
 	zend_alter_ini_entry("max_execution_time", sizeof("max_execution_time")-1, "0", sizeof("0")-1,PHP_INI_SYSTEM, PHP_INI_STAGE_ACTIVATE);
 
 	php_gtk_handlers = *zend_get_std_object_handlers();
@@ -211,6 +214,7 @@ PHP_RINIT_FUNCTION(gtk)
 	}
 
 	php_gtk_startup_shared_extensions(module_number);
+	EG(current_module) = temp_module;
 
 	return SUCCESS;
 }
