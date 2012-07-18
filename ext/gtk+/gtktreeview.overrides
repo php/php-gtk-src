@@ -774,20 +774,20 @@ PHP_METHOD
         column_types = emalloc(argc * sizeof(GType));
 
         for (i = 0; i < argc; i++) {
-            column_types[i] = phpg_gtype_from_zval(*args[i]);
+            column_types[i] = phpg_gtype_from_zval(*args[i] TSRMLS_CC);
             if (column_types[i] == 0) {
                 efree(column_types);
-                PHPG_THROW_CONSTRUCT_EXCEPTION(GtkTreeStore);
+                PHPG_THROW_CONSTRUCT_EXCEPTION(GtkTreeStore TSRMLS_CC);
             }
         }
 
-        wrapped_obj = g_object_newv(phpg_gtype_from_zval(this_ptr), 0, NULL);
+        wrapped_obj = g_object_newv(phpg_gtype_from_zval(this_ptr TSRMLS_CC), 0, NULL);
         gtk_tree_store_set_column_types(GTK_TREE_STORE(wrapped_obj), argc, column_types);
 
         efree(column_types);
         efree(args);
     } else {
-        wrapped_obj = g_object_new(phpg_gtype_from_zval(this_ptr), NULL);
+        wrapped_obj = g_object_new(phpg_gtype_from_zval(this_ptr TSRMLS_CC), NULL);
     }
 
     if (!wrapped_obj) {
@@ -823,7 +823,7 @@ PHP_METHOD
          zend_hash_get_current_data(Z_ARRVAL_P(php_types), (void**)&item) == SUCCESS;
          zend_hash_move_forward(Z_ARRVAL_P(php_types)), i++) {
 
-        column_types[i] = phpg_gtype_from_zval(*item);
+        column_types[i] = phpg_gtype_from_zval(*item TSRMLS_CC);
         if (column_types[i] == 0) {
             efree(column_types);
             php_error(E_WARNING, "could not set column types for GtkTreeStore");
@@ -1588,7 +1588,7 @@ PHP_METHOD
         return;
     }
 
-    wrapped_obj = g_object_new(phpg_gtype_from_zval(this_ptr),
+    wrapped_obj = g_object_new(phpg_gtype_from_zval(this_ptr TSRMLS_CC),
                                "child-model", GTK_TREE_MODEL(PHPG_GOBJECT(php_model)),
                                "virtual-root", path,
                                NULL);
@@ -1598,7 +1598,7 @@ PHP_METHOD
     }
 
     if (!wrapped_obj) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkTreeModelFilter);
+        PHPG_THROW_CONSTRUCT_EXCEPTION(GtkTreeModelFilter TSRMLS_CC);
     }
 
     phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
@@ -2922,7 +2922,7 @@ PHP_METHOD
         }
     }
 
-    tvc = GTK_TREE_VIEW_COLUMN(g_object_new(phpg_gtype_from_zval(this_ptr), NULL));
+    tvc = GTK_TREE_VIEW_COLUMN(g_object_new(phpg_gtype_from_zval(this_ptr TSRMLS_CC), NULL));
     if (php_cell && Z_TYPE_P(php_cell) != IS_NULL) {
         cell = GTK_CELL_RENDERER(PHPG_GOBJECT(php_cell));
     }

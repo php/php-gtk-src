@@ -236,7 +236,7 @@ static GType phpg_custom_tree_model_get_column_type(GtkTreeModel *tree_model, gi
 
 	if (call_user_function_ex(EG(function_table), &wrapper, &method_name, &retval, 1, args, 0, NULL TSRMLS_CC) == SUCCESS
 		&& retval) {
-		result = phpg_gtype_from_zval(retval);
+		result = phpg_gtype_from_zval(retval TSRMLS_CC);
 		zval_ptr_dtor(&retval);
 	} else {
 		php_error(E_WARNING, "Could not invoke on_get_column_type handler");

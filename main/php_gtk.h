@@ -329,7 +329,7 @@ void php_gtk_call_function(INTERNAL_FUNCTION_PARAMETERS, zend_property_reference
 
 PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name, zend_function_entry *class_functions, zend_class_entry *parent, zend_uint ce_flags, prop_info_t *prop_info, create_object_func_t create_obj_func, GType gtype TSRMLS_DC);
 PHP_GTK_API zend_class_entry* phpg_register_interface(const char *iface_name, zend_function_entry *iface_methods, GType gtype TSRMLS_DC);
-PHP_GTK_API zend_class_entry* phpg_create_class(GType gtype);
+PHP_GTK_API zend_class_entry* phpg_create_class(GType gtype TSRMLS_DC);
 PHP_GTK_API void phpg_init_object(void *pobj, zend_class_entry *ce TSRMLS_DC);
 PHP_GTK_API zend_bool phpg_parse_ctor_props(GType gtype, zval **php_args, GParameter *params, guint *n_params, char **prop_names TSRMLS_DC);
 
@@ -370,13 +370,13 @@ static inline zend_bool phpg_object_isa(zval *zobj, zend_class_entry *ce TSRMLS_
 	return TRUE;
 }
 
-static inline zend_class_entry* phpg_class_from_gtype(GType gtype)
+static inline zend_class_entry* phpg_class_from_gtype(GType gtype TSRMLS_DC)
 {
 	zend_class_entry *ce = NULL;
 
 	ce = g_type_get_qdata(gtype, phpg_class_key);
 	if (!ce) {
-		ce = phpg_create_class(gtype);
+		ce = phpg_create_class(gtype TSRMLS_CC);
 	}
 	
 	assert(ce != NULL);
@@ -435,22 +435,15 @@ static inline gchar* phpg_from_utf8(const gchar *str, zend_uint str_len, gsize *
 	}
 
 #define PHPG_THROW_EXCEPTION(exception, message) \
-    do { \
-		TSRMLS_FETCH(); \
 		zend_throw_exception(exception, message, 0 TSRMLS_CC); \
-		return; \
-	} while (0)
+		return;
 
 #define PHPG_THROW_CONSTRUCT_EXCEPTION(type) \
 	PHPG_THROW_EXCEPTION(phpg_construct_exception, "could not construct " #type " object");
 
 #define PHPG_THROW_EXCEPTION_WITH_RETURN(exception, message, retval) \
-    do { \
-		TSRMLS_FETCH(); \
 		zend_throw_exception(exception, message, 0 TSRMLS_CC); \
 		return retval; \
-	} while (0)
-
 
 #define MAKE_ZVAL_IF_NULL(z) \
    do { \
@@ -458,7 +451,7 @@ static inline gchar* phpg_from_utf8(const gchar *str, zend_uint str_len, gsize *
    } while (0);
 
 
-void phpg_register_exceptions();
+void phpg_register_exceptions(TSRMLS_D);
 gboolean phpg_handler_marshal(gpointer user_data);
 PHP_GTK_API zval* phpg_throw_gerror_exception(const char *domain, long code, const char *message TSRMLS_DC);
 
@@ -474,7 +467,7 @@ PHP_GTK_API void phpg_register_string_constant(zend_class_entry *ce, char *name,
 
 void phpg_gtype_register_self(TSRMLS_D);
 PHP_GTK_API void phpg_gtype_new(zval *zobj, GType type TSRMLS_DC);
-PHP_GTK_API GType phpg_gtype_from_zval(zval *value);
+PHP_GTK_API GType phpg_gtype_from_zval(zval *value TSRMLS_DC);
 PHP_GTK_API GType phpg_gtype_from_class(zend_class_entry *ce TSRMLS_DC);
 
 
