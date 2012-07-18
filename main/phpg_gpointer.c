@@ -39,12 +39,7 @@ static zend_function_entry gpointer_methods[] = {
 /* {{{ static phpg_free_gpointer_storage() */
 static void phpg_free_gpointer_storage(phpg_gpointer_t *object TSRMLS_DC)
 {
-	zend_hash_destroy(object->zobj.properties);
-	FREE_HASHTABLE(object->zobj.properties);
-    if (object->zobj.guards) {
-        zend_hash_destroy(object->zobj.guards);
-        FREE_HASHTABLE(object->zobj.guards);     
-    }
+	zend_object_std_dtor(&object->zobj TSRMLS_CC);
 	efree(object);
 }
 /* }}} */
@@ -66,7 +61,7 @@ PHP_GTK_API zend_object_value phpg_create_gpointer(zend_class_entry *ce TSRMLS_D
 	phpg_gpointer_t *object;
 
 	object = emalloc(sizeof(phpg_gpointer_t));
-	phpg_init_object(object, ce);
+	phpg_init_object(object, ce TSRMLS_CC);
 
 	object->pointer = NULL;
 	object->gtype = 0;

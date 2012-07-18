@@ -319,6 +319,11 @@ HashTable* phpg_gdkcolor_get_properties_handler(zval *object TSRMLS_DC)
 {
     phpg_head_t *poh = NULL;
     poh = (phpg_head_t *) zend_object_store_get_object(object TSRMLS_CC);
+#if PHP_VERSION_ID > 50399
+	if (!poh->zobj.properties) {
+		rebuild_object_properties(&poh->zobj);
+	}
+#endif
     phpg_get_properties_helper(object, poh->zobj.properties TSRMLS_CC,
                                STRS(red), STRS(green), STRS(blue), STRS(pixel), NULL);
 
@@ -789,7 +794,7 @@ PHP_METHOD
 
 %%
 override-handler GdkEvent read_property
-static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int type TSRMLS_DC)
+static zval* phpg_gdkevent_read_property_handler(zval *object, zval *member, int type PHPGTK_PROPERTY_END)
 {
     zval tmp_member;
     zval *result = NULL;
@@ -1187,6 +1192,12 @@ HashTable* phpg_gdkevent_get_properties_handler(zval *object TSRMLS_DC)
 
     poh = (phpg_head_t *) zend_object_store_get_object(object TSRMLS_CC);
 
+#if PHP_VERSION_ID > 50399
+	if (!poh->zobj.properties) {
+		rebuild_object_properties(&poh->zobj);
+	}
+#endif
+
     switch (event->type) {
 
         case GDK_NOTHING:
@@ -1210,6 +1221,7 @@ HashTable* phpg_gdkevent_get_properties_handler(zval *object TSRMLS_DC)
         case GDK_2BUTTON_PRESS:
         case GDK_3BUTTON_PRESS:
         case GDK_BUTTON_RELEASE:
+
             phpg_get_properties_helper(object, poh->zobj.properties TSRMLS_CC,
                                        STRS(time), STRS(x), STRS(y), STRS(axes),
                                        STRS(state), STRS(button), STRS(device),

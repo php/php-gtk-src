@@ -730,12 +730,7 @@ static prop_info_t gtktreemodelrow_prop_info[] = {
 
 static void phpg_modelrow_free_object_storage(phpg_modelrow_t *object TSRMLS_DC)
 {
-	zend_hash_destroy(object->zobj.properties);
-	FREE_HASHTABLE(object->zobj.properties);
-    if (object->zobj.guards) {
-        zend_hash_destroy(object->zobj.guards);
-        FREE_HASHTABLE(object->zobj.guards);     
-    }
+	zend_object_std_dtor(&object->zobj TSRMLS_CC);
     g_object_unref(object->model);
 	efree(object);
 }
@@ -745,9 +740,8 @@ static zend_object_value phpg_modelrow_create_object(zend_class_entry *ce TSRMLS
 	zend_object_value zov;
 	phpg_modelrow_t *object;
 
-	object = emalloc(sizeof(phpg_modelrow_t));
-    memset(object, 0, sizeof(phpg_modelrow_t));
-	phpg_init_object(object, ce);
+	object = ecalloc(1, sizeof(phpg_modelrow_t));
+	phpg_init_object(object, ce TSRMLS_CC);
 
 	zov.handlers = &gtktreemodelrow_handlers;
 	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_modelrow_free_object_storage, NULL TSRMLS_CC);
@@ -792,12 +786,7 @@ static void phpg_modelrowiter_new(zval **zobj, GtkTreeModel *model, GtkTreeIter 
 
 static void phpg_modelrowiter_free_object_storage(phpg_modelrowiter_t *object TSRMLS_DC)
 {
-	zend_hash_destroy(object->zobj.properties);
-	FREE_HASHTABLE(object->zobj.properties);
-    if (object->zobj.guards) {
-        zend_hash_destroy(object->zobj.guards);
-        FREE_HASHTABLE(object->zobj.guards);     
-    }
+	zend_object_std_dtor(&object->zobj TSRMLS_CC);
     if (object->current) {
         zval_ptr_dtor(&object->current);
     }
@@ -810,9 +799,9 @@ static zend_object_value phpg_modelrowiter_create_object(zend_class_entry *ce TS
 	zend_object_value zov;
 	phpg_modelrowiter_t *object;
 
-	object = emalloc(sizeof(phpg_modelrowiter_t));
-    memset(object, 0, sizeof(phpg_modelrowiter_t));
-	phpg_init_object(object, ce);
+	object = ecalloc(1, sizeof(phpg_modelrowiter_t));
+
+	phpg_init_object(object, ce TSRMLS_CC);
 
 	zov.handlers = &php_gtk_handlers;
 	zov.handle = zend_objects_store_put(object, (zend_objects_store_dtor_t) zend_objects_destroy_object, (zend_objects_free_object_storage_t) phpg_modelrowiter_free_object_storage, NULL TSRMLS_CC);

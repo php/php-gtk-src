@@ -55,14 +55,14 @@ zend_object_iterator* phpg_treemodel_get_iterator(zend_class_entry *ce, zval *ob
 
 void phpg_modelrow_new(zval **zobj, GtkTreeModel *model, GtkTreeIter *iter TSRMLS_DC);
 
-void phpg_atk_register_constants(const char *strip_prefix);
-void phpg_pango_register_constants(const char *strip_prefix);
-void phpg_gdk_register_constants(const char *strip_prefix);
-void phpg_gtk_register_constants(const char *strip_prefix);
-void phpg_atk_register_classes(void);
-void phpg_pango_register_classes(void);
-void phpg_gdk_register_classes(void);
-void phpg_gtk_register_classes(void);
+void phpg_atk_register_constants(const char *strip_prefix TSRMLS_DC);
+void phpg_pango_register_constants(const char *strip_prefix TSRMLS_DC);
+void phpg_gdk_register_constants(const char *strip_prefix TSRMLS_DC);
+void phpg_gtk_register_constants(const char *strip_prefix TSRMLS_DC);
+void phpg_atk_register_classes(TSRMLS_D);
+void phpg_pango_register_classes(TSRMLS_D);
+void phpg_gdk_register_classes(TSRMLS_D);
+void phpg_gtk_register_classes(TSRMLS_D);
 
 void php_gtk_plus_register_types(TSRMLS_D);
 

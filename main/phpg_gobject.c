@@ -40,12 +40,7 @@ static inline void phpg_free_gobject_storage(phpg_gobject_t *object, zend_object
 {
     GSList *tmp;
 
-    zend_hash_destroy(object->zobj.properties);
-    FREE_HASHTABLE(object->zobj.properties);
-    if (object->zobj.guards) {
-        zend_hash_destroy(object->zobj.guards);
-        FREE_HASHTABLE(object->zobj.guards);     
-    }
+    zend_object_std_dtor(&object->zobj TSRMLS_CC);
 
     /*
      * Remove cached handle information, since the object wrapper is going away.
@@ -144,7 +139,7 @@ PHP_GTK_API zend_object_value phpg_create_gobject(zend_class_entry *ce TSRMLS_DC
     phpg_gobject_t *object;
 
     object = emalloc(sizeof(phpg_gobject_t));
-    phpg_init_object(object, ce);
+    phpg_init_object(object, ce TSRMLS_CC);
 
     object->obj  = NULL;
     object->dtor = NULL;
@@ -1242,11 +1237,9 @@ static int phpg_register_properties(GType type, zval *properties)
     return retval;
 }
 
-static int phpg_override_signal(GType type, const char *signal_name)
+static int phpg_override_signal(GType type, const char *signal_name TSRMLS_DC)
 {
     guint signal_id;
-
-	TSRMLS_FETCH();
 
     signal_id = g_signal_lookup(signal_name, type);
     if (!signal_id) {
@@ -1254,11 +1247,11 @@ static int phpg_override_signal(GType type, const char *signal_name)
         return FAILURE;
     }
 
-    g_signal_override_class_closure(signal_id, type, phpg_get_signal_class_closure());
+    g_signal_override_class_closure(signal_id, type, phpg_get_signal_class_closure(TSRMLS_C));
     return SUCCESS;
 }
 
-static int phpg_create_signal(GType type, const char *signal_name, zval *data)
+static int phpg_create_signal(GType type, const char *signal_name, zval *data TSRMLS_DC)
 {
     long signal_flags;
     zval *php_return_type;
@@ -1267,8 +1260,6 @@ static int phpg_create_signal(GType type, const char *signal_name, zval *data)
     GType *param_types;
     guint n_params, i, signal_id;
     zval **item;
-
-	TSRMLS_FETCH();
 
     if (!php_gtk_parse_args_hash(data, "lVa", &signal_flags, &php_return_type, &php_param_types)) {
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "incorrect format for '%s' signal spec", signal_name);
@@ -1294,7 +1285,7 @@ static int phpg_create_signal(GType type, const char *signal_name, zval *data)
         }
     }
 
-    signal_id = g_signal_newv(signal_name, type, signal_flags, phpg_get_signal_class_closure(), 
+    signal_id = g_signal_newv(signal_name, type, signal_flags, phpg_get_signal_class_closure(TSRMLS_C), 
                               (GSignalAccumulator)0, NULL, (GSignalCMarshaller)0,
                               return_type, n_params, param_types);
     efree(param_types);
@@ -1307,7 +1298,7 @@ static int phpg_create_signal(GType type, const char *signal_name, zval *data)
     return SUCCESS;
 }
 
-static int phpg_register_signals(GType type, zval *signals)
+static int phpg_register_signals(GType type, zval *signals TSRMLS_DC)
 {
     GObjectClass *oclass;
     zval **data;
@@ -1315,8 +1306,6 @@ static int phpg_register_signals(GType type, zval *signals)
     uint str_key_len;
     ulong num_key;
     int retval = SUCCESS;
-
-	TSRMLS_FETCH();
 
     oclass = g_type_class_ref(type);
     if (!oclass) {
@@ -1336,9 +1325,9 @@ static int phpg_register_signals(GType type, zval *signals)
         if (Z_TYPE_PP(data) == IS_NULL ||
             (Z_TYPE_PP(data) == IS_STRING &&
              !strcmp(Z_STRVAL_PP(data), "override"))) {
-            retval = phpg_override_signal(type, str_key);
+            retval = phpg_override_signal(type, str_key TSRMLS_CC);
         } else {
-            retval = phpg_create_signal(type, str_key, *data);
+            retval = phpg_create_signal(type, str_key, *data TSRMLS_CC);
         }
 
         if (retval == FAILURE) {
@@ -1352,115 +1341,174 @@ static int phpg_register_signals(GType type, zval *signals)
 
 static PHP_METHOD(GObject, register_type)
 {
-    zend_class_entry *class = gobject_ce;
-    GType parent_type, new_type;
-    GTypeQuery query;
-    gchar *type_name;
-    zval **prop_decls, **signal_decls;
-    gchar **split_name;
-    int free_name = 0;
+	zend_class_entry *ce = gobject_ce;
+	GType parent_type, new_type;
+	GTypeQuery query;
+	gchar *type_name;
+	gchar **split_name;
+	int free_name = 0;
 
-    GTypeInfo type_info = {
-        0,    /* class_size */
+#if PHP_VERSION_ID < 50399
+	zval **prop_decls, **signal_decls;
+#else
+	zval *property = NULL;
+	zend_property_info *property_info_ptr;
+	ulong h_signals = zend_get_hash_value("__gsignals", sizeof("__gsignals"));
+	ulong h_properties = zend_get_hash_value("__gproperties", sizeof("__gproperties"));
+#endif
 
-        (GBaseInitFunc) NULL,
-        (GBaseFinalizeFunc) NULL,
+	GTypeInfo type_info = {
+		0,    /* class_size */
 
-        (GClassInitFunc) phpg_object_class_init,
-        (GClassFinalizeFunc) NULL,
-        NULL, /* class_data */
+		(GBaseInitFunc) NULL,
+		(GBaseFinalizeFunc) NULL,
 
-        0,    /* instance_size */
-        0,    /* n_preallocs */
-        (GInstanceInitFunc) NULL
-    };
+		(GClassInitFunc) phpg_object_class_init,
+		(GClassFinalizeFunc) NULL,
+		NULL, /* class_data */
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "C", &class)) {
-        return;
-    }
+		0,    /* instance_size */
+		0,    /* n_preallocs */
+		(GInstanceInitFunc) NULL
+	};
 
-    parent_type = phpg_gtype_from_class(class TSRMLS_CC);
-    if (!parent_type) {
-        return;
-    }
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), "C", &ce)) {
+		return;
+	}
 
-    type_name = class->name;
-	/* If this is a namespaced class we will have issues, since \ is not allowed, so copy and replace \ with _ */	
-    if ((split_name = g_strsplit(class->name, "\\", 0))) {
-        free_name = 1;
-        type_name = g_strjoinv("__", split_name);
-        g_strfreev(split_name);		
-    }
+	parent_type = phpg_gtype_from_class(ce TSRMLS_CC);
+	if (!parent_type) {
+		return;
+	}
 
-    if (g_type_from_name(type_name) != 0) {
-        php_error_docref(NULL TSRMLS_CC, E_WARNING, "type '%s' already exists?", type_name);
-        
-        if (free_name) {
-            g_free(type_name);
-        }
-        return;
-    }
+	type_name = ce->name;
 
-    type_info.class_data = class;
-    g_type_query(parent_type, &query);
-    type_info.class_size = query.class_size;
-    type_info.instance_size = query.instance_size;
+	/* If this is a namespaced class we will have issues
+	since \ is not allowed, so copy and replace \ with _ */
+	if ((split_name = g_strsplit(ce->name, "\\", 0))) {
+		free_name = 1;
+		type_name = g_strjoinv("__", split_name);
+		g_strfreev(split_name);
+	}
 
-    new_type = g_type_register_static(parent_type, type_name, &type_info, 0);
-    if (new_type == 0) {
-        php_error_docref(NULL TSRMLS_CC, E_WARNING, "could not create new GType");
-        
-        if (free_name) {
-            g_free(type_name);
-        }
-        return;
-    }
+	if (g_type_from_name(type_name) != 0) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "type '%s' already exists?", type_name);
+		
+		if (free_name) {
+			g_free(type_name);
+		}
+		return;
+	}
+
+	type_info.class_data = ce;
+	g_type_query(parent_type, &query);
+	type_info.class_size = query.class_size;
+	type_info.instance_size = query.instance_size;
+
+	new_type = g_type_register_static(parent_type, type_name, &type_info, 0);
+	if (new_type == 0) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "could not create new GType");
+		
+		if (free_name) {
+			g_free(type_name);
+		}
+		return;
+	}
 
 	if (!phpg_class_key) {
 		phpg_class_key = g_quark_from_static_string(phpg_class_id);
 	}
 
-    g_type_set_qdata(new_type, phpg_class_key, class);
-    zend_declare_class_constant_long(class, "gtype", sizeof("gtype")-1, new_type TSRMLS_CC);
+	g_type_set_qdata(new_type, phpg_class_key, ce);
+	zend_declare_class_constant_long(ce, "gtype", sizeof("gtype")-1, new_type TSRMLS_CC);
 
-    zend_update_class_constants(class TSRMLS_CC);
+	zend_update_class_constants(ce TSRMLS_CC);
 
-    /* register properties */
-    if (zend_hash_find(&class->default_properties, "__gproperties", sizeof("__gproperties"), (void**)&prop_decls) == SUCCESS) {
-        if (Z_TYPE_PP(prop_decls) != IS_ARRAY) {
-            php_error_docref(NULL TSRMLS_CC, E_WARNING, "__gproperties variable has to be an array");
-            if (free_name) {
-                g_free(type_name);
-            }
-            return;
-        }
-        if (phpg_register_properties(new_type, *prop_decls) == FAILURE) {
-            if (free_name) {
-                g_free(type_name);
-            }
-            return;
-        }
-        zend_hash_del(&class->default_properties, "__gproperties", sizeof("__gproperties"));
+#if PHP_VERSION_ID < 50399
+	/* register properties */
+	if (zend_hash_find(&ce->default_properties, "__gproperties", sizeof("__gproperties"), (void**)&prop_decls) == SUCCESS) {
+		if (Z_TYPE_PP(prop_decls) != IS_ARRAY) {
+			php_error_docref(NULL TSRMLS_CC, E_WARNING, "__gproperties variable has to be an array");
+			if (free_name) {
+				g_free(type_name);
+			}
+			return;
+		}
+		if (phpg_register_properties(new_type, *prop_decls) == FAILURE) {
+			if (free_name) {
+				g_free(type_name);
+			}
+			return;
+		}
+		zend_hash_del(&ce->default_properties, "__gproperties", sizeof("__gproperties"));
+	}
+
+	/* register signals */
+	if (zend_hash_find(&ce->default_properties, "__gsignals", sizeof("__gsignals"), (void**)&signal_decls) == SUCCESS) {
+		if (Z_TYPE_PP(signal_decls) != IS_ARRAY) {
+			php_error_docref(NULL TSRMLS_CC, E_WARNING, "__gsignals variable has to be an array");
+			if (free_name) {
+				g_free(type_name);
+			}
+			return;
+		}
+		if (phpg_register_signals(new_type, *signal_decls TSRMLS_CC) == FAILURE) {
+			if (free_name) {
+				g_free(type_name);
+			}
+			return;
+		}
+		zend_hash_del(&ce->default_properties, "__gsignals", sizeof("__gsignals"));
+	}
+#else
+/* This is horribly painful in 5.4 */
+
+	if (zend_hash_quick_find(&ce->properties_info, "__gproperties", sizeof("__gproperties"),
+							 h_properties, (void**)&property_info_ptr) == SUCCESS &&
+		(property_info_ptr->flags & ZEND_ACC_STATIC) == 0) {
+
+			property = ce->default_properties_table[property_info_ptr->offset];
+			if (Z_TYPE_P(property) != IS_ARRAY) {
+				php_error_docref(NULL TSRMLS_CC, E_WARNING, "__gproperties variable has to be an array");
+				if (free_name) {
+					g_free(type_name);
+				}
+				return;
+			}
+			if (phpg_register_properties(new_type, property) == FAILURE) {
+				if (free_name) {
+					g_free(type_name);
+				}
+				return;
+			}
+
+			zend_hash_quick_del(&ce->properties_info, "__gproperties",
+								sizeof("__gproperties"), h_properties);
     }
 
-    /* register signals */
-    if (zend_hash_find(&class->default_properties, "__gsignals", sizeof("__gsignals"), (void**)&signal_decls) == SUCCESS) {
-        if (Z_TYPE_PP(signal_decls) != IS_ARRAY) {
-            php_error_docref(NULL TSRMLS_CC, E_WARNING, "__gsignals variable has to be an array");
-            if (free_name) {
-                g_free(type_name);
-            }
-            return;
-        }
-        if (phpg_register_signals(new_type, *signal_decls) == FAILURE) {
-            if (free_name) {
-                g_free(type_name);
-            }
-            return;
-        }
-        zend_hash_del(&class->default_properties, "__gsignals", sizeof("__gsignals"));
-    }
-    
+	if (zend_hash_quick_find(&ce->properties_info, "__gsignals", sizeof("__gsignals"),
+							 h_signals, (void**)&property_info_ptr) == SUCCESS &&
+		(property_info_ptr->flags & ZEND_ACC_STATIC) == 0) {
+
+			property = ce->default_properties_table[property_info_ptr->offset];
+			if (Z_TYPE_P(property) != IS_ARRAY) {
+				php_error_docref(NULL TSRMLS_CC, E_WARNING, "__gsignals variable has to be an array");
+				if (free_name) {
+					g_free(type_name);
+				}
+				return;
+			}
+			if (phpg_register_signals(new_type, property TSRMLS_CC) == FAILURE) {
+				if (free_name) {
+					g_free(type_name);
+				}
+				return;
+			}
+
+			zend_hash_quick_del(&ce->properties_info, "__gsignals",
+								sizeof("__gsignals"), h_signals);
+	}
+#endif
     if (free_name) {
         g_free(type_name);
     }

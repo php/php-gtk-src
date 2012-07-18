@@ -41,12 +41,7 @@ static zend_function_entry gdkatom_methods[] = {
 /* {{{ static phpg_free_gdkatom_storage() */
 static void phpg_free_gdkatom_storage(phpg_gdkatom_t *object TSRMLS_DC)
 {
-	zend_hash_destroy(object->zobj.properties);
-	FREE_HASHTABLE(object->zobj.properties);
-    if (object->zobj.guards) {
-        zend_hash_destroy(object->zobj.guards);
-        FREE_HASHTABLE(object->zobj.guards);     
-    }
+	zend_object_std_dtor(&object->zobj TSRMLS_CC);
 	if (object->name) efree(object->name);
 	efree(object);
 }
@@ -124,8 +119,8 @@ PHP_GTK_API zend_object_value phpg_create_gdkatom(zend_class_entry *ce TSRMLS_DC
 	zend_object_value zov;
 	phpg_gdkatom_t *object;
 
-	object = emalloc(sizeof(phpg_gdkatom_t));
-	phpg_init_object(object, ce);
+	object = ecalloc(1, sizeof(phpg_gdkatom_t));
+	phpg_init_object(object, ce TSRMLS_CC);
 
 	object->atom = GDK_NONE;
 	object->name = NULL;

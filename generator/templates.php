@@ -248,9 +248,8 @@ PHP_FUNCTION(%s_get_type)
 }\n\n";
 
 const register_classes = "
-void phpg_%s_register_classes(void)
+void phpg_%s_register_classes(TSRMLS_D)
 {
-	TSRMLS_FETCH();
 %s}\n";
 
 const register_class = "
@@ -293,9 +292,8 @@ const prop_access = "%(cast)(((phpg_gobject_t *)object)->obj)->%(name)";
 const boxed_prop_access = "((%(cast))((phpg_gboxed_t *)object)->boxed)->%(name)";
 
 const register_constants = "
-void phpg_%s_register_constants(const char *strip_prefix)
+void phpg_%s_register_constants(const char *strip_prefix TSRMLS_DC)
 {
-    TSRMLS_FETCH();
 %s
     /* register gtype constants for all classes */
 

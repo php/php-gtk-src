@@ -54,12 +54,7 @@ static zend_function_entry gboxed_methods[] = {
 /* {{{ static phpg_free_gboxed_storage() */
 static void phpg_free_gboxed_storage(phpg_gboxed_t *object TSRMLS_DC)
 {
-	zend_hash_destroy(object->zobj.properties);
-	FREE_HASHTABLE(object->zobj.properties);
-    if (object->zobj.guards) {
-        zend_hash_destroy(object->zobj.guards);
-        FREE_HASHTABLE(object->zobj.guards);     
-    }
+	zend_object_std_dtor(&object->zobj TSRMLS_CC);
 	if (object->boxed && object->free_on_destroy) {
 		g_boxed_free(object->gtype, object->boxed);
 		object->boxed = NULL;
@@ -75,7 +70,7 @@ PHP_GTK_API zend_object_value phpg_create_gboxed(zend_class_entry *ce TSRMLS_DC)
 	phpg_gboxed_t *object;
 
 	object = emalloc(sizeof(phpg_gboxed_t));
-	phpg_init_object(object, ce);
+	phpg_init_object(object, ce TSRMLS_CC);
 
 	object->boxed = NULL;
 	object->gtype = 0;

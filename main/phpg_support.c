@@ -27,7 +27,7 @@
  */
 
 /* {{{ phpg_read_property() */
-zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
+zval* phpg_read_property(zval *object, zval *member, int type PHPGTK_PROPERTY_END)
 {
 	phpg_head_t *poh = NULL;
 	zval tmp_member;
@@ -79,7 +79,7 @@ zval* phpg_read_property(zval *object, zval *member, int type TSRMLS_DC)
 /* }}} */
 
 /* {{{ phpg_write_property() */
-void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
+void phpg_write_property(zval *object, zval *member, zval *value PHPGTK_PROPERTY_END)
 {
 	phpg_head_t *poh = NULL;
 	zval tmp_member;
@@ -120,7 +120,7 @@ void phpg_write_property(zval *object, zval *member, zval *value TSRMLS_DC)
 /* }}} */
 
 /* {{{ phpg_get_property_ptr_ptr() */
-zval **phpg_get_property_ptr_ptr(zval *object, zval *member TSRMLS_DC)
+zval **phpg_get_property_ptr_ptr(zval *object, zval *member PHPGTK_PROPERTY_END)
 {
     phpg_head_t *poh = NULL;
     zval tmp_member;
@@ -177,19 +177,28 @@ HashTable* phpg_get_properties(zval *object TSRMLS_DC)
 	int ret;
 
 	poh = (phpg_head_t *) zend_object_store_get_object(object TSRMLS_CC);
-    pi_hash = poh->pi_hash;
-    for (zend_hash_internal_pointer_reset(pi_hash);
-         zend_hash_get_current_data(pi_hash, (void **)&pi) == SUCCESS;
-         zend_hash_move_forward(pi_hash)) {
 
-        ret = pi->read(poh, &result TSRMLS_CC);
-        if (ret == SUCCESS) {
-            ALLOC_ZVAL(result_ptr);
-            *result_ptr = result;
-            INIT_PZVAL(result_ptr);
-            zend_hash_update(poh->zobj.properties, (char *)pi->name, strlen(pi->name)+1, &result_ptr, sizeof(zval *), NULL);
-        }
-    }
+#if PHP_VERSION_ID > 50399
+	if (!poh->zobj.properties) {
+		rebuild_object_properties(&poh->zobj);
+	}
+#endif
+
+	if (poh->pi_hash) {
+		pi_hash = poh->pi_hash;
+		for (zend_hash_internal_pointer_reset(pi_hash);
+			 zend_hash_get_current_data(pi_hash, (void **)&pi) == SUCCESS;
+			 zend_hash_move_forward(pi_hash)) {
+	
+			ret = pi->read(poh, &result TSRMLS_CC);
+			if (ret == SUCCESS) {
+				ALLOC_ZVAL(result_ptr);
+				*result_ptr = result;
+				INIT_PZVAL(result_ptr);
+				zend_hash_update(poh->zobj.properties, (char *)pi->name, strlen(pi->name)+1, &result_ptr, sizeof(zval *), NULL);
+			}
+		}
+	}
 
 	return poh->zobj.properties;
 }
@@ -239,7 +248,8 @@ PHP_GTK_API void phpg_get_properties_helper(zval *object, HashTable *ht TSRMLS_D
 #endif
     while ((prop = va_arg(va, char *)) != NULL) {
         prop_len = va_arg(va, int);
-        result = zend_read_property(ce, object, prop, prop_len, 1 TSRMLS_CC);
+		result = zend_read_property(ce, object, prop, prop_len, 1 TSRMLS_CC);
+
         /*
          * zend_read_property will return a temporary zval, so we need to
          * initialize it in order to keep it around.
@@ -261,19 +271,23 @@ PHP_GTK_API void phpg_destroy_notify(gpointer data)
 /* }}} */
 
 /* {{{ phpg_init_object() */
-PHP_GTK_API void phpg_init_object(void *object, zend_class_entry *ce)
+PHP_GTK_API void phpg_init_object(void *object, zend_class_entry *ce TSRMLS_DC)
 {
 	zval *tmp;
 	zend_class_entry *prop_ce;
 	phpg_head_t *poh = (phpg_head_t *) object;
 
-	poh->zobj.ce = ce;
-	poh->zobj.guards = NULL;
+	zend_object_std_init(&poh->zobj, ce TSRMLS_CC);
+
 	poh->pi_hash = NULL;
 
-	ALLOC_HASHTABLE(poh->zobj.properties);
-	zend_hash_init(poh->zobj.properties, 0, NULL, ZVAL_PTR_DTOR, 0);
-	zend_hash_copy(poh->zobj.properties, &ce->default_properties, (copy_ctor_func_t) zval_add_ref, (void *) &tmp, sizeof(zval *));
+#if PHP_VERSION_ID < 50399
+	zend_hash_copy(poh->zobj.properties, &(ce->default_properties),
+	              (copy_ctor_func_t)zval_add_ref, (void *)(&tmp),
+	               sizeof(zval *));
+#else
+	object_properties_init(&(poh->zobj), ce);
+#endif
 
 	/*
 	 * Find the nearest internal parent class and use its property handler
@@ -284,7 +298,7 @@ PHP_GTK_API void phpg_init_object(void *object, zend_class_entry *ce)
 		prop_ce = prop_ce->parent;
 	}
 
-    zend_hash_find(&phpg_prop_info, prop_ce->name, prop_ce->name_length+1, (void **) &poh->pi_hash);
+	zend_hash_find(&phpg_prop_info, prop_ce->name, prop_ce->name_length+1, (void **) &poh->pi_hash);
 }
 /* }}} */
 
@@ -300,51 +314,47 @@ PHP_GTK_API zend_class_entry* phpg_register_class(const char *class_name,
 {
 	zend_class_entry ce, *real_ce;
 	HashTable pi_hash;
-    HashTable *parent_pi_hash = NULL;
+	HashTable *parent_pi_hash = NULL;
 	prop_info_t *pi;
 
 	if (!phpg_class_key) {
 		phpg_class_key = g_quark_from_static_string(phpg_class_id);
 	}
 
-	memset(&ce, 0, sizeof(ce));
-
-	ce.name = strdup(class_name);
-	ce.name_length = strlen(class_name);
-	ce.builtin_functions = class_methods;
+	INIT_CLASS_ENTRY_EX(ce, strdup(class_name), strlen(class_name), class_methods);
 
 	real_ce = zend_register_internal_class_ex(&ce, parent, NULL TSRMLS_CC);
 
-    real_ce->ce_flags = ce_flags;
+	real_ce->ce_flags = ce_flags;
 	if (create_obj_func) {
 		real_ce->create_object = create_obj_func;
 	} else {
 		real_ce->create_object = phpg_create_gobject;
 	}
 
-    zend_hash_init(&pi_hash, 1, NULL, NULL, 1);
-    if (prop_info) {
-        pi = prop_info;
-        /*
-         * Only register properties with reader functions.
-         */
-        while (pi->name && pi->read) {
-            zend_hash_update(&pi_hash, (char *)pi->name, strlen(pi->name)+1, pi, sizeof(prop_info_t), NULL);
-            pi++;
-        }
-    }
+	zend_hash_init(&pi_hash, 1, NULL, NULL, 1);
+	if (prop_info) {
+		pi = prop_info;
+		/*
+		 * Only register properties with reader functions.
+		 */
+		while (pi->name && pi->read) {
+			zend_hash_update(&pi_hash, (char *)pi->name, strlen(pi->name)+1, pi, sizeof(prop_info_t), NULL);
+			pi++;
+		}
+	}
 
-    /*
-     * Merge in parent's properties.
-     */
-    if (parent && zend_hash_find(&phpg_prop_info, parent->name, parent->name_length+1, (void **)&parent_pi_hash) == SUCCESS) {
-        zend_hash_merge(&pi_hash, parent_pi_hash, NULL, NULL, sizeof(prop_info_t), 0);
-    }
-    zend_hash_add(&phpg_prop_info, ce.name, ce.name_length+1, &pi_hash, sizeof(HashTable), NULL);
+	/*
+	 * Merge in parent's properties.
+	 */
+	if (parent && zend_hash_find(&phpg_prop_info, parent->name, parent->name_length+1, (void **)&parent_pi_hash) == SUCCESS) {
+		zend_hash_merge(&pi_hash, parent_pi_hash, NULL, NULL, sizeof(prop_info_t), 0);
+	}
+	zend_hash_add(&phpg_prop_info, ce.name, ce.name_length+1, &pi_hash, sizeof(HashTable), NULL);
 
-    if (gtype) {
-        g_type_set_qdata(gtype, phpg_class_key, real_ce);
-    }
+	if (gtype) {
+		g_type_set_qdata(gtype, phpg_class_key, real_ce);
+	}
 
 	return real_ce;
 }
@@ -361,10 +371,7 @@ PHP_GTK_API zend_class_entry* phpg_register_interface(const char *iface_name,
 		phpg_class_key = g_quark_from_static_string(phpg_class_id);
 	}
 
-    memset(&ce, 0, sizeof(ce));
-    ce.name = strdup(iface_name);
-    ce.name_length = strlen(iface_name);
-    ce.builtin_functions = iface_methods;
+	INIT_CLASS_ENTRY_EX(ce, strdup(iface_name), strlen(iface_name), iface_methods);
 
     real_ce = zend_register_internal_interface(&ce TSRMLS_CC);
 
