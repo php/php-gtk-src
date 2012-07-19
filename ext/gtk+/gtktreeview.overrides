@@ -1386,7 +1386,9 @@ gboolean phpg_tree_model_foreach_marshal(GtkTreeModel *model,
     char *callback_name;
     zval *php_model = NULL, *php_path = NULL, *php_iter = NULL;
     gboolean ret;
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
@@ -1893,7 +1895,9 @@ static void phpg_tree_selection_foreach_func_marshal (GtkTreeModel *model, GtkTr
     char *callback_name;
     zval *php_model = NULL, *php_path = NULL, *php_iter = NULL;
 
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
@@ -1967,7 +1971,9 @@ static gboolean phpg_tree_selection_func_marshal(GtkTreeSelection *selection,
     char *callback_name;
     zval *php_selection = NULL, *php_model = NULL, *php_path = NULL, *php_path_currently_selected;
     gboolean allow_toggle = TRUE;
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
@@ -2107,7 +2113,9 @@ static gint phpg_tree_iter_compare_func_marshal(GtkTreeModel *model, GtkTreeIter
     char *callback_name;
     zval *php_model = NULL, *php_iter_a = NULL, *php_iter_b = NULL;
     gint compared = 0;
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
@@ -2279,7 +2287,9 @@ static gboolean phpg_tree_view_column_drop_func_marshal (GtkTreeView *tree_view,
     char *callback_name;
     zval *php_view = NULL, *php_column = NULL, *php_prev_column = NULL, *php_next_column = NULL;
     gboolean may_drop = FALSE;
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
@@ -2366,7 +2376,9 @@ static gboolean phpg_tree_view_row_separator_func_marshal(GtkTreeModel *model, G
     char *callback_name;
     zval *php_model = NULL, *php_iter = NULL;
     gboolean is_separator = FALSE;
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
@@ -2448,7 +2460,9 @@ static void phpg_cell_data_func_marshal(GtkCellLayout *cell_layout, GtkCellRende
     int n_args = 0;
     char *callback_name;
     zval *php_cell_layout = NULL, *php_renderer = NULL, *php_model = NULL, *php_iter = NULL;
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
@@ -2759,7 +2773,9 @@ static gboolean phpg_tree_view_search_equal_func_marshal (GtkTreeModel *model, g
     gchar *cp_key;
     gsize cp_len;
     zend_bool free_result;
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);

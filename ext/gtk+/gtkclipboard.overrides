@@ -25,7 +25,9 @@ static void phpg_clipboard_request_contents_marshal(GtkClipboard *clipboard,
     zval *php_clipboard = NULL;
     zval *php_sel_data = NULL;
     
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
@@ -196,7 +198,9 @@ static void phpg_clipboard_request_text_marshal(GtkClipboard *clipboard,
     gsize cp_len;
     zend_bool free_cp_str;
     
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);

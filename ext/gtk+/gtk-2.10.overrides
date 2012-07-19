@@ -39,7 +39,9 @@ static void phpg_link_button_set_uri_hook_func_marshal(GtkLinkButton *button, co
     gsize cp_len;
     zend_bool free_result;
 
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
@@ -324,17 +326,19 @@ phpg_recent_chooser_sort_func_marshal(GtkRecentInfo *a, GtkRecentInfo *b, gpoint
     int argc = 0, status = 0;
     zval ***argv = NULL, *retval = NULL; 
     zval *zinfo_a = NULL, *zinfo_b = NULL;
-    phpg_cb_data_t *calldata = (phpg_cb_data_t *)data;
-    
-    TSRMLS_FETCH();
+    phpg_cb_data_t *cbd = (phpg_cb_data_t *)data;
+  
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
-    if (!zend_is_callable(calldata->callback, 0, &callback PHPGTK_ZEND_IS_CALLABLE)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(
             E_WARNING,
             "Unable to invoke callback '%s' specified in %s on line %ld",
             callback,
-            calldata->src_filename,
-            calldata->src_lineno
+            cbd->src_filename,
+            cbd->src_lineno
         );
         
         efree(callback);
@@ -344,14 +348,14 @@ phpg_recent_chooser_sort_func_marshal(GtkRecentInfo *a, GtkRecentInfo *b, gpoint
     phpg_gboxed_new(&zinfo_a,GTK_TYPE_RECENT_INFO,a,TRUE,TRUE TSRMLS_CC);
     phpg_gboxed_new(&zinfo_b,GTK_TYPE_RECENT_INFO,b,TRUE,TRUE TSRMLS_CC);
 
-    argv = php_gtk_hash_as_array_offset(calldata->user_args,2,&argc);
+    argv = php_gtk_hash_as_array_offset(cbd->user_args,2,&argc);
     argv[0] = &zinfo_a;
     argv[1] = &zinfo_b;
 
     call_user_function_ex(
         EG(function_table),
         NULL,
-        calldata->callback,
+        cbd->callback,
         &retval,
         argc,
         argv,
@@ -586,17 +590,19 @@ phpg_assistant_forward_page_func_marshal(gint cur, gpointer data)
     int argc = 0, status = 0;
     zval ***argv = NULL, *retval = NULL;
     zval *zcur;
-    phpg_cb_data_t *calldata = (phpg_cb_data_t *)data;
+    phpg_cb_data_t *cbd = (phpg_cb_data_t *)data;
     
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
-    if (!zend_is_callable(calldata->callback, 0, &callback PHPGTK_ZEND_IS_CALLABLE)) {
+    if (!zend_is_callable(cbd->callback, 0, &callback PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(
             E_WARNING,
             "Unable to invoke callback '%s' specified in %s on line %ld",
             callback,
-            calldata->src_filename,
-            calldata->src_lineno
+            cbd->src_filename,
+            cbd->src_lineno
         );
         
         efree(callback);
@@ -606,13 +612,13 @@ phpg_assistant_forward_page_func_marshal(gint cur, gpointer data)
     MAKE_STD_ZVAL(zcur);
     ZVAL_LONG(zcur,cur);
 
-    argv = php_gtk_hash_as_array_offset(calldata->user_args,1,&argc);
+    argv = php_gtk_hash_as_array_offset(cbd->user_args,1,&argc);
     argv[0] = &zcur;
 
     call_user_function_ex(
         EG(function_table),
         NULL,
-        calldata->callback,
+        cbd->callback,
         &retval,
         argc,
         argv,

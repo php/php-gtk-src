@@ -398,7 +398,9 @@ static gboolean phpg_text_iter_char_predicate_func_marshal (gunichar ch, gpointe
     gchar *cp_ret; gsize cp_len;
     zend_bool toreturn, free_result = FALSE;
 
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
@@ -560,7 +562,9 @@ static void phpg_text_tag_table_foreach_func_marshal(GtkTextTagTable *table, gpo
     char *callback_name;
     zval *php_table = NULL;
 
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);

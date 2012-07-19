@@ -813,7 +813,9 @@ static gboolean phpg_accelgroup_find_func_marshal(GtkAccelKey *key, GClosure *cl
     zval *php_key = NULL, *retval = NULL;
     gboolean return_value;
 
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);
@@ -1139,7 +1141,9 @@ static void phpg_about_dialog_activate_link_func_marshal(GtkAboutDialog *about, 
     gsize cp_len;
     zend_bool free_result;
 
-    TSRMLS_FETCH();
+#ifdef ZTS
+    TSRMLS_D = cbd->TSRMLS_C;
+#endif
 
     if (!zend_is_callable(cbd->callback, 0, &callback_name PHPGTK_ZEND_IS_CALLABLE)) {
         php_error(E_WARNING, "Unable to invoke callback '%s' specified in %s on line %ld", callback_name, cbd->src_filename, cbd->src_lineno);

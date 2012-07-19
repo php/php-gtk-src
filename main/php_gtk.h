@@ -100,6 +100,9 @@ typedef struct {
 	zval *user_args;
 	char *src_filename;
 	long src_lineno;
+#ifdef ZTS
+	TSRMLS_D;
+#endif
 } phpg_cb_data_t;
 
 #include "php_gtk_module.h"
@@ -138,6 +141,9 @@ static inline phpg_cb_data_t* phpg_cb_data_new(zval *callback, zval *user_args T
 	cbd->user_args = user_args;
 	cbd->src_filename = estrdup(zend_get_executed_filename(TSRMLS_C));
 	cbd->src_lineno = zend_get_executed_lineno(TSRMLS_C);
+#ifdef ZTS
+	cbd->TSRMLS_C = TSRMLS_C;
+#endif
 	return cbd;
 }
 PHP_GTK_API void phpg_cb_data_destroy(gpointer data);
