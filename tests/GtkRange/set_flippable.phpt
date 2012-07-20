@@ -1,5 +1,5 @@
 --TEST--
-GtkRange->set_flippable method
+GtkRange->set_flippable() method
 --SKIPIF--
 <?php
 if(!extension_loaded('php-gtk')) die('skip - PHP-GTK extension not available');
