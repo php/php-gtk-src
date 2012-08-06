@@ -22,6 +22,9 @@
 # Makefiles
 Makefile*
 
+# Output directories
+Release/
+
 # autotools
 config.*
 configure
