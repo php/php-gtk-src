@@ -732,7 +732,7 @@ function ADD_SOURCES(dir, file_list, target, obj_dir) {
 	file_list = file_list.split(new RegExp("\\s+"));
 	file_list.sort();
 
-	var re = new RegExp("\.[a-z0-9A-Z]+$");
+	var re = new RegExp("\.[a-z0-9A-Z\-]+$");
 
 	dir = dir.replace(new RegExp("/", "g"), "\\");
 	var objs_line = "";
@@ -865,6 +865,8 @@ function search_paths(thing_to_find, explicit_path, env_name) {
 
 	if (found && place == true) {
 		STDOUT.WriteLine("	<in default path>");
+		place = file[0];
+		place = place.substr(0, place.length - thing_to_find.length - 1);
 	} else if (found) {
 		STDOUT.WriteLine("	" + place);
 	} else {

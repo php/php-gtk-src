@@ -25,6 +25,12 @@ Makefile*
 # Output directories
 Release/
 
+# Generator junk
+win32/logs/
+win32/temp.bat
+sources.temp
+source_complete.txt
+
 # autotools
 config.*
 configure
@@ -56,3 +62,4 @@ run-tests.php
 gen_*
 build2/generated_lists
 main/php_gtk_ext.c
+main/php_gtk_version.h

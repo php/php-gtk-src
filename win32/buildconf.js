@@ -29,8 +29,8 @@ if (FSO.FileExists('configure.js')) {
 if (FSO.FileExists('sources.temp')) {
 	FSO.DeleteFile('sources.temp');
 }
-if (FSO.FileExists('sources_complete.txt')) {
-	FSO.DeleteFile('sources_complete.txt');
+if (FSO.FileExists('source_complete.txt')) {
+	FSO.DeleteFile('source_complete.txt');
 }
 
 var C = FSO.CreateTextFile("configure.js", true);
