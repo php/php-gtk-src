@@ -697,6 +697,10 @@ PHPG_PROP_READER
 	RETVAL_LONG(GDK_DRAWABLE_XID(((GdkDrawable *)((phpg_gobject_t *)object)->obj)));
 #elif defined(GDK_WINDOWING_WIN32)
     RETVAL_LONG((long) GDK_WINDOW_HWND((GdkDrawable *)((phpg_gobject_t *)object)->obj));
+#elif defined(GDK_WINDOWING_QUARTZ)
+    RETVAL_LONG((long) gdk_quartz_window_get_nswindow((GdkDrawable *)((phpg_gobject_t *)object)->obj));
+#else
+    RETVAL_NULL()
 #endif
     return SUCCESS;
 }
