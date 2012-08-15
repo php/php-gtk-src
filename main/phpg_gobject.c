@@ -228,6 +228,10 @@ PHP_GTK_API void phpg_gobject_new(zval **zobj, GObject *obj TSRMLS_DC)
 #ifdef ZTS
         g_object_set_qdata(obj, gobject_wrapper_zts_key, (void*)TSRMLS_C);
 #endif
+
+        if (ce->type == ZEND_USER_CLASS) {
+            zend_call_method_with_0_params(zobj, ce, &ce->constructor, "__construct", NULL);
+        }
     }
 }
 /* }}} */
@@ -398,7 +402,7 @@ static void phpg_signal_connect_impl(INTERNAL_FUNCTION_PARAMETERS, int connect_t
     if (!php_gtk_parse_varargs(ZEND_NUM_ARGS(), 2, &extra, "sV", &signal, &callback)) {
         if (extra) {
             zval_ptr_dtor(&extra);
-        }			
+        }
         return;
     }
 
@@ -1387,6 +1391,7 @@ static PHP_METHOD(GObject, register_type)
 	}
 
 	parent_type = phpg_gtype_from_class(ce TSRMLS_CC);
+
 	if (!parent_type) {
 		return;
 	}
@@ -1418,7 +1423,7 @@ static PHP_METHOD(GObject, register_type)
 	new_type = g_type_register_static(parent_type, type_name, &type_info, 0);
 	if (new_type == 0) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "could not create new GType");
-		
+
 		if (free_name) {
 			g_free(type_name);
 		}

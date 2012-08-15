@@ -53,17 +53,22 @@ static PHP_METHOD(%(class), %(name))
 {
 %(var_list)\tGObject *wrapped_obj;
 
+	phpg_gobject_t *pobj = zend_object_store_get_object(this_ptr TSRMLS_CC);
+	if (pobj->obj != NULL) {
+		return;
+	}
+
 	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
+		PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
 	}
 %(pre_code)
 	wrapped_obj = (GObject *) %(cname)(%(arg_list));
 %(post_code)
 	if (!wrapped_obj) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
+		PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
 	}
 %(post_create_code)
-    phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+	phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }\n\n";
 
 const static_constructor_body = "
@@ -150,51 +155,61 @@ e\n\n";
 const constructor_with_props = "
 static PHP_METHOD(%(class), %(name))
 {
-    GParameter params[%(n_params)];
+	GParameter params[%(n_params)];
 	zval *php_args[%(n_args)] = { NULL, };
 	char *prop_names[] = { %(props) NULL };
-    GObject *wrapped_obj;
-    guint i, n_params;
+	GObject *wrapped_obj;
+	guint i, n_params;
 	GType gtype = phpg_gtype_from_zval(this_ptr TSRMLS_CC);
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
-    }
+	phpg_gobject_t *pobj = zend_object_store_get_object(this_ptr TSRMLS_CC);
+	if (pobj->obj != NULL) {
+		return;
+	}
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"%(specs)\"%(parse_list))) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
+	}
 
 	memset(&params, 0, %(n_params) * sizeof(GParameter));
-    if (!phpg_parse_ctor_props(gtype, php_args, params, &n_params, prop_names TSRMLS_CC)) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
-    }
+	if (!phpg_parse_ctor_props(gtype, php_args, params, &n_params, prop_names TSRMLS_CC)) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
+	}
 %(pre_code)
-    wrapped_obj = (GObject *) g_object_newv(gtype, n_params, params);
+	wrapped_obj = (GObject *) g_object_newv(gtype, n_params, params);
 %(post_code)
-    if (!wrapped_obj) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
-    }
+	if (!wrapped_obj) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
+	}
 
 	for (i = 0; i < n_params; i++) {
 		g_value_unset(&params[i].value);
-    }
-    phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+	}
+	phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }\n\n";
 
 const constructor_without_props = "
 static PHP_METHOD(%(class), %(name))
 {
-    GObject *wrapped_obj;
+	GObject *wrapped_obj;
 
-    if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"\")) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
-    }
+	phpg_gobject_t *pobj = zend_object_store_get_object(this_ptr TSRMLS_CC);
+	if (pobj->obj != NULL) {
+		return;
+	}
+
+	if (!php_gtk_parse_args(ZEND_NUM_ARGS(), \"\")) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
+	}
 
 %(pre_code)
-    wrapped_obj = (GObject *) g_object_newv(phpg_gtype_from_zval(this_ptr TSRMLS_CC), 0, NULL);
+	wrapped_obj = (GObject *) g_object_newv(phpg_gtype_from_zval(this_ptr TSRMLS_CC), 0, NULL);
 %(post_code)
-    if (!wrapped_obj) {
-        PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
-    }
+	if (!wrapped_obj) {
+		PHPG_THROW_CONSTRUCT_EXCEPTION(%(class));
+	}
 
-    phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
+	phpg_gobject_set_wrapper(this_ptr, wrapped_obj TSRMLS_CC);
 }\n\n";
 const deprecation_msg = "\n\tphpg_warn_deprecated(%s TSRMLS_CC);\n";
 const method1_call = "%s(%s(PHP_GTK_GET(this_ptr))%s)";

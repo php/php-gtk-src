@@ -4,11 +4,18 @@ class NewType extends GtkButton {
 	public $__gsignals = array(
 		'clicked' => 'override',
 		'mashed'  => array(GObject::SIGNAL_RUN_LAST, GObject::TYPE_BOOLEAN, array(GObject::TYPE_LONG, GtkRequisition::gtype)),
+		'weird'  => array(GObject::SIGNAL_RUN_FIRST, GObject::TYPE_NONE, array(Gobject::TYPE_PHP_VALUE)),
 		);
 
 	function __construct()
 	{
 		parent::__construct();
+		$this->emit('weird', 'hello dolly');
+	}
+
+	function __do_weird($arg)
+	{
+		echo "NewType: class closure for `weird` called with arguments {$arg} \n";
 	}
 
 	function __do_clicked()
