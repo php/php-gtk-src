@@ -33,10 +33,15 @@ if (!PATH_PROG('grep', WshShell.Environment("Process").Item("PATH")) ||
 PATH_PROG('lib', null, 'MAKE_LIB');
 PATH_PROG('php');
 
+if (!PATH_PROG('php', WshShell.Environment("Process").Item("PATH"))) {
+ 	ERROR("php is required");
+} 
+
 STDOUT.WriteBlankLines(1);
 
 if (CL) {
 	var VCVERS = probe_msvc_compiler_version(CL);
+	STDOUT.WriteLine("Detected compiler version: " + VCVERS);
 
 	if (typeof(MSVCVERS[VCVERS]) == undefined) {
 		// Lets just bail out if we dont know the MSVC version
@@ -126,7 +131,7 @@ if (PHP_GTK_DEBUG == "yes") {
 	ADD_FLAG("LDFLAGS", "/debug");
 
 } else {
-	DEFINE("CFLAGS", "/nologo /MD /W3 /GX /O2 /I . /I ..\\ /I ..\\.. /I main /I ..\\main /I ext /I ..\\ext /D ZEND_WIN32 /D ZEND_DEBUG=0 /D PHP_WIN32 /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
+	DEFINE("CFLAGS", "/nologo /MD /W3 /EHsc /Ox /I . /I ..\\ /I ..\\.. /I main /I ..\\main /I ext /I ..\\ext /D ZEND_WIN32 /D ZEND_DEBUG=0 /D PHP_WIN32 /D WIN32 /D NDEBUG /D _WINDOWS /D _MBCS /D _USRDLL");
 	// Generate external debug files when --enable-debug-pack is specified
 	if (PHP_GTK_DEBUG_PACK == "yes") {
 	 	ADD_FLAG("CFLAGS", "/Zi");

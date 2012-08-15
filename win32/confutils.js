@@ -1225,8 +1225,8 @@ function execute(command_line) {
 
 // Which version of the compiler do we have?
 function probe_msvc_compiler_version(CL) {
-	var command = 'cmd /c ""' + CL + '" -v"';
-	var version = execute(command + '" 2>&1"');
+	var command = 'cmd /c ' + CL + ' -v';
+	var version = execute(command + ' 2>&1');
 
 	if (version.match(/(\d+\.\d+)/)) {
 		return RegExp.$1.split(".").join("");

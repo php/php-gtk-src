@@ -156,6 +156,7 @@ PHP_GTK_API int phpg_gvalue_to_zval(const GValue *gval, zval **value, zend_bool 
             if (G_VALUE_HOLDS(gval, G_TYPE_PHP_VALUE)) {
                 zval *object = (zval *) g_value_dup_boxed(gval);
                 MAKE_ZVAL_IF_NULL(*value);
+				ZVAL_NULL(*value);
                 if (object) {
                     REPLACE_ZVAL_VALUE(value, object, 1);
                     zval_ptr_dtor(&object);
