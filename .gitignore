@@ -47,6 +47,7 @@ install-sh
 ltmain.sh
 build/
 !config.m4
+buildmk.stamp
 
 # Test specific Ignores
 tests/*.diff
