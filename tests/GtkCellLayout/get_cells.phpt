@@ -5,8 +5,6 @@ GtkCellLayout->get_cells method
 if(!extension_loaded('php-gtk')) die('skip - PHP-GTK extension not available');
 if($error = Gtk::check_version(2, 18, 0)) die('skip -requires GTK 2.18 or higher ' . $error);
 ?>
---INI--
-error_reporting = E_ALL | E_DEPRECATED;
 --FILE--
 <?php
 
@@ -32,11 +30,12 @@ var_dump($column->get_cells());
 --EXPECTF--
 array(0) {
 }
-PHP Warning:  GtkTreeViewColumn::get_cells() expects exactly 0 parameters, 1 given in %s on line %d
+
+Warning: GtkTreeViewColumn::get_cells() expects exactly 0 parameters, 1 given in %s on line %d
 NULL
 array(1) {
   [0]=>
-  object(GtkCellRendererText)#2 (1) {
+  object(GtkCellRendererText)#%d (1) {
     ["gtype"]=>
     int(%i)
   }
