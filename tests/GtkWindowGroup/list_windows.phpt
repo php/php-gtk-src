@@ -3,7 +3,7 @@ GtkWindowGroup->list_windows method
 --SKIPIF--
 <?php
 if(!extension_loaded('php-gtk')) die('skip - PHP-GTK extension not available');
-if(!method_exists('GtkWindowGroup', 'list_windows')) die('skip - GtkStatusIcon->get_title not available, requires GTK 2.14 or higher');
+if(!method_exists('GtkWindowGroup', 'list_windows')) die('skip -GtkWindowGroup->list_windows not available, requires GTK 2.14 or higher');
 ?>
 --FILE--
 <?php
