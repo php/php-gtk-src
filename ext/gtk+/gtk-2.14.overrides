@@ -22,6 +22,8 @@ PHP_METHOD
         phpg_gobject_new(&php_item, G_OBJECT(window) TSRMLS_CC);
         add_next_index_zval(return_value, php_item);
     }
+
+    g_list_free(list);
 }
 
 %%
