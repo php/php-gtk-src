@@ -77,6 +77,15 @@
 # define PHPGTK_PROPERTY_END , const zend_literal *key TSRMLS_DC
 #endif
 
+/* get_property_ptr_ptr had type added in 5.5*/
+#if PHP_VERSION_ID >= 50500
+# define ZEND_GET_PPTR_TYPE_DC , int type
+# define ZEND_GET_PPTR_TYPE_CC , type
+#else
+# define ZEND_GET_PPTR_TYPE_DC
+# define ZEND_GET_PPTR_TYPE_CC
+#endif
+
 #if HAVE_PHP_GTK
 
 #include "zend_objects_API.h"
@@ -308,7 +317,7 @@ int php_gtk_startup_extensions(php_gtk_ext_entry **ext, int ext_count, int modul
 
 zval *phpg_read_property(zval *object, zval *member, int type PHPGTK_PROPERTY_END);
 void phpg_write_property(zval *object, zval *member, zval *value PHPGTK_PROPERTY_END);
-zval **phpg_get_property_ptr_ptr(zval *object, zval *member PHPGTK_PROPERTY_END);
+zval **phpg_get_property_ptr_ptr(zval *object, zval *member ZEND_GET_PPTR_TYPE_DC PHPGTK_PROPERTY_END);
 HashTable* phpg_get_properties(zval *object TSRMLS_DC);
 PHP_GTK_API void phpg_get_properties_helper(zval *object, HashTable *ht TSRMLS_DC, ...);
 

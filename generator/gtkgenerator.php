@@ -48,7 +48,7 @@ require dirname(__FILE__) . "/templates.php";
 require dirname(__FILE__) . "/array_printf.php";
 require dirname(__FILE__) . "/lineoutput.php";
 
-class Generator {
+class gtkGenerator {
     var $parser             = null;
     var $overrides          = null;
     var $prefix             = null;
@@ -75,7 +75,7 @@ class Generator {
                                     'unset_dimension', 'count_elements');
     var $cover              = array();
 
-    function Generator(&$parser, &$overrides, $prefix, $function_class)
+    function gtkGenerator(&$parser, &$overrides, $prefix, $function_class)
     {
         $this->parser    = &$parser;
         $this->overrides = &$overrides;
@@ -1135,7 +1135,7 @@ class Generator {
             }
 
             if ($this->overrides->has_extra_arginfo($class_name, $method_name)) {
-                $reflection_funcname = Generator::getReflectionFuncName($method, $class, $det_method_name);
+                $reflection_funcname = gtkGenerator::getReflectionFuncName($method, $class, $det_method_name);
                 $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
 
                 $arginfo = str_replace('ARGINFO_NAME', $reflection_funcname, $this->overrides->get_extra_arginfo($class_name, $method_name));
@@ -1150,7 +1150,7 @@ class Generator {
             $reflection_func = str_repeat(' ', $len) . 'NULL';
             $arginfo = null;
         } else {
-            $reflection_funcname = Generator::getReflectionFuncName($method, $class);
+            $reflection_funcname = gtkGenerator::getReflectionFuncName($method, $class);
             $reflection_func = str_repeat(' ', $len) . $reflection_funcname;
 
             $param_count = 0;
@@ -1164,7 +1164,7 @@ class Generator {
                 }
 
                 $paramtype = str_replace('const-', '', str_replace('*', '', $paraminfo[0]));
-                if (Generator::is_php_type($paramtype)) {
+                if (gtkGenerator::is_php_type($paramtype)) {
                     $argparams .= sprintf(Templates::reflection_arg, $paraminfo[1]);
                 } else {
                     $argparams .= sprintf(Templates::reflection_objarg, $paraminfo[1], $paramtype);
@@ -1493,7 +1493,7 @@ function fatal_error($message) {
     $fh = fopen("php://stderr", "w");
         fwrite($fh,"\n\n\n\n
 ========================================================================    
-    There was a Serious error with the PHP-GTK generator script
+    There was a Serious error with the PHP-GTK gtkGenerator script
 ========================================================================    
     $message
 ========================================================================    
@@ -1512,7 +1512,7 @@ $old_error_reporting = error_reporting(E_ALL);
 
 if (!isset($_SERVER['argv'])) 
     fatal_error("
-        Could not read command line arguments for generator.php 
+        Could not read command line arguments for gtkgenerator.php 
         Please ensure that this option is set in your php.ini
         register_argc_argv = On     
     ");
@@ -1527,7 +1527,7 @@ if (isset($_SERVER['argc']) &&
  
 $result = Console_Getopt::getopt($argv, 'l:o:p:c:r:f:v:');
 if (!$result || count($result[1]) < 2)
-    die("usage: php generator.php [-l logfile] [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] [-f savefile] [-v gtklibversion] defsfile\n");
+    die("usage: php gtkgenerator.php [-l logfile] [-o overridesfile] [-p prefix] [-c functionclass ] [-r typesfile] [-f savefile] [-v gtklibversion] defsfile\n");
 
 list($opts, $argv) = $result;
 
@@ -1564,7 +1564,7 @@ if (file_exists(dirname($argv[1]) . '/arg_types.php')) {
 
 $overrides = new Overrides($overrides, $gtkversion);
 $parser = new Defs_Parser($argv[1], $gtkversion);
-$generator = new Generator($parser, $overrides, $prefix, $function_class);
+$generator = new gtkGenerator($parser, $overrides, $prefix, $function_class);
 $generator->set_logfile($logfile);
 foreach ($register_defs as $defs) {
     $type_parser = new Defs_Parser($defs, $gtkversion);
