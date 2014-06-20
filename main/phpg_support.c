@@ -120,7 +120,7 @@ void phpg_write_property(zval *object, zval *member, zval *value PHPGTK_PROPERTY
 /* }}} */
 
 /* {{{ phpg_get_property_ptr_ptr() */
-zval **phpg_get_property_ptr_ptr(zval *object, zval *member PHPGTK_PROPERTY_END)
+zval **phpg_get_property_ptr_ptr(zval *object, zval *member ZEND_GET_PPTR_TYPE_DC PHPGTK_PROPERTY_END)
 {
     phpg_head_t *poh = NULL;
     zval tmp_member;
@@ -155,7 +155,7 @@ zval **phpg_get_property_ptr_ptr(zval *object, zval *member PHPGTK_PROPERTY_END)
 	#if PHP_VERSION_ID < 50399
 		result = zend_get_std_object_handlers()->get_property_ptr_ptr(object, member TSRMLS_CC);
 	#else
-		result = zend_get_std_object_handlers()->get_property_ptr_ptr(object, member, NULL TSRMLS_CC);
+		result = zend_get_std_object_handlers()->get_property_ptr_ptr(object, member ZEND_GET_PPTR_TYPE_CC, NULL TSRMLS_CC);
 	#endif
     }
 

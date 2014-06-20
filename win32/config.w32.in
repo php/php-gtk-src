@@ -10,6 +10,7 @@ MSVCVERS[1310] = 'MSVC7.1 (Visual C++ 2003)';
 MSVCVERS[1400] = 'MSVC8 (Visual C++ 2005)';
 MSVCVERS[1500] = 'MSVC9 (Visual C++ 2008)';
 MSVCVERS[1600] = 'MSVC10 (Visual C++ 2010)';
+MSVCVERS[1700] = 'MSVC11 (Visual C++ 2012)';
 
 STDOUT.WriteBlankLines(1);
 
