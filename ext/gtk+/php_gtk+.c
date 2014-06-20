@@ -89,14 +89,19 @@ static void init_gtk(TSRMLS_D)
 	   one more time to make sure it stays in memory even after our .so is
 	   unloaded. */
 	//DL_LOAD("libgtk.so");
-			   
-	if (!gtk_init_check(&argc, &argv)) {
+	
+	// New error handler that passes the actual gtk_init error
+	GError  *error;
+	error = NULL;
+	
+	if (! gtk_init_with_args (&argc, &argv, NULL, NULL, NULL, &error)) {
 		if (argv != NULL) {
 			for (i = 0; i < argc; i++)
 				g_free(argv[i]);
 			g_free(argv);
 		}
-		php_error(E_ERROR, "php-gtk: Could not open display");
+		php_error(E_ERROR, "%s", error->message);
+		g_error_free (error);
 		return;
 	}
 
@@ -183,21 +188,21 @@ static void phpg_register_stock_constants()
 static void phpg_register_atoms()
 {
 	register_atom(SELECTION_PRIMARY);
-    register_atom(SELECTION_SECONDARY);
-    register_atom(SELECTION_CLIPBOARD);
-    register_atom(TARGET_BITMAP);
-    register_atom(TARGET_COLORMAP);
-    register_atom(TARGET_DRAWABLE);
-    register_atom(TARGET_PIXMAP);
-    register_atom(TARGET_STRING);
-    register_atom(SELECTION_TYPE_ATOM);
-    register_atom(SELECTION_TYPE_BITMAP);
-    register_atom(SELECTION_TYPE_COLORMAP);
-    register_atom(SELECTION_TYPE_DRAWABLE);
-    register_atom(SELECTION_TYPE_INTEGER);
-    register_atom(SELECTION_TYPE_PIXMAP);
-    register_atom(SELECTION_TYPE_WINDOW);
-    register_atom(SELECTION_TYPE_STRING);
+	register_atom(SELECTION_SECONDARY);
+	register_atom(SELECTION_CLIPBOARD);
+	register_atom(TARGET_BITMAP);
+	register_atom(TARGET_COLORMAP);
+	register_atom(TARGET_DRAWABLE);
+	register_atom(TARGET_PIXMAP);
+	register_atom(TARGET_STRING);
+	register_atom(SELECTION_TYPE_ATOM);
+	register_atom(SELECTION_TYPE_BITMAP);
+	register_atom(SELECTION_TYPE_COLORMAP);
+	register_atom(SELECTION_TYPE_DRAWABLE);
+	register_atom(SELECTION_TYPE_INTEGER);
+	register_atom(SELECTION_TYPE_PIXMAP);
+	register_atom(SELECTION_TYPE_WINDOW);
+	register_atom(SELECTION_TYPE_STRING);
 }
 #undef register_atom
 
