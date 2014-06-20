@@ -44,6 +44,7 @@ static void init_gtk(TSRMLS_D)
 	char **argv = NULL;
 	int argc, i;
 	zend_bool no_argc = 0;
+	GError  *error = NULL;
 
 	/*
 	 * Grab the argc/argv values from $_SERVER array.
@@ -91,9 +92,6 @@ static void init_gtk(TSRMLS_D)
 	//DL_LOAD("libgtk.so");
 	
 	// New error handler that passes the actual gtk_init error
-	GError  *error;
-	error = NULL;
-	
 	if (! gtk_init_with_args (&argc, &argv, NULL, NULL, NULL, &error)) {
 		if (argv != NULL) {
 			for (i = 0; i < argc; i++)
@@ -188,21 +186,21 @@ static void phpg_register_stock_constants()
 static void phpg_register_atoms()
 {
 	register_atom(SELECTION_PRIMARY);
-	register_atom(SELECTION_SECONDARY);
-	register_atom(SELECTION_CLIPBOARD);
-	register_atom(TARGET_BITMAP);
-	register_atom(TARGET_COLORMAP);
-	register_atom(TARGET_DRAWABLE);
-	register_atom(TARGET_PIXMAP);
-	register_atom(TARGET_STRING);
-	register_atom(SELECTION_TYPE_ATOM);
-	register_atom(SELECTION_TYPE_BITMAP);
-	register_atom(SELECTION_TYPE_COLORMAP);
-	register_atom(SELECTION_TYPE_DRAWABLE);
-	register_atom(SELECTION_TYPE_INTEGER);
-	register_atom(SELECTION_TYPE_PIXMAP);
-	register_atom(SELECTION_TYPE_WINDOW);
-	register_atom(SELECTION_TYPE_STRING);
+    register_atom(SELECTION_SECONDARY);
+    register_atom(SELECTION_CLIPBOARD);
+    register_atom(TARGET_BITMAP);
+    register_atom(TARGET_COLORMAP);
+    register_atom(TARGET_DRAWABLE);
+    register_atom(TARGET_PIXMAP);
+    register_atom(TARGET_STRING);
+    register_atom(SELECTION_TYPE_ATOM);
+    register_atom(SELECTION_TYPE_BITMAP);
+    register_atom(SELECTION_TYPE_COLORMAP);
+    register_atom(SELECTION_TYPE_DRAWABLE);
+    register_atom(SELECTION_TYPE_INTEGER);
+    register_atom(SELECTION_TYPE_PIXMAP);
+    register_atom(SELECTION_TYPE_WINDOW);
+    register_atom(SELECTION_TYPE_STRING);
 }
 #undef register_atom
 
