@@ -1,7 +1,7 @@
 
 $(builddir)/gen_html.c: $(srcdir)/html.defs $(srcdir)/html.overrides
 	( \
-     $(PHP) $(top_srcdir)/generator/generator.php \
+     $(PHP) $(top_srcdir)/generator/gtkgenerator.php \
 	 	-l $(@D)/$(*F).log \
         -r ext/gtk+/atk-types.defs   \
         -r ext/gtk+/pango-types.defs \

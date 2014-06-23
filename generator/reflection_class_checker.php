@@ -6,7 +6,7 @@
 * here we check that
 * 
 * The classes spit out by this script have to be entered in 
-*  generator.php function is_in_php()
+*  gtkgenerator.php function is_in_php()
 */
 
 $arFiles = array(
