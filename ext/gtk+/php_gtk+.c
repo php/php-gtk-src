@@ -44,6 +44,7 @@ static void init_gtk(TSRMLS_D)
 	char **argv = NULL;
 	int argc, i;
 	zend_bool no_argc = 0;
+	GError  *error = NULL;
 
 	/*
 	 * Grab the argc/argv values from $_SERVER array.
@@ -90,13 +91,16 @@ static void init_gtk(TSRMLS_D)
 	   unloaded. */
 	//DL_LOAD("libgtk.so");
 			   
-	if (!gtk_init_check(&argc, &argv)) {
+	// New error handler that passes the actual gtk_init error
+
+	if (!gtk_init_with_args(&argc, &argv, NULL, NULL, NULL, &error)) {
 		if (argv != NULL) {
 			for (i = 0; i < argc; i++)
 				g_free(argv[i]);
 			g_free(argv);
 		}
-		php_error(E_ERROR, "php-gtk: Could not open display");
+		php_error(E_ERROR, "%s", error->message);
+		g_error_free (error);
 		return;
 	}
 
