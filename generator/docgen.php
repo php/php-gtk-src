@@ -946,7 +946,7 @@ $result = Console_Getopt::getopt($argv, 'o:p:r:d:s:l:u');
 if (!$result || count($result[1]) < 2) {
     // Set up the help message.
     die(
-        "Usage: php -q generator.php [OPTION] defsfile [class ...]\n\n" . 
+        "Usage: php -q gtkgenerator.php [OPTION] defsfile [class ...]\n\n" . 
         "  -o <file>         use overrides in <file>\n" . 
         "  -p <prefix>       use <prefix> for docs\n" . 
         "  -r <file>         register types from <file>\n" . 
