@@ -1,7 +1,7 @@
 
 $(builddir)/gen_gtkextra.c: $(srcdir)/gtkextra.defs $(srcdir)/gtkextra.overrides
 	( \
-     $(PHP) $(top_srcdir)/generator/generator.php \
+     $(PHP) $(top_srcdir)/generator/gtkgenerator.php \
 	 	-l $(@D)/$(*F).log \
         -r ext/gtk+/atk-types.defs   \
         -r ext/gtk+/pango-types.defs \

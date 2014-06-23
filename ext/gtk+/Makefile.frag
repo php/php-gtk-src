@@ -19,7 +19,7 @@ $(builddir)/gen_pango.c: $(COMMONDEFS) $(srcdir)/pango.overrides
 
 gen_%.c : %.defs
 	( \
-     $(PHP) $(top_srcdir)/generator/generator.php \
+     $(PHP) $(top_srcdir)/generator/gtkgenerator.php \
 	 	-l $(@D)/gen_$(*F).log \
         -r ext/gtk+/atk-types.defs   \
         -r ext/gtk+/pango-types.defs \

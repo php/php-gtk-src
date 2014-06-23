@@ -6,7 +6,7 @@ if (PHP_GTK_HTML != "no" || PHP_GTK_ALL != "no")
 		if (FSO.FileExists("win32\\temp.bat"))
 		{  		
 			var temp = FSO.OpenTextFile("win32\\temp.bat", 8);
- 			temp.WriteLine("php -q generator\\generator.php -l win32\\logs\\config_html.log -o ext\\html\\html.overrides -p gtkhtml -r ext\\gtk+\\gtk.defs ext\\html\\html.defs > ext\\html\\gen_html.c");
+ 			temp.WriteLine("php -q generator\\gtkgenerator.php -l win32\\logs\\config_html.log -o ext\\html\\html.overrides -p gtkhtml -r ext\\gtk+\\gtk.defs ext\\html\\html.defs > ext\\html\\gen_html.c");
                   temp.WriteLine('grep -h "^PHP_GTK_EXPORT_CE" ext\\html\\gen_html.c | sed -e "s/^/PHP_GTK_API extern /" > ext\\html\\gen_html.h');
 		 	temp.Close();
 		}
