@@ -19,7 +19,7 @@ normally be installed when you do 'make install' in the PHP source tree.
 Currently, PHP-GTK requires PHP 5.1.2 or greater to run, and to build.
 
 PHP-GTK supports GTK+ v2.6 and requires v2.6 or greater. The latest stable
-release of GTK+ v2.6 can be obtained from ftp://ftp.gtk.org/pub/gtk/v2.6/.
+release of GTK+ can be obtained from ftp://ftp.gnome.org/pub/gnome/sources/gtk+/.
 
 
 Installation and testing
@@ -67,7 +67,7 @@ There are several mailing lists for PHP-GTK.
 
      List address: php-gtk-general@lists.php.net
      Subscription: php-gtk-general-subscribe@lists.php.net
-     Archive:      http://marc.theaimsgroup.com/?l=php-gtk-general
+     Archive:      http://marc.info/?l=php-gtk-general
 
    * Developers list
      ---------------
@@ -76,7 +76,7 @@ There are several mailing lists for PHP-GTK.
 
      List address: php-gtk-dev@lists.php.net
      Subscription: php-gtk-dev-subscribe@lists.php.net
-     Archive:      http://marc.theaimsgroup.com/?l=php-gtk-dev
+     Archive:      http://marc.info/?l=php-gtk-dev
 
    * Documenters list
      ----------------
@@ -84,7 +84,7 @@ There are several mailing lists for PHP-GTK.
 
      List address: php-gtk-doc@lists.php.net
      Subscription: php-gtk-doc-subscribe@lists.php.net
-     Archive:      http://marc.theaimsgroup.com/?l=php-gtk-doc
+     Archive:      http://marc.info/?l=php-gtk-doc
 
 To subscribe to any of the lists, send blank email to the appropriate
 subscription address.
