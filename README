@@ -1,0 +1,29 @@
+The PHP-GTK3
+===================
+This is the github mirror of the official PHP-GTK3 repository located at
+http://git.php.net/?p=php/gtk-src.git;a=summary .
+
+Pull Requests
+=============
+PHP-GTK3 accepts pull requests via github.
+Discussions are done on github, but
+depending on the topic can also be relayed to the official PHP-GTK3 developer
+mailinglist php-gtk-dev@lists.php.net .
+
+We do not merge pull requests directly on github. All PRs will be
+pulled and pushed through: git@git.php.net:/php/gtk-src.git or
+https://git.php.net/repository/php/gtk-src.git or
+https://git.php.net/push/php/gtk-src.git
+
+Development Branch
+==================
+Branch development of PHP-GTK3 is dev-php-gtk3.
+Be careful when doing push. You should make sure to checkout the correct branch dev-php-gtk3.
+We will only do merge with the master branch when PHP-GTK3 is stable and functional.
+
+Guidelines for contributors
+===========================
+- [CODING_STANDARDS](/CODING_STANDARDS)
+- [README.GIT-RULES](/README.GIT-RULES)
+- [README.MAILINGLIST_RULES](/README.MAILINGLIST_RULES)
+- [README.RELEASE_PROCESS](/README.RELEASE_PROCESS)
