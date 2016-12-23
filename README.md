@@ -1,5 +1,5 @@
 PHP-GTK: PHP language bindings for GTK+ toolkit
-===============================================
+==============================================
 PHP-GTK is a PHP extension that enables you to write client-side cross-platform
 GUI applications. This is the first such extension of this kind and one of the
 goals behind it was to prove that PHP is a capable general-purpose scripting
@@ -27,15 +27,15 @@ Installation and testing
 After unpacking the distribution or checking out the sources from the CVS,
 change into the base directory and do the following.
 
-First, run './buildconf' script that comes with PHP-GTK. It will set up
+First, run `./buildconf` script that comes with PHP-GTK. It will set up
 necessary files and create 'configure' script for you.  Next, run './configure'.
 It will check that you have proper version of GTK+ and other files required for
 compilation and create the Makefile's.
 
 PHP-GTK supports extensions which can be configured via 'configure' script
-switches that you can see by running './configure --help'.
+switches that you can see by running `./configure --help'`
 
-Finally, run 'make' to compile the extension. Some source files are generated
+Finally, run `make` to compile the extension. Some source files are generated
 from .defs files by the code generator. If you see messages like "Could not
 write...", that just means that certain GTK+ objects or features are not yet
 supported. If the compilation is successful, run 'make install' to install the
@@ -49,8 +49,7 @@ can be used.
 Website
 =======
 The website for this extension can be found at:
-
-    http://gtk.php.net/
+[PHP-GTK](http://gtk.php.net/)
 
 This is where you should go to obtain the latest releases and news about
 PHP-GTK.
@@ -65,26 +64,26 @@ There are several mailing lists for PHP-GTK.
      This list is for general discussion of PHP-GTK, techniques, problems,
      development of applications, questions, and other issues.
 
-     List address: php-gtk-general@lists.php.net
-     Subscription: php-gtk-general-subscribe@lists.php.net
-     Archive:      http://marc.info/?l=php-gtk-general
+     [List address]( mailto:php-gtk-general@lists.php.net)
+     [Subscription](mailto:php-gtk-general-subscribe@lists.php.net)
+     [Archive]( http://marc.info/?l=php-gtk-general)
 
    * Developers list
      ---------------
      This list is for those wanting to help with development of PHP-GTK and its
      extensions.
 
-     List address: php-gtk-dev@lists.php.net
-     Subscription: php-gtk-dev-subscribe@lists.php.net
-     Archive:      http://marc.info/?l=php-gtk-dev
+     [List address](mailto:php-gtk-dev@lists.php.net)
+     [Subscription](mailto:php-gtk-dev-subscribe@lists.php.net)
+     [Archive](http://marc.info/?l=php-gtk-dev)
 
    * Documenters list
      ----------------
      This list is for those discussion and development of PHP-GTK documentation.
 
-     List address: php-gtk-doc@lists.php.net
-     Subscription: php-gtk-doc-subscribe@lists.php.net
-     Archive:      http://marc.info/?l=php-gtk-doc
+     [List address](mailto:php-gtk-doc@lists.php.net)
+     [Subscription](mailto:php-gtk-doc-subscribe@lists.php.net)
+     [Archive]( http://marc.info/?l=php-gtk-doc)
 
 To subscribe to any of the lists, send blank email to the appropriate
 subscription address.
@@ -100,8 +99,8 @@ list (see above).
 
 Acknowledgements
 ================
-The person I would like to thank the most is James Henstridge
-<james@daa.com.au>, the author of PyGTK (Python GTK+ bindings). His help and
+The person I would like to thank the most is [James Henstridge](http://www.jamesh.id.au/), the author of [PyGTK (Python GTK+ bindings)](www.pygtk.org/
+). His help and
 advice have proved invaluable during the development of this extension, and a
 fair amount of source code is based on or inspired by what he has developed for
 PyGTK.
@@ -109,4 +108,3 @@ PyGTK.
 I'd also like to thank PHP team for making such a great language and the GTK+
 team for developing what has to be the best C-based GUI toolkit.
 
-# vim: set et tw=80 ai sts=4:
